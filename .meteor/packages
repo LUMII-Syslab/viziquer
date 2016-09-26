@@ -38,8 +38,8 @@ natestrauser:bootstrap-colorpicker
 arturs:konva
 mizzao:user-status
 email
-gfk:mailgun-api
 nilsdannemann:pdfmake
 session
 cfs:standard-packages
 cfs:gridfs
+nimble:restivus

@@ -2,13 +2,15 @@
 Meteor.publish("Diagrams", function(list) {
 
 	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
+	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
+	}
 
 	var proj_id = list["projectId"];
 	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
+	if (!proj_user) {
 		return;
+	}
 	
 	var role = proj_user["role"];
 	if (is_project_version_reader(user_id, list, role)) {
@@ -18,8 +20,9 @@ Meteor.publish("Diagrams", function(list) {
 								versionId: list["versionId"],
 							};
 
-		if (role != "Admin" && role != "Reader")
+		if (role != "Admin" && role != "Reader") {
 			diagrams_query["allowedGroups"] = role;
+		}
 
 		var fields = {_id: 1, name: 1, imageUrl: 1, seenCount: 1, createdAt: 1,
 					diagramTypeId: 1, parentDiagrams: 1, allowedGroups: 1};
@@ -156,103 +159,18 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 });
 
 					
-Meteor.publish("ElementsSections_Sections", function(list) {
-	
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-
-	var role = proj_user["role"];
-	if (is_project_version_reader(user_id, list, role)) {
-
-		var diagram_query = {_id: list["diagramId"], projectId: list["projectId"],
-							versionId: list["versionId"]};
-
-		if (role != "Admin" && role != "Reader") {
-			diagram_query["allowedGroups"] = role;
-			//doc_query["allowedGroups"] = role;	
-		}
-
-		if (Diagrams.findOne(diagram_query)) {
-			return 	Meteor.publishWithRelations({
-						handle: this,
-						collection: ElementsSections,
-						filter: {projectId: list["projectId"], diagramId: list["diagramId"],
-								versionId: list["versionId"]},
-
-						mappings: [
-							{key: 'sectionId',
-				        	collection: Sections,
-					        },
-					    ]
-					});
-		}
-
-		else {
-			error_msg();
-			return this.stop();
-		}
-
-	}
-	else {
-		error_msg();
-		return this.stop();
-	}
-});
-
-Meteor.publish("ElementsSections_Diagrams", function(list) {
-
-	if (!list || list["noQuery"])
-		return this.stop();
-
-	var user_id = this.userId;
-	if (is_project_version_reader(user_id, list)) {
-
-		return 	Meteor.publishWithRelations({
-					handle: this,
-					collection: ElementsSections,
-					filter: {projectId: list["projectId"],
-							versionId: list["versionId"]},
-
-					mappings: [
-						{key: 'diagramId',
-			        	collection: Diagrams,
-
-			        	mappings: [
-							{key: 'diagramId',
-							reverse: true,
-				        	collection: Compartments,
-				        	filter: {isObjectRepresentation: true},
-				        	},
-				        ],
-				        },
-				    ]
-				});
-
-		//vajag compartmentus
-	}
-	else {
-		error_msg();
-		return this.stop();
-	}
-});
-
-
 Meteor.publish("Diagram_Palette_ElementType", function(list) {
 
 	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
+	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
+	}
 
 	var proj_id = list["projectId"];
 	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
+	if (!proj_user) {
 		return;
+	}
 
 	var role = proj_user["role"];
 	if (is_project_version_reader(user_id, list, role)) {
@@ -361,16 +279,18 @@ Meteor.publish("DiagramLogs", function(list) {
 	}
 });
 
-Meteor.publish("Diagram_Types_Documents", function(list) {
+Meteor.publish("Diagram_Types", function(list) {
 
 	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
+	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
+	}
 
 	var proj_id = list["projectId"];
 	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
+	if (!proj_user) {
 		return;
+	}
 
 	var role = proj_user["role"];
 	if (is_project_version_reader(user_id, list, role)) {
@@ -381,10 +301,6 @@ Meteor.publish("Diagram_Types_Documents", function(list) {
 			var tool_id = version["toolId"];
 			var tool_version_id = version["toolVersionId"];
 
-			//documents
-			var doc_query = {projectId: list["projectId"], versionId: list["versionId"]};
-			var doc_limit = {fields: {_id: 1, name: 1}};				
-
 			var type_query = {diagramTypeId: list["diagramTypeId"], toolId: tool_id, versionId: tool_version_id};
 			
 			//var elem_type_limit = {fields: {}};
@@ -394,20 +310,12 @@ Meteor.publish("Diagram_Types_Documents", function(list) {
 
 			if (role != "Admin" && role != "Reader") {
 				diagram_query["allowedGroups"] = role;
-				//doc_query["allowedGroups"] = role;	
 			}
 
 			return [
 					//types
-					//DiagramTypes.find(diagram_type_query, diagram_type_limit),
-					//ElementTypes.find(type_query, elem_type_limit),
-					Documents.find(doc_query, doc_limit),
 					CompartmentTypes.find(type_query, compart_type_limit),
 					DialogTabs.find(type_query, dialog_type_limit),
-
-					DiagramFiles.find(doc_query),
-					CloudFiles.find(doc_query),
-					FileObjects.find(doc_query),
 
 					//PaletteButtons.find(type_query, palette_button_type_limit),			
 				];
@@ -468,254 +376,6 @@ Meteor.publish("Diagram_Locker", function(list) {
 	}
 
 });
-
-Meteor.publish("Documents", function(list) {
-
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-	
-	var role = proj_user["role"];
-
-	//checks rights to access the project
-	if (is_project_version_reader(user_id, list, role)) {
-
-		//selects project diagrams
-		var documents_query = {projectId: list["projectId"],
-								versionId: list["versionId"],
-							};
-
-		if (role != "Admin" && role != "Reader")
-			documents_query["allowedGroups"] = role;
-
-		//selects project documents
-		var documents_limit = {fields: get_documents_limit(), sort: {name: 1}};
-	
-		//if the search filter is applied, then selects the specified compartments
-		if (list["text"] && list["text"] != "") {
-
-			//selects sections and then their document ids
-			//THIS IS NOT REACTIVE
-			var sections = Sections.find({projectId: list["projectId"],
-											versionId: list["versionId"],
-											textLC: {$regex: make_regex_subsring(list["text"])}});
-			var doc_ids = sections.map(function(section){return section["documentId"]});
-
-			var document_regex = {$regex: make_regex_subsring(list["text"]), $options: 'i'};
-			documents_query = {$or: [{projectId: list["projectId"], versionId: list["versionId"],
-											name: document_regex}, {_id: {$in: doc_ids}}]};
-		}
-
-
-		return [Documents.find(documents_query, documents_limit),
-
-				UserVersionSettings.find({projectId: list["projectId"],
-											userSystemId: user_id, 
-											versionId: list["versionId"]}, 
-											{fields: {view: 0,
-													collapsedDiagrams: 0,
-													consistencyCheck: 0,
-													diagramsSortBy: 0,
-													diagramsSelectedGroup: 0,
-												}}),
-				];
-
-
-	}
-	else {
-		error_msg();
-		return this.stop();
-	}
-});
-
-Meteor.publish("Files", function(list) {
-
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-	
-	var role = proj_user["role"];
-
-	//checks rights to access the project
-	if (is_project_version_reader(user_id, list, role)) {
-
-		//selects project diagrams
-		var query = {projectId: list["projectId"],
-								versionId: list["versionId"],
-							};
-
-		if (role != "Admin" && role != "Reader")
-			query["allowedGroups"] = role;
-
-		//selects project documents
-		//var limit = {fields: get_documents_limit(), sort: {name: 1}};
-		var limit = {};
-
-		return [CloudFiles.find(query, limit),
-				FileObjects.find({projectId: list.projectId, versionId: list.versionId}),
-			];
-	}
-
-	else {
-		error_msg();
-		return this.stop();
-	}
-});
-
-
-Meteor.publish("DiagramFiles", function(list) {
-
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-
-	return	Meteor.publishWithRelations({
-				handle: this,
-				collection: DiagramFiles,
-				filter: {projectId: list.projectId, versionId: list.versionId},
-				options: {
-					//fields: posts_fields,
-				},
-
-				mappings: [
-					{
-			        	key: "diagramId",
-			        	collection: Diagrams,
-			        	options: {
-			        		fields: {name: 1, diagramTypeId: 1},
-			        	},
-			        },
-
-			        {
-			        	key: "elementId",
-			        	collection: Elements,
-						options: {
-							fields: {_id: 1},
-						},
-
-						mappings: [
-							{	
-					        	key: "elementId",
-					        	collection: Compartments,
-					        	reverse: true,
-
-					        	filter: {projectId: list.projectId, versionId: list.versionId, isObjectRepresentation: true},
-					        	options: {
-									fields: {value: 1, elementId: 1, isObjectRepresentation: 1},
-								},
-							},
-						],
-
-					},
-				]
-	    	});
-});
-
-Meteor.publish("DocumentTypes", function(list) {
-
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-
-	var version = Versions.findOne({_id: list["versionId"],
-									projectId: list["projectId"]});
-	if (version) {
-
-		var tool_id = version["toolId"];
-		var tool_version_id = version["toolVersionId"];
-
-		//document types
-		var document_type_query = {toolId: tool_id, versionId: tool_version_id};
-		var document_type_limit = {};//{fields: {diagramId: 0, diagramTypeId: 0,
-									//		toolId: 0, versionId: 0}};
-
-		return DocumentTypes.find(document_type_query, document_type_limit);
-	}
-
-	else {
-		error_msg();
-		return this.stop();
-	}
-
-});
-
-Meteor.publish("Document_Sections", function(list) {
-
-	var user_id = this.userId;
-	if (!list || list["noQuery"] || !list["projectId"] || !user_id)
-		return this.stop();
-
-	var proj_id = list["projectId"];
-	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user)
-		return;
-
-	var role = proj_user["role"];
-	if (is_project_version_reader(this.userId, list, role)) {
-
-		//selects project documents
-		var document_query = {_id: list["id"], projectId: list["projectId"],
-								versionId: list["versionId"]};
-
-		if (role != "Admin" && role != "Reader")
-			document_query["allowedGroups"] = role;
-
-		var documents_limit = {fields: get_documents_limit()};
-
-		var section_query = {documentId: list["id"], projectId: list["projectId"],
-								versionId: list["versionId"]};				
-
-		var sections_limit = {fields: {textLC: 0, authorId: 0, createdAt: 0,
-										projectId: 0, versionId: 0}};
-
-
-		var documents = Documents.find(document_query, documents_limit);
-		if (documents.count() == 0) {
-			error_msg();
-			return this.stop();				
-		}
-		else {
-
-			var version = Versions.findOne({_id: list["versionId"],
-											projectId: list["projectId"]});
-			if (!version)
-				return this.stop();
-
-			var tool_id = version["toolId"];
-			var tool_version_id = version["toolVersionId"];
-
-			return [documents,
-					Sections.find(section_query, sections_limit),
-					DocumentTypes.find({toolId: tool_id, versionId: tool_version_id}),
-				];
-		}
-	}
-	else {
-		error_msg();
-		return this.stop();
-	}
-});
-
 
 Meteor.publish("ProjectsGroups", function(list) {
 
@@ -1181,43 +841,8 @@ Meteor.publish("Forum_Tags", function(list) {
 	return ForumPostTags.find(filter);
 });
 
-//Tasks
-Meteor.publish("Tasks", function(list) {
-
-	var user_id = this.userId;
-	if (is_project_member(user_id, list)) {
-
-		return [Diagrams.find({projectId: list["projectId"], versionId: list["versionId"]}),
-				Tasks.find({projectId: list["projectId"], versionId: list["versionId"]}),
-			];
-	}
-
-});
-
-Meteor.publish("Task", function(list) {
-
-	var user_id = this.userId;
-	if (is_project_member(user_id, list)) {
-
-		return [
-			Diagrams.find({_id: list["diagramId"], projectId: list["projectId"], versionId: list["versionId"]}),
-			Elements.find({diagramId: list["diagramId"], projectId: list["projectId"], versionId: list["versionId"]}),
-			Compartments.find({diagramId: list["diagramId"], projectId: list["projectId"], versionId: list["versionId"]}),
-
-			Tasks.find({_id: list["taskId"], projectId: list["projectId"], versionId: list["versionId"]}),
-			TaskSteps.find({taskId: list["taskId"], projectId: list["projectId"], versionId: list["versionId"]}),
-		];
-	}
-
-});
-
 
 //End of publish
-
-function get_documents_limit() {
-	return {nameLC: 0, authorId: 0, versionId: 0, projectId: 0};
-}
-
 function limit_versions_fields() {
 	return {createdBy: 0, projectId: 0, publishedBy: 0};
 }

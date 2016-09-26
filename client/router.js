@@ -235,9 +235,9 @@ Router.map( function () {
               Meteor.subscribe("Document_Sections", Session.get("documentSections"));           
           });
 
-          Meteor.subscribe("ElementsSections_Sections", {
-                                                diagramId: dgr_id, projectId: proj_id,
-                                                versionId: version_id});          
+          // Meteor.subscribe("ElementsSections_Sections", {
+          //                                       diagramId: dgr_id, projectId: proj_id,
+          //                                       versionId: version_id});          
 
           Meteor.subscribe("ProjectsGroups", {projectId: proj_id});
 
@@ -246,9 +246,7 @@ Router.map( function () {
               Meteor.subscribe("DiagramLogs", Session.get("logs"));
           });
 
-          Meteor.subscribe("Diagram_Types_Documents", {
-                          id: dgr_id, projectId: proj_id, versionId: version_id,
-                          diagramTypeId: type_id});
+
       },
 
       waitOn: function() {
@@ -265,8 +263,9 @@ Router.map( function () {
             Session.set("editMode", true);
             Session.set("edited", true);
         }
-        else
+        else {
             Session.set("editMode", reset_variable());
+        }
 
       //sets active diagram  
         Session.set("activeDiagram", dgr_id);
@@ -281,8 +280,12 @@ Router.map( function () {
         // if (stage)
         //   stage["edit"] = reset_variable();
 
-
         return [
+
+            Meteor.subscribe("Diagram_Types", {
+                            id: dgr_id, projectId: proj_id, versionId: version_id,
+                            diagramTypeId: type_id}),
+
             Meteor.subscribe("Diagram_Palette_ElementType", {
                           id: dgr_id, projectId: proj_id, versionId: version_id,
                           diagramTypeId: type_id}),

@@ -58,7 +58,6 @@ fortawesome:fontawesome@4.4.0_1
 froala:editor@2.3.0
 froala:editor-reactive@2.3.0
 geojson-utils@1.0.8
-gfk:mailgun-api@1.1.0
 hot-code-push@1.0.4
 html-tools@1.0.9
 htmljs@1.0.9
@@ -102,6 +101,7 @@ natestrauser:font-awesome@4.6.1
 nemo64:bootstrap@3.3.5_2
 nemo64:bootstrap-data@3.3.5
 nilsdannemann:pdfmake@1.0.38
+nimble:restivus@0.8.11
 npm-bcrypt@0.8.5
 npm-mongo@1.4.43
 observe-sequence@1.0.11
@@ -119,6 +119,7 @@ routepolicy@1.0.10
 service-configuration@1.0.9
 session@1.1.5
 sha@1.0.7
+simple:json-routes@2.1.0
 spacebars@1.0.11
 spacebars-compiler@1.0.11
 srp@1.0.8
