@@ -1,0 +1,73 @@
+
+<!-- Start of keystrokes -->
+<template name="keystrokes">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-keystrokes" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-keystrokes" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-keystrokes">
+					{{> editKeystroke}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-keystrokes">
+					{{> readKeystroke}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<!-- Start of keystrokes -->
+<template name="editKeystroke">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+<!-- End of keystrokes -->
+
+<!-- Start of keystrokes -->
+<template name="readKeystroke">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+<!-- End of keystrokes -->
+
+<!-- Start of keystrokes -->
+<template name="keystroke">
+
+	{{#with this}}
+		<div class="menu" collection="{{collection}}" array="{{array}}">
+			<table class="table table-bordered table-condensed table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Keystroke</th>
+						<th>Procedure</th>
+						<th>Template</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody class="table-body">
+					{{#each keystrokes}}
+						<tr index="{{index}}">
+							<td><div class="table-item" attribute="keyStroke" contentEditable="true">{{keyStroke}}</div></td>
+							<td><div class="table-item" attribute="procedure" contentEditable="true">{{procedure}}</div></td>
+							<td><div class="table-item" attribute="template" contentEditable="true">{{template}}</div></td>
+							<td>
+								<center>
+									<a class="btn btn-xs btn-danger remove-keystroke"><i class="fa fa-trash-o"></i></a>
+								</center>
+							</td>
+						</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<a class="btn btn-success pull-right" id="add-keystroke"><i class="fa fa-plus"></i> Add</a>
+		</div>	
+	{{/with}}
+
+</template>
+<!-- End of keystrokes -->

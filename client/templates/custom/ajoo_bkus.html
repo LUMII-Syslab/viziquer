@@ -1,0 +1,82 @@
+
+
+<template name="Filter">
+
+	<form role="form">
+
+		<div class="form-group">
+			<select id="attribute" class="form-control">
+				
+				{{#each attributes}}
+					<option id="{{_id}}">{{name}}</option>
+				{{/each}}
+
+			</select>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<select id="condition1" class="form-control">
+						<option id="equals">equals</option>
+						<option id="greaterThan">greater than</option>
+						<option id="lessThan">less than</option>
+						<option id="notEquals">not equals</option>
+						<option id="contains">contains</option>
+						<option id="oneFrom">one from</option>
+					</select>
+				</div><!-- /form-group -->
+			</div><!-- /.col -->
+
+			<div class="col-md-6">
+				<div class="form-group">
+					<input id="value1" placeholder="" class="form-control">
+				</div><!-- /form-group -->
+			</div><!-- /.col -->
+		</div>
+
+		<div class="form-group">
+			<label class="label-radio inline">
+				<input id="and" type="radio" name="inline-radio" checked="checked">
+				<span class="custom-radio"></span>
+				And
+			</label>
+			<label class="label-radio inline">
+				<input id="or" type="radio" name="inline-radio">
+				<span class="custom-radio"></span>
+				Or
+			</label>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<select id="condition2" class="form-control">
+						<option id="equals">equals</option>
+						<option id="greaterThan">greater than</option>
+						<option id="lessThan">less than</option>
+						<option id="notEquals">not equals</option>
+						<option id="contains">contains</option>
+						<option id="oneFrom">one from</option>
+					</select>
+				</div><!-- /form-group -->
+			</div><!-- /.col -->
+
+			<div class="col-md-6">
+				<div class="form-group">
+					<input id="value2" placeholder="" class="form-control">
+				</div><!-- /form-group -->
+			</div><!-- /.col -->
+		</div>
+
+		<div class="form-group">
+	    	<div class="pull-right">
+	        	<a id="filter" class="btn btn-sm btn-success">Filter</a>
+	        </div>
+	    </div>
+	</form>
+
+</template>
+
+
+

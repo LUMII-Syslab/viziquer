@@ -1,0 +1,332 @@
+
+<!-- Diagram content templates -->
+
+<template name="diagramsTemplate">
+
+    <div class="row diagrams-margin">
+
+        <!-- Views switch buttons -->
+        <div class="col-xs-5 col-sm-5 col-md-7 col-lg-8">
+            {{> diagramsViewButton}}
+
+            {{#if isAdmin}}
+                {{> diagramsGroupsButton}}
+            {{/if}}
+
+            {{> diagramsSortButton}}
+
+        </div>
+        <!-- End of views switch buttons -->
+
+        <!-- Search bar -->
+        <div class="col-xs-7 col-sm-7 col-md-5 col-lg-4 pull-right">
+            {{> diagramsSearchBar}}
+        </div>
+        <!-- End of search bar -->
+
+    </div>
+
+	<div class="row">
+
+        {{#if isDefaultView}}
+            {{> defaultDiagramsView}}
+        {{else}}
+            {{> treeDiagramsView}}
+        {{/if}}
+
+	</div>
+
+    {{> renameDiagramForm}}
+
+</template>
+
+<template name="diagramsViewButton">
+
+    <div id="viewButtons" class="btn-group">
+        <a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
+            <i class="fa fa-gear fa-lg"></i> 
+            <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu text-left">
+            {{#with diagramViews}}
+                <li>
+                    <a class="view-switch" view="Default" href="#">
+                        <i class="fa fa-check" style="{{defaultStyle}}"></i> 
+                        {{_ "default_view"}} 
+                    </a>
+                </li>
+                <li>
+                    <a class="view-switch" view="Tree" href="#">
+                        <i class="fa fa-check" style="{{treeStyle}}"></i> 
+                        {{_ "tree_view"}}
+                    </a>
+                </li>
+            {{/with}}
+        </ul>
+    </div>
+<!--visibility:hidden; -->
+</template>
+
+<template name="diagramsSortButton">
+
+    <div id="sortButtons" class="btn-group hover-dropdown">
+        <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">{{_ "sort"}} <span class="caret"></span></button>
+        <ul class="dropdown-menu slidedown">
+            {{#each items}}
+                <li class="sort-by-item" type="{{type}}"><a href="#">
+                {{#if active}}
+                    <i class="fa fa-check"></i>
+                {{else}}
+                    <i class="fa fa-check" style="visibility:hidden;"></i>
+                {{/if}}
+                 {{_ "sort_by" context=name}}</a></li>
+            {{/each}}
+        </ul>
+    </div>
+
+</template>
+
+
+<template name="diagramsGroupsButton">
+
+    <div id="groupsButtons" class="btn-group hover-dropdown">
+        <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">{{_ "select_group"}} <span class="caret"></span></button>
+        <ul class="dropdown-menu slidedown">
+
+            {{#each items}}
+                <li class="select-group-item" value="{{_id}}">
+                    <a href="#">
+                        {{#if active}}
+                            <i class="fa fa-check"></i>
+                        {{else}}
+                            <i class="fa fa-check" style="visibility:hidden;"></i>
+                        {{/if}}
+
+                        {{#if defaultRole}}
+                            {{_ "selected_group" context=name}}
+                        {{else}}
+                            {{name}}
+                        {{/if}}
+                    </a>
+                </li>
+            {{/each}}
+            
+            <li class="divider"></li>
+            <li class="select-group-item" value="none"><a href="#">{{_ "reset"}}</a></li>
+        </ul>
+    </div>
+
+</template>
+
+
+<template name="diagramsSearchBar">
+    <div class="input-group input-group search-bar" suggestionsQuery="diagramsSearch" collectionType="Diagrams" type="diagrams">
+        <input class="form-control input input-sm" value="{{search_phrase}}" type="text" placeholder='{{_ "search_here"}}' id="searchField">
+        <div class="input-group-btn">
+            <button id="searchButton" class="btn btn-default btn-sm">
+                <i class="fa fa-fw fa-search fa-lg"></i>
+            </button>
+        </div>
+
+        {{> searchMenu}}
+
+    </div>
+</template>
+
+
+<template name="defaultDiagramsView">
+    {{#each diagrams}}
+        <div class="col-sm-12 col-md-6 col-lg-3">
+            <div class="thumbnail diagram clearfix" diagramId="{{_id}}">
+                <a class="reference" href="{{pathFor 'diagram'}}" >
+                    <img src="{{imageUrl}}" class="diagram-image">
+                </a>
+                <div class="caption">
+                    <center>
+                        <a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}"><h4 class="diagram-name">{{name}}</h4></a>
+                    </center>
+                </div>
+
+                <div class="image-like pull-right">
+                    <div>{{seenCount}} {{_ "views"}}</div>
+                    <div>{{date}}</div>
+                </div>
+
+                {{#if isEditMode}}
+                    <div class="diagram-dropdown-container hidden" style="position: absolute; top: 3px;">
+                        <a class="edit-project" href="#" data-toggle="dropdown">
+                            <i class="fa fa-angle-down fa-lg"></i> 
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;">
+                            <li>
+                                <a class="rename-diagram" href="#">
+                                    <i class="fa fa-pencil fa-lg"></i> 
+                                    Rename
+                                </a>
+                            </li>
+                            <li>
+                                <a class="remove-diagram" href="#">
+                                    <i class="fa fa-trash-o fa-lg"></i> 
+                                    {{_ "delete"}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {{/if}}
+
+            </div>
+        </div>
+    {{/each}}   
+</template>
+
+<template name="treeDiagramsView">
+
+    <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="dd" id="nestable3" style="max-width: none;">
+            <ol class="dd-list">
+
+                {{#each diagrams}}
+
+                    {{> treeDiagrams}}
+
+                {{/each}}
+
+            </ol>
+        </div>
+    </div>
+
+</template>
+
+<template name="treeDiagrams">
+    <li id="{{_id}}" class="dd-item diagram" typeId="{{diagramTypeId}}">
+        {{#if children}}
+            <button class="collapse treeNodeButton" data-action="collapse" type="button" style="{{collapsed}}">Collapse</button>
+            <button class="expand treeNodeButton" data-action="expand" type="button" style="{{expanded}}">Expand</button>
+        {{/if}}
+
+      
+        <a href="{{pathFor 'diagram'}}" style="text-decoration:none;" class="diagram-title" diagramId="{{_id}}"  data-container="body" data-toggle="popover" data-placement="right" data-content="">
+            <div class="dd-handle {{colorClass}}">{{name}}</div>
+        </a>
+
+        {{#if children}}
+            <ol class="dd-list" style="{{childrenList}}">
+                {{#each children}}
+                    {{> treeDiagrams}}
+                {{/each}}
+            </ol> 
+        {{/if}}
+    </li>
+
+</template>
+
+<template name="addDiagram">
+<!-- Modal for new diagram -->
+    <div id="add-diagram" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "new_diagram"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="diagram-name" class="col-sm-2 control-label">{{_ "new_diagram_name"}}</label>
+                            <div class="col-sm-10">
+                                <input id="diagram-name" type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="diagramType" class="control-label col-sm-2">{{_ "new_diagram_type"}}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="diagramType">
+                                    {{> configuratorDiagramOptions}}
+                                </select>
+                            </div>
+                        </div>
+                    </form>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="create-diagram" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>
+
+<template name="configuratorDiagramOptions">
+    {{#each configuratorDiagrams}}
+        <option id="{{_id}}">{{name}}</option>
+    {{/each}}
+</template>
+
+<template name="renameDiagramForm">
+
+<!-- Modal for new document -->
+    <div id="rename-diagram-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Rename</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                       
+                        <div class="form-group">
+                            <label for="diagram-name-field" class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input id="diagram-name-field" type="text" class="form-control" value="">
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="rename-diagram-form-ok" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>
+
+<!-- Ribbons -->
+<template name="diagramsRibbon">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+            <li><i class="fa fa-picture-o"></i> {{_ "diagrams"}} {{versionId}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+
+        {{#if is_toolbar_enabled}}
+            <span class="ribbon-button-alignment pull-right">
+            	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_diagram"}}'><i class="fa fa-plus"></i></button>
+            </span>
+        {{/if}}
+
+    </div>
+    <!-- END RIBBON -->
+
+    {{> addDiagram}}
+
+</template>
+
+
+
+
+
+
+

@@ -1,0 +1,261 @@
+<template name="diagramRibbon">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+
+        <ol class="breadcrumb">
+            <li><i class="fa fa-picture-o"></i> {{diagramName}}</li>
+        </ol>
+
+        <span class="ribbon-button-alignment pull-right">
+
+            {{#each toolbar_buttons}}
+                <button id="{{id}}" class="btn btn-ribbon toolbar-button" data-title='{{_ "toolbar_name" name=name context=name}}' procedure="{{procedure}}"><i class="fa {{icon}}"></i></button>
+            {{/each}}
+
+        </span>
+    </div>
+    <!-- END RIBBON --> 
+
+    {{> downloadAsFile}}
+    {{> delete_confirmation}}
+    {{> diagram_settings}}
+    {{> diagram_log}}
+    {{> diagramPermissions}}
+    {{> ImportedTranslets}}
+
+</template>
+
+<template name="diagram_settings">
+
+    <!-- Add form-->   
+    <div id="diagram-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "diagram_info"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>{{_ "diagram_info_project"}}</td>
+                                <td>{{project_name}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_info_version"}}</td>
+                                <td>{{version}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_info_tool"}}</td>
+                                <td>{{tool_name}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_info_diagram_type"}}</td>
+                                <td>{{diagram_type}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_info_boxes"}}</td>
+                                <td>{{boxes}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_info_lines"}}</td>
+                                <td>{{lines}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{_ "diagram_total_elements"}}</td>
+                                <td>{{total}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of add form-->
+</template>
+
+<template name="diagramPermissions">
+    {{> permissions groups=groups}}
+</template>
+
+<template name="permissions">
+
+    <!-- Add form-->   
+    <div id="permissions-form" class="modal fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "permissions"}}</h4>
+                </div>
+
+                <div class="modal-body">
+                    <ul class="list-group task-list no-margin collapse in">
+
+                        {{#each groups}}
+                            <li class="list-group-item group-container" id="{{_id}}">
+                                <label class="label-checkbox inline">
+                                     <input type="checkbox" class="task-finish permission-checkbox" {{checked}} {{disabled}}>
+                                     <span class="custom-checkbox"></span>
+                                </label>
+
+                                {{#if isDefault}}
+                                    <span class="m-left-xs">{{_ "user_role" context=name}}</span>
+                                {{else}}
+                                    {{name}}
+                                {{/if}}
+
+                                
+                            </li>
+                        {{/each}}
+                    </ul>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of add form-->
+
+</template>
+
+
+<template name="diagram_log">
+
+    <!-- Add form-->   
+    <div id="diagram-log-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button id="diagram-log-modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Action history</h4>
+                </div>
+                <div class="modal-body">
+
+                    <ul class="chat">
+                        {{#each logs}}
+                            <li class="left clearfix">
+                                <span class="chat-img pull-left">
+                                    <img src="{{image}}" alt="User Avatar">
+                                </span>
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">{{fullName}}</strong>
+                                        <small class="pull-right text-muted">{{time}}</small>
+                                    </div>
+                                    <p>{{{text}}}</p>
+                                </div>
+                            </li>
+                        {{/each}}
+                    </ul>
+
+                    <center class="list-group">
+                        <button id="load-more-logs" type="button" class="btn btn-info">Load more</button>
+                    </center>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="downloadAsFile">
+
+    <!-- Add form-->   
+    <div id="download-file-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Download</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="file-name" class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input id="file-name" type="text" class="form-control" placeholder="File name" value="{{fileName}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="file-type" class="control-label col-sm-2">Type</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="file-type">
+                                    <option id="pdf">PDF</option>
+                                </select>
+                            </div>
+                        </div>
+
+ <!--                       <hr>
+ 
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Page nr</label>
+                            <div class="col-sm-10">
+                                <label class="label-radio inline">
+                                    <input type="radio" name="inline-radio">
+                                    <span class="custom-radio"></span>
+                                    None
+                                </label>
+
+                                <label class="label-radio inline">
+                                    <input type="radio" name="inline-radio">
+                                    <span class="custom-radio"></span>
+                                    Left
+                                </label>
+
+                                <label class="label-radio inline">
+                                    <input type="radio" name="inline-radio">
+                                    <span class="custom-radio"></span>
+                                    Middle
+                                </label>
+
+                                <label class="label-radio inline">
+                                    <input type="radio" name="inline-radio">
+                                    <span class="custom-radio"></span>
+                                    Right
+                                </label>
+
+                            </div>
+                        </div> 
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <label class="label-checkbox inline">
+                                    <input type="checkbox">
+                                    <span class="custom-checkbox"></span>
+                                    Show related documents
+                                </label>
+
+                                <label class="label-radio inline">
+                                    <input type="checkbox">
+                                    <span class="custom-checkbox"></span>
+                                    Show element info
+                                </label>
+
+                            </div>
+                        </div>
+     -->
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="create-file" type="button" class="btn btn-primary">OK</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</template>
+
+

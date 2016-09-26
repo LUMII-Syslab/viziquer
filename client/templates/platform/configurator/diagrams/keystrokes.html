@@ -1,0 +1,66 @@
+
+<template name="collectionKeyStrokes">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-keystrokes" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-keystrokes" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-keystrokes">
+					{{> editCollectionKeyStrokes}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-keystrokes">
+					{{> readCollectionKeyStrokes}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<template name="editCollectionKeyStrokes">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+
+<template name="readCollectionKeyStrokes">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+
+
+<template name="noCollectionKeyStrokes">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-no-collection-keystrokes" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-no-collection-keystrokes" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-no-collection-keystrokes">
+					{{> editNoCollectionKeyStrokes}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-no-collection-keystrokes">
+					{{> readNoCollectionKeyStrokes}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<template name="editNoCollectionKeyStrokes">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+
+<template name="readNoCollectionKeyStrokes">
+	{{> Template.dynamic template="keystroke" data=data}}
+</template>
+

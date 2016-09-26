@@ -1,0 +1,55 @@
+<template name="panel">
+    <aside class="fixed skin-{{skin}}" activePanelItem="{{activePanelItem}}">    
+        <div class="sidebar-inner scrollable-sidebar">
+            
+            <div class="main-menu">
+                <ul>
+                    <li class="structure {{isProjectsActive}} panel-item">
+                        <a id="structure" href="{{pathFor 'structure'}}">
+                            <span class="menu-icon">
+                                <i class="fa fa-folder fa-lg"></i> 
+                            </span>
+                            <span class="text">
+                                {{_ "structure"}}   
+                            </span>
+                            <span class="menu-hover"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            {{#with profile}}
+                <div class="user-block clearfix">
+                    <a href="{{pathFor 'profile'}}">
+                        <img src="{{profileImage}}" alt="User Avatar">
+                    </a>
+                </div><!-- /user-block -->
+            {{/with}}
+
+            <div class="main-menu">        
+                <ul>   
+
+                    {{#each panel}} 
+
+                        {{#if isVisible}}
+                            <li class="{{id}} {{active}} panel-item">
+                                <a id="{{id}}" href="{{pathFor route}}">
+                                    <span class="menu-icon">
+                                        <i class="fa fa-{{icon}} fa-lg"></i> 
+                                    </span>
+                                    <span class="text">
+                                        {{_ id}}
+                                    </span>
+                                    <span class="menu-hover"></span>
+                                </a>
+                            </li>
+                        {{/if}}
+
+                    {{/each}}
+
+                </ul>
+            </div><!-- /main-menu -->
+    
+        </div><!-- /sidebar-inner -->
+    </aside>
+</template>

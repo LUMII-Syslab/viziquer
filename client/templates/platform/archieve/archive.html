@@ -1,0 +1,113 @@
+
+
+<template name="archiveTemplate">
+	<div class="padding-md">
+		<div class="timeline-wrapper">
+			
+			<div class="timeline-item">
+				<div class="timeline-info">
+					<div class="timeline-icon bg-grey">
+						<i class="fa fa-circle"></i>
+					</div>
+				</div>
+				
+				{{#with buttons_enabled}}
+					<div class="panel panel-default timeline-panel version-button-panel" style="{{style}}">
+					
+						<a class="btn btn-success" id="new-version" disabled="{{new_version_disabled}}"><i class="fa fa-file-o"></i> {{_ "new_version_btn"}}</a>
+						
+						<a class="btn btn-danger" id="remove-version-button" disabled="{{remove_version_disabled}}"><i class="fa fa-trash-o"></i> {{_ "remove_btn"}}</a>
+						
+						<a class="btn btn-primary" id="publish-version-button" disabled="{{publish_version_disabled}}"><i class="fa fa-upload"></i> {{_ "publish_btn"}}</a>
+
+					</div><!-- /panel -->
+				{{/with}}
+				
+			</div><!-- /timeline-item -->
+
+			{{#each versions}}
+
+			<div class="timeline-item version" id="{{_id}}">
+				<div class="timeline-info">
+					{{#if active}}
+						<a href="#">
+							<div class="timeline-icon bg-danger">
+								<i class="fa fa-briefcase"></i>
+							</div>
+						</a>
+					{{else}}
+						<a href="#">
+							<div class="timeline-icon bg-warning">
+								<i class="fa fa-briefcase"></i>
+							</div>
+						</a>
+					{{/if}}
+				</div>
+				<div class="panel panel-default timeline-panel">
+					<div class="panel-heading">
+						{{_ "version"}} <span class="label label-success m-left-xs">#{{_id}}</span>
+
+						<span class="label label-warning m-left-xs">{{_ "new_badge" context=status}}</span>
+					
+						{{#if active}}
+							<span class="label label-danger m-left-xs">{{_ "active_version_badge"}}</span>
+						{{/if}}
+						<small class="pull-right text-muted">{{date}}</small>
+					</div>
+					<div class="panel-body">
+						<p>{{comment}}</p>
+						<div class="seperator"></div>
+						<a class="btn btn-success pull"><i class="fa fa-download"></i> {{_ "pull"}}</a>
+					</div>
+				</div><!-- /panel -->
+			</div><!-- /timeline-item -->
+
+			{{/each}}
+			
+<!-- 			<div class="timeline-date">
+				3 Oct 2013
+			</div> -->
+
+			<div class="timeline-item clearfix">
+				<div class="timeline-info">
+					<div class="timeline-icon bg-grey">
+						<i class="fa fa-pencil"></i>
+					</div>
+				</div>
+			</div><!-- /timeline-item -->
+		</div><!-- /timeline-wrapper -->
+	</div><!-- /.padding -->
+
+	{{> publishVersion}}
+</template>
+
+<template name="publishVersion">
+	<!-- Modal for new diagram -->
+    <div id="publish-version" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "publish_version"}} <span class="label label-success m-left-xs">#{{version_number}}</span></h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="comment" class="col-sm-2 control-label">{{_ "version_comment"}}</label>
+                            <div class="col-sm-9">
+                            	<textarea id="comment" class="form-control" rows="7"></textarea>
+                            </div>
+                        </div>
+                    </form>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="publish" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- End of modal -->
+
+</template>
+

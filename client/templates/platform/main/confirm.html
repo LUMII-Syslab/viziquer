@@ -1,0 +1,22 @@
+
+<template name="delete_confirmation">
+ 	<div id="delete-confirm-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+
+					<div class="padding-md">
+						<h4 class="m-top-none">{{_ "delete_confirm_msg" context=text}}</h4>
+					</div>
+
+					<div class="text-center">
+						<a id="confirm" href="#" class="btn btn-success m-right-sm lightCustomModal_close">{{_ "confirm"}}</a>
+						<a id="cancel" href="#" class="btn btn-danger lightCustomModal_close">{{_ "cancel"}}</a>
+					</div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- End of modal -->
+</template>

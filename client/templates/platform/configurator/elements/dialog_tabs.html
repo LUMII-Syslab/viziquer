@@ -1,0 +1,140 @@
+
+<!-- Dialog accordion -->
+<template name="dialogAccordion">
+
+    <div class="row">
+    	<div class="pull-right">
+        	<a id="addTab" class="btn btn-success"><i class="fa fa-plus"></i> Add Tab</a>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-12 col-lg-12">
+			<div class="dd">
+				<ul id="tabs" class="dd-list">
+					{{#each tabs}}
+						<li class="dd-item tab" id="{{_id}}" index="{{index}}" type="{{type}}">
+							<div class="row">
+								<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+									<div class="dd-handle tab-name {{#if type}} bg-info{{/if}}" >{{name}}</div>
+
+									{{#if type}}
+										<ul class="dd-list compartments" tabId="{{_id}}">
+											{{#each _rows}}
+												{{> row}}
+											{{/each}}
+										</ul>
+
+									{{else}}
+										<ul class="dd-list compartments" tabId="{{_id}}" style="min-height:20px;">
+											{{#each _rows}}
+												{{> row}}
+											{{/each}}
+										</ul>
+									{{/if}}
+								</div>
+
+								<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="margin-top: 8px;">
+									<a class="btn btn-xs btn-warning edit-tab"><i class="fa fa-pencil"></i></a>
+
+									<a class="btn btn-xs btn-danger remove-tab"><i class="fa fa-trash-o"></i></a>
+								</div>
+							</div>
+						</li>        
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	{{> newTab}}
+	{{> editTab}}
+
+</template>
+
+<template name="row">
+	<li class="dd-item compartment" id="{{_id}}" index="{{tabIndex}}">
+		<div class="dd-handle">{{name}}</div>
+	</li>
+</template>
+<!-- End of dialog accordion -->
+
+<!-- New tab form -->
+<template name="newTab">
+	<!-- Modal for new diagram -->
+	    <div id="new-tab-form" class="modal fade">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title">New Tab</h4>
+	                </div>
+	                <div class="modal-body">
+
+						<form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label for="tab-name" class="col-sm-1 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input id="tab-name" type="text" class="form-control" placeholder="">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tab-type" class="control-label col-sm-1">Tab</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="tab-type">
+                                    	{{#each options}}
+                                    		<option id="{{id}}">{{name}}</option>
+                                    	{{/each}}
+                                    </select>
+                                </div>
+                            </div>
+
+                        </form>  
+	                </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="add-tab" type="button" class="btn btn-primary">OK</button>
+                    </div>
+
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	<!-- End of modal -->
+</template>
+
+<template name="editTab">
+
+	<!-- Modal for new diagram -->
+	    <div id="edit-tab-form" class="modal fade" tabId="{{_id}}">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title">Edit Tab</h4>
+	                </div>
+	                <div class="modal-body">
+
+						<form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label for="tab-name" class="col-sm-1 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input id="edit-tab-name" value="{{name}}" type="text" class="form-control" placeholder="">
+                                </div>
+                            </div>
+                        </form>  
+	                </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="edit-tab" type="button" class="btn btn-primary">OK</button>
+                    </div>
+
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	<!-- End of modal -->
+</template>
+
+<!-- End of new tab form template -->

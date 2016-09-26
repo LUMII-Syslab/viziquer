@@ -1,0 +1,40 @@
+
+<template name="toolRibbon">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+            <li><i class="fa fa-wrench"></i> {{title}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+
+        <span class="ribbon-button-alignment pull-right">
+            {{#if editMode}}
+        		
+                <button id="load-model" class="btn btn-ribbon" data-title="Load model"><i class="fa fa-upload"></i></button>
+
+                <button id="edit" class="btn btn-ribbon" data-title="Rename tool"><i class="fa fa-pencil"></i></button>
+
+                <button id="settings" class="btn btn-ribbon" data-title="Tool settings"><i class="fa fa-gear"></i></button>
+
+                <button id="delete" class="btn btn-ribbon" data-title="Delete tool"><i class="fa fa-trash-o"></i></button>
+
+        	{{/if}}
+
+        </span>
+    </div>
+    <!-- END RIBBON -->
+
+    {{> delete_confirmation}}
+
+    {{> addConfiguratorDiagram}}
+    {{> settings}}
+    {{> renameTool}}
+    {{> loadModelForm}}
+
+    {{> importConfigurationForm}}
+    
+</template>
+<!-- Ribbons -->

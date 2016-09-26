@@ -1,0 +1,79 @@
+
+
+<template name="enrollAccountTemplate">
+
+	<div class="login-wrapper" style="-webkit-animation: none !important;">
+		<div class="text-center">
+	    </div>
+		<div class="login-widget">	
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<i class="fa fa-plus-circle fa-lg"></i> {{_ "sign_up"}}
+				</div>
+				<div class="panel-body">
+					<form class="form-login">
+
+						<div class="form-group">
+							<label>{{_ "sign_up_name"}}</label>
+							<input id="name" type="text" placeholder='{{_ "sign_up_name"}}' class="form-control input-sm" >
+
+							{{#if name_error}}
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{name_error}}</li>
+								</ul>
+							{{/if}}
+
+						</div><!-- /form-group -->
+
+						<div class="form-group">
+							<label>{{_ "sign_up_surname"}}</label>
+							<input id="surname" type="text" placeholder='{{_ "sign_up_surname"}}' class="form-control input-sm" >
+
+							{{#if surname_error}}
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{surname_error}}</li>
+								</ul>
+							{{/if}}
+
+						</div><!-- /form-group -->
+
+						<div class="form-group">
+							<label>{{_ "login_password"}}</label>
+							<input id="password" type="password" placeholder='{{_ "login_password"}}' class="form-control input-sm">
+
+							{{#if password_error}}
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{password_error}}</li>
+								</ul>
+							{{/if}}
+
+						</div><!-- /form-group -->
+
+						<div class="form-group">
+							<label>{{_ "sign_up_confirm_password"}}</label>
+							<input id="confirmPassword" type="password" placeholder='{{_ "sign_up_confirm_password"}}' class="form-control input-sm">
+
+							{{#if confirmed_password_error}}
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{confirmed_password_error}}</li>
+								</ul>
+							{{/if}}
+
+						</div><!-- /form-group -->
+
+						<div class="form-group">
+							<div id="enroll-ok-button" class="controls text-right">
+								<a class="btn btn-success btn-sm login-link {{button_enabled}}">{{_ "ok"}}</a>
+							</div>
+						</div><!-- /form-group -->
+
+					</form>
+				</div>
+			</div><!-- /panel -->
+		</div><!-- /login-widget -->
+	</div><!-- /login-wrapper -->
+
+	
+</template>
+
+

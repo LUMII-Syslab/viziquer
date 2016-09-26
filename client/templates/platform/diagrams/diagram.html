@@ -1,0 +1,292 @@
+
+<!-- Start of diagram template -->
+<template name="diagramTemplate">
+
+    <div class="row">
+
+        {{#with diagram_type}}
+
+            <div id="diagram" class="col-sm-12 col-md-12 col-lg-{{diagram_size}}" style="padding-left:2px;">
+
+                {{> diagramEditor}}
+
+            </div>
+
+            <div id="compartment-forms" class="col-sm-12 col-md-12 col-lg-{{dialog_size}}">
+
+                {{> editingMessage editing=editing}}
+                
+                {{> errorMessages}}
+
+                <div class="panel-group" id="dialog">
+                    {{> dialog}}
+                </div>
+            </div>
+        {{/with}}
+    </div>
+
+    {{#each templates}}
+        {{> Template.dynamic template=templateId}}
+    {{/each}}
+
+</template>
+<!-- End of diagram template -->
+
+<!-- Diagram editor -->
+<template name="diagramEditor">
+
+    <div elements="{{elements}}"></div>
+
+    <div id="Diagram_Editor" oncontextmenu="return false"></div>
+
+    <div id="contextMenuContainer">
+        {{> contextMenuTemplate}}
+    </div>
+<!--     {{> gritters}} -->
+</template>
+<!-- End of diagram editor -->
+
+<template name="gritters">
+
+    <div id="gritter-notice-wrapper" last-rendered="{{last_rendered}}">
+        {{#each diagram_notifications}}
+
+            <div id="{{_id}}" class="gritter-item-wrapper my-sticky-class gritter-container">
+                <div class="gritter-top"></div>
+                <div class="gritter-item">
+                 <!--   <div class="gritter-close" style="display: none;"></div> -->
+                    <img src="{{img}}" class="gritter-image">
+                    <div class="gritter-with-image">
+                        {{#if added}}
+                            <span class="gritter-title">{{user}} added a new element</span>
+                        {{/if}}
+
+                        {{#if resized}}
+                            <span class="gritter-title">{{user}} resized an element</span>
+                        {{/if}}
+
+                        {{#if moved}}
+                            <span class="gritter-title">{{user}} moved some elements</span>
+                        {{/if}}
+
+                        {{#if deleted}}
+                            <span class="gritter-title">{{user}} deleted some elements</span>
+                        {{/if}}
+
+                        {{#if style}}
+                            <span class="gritter-title">{{user}} changed style for some elements</span>
+                        {{/if}}                        
+
+                        {{#if updated}}
+                            <span class="gritter-title">{{user}} changed an element</span>
+                        {{/if}}                       
+
+                    </div>
+                    <div style="clear:both"></div>
+                </div>
+                <div class="gritter-bottom"></div>
+            </div>
+
+        {{/each}}
+    </div>
+</template>
+
+<template name="diagramAccordion">
+    <form role="form">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" disabled={{disabled}} class="form-control dialog-input" id="name" value="{{diagramName}}">
+        </div>
+    </form>
+</template>
+
+
+<template name="diagramStyleAccordion">
+    {{> diagramStyle}}
+</template>
+
+<template name="sectionsTemplate">
+    <!-- Document container -->
+    {{#if editable}}
+        {{#if editMode}}
+            <div class="row element-sections-header">
+                <div class="pull-right"> 
+                    {{#if addSectionsEnabled}}
+                        <a id="addSections" class="btn btn-success"><i class="fa fa-file"></i> {{_ "add_document_sections"}}</a>
+                    {{/if}}
+                </div>
+            </div>
+        {{/if}}
+    {{/if}}
+
+                
+    <ul id="sections" class="dd-list">                        
+        {{#each sections}}
+
+            <li class="dd-item section-item" id="{{_id}}" index="{{index}}">
+                <div class="section-container" id="{{documentId}}">
+                    <div class="section">{{{text}}}</div>
+                    <div class="row">
+                        <div class="pull-right">
+                            <ul class="list-inline font-xs list-section"> 
+                                <li>
+                                    <a href="{{pathFor 'document' _id=this.documentId}}" class="text-muted">{{documentName}}</a>
+                                </li>
+                                {{#if sectionsEdit}}
+                                    <li>
+                                        <a href="#" class="text-danger removeSection">{{_ "remove_section"}}</a>
+                                    </li>
+                                {{/if}}
+                            </ul>
+                        </div>
+                    </div>
+                    <hr class="hr-document">
+                </div>
+            </li>
+
+        {{/each}}
+        <!-- End of document container -->
+    </ul>
+
+    {{> addSectionsForm}}
+
+</template>
+
+<!-- Start of add sections form dialog -->
+<template name="addSectionsForm">
+    <!-- Add form-->   
+    <div id="add-sections-form" class="modal fade">
+        <div id="sections-dialog" class="modal-dialog">
+            <div class="modal-content add-sections-content" style="overflow:auto;">      
+                <div class="modal-header">
+                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "add_sections"}}</h4>
+                </div>
+                <div class="modal-body">
+                    {{> sectionsFormDropDown}}
+                    <hr>   
+                    {{> docSections}}
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of add form-->
+</template>
+
+<template name="sectionsFormDropDown">
+    
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="modalDocument" class="control-label col-sm-2">{{_ "document_dialog"}}</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="modalDocument">
+                    <option selected>--{{_ "no_documents_selected"}}--</option>
+                    {{#each documents}}
+                        <option id="{{_id}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+    </form>
+
+</template>
+
+<template name="docSections">
+    <div id="document-sections">
+        {{#each documentSections}}
+            <div id="{{_id}}" class="modal-section"> {{{text}}}
+                <div class="row">
+                    <div class="pull-right">
+                        <ul class="list-inline font-xs list-section">
+                            <li> 
+                            <a href="#" class="text-danger sectionAddRemove">{{_ "document_dialog_add_section"}}</a> 
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="hr-document">
+            </div>
+        {{/each}}
+    </div>
+</template>
+<!-- End of add sections form dialog -->
+
+<!-- Element style accordion -->
+<template name="elementStyleAccordion">
+    {{> configuratorElementStyleAccordion}}
+</template>
+<!-- End of element style accordion -->
+
+<!--ContextMenuTemplate variable and events are processed in /editor/context_menu.js -->
+<template name="contextMenuTemplate">
+{{#with context_menu_item}}
+    <ul id="contextMenu" class="dropdown-menu" role="menu" x="{{x}}" y="{{y}}" style="display:{{display}}; position:absolute; left:{{left}}; top:{{top}};">
+        {{#each menu}} 
+            {{> menu_item}}
+        {{/each}}
+    </ul>
+{{/with}}
+</template>
+
+<template name="menu_item">
+
+    <li class="context-menu-item-li">
+
+        {{#if subMenu}}
+            <a class="context-menu-item sub-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{data}}" index="{{index}}">{{item}} <i class="fa fa-play pull-right" style="padding-top: 2px; font-size: 10px; color: rgb(119, 119, 119);"></i></a>
+            <ul class="dropdown-menu sub-menu" role="menu" style="display:none; position:absolute; left:0px; top:0px;">
+
+                {{#each subMenu}}
+                    {{> menu_item}}
+                {{/each}}
+            </ul>
+
+        {{else}}
+            <a class="context-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{data}}" index="{{index}}">{{item}}</a>
+
+        {{/if}}
+
+    </li>
+
+</template>
+
+
+<template name="errorMessages">
+    {{#with error_msg}}
+
+        <div class="alert alert-{{error_msg.type}}">
+            {{error_msg.text}}
+        </div>
+
+    {{/with}}
+</template>
+
+<template name="editingMessage">
+
+    {{#with editing}}
+        
+        {{#if lockingButton}}
+            <div class="alert alert-success clearfix">
+                {{_ "diagram_can_be_edited"}}
+                <button id="lockDiagram" type="button" class="btn btn-success btn-xs pull-right">{{_ "diagram_edit_button"}}</button>
+            </div>
+        {{/if}}
+
+        {{#if unLockButton}}
+            <div class="alert alert-info clearfix" style="min">
+                {{_ "diagram_is_edited"}}
+                <button id="unLockDiagram" type="button" class="btn btn-info btn-xs pull-right">{{_ "diagram_unlock_button"}}</button>
+            </div>
+        {{/if}}
+
+        {{#if isEdited}}
+            <div class="alert alert-warning clearfix">
+                {{_ "diagram_locked" user=userName}}
+                <button id="lockDiagram" type="button" class="btn btn-warning btn-xs pull-right">{{_ "diagram_unlock_button"}}</button>
+            </div>
+        {{/if}}
+        
+    {{/with}}
+
+</template>
+

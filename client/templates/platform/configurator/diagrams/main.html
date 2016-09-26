@@ -1,0 +1,269 @@
+
+<!-- Diagram content templates -->
+<template name="configuratorDiagramTemplate">
+	<div class="row">
+		<div id="diagram-container" class="col-sm-8 col-md-8 col-lg-8" style="padding-left:0px;">
+			{{> configuratorDiagramContainer}}
+		</div>
+		<div class="col-sm-4 col-md-4 col-lg-4">
+
+			{{> editingMessage editing=editing}}
+
+			{{#if activeElementType}}
+				{{> configuratorDialog}}
+			{{else}}
+				{{#if activeDiagramType}}
+					{{> configuratorDiagramDialog}}
+				{{/if}}
+			{{/if}}
+		</div>
+	</div>
+</template>
+<!-- End of diagram content templates -->
+
+<!-- Configurator diagram container - palette and editor -->
+<template name="configuratorDiagramContainer">
+    <!-- Diagram editor template is from diagram.html -->
+    {{> diagramEditor}}
+</template>
+<!-- End of configurator diagram container -->
+
+<!-- Diagram dialog -->
+<template name="configuratorDiagramDialog">
+	<div class="panel-group" id="diagramAccordion">
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#diagram">
+						Diagram
+					</a>
+				</h4>
+			</div>
+
+			<div id="diagram" class="panel-collapse collapse" style="height: 0px;">
+				<div class="panel-body">
+					{{> configuratorDiagramAccordion}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#compartments">
+						Compartments
+					</a>
+				</h4>
+			</div>
+			<div id="compartments" class="panel-collapse collapse">
+				<div class="panel-body">
+					{{> diagramCompartments}}	
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#collection">
+						Collection
+					</a>
+				</h4>
+			</div>
+			<div id="collection" class="panel-collapse collapse">
+				<div class="panel-body">
+					{{> collectionAccordion}}	
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#no-collection">
+						NoCollection
+					</a>
+				</h4>
+			</div>
+			<div id="no-collection" class="panel-collapse collapse">
+				<div class="panel-body">
+					{{> noCollectionAccordion}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#dialog">
+						Dialog
+					</a>
+				</h4>
+			</div>
+			<div id="dialog" class="panel-collapse collapse">
+				<div class="panel-body">
+					{{> diagramTypeDialog}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		{{#if is_palette_needed}}
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#palette">
+							Palette
+						</a>
+					</h4>
+				</div>
+
+				<div id="palette" class="panel-collapse collapse">
+					<div class="panel-body">
+						{{> diagramTypePalette}}
+					</div>
+				</div>
+			</div><!-- /panel -->
+		{{/if}}
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#diagramAccordion" href="#diagram-advanced-settings">
+						Settings
+					</a>
+				</h4>
+			</div>
+			<div id="diagram-advanced-settings" class="panel-collapse collapse">
+				<div class="panel-body">
+					{{> diagramAdanced}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+	</div>
+</template>
+<!-- End of diagram dialog -->
+
+<!-- Diagram accordion -->
+<template name="configuratorDiagramAccordion">
+
+	<div class="panel-tab clearfix">
+		<ul class="nav nav-pills configurator-pills">
+			<li class="active"><a href="#diagram-main" data-toggle="tab">Main</a></li>		
+			<li><a href="#diagram-style" data-toggle="tab">Style</a></li>
+			<li><a href="#diagram-toolbar" data-toggle="tab">Toolbar</a></li>			
+			<li><a href="#diagram-extensions" data-toggle="tab">Extensions</a></li>
+		</ul>
+	</div>
+	<div class="panel-body pills-body">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="diagram-main">
+				{{> diagramMain}}
+			</div>			
+			<div class="tab-pane fade" id="diagram-style">
+				{{> diagramStyle}}
+			</div>
+			<div class="tab-pane fade" id="diagram-toolbar">
+				{{> diagramToolbar}}
+			</div>
+			<div class="tab-pane fade" id="diagram-extensions">
+				{{> diagramExtensions}}
+			</div>
+		</div>
+	</div>
+</template>
+<!-- End of diagram accordion -->
+
+<template name="diagramMain">
+	<form role="form">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input type="text" class="form-control dialog-input" id="name" value="{{diagramName}}">
+		</div>
+	</form>
+</template>
+
+<!-- Configurator diagram ribbon -->
+<template name="configuratorDiagramRibbon">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+            <li><i class="fa fa-picture-o"></i> {{diagramTypeName}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+        <span class="ribbon-button-alignment pull-right">
+
+        	<button id="export-diagram" class="btn btn-ribbon" data-title="Export diagram"><i class="fa fa-gear"></i></button>
+
+        	<button id="zoomin" class="btn btn-ribbon" data-title="Zoom in"><i class="fa fa-plus"></i></button>
+
+        	<button id="zoomout" class="btn btn-ribbon" data-title="Zoom out"><i class="fa fa-minus"></i></button>        	
+
+        	{{#if editMode}}
+        		<button id="delete" class="btn btn-ribbon" data-title="Delete diagram"><i class="fa fa-trash-o"></i></button>
+        	{{/if}}
+        </span>
+
+    </div>
+    <!-- END RIBBON -->
+
+    {{> delete_confirmation}}
+
+</template>
+<!-- End of configurator diagram ribbon -->
+
+<template name="diagramTypeDialog">
+	{{> dialogAccordion}}
+</template>
+
+<template name="diagramCompartments">
+	{{> compartmentsAccordion}}
+</template>
+
+<!-- Collection accordion -->
+<template name="collectionAccordion">
+	<div class="panel-tab clearfix">
+		<ul class="nav nav-pills configurator-pills">
+			<li class="active"><a href="#collection-context-menu" data-toggle="tab">Context menu</a></li>		
+			<li><a href="#collection-keystrokes" data-toggle="tab">Keystrokes</a></li>
+			<li><a href="#collection-extension-points" data-toggle="tab">Extensions</a></li>
+		</ul>
+	</div>
+	<div class="panel-body pills-body">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="collection-context-menu">
+				{{> collectionContextMenu}}
+			</div>			
+			<div class="tab-pane fade" id="collection-keystrokes">
+				{{> collectionKeyStrokes}}
+			</div>
+			<div class="tab-pane fade" id="collection-extension-points">
+				{{> collectionExtensions}}
+			</div>
+		</div>
+	</div>
+</template>
+<!-- End of collection accordion -->
+
+<!-- No collection accordion -->
+<template name="noCollectionAccordion">
+	<div class="panel-tab clearfix">
+		<ul class="nav nav-pills configurator-pills">
+			<li class="active"><a href="#noCollection-context-menu" data-toggle="tab">Context menu</a></li>		
+			<li><a href="#noCollection-keystrokes" data-toggle="tab">Keystrokes</a></li>
+		</ul>
+	</div>
+	<div class="panel-body pills-body">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="noCollection-context-menu">
+				{{> noCollectionContextMenu}}
+			</div>			
+			<div class="tab-pane fade" id="noCollection-keystrokes">
+				{{> noCollectionKeyStrokes}}
+			</div>
+		</div>
+	</div>
+</template>
+<!-- End of no collection accordion -->

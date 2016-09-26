@@ -1,0 +1,91 @@
+
+<!-- Start of compartment extensions -->
+<template name="compartmentExtensions">
+
+	{{#with extensions}}
+		<div class="row">
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">
+					<div class="form-group">
+						<label for="beforeUpdate">beforeUpdate</label>
+						<input type="text" class="form-control dialog-input" id="beforeUpdate" value="{{beforeUpdate}}">
+						<span class="help-block">params: (compartType, compartId, input)</span>
+					</div>
+	            </form>
+	        </div>
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">       
+			        <div class="form-group">
+						<label for="afterUpdate">afterUpdate</label>
+						<input type="text" class="form-control dialog-input" id="afterUpdate" value="{{afterUpdate}}">
+						<span class="help-block">params: (compartType, compartId)</span>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12">	
+				<form role="form">
+					<div class="form-group">
+						<label for="update">update</label>
+						<input type="text" class="form-control dialog-input" id="update" value="{{update}}">
+						<span class="help-block">params: (compartType, compartId, input, value, elemStyle, compartStyle)</span>
+					</div>
+	            </form>
+	        </div>
+		</div>
+
+		<hr>
+
+		<div class="row">
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">
+					<div class="form-group">
+						<label for="dynamicPrefix">dynamicPrefix</label>
+						<input type="text" class="form-control dialog-input" id="dynamicPrefix" value="{{dynamicPrefix}}">
+						<span class="help-block">params: (value)<br>return: String</span>
+					</div>
+	            </form>
+	        </div>
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">       
+			        <div class="form-group">
+						<label for="dynamicSuffix">dynamicSuffix</label>
+						<input type="text" class="form-control dialog-input" id="dynamicSuffix" value="{{dynamicSuffix}}">
+						<span class="help-block">params: (value)<br>return: String</span>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12">	
+				<form role="form">
+					<div class="form-group">
+						<label for="dynamicDefaultValue">dynamicDefaultValue</label>
+						<input type="text" class="form-control dialog-input" id="dynamicDefaultValue" value="{{dynamicDefaultValue}}">
+						<span class="help-block">return: String</span>
+					</div>
+	            </form>
+	        </div>
+		</div>
+
+		{{#if isDropDown}}
+			<hr>
+			<div class="row">
+				<div class="col-sm-12 col-md-12 col-lg-12">	
+					<form role="form">
+						<div class="form-group">
+							<label for="dynamicDropDown">dynamicDropDown</label>
+							<input type="text" class="form-control dialog-input" id="dynamicDropDown" value="{{dynamicDropDown}}">
+							<span class="help-block">return: [{value: String: input: String, elementStyle: ID, compartmentStyle: ID}]</span>
+						</div>
+		            </form>
+		        </div>
+			</div>
+		{{/if}}
+	{{/with}}
+
+</template>
+<!-- End of compartment extensions -->

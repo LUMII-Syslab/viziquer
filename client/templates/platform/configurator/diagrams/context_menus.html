@@ -1,0 +1,64 @@
+
+<template name="collectionContextMenu">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-context-menu" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-context-menu" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-context-menu">
+					{{> editCollectionContextMenu}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-context-menu">
+					{{> readCollectionContextMenu}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<template name="editCollectionContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>
+
+<template name="readCollectionContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>
+
+
+<template name="noCollectionContextMenu">
+	<div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-no-collection-context-menu" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-no-collection-context-menu" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-no-collection-context-menu">
+					{{> editNoCollectionContextMenu}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-no-collection-context-menu">
+					{{> readNoCollectionContextMenu}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<template name="editNoCollectionContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>
+
+<template name="readNoCollectionContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>

@@ -1,0 +1,294 @@
+
+<template name="forumRibbon">
+
+ 	<!-- RIBBON -->
+    <div id="ribbon">
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+        	<li><i class="fa fa-forumbee "></i> {{_ "forum"}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+    </div>
+    <!-- END RIBBON -->
+
+</template>
+
+<template name="forumPost">
+
+	<div class="row">	
+		<div class="col-md-8">
+
+			{{> forumPostMessage}}
+			
+			{{> forumPostComments}}
+				
+			{{> addForumPostComment}}
+		</div><!-- /.col -->
+		
+		{{> forumPostLeftSide}}
+	</div><!-- /.row -->
+
+	{{> addForumPostCommentForm}}
+
+	{{> editForumPostCommentForm}}
+
+	{{> editForumPost}}
+
+</template>
+
+<template name="forumPostMessage">
+	{{#with forum_post}}
+		<div class="panel blog-container">
+			<div class="panel-body">
+				<h4>{{title}}</h4>
+				<small class="text-muted">{{_ "forum_author"}} <a href="#"><strong> {{author}}</strong></a> | {{_ "time_since" number=time.number time=time.time context=time.time}}</small>
+				<div class="seperator"></div>
+									
+				<p class="m-top-sm m-bottom-sm">
+					{{text}}
+				</p>
+			</div>
+
+			{{#if isAuthor}}
+				<div id="{{_id}}" class="edit-button hidden" style="position: absolute; top: 3px;">
+	                <a class="edit-forum-post" href="#">
+	                    <i class="fa fa-pencil fa-lg"></i> 
+	                </a>
+	            </div>
+	        {{/if }}
+
+		</div><!-- /panel -->
+	{{/with}}
+</template>
+
+<template name="forumPostComments">
+
+	{{#if comments}}
+		<h4 class="headline">
+			{{_ "forum_post_comments"}} ({{commentsCount}})
+			<span class="line"></span>
+		</h4>
+	{{/if}}
+
+	<ul class="media-list comment-list">
+		
+		{{#each comments}}
+			{{> comment}}
+		{{/each}}
+
+	</ul><!-- /media-list -->
+</template>
+
+<template name="comment">
+
+	<li class="media post-comment" id="{{_id}}">
+		<a class="pull-left" href="#">
+			<img class="media-object img-circle" src="{{image}}" alt="User Avatar" style="width: 40px; height: 40px;">
+		</a>
+		<div class="media-body">
+			<div class="media-heading">
+				<a href="#">{{author}}</a>
+			</div>
+			<p>{{text}}</p>
+
+			<ul class="list-inline font-xs">
+				<li>
+					<a href="#" class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=time.number time=time.time context=time.time}}</a>
+				</li>
+				<li>
+					<a href="#" class="text-primary reply">{{_ "forum_post_reply"}}</a>
+				</li>
+
+				{{#if isAuthor}}
+					{{> edit_delete_comment_post}}
+				{{/if}}	
+			</ul>
+
+			<!-- Nested media object -->
+			{{#each replies}}
+
+				<div class="media comment-reply" id="{{id}}">
+					<a class="pull-left" href="#">
+						<img class="media-object img-circle" src="{{image}}" alt="User Avatar" style="width: 40px; height: 40px;">
+					</a>
+					<div class="media-body">
+						<div class="media-heading">
+							<a href="#">{{author}}</a>
+						</div>
+						<p>{{text}}</p>
+
+						<ul class="list-inline font-xs">
+							<li>
+								<a href="#" class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=time.number time=time.time context=time.time}}</a>
+							</li>
+
+							{{#if isAuthor}}
+								{{> edit_delete_comment_reply}}
+							{{/if}}
+						</ul>
+
+					</div>
+				</div>
+
+			{{/each}}
+
+		</div>
+	</li>
+</template>
+
+<template name="edit_delete_comment_post">
+	<li><a href="#" class="text-primary edit">{{_ "forum_edit_comment"}}</a></li>
+	<li><a href="#" class="text-danger delete">{{_ "forum_delete_comment"}}</a></li>		
+</template>
+
+<template name="edit_delete_comment_reply">
+	<li><a href="#" class="text-primary edit-reply">{{_ "forum_edit_comment"}}</a></li>
+	<li><a href="#" class="text-danger delete-reply">{{_ "forum_delete_comment"}}</a></li>
+</template>
+
+
+<template name="addForumPostComment">
+
+	<h4 class="headline">
+		<span class="line"></span>
+	</h4>
+
+	<div class="text-right m-bottom-md">
+		<button id="post-comment" class="btn btn-success">{{_ "forum_post_comment"}}</button>
+	</div>
+
+</template>
+
+<template name="forumPostLeftSide">
+
+	<div class="col-md-4">
+
+		<h4 class="headline">
+			{{_ "forum_tags"}}
+			<span class="line"></span>
+		</h4>
+		<div class="tag-wrapper">
+			{{#each tags}}
+				<a class="blog-tag" href="#">{{this}}</a>
+			{{/each}}
+		</div>
+
+	</div><!-- /.col -->
+
+</template>
+
+<template name="addForumPostCommentForm">
+
+	<!-- Modal for new diagram -->
+    <div id="add-forum-post-comment" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "forum_new_comment"}}</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="comment-field" class="col-sm-2 control-label">{{_ "forum_form_comment"}}</label>
+                            <div class="col-sm-9">
+                            	<textarea id="comment-field" class="form-control" rows="7"></textarea>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="add-post-comment" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- End of modal -->
+
+</template>
+
+<template name="editForumPostCommentForm">
+
+	<!-- Modal for new diagram -->
+    <div id="edit-forum-post-comment" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "forum_edit_comment"}}</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="edit-comment-field" class="col-sm-2 control-label">{{_ "forum_form_comment"}}</label>
+                            <div class="col-sm-9">
+                            	<textarea id="edit-comment-field" class="form-control" rows="7" value="{{comment}}"></textarea>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="edit-post-comment" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- End of modal -->
+
+</template>
+
+<template name="editForumPost">
+
+	{{#with post}}
+
+		<!-- Modal for new diagram -->
+	    <div id="edit-forum-post" class="modal fade">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title">{{_ "forum_edit_post"}}</h4>
+	                </div>
+
+	                <div class="modal-body">
+	                    <form class="form-horizontal" role="form">
+
+	                        <div class="form-group">
+	                            <label for="title" class="col-sm-2 control-label">{{_ "forum_title"}}</label>
+	                            <div class="col-sm-9">
+	                            	<input id="title" class="form-control" value="{{title}}">
+	                            </div>
+	                        </div>
+
+	                        <div class="form-group">
+	                            <label for="message" class="col-sm-2 control-label">{{_ "forum_msg"}}</label>
+	                            <div class="col-sm-9">
+	                            	<textarea id="message" class="form-control" rows="7" value="{{text}}"></textarea>
+	                            </div>
+	                        </div>
+
+	                    </form>  
+	                </div>
+
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+	                    <button id="edit-post" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+	                </div>
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+		<!-- End of modal -->
+
+	{{/with}}
+</template>

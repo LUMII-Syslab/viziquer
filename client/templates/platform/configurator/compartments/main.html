@@ -1,0 +1,208 @@
+
+<!-- Compartment accordion -->
+<template name="compartmentsAccordion">
+
+	{{#if element}}
+		{{> elementCompartmentMain}}
+	{{else}}
+		{{> compartmentMain}}
+	{{/if}}
+
+</template>
+<!-- End of compartment accordion -->
+
+<template name="elementCompartmentMain">
+
+ 	<div class="panel-tab clearfix">
+		<ul class="nav nav-pills configurator-pills">
+			<li class="active"><a href="#compartment-main" data-toggle="tab">Main</a></li>
+			<li><a href="#compartment-reorder" data-toggle="tab">Reorder</a></li>
+		</ul>
+	</div>
+
+	<div class="panel-body pills-body">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="compartment-main">
+				{{> compartmentMain}}
+			</div>
+			<div class="tab-pane fade" id="compartment-reorder">
+				{{> compartmentReorder}}
+			</div>
+		</div>
+	</div>
+
+</template>
+
+<template name="compartmentMain">
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+		    <label for="compartment" class="col-sm-2 control-label">Selected</label>
+		    <div class="col-sm-8">
+				{{> compartmentTypeDropDown}}
+		    </div>
+			<div class="col-sm-2 btn-group pull-right">
+	        	<a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
+		            <i class="fa fa-gear fa-lg"></i> 
+		            <i class="fa fa-caret-down"></i>
+		        </a>
+		        <ul class="dropdown-menu text-left">
+		            <li><a id="addCompartment" href="#">Add</a></li>	            
+		            <li><a id="deleteCompartment" href="#">Remove</a></li>
+		        </ul>
+		    </div>
+
+		</div>
+	</form>
+
+	<hr>
+
+	{{> compartmentTypeBody}}
+</template>
+
+<!-- Start of compartment type body -->
+<template name="compartmentTypeBody">
+
+	{{#if existsCompartemnts}}
+	 	<div class="panel-tab clearfix">
+			<ul class="nav nav-tabs configurator-pills">
+				<li class="active"><a href="#compartment-properties" data-toggle="tab">Properties</a></li>
+				<li><a href="#compartment-dialog" data-toggle="tab">Dialog</a></li>
+				{{#unless isDiagram}}
+					<li><a href="#compartment-styles" data-toggle="tab">Styles</a></li>
+				{{/unless}}
+				<li><a href="#compartment-extension-points" data-toggle="tab">Extensions</a></li>
+			</ul>
+		</div>
+
+		<div class="panel-body pills-body">
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="compartment-properties">
+					{{> compartmentProperties}}
+				</div>
+				<div class="tab-pane fade" id="compartment-dialog">
+					{{> compartmentDialog}}
+				</div>
+
+				{{#unless isDiagram}}
+					<div class="tab-pane fade" id="compartment-styles">
+						{{> compartmentTypeStyles}}
+					</div>
+				{{/unless}}
+
+				<div class="tab-pane fade" id="compartment-extension-points">
+					{{> compartmentExtensions}}
+				</div>
+			</div>
+		</div>
+	{{/if}}
+</template>
+<!-- End of compartment type body -->
+
+<!-- Start of compartment type dropdown -->
+<template name="compartmentTypeDropDown">
+	<select class="form-control" id="compartment">
+		{{#if compartmentTypes}}
+			{{#each compartmentTypes}}
+		  		<option id="{{_id}}" {{selected}}>{{name}}</option>
+		  	{{/each}}
+	  	{{else}}
+	  		<option id="noSelection">--No compartments--</option>
+	  	{{/if}}
+	</select>
+</template>
+<!-- End of compartment type dropdown -->
+
+
+<!-- Start of compartment main -->
+<template name="compartmentProperties">
+{{#with property}}
+	<div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<form role="form">
+				<div class="form-group">
+					<label for="name">Name</label>
+					<input type="text" class="form-control dialog-input" id="name" value="{{name}}">
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label class="label-checkbox">
+						<input type="checkbox" class="dialog-checkbox" {{isObjectRepresentationChecked}}  id="isObjectRepresentation">
+						<span class="custom-checkbox"></span>
+						isObjectRepresentation
+					</label>
+				</div>
+			</form>
+		</div>
+
+		{{#if isNoRepresentation}}
+
+			<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+					<div class="form-group">
+						<label class="label-checkbox">
+							<input type="checkbox" class="dialog-checkbox" {{noRepresentationChecked}} id="noRepresentation">
+							<span class="custom-checkbox"></span>
+							noRepresentation
+						</label>
+					</div>
+				</form>
+			</div>
+		{{/if}}
+	</div>
+	
+	<div class="row">	
+		<div class="col-sm-12 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="description">Description</label>
+					<input type="text" class="form-control dialog-input" id="description" value="{{description}}">
+				</div>	
+			</form>
+		</div>
+		<div class="col-sm-12 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="defaultValue">Default value</label>
+					<input type="text" class="form-control dialog-input" id="defaultValue" value="{{defaultValue}}">
+				</div>	
+			</form>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="prefix">Prefix</label>
+					<input type="text" class="form-control dialog-input" id="prefix" value="{{prefix}}">
+				</div>
+			</form>
+		</div>
+		<div class="col-sm-12 col-md-6 col-lg-6">
+			<form role="form">		
+				<div class="form-group">
+					<label for="suffix">Suffix</label>
+					<input type="text" class="form-control dialog-input" id="suffix" value="{{suffix}}">
+				</div>
+			</form>
+		</div>
+	</div>
+
+{{/with}}
+</template>
+<!-- End of compartment main -->
+
+<template name="compartmentStyleContextMenu">
+	<ul class="dropdown-menu text-left">
+	    <li><a id="add-compartment-type-style" href="#">Add</a></li>
+	    <li><a id="editCompartment" href="#">Edit</a></li>	
+	    <li class="{{is_remove}}"><a id="delete-compartment-type-style" href="#">Remove</a></li>
+	</ul>
+</template>
+

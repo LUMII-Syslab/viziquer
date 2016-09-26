@@ -1,0 +1,275 @@
+
+<template name="diagramAdanced">
+	<div class="panel-tab clearfix">
+
+		{{#with settings}}
+			<ul class="nav nav-pills configurator-pills">
+
+				{{#if diagramSize}}
+					<li class="active"><a href="#size" data-toggle="tab">Size</a></li>
+				{{/if}}
+
+				{{#if isLayout}}
+					<li><a href="#layout-settings" data-toggle="tab">Layout</a></li>
+				{{/if}}
+
+				{{#if globalKeyStokes}}	
+					<li><a href="#global-keystrokes" data-toggle="tab">GlobalKeyStrokes</a></li>
+				{{/if}}
+
+				{{#if selection}}
+					<li><a href="#selection-style" data-toggle="tab">Selection</a></li>
+				{{/if}}
+				
+				{{#if isPalette}}
+					<li><a href="#new-line-style" data-toggle="tab">Palette</a></li>
+				{{/if}}
+
+			</ul>
+		{{/with}}
+
+	</div>
+
+	<div class="panel-body pills-body">
+
+		{{#with settings}}
+			<div class="tab-content">
+
+				{{#if diagramSize}}
+					<div class="tab-pane fade in active" id="size">
+						{{> diagramSize}}
+					</div>
+				{{/if}}
+
+				{{#if isLayout}}
+					<div class="tab-pane fade" id="layout-settings">
+						{{> layoutSettings}}
+					</div>
+				{{/if}}
+
+				{{#if globalKeyStokes}}
+					<div class="tab-pane fade" id="global-keystrokes">
+						{{> globalKeyStokes}}
+					</div>
+				{{/if}}
+
+				{{#if selection}}
+					<div class="tab-pane fade" id="selection-style">
+						{{> SelectionStyle}}
+					</div>
+				{{/if}}
+
+				{{#if isPalette}}
+					<div class="tab-pane fade" id="new-line-style">
+						{{> PaletteSettings}}
+					</div>
+				{{/if}}
+			</div>
+		{{/with}}
+
+	</div>
+</template>
+
+<template name="diagramSize">
+	{{#with size}}
+		<div class="row">
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="size.diagramSize">Diagram</label>
+		                <input type="number" step="1" min="1" max="11" class="form-control dialog-input" id="size.diagramSize" value="{{diagramSize}}">
+		            </div>
+		        </form>
+		    </div>
+
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="size.dialogSize">Dialog</label>
+		                <input type="number" step="1" min="1" max="11" class="form-control dialog-input" id="size.dialogSize" value="{{dialogSize}}">
+		            </div>
+		        </form>
+		    </div>
+		</div>
+	{{/with}}
+</template>
+
+<template name="globalKeyStokes">
+	<table class="table table-bordered table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th>KeyStroke</th>
+				<th>Procedure</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each keyStrokes}}
+				<tr index="{{index}}">
+					<td><div class="global-keystroke" attribute="keyStroke" contentEditable="true">{{keyStroke}}</div></td>
+					<td><div class="global-keystroke-procedure" attribute="procedure" contentEditable="true">{{procedure}}</div></td>
+					<td>
+						<center>
+							<a class="btn btn-xs btn-danger remove-global-keystroke"><i class="fa fa-trash-o"></i></a>
+						</center>
+					</td>
+				</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	<a class="btn btn-success pull-right" id="add-global-keystroke"><i class="fa fa-plus"></i> Add</a>
+</template>
+
+<template name="SelectionStyle">
+
+{{#with styles}}
+	<div class="row">
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="stroke">stroke</label>
+	                <input type="text" class="form-control dialog-input" id="stroke" value="{{stroke}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="strokeWidth">strokeWidth</label>
+	                <input type="number" step="0.1" min="0" class="form-control dialog-input" id="strokeWidth" value="{{strokeWidth}}">
+	            </div>
+	        </form>
+	    </div>
+	</div>
+
+	<div class="row">
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="fill">fill</label>
+	                <input type="text" class="form-control dialog-input color-picker" id="fill" value="{{fill}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="opacity">opacity</label>
+	                <input type="number" step="0.1" min="0" class="form-control dialog-input" id="opacity" value="{{opacity}}">
+	            </div>
+	        </form>
+	    </div>
+	</div>
+{{/with}}
+
+</template>
+
+<template name="PaletteSettings">
+
+{{#with palette}}
+	<div class="row">
+	   	<div class="col-sm-4 col-md-4 col-lg-4">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="buttonWidth">buttonWidth</label>
+	                <input type="number" step="2" class="form-control dialog-input" id="buttonWidth" value="{{buttonWidth}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-4 col-md-4 col-lg-4">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="buttonHeight">buttonHeight</label>
+	                <input type="number" min="30" step="2" class="form-control dialog-input" id="buttonHeight" value="{{buttonHeight}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-4 col-md-4 col-lg-4">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="padding">padding</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="padding" value="{{padding}}">
+	            </div>
+	        </form>
+	    </div>
+
+	</div>
+{{/with}}
+</template>
+
+<template name="layoutSettings">
+
+{{#with layout_settings}}
+
+	{{#if isAjooEditor}}
+
+		<div class="row">
+
+			<div class="form-group">
+                <label for="lineLayoutMode">Layout</label>
+				<select class="form-control dialog-selection" id="layout.lineLayoutMode">
+					{{#each layouts}}
+	  					<option {{selected}} value="{{name}}">{{name}}</option>
+					{{/each}}
+				</select>
+			</div>
+
+		</div>
+
+	{{else}}
+
+		<div class="row">
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="layout.mode">mode</label>
+						<select class="form-control dialog-selection" id="layout.mode">
+							{{#each modes}}
+			  					<option {{selected}}>{{name}}</option>
+							{{/each}}
+						</select>
+		            </div>
+		        </form>
+		    </div>
+
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="layout.nodeSpacing">nodeSpacing</label>
+		                <input type="number" min="0" step="1" class="form-control dialog-input" id="layout.nodeSpacing" value="{{nodeSpacing}}">
+		            </div>
+		        </form>
+		    </div>
+
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="layout.globalLayoutOnChanges">globalLayoutOnChanges</label>
+						<select class="form-control dialog-selection" id="layout.globalLayoutOnChanges" dataType="boolean">
+							{{#each globalLayoutOnChanges}}
+			  					<option {{selected}}>{{name}}</option>
+							{{/each}}
+						</select>
+		            </div>
+		        </form>
+		    </div>
+
+		   	<div class="col-sm-6 col-md-6 col-lg-6">
+				<form role="form">
+		            <div class="form-group">
+		                <label for="layout.layoutFreezeTimeout">layoutFreezeTimeout</label>
+		                <input type="number" step="100" min="100" class="form-control dialog-input" id="layout.layoutFreezeTimeout" value="{{layoutFreezeTimeout}}">
+		            </div>
+		        </form>
+		    </div>
+
+		</div>
+	{{/if}}
+
+{{/with}}
+
+</template>

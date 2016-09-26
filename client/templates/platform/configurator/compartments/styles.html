@@ -1,0 +1,262 @@
+
+
+<template name="compartmentTypeStyles">
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+		    <label for="compartment" class="col-sm-2 control-label">Selected</label>
+		    <div class="col-sm-8">
+				<select class="form-control" id="compartmentStyle">
+					{{> compartmentStyleDropDown}}
+				</select>
+		    </div>
+
+			<div class="col-sm-2 btn-group pull-right">
+	        	<a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
+		            <i class="fa fa-gear fa-lg"></i> 
+		            <i class="fa fa-caret-down"></i>
+		        </a>
+		        {{> compartmentStyleContextMenu}}
+		    </div>
+		</div>
+	</form>
+	<hr>
+	{{> compartmentStyle}}
+	{{> compartmentStyleModal}}
+</template>
+
+<template name="compartmentStyleDropDown">
+	{{#each styles}}
+  		<option index="{{index}}" {{selected}}>{{name}}</option>
+  	{{/each}}
+</template>
+
+<template name="compartmentStyle">
+
+	{{#with editor_type}}
+		{{#if ajooEditor}}
+			{{> ajooCompartmentStyle}}
+		{{else}}
+			{{> ZoomChartCompartmentStyle}}
+		{{/if}}
+	{{/with}}
+
+</template>
+
+<!-- Start of compartment style -->
+<template name="ajooCompartmentStyle">
+{{#with style}}
+	<div class="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+
+				<div class="form-group">
+					<label for="inputType">placement</label>
+					<select class="form-control dialog-select" id="placement">
+						{{#each placementList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">fill</label>
+					<input type="text" class="form-control dialog-input color-picker" id="fill" value="{{fill}}">
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">fontFamily</label>
+					<input type="text" class="form-control dialog-input" id="fontFamily" value="{{fontFamily}}">
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">fontSize</label>
+					<input type="number" class="form-control dialog-input" id="fontSize" value="{{fontSize}}">
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">padding</label>
+					<input type="number" class="form-control dialog-input" id="padding" value="{{padding}}">
+				</div>			
+
+			</form>
+		</div>
+
+		<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="inputType">align</label>
+					<select class="form-control dialog-select" id="align">
+						{{#each alignList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">visible</label>
+					<select class="form-control dialog-select" id="visible">
+						{{#each visibleList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="inputType">fontStyle</label>
+					<select class="form-control dialog-select" id="fontStyle">
+						{{#each fontStyleList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>				
+
+				<div class="form-group">
+					<label for="inputType">fontVariant</label>
+					<select class="form-control dialog-select" id="fontVariant">
+						{{#each fontVariantList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+
+			</form>
+		</div>
+	</div>
+
+{{/with}}
+</template>
+<!-- End of compartment style -->
+
+<template name="ZoomChartCompartmentStyle">
+	{{#with style}}
+	 	<div class="panel-tab clearfix">
+			<ul class="nav nav-tabs configurator-pills">
+				<li class="active"><a href="#textStyle" data-toggle="tab">TextStyle</a></li>
+				<li><a href="#backgroundStyle" data-toggle="tab">BackgroundStyle</a></li>
+			</ul>
+		</div>
+
+		<div class="panel-body pills-body">
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="textStyle">
+					{{> textStyleProperties}}
+				</div>
+				<div class="tab-pane fade" id="backgroundStyle">
+					{{> backgroundStyleProperties}}
+				</div>
+			</div>
+		</div>
+	{{/with}}
+</template>
+
+<template name="textStyleProperties">
+
+	<div class="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+				<div class="form-group">
+					<label for="textStyle.align">align</label>
+					<select class="form-control dialog-select" id="textStyle.align">
+						{{#each textStyle.alignList}}
+							<option {{selected}}>{{value}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="textStyle.font">font</label>
+					<input type="text" class="form-control dialog-input" id="textStyle.font" value="{{textStyle.font}}" placeholder="12px Arial">
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="textStyle.aspectRatio">aspectRatio</label>
+					<input type="number" class="form-control dialog-input " id="textStyle.aspectRatio" value="{{textStyle.aspectRatio}}" placeholder="">
+				</div>
+
+				<div class="form-group">
+					<label for="textStyle.fillColor">fillColor</label>
+					<input type="text" class="form-control dialog-input color-picker" id="textStyle.fillColor" value="{{textStyle.fillColor}}" placeholder="black">
+				</div>
+			</form>
+		</div>
+	</div>
+
+</template>
+
+<template name="backgroundStyleProperties">
+
+	<div class="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="backgroundStyle.lineColor">lineColor</label>
+					<input type="text" class="form-control dialog-input color-picker" id="backgroundStyle.lineColor" value="{{backgroundStyle.lineColor}}" placeholder="black">
+				</div>
+
+				<div class="form-group">
+					<label for="backgroundStyle.padding">padding</label>
+					<input type="number" class="form-control dialog-input" id="backgroundStyle.padding" value="{{backgroundStyle.padding}}" placeholder="0">
+				</div>
+			</form>
+		</div>
+
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="backgroundStyle.lineWidth">lineWidth</label>
+					<input type="number" class="form-control dialog-input" id="backgroundStyle.lineWidth" value="{{backgroundStyle.lineWidth}}" placeholder="1">
+				</div>	
+
+				<div class="form-group">
+					<label for="backgroundStyle.borderRadius">borderRadius</label>
+					<input type="number" class="form-control dialog-input" id="backgroundStyle.borderRadius" value="{{backgroundStyle.borderRadius}}" placeholder="999">
+				</div>	
+			</form>
+		</div>
+	</div>
+
+</template>
+
+<template name="compartmentStyleModal">
+
+	<!-- Modal for new diagram -->
+	    <div id="compartment-style-form" class="modal fade">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title">Compartment Type Style</h4>
+	                </div>
+	                <div class="modal-body">
+
+	                	{{#with dialog}}
+						<form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label for="compart-style-name" class="col-sm-1 control-label">Name</label>
+                                <div class="col-sm-10">
+                                	{{#if edit}}
+                                    	<input id="compart-style-name" value="{{name}}" type="text" class="form-control">
+                                    {{else}}
+                                    	<input id="compart-style-name" value="" type="text" class="form-control">
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </form> 
+                        {{/with}}
+	                </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="ok-compart-style" type="button" class="btn btn-primary">OK</button>
+                    </div>
+
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	<!-- End of modal -->
+</template>

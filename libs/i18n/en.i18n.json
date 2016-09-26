@@ -1,0 +1,348 @@
+{
+	"diagrams": "Diagrams",
+	"documents": "Documents",
+	"users": "Users",
+	"chats": "Chats",
+	"analytics": "Monitoring",
+	"archive": "Archive",
+	"dataAnalytics": "Analytics",
+	"configurator": "Configurator",
+	"tasks": "Tasks",
+	"training": "Training",
+
+	"search_here": "search here...",
+
+	"default_view": "Default view",
+	"tree_view": "Tree view",
+	"add_diagram": "Add diagram",
+	"new_diagram": "New diagram",
+	"new_diagram_name": "Name",
+	"new_diagram_type": "Type",
+	
+	"select_group": "Select group",
+	"selected_group_Admin/Reader": "Admin/Reader",	
+	"reset": "Reset",
+	
+	"sort": "Sort by",
+	"sort_by_A-Z": "A-Z",
+	"sort_by_Date": "Date",
+	"sort_by_Popular": "Popular",	
+
+	"views": "views",
+
+	"add_document": "Add document",
+	"new_document": "New document",
+
+	"document_form_title_new": "New document",
+	"edit_document_form_title": "Edit",
+
+	"new_document_name": "Name",
+	"new_document_type": "Type",
+
+	"add_section": "Add section",
+	"delete_section": "Delete section",
+	"document_edit_mode": "Edit mode",
+	"document_read_mode": "Read mode",
+	"rename_document": "Rename",
+	"delete_document": "Delete",
+
+	"document_change_view": "Change view",
+	"document_standart_view": "Standart view",
+	"document_dependency_view": "Dependency view",
+
+	"document_diagram": "Diagrams",
+	"document_count": "Count",
+	"document_elements": "Elements",
+
+	"feed": "Feed",
+	"what_are_you_thinking": "What are you thinking?",
+	"post_post": "Post",
+	"edit_post": "Edit",
+	"delete_post": "Delete",
+	"type_and_enter": "Type and enter",
+	"like_unlike_Like": "Like",
+	"like_unlike_Unlike": "Unlike",
+	"load_more": "Load more",
+	"people_who_liked_this": "People Who Like This",
+
+	"new_version_btn": "New version",
+	"remove_btn": "Remove",
+	"publish_btn": "Publish",
+	"pull": "Pull",
+	"version": "Version",
+	"new_version_badge": "New",
+
+	"new_badge_New": "New",
+	"new_badge_Published": "Published",
+
+	"active_version_badge": "Active",
+	"publish_version": "Publish version",
+	"version_comment": "Comment",
+
+	"project_participant": "Project participants",
+	"find_people": "Find people",
+	"user_find_placeholder": "Find",
+	"default_view_role": "Change role",
+	"user_default_view": "Default view",
+	"user_table_view": "Table view",
+	"search_for_people": "Search for people",
+
+	"users_group": "Groups",
+	"users_new_group": "New group",
+	"users_group_title": "Name",
+	"users_enter_group_name": "Enter group name",
+	"users_group_name": "Name",
+	"users_group_users": "Users",
+
+	"users_group_all_version_dgr": "Add to all project diagrams",
+	"users_group_active_version_dgr": "Add to the project active version's diagrams",
+
+	"users_group_all_version_doc": "Add to all project documents",
+	"users_group_active_version_doc": "Add to the project active version's documents",	
+
+
+	"user_role_Admin": "Admin",
+	"user_role_Reader": "Reader",
+
+	"user_status_Member": "Member",
+	"user_status_Invited": "Invited",
+
+	"set_as_reader": "Set as reader",
+	"set_as_admin": "Set as admin",
+	"user_set_as": "Set as __role__",
+
+	"remove_user": "Remove",	
+
+	"invite": "Invite",
+	"invite_as_reader": "Invite as reader",
+	"invite_as_admin": "Invite as admin",
+	"user_invite_as": "Invite as __role__",	
+
+	"user_user": "User",
+	"user_email": "Email",
+	"user_role": "Role",
+	"user_status": "Status",
+	"user_joined": "Joined",
+	"user_remove": "Remove",
+
+	"chats_conversations_1": "__count__ conversation",
+	"chats_conversations": "__count__ conversations",
+
+	"chats_page": "Page %s of %s",
+	"chats_new_chat": "New chat",
+	"chats_delete_chat": "Delete",
+	"chats_to": "To",
+
+	"chats_time_minutesam": "__hour__:__minutes__ am",
+	"chats_time_minutespm": "__hour__ : __minutes__ pm",	
+	"chats_time_month": "__month__ __date__",
+	"chats_time_year": "__month__/__date__/__year__",
+
+	"contacts": "Contacts",
+	"contacts_add": "Add",
+	"type_your_msg_here": "Type your message here",
+	"chat_send": "Send",
+	"chat_error_msg": "The chat has been deleted or you have been removed from the chat.",
+	"new_chat_title": "New Chat",
+	"view_all_messages": "View all messages",
+
+	"forgot_password": "Forgot your password?",
+	"sign_in": "Sign in",
+	"stay_signed_in": "Stay signed in",
+	"enter_your_password": "Enter your password",
+	"login_password": "Password",
+	"please_enter_email": "Please enter email address/username",
+	"e_mail": "E-mail",
+	"registration": "Registration",
+	"sign_up": "Sign up",
+	"login_user_name": "Username",
+	"dont_have_any_account": "Don't have any account?",
+	"login": "Login",
+
+	"click": "Click",
+	"here": "here",
+	"reset_password": " to reset your password",
+	"already_have_account": "Already have an account?",
+
+	"email_address": "Email Address",
+	"sign_up_name": "Name",
+	"sign_up_surname": "Surname",
+	"sign_up_confirm_password": "Confirm Password",
+
+	"do_you_want_to_logout": "Do you want to logout?",
+	"logout": "Logout",
+	"edit_profile": "Edit profile",
+
+	"basic_information": "Basic Information",
+	"profile_name": "Name",
+	"profile_surname": "Surname",
+	"profile_tags": "Tags",
+	"profile_language": "Language",
+
+	"profile_change_password": "Change Password",
+	"old_password": "Old password",
+	"profile_password": "Password",
+	"profile_change_btn": "Change",
+	"profile_type_and_enter": "Type and enter",
+	"profile_confirm_password": "Confirm Password",
+
+	"profile_last_update_Jan": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Feb": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Mar": "Last Update on __date__ __month__, __year__",	
+	"profile_last_update_Apr": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_May": "Last Update on __date__ __month__, __year__",	
+	"profile_last_update_Jun": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Jul": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Aug": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Sep": "Last Update on __date__ __month__, __year__",	
+	"profile_last_update_Oct": "Last Update on __date__ __month__, __year__",
+	"profile_last_update_Nov": "Last Update on __date__ __month__, __year__",	
+	"profile_last_update_Dec": "Last Update on __date__ __month__, __year__",
+
+	"profile": "Profile",
+
+	"notifications": "Notifications",
+
+	"notifications_small_1": "__count__ notification",	
+	"notifications_small": "__count__ notifications",
+
+	"create_project": "Create project",
+	"view_all_projects": "View all projects",
+	"view_all_notifications": "View all notifications",
+
+	"you_have_projects_count_1": "You have __count__ project",
+	"you_have_projects_count": "You have __count__ projects",
+	
+	"you_have_unread_chats_count_1": "You have __count__ new chat",
+	"you_have_unread_chats_count": "You have __count__ new chats",
+
+	"you_have_new_notifications_count_1": "You have __count__ notification",
+	"you_have_new_notifications_count": "You have __count__ notifications",	
+
+	"document_dialog": "Document",
+	"no_documents_selected": "No Documents Selected",
+	"document_dialog_add_section": "Add",
+	"add_sections": "Add Sections",
+	"remove_section": "Remove",
+	"add_document_sections": "Add",
+
+	"diagram_info": "Diagram info",
+	"diagram_info_project": "Project",
+	"diagram_info_version": "Version",
+	"diagram_info_tool": "Tool",
+	"diagram_info_diagram_type":"Diagram type",
+	"diagram_info_boxes": "Boxes",
+	"diagram_info_lines": "Lines",
+	"diagram_total_elements": "Total elements",
+
+	"diagram_edit_button": "Edit",
+	"diagram_unlock_button": "Finish",
+	"diagram_force_lock_button": "Force Lock",
+
+	"diagram_can_be_edited": "You can edit the diagram!",
+	"diagram_locked": "Diagram is being edited by __user__!",
+	"diagram_is_edited": "You are editing the diagram!",
+
+	"notifications_user_removed": "<p class='no-margin'>You have been removed from the project <strong> __project__</strong> by <i>__remover__</i></p>",
+
+	"notifications_user_invited_Admin": "<p class='no-margin'>You are invited to be <strong><i>Admin</i></strong> in <strong>__project__</strong> by <i>__inviter__</i></p>",
+	"notifications_user_invited_Reader": "<p class='no-margin'>You are invited to be <strong><i>Reader</i></strong> in <strong>__project__</strong> by <i>__inviter__</i></p>",
+	  
+    "notifications_user_rejected": "<p class='no-margin'>You have rejected the invitation for the project <strong>__project__</strong> from <i>__person__</i></p>",
+    "notifications_user_confirmed": "<p class='no-margin'>You have accepted the invitation in the project <strong>__project__</strong> from <i>__person__</i></p>",
+   	
+   	"notifications_user_changed_Admin": "<p class='no-margin'>Your role has been changed to <strong><i>Admin</i></strong> in <strong>__project__</strong>by <i>__person__</i></p>",
+   	"notifications_user_changed_Reader": "<p class='no-margin'>Your role has been changed to <strong><i>Reader</i></strong> in <strong>__project__</strong>by <i>__person__</i></p>",
+    
+    "notifications_new_version": "<p class='no-margin'>A new version <strong><span class='label label-info m-left-xs'>#__version__</span></strong> is created in the project <strong>__project__</strong> by <i>__person__</i></p>",
+    "notifications_delete_version": "<p class='no-margin'>The version <strong><span class='label label-danger m-left-xs'>#__version__</span></strong> has been deleted from the project <strong>__project__</strong> by <i>__person__</i></p>",
+    "notifications_publish_version": "<p class='no-margin'> The version <strong><span class='label label-success m-left-xs'>#__version__</span></strong> is published in the project <strong>__project__</strong>by <i>__person__</i></p>",
+
+    "time_since_seconds": "a few seconds ago",
+    "time_since_minute": "__number__ minute ago",    
+    "time_since_minutes": "__number__ minutes ago",
+    "time_since_hour": "__number__ hour ago",     
+    "time_since_hours": "__number__ hours ago",
+    "time_since_day": "__number__ day ago",          
+    "time_since_days": "__number__ days ago",
+    "time_since_month": "__number__ month ago",      
+    "time_since_months": "__number__ months ago",
+    "time_since_year": "__number__ year ago",      
+    "time_since_years": "__number__ years ago",
+
+    "password_error_msg": "",
+    "password_error_msg_EmptyFieldError": "This value is required.",
+    "password_error_msg_ValueShouldBeTheSame": "This value should be the same.",
+    "password_error_msg_PasswordTooShort": "This value is too short. It should have 8 characters or more.",
+	
+    "password_button_msg": "",
+	"password_button_msg_OldPasswordIsIncorrect": "The old password value is incorrect.",
+	"password_button_msg_PasswordChanged": "Password changed.",
+
+	"delete_confirm_msg_ConfirmDeleteDiagram": "Are you sure you want to delete the diagram?",
+	"delete_confirm_msg_ConfirmDeleteDiagramType": "Are you sure you want to delete the tool and all its projects?",
+	"delete_confirm_msg_ConfirmDeleteDocument": "Are you sure you want to delete the document?",
+
+	"forum": "Forum",
+	"forum_prev": "Previous",
+	"forum_next": "Next",
+	"forum_all_projects": "--All projects--",
+	"forum_search_by_tag": "Search by tag...",
+	"forum_tag_cloud": "TAG CLOUD",
+	"forum_add_topic": "Add Topic",	
+	"forum_new_post": "New post",
+	"forum_title": "Title",
+	"forum_msg": "Message",
+
+	"forum_views": "__count__ views",
+	"forum_views_1": "1 view",
+
+	"forum_author": "By",
+
+	"forum_comments": "__count__ comment",
+	"forum_comments_1": "1 comment",
+
+	"forum_comments": "comments",
+	"forum_edit_post": "Edit post",
+
+	"forum_post_comment": "Post Comment",
+	"forum_new_comment": "New comment",
+	"forum_edit_comment": "Edit comment",
+	"forum_form_comment": "Comment",
+
+	"forum_tags": "TAGS",
+	"forum_post_comments": "Comments",
+
+	"forum_post_reply": "Reply",
+
+	"forum_edit_comment": "Edit",
+	"forum_delete_comment": "Delete",
+
+	"structure": "Projects",
+	"add_project": "Create project",
+	"project_name": "Name",
+	"project_icon": "Icon",
+	"project_category": "Category",
+
+	"project_tool": "Tool",
+	"project_edit_project": "Edit project",
+
+	"structure_font_awesome": "Click <a href='http://fortawesome.github.io/Font-Awesome/icons/' target='_blank'>here</a> to see Font-Awesome icons",
+
+	"permissions": "Permissions",
+	"toolbar_name": "__name__",
+	"toolbar_name_Permissions": "Permissions",
+
+	"dashboard": "Dashboard",
+
+	"add": "Add",
+	"edit": "Edit",
+	"delete": "Delete",
+	"remove": "Remove",
+	"ok": "OK",
+	"close": "Close",
+	"confirm": "Confirm",
+	"accept": "Accept",
+	"reject": "Reject",
+	"cancel": "Cancel"
+}

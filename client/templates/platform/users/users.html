@@ -1,0 +1,484 @@
+
+<!-- Diagram content templates -->
+
+<template name="usersTemplate">
+    <div class="panel panel-default">
+
+        <div class="panel-tab clearfix">
+            <ul class="tab-bar">
+                <li class="active" id="project-members"><a href="#members" data-toggle="tab"><i class="fa fa-user"></i> {{_ "project_participant"}}</a></li>
+                <li id="find-people"><a href="#find" data-toggle="tab"><i class="fa fa-search"></i> {{_ "find_people"}}</a></li>
+            </ul>
+        </div>
+
+        <div class="panel-body">        
+            <div class="tab-content user-tab-content">
+
+                <!-- tab1 -->
+                <div class="tab-pane fade in active" id="members">
+                    {{> membersTab}}
+                </div>
+                <!-- end of tab1 -->
+
+                <!-- tab2 -->
+                <div class="tab-pane fade padding-10" id="find">
+
+                    {{> usersSearchBar}}
+                    {{> foundUsers}}
+                </div>
+                <!-- end of tab2 -->
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="membersTab">
+    {{> membersFilter}}
+    <hr>
+    <div id="membersTab" class="padding-10">
+        <div class="row">
+            {{#if tableView}}
+                {{> membersTableView}}
+            {{else}}
+                {{> membersDefaultView}}
+            {{/if}}
+        </div>
+    </div>
+
+    {{> userGroups}}
+</template>
+
+<template name="membersFilter">
+    <div class="padding-10">
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-2 col-lg-4">
+                {{> membersViewButton}}
+                <button id="add-user-groups" type="button" class="btn btn-info btn-sm">{{_ "users_group"}}</button>
+
+                <button id="invite-user" type="button" class="btn btn-success btn-sm">Invite user</button> 
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3 pull-right">
+                <div class="input-group">
+                    <input class="form-control input-sm" id="findUser" placeholder='{{_ "user_find_placeholder"}}' type="text">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{> inviteUserForm}}
+
+</template>
+
+<template name="membersViewButton">
+    <div class="btn-group">
+        <a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
+            <i class="fa fa-gear fa-lg"></i> 
+            <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu text-left">
+            <li>
+                <a id="defaultView" href="#">
+                    {{#if tableView}}
+                        <i class="fa fa-check" style="visibility:hidden;"></i> 
+                    {{else}}
+                        <i class="fa fa-check"></i> 
+                    {{/if}}
+                    {{_ "user_default_view"}}
+                </a>
+            </li>
+            <li>
+                <a id="tableView" href="#">
+                    {{#if tableView}}
+                        <i class="fa fa-check"></i> 
+                    {{else}}
+                        <i class="fa fa-check" style="visibility:hidden;"></i> 
+                    {{/if}}
+                    {{_ "user_table_view"}}
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</template>
+
+<template name="membersTableView">
+    <div class="table-responsive padding-10">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{_ "user_user"}}</th>
+                    <th>{{_ "user_email"}}</th>
+                    <th>{{_ "user_role"}}</th>
+                    <th>{{_ "user_status"}}</th>
+                    <th>{{_ "user_joined"}}</th>
+                    {{#if editable}}
+                        <th>{{_ "user_remove"}}</th>
+                    {{/if}}
+                </tr>
+            </thead>
+
+            <tbody>
+                {{#each users}}
+
+                    {{#if _id}}
+                        <tr>
+                            <td>{{index}}</td>
+                            <td>
+                                <a id="{{_id}}" href="{{pathFor 'userProfile'}}">
+                                    {{name}} {{surname}}
+                                </a>
+                            </td>
+                            <td>{{email}}</td>
+
+                            {{#if defaultRole}}
+                                <td>{{_ "user_role" context=role}}</td>
+                            {{else}}
+                                <td>{{roleName}}</td>
+                            {{/if}}
+
+                            <td>{{_ "user_status" context=status}}</td>
+                            <td>{{createdAt}}</td>    
+                            {{#if editable}}
+                                <td>
+                                    <a href="#" class="decline change-button btn" id="{{systemId}}">
+                                        <i class="edit-service fa fa-fw fa-trash-o text-danger"></i>
+                                    </a>
+                                </td>
+                            {{/if}}
+                        </tr>
+                    {{/if}}
+
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<template name="membersDefaultView">
+
+{{#each users}}
+    {{#if _id}}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="panel panel-default">
+                 <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-12 col-md-6 text-center">
+                            <a href="{{pathFor 'userProfile'}}">
+                                <img src="{{profileImage}}" alt="User Avatar" class="img-thumbnail user-avatar-size">
+                            </a>
+                        </div><!-- /.col -->
+                        <div class="col-xs-6 col-sm-12 col-md-6">
+
+                            {{#if online}}
+                                <i class="fa fa-circle text-success"> </i> 
+                            {{else}}
+                                {{#if idle}}
+                                    <i class="fa fa-circle text-warning"> </i>
+                                {{/if}}
+                            {{/if}}
+
+                            {{#if name}}
+                                <strong class="font-14">{{name}} {{surname}}</strong>   
+                            {{else}}
+
+                                {{#if surname}}
+                                    <strong class="font-14">{{name}} {{surname}}</strong>
+                                {{else}}
+                                     <strong class="font-14">{{email}}</strong>   
+                                {{/if}}
+
+                            {{/if}}
+
+                            <small class="block text-muted">
+                                {{#if defaultRole}}
+                                    {{_ "user_role" context=role}} / {{_ "user_status" context=status}}
+                                {{else}}
+                                    {{roleName}} / {{_ "user_status" context=status}}
+                                {{/if}}
+                            </small> 
+                            <div class="seperator"></div>
+
+                            <div class="user-profile-buttons">
+                                {{#if editable}}
+                                    <div class="btn-group change-button" id="{{systemId}}"> 
+                                        <a class="btn btn-sm btn-success m-bottom-sm dropdown-toggle" data-toggle="dropdown">{{_ "default_view_role"}} <span class="caret"></span></a>
+                                        <ul class="dropdown-menu slidedown">
+                                            <li role="Reader" class="set-as"><a href="#">{{_ "set_as_reader"}}</a></li>
+                                            <li role="Admin" class="set-as"><a href="#">{{_ "set_as_admin"}}</a></li>
+
+                                            {{#each groups}}
+                                                <li role="{{_id}}" class="set-as"><a href="#">{{_ "user_set_as" role=name}}</a></li>
+                                            {{/each}}
+
+                                            <li class="divider"></li>
+                                            <li class="decline"><a href="#">{{_ "remove_user"}}</a></li>
+                                        </ul>                       
+                                    </div>
+                                {{/if}}
+                            </div>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div>
+            </div>
+        </div>
+    {{/if}}
+{{/each}}
+
+</template>
+                           
+<template name="foundUsers">
+    <div class="row">
+        {{#each foundUsers}}
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 found-user" id="{{systemId}}">
+                <div class="panel panel-default">
+                     <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-12 col-md-6 text-center">
+                                <a href="#">
+                                    <img src="{{profileImage}}" alt="User Avatar" class="img-thumbnail user-avatar-size">
+                                </a>
+                            </div><!-- /.col -->
+                            <div class="col-xs-6 col-sm-12 col-md-6">
+                                <strong class="font-14">{{name}} {{surname}}</strong>
+                                <div class="invite-buttons">
+                                    {{#if editable}}
+                                        <div class="btn-group change-button" id="{{systemId}}"> 
+                                            <a class="btn btn-sm btn-success m-bottom-sm dropdown-toggle" data-toggle="dropdown">{{_ "invite"}} <span class="caret"></span></a>
+                                            <ul class="dropdown-menu slidedown">
+                                                <li class="invite" role="Reader"><a href="#">{{_ "invite_as_reader"}}</a></li>
+                                                <li class="invite" role="Admin"><a href="#">{{_ "invite_as_admin"}}</a></li>
+
+                                                {{#each groups}}
+                                                    <li class="invite" role="{{_id}}"><a href="#">{{_ "user_invite_as" role=name}}</a></li>
+                                                {{/each}}
+
+                                            </ul>
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</template>
+                        
+
+<template name="usersSearchBar">
+
+    <div class="input-group search-bar padding-10" suggestionsQuery="usersSearch" collectionType="Users" type="users" style="padding-left:0px;padding-right:0px;">
+        <input class="form-control" type="text" placeholder='{{_ "search_for_people"}}' id="searchField">
+        <div class="input-group-btn">
+            <button id="searchUser" class="btn btn-default">
+                <i class="fa fa-fw fa-search fa-lg"></i>
+            </button>
+        </div>
+
+        {{> searchMenu}}
+
+    </div>
+</template>
+
+<template name="usersRibbon">
+    <div id="ribbon">
+        <ol class="breadcrumb">
+            <li><i class="fa fa-group"></i> {{_ "users"}}</li>
+        </ol>
+    </div>
+</template>
+
+
+<template name="userGroups">
+
+    <!-- Modal for new diagram -->
+    <div id="user-groups" class="modal fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "users_group"}}</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            {{#if isAdmin}}
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false">
+                                                {{_ "users_new_group"}}
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="height:0px;">
+                                        <div class="panel-body">
+                                            
+                                                <div class="margin-bottom">
+                                                    <form>
+
+                                                        <div class="form-group">
+                                                            <label for="group-name">{{_ "users_group_title"}}</label>
+                                                            <input id="group-name" type="text" class="form-control input-sm" placeholder="{{_ 'users_enter_group_name'}}">
+                                                        </div><!-- /form-group -->
+
+                                                        <div class="form-group">
+                                                            <label class="label-checkbox">
+                                                                <input id="currentProjectDiagrams" type="checkbox">
+                                                                <span class="custom-checkbox"></span>
+                                                                {{_ "users_group_all_version_dgr"}}
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="label-checkbox">
+                                                                <input id="allProjectDiagrams" type="checkbox">
+                                                                <span class="custom-checkbox"></span>
+                                                                {{_ "users_group_active_version_dgr"}}
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="label-checkbox">
+                                                                <input id="currentProjectDocuments" type="checkbox">
+                                                                <span class="custom-checkbox"></span>
+                                                                {{_ "users_group_all_version_doc"}}
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="label-checkbox">
+                                                                <input id="allProjectDocuments" type="checkbox">
+                                                                <span class="custom-checkbox"></span>
+                                                                {{_ "users_group_active_version_doc"}}
+                                                            </label>
+                                                        </div>
+
+                                                        <div clas="form-group">
+                                                            <button id="new-group" class="btn btn-success">{{_ "add"}}</button>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div><!-- /panel -->
+                            </div>
+                            {{/if}}
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{_ "users_group_name"}}</th>
+                                        <th>{{_ "users_group_users"}}</th>
+                                        {{#if isAdmin}}
+                                            <th>{{_ "remove"}}</th>
+                                        {{/if}}
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {{#each groups}}
+                                    <tr class="table-row" id="{{_id}}">
+
+                                        <td>{{nr}}</td>
+
+                                        {{#if isEditable}}
+                                            {{#if isDefault}}
+                                                <td class="name"><span class="edit-group-name" contenteditable="true">{{_ "user_role" context=name}}</span></td>
+                                            {{else}}
+                                                <td class="name"><span class="edit-group-name" contenteditable="true">{{name}}</span></td>
+                                            {{/if}}
+                                        {{else}}
+                                            {{#if isDefault}}
+                                                <td class="name"><span class="edit-group-name">{{_ "user_role" context=name}}</span></td>
+                                            {{else}}
+                                                <td class="name"><span class="edit-group-name">{{name}}</span></td>
+                                            {{/if}}
+                                        {{/if}}
+                             
+                                        <td>{{count}}</td>
+                           
+                                        <td>
+                                            {{#if isRemovable}}
+                                            <span>
+                                                <a href="#" class="delete-group-button"><i class="delete-button fa fa-fw fa-trash-o text-danger"></i></a>
+                                            </span>
+                                            {{/if}}
+                                        </td>
+
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>    
+            </div><!-- /.modal-content -->
+
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+<template name="inviteUserForm">
+
+    <div id="invite-user-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Send invitation</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10">
+                                <input id="email" type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>   
+
+                        <div class="form-group">
+                            <label for="role" class="control-label col-sm-2">Role</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="role">
+                                    {{#each groups}}
+                                        <option id="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="invite-user-send-button" type="button" class="btn btn-primary">OK</button>
+                </div>
+
+            </div>
+        </div>
+    </div>   
+
+</template>
+

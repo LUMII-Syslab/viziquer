@@ -1,0 +1,141 @@
+
+Interpreter.methods({
+
+	Cut: function() {
+
+		if (Interpreter.editor.isEditMode()) {
+			Copy();
+			//Delete();
+		}
+	},
+
+	Copy: function() {
+		var diagram_id = Session.get("activeDiagram");
+		var diagram = Diagrams.findOne({_id: diagram_id});
+
+		if (!diagram) {
+			return;
+		}
+
+		var diagram_type_id = diagram["diagramTypeId"];
+		var diagram_type = DiagramTypes.findOne({_id: diagram_type_id});
+
+		var selected_elements;
+		var editor = Interpreter.editor;
+
+		var editor_type = Interpreter.getEditorType();
+		if (is_ajoo_editor(editor_type)) {
+			selected_elements = editor.getSelectedElements();
+
+			var left_point = {x: Infinity, y: Infinity};
+			_.each(selected_elements, function(elem) {
+
+				if (elem["type"] == "Box") {
+					var size = elem.getSize();
+					var x = size.x;
+					var y = size.y;
+
+					if (x < left_point["x"] && y < left_point["y"]) {
+						left_point["x"] = x;
+						left_point["y"] = y;
+					}
+				}
+			});
+
+			var drag_layer = editor.getLayer("DragLayer");
+			var drag_group = find_child(drag_layer, "DragGroup");
+			left_point["x"] = left_point["x"] + drag_group.x();
+			left_point["y"] = left_point["y"] + drag_group.y();
+
+			var selected_elem_list = _.keys(selected_elements);
+
+			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
+			if (res != false) {
+				var list = {
+							diagramId: diagram_id,
+							elements: selected_elem_list,
+							leftPoint: left_point,
+						};
+				Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
+			}
+		}
+
+		else {
+			selected_elem_list = _.map(editor.selection(), function(elem) {
+				return elem.id;
+			});
+
+			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
+			if (res != false) {
+				var list = {
+							diagramId: diagram_id,
+							elements: selected_elem_list,
+						};
+
+				Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
+			}	
+		}
+	},
+
+	Paste: function(ev_obj) {
+
+		var editor = Interpreter.editor;
+
+		var diagram_id = Session.get("activeDiagram");
+		var diagram = Diagrams.findOne({_id: diagram_id});
+		if (!diagram) {
+			return;
+		}
+
+		var diagram_type = DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
+
+		var editor_type = Interpreter.getEditorType();
+		if (is_ajoo_editor(editor_type)) {
+
+			var e;
+			if (editor.data.ev) {
+				e = editor.data.ev;
+			}
+
+			var x, y;
+			if (e) {
+				var mouse_state_obj = editor.getMouseStateObject();
+				var mouse_pos = mouse_state_obj.getMousePosition(e);
+				x = mouse_pos["x"];
+				y = mouse_pos["y"];
+			}
+
+			var list = {
+						diagramId: diagram_id,
+						x: x,
+						y: y,
+					};
+
+			var res = Interpreter.executeExtensionPoint(diagram_type, "pasteCollection", list);
+			editor.data = {};
+		}
+
+		else {
+			var list = {diagramId: diagram_id,};
+			var res = Interpreter.executeExtensionPoint(diagram_type, "pasteCollection", list);
+		}
+
+	},
+
+	CopyCollection: function(list) {
+
+		list["projectId"] = Session.get("activeProject");
+		list["versionId"] = Session.get("versionId");
+
+		Utilities.callMeteorMethod("copyElements", list);
+	},
+
+	PasteCollection: function(list) {
+		list["projectId"] = Session.get("activeProject");
+		list["versionId"] = Session.get("versionId");
+
+		Utilities.callMeteorMethod("pasteElements", list);
+	},
+
+});
+

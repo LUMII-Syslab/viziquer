@@ -1,0 +1,103 @@
+
+<template name="elementTypeStyles">
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+		    <label for="compartment" class="col-sm-2 control-label">Style</label>
+		    <div class="col-sm-8">
+				<select class="form-control" id="elementStyle">
+					{{> elementStyleDropDown}}
+				</select>
+		    </div>
+
+			<div class="col-sm-2 btn-group pull-right">
+	        	<a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
+		            <i class="fa fa-gear fa-lg"></i> 
+		            <i class="fa fa-caret-down"></i>
+		        </a>
+		        <ul class="dropdown-menu text-left">
+		            <li><a id="add-element-type-style" href="#">Add</a></li>
+		            <li><a id="edit-element-type-style" href="#">Edit</a></li>
+		            <li class="{{is_remove}}"><a id="delete-element-type-style" href="#">Remove</a></li>
+		        </ul>
+		    </div>
+		</div>
+	</form>
+	<hr>
+	{{> configuratorElementStyleAccordion}}
+	{{> elementStyleModal}}
+</template>
+
+<!-- Element style accordion -->
+<template name="configuratorElementStyleAccordion">
+    {{#if box}}
+    	{{> boxStyle}}
+	{{else}}
+		{{> lineStyle}}        
+	{{/if}}
+</template>
+<!-- End of element style accordion -->
+
+<template name="boxStyle">
+
+	{{#with editor_type}}
+
+		{{#if ajooEditor}}
+			{{> ajooBoxStyle}}
+		{{/if}}
+
+		{{#if ZoomChart}}
+			{{> ZoomChartBoxStyle}}
+		{{/if}}
+
+	{{/with}}
+
+</template>
+
+<template name="elementStyleModal">
+<!-- Modal for new diagram -->
+    <div id="element-style-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Element Type Style</h4>
+                </div>
+                <div class="modal-body">
+
+                	{{#with dialog}}
+					<form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="element-style-name" class="col-sm-1 control-label">Name</label>
+                            <div class="col-sm-10">
+                            	{{#if edit}}
+                                	<input id="element-style-name" value="{{name}}" type="text" class="form-control">
+                                {{else}}
+                                	<input id="element-style-name" value="" type="text" class="form-control">
+                                {{/if}}
+                            </div>
+                        </div>
+                    </form> 
+                    {{/with}}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-element-style" type="button" class="btn btn-primary">OK</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>
+
+<template name="elementStyleDropDown">
+	{{#each elementStyles}}
+  		<option index="{{index}}" {{selected}}>{{name}}</option>
+  	{{/each}}
+</template>
+
+
+
+

@@ -1,0 +1,37 @@
+<template name="projectsT">
+    <li id="nav-projects" class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            {{> activeProject}}
+            <span class="bounceIn animation-delay6"><i class="fa fa-angle-down"></i></span>
+        </a>
+        <ul class="dropdown-menu notification dropdown-3">
+            {{> projectsList}}
+            <li>
+                <a class="main-link" href="{{pathFor 'structure'}}">{{_ "view_all_projects"}}</a>
+            </li>
+        </ul>
+    </li>
+</template>
+
+<template name="activeProject">
+    <strong>{{activeProject}}</strong>
+</template>
+
+<template name="projectsList">
+    <li>
+        <a tabindex="-1" class="main-link" href="#">{{_ "you_have_projects_count" count=projectsCount context=projectsCount}}</a>
+    </li>
+    {{#each projects}}
+        <li class="projects-dropdown-item" id="{{projectId}}">
+            <a href="{{pathFor 'diagrams'}}">
+                <div class="clearfix project-padding">
+                    <span class="m-left-xs"> {{name}} </span>
+                    {{#if removeProject}}
+                        <i class="fa fa-trash-o fa-lg pull-right remove-project"></i>
+                    {{/if}}
+                </div>
+            </a>
+        </li>
+    {{/each}}
+</template>
+

@@ -1,0 +1,16 @@
+
+<template name="compartmentReorder">
+    <div class="row">
+		<div class="col-sm-12 col-lg-12">
+			<div class="dd">
+				<ul class="dd-list compartmentTypes" tabId="{{_id}}">
+					{{#each compartment_types}}
+						<li class="dd-item compartmentType" id="{{_id}}" index="{{index}}" elementTypeId="{{elementTypeId}}">
+							<div class="dd-handle">{{name}}</div>
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+	</div>
+</template>

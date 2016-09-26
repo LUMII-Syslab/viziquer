@@ -1,0 +1,23 @@
+
+<template name="swimlane_TopLine">
+	{{> Template.dynamic template="swimlane_compartment" data=compartment}}
+</template>
+
+<template name="swimlane_LeftLine">
+	{{> Template.dynamic template="swimlane_compartment" data=compartment}}
+</template>
+
+<template name="swimlane_Middle">
+	{{> Template.dynamic template="swimlane_compartment" data=compartment}}
+</template>
+
+<template name="swimlane_compartment">
+
+	{{#if compartment_type_id}}
+		<div class="form-group compart-type">
+			<label for="{{_id}}">{{name}}</label>
+			<textarea type="text" class="form-control dialog-input" style="overflow:auto;resize:none;" id="{{_id}}" compartment-type-id="{{compartment_type_id}}" rows="{{_rows}}" disabled="{{disabled}}" value="{{value}}"></textarea>
+		</div>
+	{{/if}}	
+
+</template>

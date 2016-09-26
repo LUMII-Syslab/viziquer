@@ -1,0 +1,147 @@
+
+<!-- Configurator dialog -->
+<template name="configuratorDialog">
+	<div class="panel-group" id="elementAccordion">
+		{{> dialog}}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed accordion-title" data-toggle="collapse" data-parent="#elementAccordion" href="#element">Element</a>
+				</h4>
+			</div>
+
+			<div id="element" class="panel-collapse collapse" style="height: 0px;">
+				<div class="panel-body">
+					{{> elementAccordion}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default" id="xy">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed accordion-title" data-toggle="collapse" data-parent="#elementAccordion" href="#compartments">Compartments</a>
+				</h4>
+			</div>
+
+			<div id="compartments" class="panel-collapse collapse" style="height: 0px;">
+				<div class="panel-body">
+					{{> compartmentsAccordion}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a class="accordion-toggle collapsed accordion-title" data-toggle="collapse" data-parent="#elementAccordion" href="#dialog">Dialog</a>
+				</h4>
+			</div>
+
+			<div id="dialog" class="panel-collapse collapse" style="height: 0px;">
+				<div class="panel-body">
+					{{> dialogAccordion}}
+				</div>
+			</div>
+		</div><!-- /panel -->
+	</div>
+</template>
+<!-- End of configurator dialog -->
+
+<!-- Element accordion -->
+<template name="elementAccordion">
+
+	{{#if activeElement}}
+		<div class="panel-tab clearfix">
+			<ul class="nav nav-pills configurator-pills">
+				<li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+				<li><a href="#styles" data-toggle="tab">Styles</a></li>
+				<li><a href="#context-menu" data-toggle="tab">Context menu</a></li>		
+				<li><a href="#keystrokes" data-toggle="tab">Keystrokes</a></li>
+				<li><a href="#extension-points" data-toggle="tab">Extensions</a></li>
+			</ul>
+		</div>
+		<div class="panel-body pills-body">
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="main">
+					{{> elementMain}}
+				</div>
+				<div class="tab-pane fade" id="styles">
+					{{> elementTypeStyles}}
+				</div>
+				<div class="tab-pane fade" id="context-menu">
+					{{> contextMenus}}
+				</div>			
+				<div class="tab-pane fade" id="keystrokes">
+					{{> keystrokes}}
+				</div>
+				<div class="tab-pane fade" id="extension-points">
+					{{> elementExtensions}}
+				</div>
+			</div>
+		</div>
+	{{/if}}
+
+</template>
+<!-- End of element accordion -->
+
+<!-- Start of elementMain -->
+<template name="elementMain">
+	{{#with active_elem_type}}
+		<form role="form" class="element-type" id="{{_id}}">
+
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input type="text" class="form-control dialog-input" id="name" value="{{active_elem_type.name}}">
+			</div>
+
+			{{#if is_line}}
+
+				<div class="form-group">
+                    <label for="direction">Direction</label>
+					<select class="form-control dialog-selection" id="direction">
+						{{#each directions}}
+		  					<option {{selected}} value="{{option}}">{{option}}</option>
+						{{/each}}
+					</select>
+				</div>
+
+				<div class="form-group">
+                    <label for="lineType">Type</label>
+					<select class="form-control dialog-selection" id="lineType">
+						{{#each lineTypes}}
+		  					<option {{selected}} value="{{option}}">{{option}}</option>
+						{{/each}}
+					</select>
+				</div>
+			
+			{{else}}
+
+				<div class="col-sm-6 col-md-6 col-lg-6">
+					<div class="form-group">
+	                    <label for="defaultFixedSize.defaultFixedWidth">DefaultFixedWidth</label>
+						<input type="number" class="form-control dialog-input" id="defaultFixedSize.defaultFixedWidth" value="{{defaultFixedSize.defaultFixedWidth}}">
+					</div>
+				</div>
+
+				<div class="col-sm-6 col-md-6 col-lg-6">
+					<div class="form-group">
+	                    <label for="defaultFixedSize.defaultFixedHeight">DefaultFixedHeight</label>
+	                    <input type="number" class="form-control dialog-input" id="defaultFixedSize.defaultFixedHeight" value="{{defaultFixedSize.defaultFixedHeight}}">
+	                </div>
+				</div>
+
+			{{/if}}
+
+			<div class="form-group">
+				<label class="label-checkbox inline">
+					<input type="checkbox" class="dialog-checkbox" id="isAbstract" {{checked}}>
+					<span class="custom-checkbox"></span>
+					isAbstract
+				</label>
+			</div>
+
+		</form>
+	{{/with}}	
+</template>
+<!-- End of elementMain -->

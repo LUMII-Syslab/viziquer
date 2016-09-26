@@ -1,0 +1,225 @@
+
+<template name="profileHeader">
+</template>
+
+<template name="profile">
+	<div class="row">
+		<div class="col-sm-4 col-md-4 col-lg-3">
+			{{> profileInfo}}
+		</div><!-- /.col -->
+
+		<div class="col-sm-12 col-md-8 col-lg-9">
+			{{> editProfileTab}}
+		</div><!-- /.col -->
+	</div><!-- /.row -->		
+</template>
+
+<template name="editProfileTab">
+	{{> editTabLastUpdate}}
+	{{> formsTab}}
+	{{> overviewTab}}
+</template>
+
+<template name="editTabLastUpdate">
+	<div class="row grey-background">
+		<div class="panel panel-info pull-right">
+			<div class="panel-body">
+				{{_ "profile_last_update" date=lastUpdate.date month=lastUpdate.month year=lastUpdate.year context=lastUpdate.month}}
+			</div>
+		</div><!-- /panel -->
+	</div><!-- /.row -->
+</template>
+
+<template name="formsTab">
+	<div class="row grey-background">
+		<div class="col-md-12 col-lg-8">
+			{{> basicInfoPanel}}
+		</div>
+
+		<div class="col-md-12 col-lg-4">
+			{{> passwordPanel}}
+		</div>
+	</div>
+</template>
+
+<template name="overviewTab">
+	<div class="row grey-background">
+		<div class="col-md-12 col-lg-8">
+			{{> userNotifications}}
+		</div>
+	</div>
+</template>
+
+<template name="basicInfoPanel">
+	{{#with user}}
+		<div class="panel panel-default">
+			<form class="no-margin" id="formValidate1" data-validate="parsley" novalidate="">
+				<div class="panel-heading">
+					{{_ "basic_information"}}
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">{{_ "profile_name"}}</label>
+								<input id="name" value="{{name}}" type="text" placeholder="Name" class="form-control input-sm profile-field">
+							</div><!-- /form-group -->
+						</div><!-- /.col -->
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">{{_ "profile_surname"}}</label>
+								<input id="surname" value="{{surname}}" type="text" placeholder="Surname" class="form-control input-sm profile-field">
+							</div><!-- /form-group -->
+						</div><!-- /.col -->
+					</div><!-- /.row -->
+
+					<div class="row">
+						<div class="col-md-8">
+							<div class="form-group">
+								<label class="control-label">{{_ "profile_tags"}}</label>
+								<input id="tags" collection="{{tags_array}}" type="text" placeholder='{{_ "profile_type_and_enter"}}' class="form-control input-sm" data-role="tagsinput">
+							</div><!-- /form-group -->
+						</div><!-- /.col -->
+
+						<div class="col-md-4">
+							<div class="form-group">
+								<label class="control-label">{{_ "profile_language"}}</label>
+								<select id="lang" class="form-control dialog-selection">
+                    				{{#each langs}}
+ 		  								<option {{selected}} value="{{value}}">{{title}}</option>
+                    				{{/each}}		
+ 		  						</select>
+							</div>
+					  </div><!-- /.col -->
+
+					</div>
+				</div>
+
+				<div class="panel-footer">
+					<button class="btn btn-sm" style="visibility:hidden;">HiddenButton</button>
+				</div>
+			</form>
+		</div><!-- /panel -->
+	{{/with}}
+</template>
+
+<template name="passwordPanel">
+	<div class="panel panel-default">
+		<form class="no-margin">
+			<div class="panel-heading">
+				{{_ "profile_change_password"}}
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					{{#with old_password_error}}
+						<label class="control-label">{{_ "old_password"}}</label>
+						<input id="oldPassword" type="password" placeholder='{{_ "old_password"}}' class="form-control input-sm {{validatedClass}} {{errorClass}}" >
+						{{#if errorClass}}
+							<ul class="parsley-error-list" style="display: block;">
+								<li style="display: list-item;">{{_ "password_error_msg" context=message}}</li>
+							</ul>
+						{{/if}}
+					{{/with}}
+				</div><!-- /form-group -->
+					
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							{{#with new_password_error}}
+								<label class="control-label">{{_ "profile_password"}}</label>
+								<input id="newPassword" type="password" placeholder='{{_ "profile_password"}}' class="form-control password {{validatedClass}} {{errorClass}}">
+							
+								{{#if errorClass}}
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{_ "password_error_msg" context=message}}</li>
+								</ul>
+								{{/if}}
+							{{/with}}
+						</div><!-- /form-group -->
+					</div><!-- /.col -->
+					<div class="col-md-6">
+						<div class="form-group">
+							{{#with confirmed_password_error}}
+								<label class="control-label">{{_ "profile_confirm_password"}}</label>
+								<input id="confirmPassword" type="password" placeholder='{{_ "profile_confirm_password"}}' class="form-control password {{validatedClass}} {{errorClass}}">
+							
+								{{#if errorClass}}
+
+								<ul class="parsley-error-list" style="display: block;">
+									<li style="display: list-item;">{{_ "password_error_msg" context=message}}</li>
+								</ul>
+								{{/if}}
+							{{/with}}
+						</div><!-- /form-group -->
+					</div><!-- /.col -->
+				</div><!-- /.row -->
+			</div>
+			<div class="panel-footer text-right">
+				<div class="text-right">
+					<button id="savePassword" class="btn btn-sm btn-success">{{_ "profile_change_btn"}}</button>
+				</div>
+
+				<div id="button-message">
+					{{#if button_message}}
+					<ul  class="parsley-error-list" style="display: block;">
+						<li style="display: list-item;">{{_ "password_button_msg" context=button_message}}</li>
+					</ul>
+					{{/if}}
+				</div>
+			</div>
+		</form>
+	</div>
+</template>
+
+<template name="chatsTab">
+	{{> chatsList}}
+</template>
+
+<template name="profileRibbon">
+	<!-- RIBBON -->
+	<div id="ribbon">
+		<div id="breadcrumb">
+			<ul class="breadcrumb">
+				 <li><i class="fa fa-user"></i> {{_ "profile"}}</li>
+			</ul>
+		</div><!--breadcrumb-->
+	</div>
+	<!-- END RIBBON -->
+</template>
+
+<template name="profileInfo">
+
+	{{#with user}}
+		<div class="row">
+			<div class="col-xs-6 col-sm-4 col-md-6 col-lg-6 text-center">
+				<a href="#">
+					<img src="{{image}}" alt="User Avatar" class="img-thumbnail user-image">
+				</a>
+
+				<input id="fileList" type='file' multiple/>
+
+				<div class="seperator"></div>
+				<div class="seperator"></div>
+			</div><!-- /.col -->
+			<div class="col-xs-6 col-sm-12 col-md-6 col-lg-6">
+				<strong class="font-14">{{name}} {{surname}}</strong>
+				<small class="block">
+					<span class="text-muted"> {{email}}</span>
+				</small>
+
+				<div class="seperator"></div>
+				{{#each tags}}
+					<span class="label label-primary" style="display: inline-block;">{{.}}</span>
+				{{/each}}
+
+				<div class="seperator"></div>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	{{/with}}
+
+</template>
+
+
+
+

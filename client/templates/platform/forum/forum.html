@@ -1,0 +1,172 @@
+
+<template name="forum">
+
+	<div class="row">
+		<div class="col-md-8">
+
+			{{> forumPosts}}
+			
+			{{> forumPagination}}
+		</div><!-- /.col -->
+
+		<div class="col-md-4">
+
+			{{> forumTagSearch}}
+
+			{{> forumTags}}
+
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+
+</template>
+
+<template name="forumPagination">
+
+	{{#if paginations}}
+		<ul class="pagination pagination-split m-bottom-md">
+			<li><a id="previous" href="#">{{_ "forum_prev"}}</a></li>
+
+			{{#each paginations}}
+				<li class="{{active}}"><a href="{{pathFor 'forum'}}">{{value}}</a></li>
+			{{/each}}
+
+			<li><a id="next" href="#">{{_ "forum_next"}}</a></li>
+		</ul>
+	{{/if}}
+
+</template>
+
+<template name="forumTagSearch">
+
+	<div class="form-group">
+		<div class="input-group">
+			<input id="search-tag" type="text" class="form-control input-sm" placeholder="{{_ 'forum_search_by_tag'}}" value="{{searched_tag}}">
+			<span class="input-group-btn">
+				<button id="forum-search-btn" class="btn btn-default btn-sm" type="button"><i class="fa fa-search"></i></button>
+			</span>
+		</div><!-- /input-group -->
+	</div>
+
+</template>
+
+
+<template name="forumTags">
+
+	{{#if tags}}
+		<h4 class="headline">
+			{{_ "forum_tag_cloud"}}
+			<span class="line"></span>
+		</h4>
+		<div class="tag-wrapper">
+			{{#each tags}}
+				<a class="blog-tag" href="{{pathFor 'forum'}}">{{name}}</a>
+			{{/each}}
+		</div>
+	{{/if}}
+	
+</template>
+
+
+<template name="forumPosts">
+
+	<div class="panel blog-container">
+		<div class="panel-body">
+
+			{{> forumProjectsSelection}}
+
+			<button id="new-topic" class="btn btn-success pull-right">{{_ "forum_add_topic"}}</button>
+		</div>
+	</div>
+
+	{{#each forum_posts}}
+		<div id="{{_id}}" class="panel blog-container">
+			<div class="panel-body">
+				
+				<a href="{{pathFor 'forumPost'}}"><h4>{{title}}</h4></a>
+				<small class="text-muted">{{_ "forum_author"}} <a href="#"><strong> {{author}}</strong></a> | {{_ "time_since" number=time.number time=time.time context=time.time}} | {{_ "forum_comments" count=commentsCount context=commentsCount}} | 
+				{{_ "forum_views" count=seenCount context=seenCount}}</small>
+				<p class="m-top-sm m-bottom-sm">
+					{{shortText}}
+				</p>
+
+				{{#each tags}}
+					<a class="blog-tag" href="#">{{this}}</a> 
+				{{/each}}
+
+				<span class="post-like text-muted tooltip-test">
+					 <span class="label label-info m-left">{{projectName}}</span>
+				</span>
+				
+				{{#if isAuthor}}
+					<div id="{{_id}}" projectId="{{projectId}}" class="remove-button hidden" style="position: absolute; top: 3px;">
+	                    <a class="remove-forum-post" href="#">
+	                        <i class="fa fa-trash-o fa-lg"></i> 
+	                    </a>
+	                </div>
+	            {{/if}}
+
+			</div>
+		</div>
+	{{/each}}
+
+	{{> addForumPost}}
+
+</template>
+
+<template name="forumProjectsSelection">
+
+	<select id="project-selection" class="form-control input-sm" style="display:inline-block;width:200px;">
+		{{#each projects}}
+
+			{{#if isDefault}}
+				<option {{selected}} projectId="{{projectId}}">{{_ "forum_all_projects"}}</option>
+			{{else}}
+				<option {{selected}} projectId="{{projectId}}">{{name}}</option>
+			{{/if}}
+		{{/each}}
+	</select>
+
+</template>
+
+
+<template name="addForumPost">
+
+	<!-- Modal for new diagram -->
+    <div id="add-forum-post" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "forum_new_post"}}</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">{{_ "forum_title"}}</label>
+                            <div class="col-sm-9">
+                            	<input id="title" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message" class="col-sm-2 control-label">{{_ "forum_msg"}}</label>
+                            <div class="col-sm-9">
+                            	<textarea id="message" class="form-control" rows="7"></textarea>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="add-post" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- End of modal -->
+
+</template>

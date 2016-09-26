@@ -1,0 +1,225 @@
+
+
+<template name="diagramStyle">
+
+	{{> diagramZoomSlider}}
+
+	{{#if is_edit_mode}}
+	    <div class="row">
+	        <div class="col-sm-12 col-md-12 col-lg-12">
+	            <form role="form">
+	            	<div class="form-group">
+	                    <label for="fillPriority">fillPriority</label>
+						<select class="form-control dialog-selection" id="fillPriority">
+							{{#each fill_priority}}
+			  					<option {{selected}}>{{option}}</option>
+							{{/each}}
+						</select>
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+	    <div class="row">
+	    	<div class="col-sm-12 col-md-12 col-lg-12">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#color" data-toggle="tab">Color</a></li>
+					<li><a href="#linear-gradient" data-toggle="tab">Linear-gradient</a></li>
+					<li><a href="#radial-gradient" data-toggle="tab">Radial-gradient</a></li>
+				</ul>
+
+				<!-- Tab panes -->
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="color">
+						{{> diagramColor}}
+					</div>
+
+					<div class="tab-pane" id="linear-gradient">
+						{{> diagramLinearGradient}}
+					</div>
+
+					<div class="tab-pane" id="radial-gradient">
+						{{> diagramRadialGradient}}
+					</div>										
+				</div>
+			</div>
+	    </div>
+	{{/if}}
+</template>
+
+<template name="diagramColor">
+
+	{{#with style}}
+	    <div class="row">
+	        <div class="col-sm-12 col-md-12 col-lg-12">
+	            <form role="form">
+	                <div class="form-group">
+	                    <label for="fill">fill</label>
+	                    <input type="text" class="form-control dialog-input color-picker" id="fill" value="{{fill}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+	{{/with}}
+
+</template>
+
+<template name="diagramLinearGradient">
+
+	{{#with style}}
+		<div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="fillLinearGradientStartPointX">fillLinearGradientStartPointX</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientStartPointX" value="{{fillLinearGradientStartPointX}}">
+	                </div>
+	            </form>
+	        </div>
+
+	        <div class="col-sm-6 col-md-6 col-lg-6">
+	            <form role="form">
+					<div class="form-group">
+	                    <label for="fillLinearGradientStartPointY">fillLinearGradientStartPointY</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientStartPointY" value="{{fillLinearGradientStartPointY}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+		<div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillLinearGradientEndPointX</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientEndPointX" value="{{fillLinearGradientEndPointX}}">
+	                </div>
+	            </form>
+	        </div>
+
+	        <div class="col-sm-6 col-md-6 col-lg-6">
+	            <form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillLinearGradientEndPointY</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientEndPointY" value="{{fillLinearGradientEndPointY}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+	    <div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillLinearGradientColorStops</label>
+	                    <input type="text" class="form-control dialog-input" seperator=", " id="fillLinearGradientColorStops" value="{{fillLinearGradientColorStops}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+	{{/with}}   
+
+</template>
+
+<template name="diagramRadialGradient">
+
+	{{#with style}}
+		<div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="fillLinearGradientStartPointX">fillRadialGradientStartPointX</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartPointX" value="{{fillRadialGradientStartPointX}}">
+	                </div> 
+	            </form>
+	        </div>
+
+	        <div class="col-sm-6 col-md-6 col-lg-6">
+	            <form role="form">
+	                <div class="form-group">
+	                    <label for="fillLinearGradientStartPointX">fillRadialGradientStartPointY</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartPointY" value="{{fillRadialGradientStartPointY}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+	    <div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillRadialGradientEndPointX</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndPointX" value="{{fillRadialGradientEndPointX}}">
+	                </div>
+	            </form>
+	        </div>
+
+	        <div class="col-sm-6 col-md-6 col-lg-6">
+	            <form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillRadialGradientEndPointY</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndPointY" value="{{fillRadialGradientEndPointY}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+	    <div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">	
+				<form role="form">
+	                <div class="form-group">
+	                    <label for="breakLength">fillRadialGradientStartRadius</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartRadius" value="{{fillRadialGradientStartRadius}}">
+	                </div>
+	            </form>
+	        </div>
+
+	        <div class="col-sm-6 col-md-6 col-lg-6">
+	            <form role="form">
+	                <div class="form-group">
+	                    <label for="fillRadialGradientEndRadius">fillRadialGradientEndRadius</label>
+	                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndRadius" value="{{fillRadialGradientEndRadius}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+
+	    <div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12">	
+				<form role="form">
+					<div class="form-group">
+	                    <label for="breakLength">fillRadialGradientColorStops</label>
+	                    <input type="text" class="form-control dialog-input" seperator=", " id="fillRadialGradientColorStops" value="{{fillRadialGradientColorStops}}">
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+	{{/with}}
+
+</template>
+
+<template name="diagramZoomSlider">
+
+	<!--<div class="row">
+		<form class="form-horizontal no-margin form-border">
+			<div class="form-group">
+				<label class="col-lg-2 control-label">Slider</label>
+				<div class="col-lg-10">
+					<div class="slider slider-horizontal" style="width: 210px;">
+						<div class="slider-track">
+							<div class="slider-selection" style="left: 0%; width: 10%;"></div>
+							<div class="slider-handle round" style="left: 10%;"></div>
+							<div class="slider-handle round" style="left: 0%;"></div>
+						</div>
+						<div class="tooltip top" style="top: -30px; left: 9.5px;">
+							<div class="tooltip-arrow"></div>
+							<div class="tooltip-inner">6</div>
+						</div>
+						<input type="text" class="form-control" value="4" id="sl1" data-slider-handle="round">
+					</div>
+				</div>
+			</div>
+		</form>
+	</div> -->
+</template>
+

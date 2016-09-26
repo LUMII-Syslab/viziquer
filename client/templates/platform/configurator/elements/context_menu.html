@@ -1,0 +1,77 @@
+
+<template name="contextMenus">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#edit-mode-context-menu" data-toggle="tab">Edit mode</a></li>
+				<li><a href="#read-mode-context-menu" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-context-menu">
+					{{> editContextMenu}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-context-menu">
+					{{> readContextMenu}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+</template>
+
+<template name="editContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>
+
+<template name="readContextMenu">
+	{{> Template.dynamic template="contextMenu" data=menu}}
+</template>
+
+
+<!-- Start of contextMenu -->
+<template name="contextMenu">
+
+	{{#with this}}
+		<div class="menu" collection="{{collection}}" array="{{array}}">
+			<form role="form">
+				<div class="form-group">
+					<label for="{{dynamicContextMenu.name}}">dynamicContextMenu</label>
+					<input type="text" class="form-control dialog-input" id="{{dynamicContextMenu.name}}" value="{{dynamicContextMenu.value}}">
+					<span class="help-block">return: [{item: String, procedure: String}]</span>
+				</div>
+		    </form>
+
+			<table class="table table-bordered table-condensed table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Procedure</th>
+						<th>Template</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody class="table-body">
+					{{#each items}}
+						<tr index="{{index}}">
+							<td><div class="table-item" attribute="item" contentEditable="true">{{item}}</div></td>
+							<td><div class="table-item" attribute="procedure" contentEditable="true">{{procedure}}</div></td>
+							<td><div class="table-item" attribute="template" contentEditable="true">{{template}}</div></td>					
+							<td>
+								<center>
+										<a class="btn btn-xs btn-danger remove-context-menu-item"><i class="fa fa-trash-o"></i></a>
+								</center>
+							</td>
+						</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<a class="btn btn-success pull-right" id="add-context-menu-item"><i class="fa fa-plus"></i> Add</a>
+		</div>
+	{{/with}}
+
+</template>
+<!-- End of contextMenu -->

@@ -1,0 +1,418 @@
+
+<template name="ajooBoxStyle">
+{{#with element}}
+    <div class="row">
+        <div class="col-sm-5 col-md-5 col-lg-5">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="stroke">stroke</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="stroke" value="{{stroke}}">
+                </div>
+            </form>
+        </div>
+
+		<div class="col-sm-4 col-md-4 col-lg-4">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineWidth">dash</label>
+                    <input type="text" class="form-control dialog-input" seperator=", " id="dash" value="{{dash}}" placeholder="stroke, gap, ...">
+                </div>
+            </form>
+        </div>
+
+		<div class="col-sm-3 col-md-3 col-lg-3">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineWidth">strokeWidth</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="strokeWidth" value="{{strokeWidth}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+    	<div class="col-sm-5 col-md-5 col-lg-5">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowColor</label>
+	                <input type="text" class="form-control dialog-input color-picker" id="shadowColor" value="{{shadowColor}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-3 col-md-3 col-lg-3">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowBlur</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowBlur" value="{{shadowBlur}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-4 col-md-4 col-lg-4">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOpacity</label>
+	                <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="shadowOpacity" value="{{shadowOpacity}}">
+	            </div>
+	       	</form>
+        </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOffsetX</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowOffsetX" value="{{shadowOffsetX}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOffsetY</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowOffsetY" value="{{shadowOffsetY}}">
+	            </div>
+	        </form>
+	    </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="fillPriority">shape</label>
+					<select class="form-control dialog-selection" id="shape">
+						{{#each shapes}}
+		  					<option {{selected}} value="{{option}}">{{option}}</option>
+						{{/each}}
+					</select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="fillPriority">fillPriority</label>
+					<select class="form-control dialog-selection" id="fillPriority">
+						{{#each fillPriority}}
+		  					<option {{selected}}>{{option}}</option>
+						{{/each}}
+					</select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#color" data-toggle="tab">Color</a></li>
+				<li><a href="#linear-gradient" data-toggle="tab">Linear-gradient</a></li>
+				<li><a href="#radial-gradient" data-toggle="tab">Radial-gradient</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="color">
+					{{> boxColor}}
+				</div>
+
+				<div class="tab-pane" id="linear-gradient">
+					{{> boxLinearGradient}}
+				</div>
+
+				<div class="tab-pane" id="radial-gradient">
+					{{> boxRadialGradient}}
+				</div>
+
+			</div>
+		</div>
+    </div>
+{{/with}}
+</template>
+
+
+<template name="ZoomChartBoxStyle">
+
+{{#with element}}
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="fillColor">fillColor</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="fillColor" value="{{fillColor}}">
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="opacity">opacity</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="opacity" value="{{opacity}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="image">image</label>
+                    <input type="text" class="form-control dialog-input" id="image" value="{{image}}" placeholder="image URL">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="imageCropping">imageCropping</label>
+                    <select class="form-control dialog-selection" id="imageCropping">
+                        {{#each imageCroppings}}
+                            <option {{selected}} value="{{option}}">{{option}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="shadowColor">shadowColor</label>
+	                <input type="text" class="form-control dialog-input color-picker" id="shadowColor" value="{{shadowColor}}">
+	            </div>
+	       	</form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="display">display</label>
+                    <select class="form-control dialog-selection" id="display">
+                        {{#each displays}}
+                            <option {{selected}} value="{{option}}">{{option}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineColor">lineColor</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="lineColor" value="{{lineColor}}">
+                </div>
+            </form>
+        </div>
+
+    	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="lineWidth">lineWidth</label>
+	                <input type="number" min="0" max="10" step="1" class="form-control dialog-input" id="lineWidth" value="{{lineWidth}}">
+	            </div>
+	        </form>
+	    </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="radius">radius</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="radius" value="{{radius}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineDash">lineDash</label>
+                    <input type="text" class="form-control dialog-input" seperator=", " id="lineDash" value="{{lineDash}}" placeholder="stroke, gap, ...">
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="cursor">cursor</label>
+                    <input type="text" class="form-control dialog-input" id="cursor" value="{{cursor}}" placeholder="HTML cursor names">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{{/with}}
+
+</template>
+
+<template name="boxColor">
+{{#with elem}}
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <form role="form">
+                <div class="form-group">
+                    <label for="fill">fill</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="fill" value="{{fill}}">
+                </div>
+            </form>
+        </div>
+    </div>
+{{/with}}			
+</template>
+
+<template name="boxLinearGradient">
+{{#with style}}
+	<div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="fillLinearGradientStartPointX">fillLinearGradientStartPointX</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientStartPointX" value="{{fillLinearGradientStartPointX}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+				<div class="form-group">
+                    <label for="fillLinearGradientStartPointY">fillLinearGradientStartPointY</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientStartPointY" value="{{fillLinearGradientStartPointY}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+	<div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillLinearGradientEndPointX</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientEndPointX" value="{{fillLinearGradientEndPointX}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillLinearGradientEndPointY</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillLinearGradientEndPointY" value="{{fillLinearGradientEndPointY}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillLinearGradientColorStops</label>
+                    <input type="text" class="form-control dialog-input" seperator=", " id="fillLinearGradientColorStops" value="{{fillLinearGradientColorStops}}">
+                </div>
+            </form>
+        </div>
+    </div>
+{{/with}}             
+</template>
+
+<template name="boxRadialGradient">
+{{#with style}}
+	<div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="fillLinearGradientStartPointX">fillRadialGradientStartPointX</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartPointX" value="{{fillRadialGradientStartPointX}}">
+                </div> 
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="fillLinearGradientStartPointX">fillRadialGradientStartPointY</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartPointY" value="{{fillRadialGradientStartPointY}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillRadialGradientEndPointX</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndPointX" value="{{fillRadialGradientEndPointX}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillRadialGradientEndPointY</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndPointY" value="{{fillRadialGradientEndPointY}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">	
+			<form role="form">
+                <div class="form-group">
+                    <label for="breakLength">fillRadialGradientStartRadius</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientStartRadius" value="{{fillRadialGradientStartRadius}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="fillRadialGradientEndRadius">fillRadialGradientEndRadius</label>
+                    <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="fillRadialGradientEndRadius" value="{{fillRadialGradientEndRadius}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">	
+			<form role="form">
+				<div class="form-group">
+                    <label for="breakLength">fillRadialGradientColorStops</label>
+                    <input type="text" class="form-control dialog-input" seperator=", " id="fillRadialGradientColorStops" value="{{fillRadialGradientColorStops}}">
+                </div>
+            </form>
+        </div>
+    </div>
+{{/with}}
+</template>
+
+<template name="boxPattern">
+	<div class="tab-pane" id="pattern"></div>
+</template>
+

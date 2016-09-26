@@ -1,0 +1,27 @@
+
+<template name="searchMenu">
+    <div class="dropdown-menu no-padding" style="{{searches.style}}width: 100%;">
+        <div class="panel panel-default no-margin">
+            <div class="panel-body no-padding collapse in" id="typeahead">
+                <ul id="searchList"  class="list-group task-list no-margin collapse in" count="{{searches.count}}">
+                {{#each searches}}
+                    {{#if phrase}}
+                        {{#if profileImage}}
+                            <li id="{{id}}" class="list-group-item clearfix user-container search-item" item="{{phrase}}" index="{{index}}" style="cursor: pointer;">
+
+                                <div class="author-image small" style="backround:white;border:none;">
+                                    <img src="{{profileImage}}">
+                                </div>
+                                <div class="pull-left m-left-sm"><span>{{name}}</span><br>{{email}}</div>
+                            </li>
+
+                        {{else}}
+                            <li class="list-group-item search-item {{active}}" index="{{index}}" item="{{phrase}}">{{phrase}}</li>
+                        {{/if}}
+                    {{/if}}
+                {{/each}}
+                </ul><!-- /list-group -->
+            </div>
+        </div>
+    </div>
+</template>

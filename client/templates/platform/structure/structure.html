@@ -1,0 +1,204 @@
+
+<!-- Project content templates -->
+<template name="structureTemplate">
+
+	{{#each categories}}
+
+        {{#if name}}
+            <h5 class="headline m-top-md" id="{{_id}}">
+                {{name}}
+                <span class="line"></span>
+            </h5>
+        {{/if}}
+        
+        <div class="row">
+            {{#each projects}}
+    			<div class="col-sm-6 col-md-3 container">
+                    <a id="{{projectId}}" class="project-path" href="#">
+                        <div class="panel-stat3 {{styleClass}} project-container">
+                            <h4>{{name}}</h4>
+
+                            {{#if isDefault}}
+                                <span class="m-left-xs">{{_ "user_role" context=role}}/{{_ "user_status" context=status}}</span>
+                            {{else}}
+                                <span class="m-left-xs">{{role}}/{{_ "user_status" context=status}}</span>    
+                            {{/if}}
+                            
+                            <div class="stat-icon">
+
+    	                        {{#if icon}}
+    	                            <i class="fa fa-{{icon}} fa-2x"></i>
+    	                        {{/if}}
+              
+                            </div>
+                        </div>
+
+                        {{#if isEditable}}
+    						<div class="project-dropdown-container hidden" style="position: absolute; top: 3px;">
+    							<a class="edit-project" href="#" data-toggle="dropdown">
+    	                            <i class="fa fa-angle-down fa-lg"></i> 
+    	                        </a>
+    	                        <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;"> 
+    	                            <li>
+    	                                <a class="edit-forum-post" href="#">
+    	                                    <i class="fa fa-pencil fa-lg"></i> 
+    	                                    {{_ "edit"}}
+    	                                </a>
+    	                            </li>
+    	                            <li>
+    	                                <a class="remove-forum-post" href="#">
+    	                                    <i class="fa fa-trash-o fa-lg"></i> 
+    	                                    {{_ "delete"}}
+    	                                </a>
+    	                            </li>
+    	                        </ul>
+    		                </div>
+    	                {{/if}}
+                    </a>
+                </div>
+            {{/each}}
+        </div>
+	{{/each}}
+
+</template>
+<!-- End of project content templates -->
+
+<!-- Ribbon -->
+<template name="structureRibbon">
+
+ <!-- RIBBON -->
+    <div id="ribbon">
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+        	<li><i class="fa fa-cog"></i> {{_ "structure"}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+
+        <span class="ribbon-button-alignment pull-right">
+        	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_project"}}'><i class="fa fa-plus"></i></button>
+        </span>
+
+
+    </div>
+    <!-- END RIBBON -->
+
+    {{> createProjectModal}}
+    {{> editProjectModal}}
+
+</template>
+<!-- End of Ribbon -->
+
+<template name="createProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="add-project" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "add_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                            <div class="col-sm-10">
+                                <input id="project-name" type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                            <div class="col-sm-10">
+                                <input id="category-name" type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                            <div class="col-sm-10">
+                                <input id="icon-name" type="text" class="form-control" placeholder="">
+								<ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+									<li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+								</ul>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tool" class="control-label col-sm-2">{{_ "project_tool"}}</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="tool">
+                                    {{#each tools}}
+                                        <option id="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="create-project" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+<template name="editProjectModal">
+
+    <!-- Modal to create new project -->
+    <div id="edit-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{_ "project_edit_project"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        {{#with data}}
+
+                            <div class="form-group">
+                                <label for="edit-project-name" class="col-sm-2 control-label">{{_ "project_name"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="edit-project-name" type="text" class="form-control" value="{{name}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-category-name" class="col-sm-2 control-label">{{_ "project_category"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="edit-category-name" type="text" class="form-control" value="{{category}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-icon-name" class="col-sm-2 control-label">{{_ "project_icon"}}</label>
+                                <div class="col-sm-10">
+                                    <input id="edit-icon-name" type="text" class="form-control" value="{{icon}}">
+    								<ul id="parsley-5828012968413532" class="parsley-error-list" style="display: block;">
+    									<li class="type" style="display: list-item;">{{{_ "structure_font_awesome"}}}</li>
+    								</ul>
+
+                                </div>
+                            </div>
+                        {{/with}}
+                    </form>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="project-edited" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>

@@ -1,0 +1,24 @@
+
+<template name="diagramTypePalette">
+
+    <div class="row">
+		<div class="col-sm-12 col-lg-12">
+			<div class="dd" id="nestable">
+				<ol id="buttons" class="dd-list">
+
+					{{#each paletteButtons}}
+
+						<li class="dd-item button" id="{{_id}}" index="{{index}}">
+							<div class="row">
+								<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+									<div class="dd-handle">{{name}}</div>
+								</div>
+							</div>
+						</li>
+
+					{{/each}}
+				</ol>
+			</div><!-- dd -->
+		</div>
+	</div>
+</template>

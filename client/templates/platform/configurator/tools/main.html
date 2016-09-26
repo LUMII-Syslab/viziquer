@@ -1,0 +1,155 @@
+
+<template name="toolTemplate">
+	<div class="row">
+		<div class="col-sm-8">
+            {{> toolDocsDgrs}}
+		</div>
+		<div class="col-sm-4">
+			{{> versions}}
+		</div>
+	</div>		
+</template>
+
+<template name="toolDocsDgrs">
+
+    <div class="panel">
+        <div class="panel-tab clearfix">
+            <ul class="tab-bar bg-warning">
+                <li class="active"><a href="#Diagrams" data-toggle="tab"><i class="fa fa-picture-o"></i> Diagrams</a></li>
+                <li class=""><a href="#Documents" data-toggle="tab"><i class="fa fa-file-text"></i> Documents</a></li>
+            </ul>
+        </div>
+        <div class="panel-body">
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="Diagrams">
+                    {{> toolDiagrams}}             
+                </div>
+            
+                <div class="tab-pane fade" id="Documents">
+                    {{> toolDocuments}}             
+                </div>
+            </div><!-- /tab-content -->
+        </div>
+    </div>
+</template>
+
+<template name="loadModelForm">
+    <!-- Modal for load models -->
+    <div id="load-model-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <input id="model-upload" type='file'/>
+                </div>
+
+                <div class="modal-body load-models-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">                      
+                            <div class="form-group">
+                                <label class="col-lg-1 control-label"></label>
+                                <div class="col-lg-9">
+                                    {{#each projects}}
+                                        <label class="label-checkbox">
+                                            <input type="checkbox" class="load-model-checkbox" id="{{_id}}">
+                                            <span class="custom-checkbox"></span>
+                                            {{name}} <span class="label label-info m-left-xs">#{{_id}}</span>
+                                        </label>
+                                    {{/each}}
+                                </div>
+                            </div>  
+                        </div>
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="loadModel" type="button" class="btn btn-primary" data-dismiss="modal">Upload</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+<template name="renameTool">
+    <!-- Modal for new diagram -->
+        <div id="rename-tool-form" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Rename Tool</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label for="diagram-name" class="col-sm-1 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input id="tool-name" type="text" class="form-control" value="{{tool_name}}" placeholder="">
+                                </div>
+                            </div>
+                        </form>  
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="update-tool-name" type="button" class="btn btn-primary">OK</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    <!-- End of modal -->
+</template>
+
+<template name="settings">
+<!-- Modal for new diagram -->
+    <div id="settings-form" class="modal fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Tool Settings</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="modeSettings" class="control-label col-sm-4">Mode</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="modeSettings">
+                                    <option selected>Edit</option>
+                                    <option>Edit/Read</option>
+                                    <option>Read</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{#each panel_settings}}
+                            <div class="form-group">
+                                <label for="{{id}}" class="control-label col-sm-4">{{name}}</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control selection-item" id="{{id}}">
+                                        {{#with options}}
+                                            <option value="{{yes.value}}" {{yes.selected}}>{{yes.input}}</option>
+                                            <option value="{{no.value}}" {{no.selected}}>{{no.input}}</option>
+                                        {{/with}}
+                                    </select>
+                                </div>
+                            </div>
+
+                        {{/each}}
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="save-tool-settings" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>

@@ -1,0 +1,106 @@
+
+<template name="toolDiagrams">
+   
+<!--     {{> diagramToolbar}} -->
+
+    <div class="panel-heading text-right">
+        <a class="btn btn-success btn-sm" id="add"><i class="fa fa-plus"></i> Add</a>
+        <a class="btn btn-primary btn-sm" id="import-diagram"><i class="fa fa-upload"></i> Import</a>
+    </div>
+
+    <div>
+        {{#each diagrams}}
+            <div class="col-sm-6 col-md-6">
+                <div class="thumbnail">
+                    <a class="reference" href="{{pathFor 'configuratorDiagram'}}">
+                        {{#if imageUrl}}
+                          <img src="{{imageUrl}}" alt="{{imageUrl}}" class="diagram-image">
+                        {{else}}
+                          <img src="http://placehold.it/770x347" class="diagram-image">
+                        {{/if}}
+                    </a>
+                    <div class="caption">
+                        <center>
+                            <a class="reference" href="{{pathFor 'configuratorDiagram'}}"><h4>{{name}}</h4></a>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+ 
+</template>
+
+<template name="addConfiguratorDiagram">
+<!-- Modal for new diagram -->
+    <div id="add-configurator-diagram" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">New Diagram Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="diagram-name" class="col-sm-1 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input id="diagram-name" type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editor-type" class="col-sm-1 control-label">Type</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="editor-type">
+                                    <option id="ajooEditor">ajooEditor</option>
+                                    <option id="ZoomChart">ZoomChart</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="create-configurator-diagram" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+</template>
+
+<template name="importConfigurationForm">
+
+    <!-- Modal for new document -->
+    <div id="upload-data" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="fileList" type='file' multiple/>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button id="ok-upload-files" type="button" class="btn btn-default">Upload</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{_ "close"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>

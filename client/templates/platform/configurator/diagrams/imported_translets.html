@@ -1,0 +1,104 @@
+
+
+<template name="ImportedTranslets">
+ 
+    <div id="imported-translets-form" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">      
+                <div class="modal-header">
+                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Imported Translets</h4>
+                </div>
+
+                <div class="modal-body">
+                	{{#with translets}}
+
+	                    <ul class="list-group task-list no-margin collapse in">
+                    		{{#if diagramTypeTranslets}}
+	                    		<table class="table table-striped">
+	                    			<thead>
+	                    				<tr>
+											<th>Diagram</th>
+				                            <th>ExtensionPoint</th>
+				                            <th>Procedure</th>
+	                    				</tr>
+	                    			</thead>
+			                        <tbody>
+			                        	{{#each diagramTypeTranslets}}
+			                        		<tr>
+			                        			<td>{{name}}</td>
+				                                <td>{{extensionPoint}}</td>
+				                                <td>{{procedureName}}</td>
+				                            </tr>
+				                        {{/each}}
+			                        </tbody>
+			                    </table>
+		                    {{/if}}
+	                    </ul>
+
+	                    <ul class="list-group task-list no-margin collapse in">
+
+	                    	{{#each elementTypeTranslets}}
+
+	                    		{{#if group}}
+		                    		<table class="table table-striped">
+		                    			<thead>
+		                    				<tr>
+					                            <th>Element</th>
+					                            <th>ExtensionPoint</th>
+					                            <th>Procedure</th>
+		                    				</tr>
+		                    			</thead>
+				                        <tbody>
+				                        	{{#each group}}
+				                        		<tr>
+					                            	<td>{{name}}</td>
+					                                <td>{{extensionPoint}}</td>
+					                                <td>{{procedureName}}</td>
+					                            </tr>
+					                        {{/each}}
+				                        </tbody>
+				                    </table>
+
+				                    {{#each compartments}}
+
+				                    	{{#if compartTranslets}}
+					                        <table class="table table-striped">
+				                    			<thead>
+				                    				<tr>
+							                            <th>Element</th>
+							                            <th>Compartment</th>
+							                            <th>SubCompartment</th>
+							                            <th>ExtensionPoint</th>
+							                            <th>Procedure</th>
+				                    				</tr>
+				                    			</thead>
+
+					                        	<tbody>
+						                            {{#each compartTranslets}}
+							                            <tr>
+							                            	<td>{{elementName}}</td>
+							                                <td>{{name}}</td>
+							                                <td>{{subCompartmentName}}</td>
+								                            <td>{{extensionPoint}}</td>
+								                            <td>{{procedureName}}</td>
+								                        </tr>
+						                            {{/each}}
+						                        </tbody>
+						                    </table>
+						                {{/if}}
+
+					                {{/each}}
+					            {{/if}}
+
+		                	{{/each}}
+	                    </ul>
+
+                    {{/with}}
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</template>

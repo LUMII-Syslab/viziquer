@@ -1,0 +1,335 @@
+
+
+<template name="dialog">
+
+	{{#each tabs}}
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+
+					{{#if isOpen}}
+
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#dialog" href="#{{_id}}" aria-expanded="true" aria-controls="{{name}}">
+							{{name}}
+						</a>
+
+					{{else}}
+
+						<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#dialog" href="#{{_id}}" aria-expanded="false" aria-controls="{{name}}">
+							{{name}}
+						</a>
+
+					{{/if}}
+				</h4>
+			</div>
+
+			{{#if isOpen}}
+
+				<div id="{{_id}}" class="panel-collapse collapse in" aria-expanded="true">
+					<div class="panel-body">
+						{{> Template.dynamic template=templateId data=tab}}
+					</div>
+				</div>
+
+			{{else}}
+
+				<div id="{{_id}}" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+					<div class="panel-body">
+						{{> Template.dynamic template=templateId data=tab}}
+					</div>
+				</div>
+
+			{{/if}}
+
+		</div>
+	
+	{{/each}}
+
+</template>
+
+
+<template name="dialogTabContent">
+
+	{{#each compart_types}}
+
+		{{#if input}}
+			<div id="{{_id}}" class="form-group compart-type">
+				<label for="{{compartmentId}}">{{name}}</label>
+				<input type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
+				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
+				placeholder="{{_placeholder}}" >
+			</div>
+		{{/if}}
+
+		{{#if textarea}}
+			<div id="{{_id}}" class="form-group compart-type">
+				<label for="{{compartmentId}}">{{name}}</label>
+				<textarea type="text" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
+				style="overflow:auto;resize:none;" id="{{compartmentId}}"
+				rows="{{_rows}}" disabled="{{disabled}}" placeholder="{{_placeholder}}"
+				value="{{field_value}}"></textarea>
+					{{#if description}}
+						<span class="help-block">{{description}}</span>
+					{{/if}}
+			</div>
+		{{/if}}
+
+		{{#if selection}}
+			<div id="{{_id}}" class="form-group compart-type">
+				<label for="{{compartmentId}}">{{name}}</label>
+				<select type="text" class="form-control dialog-selection {{subCompartmentTypeId}} input-sm"
+					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
+					placeholder="{{_placeholder}}" >
+
+					{{#each values}}
+						<option selected="{{selected}}" mappedValue="{{value}}"
+						elementStyleId="{{elementStyle}}"
+						compartmentStyleId="{{compartmentStyle}}">{{input}}</option>
+					{{/each}}
+
+					{{#if description}}
+						<span class="help-block">{{description}}</span>
+					{{/if}}
+				</select>
+			</div>
+		{{/if}}
+
+		{{#if combobox}}
+			<div id="{{_id}}" class="form-group compart-type">
+				<label for="{{compartmentId}}">{{name}}</label>
+				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
+					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
+					placeholder="{{_placeholder}}" list="row_{{_id}}">
+
+					<datalist id="row_{{_id}}" class="datalist">
+						{{#each values}}
+							<option selected="{{selected}}" mappedValue="{{value}}"
+							elementStyleId="{{elementStyle}}"
+							compartmentStyleId="{{compartmentStyle}}">{{input}}</option>
+						{{/each}}
+					</datalist>
+
+					{{#if description}}
+						<span class="help-block">{{description}}</span>
+					{{/if}}
+			</div>
+		{{/if}}
+
+		{{#if checkbox}}
+			<div id="{{_id}}" class="form-group compart-type">
+				<label for="{{compartmentId}}" class="label-checkbox">
+				
+					<input type="checkbox" class="dialog-checkbox {{subCompartmentTypeId}} input-sm"
+					id="{{compartmentId}}" checked="{{checked}}"
+					placeholder="{{_placeholder}}" disabled="{{disabled}}"
+
+					falseValue="{{false_value}}" trueValue="{{true_value}}"
+					falseElementStyle="{{false_elem_style}}"
+					falseCompartmentStyle="{{false_compart_style}}"
+					trueElementStyle="{{true_elem_style}}"
+					trueCompartmentStyle="{{true_compart_style}}"
+					>
+
+					<span class="custom-checkbox"></span>
+					{{name}}
+
+				</label>
+
+				{{#if description}}
+					<span class="help-block">{{description}}</span>
+				{{/if}}
+
+			</div>
+		{{/if}}
+
+		{{#if radio}}
+			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}">
+				{{#each values}}
+					<label for="{{compartmentId}}" class="label-radio">{{name}}
+
+						<input type="radio" class="dialog-radio" 
+						name="{{_id}}" 
+						input="{{input}}" 	
+						mappedValue="{{value}}" 
+						elementStyleId="{{elementStyle}}" 
+						compartmentStyleId="{{compartmentStyle}}"
+						checked="{{checked}}" disabled="{{disabled}}" > 
+
+						<span class="custom-radio"></span>
+						{{input}}
+					</label>
+
+					{{#if description}}
+						<span class="help-block">{{description}}</span>
+					{{/if}}
+
+				{{/each}} 
+			</div>
+		{{/if}}
+
+		{{#if cloudFiles}}
+			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}">
+				
+				{{#unless disabled}}
+					
+					<div class="form-group attach-container">
+						<a class="attach-file-btn btn btn-sm btn-info">Attach files</a>
+						<button id="upload-file" type="button" class="btn btn-info btn-sm">Upload</button>
+
+						{{> attachFiles}}
+						{{> uploadFileFormInDiagram}}
+					</div>
+					
+				{{/unless}}
+				
+				<div class="row">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-condensed table-hover table-striped">
+							<tbody>
+
+							{{#each addedFiles}}	
+
+								{{#if _id}}
+
+									{{#if image}}
+
+										<tr>
+											<td>
+												<img src={{url}} file-id="{{fileId}}" class="multimedia" style="width:100%;" alt="User Avatar">
+											</td>
+
+											{{#unless disabled}}
+												<td style="width:30px;">
+													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>			
+												</td>
+											{{/unless}}
+
+										</tr>
+									{{else}}
+
+										{{#if video}}
+
+											<tr>
+												<td>
+													<video style="width:100%;" controls>  
+														<source video="video" file-id="{{fileId}}" src="{{url}}" class="multimedia" type="video/mp4">
+													</video>
+												</td>
+
+												{{#unless disabled}}
+													<td style="width:30px;">
+														<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>
+													</td>
+												{{/unless}}
+											</tr>
+
+										{{else}}
+
+											<tr>
+												<td><a href="{{url}}" class="file-link" target="_blank" initialName="{{initialName}}">{{fullName}}</a></td>
+												{{#unless disabled}}
+													<td style="width:30px;">
+														<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>	
+													</td>
+												{{/unless}}
+											</tr>
+
+										{{/if}}
+
+									{{/if}}
+
+								{{/if}}
+
+							{{/each}}
+							
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+
+			</div>
+		{{/if}}
+
+		{{#if custom}}
+			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}">
+				{{> Template.dynamic template=templateName data=this}}
+			</div>
+		{{/if}}
+
+	{{/each}}
+
+</template>
+
+<template name="attachFiles">
+
+<!-- Modal for new document -->
+    <div class="attach-file-form modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Attach files</h4>
+                </div>
+
+                <div class="modal-body">
+
+					<table class="table table-bordered table-condensed table-hover table-striped">
+						<tbody>
+
+						{{#each filesList}}	
+							<tr>
+								<td><p>{{fullName}}</p></td>
+								<td style="width:30px;"><center><a id="{{_id}}" class="btn btn-xs btn-success attach-file"><i class="fa fa-plus"></i></a></center></td>
+							</tr>
+						{{/each}}
+						
+						</tbody>
+					</table>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary attach-file-form-close">{{_ "Close"}}</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>
+
+<template name="uploadFileFormInDiagram">
+
+<!-- Modal for new document -->
+    <div id="upload-file-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+				       
+						<div class="form-group">
+							<div class="col-lg-10">
+								<input id="fileToUpload" type="file">
+							</div><!-- /.col -->
+						</div>
+
+                    </form> 
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="upload-file-form-ok" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+
+</template>

@@ -1,0 +1,334 @@
+
+<template name="lineStyle">
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+
+            {{#if is_ajoo_editor}}
+    			<ul class="nav nav-tabs">
+    				<li class="active"><a href="#line" data-toggle="tab">Line</a></li>
+    				<li><a href="#start-shape" data-toggle="tab">Start shape</a></li>
+    				<li><a href="#end-shape" data-toggle="tab">End shape</a></li>
+    			</ul>
+
+    			<!-- Tab panes -->
+    			<div class="tab-content">
+    				<div class="tab-pane fade in active" id="line">
+    					{{> lineObjectStyle}}
+    				</div>
+
+    				<div class="tab-pane" id="start-shape">
+    					{{> startShapeStyle}}
+    				</div>
+
+    				<div class="tab-pane" id="end-shape">
+    					{{> endShapeStyle}}
+    				</div>
+    			</div>
+
+            {{else}}
+
+                {{> lineObjectZoomChartStyle}}
+
+            {{/if}}
+		</div>
+    </div>
+</template>
+
+<template name="lineObjectStyle">
+{{#with elem}}
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="alignment">stroke</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="stroke" value="{{stroke}}">
+                </div>
+
+                <div class="form-group">
+                    <label for="alignment">dash</label>
+                    <input type="text" class="form-control dialog-input" id="dash" seperator=", " value="{{dash}}">
+                </div>
+
+                <div class="form-group">
+                    <label for="alignment">opacity</label>
+                    <input type="number" class="form-control dialog-input" id="opacity" value="{{opacity}}">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="alignment">shadowColor</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="shadowColor" value="{{shadowColor}}">
+                </div>
+
+                <div class="form-group">
+                    <label for="alignment">shadowOffsetX</label>
+                    <input type="number" class="form-control dialog-input" id="shadowOffsetX" value="{{shadowOffsetX}}">
+                </div>	
+
+                <div class="form-group">
+                    <label for="alignment">shadowOpacity</label>
+                    <input type="number" class="form-control dialog-input" id="shadowOpacity" value="{{shadowOpacity}}">
+                </div>	                
+
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="alignment">strokeWidth</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="strokeWidth" value="{{strokeWidth}}">
+                </div>
+
+                <div class="form-group">
+                    <label for="alignment">tension</label>
+                    <input type="number" class="form-control dialog-input" id="tension" value="{{tension}}">
+                </div>
+
+               	<div class="form-group">
+                    <label for="alignment">shadowBlur</label>
+                    <input type="number" class="form-control dialog-input" id="shadowBlur" value="{{shadowBlur}}">
+                </div>
+
+               	<div class="form-group">
+                    <label for="alignment">shadowOffsetY</label>
+                    <input type="number" class="form-control dialog-input" id="shadowOffsetY" value="{{shadowOffsetY}}">
+                </div>	
+
+           	</form>
+        </div>
+	</div>
+{{/with}}
+</template>
+
+<template name="startShapeStyle">
+	{{#with startShape}}
+		{{> lineShapeStyle}}
+	{{/with}}
+</template>
+
+<template name="endShapeStyle">
+	{{#with endShape}}
+		{{> lineShapeStyle}}
+	{{/with}}
+</template>
+
+<template name="lineShapeStyle">
+
+    <div class="row">
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="shape">shape</label>
+					<select class="form-control dialog-selection" id="shape">
+						{{#each shapes}}
+		  					<option {{selected}} value="{{option}}">{{option}}</option>
+						{{/each}}
+					</select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="radius">radius</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="radius" value="{{radius}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-5 col-md-5 col-lg-5">
+            <form role="form">
+            	<div class="form-group">
+                    <label for="stroke">stroke</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="stroke" value="{{stroke}}">
+                </div>
+            </form>
+        </div>
+
+		<div class="col-sm-4 col-md-4 col-lg-4">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineWidth">dash</label>
+                    <input type="text" class="form-control dialog-input" seperator=", " id="dash" value="{{dash}}" placeholder="stroke, gap, ...">
+                </div>
+            </form>
+        </div>
+
+		<div class="col-sm-3 col-md-3 col-lg-3">
+            <form role="form">
+                <div class="form-group">
+                    <label for="lineWidth">strokeWidth</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="strokeWidth" value="{{strokeWidth}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+    	<div class="col-sm-5 col-md-5 col-lg-5">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowColor</label>
+	                <input type="text" class="form-control dialog-input color-picker" id="shadowColor" value="{{shadowColor}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-3 col-md-3 col-lg-3">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowBlur</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowBlur" value="{{shadowBlur}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-4 col-md-4 col-lg-4">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOpacity</label>
+	                <input type="number" step="0.1" min="0" max="1" class="form-control dialog-input" id="shadowOpacity" value="{{shadowOpacity}}">
+	            </div>
+	       	</form>
+        </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOffsetX</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowOffsetX" value="{{shadowOffsetX}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-6 col-md-6 col-lg-6">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="alignment">shadowOffsetY</label>
+	                <input type="number" step="1" min="0" class="form-control dialog-input" id="shadowOffsetY" value="{{shadowOffsetY}}">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-12 col-md-12 col-lg-12">
+    		<form role="form">
+	            <div class="form-group">
+	                <label for="fill">fill</label>
+	                <input type="text" class="form-control dialog-input color-picker" id="fill" value="{{fill}}">
+	            </div>
+	        </form>
+	    </div>
+    </div>
+
+</template>
+
+
+<template name="lineObjectZoomChartStyle">
+
+{{#with line_style}}
+    <div class="row">
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="fromDecoration">fromDecoration</label>
+                    <select class="form-control dialog-selection" id="fromDecoration">
+                        {{#each fromDecorations}}
+                            <option {{selected}} value="{{option}}">{{value}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="toDecoration">toDecoration</label>
+                    <select class="form-control dialog-selection" id="toDecoration">
+                        {{#each toDecorations}}
+                            <option {{selected}} value="{{option}}">{{value}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="fillColor">fillColor</label>
+                    <input type="text" class="form-control dialog-input color-picker" id="fillColor" value="{{fillColor}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="dashed">dashed</label>
+                    <select class="form-control dialog-selection" id="dashed">
+                        {{#each dashes}}
+                            <option {{selected}} value="{{option}}">{{option}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="length">length</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="length" value="{{length}}" placeholder="1">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="strength">strength</label>
+                    <input type="number" step="1" min="0" max="10" class="form-control dialog-input" id="strength" value="{{strength}}" placeholder="1">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="radius">radius</label>
+                    <input type="number" step="1" min="0" class="form-control dialog-input" id="radius" value="{{radius}}">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="cursor">cursor</label>
+                    <input type="text" class="form-control dialog-input" id="cursor" value="{{cursor}}" placeholder="HTML cursor names">
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <form role="form">
+                <div class="form-group">
+                    <label for="direction">direction</label>
+                    <select class="form-control dialog-selection" id="direction">
+                        {{#each directions}}
+                            <option {{selected}} value="{{option}}">{{option}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{{/with}}
+
+</template>

@@ -1,0 +1,197 @@
+
+<template name="diagramToolbar">
+
+    <div class="row">
+    	<div class="col-sm-12 col-md-12 col-lg-12">
+			<ul class="nav nav-tabs">
+				<li  class="toolbar-tab active" type="edit-mode"><a href="#edit-mode-toolbar" data-toggle="tab">Edit mode</a></li>
+				<li class="toolbar-tab" type="read-mode"><a href="#read-mode-toolbar" data-toggle="tab">Read mode</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+
+				<div class="tab-pane fade in active" id="edit-mode-toolbar">
+					{{> editModeToolbar}}
+				</div>
+
+				<div class="tab-pane" id="read-mode-toolbar">
+					{{> readModeToolbar}}
+				</div>								
+		
+			</div>
+		</div>
+    </div>
+
+</template>
+
+<template name="editModeToolbar">
+	{{> toolbarButtons}}
+	{{> toolbarButtonFields}}
+	{{> toolbarDropDownTable}}
+</template>
+
+<template name="toolbarButtons">
+	<div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">
+			{{#each toolbar_buttons}}
+				{{> toolbar_button}}
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">
+			<div class="pull-right">
+				<a class="btn btn-success" id="add-toolbar-button"><i class="fa fa-plus"></i> Add</a>
+				<a class="btn btn-danger" id="remove-toolbar-button"><i class="fa fa-trash-o"></i> Remove</a>
+			</div>
+		</div>
+	</div>
+	<hr>	
+</template>
+
+<template name="toolbarButtonFields">
+	{{#with toolbar_button}}
+		{{> toolbar_item_rows}}
+	{{/with}}
+</template>
+
+<template name="readModeToolbar">
+	{{> readModeToolbarButtons}}
+	{{> readModeToolbarButtonFields}}
+	{{> toolbarDropDownTable}}
+</template>
+
+<template name="readModeToolbarButtonFields">
+	{{#with toolbar_button}}   	
+		{{> toolbar_item_rows}}
+
+		<div class="row">
+		   	<div class="col-sm-12 col-md-6 col-lg-6">
+				<form role="form">
+					<div class="form-group">
+						<label class="label-checkbox inline">
+							<input type="checkbox" class="dialog-checkbox" id="isInEditableVersion" {{isInEditableVersionChecked}}>
+							<span class="custom-checkbox"></span>
+							isInEditableVersion
+						</label>
+					</div>
+		        </form>
+		    </div>
+
+		   	<div class="col-sm-12 col-md-6 col-lg-6">
+				<form role="form">
+					<div class="form-group">
+						<label class="label-checkbox inline">
+							<input type="checkbox" class="dialog-checkbox" id="isForAdminOnly" {{isForAdminOnlyChecked}}>
+							<span class="custom-checkbox"></span>
+							isForAdminOnly
+						</label>
+					</div>
+		        </form>
+		    </div>
+		</div>
+	{{/with}}
+</template>
+
+<template name="readModeToolbarButtons">
+	<div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">
+			{{#each toolbar_buttons}}
+				{{> toolbar_button}}
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12">
+			<div class="pull-right">
+				<a class="btn btn-success" id="add-read-mode-toolbar-button"><i class="fa fa-plus"></i> Add</a>
+				<a class="btn btn-danger" id="remove-read-mode-toolbar-button"><i class="fa fa-trash-o"></i> Remove</a>
+			</div>
+		</div>
+	</div>
+	<hr>
+</template>
+
+<template name="readModeToolbarDropDownTable">
+	
+</template>
+
+
+<template name="toolbarDropDownTable">
+
+	<table class="table table-bordered table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th>Item</th>
+				<th>Procedure</th>
+				<th>Icon</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each toolbarItems}}
+				<tr index="{{index}}">
+					<td><div class="toolbar-item" attribute="item" contentEditable="true">{{item}}</div></td>
+					<td><div class="toolbar-procedure" attribute="procedure" contentEditable="true">{{procedure}}</div></td>
+					<td><div class="toolbar-icon" attribute="icon" contentEditable="true">{{icon}}</div></td>
+					<td>
+						<center>
+							<a class="btn btn-xs btn-danger remove-toolbar-item"><i class="fa fa-trash-o"></i></a>
+						</center>
+					</td>
+				</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	<a class="btn btn-success pull-right" id="add-toolbar-dropdown-item"><i class="fa fa-plus"></i> Add</a>
+</template>
+
+<template name="toolbar_item_rows">
+	<div class="row">
+	   	<div class="col-sm-12 col-md-12 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="name">name</label>
+	                <input type="text" class="form-control dialog-input" id="name" value="{{name}}" placeholder="name">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-12 col-md-12 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="icon">icon</label>
+	                <input type="text" class="form-control dialog-input" id="icon" value="{{icon}}" placeholder="icon">
+	            </div>
+	        </form>
+	    </div>
+	</div>
+
+	<div class="row">
+	   	<div class="col-sm-12 col-md-12 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="procedure">procedure</label>
+	                <input type="text" class="form-control dialog-input" id="procedure" value="{{procedure}}" placeholder="procedure">
+	            </div>
+	        </form>
+	    </div>
+
+	   	<div class="col-sm-12 col-md-12 col-lg-6">
+			<form role="form">
+	            <div class="form-group">
+	                <label for="procedure">template</label>
+	                <input type="text" class="form-control dialog-input" id="template" value="{{template}}" placeholder="template">
+	            </div>
+	        </form>
+	    </div>
+	</div>
+
+</template>
+
+<template name="toolbar_button">
+	<button id="{{id}}" index="{{index}}" class="btn btn-xs btn-primary toolbar-button" name="{{name}}" icon="{{icon}}" procedure="{{procedure}}" isInEditableVersion="{{isInEditableVersion}}" isForAdminOnly="{{isForAdminOnly}}"><i class="fa {{icon}}"></i></button>
+</template>
