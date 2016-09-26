@@ -48,9 +48,6 @@ _.extend(Interpreter, {
 		
 		Interpreter.editor = editor;
 
-		console.log("interpreter1 ", Interpreter)
-		console.log("editor ", editor)
-
 		return editor;
 	},
 

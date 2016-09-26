@@ -153,6 +153,7 @@ Template.inputOptions.helpers({
 	},
 
 	textarea_rows: function() {
+
 		var compart_type = Configurator.getActiveCompartmentType();
 		if (compart_type) {
 			return compart_type["inputType"]["rows"];
@@ -160,6 +161,7 @@ Template.inputOptions.helpers({
 	},
 
 	placeholder: function() {
+
 		var compart_type = Configurator.getActiveCompartmentType();
 		if (compart_type) {
 			return compart_type["inputType"]["placeholder"];
@@ -367,6 +369,7 @@ Template.inputDropDown.helpers({
 Template.customField.helpers({
 
 	templateName: function() {
+
 		var compart_type = Configurator.getActiveCompartmentType();
 		if (compart_type) {
 			return compart_type["inputType"]["templateName"];
@@ -565,9 +568,8 @@ function get_style_list(obj_type, value, attr) {
 
 	_.each(obj_type["styles"], function(style, i) {
 		var item = {name: style["name"], id: style["id"]};
-		if (value[attr] == item["id"]) {
+		if (value[attr] == item["id"])
 			item["selected"] = "selected";
-		}
 
 		styles.push(item);
 	});
@@ -588,6 +590,7 @@ function insert_tab(tab_list) {
 }
 
 function update_input_type_obj(list) {
+
 	Configurator.updateCompartmentType(list);
 }
 
@@ -596,7 +599,7 @@ function add_selection_item(list) {
 }
 
 function update_selection_object(list) {
-	Utilities.callMeteorMethod("updateSelectionItem", list);
+	("updateSelectionItem", list);
 }
 
 function update_comparment_type_field(e) {

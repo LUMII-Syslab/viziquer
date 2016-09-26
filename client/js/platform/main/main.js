@@ -45,9 +45,8 @@ Template.userT.helpers({
     var user = Users.findOne({systemId: Session.get("userSystemId")});
     if (user)
         return {name: user["name"],
-                surname: user["surname"],
-                profileImage: Utilities.getProfileImagePath(),
-              }; 
+              surname: user["surname"],
+              profileImage: user["profileImage"]}; 
   },
 });
 

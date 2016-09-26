@@ -104,9 +104,8 @@
 
 					<datalist id="row_{{_id}}" class="datalist">
 						{{#each values}}
-							<option selected="{{selected}}" mappedValue="{{value}}"
-							elementStyleId="{{elementStyle}}"
-							compartmentStyleId="{{compartmentStyle}}">{{input}}</option>
+							<option selected="{{selected}}" mappedValue="{{value}}" elementStyleId="{{elementStyle}}"
+							compartmentStyleId="{{compartmentStyle}}" input="{{input}}">{{input}}</option>
 						{{/each}}
 					</datalist>
 
@@ -183,6 +182,7 @@
 					
 				{{/unless}}
 				
+
 				<div class="row">
 					<div class="col-sm-12">
 						<table class="table table-bordered table-condensed table-hover table-striped">
@@ -190,52 +190,48 @@
 
 							{{#each addedFiles}}	
 
-								{{#if _id}}
+								{{#if image}}
 
-									{{#if image}}
+									<tr>
+										<td>
+											<img file-id="{{fileId}}" class="multimedia" style="width:100%;" alt="User Avatar">
+										</td>
+
+										{{#unless disabled}}
+											<td style="width:30px;">
+												<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>			
+											</td>
+										{{/unless}}
+
+									</tr>
+								{{else}}
+
+									{{#if video}}
 
 										<tr>
 											<td>
-												<img src={{url}} file-id="{{fileId}}" class="multimedia" style="width:100%;" alt="User Avatar">
+												<video style="width:100%;" controls>  
+													<source video="video" file-id="{{fileId}}" class="multimedia" type="video/mp4">
+												</video>
 											</td>
 
 											{{#unless disabled}}
 												<td style="width:30px;">
-													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>			
+													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>
 												</td>
 											{{/unless}}
-
 										</tr>
+
 									{{else}}
 
-										{{#if video}}
-
-											<tr>
-												<td>
-													<video style="width:100%;" controls>  
-														<source video="video" file-id="{{fileId}}" src="{{url}}" class="multimedia" type="video/mp4">
-													</video>
+										<tr>
+											<td><a href="{{url}}" class="file-link" target="_blank" initialName="{{initialName}}">{{fullName}}</a></td>
+											{{#unless disabled}}
+												<td style="width:30px;">
+													<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>	
 												</td>
-
-												{{#unless disabled}}
-													<td style="width:30px;">
-														<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>
-													</td>
-												{{/unless}}
-											</tr>
-
-										{{else}}
-
-											<tr>
-												<td><a href="{{url}}" class="file-link" target="_blank" initialName="{{initialName}}">{{fullName}}</a></td>
-												{{#unless disabled}}
-													<td style="width:30px;">
-														<a id="{{_id}}" class="btn btn-xs btn-danger pull-right detach-file"><i class="fa fa-trash-o"></i></a>	
-													</td>
-												{{/unless}}
-											</tr>
-
-										{{/if}}
+											{{/unless}}
+										</tr>
 
 									{{/if}}
 

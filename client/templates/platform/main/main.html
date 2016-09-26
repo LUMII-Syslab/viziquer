@@ -98,6 +98,33 @@
 
 </template>
 
+<template name="mailsT">
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-envelope fa-lg"></i>
+            {{#if unreadMails}}
+                <span class="notification-label bounceIn animation-delay4">{{unreadMails}}</span>
+            {{/if}}
+        </a>
+        <ul id="nav-messages" class="dropdown-menu message dropdown-1">
+            <li><a>You have 4 new unread messages</a></li>                    
+            <li>
+                <a class="clearfix" href="#">
+                    <img src="/img/user.jpg" alt="User Avatar">
+                    <div class="detail">
+                        <strong>John Doe</strong>
+                        <p class="no-margin">
+                            Lorem ipsum dolor sit amet...
+                        </p>
+                        <small class="text-muted"><i class="fa fa-check text-success"></i> 27m ago</small>
+                    </div>
+                </a>    
+            </li>
+            <li><a href="#">View all messages</a></li>                    
+        </ul>
+    </li>
+</template>
+
 <template name="userT">
     <li id="nav-user" class="profile dropdown">
         {{#with profile}}

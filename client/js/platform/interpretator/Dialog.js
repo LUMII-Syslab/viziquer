@@ -178,7 +178,6 @@ Dialog = {
 				var input_value, mapped_value;
 				var elem_style_id, compart_style_id;
 				var input_control = parent.find("." + sub_compart_type["_id"]);
-
 				if (input_control.hasClass("dialog-input")) {
 					input_value = input_control.val();
 				}
@@ -200,6 +199,7 @@ Dialog = {
 					compart_style_id = input_control.attr("compartmentStyleId");
 				}
 
+
 				else if (input_control.hasClass("dialog-radio")) {
 					input_value = input_control.attr("input");
 				}
@@ -214,8 +214,7 @@ Dialog = {
 					else {
 					 	input_value = "false";
 					}
-
-
+					
 					if (tmp_val) {
 						mapped_value = input_control.attr("trueValue");
 						elem_style_id = input_control.attr("trueElementStyle");
@@ -371,9 +370,7 @@ Dialog = {
 			var extensions = {
 							jpg: "image",
 							jpeg: "image",
-							png: "image",
 							mp4: "video",
-							//avi: "video",
 						};
 
 			var is_disabled = compart_type["disabled"];
@@ -381,46 +378,70 @@ Dialog = {
 				function(diagram_file) {
 
 					var file = CloudFiles.findOne({_id: diagram_file["fileId"]});
+					diagram_file.fileId = file._id;
+
+
 					if (file) {
 
-						diagram_file.fileId = file._id;
-
-						var file_obj = FileObjects.findOne({_id: file.fileId});
-						if (file_obj) {
-							diagram_file.url = file_obj.url();
-						}
-
 						if (file["extension"]) {
-							//diagram_file["fullName"] = file["name"] + "." + file["extension"];
-							diagram_file.fullName = file.fullName;
+							diagram_file["fullName"] = file["name"] + "." + file["extension"];
 
 							if (extensions[file["extension"]]) {
 
 								var file_type = extensions[file["extension"]];
 								diagram_file[file_type] = true;
 
-								var obj = $("[file-id=" + diagram_file.fileId  + "]");
+
+								var list = {projectId: Session.get("activeProject"),
+											versionId: Session.get("versionId"),
+											fileName: diagram_file.fullName,
+										};
+
+								Utilities.callMeteorMethod("getFileUrl", list, function(url) {
+
+									var obj = $("[file-id=" + diagram_file.fileId  + "]");
+
+									//HACK: adding/removing source element to make video playing
+									if (obj.attr("video")) {
+										var parent = obj.parent();
+										obj.remove();
+										$('<source video="video" type="video/mp4">').appendTo(parent)
+																					.attr("file-id",  diagram_file.fileId)
+																					.attr("src",  url);
+									}
+
+									else {
+										$("[file-id=" + diagram_file.fileId  + "]").attr("src", url);
+									}
+								});
+
+							}
+
+							else {
+								diagram_file["url"] = file["url"];	
 							}
 						}
 
 						else {
-							diagram_file["fullName"] = file.fullName;
+							diagram_file["fullName"] = file["name"];
+							diagram_file["url"] = file["url"];
 						}
 
 						diagram_file["initialName"] = file["initialName"];
 						diagram_file["disabled"] = is_disabled;
-
-						added_files_ids.push(diagram_file.fileId);
-						return diagram_file;
 					}
 
-					return;
+					added_files_ids.push(diagram_file.fileId);
+					return diagram_file;
 				});
 
 			compart_type["filesList"] = CloudFiles.find({_id: {$nin: added_files_ids}}).map(
 				function(file) {
 
-					if (!file["extension"]) {
+					if (file["extension"]) {
+						file["fullName"] = file["name"] + "." + file["extension"];
+					}
+					else {
 						file["fullName"] = file["name"];
 					}
 

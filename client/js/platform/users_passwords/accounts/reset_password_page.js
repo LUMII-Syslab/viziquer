@@ -8,7 +8,7 @@ Template.resetPasswordPageTemplate.events({
 		var secret_phrase = $("#secretPhrase").val();
 		var list = {email: email,
 					secretPhrase: secret_phrase,
-					//"recaptcha-response": $('#g-recaptcha-response').val()
+					"recaptcha-response": $('#g-recaptcha-response').val()
 				};
 
 		Utilities.callMeteorMethod("sendResetPasswordLink", list);

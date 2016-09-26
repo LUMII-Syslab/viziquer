@@ -1,0 +1,160 @@
+
+
+<!-- Project content templates -->
+<template name="projectTemplate">
+
+	<div class="col-sm-12 col-md-12 col-lg-6 posts">
+
+		<form method="post" class="well padding-bottom-10 post-box" onsubmit="return false;">
+
+			<textarea id="post-msg" rows="2" class="form-control" placeholder={{_ "what_are_you_thinking"}}></textarea>
+			<div class="post-button-container">
+				<button id="post" type="submit" class="btn btn-sm btn-success pull-right">
+					{{_ "post_post"}}
+				</button>
+				<a href="#" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Location"><i class="fa fa-location-arrow"></i></a>
+				<a href="#" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Voice"><i class="fa fa-microphone"></i></a>
+				<a href="#" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add Photo"><i class="fa fa-camera"></i></a>
+				<a href="#" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="Add File"><i class="fa fa-file"></i></a>
+			</div>
+		</form>
+
+		{{> postsT}}
+		
+		{{#if is_posts}}
+			<center class="list-group">
+				<a href="#" class="btn btn-warning btn-small" id="loadMore">{{_ "load_more"}}</a>
+			</center>
+		{{/if}}
+
+	</div>
+	{{> likersFormTemplate}}
+</template>
+<!-- End of project content templates -->
+
+<template name="postsT">
+	{{#each posts}}
+		<ul class="list-group collapse in profile-message">
+
+			{{> post}}
+
+			{{> postReplies}}
+
+			{{> postReply}}
+		</ul>
+	{{/each}}		
+</template>
+
+<template name="postReply">
+	<li class="list-group-item clearfix message message-reply feed-message">
+		<div class="wall-comment-reply post-reply">
+			<input class="form-control input-xs reply-input" placeholder='{{_ "type_and_enter"}}' type="text">
+		</div>
+	</li>
+</template>
+
+<template name="postReplies">
+	{{#each replies}}
+		{{> post}}
+	{{/each}}
+</template>
+
+<template name="post">
+	<li class="list-group-item clearfix message post feed-message" id="{{_id}}">
+		<!--<div class="activity-icon small"> -->
+		<div class="author-image">
+			<img src="{{profileImage}}" >
+		</div>
+		<div class="pull-left m-left-sm">
+			<a href="#" class="username" authorSystemId="{{authorSystemId}}" >{{fullName}}</a>
+			<div class="post-container">
+				{{#if editPost}}
+					<input class="form-control input-xs edit-post" type="text" value="{{text}}">	
+				{{else}}
+					{{text}}	
+				{{/if}}
+			</div>
+			<ul class="list-inline font-xs">
+				<li>
+					<a href="#" class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=postTime.number time=postTime.time context=postTime.time}}</a>
+				</li>
+				<li>
+					{{#if likesCount}}
+						<a href="#" class="text-muted likeCount">{{likesCount}} <i class="fa fa-thumbs-up"></i>
+						</a>
+					{{/if}}
+					<a href="#" class="text-primary like" like="{{likeUnlike}}">{{_ "like_unlike" context=likeUnlike}}</a>
+				</li>
+				{{#if editDelete}}
+					<li>
+						<a href="#" class="text-primary editPost">{{_ "edit_post"}}</a>
+					</li>
+					<li>
+						<a href="#" class="text-danger deletePost">{{_ "delete_post"}}</a>
+					</li>
+				{{/if}}		
+			</ul>
+		</div>
+	</li>
+</template>
+
+<!-- Likers form templates -->
+<template name="likersFormTemplate">
+	<!-- Modal for new diagram -->
+	    <div id="likers-form" class="modal fade">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close close-likers-form" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title">{{_ "people_who_liked_this"}}</h4>
+	                </div>
+	                <div class="modal-body modal-body-likers">
+	                	{{> likersT}}
+	                </div>
+	            </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	    </div><!-- /.modal -->
+	<!-- End of modal -->
+</template>
+<!-- End of likers form templates -->
+
+<template name="likersT">
+	{{#each likers}}
+		<div class="clearfix" id="{{_id}}">
+			<!--<div class="activity-icon small"> -->
+			<div class="author-image">
+				<img src="{{profileImage}}" >
+			</div>
+			<div class="pull-left m-left-sm">
+				<a href="#" class="username" authorSystemId="{{authorSystemId}}">{{name}}</a>
+			
+				<ul class="list-inline font-xs">
+					<li>
+						<a href="#" class="text-muted"><i class="fa fa-clock-o"></i> {{_ "time_since" number=time.number context=time.time}}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<hr>
+	{{/each}}
+
+</template>
+
+
+
+<!-- Ribbon -->
+<template name="projectRibbon">
+
+ <!-- RIBBON -->
+    <div id="ribbon">
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+        	<li><i class="fa fa-pencil"></i> {{_ "feed"}}</li>
+        </ol>
+        <!-- end breadcrumb -->
+    </div>
+    <!-- END RIBBON -->
+
+</template>
+<!-- End of Ribbon -->

@@ -79,9 +79,8 @@ Template.show_multi_field_form.helpers({
 	field_obj: function() {
 
 		var data_in = Template.currentData();
-		if (!data_in) {
+		if (!data_in)
 			return;
-		}
 
 		//var compart_type_id = $(this).$(".multi-field").attr("id");
 		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
@@ -92,9 +91,8 @@ Template.show_multi_field_form.helpers({
 		var fields = [];
 
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-		if (!compart_type) {
+		if (!compart_type)
 			return {fields: fields};
-		}
 
 		var sub_compartment;
 		var compart_id;
@@ -133,7 +131,7 @@ Template.show_multi_field_form.events({
 		if (!compart_type) {
 			return;
 		}
-		
+
 		var sub_compart_tree = {};
 
 		var multi_field = form.find(".multi-field");
@@ -206,20 +204,3 @@ function process_sub_compart_types(subCompartmentTypes, fields, sub_compartments
 
 	});
 }
-
-
-Interpreter.customMethods({
-
-	validateSchema: function() {
-
-		console.log("schema validated22");
-	},
-
-	VQgetAttributeNames: function() {
-
-	},
-
-});
-
-
-

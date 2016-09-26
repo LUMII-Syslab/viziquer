@@ -152,9 +152,8 @@ Template.userGroups.events({
 
 		var group = ProjectsGroups.findOne({_id: group_id});
 		if (group) {
-			if (group["name"] != value) {
+			if (group["name"] != value)
 				input.text("");
-			}
 		}
 		
 		var list = {id: group_id, projectId: Session.get("activeProject"), name: value};
@@ -218,12 +217,10 @@ Template.foundUsers.helpers({
 		var search = Session.get("searchUsers");
 		var query1 = {noQuery: -1};
 		if (search) {
-			if (search["text"] && search["text"] != "") {
+			if (search["text"] && search["text"] != "")
 				query1 = build_user_search_query(search["text"]);
-			}
-			else {
+			else
 				query1 = {noQuery: -1};			
-			}
 		}
 
 		var query2 = {systemId: {$nin: user_ids}};
@@ -266,7 +263,7 @@ Template.usersSearchBar.events({
 	'click #searchUser': function(e) {
 		e.keyCode = 13;
 		search_keyup(e);
-	},
+	}
 
 });
 
@@ -305,18 +302,13 @@ function get_project_members() {
 	var members_filter = Session.get("membersFilter");
 	var filter_query;
 	if (members_filter) {
-		var user_ids = Users.find(members_filter).map(function(user) {
-							return user["systemId"];
-						});
-
-		if (user_ids.length > 0) {
+		var user_ids = Users.find(members_filter).map(function(user) {return user["systemId"]});
+		if (user_ids.length > 0)
 			filter_query = {systemId: {$in: user_ids}};
-		}
 		
 		//if no user matches the filter, returns nothing
-		else {
+		else
 			return;
-		}
 	}
 
 	//selecting project members
@@ -325,13 +317,10 @@ function get_project_members() {
 
 			//building the query
 			var user_query;
-			if (filter_query) {
+			if (filter_query)
 				user_query = {$and: [{systemId: proj_user["userSystemId"]}, filter_query]};
-			}
-
-			else {
+			else
 				user_query = {systemId: proj_user["userSystemId"]};
-			}
 
 			//selecting the user
 			var user = Users.findOne(user_query);
@@ -387,16 +376,13 @@ function set_role(ev, role) {
 }
 
 build_user_search_query = function(search_entered) {
-	if (!search_entered) {
+	if (!search_entered)
 		return {};
-	}
 
 	var search_items = search_entered.split(" ");
 	var query = {};
-	if (search_items.length == 0) {
+	if (search_items.length == 0)
 		query = {};
-	}
-
 	else {
 
 		//filters by name, surname or email
@@ -416,9 +402,8 @@ build_user_search_query = function(search_entered) {
 							{surname: {'$regex': "^" + search_items[0], $options: 'i'}}]},
 				]};   		
     		}
-    		else {
+    		else
     			query = Utilities.resetQuery();
-    		}
    	}
 
    	return query;
@@ -435,26 +420,22 @@ function render_members() {
 
 	return _.map(members, function(member) {
 
-		if (!member) {
+		if (!member)
 			return;
-		}
 
 		//groups for the change role drop-down
-		if (member) {
+		if (member)
 			member["groups"] = groups;
-		}
 
 
-		if (is_default_role(member["role"])) {
+		if (is_default_role(member["role"]))
 			member["defaultRole"] = true;
-		}
 
 		else {
 			var group_id = member["role"];
 			var group = ProjectsGroups.findOne({_id: group_id});
-			if (group) {
+			if (group)
 				member["roleName"] = group["name"];
-			}
 		}
 		
 		var meteor_user = Meteor.users.findOne({_id: member["systemId"]});
@@ -464,25 +445,22 @@ function render_members() {
 			//online status online, idle
 			if (status) {
 
-				if (status.idle) {
+				if (status.idle)
 					member.idle = true;
-				}
-
-				else if (status.online) {
+				else if (status.online)
 					member.online = true;
-				}
 
+				//else {
+				//}
 			}
 		}
 
-		member.profileImage = Utilities.getProfileImagePath();
 
 		return member;
 	});
 }
 
 is_default_role = function(role) {
-	if (role == "Admin" || role == "Reader") {
+	if (role == "Admin" || role == "Reader")
 		return true;
-	}
 }

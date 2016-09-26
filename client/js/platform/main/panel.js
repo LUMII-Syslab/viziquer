@@ -21,9 +21,9 @@ Template.panel.helpers({
                             {icon: "group", id: "users", route: "users"},            
                             // {icon: "forumbee", id: "forum", route: "forum"},     
                               
-                            // {icon: "desktop", id: "analytics", route: "analytics"},     
-                            // {icon: "comment", id: "chats", route: "chats"},     
+                            // {icon: "desktop", id: "analytics", route: "analytics"},        
                             {icon: "wrench", id: "configurator", route: "configurator", isVisible: is_admin},     
+
                         ];
 
               var extension = {projectId: Session.get("activeProject"), versionId: Session.get("versionId"),};
@@ -54,16 +54,15 @@ Template.panel.helpers({
     },
 
 
+
     profile: function() {
       var user = Users.findOne({systemId: Session.get("userSystemId")});
       if (user)
           return {name: user["name"],
                 surname: user["surname"],
-                profileImage: Utilities.getProfileImagePath(),
-              }; 
+                profileImage: user["profileImage"]}; 
     },
     
-
     skin: function() {
       return 6;
     },
@@ -72,7 +71,7 @@ Template.panel.helpers({
 
 function no_project_panel() {
 
-    var panel = [{icon: "comment", id: "chats", route: "chats", isVisible: true},
+    var panel = [
                   {icon: "wrench", id: "configurator", route: "configurator", isVisible: is_system_admin(Session.get("userSystemId"))},                      
               ];
 
@@ -90,6 +89,7 @@ function no_project_panel() {
 function is_system_admin(system_id) {
   
   var user = Users.findOne({systemId: system_id});
-  if (user && user["isSystemAdmin"] === true)
+  if (user && user["isSystemAdmin"] === true) {
       return true;
+  }
 }

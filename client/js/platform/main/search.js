@@ -464,7 +464,6 @@ function diagrams_search() {
 	Template.diagramsSearchBar.events(events);
 }
 
-
 function users_search() {
 	var events = build_search_events_list();
 	Template.usersSearchBar.events(events);	

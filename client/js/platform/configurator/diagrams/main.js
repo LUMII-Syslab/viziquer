@@ -2,13 +2,17 @@
 Template.configuratorDiagramTemplate.helpers({
 	activeElementType: function() {
 		var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
-		if (elem_type && elem_type["name"] != "Specialization") {
+		if (elem_type && elem_type["name"] != "Specialization")
 			return true;
-		}
+		else
+			return;
 	},
 
 	activeDiagramType: function() {
-		return !Session.get("activeElementType");
+		if (Session.get("activeElementType"))
+			return;
+		else
+			return true;
 	},
 });
 
@@ -32,7 +36,7 @@ Template.diagramMain.helpers({
 Template.diagramMain.events({
 
 	'blur .dialog-input' : function(e) {
-		Configurator.updateObjectType(e);	
+		Configurator.updateElementStyleFromSelection(e);	
 	},
 });
 //End of diagram accordion

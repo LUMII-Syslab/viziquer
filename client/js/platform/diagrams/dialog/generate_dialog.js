@@ -57,36 +57,18 @@ Template.dialogTabContent.events({
 
 			upsert_compartment_value(e, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
 		}
-
 	},
 
 	'focus .dialog-combobox': function(e) {
 		Session.set("editingDialog", true);
 	},
 
+	'blur .dialog-combobox': function(e) {
+		update_combobox(e);
+	},
 
-	'input .dialog-combobox' : function(e) {
-
-		e.stopPropagation();
-
-		var src = $(e.target).closest(".dialog-combobox");
-		var parent = src.closest(".parent-compartment");
-
-		if (parent.length > 0) {
-			update_compartment_from_sub_fields(parent);
-		}
-
-		else {
-			var src_id = src.attr("id");
-			var src_val = src.val();
-			var mapped_value = src.attr("mappedValue");			
-
-			var elem_style_id = src.attr("elementStyleId");
-			var compart_style_id = src.attr("compartmentStyleId");
-
-			upsert_compartment_value(e, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
-		}
-
+	'input .dialog-combobox': function(e) {
+		update_combobox(e);
 		Session.set("editingDialog", true);
 	},
 
@@ -171,6 +153,25 @@ Template.dialogTabContent.events({
 		$("#upload-file-form").modal("show");
 	},
 
+	"click .file-link": function(e) {
+
+		e.preventDefault();
+
+		var src = $(e.target);
+
+		var file_container = $(e.target).closest(".file-link");
+
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+					fileName: file_container.attr("initialName"),
+				};
+
+		Utilities.callMeteorMethod("getFileUrl", list, function(url) {
+			window.open(url, '_blank');
+		});
+
+	},
+
 });
 
 Template.attachFiles.events({
@@ -202,49 +203,436 @@ Template.uploadFileFormInDiagram.events({
 	"click #upload-file-form-ok": function(e) {
 		e.preventDefault();
 
-		$("#upload-file-form").modal("hide");
-
+		//insert file and attach it to the elmeent
   		var meta_context = {projectId: Session.get("activeProject"),
   							versionId: Session.get("versionId"),
-  						};	
+  						};
 
-		var file_list = $("#fileToUpload")[0].files;
+  		//selecting file
+		var uploader = new Slingshot.Upload("myFileUploads", meta_context);
+		var file = document.getElementById('fileToUpload').files[0];
 
-        _.each(file_list, function(file_in) {
+		//hiding hte form
+		$("#upload-file-form").modal("hide");
 
-         	var file = new FS.File(file_in);
-          	file.userId = Session.get("userSystemId");
-          	_.extend(file, meta_context);
+		uploader.send(file, function (error, file_url) {
+		  	
+			if (error) {
+				console.error('Error uploading', uploader.xhr.response);
+			}
 
-			var fileObj = FileObjects.insert(file);
+			else {
 
-	  		var list = {projectId: Session.get("activeProject"),
-	  					versionId: Session.get("versionId"),
-	  					fileId: fileObj._id,
-	  					fullName: fileObj.data.blob.name,
-	  				};
+				document.getElementById("fileToUpload").value = "";
 
-	  		//inserting a file
-	  		Utilities.callMeteorMethod("insertFile", list,
+		  		var list = {projectId: Session.get("activeProject"),
+		  					versionId: Session.get("versionId"),
+		  					url: file_url,
+		  					name: file_url,
+		  				};
 
-	  			//attaching a file
-	  			function(file_id) {
+		  		//inserting a file
+		  		Utilities.callMeteorMethod("insertFile", list,
 
-		  			var list2 = {projectId: Session.get("activeProject"),
-								versionId: Session.get("versionId"),
-								diagramId: Session.get("activeDiagram"),
-								elementId: Session.get("activeElement"),
-								fileId: file_id,
-								index: DiagramFiles.find({elementId: Session.get("activeElement")}).count() + 1,
-							};
+		  			//attaching a file
+		  			function(file_id) {
 
-					Utilities.callMeteorMethod("attachFileToElement", list2);
-			});
-	  	});
+			  			var list2 = {projectId: Session.get("activeProject"),
+									versionId: Session.get("versionId"),
+									diagramId: Session.get("activeDiagram"),
+									elementId: Session.get("activeElement"),
+									fileId: file_id,
+									index: DiagramFiles.find({elementId: Session.get("activeElement")}).count() + 1,
+								};
 
+						Utilities.callMeteorMethod("attachFileToElement", list2);
+
+			  	});
+		  	}
+
+		});
 	},
 
 });
+
+function update_combobox(e) {
+
+	e.stopPropagation();
+
+	var src = $(e.target);
+	var parent = src.closest(".parent-compartment");
+	if (parent.length > 0) {
+		update_compartment_from_sub_fields(parent);
+	}
+
+	else {
+		var src_id = src.attr("id");
+		var src_val = src.val();
+
+		var selected = src.closest(".compart-type").find('option[input="'+src_val+'"]');
+		var mapped_value = selected.attr("mappedValue");			
+
+		var elem_style_id = selected.attr("elementStyleId");
+		var compart_style_id = selected.attr("compartmentStyleId");
+
+		upsert_compartment_value(e, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
+	}
+
+	Session.set("editingDialog", reset_variable());
+
+	return false;
+}
+
+
+//Generating new dialog templates
+function define_dialog_tab_template(id) {
+
+	var template_structure = '{{> Template.dynamic template="dialogTabContent" data=compart_types}}';
+
+	compileTemplate(id, template_structure);
+}
+
+function compileTemplate(name, html_text) { 
+    try { 
+        var compiled = SpacebarsCompiler.compile(html_text, {isTemplate: true}); 
+        var renderer = eval(compiled);
+        UI.Template.__define__(name, renderer);
+
+        add_template_helpers(name);
+    } 
+
+    catch (err){ 
+        console.error('Error compiling template:' + html_text); 
+        console.error(err.message); 
+    } 
+}; 
+
+function add_template_helpers(id) {
+
+	//helpers
+	Template[id].helpers({
+
+		compart_types: function() {
+
+			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
+				function(compart_type) {
+					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"],
+						 									elementId: Session.get("activeElement")});
+
+					return render_dialog_fields(compart_type, compartment);
+			});
+		},
+
+	});
+}
+
+function update_compartment_from_sub_fields(parent) {
+
+	var compart_type_id = parent.attr("id");
+
+	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+	if (!compart_type)
+		return;
+
+	var sub_compart_tree = {};
+	var res = build_sub_compartment_tree(parent, compart_type, sub_compart_tree);
+
+	var src_id = parent.attr("compartmentId");
+	var input = res;
+	var value = input;
+
+	var compart_style, elem_style;
+
+	update_compartment_value(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
+}
+
+
+build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
+
+	var sub_compart_types = compart_type["subCompartmentTypes"];
+	var len = sub_compart_types.length;
+	var concat_style = compart_type["concatStyle"];
+
+	var res = [];
+
+	compart_tree[compart_type["name"]] = {};
+	var sub_compart_tree = compart_tree[compart_type["name"]];
+
+	var sub_compartments = [];
+	_.each(sub_compart_types, function(sub_compart_type, i) {
+
+		var sub_sub_compart_types = sub_compart_type["subCompartmentTypes"];
+		if (sub_sub_compart_types.length == 0) {
+
+			var input_value, mapped_value;		
+			var input_control = parent.find("." + sub_compart_type["_id"]);
+			if (input_control.hasClass("dialog-input")) {
+				input_value = input_control.val();
+			}
+
+			else if (input_control.hasClass("textarea")) {
+				input_value = input_control.val();
+			}
+
+			else if (input_control.hasClass("dialog-selection")) {
+				var selected = input_control.find("option:selected");
+				input_value = selected.text();
+			}
+
+			else if (input_control.hasClass("dialog-radio")) {
+				input_value = input_control.attr("input");
+			}
+
+			else if (input_control.hasClass("dialog-checkbox")) {
+
+				var tmp_val = input_control.prop('checked');
+				if (tmp_val === true) {
+					input_value = "true";
+				}
+
+				else {
+				 	input_value = "false";
+				}
+
+				var elem_style_id, compart_style_id;
+				if (input_value) {
+					mapped_value = input_control.attr("trueValue");
+					elem_style_id = input_control.attr("trueElementStyle");
+					compart_style_id = input_control.attr("trueCompartmentStyle");
+				}
+				else {
+					mapped_value = input_control.attr("falseValue");
+					elem_style_id = input_control.attr("falseElementStyle");
+					compart_style_id = input_control.attr("falseCompartmentStyle");				
+				}
+			}
+				
+			var value = build_compartment_value(sub_compart_type, input_value, mapped_value);
+			sub_compart_tree[sub_compart_type["name"]] = {value: value, input: input_value};
+			res.push(value);
+		}
+		
+		else {
+
+			var val = build_sub_compartment_tree(parent, sub_compart_type, sub_compart_tree);
+			if (val) {
+
+				if (sub_compart_type["prefix"])
+					val = sub_compart_type["prefix"] + val;
+
+				if (sub_compart_type["suffix"])
+					val = val + sub_compart_type["suffix"];
+			}
+
+			res.push(val);
+	
+		}
+
+		//if there are more then one compartment; checking the last compartment
+		if (len > 1 && i < len-1)
+			res.push(concat_style);
+
+	});
+
+	return res.join("");
+}
+
+
+render_dialog_fields = function(compart_type, compartment) {
+
+	if (compartment) {
+ 		compart_type["field_value"] = compartment["input"];
+ 		compart_type["compartmentId"] = compartment["_id"];
+	}
+	else {
+ 		compart_type["field_value"] = "";
+ 		compart_type["compartmentId"] = reset_variable();					
+	}
+
+	if (compart_type["inputType"]) {
+		//compart_type["fieldType"] = compart_type["inputType"]["type"];
+		
+		compart_type[compart_type["inputType"]["type"]] = true;
+		compart_type["input_type"] = compart_type["inputType"]["inputType"];
+		compart_type["_rows"] = compart_type["inputType"]["rows"];
+		compart_type["_placeholder"] = compart_type["inputType"]["placeholder"];
+
+		if (!is_editor_in_edit_mode_reactive()) {
+			compart_type["disabled"] = true;
+		}
+
+		var compart_input, compart_id;
+		if (compartment) {
+			compart_input = compartment["input"];
+			compart_id = compartment["_id"];
+		}
+		
+		var dynamic_drop_down = Interpreter.getExtensionPointProcedure("dynamicDropDown", compart_type);
+		var values;
+
+		//building drop down dynamically
+		if (dynamic_drop_down && dynamic_drop_down != "") {
+			values = Interpreter.execute(dynamic_drop_down);
+		}
+
+		else {
+			values = compart_type["inputType"]["values"];
+		}
+
+		compart_type["values"] = _.map(values, 
+			function(value_item) {
+
+				if (compart_input === value_item["input"]) {
+					value_item["selected"] = true;	
+					value_item["checked"] = "checked";		
+				}
+
+				value_item["compartmentTypeId"] = compart_type["_id"];
+				value_item["compartemntId"] = compart_id;
+				value_item["disabled"] = compart_type["disabled"];									
+
+				return value_item;
+			}
+		);
+	}
+
+	if (compart_type["checkbox"]) {
+
+		var cbx_values = compart_type["values"];
+		var false_value, false_elem_style, false_compart_style,
+			true_value, true_elem_style, true_compart_style;
+
+		if (cbx_values && cbx_values.length == 2) {
+
+			_.each(cbx_values, function(cbx_value) {
+
+				if (cbx_value["input"] == "true") {
+					true_value = cbx_value["value"];
+					true_elem_style = cbx_value["elementStyle"];				
+					true_compart_style = cbx_value["compartmentStyle"];
+				}
+
+				else {
+					false_value = cbx_value["value"];
+					false_elem_style = cbx_value["elementStyle"];				
+					false_compart_style = cbx_value["compartmentStyle"];
+				}
+			});
+		}
+
+		else {
+			console.error("Error in generating checkbox field");
+			return;
+		}
+
+		compart_type["false_value"] = false_value;
+		compart_type["false_elem_style"] = false_elem_style;
+		compart_type["false_compart_style"] = false_compart_style;
+
+		compart_type["true_value"] = true_value;
+		compart_type["true_elem_style"] = true_elem_style;
+		compart_type["true_compart_style"] = true_compart_style;
+
+		if (compart_type["field_value"] == "true") {
+			compart_type["checked"] = true;
+		}
+		else {
+			compart_type["checked"] = false;
+		}
+	}
+
+	if (compart_type["cloudFiles"]) {
+
+		var added_files_ids = [];
+
+		var extensions = {
+						jpg: "image",
+						jpeg: "image",
+						mp4: "video",
+
+					};
+
+		var is_disabled = compart_type["disabled"];
+		compart_type["addedFiles"] = DiagramFiles.find({elementId: Session.get("activeElement")}).map(
+			function(diagram_file) {
+
+				var file = CloudFiles.findOne({_id: diagram_file["fileId"]});
+				diagram_file.fileId = file._id;
+
+				if (file) {
+
+					if (file["extension"]) {
+						diagram_file["fullName"] = file["name"] + "." + file["extension"];
+
+						if (extensions[file["extension"]]) {
+
+							var file_type = extensions[file["extension"]];
+							diagram_file[file_type] = true;
+
+
+							var list = {projectId: Session.get("activeProject"),
+										versionId: Session.get("versionId"),
+										fileName: diagram_file.fullName,
+									};
+
+							call_meteor_method("getFileUrl", list, function(url) {
+
+								var obj = $("[file-id=" + diagram_file.fileId  + "]");
+
+								//HACK: adding/removing source element to make video playing
+								if (obj.attr("video")) {
+									var parent = obj.parent();
+									obj.remove();
+									$('<source video="video" type="video/mp4">').appendTo(parent)
+																			.attr("file-id",  diagram_file.fileId)
+																			.attr("src",  url);
+								}
+
+								else {
+									$("[file-id=" + diagram_file.fileId  + "]").attr("src", url);
+								}
+							});
+
+						}
+
+						else {
+							diagram_file["url"] = file["url"];	
+						}
+					}
+
+					else {
+						diagram_file["fullName"] = file["name"];
+						diagram_file["url"] = file["url"];
+					}
+
+					diagram_file["initialName"] = file["initialName"];
+					diagram_file["disabled"] = is_disabled;
+				}
+
+				added_files_ids.push(diagram_file.fileId);
+				return diagram_file;
+			});
+
+		compart_type["filesList"] = CloudFiles.find({_id: {$nin: added_files_ids}}).map(
+			function(file) {
+
+				if (file["extension"]) {
+					file["fullName"] = file["name"] + "." + file["extension"];
+				}
+				else {
+					file["fullName"] = file["name"];
+				}
+
+				return file;
+			});
+	}
+
+	if (compart_type["inputType"]["type"] == "custom") {
+		compart_type["templateName"] = compart_type["inputType"]["templateName"];
+	}
+
+	return compart_type;
+}
 
 //helpers
 Template.dialog.helpers({

@@ -9,7 +9,7 @@ Template.compartmentExtensions.helpers({
 			var extensions = {};
 			if (compart_type && compart_type["inputType"]) {
 				var input_type = compart_type["inputType"]["type"];
-				if (input_type === "selection" || input_type === "radio") {
+				if (input_type === "selection" || input_type === "radio" || input_type === "combobox") {
 			 		extensions["isDropDown"] = true;
 			 	}
 			}

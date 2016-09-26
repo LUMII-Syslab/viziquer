@@ -81,7 +81,7 @@ Template.signup.events({
 				surname: $("#surname").val(),
 				password: password,
 				secretPhrase: $("#secretPhrase").val(),
-				//"recaptcha-response" : $('#g-recaptcha-response').val()
+				"recaptcha-response" : $('#g-recaptcha-response').val()
 			}
 
 			Meteor.call("makeUser", list, function(err) {

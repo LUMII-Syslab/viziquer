@@ -8,18 +8,16 @@ Template.profileInfo.helpers({
 
 Template.profileInfo.events({
 
-	//changes user image
-	'change #fileList' : function(event, templ) {
+//changes user image
+	'click .user-image' : function(e, templ) {
+		e.preventDefault();
+        
+        var settings = {mimetype: "image/*"};
 
-        FS.Utility.eachFile(event, function(file_in){
-         	var file = new FS.File(file_in);
-          	file.userId = Session.get("userSystemId");
-
-			var fileObj = Images.insert(file);
-
-			Utilities.editUserProfile({"profileImage": fileObj._id});
-		});
-
+		Dialog.pickFile(settings, function(InkBlobs) {
+				            var pic_name = InkBlobs[0].url;
+				            Utilities.editUserProfile({"profileImage": pic_name});
+			        	});
 	},
 });
 
@@ -49,6 +47,8 @@ Template.basicInfoPanel.helpers({
 
 				return option;
 		    });
+
+		    
 
 		    return profile;
 		}
@@ -308,14 +308,7 @@ Template.editTabLastUpdate.helpers({
 
 
 function user_profile_info() {
-
-	var user =  Users.findOne({systemId: Session.get("userSystemId")});
-	if (user) {
-
-		user.image = Utilities.getProfileImagePath();
-
-	    return user;
-	}
+	return Users.findOne({systemId: Session.get("userSystemId")});
 }
 
 check_password_complexity = function(password) {

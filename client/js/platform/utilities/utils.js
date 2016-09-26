@@ -99,16 +99,6 @@ Utilities = {
 		});
 	},
 
-	getProfileImagePath: function() {
-
-	    var image = Images.findOne({userId: Session.get("userSystemId")});
-	    if (image) {
-	    	return image.url() || "/img/user.jpg";
-	    }
-
-	    return "/img/user.jpg";
-	},
-
 };
 
  

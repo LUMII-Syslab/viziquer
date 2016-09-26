@@ -162,6 +162,7 @@ function add_remove_swimlane_row_or_column(line_index, index, lines_group1, line
 		list["increment"] = -1; 
 	}
 
+	//swimlane = editor.getSwimlane();
 	var swimlane_presentation = swimlane.presentation;
 	var h_lines_group = find_child(swimlane_presentation, "HorizontalLines");
 	var v_lines_group = find_child(swimlane_presentation, "VerticalLines");
