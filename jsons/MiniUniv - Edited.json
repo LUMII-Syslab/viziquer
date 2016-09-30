@@ -1,0 +1,1201 @@
+{
+  "Classes": [
+    {
+      "DirectSubClasses": [
+        {
+          "localName": "Assistant",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Assistant"
+        },
+        {
+          "localName": "Professor",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Professor"
+        }
+      ],
+      "DirectSuperClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Teacher",
+      "InAssociations": [],
+      "name": "Teacher",
+      "Attributes": [
+        {
+          "localName": "salary",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#salary"
+        },
+        {
+          "localName": "teacherName",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teacherName"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher",
+      "AllSubClasses": [
+        {
+          "localName": "Assistant",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Assistant"
+        },
+        {
+          "localName": "Professor",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Professor"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": [
+        {
+          "localName": "teaches",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "localName": "facultyLevel",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        }
+      ]
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "FacultyLevel",
+      "InAssociations": [
+        {
+          "localName": "facultyLevel",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel"
+        }
+      ],
+      "name": "FacultyLevel",
+      "Attributes": [
+        {
+          "localName": "acadTitle",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#acadTitle"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Student",
+      "InAssociations": [
+        {
+          "localName": "student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        }
+      ],
+      "name": "Student",
+      "Attributes": [
+        {
+          "localName": "studentNumber",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#studentNumber"
+        },
+        {
+          "localName": "studentName",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#studentName"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": [
+        {
+          "localName": "enrolled",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#enrolled"
+        },
+        {
+          "localName": "takes",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        }
+      ]
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "AcademicProgram",
+      "InAssociations": [
+        {
+          "localName": "enrolled",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#enrolled"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#enrolled"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#enrolled"
+        }
+      ],
+      "name": "AcademicProgram",
+      "Attributes": [
+        {
+          "localName": "programName",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#programName"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": [
+        {
+          "localName": "includes",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        }
+      ]
+    },
+    {
+      "DirectSubClasses": [
+        {
+          "localName": "OptionalCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#OptionalCourse"
+        },
+        {
+          "localName": "MandatoryCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#MandatoryCourse"
+        }
+      ],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Course",
+      "InAssociations": [
+        {
+          "localName": "course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "localName": "teaches",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "localName": "takes",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "localName": "includes",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        }
+      ],
+      "name": "Course",
+      "Attributes": [
+        {
+          "localName": "courseName",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseName"
+        },
+        {
+          "localName": "courseCredits",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseCredits"
+        },
+        {
+          "localName": "courseExtInfo",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseExtInfo"
+        },
+        {
+          "localName": "courseCode",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseCode"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course",
+      "AllSubClasses": [
+        {
+          "localName": "OptionalCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#OptionalCourse"
+        },
+        {
+          "localName": "MandatoryCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#MandatoryCourse"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "OptionalCourse",
+      "InAssociations": [
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        }
+      ],
+      "name": "OptionalCourse",
+      "Attributes": [],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#OptionalCourse",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "MandatoryCourse",
+      "InAssociations": [
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes"
+        }
+      ],
+      "name": "MandatoryCourse",
+      "Attributes": [],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#MandatoryCourse",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Registration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Registration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "CompletedRegistration",
+      "InAssociations": [],
+      "name": "CompletedRegistration",
+      "Attributes": [
+        {
+          "localName": "dateCompleted",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#dateCompleted"
+        },
+        {
+          "localName": "mark",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#mark"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [
+        {
+          "localName": "CompletedRegistration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration"
+        }
+      ],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Registration",
+      "InAssociations": [],
+      "name": "Registration",
+      "Attributes": [
+        {
+          "localName": "datePaid",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#datePaid"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration",
+      "AllSubClasses": [
+        {
+          "localName": "CompletedRegistration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": [
+        {
+          "localName": "course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#course"
+        },
+        {
+          "localName": "student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#student"
+        }
+      ]
+    },
+    {
+      "DirectSubClasses": [
+        {
+          "localName": "Student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+        },
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        }
+      ],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Person",
+      "InAssociations": [],
+      "name": "Person",
+      "Attributes": [
+        {
+          "localName": "personName",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#personName"
+        },
+        {
+          "localName": "personID",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#personID"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person",
+      "AllSubClasses": [
+        {
+          "localName": "Student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+        },
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        },
+        {
+          "localName": "Assistant",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Assistant"
+        },
+        {
+          "localName": "Professor",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Professor"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": [
+        {
+          "localName": "nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        }
+      ]
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        },
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Professor",
+      "InAssociations": [],
+      "name": "Professor",
+      "Attributes": [],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Professor",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        },
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Assistant",
+      "InAssociations": [],
+      "name": "Assistant",
+      "Attributes": [],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Assistant",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [],
+      "DirectSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "AllSuperClasses": [
+        {
+          "localName": "Thing",
+          "URI": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      ],
+      "localName": "Nationality",
+      "InAssociations": [
+        {
+          "localName": "nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        },
+        {
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality"
+        }
+      ],
+      "name": "Nationality",
+      "Attributes": [
+        {
+          "localName": "nCode",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nCode"
+        },
+        {
+          "localName": "nValue",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#nValue"
+        }
+      ],
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality",
+      "AllSubClasses": [],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "Associations": []
+    },
+    {
+      "DirectSubClasses": [
+        {
+          "localName": "FacultyLevel",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel"
+        },
+        {
+          "localName": "AcademicProgram",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram"
+        },
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        },
+        {
+          "localName": "Registration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+        },
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
+        }
+      ],
+      "DirectSuperClasses": [],
+      "AllSuperClasses": [],
+      "localName": "Thing",
+      "InAssociations": [],
+      "name": "Thing",
+      "Attributes": [],
+      "URI": "http://www.w3.org/2002/07/owl#Thing",
+      "AllSubClasses": [
+        {
+          "localName": "FacultyLevel",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel"
+        },
+        {
+          "localName": "AcademicProgram",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram"
+        },
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        },
+        {
+          "localName": "OptionalCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#OptionalCourse"
+        },
+        {
+          "localName": "MandatoryCourse",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#MandatoryCourse"
+        },
+        {
+          "localName": "Registration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+        },
+        {
+          "localName": "CompletedRegistration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration"
+        },
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        },
+        {
+          "localName": "Student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+        },
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        },
+        {
+          "localName": "Assistant",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Assistant"
+        },
+        {
+          "localName": "Professor",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Professor"
+        },
+        {
+          "localName": "Nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
+        }
+      ],
+      "namespace": "http://www.w3.org/2002/07/owl#",
+      "Associations": []
+    }
+  ],
+  "Attributes": [
+    {
+      "localName": "nCode",
+      "type": "XSD_STRING",
+      "name": "nCode",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#nCode",
+      "SourceClasses": [
+        {
+          "localName": "Nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "dateCompleted",
+      "type": "XSD_DATE_TIME",
+      "name": "dateCompleted",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#dateCompleted",
+      "SourceClasses": [
+        {
+          "localName": "CompletedRegistration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "studentNumber",
+      "type": "XSD_STRING",
+      "name": "studentNumber",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#studentNumber",
+      "SourceClasses": [
+        {
+          "localName": "Student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "studentName",
+      "type": "XSD_STRING",
+      "name": "studentName",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#studentName",
+      "SourceClasses": [
+        {
+          "localName": "Student",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "acadTitle",
+      "type": "XSD_STRING",
+      "name": "acadTitle",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#acadTitle",
+      "SourceClasses": [
+        {
+          "localName": "FacultyLevel",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "salary",
+      "type": "XSD_STRING",
+      "name": "salary",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#salary",
+      "SourceClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "programName",
+      "type": "XSD_STRING",
+      "name": "programName",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#programName",
+      "SourceClasses": [
+        {
+          "localName": "AcademicProgram",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "personName",
+      "type": "XSD_STRING",
+      "name": "personName",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#personName",
+      "SourceClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "mark",
+      "type": "XSD_STRING",
+      "name": "mark",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#mark",
+      "SourceClasses": [
+        {
+          "localName": "CompletedRegistration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "courseName",
+      "type": "XSD_STRING",
+      "name": "courseName",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseName",
+      "SourceClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "datePaid",
+      "type": "XSD_DATE_TIME",
+      "name": "datePaid",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#datePaid",
+      "SourceClasses": [
+        {
+          "localName": "Registration",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "courseCredits",
+      "type": "XSD_STRING",
+      "name": "courseCredits",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseCredits",
+      "SourceClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "courseExtInfo",
+      "type": "XSD_STRING",
+      "name": "courseExtInfo",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseExtInfo",
+      "SourceClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "nValue",
+      "type": "XSD_STRING",
+      "name": "nValue",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#nValue",
+      "SourceClasses": [
+        {
+          "localName": "Nationality",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "courseCode",
+      "type": "XSD_STRING",
+      "name": "courseCode",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#courseCode",
+      "SourceClasses": [
+        {
+          "localName": "Course",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "personID",
+      "type": "XSD_STRING",
+      "name": "personID",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#personID",
+      "SourceClasses": [
+        {
+          "localName": "Person",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    },
+    {
+      "localName": "teacherName",
+      "type": "XSD_STRING",
+      "name": "teacherName",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#teacherName",
+      "SourceClasses": [
+        {
+          "localName": "Teacher",
+          "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+        }
+      ],
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#"
+    }
+  ],
+  "Associations": [
+    {
+      "localName": "course",
+      "name": "course",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#course",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Registration",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+          },
+          "TargetClass": {
+            "localName": "Course",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "teaches",
+      "name": "teaches",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#teaches",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Teacher",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+          },
+          "TargetClass": {
+            "localName": "Course",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "student",
+      "name": "student",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#student",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Registration",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Registration"
+          },
+          "TargetClass": {
+            "localName": "Student",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "enrolled",
+      "name": "enrolled",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#enrolled",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Student",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+          },
+          "TargetClass": {
+            "localName": "AcademicProgram",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "facultyLevel",
+      "name": "facultyLevel",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Teacher",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Teacher"
+          },
+          "TargetClass": {
+            "localName": "FacultyLevel",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "nationality",
+      "name": "nationality",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#nationality",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Person",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Person"
+          },
+          "TargetClass": {
+            "localName": "Nationality",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "takes",
+      "name": "takes",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#takes",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "Student",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Student"
+          },
+          "TargetClass": {
+            "localName": "Course",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+          }
+        }
+      ]
+    },
+    {
+      "localName": "includes",
+      "name": "includes",
+      "URI": "http://lumii.lv/ontologies/UnivExample.owl#includes",
+      "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
+      "ClassPairs": [
+        {
+          "SourceClass": {
+            "localName": "AcademicProgram",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram"
+          },
+          "TargetClass": {
+            "localName": "Course",
+            "URI": "http://lumii.lv/ontologies/UnivExample.owl#Course"
+          }
+        }
+      ]
+    }
+  ]
+}
