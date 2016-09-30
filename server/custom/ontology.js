@@ -8,8 +8,6 @@ Meteor.methods({
                 var user_id = Meteor.userId();
                 if (is_project_version_admin(user_id, list)) {
 
-                	console.log("list1 ", list)
-
                         Associations.remove({projectId: list.projectId, versionId: list.versionId});
                         Attributes.remove({projectId: list.projectId, versionId: list.versionId});
                         Classes.remove({projectId: list.projectId, versionId: list.versionId});
