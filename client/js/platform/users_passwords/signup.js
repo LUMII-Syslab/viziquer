@@ -80,8 +80,6 @@ Template.signup.events({
 				name: $("#name").val(),
 				surname: $("#surname").val(),
 				password: password,
-				secretPhrase: $("#secretPhrase").val(),
-				"recaptcha-response" : $('#g-recaptcha-response').val()
 			}
 
 			Meteor.call("makeUser", list, function(err) {
@@ -165,8 +163,8 @@ blur_password_fields = function(e) {
 		var password = $("#password").val();
 		var confirmed_password = $("#confirmPassword").val();
 
-		check_passwords(password, confirmed_password);
-		check_fields_values();
+		// check_passwords(password, confirmed_password);
+		// check_fields_values();
 	}
 }
 

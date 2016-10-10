@@ -259,6 +259,40 @@
 
 </template>
 
+
+<template name="importOntology">
+
+    <!-- Modal for new document -->
+    <div id="import-ontology-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Import</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="fileList" type='file' multiple/>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button id="ok-import-ontology" type="button" class="btn btn-default">Import</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{_ "close"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
 <template name="configuratorDiagramOptions">
     {{#each configuratorDiagrams}}
         <option id="{{_id}}">{{name}}</option>
@@ -313,6 +347,7 @@
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right">
+                <button id="import" class="btn btn-ribbon" data-title='{{_ "import_ontology"}}'><i class="fa fa-upload"></i></button>
             	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_diagram"}}'><i class="fa fa-plus"></i></button>
             </span>
         {{/if}}
@@ -321,7 +356,7 @@
     <!-- END RIBBON -->
 
     {{> addDiagram}}
-
+    {{> importOntology}}
 </template>
 
 

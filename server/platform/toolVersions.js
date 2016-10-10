@@ -1,24 +1,29 @@
 
 ToolVersions.after.insert(function (user_id, doc) {
 
-	if (!doc)
+	if (!doc) {
 		return false;
+	}
 
 	var tool_id = doc["toolId"];
+	var _id = this._id;
+
 
 	//the creator's current version is updated to the new one
 	var user_tool = UserTools.findOne({userSystemId: user_id, toolId: doc["toolId"]});
-	if (user_tool)
-		UserTools.update({userSystemId: user_id, toolId: doc["toolId"]}, {$set: {versionId: doc["_id"]}});
+	if (user_tool) {
+		UserTools.update({userSystemId: user_id, toolId: doc["toolId"]}, {$set: {versionId: _id,}});
+	}
 	
 	else {
 		if (!user_id) {
 			var configurator = Tools.findOne({_id: doc["toolId"]});
-			if (configurator)
+			if (configurator) {
 				user_id = configurator["createdBy"];
+			}
 		}
 
-		UserTools.insert({userSystemId: user_id, toolId: doc["toolId"], versionId: doc["_id"]});
+		UserTools.insert({userSystemId: user_id, toolId: doc["toolId"], versionId: _id});
 	}
 	
 
@@ -32,6 +37,9 @@ ToolVersions.after.insert(function (user_id, doc) {
 
 	//copies of diagram things
 
+
+	console.log("abc1")
+
 	var diagrams = Diagrams.find({toolId: tool_id, versionId: last_version_id});
 	var elements = Elements.find({toolId: tool_id, versionId: last_version_id});
 	var compartments = Compartments.find({toolId: tool_id, versionId: last_version_id});
@@ -41,6 +49,8 @@ ToolVersions.after.insert(function (user_id, doc) {
 	var compartment_types = CompartmentTypes.find({toolId: tool_id, versionId: last_version_id});
 	var palette_buttons = PaletteButtons.find({toolId: tool_id, versionId: last_version_id});
 	var dialog_tabs = DialogTabs.find({toolId: tool_id, versionId: last_version_id});
+
+	console.log("abc2")
 
 //diagram things
 	//presentation things

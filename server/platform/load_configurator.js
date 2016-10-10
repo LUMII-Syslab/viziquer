@@ -1,8 +1,9 @@
 
 load_configurator = function (user_id) {
 	
-	if (!user_id)
+	if (!user_id) {
 		return;
+	}
 
 	Tools.remove({});
 
@@ -12,14 +13,11 @@ load_configurator = function (user_id) {
 	var tool_id = Tools.insert({name: "_Configurator",
 								createdAt: get_current_time(),
 								createdBy: user_id,
-								documents: false,
 								archive: false,
 								users: true,
 								analytics: false,
 								isConfigurator: true,
                 				forum: false,
-                				tasks: false,
-                				training: false,
 							});
 
 	var version_id = ToolVersions.insert({toolId: tool_id,
@@ -27,7 +25,6 @@ load_configurator = function (user_id) {
 											createdAt: get_current_time(),
 											createdBy: user_id,
 										});
-
 
 	var tool_version = ToolVersions.findOne({_id: version_id});
 	if (!tool_version) {
@@ -50,62 +47,6 @@ load_configurator = function (user_id) {
 		build_swimlane(tool_id, version_id, diagram_type_id, super_box_id);
 	}
 
-	//ZoomChart diagram type
-	var zoomchart_diagram_type_obj = build_zoomchart_configurator_diagram_type(user_id, tool_id, version_id);
-	var zoomchart_diagram_type_id = DiagramTypes.insert(zoomchart_diagram_type_obj);
-
-//Element types
-	if (ElementTypes.find({toolId: tool_id, diagramTypeId: zoomchart_diagram_type_id}).count() === 0) {
-		//var super_box_id = build_super_box(tool_id, version_id, zoomchart_diagram_type_id);
-		
-		//Box
-		var box_type_obj = build_box_type_obj(tool_id, version_id, zoomchart_diagram_type_id, undefined, "ZoomChart");
-		box_type_obj["contextMenu"] = [
-							{item: "Add loop link", procedure: "AddNodeWithLink"},
-							{item: "Delete", procedure: "DeleteZoomChartCollectionConfigurator"},
-						];
-
-		var box_id = ElementTypes.insert(box_type_obj);
-
-		var compart_type_obj = build_box_compart_type_obj(tool_id, version_id, zoomchart_diagram_type_id, box_id, "ZoomChart")
-		CompartmentTypes.insert(compart_type_obj, {removeEmptyStrings: false});
-
-		//Box clone
-		var loop_box_type_obj = build_box_type_obj(tool_id, version_id, zoomchart_diagram_type_id, undefined, "ZoomChart");
-		loop_box_type_obj["name"] = "LoopBox";
-
-		loop_box_type_obj["styles"][0]["elementStyle"]["fillColor"] = "#bf2150";
-
-		loop_box_type_obj["styles"][0]["elementStyle"]["lineColor"] = "#bf2150";	
-		loop_box_type_obj["styles"][0]["elementStyle"]["lineDash"] = [3, 3];	
-		loop_box_type_obj["styles"][0]["elementStyle"]["lineWidth"] = 1;
-		loop_box_type_obj["contextMenu"] = [
-							{item: "Delete", procedure: "DeleteZoomChartCollectionConfigurator"},
-						];
-
-		loop_box_type_obj["keyStrokes"] = [];
-
-
-		var loop_box_id = ElementTypes.insert(loop_box_type_obj);
-
-		//Line
-		var line_type_obj = build_line_type_obj(tool_id, version_id, zoomchart_diagram_type_id, undefined, "ZoomChart");
-			line_type_obj["startElementTypeId"] = box_id;
-			line_type_obj["endElementTypeId"] = box_id;
-
-		var line_id = ElementTypes.insert(line_type_obj);
-
-		//Loop line
-		var line_loop_type_obj = build_line_type_obj(tool_id, version_id, zoomchart_diagram_type_id, undefined, "ZoomChart");
-			line_loop_type_obj["name"] = "LoopLine";
-			line_loop_type_obj["startElementTypeId"] = box_id;
-			line_loop_type_obj["endElementTypeId"] = loop_box_id;		
-			line_loop_type_obj["contextMenu"] =  [{item: "Delete",
-													procedure: "DeleteZoomChartCollectionConfigurator"}];
-
-		var line_loop_id = ElementTypes.insert(line_loop_type_obj);
-
-	}
 }
 
 function build_ajoo_configurator_diagram_type(user_id, tool_id, version_id) {
@@ -270,142 +211,6 @@ function build_ajoo_configurator_diagram_type(user_id, tool_id, version_id) {
 			],
 		};
 }
-
-function build_zoomchart_configurator_diagram_type(user_id, tool_id, version_id) {
-
-	return {
-			toolId: tool_id,
-			versionId: version_id,
-			name: "_ZoomChartDiagramType",
-
-			createdAt: get_current_time(),
-			createdBy: user_id,
-			editorType: "ZoomChart",
-
-		    size: {
-		    	diagramSize: 8,
-		    	dialogSize: 4,
-		    },
-
-			style: {
-
-				fillPriority: "color",
-				fill: "#fff",
-
-				//linear gradient
-				fillLinearGradientStartPointX: 0.5,
-				fillLinearGradientStartPointY: 0,			
-				fillLinearGradientEndPointX: 0.5,
-				fillLinearGradientEndPointY: 1,
-				fillLinearGradientColorStops: [0, 'white', 1, 'black'],
-
-				//radial gradient
-				fillRadialGradientStartPointX: 0.5,
-				fillRadialGradientStartPointY: 0.5,
-				fillRadialGradientEndPointX: 0.5,
-				fillRadialGradientEndPointY: 0.5,
-				fillRadialGradientStartRadius: 0,
-				fillRadialGradientEndRadius: 1,
-				fillRadialGradientColorStops: [0, 'white', 1, 'black'],
-			},
-
-			selectionStyle: {
-			    fill: 'grey',
-			    opacity: 0.4,
-			    stroke: 'black',
-			    strokeWidth: 0.6,
-			},
-
-			layout: {
-				mode: "dynamic",
-				nodeSpacing: 16,
-				layoutFreezeTimeout: 1500,
-				globalLayoutOnChanges: true,
-			},
-
-			toolbar: [
-					{id: generate_id(),
-					name: "Diagram settings",
-					procedure: "ShowDiagramSettings",
-					icon: "fa-gear"},
-
-					{id: generate_id(),
-					name: "Delete",
-					procedure: "DeleteDiagram",
-					icon: "fa-trash-o"},
-			],
-
-			readModeToolbar: [
-					{id: generate_id(),
-					name: "Diagram settings",
-					procedure: "ShowDiagramSettings",
-					isInEditableVersion: false,
-          isForAdminOnly: false, 
-					icon: "fa-gear"},
-			],
-
-			readModeNoCollectionKeyStrokes: [],
-			readModeCollectionKeyStrokes: [],
-			readModeNoCollectionContextMenu: [],
-			readModeCollectionContextMenu: [],
-
-		//key strokes
-			collectionKeyStrokes: [
-				{keyStroke: "Ctrl C", procedure: "Copy"},
-				{keyStroke: "Ctrl X", procedure: "Cut"},
-				{keyStroke: "Delete", procedure: "DeleteCollection"},
-			],
-
-			noCollectionKeyStrokes: [
-				{keyStroke: "Ctrl V", procedure: "Paste"},
-			],
-
-			globalKeyStrokes: [
-				{keyStroke: "Ctrl A", procedure: "SelectAll"},
-			],
-
-		//context menus
-			//vajag dynamic
-			collectionContextMenu: [
-			//	{item: "Remove", procedure: "remove_zoomchart_elements"},
-			],
-
-			noCollectionContextMenu: [
-				{item: "Add node", procedure: "add_zoomchart_node"},
-			],
-
-		//extension points
-			extensionPoints: [
-				//{extensionPoint: "beforeDeleteCollection",
-				//	procedure: "delete_configurator_collection"},
-
-				{extensionPoint: "dynamicCollectionContextMenu",
-					procedure: "ZoomChartDiagramTypeContextMenu"},
-
-				{extensionPoint: "changeCollectionPosition",
-					procedure: "ChangeConfiguratorCollectionPosition"},
-
-				{extensionPoint: "deleteCollection",
-					procedure: "DeleteConfiguratorElementsCollection"},
-
-				{extensionPoint: "copyCollection",
-					procedure: "CopyConfiguratorCollection"},
-
-				{extensionPoint: "cutCollection",
-					procedure: "CutConfiguratorCollection"},
-
-				{extensionPoint: "pasteCollection",
-					procedure: "PasteConfiguratorCollection"},
-
-				{extensionPoint: "deleteDiagram",
-					procedure: "DeleteConfiguratorDiagram"},
-
-				{extensionPoint: "createDiagram",
-					procedure: "CreateConfiguratorDiagram"},
-			],
-		};
-}
-
 
 function build_box_type(tool_id, version_id, diagram_type_id, super_box_id) {
 	

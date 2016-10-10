@@ -24,7 +24,7 @@
 
 			var limit = user_limit();
 			return [Users.find({systemId: user_id}, limit),
-					Images.find({"userId": user_id}, {sort: {uploadedAt: -1} , limit: 1}),
+					// Images.find({"userId": user_id}, {sort: {uploadedAt: -1} , limit: 1}),
 				];
 		}
 		else {

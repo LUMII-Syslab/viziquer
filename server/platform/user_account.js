@@ -33,7 +33,7 @@ Meteor.methods({
 			if (is_first_user) {
 				var role = build_power_user_role();
 				Roles.addUsersToRoles(user_id, [role]);
-
+				
 				//loading configurator data
 				load_configurator(user_id);
 			}
@@ -67,7 +67,7 @@ Meteor.methods({
 
 	sendResetPasswordLink: function(list) {
 			
-		if (list && check_captcha(this.connection, list["recaptcha-response"])) {
+		if (list) {
 
 			//var secret_phrase = list["secretPhrase"] || "";
 			
@@ -162,10 +162,9 @@ Meteor.methods({
 		var user = Meteor.users.findOne({"services.password.reset.token": list["token"]});
 		if (user) {
 
-			if (list["name"] || list["surname"]) {
+			if (list["name"] || list["surname"])
 				Users.update({systemId: user["_id"],},
 							{$set: {name: list["name"], surname: list["surname"],}});
-			}
 
 			Accounts.setPassword(user["_id"], list["password"]);
 
@@ -196,7 +195,7 @@ Meteor.methods({
 
 				//user properties
 				var name = "Mr";
-				var surname ="test"+ index
+				var surname ="test"+ index;
 				var mail = surname + "@test.com";
 				var password = surname + surname;
 
@@ -232,7 +231,7 @@ Meteor.methods({
 
 
 Accounts.validateLoginAttempt(function(obj) {
-
+	
 	if (!obj) {
 		return;
 	}

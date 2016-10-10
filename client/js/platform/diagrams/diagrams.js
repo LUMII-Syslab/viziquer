@@ -48,9 +48,14 @@ Template.diagramsTemplate.events({
 Template.diagramsRibbon.events({
 
 //shows dialog window to enter diagram name
-	'click #add' : function(e, templ) {
+	'click #add': function(e, templ) {
 		$('#add-diagram').modal("show");
 	},
+
+	'click #import': function(e, templ) {
+		$('#import-ontology-form').modal("show");
+	},
+
 
 //shows button's tooltip on mouse over
     'mouseover .btn-ribbon' : function(e, templ) {
@@ -420,6 +425,40 @@ Template.addDiagram.events({
 		}
 	},
 });
+
+
+Template.importOntology.events({
+	
+	'click #ok-import-ontology' : function(e, templ) {
+
+		//hidding the form
+		$('#import-ontology-form').modal("hide");
+
+		var fileList = $("#fileList")[0].files;
+	    _.each(fileList, function(file) {
+
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+
+	        	var list = {projectId: Session.get("activeProject"),
+	        				versionId: Session.get("versionId"),
+	                        data: JSON.parse(reader.result),
+	                    };
+
+	            Utilities.callMeteorMethod("loadOntology", list);
+	        }
+
+	        reader.onerror = function(error) {
+	            console.error("Error: ", error);
+	        }
+
+	        reader.readAsText(file);
+	    });
+
+	},
+
+});
+
 
 //returns diagram types for drop down when user creates a new diagram
 

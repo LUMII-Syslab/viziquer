@@ -1,38 +1,4 @@
 
-
-Images.allow({
-
-    download: function(user_id, fileObj) {
-        return user_id === fileObj.userId;
-    },
-
-    insert: function (user_id, fileObj) {
-        return user_id === fileObj.userId;
-    },
-
-    update: function (user_id, fileObj) {
-        return user_id === fileObj.userId;
-    },
-
-});
-
-FileObjects.allow({
-
-    download: function(user_id, fileObj) {
-        return is_project_version_reader(user_id, fileObj);
-    },
-
-    insert: function (user_id, fileObj) {
-        return is_project_admin(user_id, fileObj);
-    },
-
-    update: function (user_id, fileObj) {
-        return is_project_admin(user_id, fileObj);
-    },
-
-});
-
-
 Meteor.methods({
 
     upsertProfileImage: function(list) {
