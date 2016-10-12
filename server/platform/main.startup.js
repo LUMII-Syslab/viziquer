@@ -2,6 +2,8 @@
 	Meteor.startup(function () {
 		console.log("Loading server");
 		
+		Meteor.call("importConfiguration");
+
   		// var settings = Meteor.settings || {};
 
 		//kadira settings

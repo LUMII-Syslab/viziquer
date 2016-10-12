@@ -7,7 +7,9 @@ Meteor.methods({
 		if (is_system_admin(user_id) && list) {
 
 			ImportTDAConfiguration.init(list, user_id);
-			ImportTDAConfiguration.importDiagramTypes(user_id);
+			var ids = ImportTDAConfiguration.importDiagramTypes(user_id);
+
+			ImportTDAConfiguration.addVQProperties(ids);
 		}
 	},
 
@@ -57,11 +59,11 @@ var ImportTDAConfiguration = {
 
 		var self = this;
 
-		_.each(this.data.diagramTypes, function(diagram_type_in) {
-			var target_diagram = self.buildDiagramPresentation(diagram_type_in);
-			self.buildDiagramType(diagram_type_in, target_diagram);
-		});
-
+		return _.map(this.data.diagramTypes, function(diagram_type_in) {
+						var target_diagram = self.buildDiagramPresentation(diagram_type_in);
+						var _id = self.buildDiagramType(diagram_type_in, target_diagram);
+						return _id;
+					});
 	},
 
 	buildDiagramPresentation: function(diagram_type_in) {
@@ -141,7 +143,7 @@ var ImportTDAConfiguration = {
 		self.addElementTypes(diagram_type_in["elementTypes"]);
 		self.addSpecializations(diagram_type_in["specializations"]);
 
-		return target_diagram_type;
+		return self.newDiagramTypeId;
 	},
 
 
@@ -922,7 +924,19 @@ var ImportTDAConfiguration = {
 		 		proc_name = tmp_proc_name;
 		 	}
 
-	 		translets_list.push({extensionPoint: extension_point, procedure: proc_name,});
+		 	var found_translet = _.find(translets_list, function(tmp_translet) {
+		 		if (tmp_translet["extensionPoint"] == extension_point) {
+		 			return true;
+		 		}
+		 	});
+
+
+		 	if (found_translet) {
+		 		found_translet.procedure = proc_name;
+		 	}
+		 	else {
+		 		translets_list.push({extensionPoint: extension_point, procedure: proc_name,});
+		 	}
 
 	 		if (translet["procedureName"] !== proc_name) {
 
@@ -1236,6 +1250,127 @@ var ImportTDAConfiguration = {
 				//"TextArea+Button": "multiField",
 			};
 	},
+
+	addVQProperties: function(ids) {
+
+		var id = ids[0];
+		var diagram_type = DiagramTypes.findOne({_id: id,});
+		if (!diagram_type) {
+			console.error("No diagram type inserted");
+			return;
+		}
+
+		var diagram_type_id = diagram_type._id;
+
+		var no_collection_menu = diagram_type.noCollectionContextMenu;
+		var menu_item = _.find(no_collection_menu, function(menu) {
+			return menu.item == "Generate SPARQL";
+		});
+
+		if (menu_item) {
+			menu_item.procedure = "GenerateSPARQL";
+			DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
+		}
+
+
+		ElementTypes.find({diagramTypeId: diagram_type_id, }).forEach(function(elem_type) {
+
+			var name = elem_type.name;
+
+			if (name == "Class") {
+
+				var class_type_id = elem_type._id;
+
+				CompartmentTypes.find({elementTypeId: class_type_id,}).forEach(function(compart_type) {
+
+					if (compart_type.name == "ClassType") {
+						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+					}
+
+					if (compart_type.name == "Distinct") {
+						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+					}
+
+					if (compart_type,name == "OrderBy") {
+						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
+					}
+
+					if (compart_type.name == "Name") {
+
+						var extension_points = compart_type.extensionPoints;
+						var item = _.find(extension_points, function(extension_point) {
+							return extension_point.extensionPoint == "dynamicDropDown";
+						});
+
+						if (item) {
+							item.procedure = "VQgetClassNames";
+							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+						}
+					}
+
+
+					if (compart_type.name == "Attributes") {
+
+						var extension_points = compart_type.extensionPoints;
+						var item = _.find(extension_points, function(extension_point) {
+							return extension_point.extensionPoint == "dynamicDropDown";
+						});
+
+						if (item) {
+							item.procedure = "VQgetAttributeNames";
+							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+						}
+					}
+
+
+
+				});
+			}
+
+
+			if (name == "Link") {
+
+				CompartmentTypes.find({elementTypeId: elem_type._id,}).forEach(function(compart_type) {
+
+					if (compart_type.name == "Name") {
+
+						var extension_points = compart_type.extensionPoints;
+						var item = _.find(extension_points, function(extension_point) {
+							return extension_point.extensionPoint == "dynamicDropDown";
+						});
+
+						if (item) {
+							item.procedure = "VQgetAssociationNames";
+							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+						}
+
+					}
+
+
+					if (compart_type.name == "Subquery Link") {
+
+						var extension_points = compart_type.extensionPoints;
+						var item = _.find(extension_points, function(extension_point) {
+							return extension_point.extensionPoint == "afterUpdate";
+						});
+
+						if (item) {
+							item.procedure = "VQsetSubQueryInverseLink";
+							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+						}
+
+					}
+
+
+				});
+
+			}
+
+		});
+
+
+	},
+
 };
 
 
