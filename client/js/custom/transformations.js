@@ -18,101 +18,16 @@ Interpreter.customMethods({
 		//Class -> compartments->Name->extension->dynamicDropDown	
 		var cls = Classes.find();
 
-		if (cls.count() > 0){
-			//Create array of needed structure from class' names
-			var class_names = [{value: " ", input: " ", }];
+		if (cls.count() > 0) {
 
-			var class_val = cls.forEach(function (user) {
-				class_names.push({value: user["name"], input: user["name"], });
+			//Create array of needed structure from class' names
+			var class_names = cls.map(function (user) {
+				return {value: user["name"], input: user["name"],};
 			});
 
-			/* If atributes from drop-down are fixed 
-			//If Class name is changed
-			//check for existing attributes and delete unpropriate if neccessary - 09.05.2016. changed to keep any user text	
-			var act_elem = Session.get("activeElement");
-
-			if (act_elem){
-				var act_el = Elements.findOne({_id: act_elem});
-				var act_comp = CompartmentTypes.findOne({name: "Name", elementTypeId: Session.get("activeElementType")})
-				
-				if (act_comp && act_el) {				
-					var act_class = Compartments.findOne({ elementId: act_elem, compartmentTypeId: act_comp["_id"] });
-					
-					if (act_class) {		
-						var cls_value = act_class["input"]; // Class name
-						
-						if (cls_value){ 
-							
-							var known_class = _.find(class_names, function(cn){ 
-								return cn["value"] === cls_value;
-							})
-
-							if (!known_class) {
-								console.error("VQgetClassNames: Unknown Class Name");
-							} else {
-								//Search for all given atributes of active element
-								var att_val = [];
-
-								var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Session.get("activeElementType")})
-								var att = Compartments.find({ elementId: act_elem, compartmentTypeId: compart_type["_id"] });
-								
-								att.forEach(function (user) {
-									att_val.push({name: user["subCompartments"]["Attributes"]["Attributes"]["Name"]["input"], id: user["_id"]});
-								});
-
-
-								//If some attributes are mentioned
-								if (att_val.length > 0){				
-									var exist;		
-									var atr_name = [];
-
-									//Read attribute values from DB					
-									if (cls_value != " "){
-										//direct
-										_.each(Classes.findOne({name: cls_value})["Attributes"], function(e){
-											atr_name.push({name: e["localName"]});
-										})			
-										
-										//from Super Class						
-										_.each(Classes.findOne({name: cls_value})["AllSuperClasses"], function(e){
-
-											_.each(Classes.findOne({name: e["localName"]})["Attributes"], function(el){
-												atr_name.push({name: el["localName"]});
-											})
-										});
-
-										//from Sub Class						
-										_.each(Classes.findOne({name: cls_value})["AllSubClasses"], function(e){
-
-											_.each(Classes.findOne({name: e["localName"]})["Attributes"], function(el){
-												atr_name.push({name: el["localName"]});
-											})
-										});
-									}
-									
-									//Compare existing atribute with all possible Class atributes
-									_.each(att_val, function(aname){
-
-										var exist = _.find(atr_name, function(all) {
-											return  all["name"].includes(aname["name"]); 
-										});
-
-										//Delete attribute if it does not exists for given Class
-										if (!exist) {
-											Utilities.callMeteorMethod("removeCompartment", {projectId: Session.get("activeProject"), 
-												versionId: Session.get("versionId"), compartmentId: aname["id"]});
-										}
-									})	
-								}
-							}
-						}
-					}
-				}	
-			
-			}	*/
+			class_names = _.union([{value: " ", input: " ", }], class_names);
 
 		 	var is_sorted = false;
-
 		 	return _.uniq(class_names, is_sorted, function(item) {
 		 		return item["input"];
 		 	});
@@ -140,14 +55,13 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsOptionalAttribute: function() {
-
-	console.log("is optional enetered");	
-
-
-
+		console.log("is optional enetered");	
 	},
 
 	VQgetAttributeNames: function() {
+
+		console.log("VQgetAttributeNames executed");
+
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
@@ -159,7 +73,8 @@ Interpreter.customMethods({
 			return [];
 		}
 
-		if (act_comp["elementTypeId"] != ElementTypes.findOne({name: "Class"})["_id"]) {
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
 			return [];
 		}
 
@@ -177,15 +92,12 @@ Interpreter.customMethods({
 			}
 
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-
 			if (!compart) {
 				return atr_names;
 			}
 
 		//Read attribute values from DB
 			//direct
-			var att_val; 
-
 			var klass = Classes.findOne({name: compart["input"]});			
 
 			if (!klass) {
@@ -194,23 +106,20 @@ Interpreter.customMethods({
 			}
 
 			_.each(klass["Attributes"], function(att){
-				att_val = att["localName"];
+				var att_val = att["localName"];
 				atr_names.push({value: att_val, input: att_val});
 			})
 				
 			//from Super Class
-			var cs_val;
-			var cs_list;	
-
 			_.each(klass["AllSuperClasses"], function(supC){
 
-				cs_val = supC["localName"];
-				cs_list = Classes.findOne({name: cs_val});
+				var cs_val = supC["localName"];
+				var cs_list = Classes.findOne({name: cs_val});
 
 				if (cs_list) {
 
 					_.each(cs_list["Attributes"], function(sca){
-						att_val = sca["localName"];
+						var att_val = sca["localName"];
 						atr_names.push( {value: att_val, input: att_val} );
 					})
 				}
@@ -219,13 +128,13 @@ Interpreter.customMethods({
 			//from Sub Class		
 			_.each(klass["AllSubClasses"], function(supC){
 
-				cs_val = supC["localName"];
-				cs_list = Classes.findOne({name: cs_val});
+				var cs_val = supC["localName"];
+				var cs_list = Classes.findOne({name: cs_val});
 
 				if (cs_list) {
 
 					_.each(cs_list["Attributes"], function(sca){
-						att_val = sca["localName"];
+						var att_val = sca["localName"];
 						atr_names.push( {value: att_val, input: att_val} );
 					})
 				}
@@ -302,7 +211,8 @@ Interpreter.customMethods({
 
 					// Dialog.updateCompartmentValue(ct, "true", "<inv>", c["_id"]);
 					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]);
-				} else {
+				}
+				else {
 					var s = cn["input"].indexOf("(");
 					var e = cn["input"].lastIndexOf(")");
 					var name = cn["input"].substring(s + 1, e)

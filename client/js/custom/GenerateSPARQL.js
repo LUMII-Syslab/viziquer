@@ -2,6 +2,8 @@ Interpreter.customMethods({
 
 	GenerateSPARQL: function() {
 
+		console.log("GenerateSPARQL executed");
+
 		var editor = Interpreter.editor;
 		var elem_ids = _.keys(editor.getSelectedElements());
 		var elem_table = []; 

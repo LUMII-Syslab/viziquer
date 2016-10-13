@@ -532,9 +532,6 @@ var ImportTDAConfiguration = {
 				if (row) {
 
 					var row_type = row["rowType"];
-
-					//console.log("row ", row)
-
 					var new_row_type;
 					if (row_type == "ComboBox" && row.isEditable == "true" ) {
 						new_row_type = "combobox";
@@ -1263,14 +1260,26 @@ var ImportTDAConfiguration = {
 		var diagram_type_id = diagram_type._id;
 
 		var no_collection_menu = diagram_type.noCollectionContextMenu;
-		var menu_item = _.find(no_collection_menu, function(menu) {
+		var no_menu_item = _.find(no_collection_menu, function(menu) {
 			return menu.item == "Generate SPARQL";
+		});
+
+		if (no_menu_item) {
+			no_menu_item.procedure = "GenerateSPARQL";
+		}
+
+
+		var collection_menu = diagram_type.collectionContextMenu;
+		var menu_item = _.find(collection_menu, function(menu) {
+			return menu.item == "Generate SPARQL from selection";
 		});
 
 		if (menu_item) {
 			menu_item.procedure = "GenerateSPARQL";
-			DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
 		}
+
+
+		DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
 
 
 		ElementTypes.find({diagramTypeId: diagram_type_id, }).forEach(function(elem_type) {
@@ -1280,6 +1289,16 @@ var ImportTDAConfiguration = {
 			if (name == "Class") {
 
 				var class_type_id = elem_type._id;
+
+				var menu = elem_type.contextMenu;
+				menu = _.union([{item: "AddLink", procedure: "AddLink", }], menu);
+				ElementTypes.update({_id: elem_type._id}, {$set: {contextMenu: menu},});
+
+				if (menu_item) {
+					menu_item.procedure = "GenerateSPARQL";
+					DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu}});
+				}
+
 
 				CompartmentTypes.find({elementTypeId: class_type_id,}).forEach(function(compart_type) {
 
@@ -1306,24 +1325,47 @@ var ImportTDAConfiguration = {
 							item.procedure = "VQgetClassNames";
 							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
 						}
+
 					}
 
 
 					if (compart_type.name == "Attributes") {
 
-						var extension_points = compart_type.extensionPoints;
-						var item = _.find(extension_points, function(extension_point) {
-							return extension_point.extensionPoint == "dynamicDropDown";
+						var sub_compart_types = compart_type.subCompartmentTypes
+
+						var attr_sub_compart_type_first = _.find(sub_compart_types, function(sub_compart_type) {
+							return sub_compart_type.name == "Attributes";
 						});
 
-						if (item) {
-							item.procedure = "VQgetAttributeNames";
-							CompartmentTypes.update({_id: compart_type._id}, {$set: {extensionPoints: extension_points,}});
+						if (attr_sub_compart_type_first) {
+
+							var attr_sub_compart_type = _.find(attr_sub_compart_type_first.subCompartmentTypes, function(sub_compart_type) {
+								return sub_compart_type.name == "Name";
+							});
+
+							var extension_points = attr_sub_compart_type.extensionPoints;
+							var item = _.find(extension_points, function(extension_point) {
+								return extension_point.extensionPoint == "dynamicDropDown";
+							});	
+
+
+							if (item) {
+								item.procedure = "VQgetAttributeNames";
+							}
+
+							else {
+								extension_points.push({extensionPoint: "dynamicDropDown", procedure: "VQgetAttributeNames"})
+							}
+
+							var item = _.find(extension_points, function(extension_point) {
+								return extension_point.extensionPoint == "dynamicDropDown";
+							});	
+
+
+							CompartmentTypes.update({_id: compart_type._id}, {$set: {subCompartmentTypes: sub_compart_types,}});
 						}
+
 					}
-
-
-
 				});
 			}
 
