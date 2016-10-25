@@ -2,63 +2,66 @@
 //creating a new project version and adds the project creator to the project
 Projects.after.insert(function (user_id, doc) {
 
-	if (!doc)
+	if (!doc) {
 		return false;
-
-	var proj_id = doc["_id"];
-	var tool_id = doc["toolId"];
-	var date = new Date();
-
-	//selects the last tool version
-	var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
-	if (!tool_version) {
-		console.log("There is no tool version for tool: ", tool_id);
-		return;
 	}
 
-	//adding the project new version
-	var version_id = Versions.insert({projectId: proj_id,
-									createdAt: date,
-									createdBy: user_id,
-									status: "New",
-									toolVersionId: tool_version["_id"],
-									toolId: tool_id,
-								});
+	afterInsert(user_id, doc);
 
-	//inserting the user in the project
-	ProjectsUsers.insert({
-						projectId: proj_id,
-						role: "Admin",
-						status: "Member",
-						createdAt: date,
-						modifiedAt: date,
-						invitedBy: user_id,
-						userSystemId: user_id,
-						versionId: version_id,
-					});
+	// var proj_id = doc["_id"];
+	// var tool_id = doc["toolId"];
+	// var date = new Date();
 
-	//adding the doc that stores some user stuff
-	UserVersionSettings.insert({
-						userSystemId: user_id,
-						versionId: version_id,
-						projectId: proj_id,
-						view: "Default",
-						consistencyCheck: false,
-						collapsedDiagrams: [],
-						diagramsSortBy: "alphabetTopDown",
-						diagramsSelectedGroup: "none",
-						documentsSortBy: "alphabetTopDown",
-						documentsSelectedGroup: "none",
-					});
+	// //selects the last tool version
+	// var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
+	// if (!tool_version) {
+	// 	console.log("There is no tool version for tool: ", tool_id);
+	// 	return;
+	// }
 
-	Users.update({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
+	// //adding the project new version
+	// var version_id = Versions.insert({projectId: proj_id,
+	// 								createdAt: date,
+	// 								createdBy: user_id,
+	// 								status: "New",
+	// 								toolVersionId: tool_version["_id"],
+	// 								toolId: tool_id,
+	// 							});
 
-	//managing roles/permissons
-	var project_role = build_project_role(proj_id);
-	var project_admin_role = build_project_admin_role(proj_id);
-	var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
+	// //inserting the user in the project
+	// ProjectsUsers.insert({
+	// 					projectId: proj_id,
+	// 					role: "Admin",
+	// 					status: "Member",
+	// 					createdAt: date,
+	// 					modifiedAt: date,
+	// 					invitedBy: user_id,
+	// 					userSystemId: user_id,
+	// 					versionId: version_id,
+	// 				});
 
-	Roles.addUsersToRoles(user_id, [project_role, project_admin_role, project_version_admin_role]);
+	// //adding the doc that stores some user stuff
+	// UserVersionSettings.insert({
+	// 					userSystemId: user_id,
+	// 					versionId: version_id,
+	// 					projectId: proj_id,
+	// 					view: "Default",
+	// 					consistencyCheck: false,
+	// 					collapsedDiagrams: [],
+	// 					diagramsSortBy: "alphabetTopDown",
+	// 					diagramsSelectedGroup: "none",
+	// 					documentsSortBy: "alphabetTopDown",
+	// 					documentsSelectedGroup: "none",
+	// 				});
+
+	// Users.update({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
+
+	// //managing roles/permissons
+	// var project_role = build_project_role(proj_id);
+	// var project_admin_role = build_project_admin_role(proj_id);
+	// var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
+
+	// Roles.addUsersToRoles(user_id, [project_role, project_admin_role, project_version_admin_role]);
 });
 Projects.hookOptions.after.insert = {fetchPrevious: false};
 
@@ -130,5 +133,140 @@ Meteor.methods({
 		}
 	},
 
+
+	dublicateProject: function(list) {
+
+		var user_id = Meteor.userId();
+		if (is_project_version_admin(user_id, list)) {
+
+			var project_id = list.projectId;
+			var project = Projects.findOne({_id: project_id});
+			if (!project) {
+				console.error("No project object");
+				return;
+			}
+
+			project._id = undefined;
+			var new_project_id = Projects.direct.insert(project);
+			list.newProjectId = new_project_id;
+
+
+			project._id = new_project_id;
+			var new_version_id = afterInsert(user_id, project);
+
+			Diagrams.find({projectId: project_id}).forEach(function(diagram) {
+				dublicateDiagram(diagram, new_project_id, new_version_id);
+			});
+		}
+
+	},
+
+
 });
 
+
+
+function dublicateDiagram(diagram, new_project_id, new_version_id) {
+
+	var diagram_id = diagram._id;
+	var project_id = diagram.projectId;
+
+	diagram._id = undefined;
+
+	_.extend(diagram, {_id: undefined, projectId: new_project_id, versionId: new_version_id,});
+	var new_diagram_id = Diagrams.insert(diagram);
+
+
+	var elems_map = {};
+	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
+
+		var old_box_id = box._id;
+		_.extend(box, {_id: undefined, diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id,});
+
+		var new_box_id = Elements.insert(box);
+		elems_map[old_box_id] = new_box_id;
+	});
+
+
+	Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEach(function(line) {
+
+		var old_line_id = line._id;
+
+		line._id = undefined;
+		_.extend(line, {_id: undefined, diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id,
+						startElement: elems_map[line.startElement], endElement: elems_map[line.endElement],});
+
+		var new_line_id = Elements.insert(line);
+		elems_map[old_line_id] = new_line_id;
+	});
+
+
+	Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
+
+		_.extend(compart, {_id: undefined, elementId: elems_map[compart.elementId], diagramId: new_diagram_id, projectId: new_project_id, versionId: new_version_id, });
+
+		Compartments.insert(compart);
+	});
+}
+
+
+function afterInsert(user_id, doc) {
+
+
+	var proj_id = doc["_id"];
+	var tool_id = doc["toolId"];
+	var date = new Date();
+
+	//selects the last tool version
+	var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
+	if (!tool_version) {
+		console.log("There is no tool version for tool: ", tool_id);
+		return;
+	}
+
+	//adding the project new version
+	var version_id = Versions.insert({projectId: proj_id,
+									createdAt: date,
+									createdBy: user_id,
+									status: "New",
+									toolVersionId: tool_version["_id"],
+									toolId: tool_id,
+								});
+
+	//inserting the user in the project
+	ProjectsUsers.insert({
+						projectId: proj_id,
+						role: "Admin",
+						status: "Member",
+						createdAt: date,
+						modifiedAt: date,
+						invitedBy: user_id,
+						userSystemId: user_id,
+						versionId: version_id,
+					});
+
+	//adding the doc that stores some user stuff
+	UserVersionSettings.insert({
+						userSystemId: user_id,
+						versionId: version_id,
+						projectId: proj_id,
+						view: "Default",
+						consistencyCheck: false,
+						collapsedDiagrams: [],
+						diagramsSortBy: "alphabetTopDown",
+						diagramsSelectedGroup: "none",
+						documentsSortBy: "alphabetTopDown",
+						documentsSelectedGroup: "none",
+					});
+
+	Users.update({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
+
+	//managing roles/permissons
+	var project_role = build_project_role(proj_id);
+	var project_admin_role = build_project_admin_role(proj_id);
+	var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
+
+	Roles.addUsersToRoles(user_id, [project_role, project_admin_role, project_version_admin_role]);
+
+	return version_id;
+}

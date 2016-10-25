@@ -297,6 +297,28 @@ Template.defaultDiagramsView.events({
 
 		Interpreter.execute("delete_diagram", [diagram_id]);
 	},
+
+	"click .dublicate-diagram": function(e) {
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		var diagram_container = $(e.target).closest(".diagram");
+
+		var diagram_id = diagram_container.attr("diagramId");
+		if (!diagram_id) {
+			return;
+		}
+
+
+		var list = {diagramId: diagram_id};
+
+		list["projectId"] = Session.get("activeProject");
+		list["versionId"] =	Session.get("versionId");
+
+		Utilities.callMeteorMethod("dublicateDiagram", list);
+	},
+
 });
 
 

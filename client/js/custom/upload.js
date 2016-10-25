@@ -38,8 +38,6 @@ Template.uploadOntology.events({
 
 Template.diagramTemplate.onRendered(function() {
 
-	console.log("diagram template rendered");
-
 	var list = {projectId: Session.get("activeProject"),
 				versionId: Session.get("versionId"),
 			};

@@ -48,14 +48,6 @@ Versions.after.insert(function (user_id, doc) {
 	var users_settings = UserVersionSettings.find({projectId: project_id, versionId: last_version_id});
 	var elements = Elements.find({projectId: project_id, versionId: last_version_id});
 	var compartments = Compartments.find({projectId: project_id, versionId: last_version_id});
-	var elements_sections = ElementsSections.find({projectId: project_id, versionId: last_version_id});
-
-	//copies of document things
-	var documents = Documents.find({projectId: project_id, versionId: last_version_id});
-	var sections = Sections.find({projectId: project_id, versionId: last_version_id});
-
-	var cloud_files = CloudFiles.find({projectId: project_id, versionId: last_version_id});
-	var diagrams_files = DiagramFiles.find({projectId: project_id, versionId: last_version_id});
 
 
 	//diagram things
@@ -126,76 +118,7 @@ Versions.after.insert(function (user_id, doc) {
 		Compartments.insert(compartment, {removeEmptyStrings: false});
 	});
 
-	//document things
-	var doc_list = {};
-	_.each(documents.fetch(), function(doc) {
-		doc["versionId"] = new_version_id;
-		var old_doc = doc["_id"];
-		delete doc["_id"];
-
-		if (!doc["allowedGroups"])
-			doc["allowedGroups"] = [];
-
-		if (!doc["seenCount"])
-			doc["seenCount"] = 0;		
-
-		var new_doc_id = Documents.insert(doc, {removeEmptyStrings: false});
-		doc_list[old_doc] = new_doc_id;
-	});
-
-	var section_list = {};
-	_.each(sections.fetch(), function(section) {
-		section["versionId"] = new_version_id;
-		section["documentId"] = doc_list[section["documentId"]];
-
-		var old_section = section["_id"];
-		delete section["_id"];
-		var new_section = Sections.insert(section, {removeEmptyStrings: false});
-		section_list[old_section] = new_section;
-	});			
-
-	_.each(elements_sections.fetch(), function(element_section) {
-		element_section["versionId"] = new_version_id;
-		element_section["documentId"] = doc_list[element_section["documentId"]];
-		element_section["sectionId"] = section_list[element_section["sectionId"]];	
-		element_section["diagramId"] = diagram_list[element_section["diagramId"]];
-		element_section["elementId"] = element_list[element_section["elementId"]];
-
-		delete element_section["_id"];
-
-		var new_section = ElementsSections.insert(element_section);
-	});
-
-	//files
-	var files_list = {};
-	_.each(cloud_files.fetch(), function(doc) {
-		doc["versionId"] = new_version_id;
-		var old_doc = doc["_id"];
-		delete doc["_id"];
-
-		if (!doc["allowedGroups"])
-			doc["allowedGroups"] = [];
-
-		if (!doc["seenCount"])
-			doc["seenCount"] = 0;		
-
-		var new_file_id = CloudFiles.insert(doc, {removeEmptyStrings: false});
-		files_list[old_doc] = new_file_id;
-	});
-
-	_.each(diagrams_files.fetch(), function(diagram_file) {
-		diagram_file["versionId"] = new_version_id;
-		diagram_file["fileId"] = files_list[diagram_file["fileId"]];
-		diagram_file["diagramId"] = diagram_list[diagram_file["diagramId"]];
-
-		if (diagram_file["elementId"])
-			diagram_file["elementId"] = element_list[diagram_file["elementId"]];
-
-		delete diagram_file["_id"];
-
-		var new_diagram_file = DiagramFiles.insert(diagram_file);
-	});
-
+		
 	var notification = {projectId: project_id,
 						isAdminsOnly: true,
 						notificationType: "NewVersion",
@@ -257,9 +180,6 @@ Versions.after.remove(function(user_id, doc) {
 
 	//deleting diagrams, elements, compartments, ...
 	Diagrams.remove({projectId: project_id, versionId: new_version_id});
-	Documents.remove({projectId: project_id, versionId: new_version_id});
-
-	CloudFiles.remove({projectId: project_id, versionId: new_version_id});
 
 	UserVersionSettings.remove({projectId: project_id, versionId: new_version_id});
 

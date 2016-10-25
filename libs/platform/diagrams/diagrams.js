@@ -139,6 +139,65 @@ Meteor.methods({
 		}
 
 	},
+
+
+	dublicateDiagram: function(list) {
+
+		var user_id = Meteor.userId();
+		if (is_project_version_admin(user_id, list)) {
+
+			var diagram_id = list.diagramId;
+			var project_id = list.projectId;
+
+			var diagram = Diagrams.findOne({_id: diagram_id, projectId: project_id,});
+			if (!diagram) {
+				console.error("No diagram ", diagram);
+				return;
+			}
+
+			diagram._id = undefined;
+			var new_diagram_id = Diagrams.insert(diagram);
+
+
+			var elems_map = {};
+			Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
+
+				var old_box_id = box._id;
+				box._id = undefined;
+				box.diagramId = new_diagram_id;
+
+				var new_box_id = Elements.insert(box);
+				elems_map[old_box_id] = new_box_id;
+			});
+
+
+			Elements.find({diagramId: diagram_id, projectId: project_id, type: "Line"}).forEach(function(line) {
+
+				var old_line_id = line._id;
+
+				line._id = undefined;
+				line.startElement = elems_map[line.startElement];
+				line.endElement = elems_map[line.endElement];
+				line.diagramId = new_diagram_id;
+
+				var new_line_id = Elements.insert(line);
+				elems_map[old_line_id] = new_line_id;
+			});
+
+
+			Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
+
+				compart._id = undefined;
+				compart.elementId = elems_map[compart.elementId];
+				compart.diagramId = new_diagram_id;
+
+				Compartments.insert(compart);
+			});
+
+		}
+
+	},
+
 });
 
 function build_diagram(list, user_id) {

@@ -92,7 +92,7 @@ Template.structureTemplate.events({
 		                                                                  	.removeClass("hidden");
 	},
 
-	'click .edit-forum-post': function(e) {
+	'click .edit-project-obj': function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -107,7 +107,7 @@ Template.structureTemplate.events({
 		return;
 	},
 
-	'click .remove-forum-post': function(e) {
+	'click .remove-project-obj': function(e) {
 		e.preventDefault();
 		//e.stopPropagation();
 
@@ -118,6 +118,21 @@ Template.structureTemplate.events({
 
 		return;
 	},
+
+
+	'click .dublicate-project-obj': function(e) {
+		e.preventDefault();
+		//e.stopPropagation();
+
+		var proj_id = $(e.target).closest(".project-path").attr("id");
+		var list = {projectId: proj_id};
+
+		Utilities.callMeteorMethod("dublicateProject", list);
+
+		return;
+	},
+
+
 });
 
 Template.structureRibbon.events({
