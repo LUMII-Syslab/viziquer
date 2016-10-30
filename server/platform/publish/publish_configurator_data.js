@@ -66,8 +66,8 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function(list) {
 				ToolVersions.find({toolId: list["toolId"]},
 												{fields: {toolId: 0, createdBy: 0}}),
 
-				DocumentTypes.find({toolId: list["toolId"], versionId: version_id},
-									{fields: {toolId: 0, createdBy: 0, createdAt: 0}}),
+				// DocumentTypes.find({toolId: list["toolId"], versionId: version_id},
+				// 					{fields: {toolId: 0, createdBy: 0, createdAt: 0}}),
 
 				//selecting the cofigurator diagram type
 				DiagramTypes.find(diagram_type_query2,
@@ -123,29 +123,19 @@ Meteor.publish("ConfiguratorDiagram", function(list) {
 									_id: list["diagramTypeId"]};		
 
 		return [
-				Diagrams.find({$or: [diagram_query, query2]},
-				 			{fields: {createdAt: 0, createdBy: 0, toolId: 0, versionId: 0}}),
-				
-				Elements.find({$or: [diagram_elems_query, query2]},
-				 			{fields: {toolId: 0, versionId: 0, diagramId: 0, domain: 0}}),
-				
-				Compartments.find({$or: [diagram_elems_query, query2]},
-							{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				Diagrams.find({$or: [diagram_query, query2]}),
+				Elements.find({$or: [diagram_elems_query, query2]}),
+				Compartments.find({$or: [diagram_elems_query, query2]}),
 
-				
-				DiagramTypes.find({$or: [diagram_type_query, diagram_type_query2]},
-				 			{fields: {createdAt: 0, createdBy: 0, toolId: 0, versionId: 0}}),
+				DiagramTypes.find({$or: [diagram_type_query, diagram_type_query2]}),
 
 				// CompartmentTypes.find({$or: [query1, query2]}, 
 				//  			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 				// DialogTabs.find({$or: [query1, query2]},
 				//  			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 
-				ElementTypes.find(query2,
-				  			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
-
-				PaletteButtons.find(query2,
-				  			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				ElementTypes.find(query2),
+				PaletteButtons.find(query2),
 
 				// ImportedTranslets.find({toolId: list["toolId"], versionId: list["versionId"],
 				// 						//diagramTypeId: list["diagramTypeId"]}),
