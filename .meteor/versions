@@ -64,7 +64,7 @@ matb33:collection-hooks@0.8.3
 mdg:validation-error@0.2.0
 meteor@1.2.17_1
 meteor-base@1.0.4
-mikowals:batch-insert@1.1.13
+mikowals:batch-insert@1.1.9
 minifier-css@1.2.14_1
 minifier-js@1.2.14_1
 minimongo@1.0.17
@@ -74,7 +74,7 @@ mobile-experience@1.0.4
 mobile-status-bar@1.0.12
 modules@0.7.6_1
 modules-runtime@0.7.6_1
-mongo@1.1.12_1
+mongo@1.1.13
 mongo-id@1.0.5
 mrt:jquery-ui-sortable@1.10.3
 natestrauser:bootstrap-colorpicker@0.1.1
@@ -84,7 +84,7 @@ nemo64:bootstrap-data@3.3.5
 nilsdannemann:pdfmake@1.0.38
 nimble:restivus@0.8.11
 npm-bcrypt@0.9.0
-npm-mongo@1.5.48
+npm-mongo@2.2.11_1
 observe-sequence@1.0.12
 okgrow:analytics@1.0.5
 ordered-dict@1.0.8

@@ -54,16 +54,25 @@ ImportAjooConfiguration.prototype = {
 			var object = box_type.object;
 			var box_type_id = object._id;
 
+			var x = object.elementId;
+
+			console.log("old box id ", x)
+			console.log("new box ic ", self.obj_type_map[x]);
+
 			_.extend(object, {_id: undefined,
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
+								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
 
+			console.log("obj ", object)
+
+
 			var new_box_type_id = ElementTypes.insert(object);
 			self.obj_type_map[box_type_id] = new_box_type_id;
-			self.importCompartmentTypes();
+			self.importCompartmentTypes(box_type.compartmentTypes);
 		});
 	},
 
@@ -78,6 +87,7 @@ ImportAjooConfiguration.prototype = {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								startElementId: self.obj_type_map[object.startElementId],
 								endElementId: self.obj_type_map[object.endElementId],
+								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
@@ -100,6 +110,10 @@ ImportAjooConfiguration.prototype = {
 			_.extend(object, {_id: undefined,
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								elementTypeId: self.obj_type_map[object.elementTypeId],
+
+								diagramId: self.obj_type_map[object.diagramId],
+								elementId: self.obj_type_map[object.elementId],
+
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
@@ -141,8 +155,8 @@ ImportAjooConfiguration.prototype = {
 								versionId: self.versionId,
 							});
 
-			var new_diaram_id = Diagrams.insert(object);
-			self.obj_type_map[diagram_id] = new_diaram_id;
+			var new_diagram_id = Diagrams.insert(object);
+			self.obj_type_map[diagram_id] = new_diagram_id;
 
 			self.importBoxes(diagram.boxes);
 			self.importLines(diagram.lines);

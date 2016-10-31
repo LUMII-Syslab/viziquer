@@ -171,7 +171,8 @@ Meteor.publish("ConfiguratorDiagramTypes", function(list) {
 		//selecting the current tool types						
 		var query1 = {toolId: list["toolId"],
 						versionId: list["versionId"],
-						diagramId: list["diagramId"]};
+						diagramId: list["diagramId"],
+					};
 
 		//selecting the configurator tool's types
 		var query2 = {toolId: get_configurator_tool_id(),
@@ -187,16 +188,16 @@ Meteor.publish("ConfiguratorDiagramTypes", function(list) {
 				// Compartments.find({$or: [diagram_elems_query, query2]},
 				// 			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 
-				ElementTypes.find(query1,
-				 			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
-				PaletteButtons.find(query1,
-				 			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				ElementTypes.find(query1),
+				 			// {fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				PaletteButtons.find(query1),
+				 			// {fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 
 
-				CompartmentTypes.find({$or: [query1, query2]}, 
-				 			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
-				DialogTabs.find({$or: [query1, query2]},
-				 			{fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				CompartmentTypes.find({$or: [query1, query2]}),
+				 			// {fields: {toolId: 0, versionId: 0, diagramId: 0}}),
+				DialogTabs.find({$or: [query1, query2]}),
+				 			// {fields: {toolId: 0, versionId: 0, diagramId: 0}}),
 
 
 				ImportedTranslets.find({toolId: list["toolId"], versionId: list["versionId"],
