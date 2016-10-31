@@ -71,7 +71,7 @@ ExportDiagramConfig.prototype = {
 		var self = this;
 
 		return CompartmentTypes.find({elementTypeId: elem_type_id}).map(function(compart_type) {
-			return {object: compart_type};
+			return {object: compart_type,};
 		});
 	},
 

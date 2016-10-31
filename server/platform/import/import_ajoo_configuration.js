@@ -8,8 +8,6 @@ Meteor.methods({
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
 		_import.importDiagrams(config.presentations);
 		_import.importDiagramTypes(config.types);
-
-		console.log("import ended");
 	},
 
 });
@@ -26,7 +24,9 @@ ImportAjooConfiguration.prototype = {
 	importDiagramTypes: function(diagram_types) {
 
 		var self = this;
-		_.each(diagram_types, function(diagram_type) {
+		_.each(diagram_types, function(diagram_type_in) {
+
+			var diagram_type = JSON.parse(JSON.stringify(diagram_type_in));
 
 			var object = diagram_type.object;
 			var diagram_type_id = object._id;
@@ -43,6 +43,10 @@ ImportAjooConfiguration.prototype = {
 			self.importLineTypes(diagram_type.lineTypes);
 
 			self.importPaletteButtons(diagram_type.paletteButtons);
+
+
+			self.importSuperTypes(diagram_type_in.boxTypes);
+			self.importSuperTypes(diagram_type_in.lineTypes);
 		});
 	},
 
@@ -54,11 +58,6 @@ ImportAjooConfiguration.prototype = {
 			var object = box_type.object;
 			var box_type_id = object._id;
 
-			var x = object.elementId;
-
-			console.log("old box id ", x)
-			console.log("new box ic ", self.obj_type_map[x]);
-
 			_.extend(object, {_id: undefined,
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								diagramId: self.obj_type_map[object.diagramId],
@@ -67,12 +66,11 @@ ImportAjooConfiguration.prototype = {
 								versionId: self.versionId,
 							});
 
-			console.log("obj ", object)
-
-
 			var new_box_type_id = ElementTypes.insert(object);
 			self.obj_type_map[box_type_id] = new_box_type_id;
+
 			self.importCompartmentTypes(box_type.compartmentTypes);
+			self.importDialogTypes(box_type);
 		});
 	},
 
@@ -90,12 +88,14 @@ ImportAjooConfiguration.prototype = {
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
-								versionId: self.versionId,
+								versionId: self.versionId,							
 							});
 
 			var new_line_type_id = ElementTypes.insert(object);
 			self.obj_type_map[line_type_id] = new_line_type_id;
+
 			self.importCompartmentTypes(line_type.compartmentTypes);
+			self.importDialogTypes(line_type);
 		});
 	},
 
@@ -140,6 +140,41 @@ ImportAjooConfiguration.prototype = {
 
 			var new_palette_button_id = PaletteButtons.insert(object);
 		});
+	},
+
+	importDialogTypes: function(box_type) {
+
+		var self = this;
+
+		_.each(box_type.dialog, function(dialog) {
+
+			var dialog_tab_id = dialog._id;
+			_.extend(dialog, {_id: undefined,
+								elementTypeId: self.obj_type_map[dialog.elementTypeId],
+								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
+								diagramId: self.obj_type_map[dialog.diagramId],
+								toolId: self.toolId,
+								versionId: self.versionId,
+							});
+
+			var new_dialog_tab_id = DialogTabs.insert(dialog);
+			self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
+		});
+	},
+
+	importSuperTypes: function(elem_type) {
+
+		var self = this;
+		var super_types = _.map(elem_type.superTypeIds, function(super_type_id) {
+								return self.obj_type_map[super_type_id];
+							});
+
+		if (_.size(super_types)) {
+
+			var elem_id = box_type.object._id;
+			ElementTypes.update({_id: elem_id}, {superTypeIds: super_types});
+		}
+
 	},
 
 	importDiagrams: function(diagrams) {
