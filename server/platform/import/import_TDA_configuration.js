@@ -1278,6 +1278,9 @@ var ImportTDAConfiguration = {
 			menu_item.procedure = "GenerateSPARQL";
 		}
 
+		var execute_sparql = {item: "ExecuteSPARQL", procedure: "ExecuteSPARQL",};
+		collection_menu.push(execute_sparql);
+		no_collection_menu.push(execute_sparql);
 
 		DiagramTypes.update({_id: diagram_type_id,}, {$set: {noCollectionContextMenu: no_collection_menu, collectionContextMenu: collection_menu}});
 

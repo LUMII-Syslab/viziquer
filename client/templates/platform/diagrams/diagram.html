@@ -25,6 +25,24 @@
         {{/with}}
     </div>
 
+
+    <div class="row">
+
+        <div id="sparql-forms" class="col-sm-12 col-md-12 col-lg-{{diagram_size}}">
+
+
+            <p>{{generatedSparql}}</p>
+
+            {{#each executedSparql}}
+                <p>{{this}}</p>
+            {{/each}}
+
+        </div>
+
+    </div>
+
+
+
     {{#each templates}}
         {{> Template.dynamic template=templateId}}
     {{/each}}

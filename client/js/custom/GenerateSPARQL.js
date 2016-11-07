@@ -1,5 +1,27 @@
 Interpreter.customMethods({
 
+	ExecuteSPARQL: function() {
+
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+			};
+
+		Utilities.callMeteorMethod("executeSparql", list, function(res) {
+
+			if (res.status == 200) {
+				console.log(res.result)
+				Session.set("executedSparql", res.result);
+			}
+
+			else {
+				console.error(res);
+				return;
+			}
+
+		});
+
+	},
+
 	GenerateSPARQL: function() {
 
 		console.log("GenerateSPARQL executed")

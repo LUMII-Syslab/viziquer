@@ -81,6 +81,14 @@ Template.diagramTemplate.helpers({
 		}
 	},
 
+	executedSparql: function() {
+		return Session.get("executedSparql");
+	},
+
+	generatedSparql: function() {
+		return Session.get("generatedSparql");
+	},
+
 	templates: function() {
 
 		var templates = [];

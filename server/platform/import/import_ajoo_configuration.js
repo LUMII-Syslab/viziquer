@@ -10,7 +10,85 @@ Meteor.methods({
 		_import.importDiagramTypes(config.types);
 	},
 
+
+	addConfiguratorExportButtonInToolbar: function() {
+
+		var user_id = Meteor.userId();
+		if (is_system_admin(user_id)) {
+
+			console.log("in add export toolbar button")
+
+			var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
+			if (!diagram_type) {
+				console.error("No configurator diagram type");
+				return;
+			}
+
+			var toolbar = diagram_type.toolbar;
+
+			var add_export_button = {id: generate_id(),
+									icon: "fa-download",
+									name: "Export configuration",
+									procedure: "ExportDiagramConfiguration",
+								};
+
+			toolbar = _.union([add_export_button], toolbar);
+
+			DiagramTypes.update({_id: diagram_type._id}, {$set: {toolbar: toolbar}});
+		}
+
+	},
+
+	executeSparql: function(list) {
+
+		var user_id = Meteor.userId();
+		if (is_project_version_admin(user_id, list)) {
+
+			var options = {params: {
+								"default-graph-uri": "",
+								query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+							},
+						};
+
+			var sparql_endpoint = "http://85.254.199.72:8890/sparql/get";
+
+
+			Future = Npm.require('fibers/future'); 
+			var future = new Future();
+
+			HTTP.call("POST", sparql_endpoint, options, function(err, resp) {
+
+				if (err) {
+					future.return({status: 500,});
+				}
+				else {
+
+	                xml2js.parseString(resp.content, function(json_err, json_res) {
+
+	                	if (json_err) {
+	                		future.return({status: 500,});
+	                	}
+	                	else {
+
+	                		var result = _.map(json_res["sparql"]["results"][0]["result"], function(item) {
+	                			return item.binding[0].uri[0];
+	                		});
+
+	                		future.return({status: 200, result: result,});
+	                	}
+
+	                });
+				}
+
+			});
+
+			return future.wait();
+		}
+
+	},
+
 });
+
 
 
 function ImportAjooConfiguration(tool_id, version_id) {

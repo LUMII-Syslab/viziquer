@@ -95,6 +95,20 @@ Interpreter.methods({
 			];
 	},
 
+	ExportDiagramConfiguration: function() {
+
+		var config_export = new ExportDiagramConfig();
+		var list = {config: config_export.export(),
+					toolId: Session.get("toolId"),
+					versionId: Session.get("toolVersionId"),
+				};
+
+		console.log("list ", list)
+
+		// Utilities.callMeteorMethod("importAjooConfiguration", list);
+
+	},
+
 });
 
 
