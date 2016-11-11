@@ -2,8 +2,22 @@ Interpreter.customMethods({
 
 	ExecuteSPARQL: function() {
 
+		// var sparql = new SPARQL();
+		// var table_sparql = sparql.generateSPARQLQuery();
+
+		var query = "select distinct ?Concept where {[] a ?Concept} LIMIT 100";
+
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
+					options: {
+						params: {
+							params: {
+								"default-graph-uri": "",
+								query: query,
+							},
+						},
+						endPoint: "http://85.254.199.72:8890/sparql/get",
+					},
 			};
 
 		Utilities.callMeteorMethod("executeSparql", list, function(res) {
@@ -25,6 +39,25 @@ Interpreter.customMethods({
 	GenerateSPARQL: function() {
 
 		console.log("GenerateSPARQL executed")
+
+		var sparql = new SPARQL();
+		var table_sparql = sparql.generateSPARQLQuery();
+		sparql.showGeneratedSPARQL(table_sparql);
+	},
+
+});
+
+
+
+function SPARQL() {
+
+
+}
+
+
+SPARQL.prototype = {
+
+	generateSPARQLQuery: function() {
 
 		var editor = Interpreter.editor;
 		var elem_ids = _.keys(editor.getSelectedElements());
@@ -1297,13 +1330,17 @@ Interpreter.customMethods({
 				
 				var tableSPARQL = createSPARQL(tableLUA);
 
-				Session.set("SPARQL", tableSPARQL);
-				$("#SPARQL-form").modal("show");			
-			}	
-		} 
+			}
+		}
 	}
-}
-});
+	},
 
+	showGeneratedSPARQL: function(table_sparql) {
+		Session.set("SPARQL", table_sparql);
 
+		console.log("table sqarql ", table_sparql)
 
+		$("#SPARQL-form").modal("show");	
+	},
+
+};

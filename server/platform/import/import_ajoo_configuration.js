@@ -44,19 +44,25 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
-			var options = {params: {
-								"default-graph-uri": "",
-								query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
-							},
-						};
+			// var options = {params: {
+			// 					"default-graph-uri": "LinkedMDB",
+			// 					query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+			// 				},
+			// 			};
 
-			var sparql_endpoint = "http://85.254.199.72:8890/sparql/get";
+			// var sparql_endpoint = "http://85.254.199.72:8890/sparql/get";
+
+
+			var options = list.options;
+
+			console.log("opt a", options.endPoint)
+			console.log("zz ", options.params)
 
 
 			Future = Npm.require('fibers/future'); 
 			var future = new Future();
 
-			HTTP.call("POST", sparql_endpoint, options, function(err, resp) {
+			HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
 
 				if (err) {
 					future.return({status: 500,});
