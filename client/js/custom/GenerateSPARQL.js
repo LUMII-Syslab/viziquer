@@ -23,7 +23,7 @@ Interpreter.customMethods({
 		Utilities.callMeteorMethod("executeSparql", list, function(res) {
 
 			if (res.status == 200) {
-				console.log(res.result)
+				Session.set("generatedSparql", query);
 				Session.set("executedSparql", res.result);
 			}
 
@@ -48,12 +48,8 @@ Interpreter.customMethods({
 });
 
 
-
 function SPARQL() {
-
-
 }
-
 
 SPARQL.prototype = {
 
@@ -91,7 +87,10 @@ SPARQL.prototype = {
 		var visitNum;
 		var alias_list = [];
 		var stereotypeCount = 0;
-		var instList = "";		
+		var instList = "";
+
+		console.log("elem ids", elem_ids)
+
 
 //========================================================================================================
 //========================================================================================================

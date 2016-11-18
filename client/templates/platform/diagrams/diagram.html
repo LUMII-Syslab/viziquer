@@ -28,20 +28,11 @@
 
     <div class="row">
 
-        <div id="sparql-forms" class="col-sm-12 col-md-12 col-lg-{{diagram_size}}">
-
-
-            <p>{{generatedSparql}}</p>
-
-            {{#each executedSparql}}
-                <p>{{this}}</p>
-            {{/each}}
-
-        </div>
+        {{#with diagram_type}}
+            {{> sparqlForm}}
+        {{/with}}
 
     </div>
-
-
 
     {{#each templates}}
         {{> Template.dynamic template=templateId}}
@@ -52,6 +43,51 @@
 
 </template>
 <!-- End of diagram template -->
+
+
+<template name="sparqlForm">
+
+    <div id="diagram-footer" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:24px;padding-right:38px;margin-top:30px;">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                SPARQL
+            </div>
+            
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <textarea id="generated-sparql" class="form-control" rows="5" style="margin-bottom:10px;">{{generatedSparql}}</textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each executedSparql}}
+                                        <tr index="{{index}}">
+                                            <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{index}}</div></td>
+                                            <td><div class="toolbar-item" attribute="item" contentEditable="true">{{value}}</div></td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 
 <!-- Diagram editor -->
 <template name="diagramEditor">

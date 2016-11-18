@@ -686,7 +686,7 @@ chat-body li.message img.online {
 /* End of configurator diagram form */
 
 #Diagram_Editor {
-  height: 800px;
+  /*height: 800px;*/
 }
 
 /* Archive style */

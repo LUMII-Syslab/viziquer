@@ -81,14 +81,6 @@ Template.diagramTemplate.helpers({
 		}
 	},
 
-	executedSparql: function() {
-		return Session.get("executedSparql");
-	},
-
-	generatedSparql: function() {
-		return Session.get("generatedSparql");
-	},
-
 	templates: function() {
 
 		var templates = [];
@@ -137,6 +129,24 @@ Template.diagramTemplate.helpers({
 	},
 
 });
+
+Template.sparqlForm.helpers({
+
+	generatedSparql: function() {
+		return Session.get("generatedSparql");
+	},
+
+	executedSparql: function() {
+
+		var result = Session.get("executedSparql");
+
+		return _.map(result, function(item, i) {
+			return {value: item, index: i+1};
+		});
+	},
+
+});
+
 
 Template.editingMessage.helpers({
 
