@@ -130,6 +130,34 @@ Template.diagramTemplate.helpers({
 
 });
 
+Template.sparqlForm.events({
+
+	"blur #generated-sparql": function(e) {
+		var val = $(e.target).val();
+		Session.set("generatedSparql", val);
+	},
+
+	"click #reset-sparql": function(e) {
+		e.preventDefault();
+		Session.set("generatedSparql", undefined);
+		Session.set("executedSparql", undefined);
+	},
+
+	"click #execute-sparql": function(e) {
+		e.preventDefault();
+
+		var resp = {status: 200,
+					query: $("#generated-sparql").val(),
+					error: "Error in execute SPARQL",
+				};
+
+		Interpreter.customExtensionPoints.ExecuteSPARQL(resp);
+	},
+
+});
+
+
+
 Template.sparqlForm.helpers({
 
 	generatedSparql: function() {

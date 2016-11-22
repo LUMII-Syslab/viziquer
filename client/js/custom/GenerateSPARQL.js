@@ -1,38 +1,45 @@
 Interpreter.customMethods({
 
-	ExecuteSPARQL: function() {
+	ExecuteSPARQL: function(resp) {
 
-		// var sparql = new SPARQL();
-		// var table_sparql = sparql.generateSPARQLQuery();
+		if (!resp) {
+			var sparql = new SPARQL();
+			resp = sparql.generateSPARQLQuery();
+		}
 
-		var query = "select distinct ?Concept where {[] a ?Concept} LIMIT 100";
+		if (resp.status == 200 || true) {
 
-		var list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-					options: {
-						params: {
+			var list = {projectId: Session.get("activeProject"),
+						versionId: Session.get("versionId"),
+						options: {
 							params: {
-								"default-graph-uri": "",
-								query: query,
+								params: {
+									"default-graph-uri": "",
+									query: resp.query,
+								},
 							},
+							endPoint: "http://85.254.199.72:8890/sparql/get",
 						},
-						endPoint: "http://85.254.199.72:8890/sparql/get",
-					},
-			};
+					};
 
-		Utilities.callMeteorMethod("executeSparql", list, function(res) {
+			Utilities.callMeteorMethod("executeSparql", list, function(res) {
 
-			if (res.status == 200) {
-				Session.set("generatedSparql", query);
-				Session.set("executedSparql", res.result);
-			}
+				if (res.status == 200) {
+					Session.set("generatedSparql", resp.query);
+					Session.set("executedSparql", res.result);
+				}
 
-			else {
-				console.error(res);
-				return;
-			}
+				else {
+					console.error(res);
+					return;
+				}
 
-		});
+			});
+		}
+
+		else {
+			sparql.showGeneratedSPARQL(resp);
+		}
 
 	},
 
@@ -41,8 +48,8 @@ Interpreter.customMethods({
 		console.log("GenerateSPARQL executed")
 
 		var sparql = new SPARQL();
-		var table_sparql = sparql.generateSPARQLQuery();
-		sparql.showGeneratedSPARQL(table_sparql);
+		var resp = sparql.generateSPARQLQuery();
+		sparql.showGeneratedSPARQL(resp);
 	},
 
 });
@@ -89,8 +96,6 @@ SPARQL.prototype = {
 		var stereotypeCount = 0;
 		var instList = "";
 
-		console.log("elem ids", elem_ids)
-
 
 //========================================================================================================
 //========================================================================================================
@@ -102,6 +107,7 @@ SPARQL.prototype = {
 
 	//Creates list of instance names for all classes
 		function generateInstTab (list) {
+
 			var inst_type = CompartmentTypes.findOne({name: "Instance", elementTypeId: class_t});
 			var inst;
 			var inst_name;
@@ -247,7 +253,6 @@ SPARQL.prototype = {
 					var word_count;
 
 					var nType = CompartmentTypes.findOne({name: "Name", elementTypeId: class_t});
-
 					if (nType) {
 
 						var c_name = Compartments.findOne({compartmentTypeId: nType["_id"], elementId: elem});
@@ -846,48 +851,7 @@ SPARQL.prototype = {
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 
-		function createSPARQL (table) {
-			var strSPARQL;
-			var attributeStr ;
-			var classStr;
-			var order;
 
-			if (!table){
-				console.error("No table");
-				return ;
-			}
-
-			//TEMPORAL - include only 1 URI
-			if (uri_list[0]) {
-
-				strSPARQL = "PREFIX : <".concat(uri_list[0], ">", "\n\n");		
-
-				attributeStr = createAtt(table);
-				classStr = createClass(table);
-
-				if (stereotypeCount == 0) {
-					strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n", classStr, "}");
-				} else {
-					
-					var countStr = countSELECT(table, classStr, attributeStr);
-
-					strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n");
-					strSPARQL = strSPARQL.concat(countStr, "}");
-				}
-
-				order = createOrderBy(table);
-
-				if (order != "") {
-					strSPARQL = strSPARQL.concat("\n", "ORDER BY ", order);
-				}
-
-
-			} else {
-				strSPARQL = "no uri";							
-			}
-			
-			return strSPARQL;
-		}
 
 	//Creates list of values to show
 		function createAtt (t) {
@@ -1069,34 +1033,7 @@ SPARQL.prototype = {
 			return str;
 		}
 
-	//Creates order By
-		function createOrderBy (t) {
-			var str = "";
 
-			if (!t){
-				console.error("No table for instance");
-				return ;
-			}
-
-			_.each(t, function(table){
-				
-				_.each(table["orderBy"], function(a){
-					
-					if (a["type"] == "DESC") {
-						str = str.concat("DESC(?", a["value"], ")");
-					} else {
-						str = str.concat("?", a["value"]);
-					}
-
-					if (table["nextClass"] && table["nextClass"].length > 0) {
-						str = str.concat(" ", createOrderBy(table["nextClass"]));
-				}
-				})
-				
-			})
-
-			return str;
-		}
 
 //========================================================================================================
 //========================================================================================================
@@ -1116,31 +1053,28 @@ SPARQL.prototype = {
 			class_t = ctype["_id"];
 			link_t = ltype["_id"];
 
-			generateInstTab	(elem_ids);	
+			generateInstTab(elem_ids);	
 			var comp_type;
 
-			_.each(elem_ids, function(el){
+			_.each(elem_ids, function(el) {
 				//If chosen element is class-type
 				comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: class_t});
 				
-				if (comp_type){
+				if (comp_type) {
 					name = Compartments.findOne({elementId: el, compartmentTypeId: comp_type["_id"]}); 
-					if (name){							
+					if (name) {							
 						
 						comp_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: class_t});
-						
-						if (comp_type){
+						if (comp_type) {
 							
 							type = Compartments.findOne({elementId: el, compartmentTypeId: comp_type["_id"]});
-							
 							if (!type){
-								
 								typeInput = "query";
 								query_count++;
-							} else {
-								
+							}
+
+							else {
 								typeInput = type["input"];
-								
 								if (type["input"] == "query") {
 									query_count++;
 								}
@@ -1235,13 +1169,16 @@ SPARQL.prototype = {
 			})
 
 			console.log(query_count)
+
 			//Only one possible top element			
 			if (query_count != 1) {
+				return {status: 500,
+						error: "Wrong number of queries",
+						query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+					};
+			}
 
-				console.error("Wrong number of queries");
-				Session.set("SPARQL", "Wrong number of queries");
-				$("#SPARQL-form").modal("show");
-			} else {						
+			else {						
 				var i;			
 				
 				for (i = elem_table.length-1; i >= 0; i--) {
@@ -1317,29 +1254,111 @@ SPARQL.prototype = {
 
 				elementCheck(top_elem_id);			
 
-				// console.log("Table after visit");
-				// elem_table.forEach(function(s) {
-				// 	console.log("Name: ", s["name"], ", type: ", s["type"], ", instance:", s["instance"], 
-				// 		", attribute: ", s["attribute"], ", start: ", s["start"], ", visited: ", s["visited"]);
-				// });
-
 				var tableLUA = [];
 				tableLUA.push(createStructureTable(elem_table, 1));
 				console.log("result table:", tableLUA);	
 				
-				var tableSPARQL = createSPARQL(tableLUA);
+				var tableSPARQL = this.createSPARQL(tableLUA);
+				// return tableSPARQL;
+
+				return {status: 200,
+						error: "",
+						query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+					};
 
 			}
 		}
 	}
 	},
 
-	showGeneratedSPARQL: function(table_sparql) {
-		Session.set("SPARQL", table_sparql);
 
-		console.log("table sqarql ", table_sparql)
+	createSPARQL: function(table) {
 
-		$("#SPARQL-form").modal("show");	
+		var self = this;
+
+		var strSPARQL = "no uri";
+		var attributeStr ;
+		var classStr;
+		var order;
+
+		if (!table){
+			console.error("No table");
+			return ;
+		}
+
+		//TEMPORAL - include only 1 URI
+		if (uri_list[0]) {
+
+			strSPARQL = "PREFIX : <".concat(uri_list[0], ">", "\n\n");		
+
+			attributeStr = createAtt(table);
+			classStr = createClass(table);
+
+			if (stereotypeCount == 0) {
+				strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n", classStr, "}");
+			}
+			else {
+				
+				var countStr = countSELECT(table, classStr, attributeStr);
+
+				strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n");
+				strSPARQL = strSPARQL.concat(countStr, "}");
+			}
+
+			order = self.createOrderBy(table);
+
+			if (order != "") {
+				strSPARQL = strSPARQL.concat("\n", "ORDER BY ", order);
+			}
+		}
+
+		return strSPARQL;
+	},
+
+
+	//Creates order By
+	createOrderBy: function(t) {
+
+		var self = this;
+
+		var str = "";
+
+		if (!t) {
+			console.error("No table for instance");
+			return;
+		}
+
+		_.each(t, function(table) {
+			
+			_.each(table["orderBy"], function(a) {
+				
+				if (a["type"] == "DESC") {
+					str = str.concat("DESC(?", a["value"], ")");
+				}
+				else {
+					str = str.concat("?", a["value"]);
+				}
+
+				if (table["nextClass"] && table["nextClass"].length > 0) {
+					str = str.concat(" ", self.createOrderBy(table["nextClass"]));
+				}
+			});
+			
+		});
+
+		return str;
+	},
+
+
+	showGeneratedSPARQL: function(resp) {
+
+		var value = resp.error;
+		if (resp.status == 200 || true) {
+			value = resp.query;
+		}
+
+		Session.set("generatedSparql", value);
+		Session.set("executedSparql", undefined);
 	},
 
 };
