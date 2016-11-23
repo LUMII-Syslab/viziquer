@@ -42,6 +42,18 @@ Template.diagramTemplate.onRendered(function() {
 				versionId: Session.get("versionId"),
 			};
 
-	Meteor.subscribe("Ontology", list);
+	var ontology_handle = Meteor.subscribe("Ontology", list);
 
+	console.log("ontology handle ", ontology_handle)
+
+	this.ontologyHandle = new ReactiveVar(ontology_handle);
+
+});
+
+
+Template.diagramTemplate.onDestroyed(function() {
+	var ontology_handle = this.ontologyHandle.get();
+
+	console.log("destroy ", ontology_handle)
+	ontology_handle.stop();	
 });
