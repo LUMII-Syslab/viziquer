@@ -18,7 +18,7 @@ Interpreter.customMethods({
 									query: resp.query,
 								},
 							},
-							endPoint: "http://85.254.199.72:8890/sparql/get",
+							endPoint: "http://85.254.199.72:8890/sparql",
 						},
 					};
 
@@ -1043,7 +1043,7 @@ SPARQL.prototype = {
 //========================================================================================================
 //========================================================================================================
 		
-	if (elem_ids.length > 0){
+	if (elem_ids.length > 0) {
 		// Making table of selected elements and properties
 		var ctype = ElementTypes.findOne({name: "Class"});
 		var ltype = ElementTypes.findOne({name: "Link"});
@@ -1268,7 +1268,21 @@ SPARQL.prototype = {
 
 			}
 		}
+
+
+
 	}
+
+	else {
+
+		return {status: 500,
+				error: "",
+				query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+			};
+	}
+
+
+
 	},
 
 
