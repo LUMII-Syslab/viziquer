@@ -7,7 +7,9 @@ Interpreter.customMethods({
 			resp = sparql.generateSPARQLQuery();
 		}
 
-		if (resp.status == 200 || true) {
+		console.log("resp ", resp)
+
+		if (resp.status == 200) {
 
 			var list = {projectId: Session.get("activeProject"),
 						versionId: Session.get("versionId"),
@@ -30,6 +32,8 @@ Interpreter.customMethods({
 				}
 
 				else {
+					Session.set("generatedSparql", undefined);
+					Session.set("executedSparql", undefined);
 					console.error(res);
 					return;
 				}
