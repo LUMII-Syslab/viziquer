@@ -7,8 +7,6 @@ Interpreter.customMethods({
 			resp = sparql.generateSPARQLQuery();
 		}
 
-		console.log("resp ", resp)
-
 		if (resp.status == 200) {
 
 			var list = {projectId: Session.get("activeProject"),
@@ -48,9 +46,6 @@ Interpreter.customMethods({
 	},
 
 	GenerateSPARQL: function() {
-
-		console.log("GenerateSPARQL executed")
-
 		var sparql = new SPARQL();
 		var resp = sparql.generateSPARQLQuery();
 		sparql.showGeneratedSPARQL(resp);
