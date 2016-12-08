@@ -23,11 +23,11 @@ underscore@1.0.10
 alanning:roles
 mrt:jquery-ui-sortable
 tmeasday:publish-with-relations
-accounts-password@1.3.1
+accounts-password@1.3.3
 ajduke:bootstrap-tagsinput
 natestrauser:font-awesome
 nemo64:bootstrap
-less@2.7.6
+less@2.7.8
 froala:editor-reactive
 http@1.2.10
 okgrow:analytics

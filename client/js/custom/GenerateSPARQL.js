@@ -56,6 +56,9 @@ Interpreter.customMethods({
 
 
 function SPARQL() {
+
+	this.stereotypeCount = 0;
+
 }
 
 SPARQL.prototype = {
@@ -845,195 +848,6 @@ SPARQL.prototype = {
 			}
 		}
 
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//SPARQL generation
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-
-
-
-	//Creates list of values to show
-		function createAtt (t) {
-			var str = "";
-
-			if (!t){
-				console.error("No table for instance");
-				return ;
-			}
-
-			_.each(t, function(table){
-
-				if (table["stereotype"] && table["stereotype"] != "") {
-					str = str.concat(" ?count_of_", table["instance"]);
-				}
-
-				_.each(table["selectMain"]["simpleAttributes"], function(a){
-					str = str.concat(" ", a["alias"]);
-				})
-
-				if (table["nextClass"] && table["nextClass"].length > 0) {
-						str = str.concat(" ", createAtt(table["nextClass"]));
-				}
-			})
-
-			return str;
-		}
-
-	//Creates SPARQL code for class
-		function createClass (t) {
-			var str = "";
-
-			if (!t){
-				console.error("No table for Class generation");
-				return ;
-			}
-
-			_.each(t, function(table){
-
-				if (table["stereotype"] == "count") {
-					stereotypeCount++;
-				}
-
-				//No link to class (1st class-element)
-				if (table["link"] == "") {
-
-					str = str.concat(table["classTriple"], "\n");
-					
-					_.each(table["attributeTriples"], function(a){
-						str = str.concat(a, ("\n"));
-					})
-
-					if (table["filters"][0] != ""){
-
-						_.each(table["filters"], function(a){
-							if (a.includes("BIND") || a.includes("OPTIONAL") || a.includes("FILTER NOT EXISTS")) {
-								str = str.concat(a, "\n");
-							} else {
-								str = str.concat("FILTER (", a, ")", "\n");
-							}
-						})
-					}
-
-					if (table["nextClass"].length > 0) {
-						str = str.concat(" ", createClass(table["nextClass"]));
-					}	
-				}					
-				
-				//Class with link to it
-				if (table["link"] && table["link"] != ""){
-
-					if (table["linkType"] != ""){
-						str = str.concat(table["linkType"], "{", "\n");
-					}					
-
-					str = str.concat(table["classTriple"], "\n");
-					
-					_.each(table["attributeTriples"], function(a){
-						str = str.concat(a, "\n");
-					})
-
-					str = str.concat(table["link"], "\n");
-
-					if (table["filters"][0] != ""){
-
-						_.each(table["filters"], function(a){
-							if (a.includes("BIND") || a.includes("OPTIONAL") || a.includes("FILTER NOT EXISTS")) {
-								str = str.concat(a, "\n");						
-							} else {
-								str = str.concat("FILTER (", a, ")", "\n");
-							}
-						})
-					}					
-
-					if (table["nextClass"].length > 0) {
-						str = str.concat(" ", createClass(table["nextClass"]));
-					}
-
-					_.each(table["conditionLinks"], function (c){
-
-						if (c["value"] != "") {
-							str = str.concat(c["filter"], "{", c["value"], "}");
-						}
-					})
-					
-					if (table["linkType"] != "") {
-						str = str.concat("}", "\n");
-					}					
-				}
-			})
-
-			return str;
-		}
-
-	//SELECT-s for count
-		function countSELECT(t, classStr, attributeStr) {
-			var str = "";
-			var onlyAtt = [];		
-
-			if (!t){
-				console.error("No table");
-				return ;
-			}
-
-			if (!attributeStr) {
-				console.error("No attributes to show");
-				return ;
-			}
-
-			if (!classStr) {
-				console.error("Nothing to search for");
-				return ;
-			}
-
-			if (stereotypeCount <= 0) {
-				return ;
-			}
-
-			onlyAtt = attributeStr.match(/\w+/gi);
-
-			for (var c = onlyAtt.length -1; c >= 0; c--) {
-				if (onlyAtt[c].includes("count")) {
-					onlyAtt.splice(c, 1);
-				}
-			}
-			
-			onlyAtt.forEach(function(a){
-				if (onlyAtt.indexOf(a) == 0) {
-					onlyAtt[0] = "?".concat(a);
-				} else {
-					onlyAtt[0] = onlyAtt[0].concat(" ?", a);
-				}
-			})			
-
-			_.each(t, function (table) {
-
-				if (!instList.includes("?".concat(table["instance"], " ")) ){
-					instList = instList.concat("?", table["instance"], " ");
-				}
-
-				if (table["stereotype"] == "count") {					
-					
-					str = str.concat("{SELECT (COUNT(?", table["instance"], ") as ?count_of_", table["instance"], ") ", onlyAtt[0], " WHERE{", "\n");
-					str = str.concat("{SELECT DISTINCT ", onlyAtt[0], " ", instList, "WHERE{", "\n");
-					str = str.concat(classStr, "}}}","\n");
-					str = str.concat("GROUP BY ", onlyAtt[0], "\n", "}", "\n");
-
-					stereotypeCount--;
-
-					if (stereotypeCount > 0) {
-						str = str.concat(countSELECT(table["nextClass"], classStr, attributeStr))
-					}						
-					
-				} else if (stereotypeCount > 0 && table["nextClass"]) {
-					str = str.concat(countSELECT(table["nextClass"], classStr, attributeStr));
-				}
-			})
-
-			return str;
-		}
-
-
 
 //========================================================================================================
 //========================================================================================================
@@ -1255,33 +1069,26 @@ SPARQL.prototype = {
 				elementCheck(top_elem_id);			
 
 				var tableLUA = [];
-				tableLUA.push(createStructureTable(elem_table, 1));
-				console.log("result table:", tableLUA);	
-				
-				var tableSPARQL = this.createSPARQL(tableLUA);
-				// return tableSPARQL;
+				tableLUA.push(createStructureTable(elem_table, 1));				
+				var sparql_query = this.createSPARQL(tableLUA) || "";
 
 				return {status: 200,
 						error: "",
-						query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+						query: sparql_query,
 					};
 
 			}
 		}
-
-
-
 	}
 
 	else {
 
 		return {status: 500,
 				error: "",
-				query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
+				query: ""
+				// query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
 			};
 	}
-
-
 
 	},
 
@@ -1290,40 +1097,40 @@ SPARQL.prototype = {
 
 		var self = this;
 
-		var strSPARQL = "no uri";
+		var strSPARQL = "";
 		var attributeStr ;
 		var classStr;
 		var order;
+		var uri_list = self.uri_list;
 
-		if (!table){
+		if (!table) {
 			console.error("No table");
-			return ;
+			return;
 		}
 
 		//TEMPORAL - include only 1 URI
-		if (uri_list[0]) {
+		if (_.size(uri_list) > 0) {
+			strSPARQL = "PREFIX : <".concat(uri_list[0], ">", "\n\n");
+		}	
 
-			strSPARQL = "PREFIX : <".concat(uri_list[0], ">", "\n\n");		
+		attributeStr = self.createAtt(table);
+		classStr = self.createClass(table);
 
-			attributeStr = createAtt(table);
-			classStr = createClass(table);
+		if (self.stereotypeCount == 0) {
+			strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n", classStr, "}");
+		}
+		else {
+			
+			var countStr = self.countSELECT(table, classStr, attributeStr);
 
-			if (stereotypeCount == 0) {
-				strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n", classStr, "}");
-			}
-			else {
-				
-				var countStr = countSELECT(table, classStr, attributeStr);
+			strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n");
+			strSPARQL = strSPARQL.concat(countStr, "}");
+		}
 
-				strSPARQL = strSPARQL.concat("SELECT", attributeStr, " WHERE {", "\n");
-				strSPARQL = strSPARQL.concat(countStr, "}");
-			}
+		order = self.createOrderBy(table);
 
-			order = self.createOrderBy(table);
-
-			if (order != "") {
-				strSPARQL = strSPARQL.concat("\n", "ORDER BY ", order);
-			}
+		if (order != "") {
+			strSPARQL = strSPARQL.concat("\n", "ORDER BY ", order);
 		}
 
 		return strSPARQL;
@@ -1363,7 +1170,6 @@ SPARQL.prototype = {
 		return str;
 	},
 
-
 	showGeneratedSPARQL: function(resp) {
 
 		var value = resp.error;
@@ -1375,4 +1181,204 @@ SPARQL.prototype = {
 		Session.set("executedSparql", undefined);
 	},
 
+
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//SPARQL generation
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+
+	//Creates list of values to show
+	createAtt: function(t) {
+
+		var self = this;
+
+		var str = "";
+
+		if (!t){
+			console.error("No table for instance");
+			return ;
+		}
+
+		_.each(t, function(table){
+
+			if (table["stereotype"] && table["stereotype"] != "") {
+				str = str.concat(" ?count_of_", table["instance"]);
+			}
+
+			_.each(table["selectMain"]["simpleAttributes"], function(a){
+				str = str.concat(" ", a["alias"]);
+			})
+
+			if (table["nextClass"] && table["nextClass"].length > 0) {
+					str = str.concat(" ", self.createAtt(table["nextClass"]));
+			}
+		})
+
+		return str;
+	},
+
+	//Creates SPARQL code for class
+	createClass: function (t) {
+
+		var self = this;
+
+		var str = "";
+
+		if (!t) {
+			console.error("No table for Class generation");
+			return ;
+		}
+
+		_.each(t, function(table){
+
+			if (table["stereotype"] == "count") {
+				self.stereotypeCount++;
+			}
+
+			//No link to class (1st class-element)
+			if (table["link"] == "") {
+
+				str = str.concat(table["classTriple"], "\n");
+				
+				_.each(table["attributeTriples"], function(a){
+					str = str.concat(a, ("\n"));
+				});
+
+				if (table["filters"][0] != ""){
+
+					_.each(table["filters"], function(a){
+						if (a.includes("BIND") || a.includes("OPTIONAL") || a.includes("FILTER NOT EXISTS")) {
+							str = str.concat(a, "\n");
+						} else {
+							str = str.concat("FILTER (", a, ")", "\n");
+						}
+					});
+				}
+
+				if (table["nextClass"].length > 0) {
+					str = str.concat(" ", self.createClass(table["nextClass"]));
+				}	
+			}					
+			
+			//Class with link to it
+			if (table["link"] && table["link"] != "") {
+
+				if (table["linkType"] != ""){
+					str = str.concat(table["linkType"], "{", "\n");
+				}					
+
+				str = str.concat(table["classTriple"], "\n");
+				
+				_.each(table["attributeTriples"], function(a){
+					str = str.concat(a, "\n");
+				});
+
+				str = str.concat(table["link"], "\n");
+
+				if (table["filters"][0] != "") {
+
+					_.each(table["filters"], function(a){
+						if (a.includes("BIND") || a.includes("OPTIONAL") || a.includes("FILTER NOT EXISTS")) {
+							str = str.concat(a, "\n");						
+						}
+						else {
+							str = str.concat("FILTER (", a, ")", "\n");
+						}
+					});
+				}					
+
+				if (table["nextClass"].length > 0) {
+					str = str.concat(" ", self.createClass(table["nextClass"]));
+				}
+
+				_.each(table["conditionLinks"], function (c) {
+
+					if (c["value"] != "") {
+						str = str.concat(c["filter"], "{", c["value"], "}");
+					}
+				});
+				
+				if (table["linkType"] != "") {
+					str = str.concat("}", "\n");
+				}					
+			}
+		})
+
+		return str;
+	},
+
+	//SELECT-s for count
+	countSELECT: function(t, classStr, attributeStr) {
+
+		var self = this;
+
+		var str = "";
+		var onlyAtt = [];		
+
+		if (!t) {
+			console.error("No table");
+			return ;
+		}
+
+		if (!attributeStr) {
+			console.error("No attributes to show");
+			return ;
+		}
+
+		if (!classStr) {
+			console.error("Nothing to search for");
+			return ;
+		}
+
+		if (self.stereotypeCount <= 0) {
+			return ;
+		}
+
+		onlyAtt = attributeStr.match(/\w+/gi);
+
+		for (var c = onlyAtt.length -1; c >= 0; c--) {
+			if (onlyAtt[c].includes("count")) {
+				onlyAtt.splice(c, 1);
+			}
+		}
+		
+		onlyAtt.forEach(function(a){
+			if (onlyAtt.indexOf(a) == 0) {
+				onlyAtt[0] = "?".concat(a);
+			}
+			else {
+				onlyAtt[0] = onlyAtt[0].concat(" ?", a);
+			}
+		});		
+
+		_.each(t, function (table) {
+
+			if (!instList.includes("?".concat(table["instance"], " ")) ) {
+				instList = instList.concat("?", table["instance"], " ");
+			}
+
+			if (table["stereotype"] == "count") {					
+				
+				str = str.concat("{SELECT (COUNT(?", table["instance"], ") as ?count_of_", table["instance"], ") ", onlyAtt[0], " WHERE{", "\n");
+				str = str.concat("{SELECT DISTINCT ", onlyAtt[0], " ", instList, "WHERE{", "\n");
+				str = str.concat(classStr, "}}}","\n");
+				str = str.concat("GROUP BY ", onlyAtt[0], "\n", "}", "\n");
+
+				self.stereotypeCount--;
+
+				if (self.stereotypeCount > 0) {
+					str = str.concat(self.countSELECT(table["nextClass"], classStr, attributeStr))
+				}						
+			}
+
+			else if (self.stereotypeCount > 0 && table["nextClass"]) {
+				str = str.concat(self.countSELECT(table["nextClass"], classStr, attributeStr));
+			}
+		});
+
+		return str;
+	},
+
 };
+
