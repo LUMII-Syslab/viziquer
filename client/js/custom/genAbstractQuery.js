@@ -74,14 +74,13 @@ function genAbstractQueryForElementList(element_id_list) {
                 return {
                   linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
                   linkType: link.link.getType(),
-                  // not really correct because of isInverse option
                   isInverse:true,
                   isSubQuery:link.link.isSubQuery(),
                   identification: { _id: elem._id(), localname: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
-                  //"isVariable":false,
-                  //"variableName":null,
+                  isVariable:elem.isVariable(),
+                  variableName:elem.getVariableName(),
                   // should not add the link which was used to get to the elem
                   conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                   fields: elem.getFields(),
@@ -103,8 +102,8 @@ function genAbstractQueryForElementList(element_id_list) {
                   identification: { _id: elem._id(), localname: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
-                  //"isVariable":false,
-                  //"variableName":null,
+                  isVariable:elem.isVariable(),
+                  variableName:elem.getVariableName(),
                   // should not add the link which was used to get to the elem
                   conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                   fields: elem.getFields(),
@@ -122,8 +121,8 @@ function genAbstractQueryForElementList(element_id_list) {
       identification: { _id: e._id(), localname: e.getName()},
       stereotype: e.getStereotype(),
       instanceAlias: e.getInstanceAlias(),
-      //"isVariable":false,
-      //"variableName":null,
+      isVariable:e.isVariable(),
+      variableName:e.getVariableName(),
       conditionLinks:_.filter(_.map(e.getLinks(), genConditionalLink), function(l) {return l}),
       fields: e.getFields(),
       conditions: e.getConditions(),

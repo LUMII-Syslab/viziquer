@@ -128,8 +128,14 @@ VQ_Element.prototype = {
       } else { return "REQUIRED";};
     } else { return null;};
   },
-  //isVariable: function() {},
-  //getVariableName: function() {},
+  // determines whether a class rather than instance is searched
+  isVariable: function() {
+    return this.getName().charAt(0)=='?'
+  },
+  // gets class variable name (e.g. X for ?X)
+  getVariableName: function() {
+    if (this.isVariable()) {return this.getName().substr(1)} else { return null }
+  },
   // determines whether the link is subquery link
   isSubQuery: function() {
     return this.getCompartmentValue("Subquery Link")=="true"
@@ -154,10 +160,10 @@ VQ_Element.prototype = {
   getOffset: function() {
     return this.getCompartmentValue("Skip rows");
   },
-  // --> [string]
+  // --> [{exp:string}]
   // returns an array of conditions' expressions
   getConditions: function() {
-    return this.getMultiCompartmentValues("Conditions");
+    return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
   },
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
@@ -166,7 +172,7 @@ VQ_Element.prototype = {
     [{title:"exp",name:"Name"},
     {title:"stereotype",name:"Stereotype"},
     {title:"alias",name:"Alias"},
-    {title:"requiredValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
+    {title:"requireValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
     {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}}]);
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
@@ -179,10 +185,10 @@ VQ_Element.prototype = {
     ])
     //return this.getMultiCompartmentValues("OrderBy");
   },
-  // --> [string]
+  // --> [{exp:string}]
   // returns an array of having's expressions
   getHavings: function() {
-    return this.getMultiCompartmentValues("Having");
+    return this.getMultiCompartmentValues("Having").map(function(c) {return {exp:c}});
   },
   // --> [{link:VQ_Element, start:bool}, ...]
   // returns an array of obects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
