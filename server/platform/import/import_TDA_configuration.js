@@ -6,10 +6,18 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
 
-			ImportTDAConfiguration.init(list, user_id);
-			var ids = ImportTDAConfiguration.importDiagramTypes(user_id);
+			if (list.data && list.data.diagramTypes) {
 
-			ImportTDAConfiguration.addVQProperties(ids);
+				ImportTDAConfiguration.init(list, user_id);
+				var ids = ImportTDAConfiguration.importDiagramTypes(user_id);
+
+				ImportTDAConfiguration.addVQProperties(ids);
+			}
+
+			else {
+				Meteor.call("importAjooConfiguration", list);
+			}
+
 		}
 	},
 

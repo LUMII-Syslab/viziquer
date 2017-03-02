@@ -3,11 +3,11 @@ Meteor.methods({
 
 	importAjooConfiguration: function(list) {
 
-		var config = list.config;
-
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
-		_import.importDiagrams(config.presentations);
-		_import.importDiagramTypes(config.types);
+
+		var data = list.data;
+		_import.importDiagrams(data.presentations);
+		_import.importDiagramTypes(data.types);
 	},
 
 
@@ -15,8 +15,6 @@ Meteor.methods({
 
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id)) {
-
-			console.log("in add export toolbar button")
 
 			var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
 			if (!diagram_type) {
@@ -44,20 +42,7 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
 
-			// var options = {params: {
-			// 					"default-graph-uri": "LinkedMDB",
-			// 					query: "select distinct ?Concept where {[] a ?Concept} LIMIT 100",
-			// 				},
-			// 			};
-
-			// var sparql_endpoint = "http://85.254.199.72:8890/sparql/get";
-
-
 			var options = list.options;
-
-			console.log("opt a", options.endPoint)
-			console.log("zz ", options.params)
-
 
 			Future = Npm.require('fibers/future'); 
 			var future = new Future();
@@ -264,6 +249,7 @@ ImportAjooConfiguration.prototype = {
 	importDiagrams: function(diagrams) {
 
 		var self = this;
+
 		_.each(diagrams, function(diagram) {
 
 			var object = diagram.object;
@@ -285,6 +271,7 @@ ImportAjooConfiguration.prototype = {
 	importBoxes: function(boxes) {
 
 		var self = this;
+
 		_.each(boxes, function(box) {
 
 			var object = box.object;
