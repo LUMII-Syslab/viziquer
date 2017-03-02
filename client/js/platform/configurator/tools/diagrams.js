@@ -28,12 +28,9 @@ Template.toolDiagrams.events({
 	'click #download-diagram' : function(e) {
 		e.preventDefault();
 
-		var export_config = new ExportDiagramConfig();
-		export_config.export();
-
-		return;
+		var list = {toolId: Session.get("toolId"),};
+		Utilities.callMeteorMethod("exportToolConfiguration", list);
 	},
-
 
 });
 

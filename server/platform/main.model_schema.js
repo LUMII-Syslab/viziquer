@@ -185,6 +185,18 @@ Schemas.Projects = new SimpleSchema({
         optional: true, 
     },
 
+    uri: {
+        type: String,
+        label: "Projects.uri",
+        optional: true, 
+    },
+
+    endpoint: {
+        type: String,
+        label: "Projects.endpoint",
+        optional: true,          
+    },
+
     category: {
         type: String,
         label: "Projects.category",

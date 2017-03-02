@@ -354,7 +354,8 @@
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right">
-                <button id="import" class="btn btn-ribbon" data-title='{{_ "import_ontology"}}'><i class="fa fa-upload"></i></button>
+                <button id="settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
+                <button id="import" class="btn btn-ribbon" data-title="Import Ontology"><i class="fa fa-upload"></i></button>
             	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_diagram"}}'><i class="fa fa-plus"></i></button>
             </span>
         {{/if}}
@@ -364,10 +365,51 @@
 
     {{> addDiagram}}
     {{> importOntology}}
+    {{> ontologySettings}}
+
 </template>
 
 
+<template name="ontologySettings">
 
+    <!-- Modal for new document -->
+    <div id="ontology-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="ontology-uri" class="col-sm-2 control-label">URI</label>
+                            <div class="col-sm-10">
+                                <input id="ontology-uri" type="text" class="form-control" value="{{uri}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ontology-endpoint" class="col-sm-2 control-label">Endpoint</label>
+                            <div class="col-sm-10">
+                                <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}">
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
 
 
 

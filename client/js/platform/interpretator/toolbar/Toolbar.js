@@ -203,10 +203,10 @@ Template.diagramRibbon.events({
 	},
 
 //shows button's tooltip on mouse over
-    'mouseover .btn-ribbon' : function(e, templ) {
+    'mouseenter .btn-ribbon' : function(e, templ) {
     	Dialog.destroyTooltip(e);
+    	Dialog.showTooltip(e);
     },
-
 //removes tooltip on mouse leave
     'mouseleave .btn-ribbon' : function(e, templ) {
     	Dialog.destroyTooltip(e);

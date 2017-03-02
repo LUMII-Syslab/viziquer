@@ -56,10 +56,15 @@ Template.diagramsRibbon.events({
 		$('#import-ontology-form').modal("show");
 	},
 
+	'click #settings': function(e, templ) {
+		$('#ontology-settings-form').modal("show");
+	},
+
 
 //shows button's tooltip on mouse over
-    'mouseover .btn-ribbon' : function(e, templ) {
+    'mouseenter .btn-ribbon' : function(e, templ) {
     	Dialog.destroyTooltip(e);
+    	Dialog.showTooltip(e);
     },
 
 //removes tooltip on mouse leave
@@ -480,6 +485,42 @@ Template.importOntology.events({
 	},
 
 });
+
+
+Template.ontologySettings.events({
+	
+	'click #ok-ontology-settings' : function(e, templ) {
+
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+					uri: $("#ontology-uri").val(),
+					endpoint: $("#ontology-endpoint").val(),
+				};
+
+		Utilities.callMeteorMethod("updateProjectOntology", list);
+	},
+
+});
+
+Template.ontologySettings.helpers({
+
+	uri: function() {
+		var proj = Projects.findOne();
+		if (proj) {
+			return proj.uri;
+		}
+	},
+
+	endpoint: function() {
+		var proj = Projects.findOne();
+		if (proj) {
+			return proj.endpoint;
+		}
+	},
+
+});
+
+
 
 
 //returns diagram types for drop down when user creates a new diagram

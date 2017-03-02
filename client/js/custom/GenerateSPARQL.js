@@ -9,16 +9,25 @@ Interpreter.customMethods({
 
 		if (resp.status == 200) {
 
+			var uri = "";
+			var endpoint = "http://85.254.199.72:8890/sparql";
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			if (proj) {
+				uri = proj.uri;
+				endpoint = proj.endpoint;
+			}
+
 			var list = {projectId: Session.get("activeProject"),
 						versionId: Session.get("versionId"),
 						options: {
 							params: {
 								params: {
-									"default-graph-uri": "",
+									"default-graph-uri": uri,
 									query: resp.query,
 								},
 							},
-							endPoint: "http://85.254.199.72:8890/sparql",
+							endPoint: endpoint,
 						},
 					};
 
