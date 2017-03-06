@@ -1,4 +1,4 @@
-var fs = Npm.require('fs');
+
 
 Meteor.methods({
 
@@ -10,6 +10,7 @@ Meteor.methods({
 		var json = JSON.stringify(res);
 		var path = process.env.PWD;
 
+		var fs = Npm.require('fs');
 		fs.writeFile(path + '/jsons/confguration_dump.json', json, 'utf8');
 	},
 
