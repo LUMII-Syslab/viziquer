@@ -7,11 +7,11 @@ Meteor.methods({
 		var export_tool = new ExportDiagramConfig();
 		var res = export_tool.export(list.toolId);
 
-		var json = JSON.stringify(res);
-		var path = process.env.PWD;
+		return JSON.stringify(res, null, 2);
 
-		var fs = Npm.require('fs');
-		fs.writeFile(path + '/jsons/confguration_dump.json', json, 'utf8');
+		// var path = process.env.PWD;
+		// var fs = Npm.require('fs');
+		// fs.writeFile(path + '/jsons/confguration_dump.json', json, 'utf8');
 	},
 
 });

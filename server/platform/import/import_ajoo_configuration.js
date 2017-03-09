@@ -86,6 +86,15 @@ function ImportAjooConfiguration(tool_id, version_id) {
 	this.toolId = tool_id;
 	this.versionId = version_id;
 	this.obj_type_map = {};
+
+	var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
+	if (!diagram_type) {
+		console.error("No configurator diagram type");
+		return;
+	}
+
+	this.diagram_type = diagram_type;
+
 }
 
 ImportAjooConfiguration.prototype = {
@@ -122,6 +131,7 @@ ImportAjooConfiguration.prototype = {
 	importBoxTypes: function(box_types) {
 
 		var self = this;
+
 		_.each(box_types, function(box_type) {
 
 			var object = box_type.object;
@@ -133,6 +143,8 @@ ImportAjooConfiguration.prototype = {
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
+
+								targetDiagramTypeId: self.obj_type_map[object.diagramTypeId],
 							});
 
 			var new_box_type_id = ElementTypes.insert(object);
@@ -258,6 +270,7 @@ ImportAjooConfiguration.prototype = {
 			_.extend(object, {_id: undefined,
 								toolId: self.toolId,
 								versionId: self.versionId,
+								diagramTypeId: self.diagram_type._id,
 							});
 
 			var new_diagram_id = Diagrams.insert(object);
@@ -272,6 +285,12 @@ ImportAjooConfiguration.prototype = {
 
 		var self = this;
 
+		var box_type = ElementTypes.findOne({type: "Box", diagramTypeId: self.diagram_type._id});
+		if (!box_type) {
+			console.error("No box type");
+			return;
+		}
+
 		_.each(boxes, function(box) {
 
 			var object = box.object;
@@ -281,6 +300,8 @@ ImportAjooConfiguration.prototype = {
 								diagramId: self.obj_type_map[object.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
+								diagramTypeId: self.diagram_type._id,
+								elementTypeId: box_type._id,
 							});
 
 			var new_box_id = Elements.insert(object);
@@ -292,7 +313,15 @@ ImportAjooConfiguration.prototype = {
 
 	importLines: function(lines) {
 
-		var self = this;	
+		var self = this;
+
+		var line_type = ElementTypes.findOne({type: "Line", name: "Line", diagramTypeId: self.diagram_type._id});
+		if (!line_type) {
+			console.error("No line types");
+			return;
+		}
+
+
 		_.each(lines, function(line) {
 
 			var object = line.object;
@@ -304,6 +333,9 @@ ImportAjooConfiguration.prototype = {
 								endElement: self.obj_type_map[object.endElement],
 								toolId: self.toolId,
 								versionId: self.versionId,
+
+								diagramTypeId: self.diagram_type._id,
+								elementTypeId: line_type._id,
 							});
 
 			var new_line_id = Elements.insert(object);
@@ -327,6 +359,8 @@ ImportAjooConfiguration.prototype = {
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
+
+								diagramTypeId: self.diagram_type._id,
 							});
 
 			var new_compart_id = Compartments.insert(object);

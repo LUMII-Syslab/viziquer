@@ -7,6 +7,10 @@ Template.toolDiagrams.helpers({
 		});
 	},
 
+	tool_id: function() {
+		return Session.get("toolId");
+	},
+
 });
 
 Template.toolDiagrams.events({
@@ -23,13 +27,6 @@ Template.toolDiagrams.events({
 		$("#upload-data").modal("show");
 	
 		return;
-	},
-
-	'click #download-diagram' : function(e) {
-		e.preventDefault();
-
-		var list = {toolId: Session.get("toolId"),};
-		Utilities.callMeteorMethod("exportToolConfiguration", list);
 	},
 
 });
