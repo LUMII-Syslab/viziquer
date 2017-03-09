@@ -30,7 +30,7 @@ Template.diagramsTemplate.events({
 
 //searches on every key stroke for diagram title or compartment value
 	'keyup #searchDiagrams' : function(e, templ) {
-		
+
 		//searched text
 		var text = $("#searchDiagrams").val();
 		var filter = {text: text,
@@ -100,8 +100,8 @@ Template.diagramsViewButton.helpers({
 			style["treeStyle"] = "";
 		}
 		else {
-			style["defaultStyle"] = "";		
-			style["treeStyle"] = "visibility:hidden;";		
+			style["defaultStyle"] = "";
+			style["treeStyle"] = "visibility:hidden;";
 		}
 
 		return style;
@@ -112,7 +112,7 @@ Template.diagramsViewButton.events({
 
 	'click .view-switch' : function(e) {
 		e.preventDefault();
-		var view = $(e.target).attr("view");	
+		var view = $(e.target).attr("view");
 
 		//switching the views
 		var list = {versionId: Session.get("versionId"),
@@ -140,7 +140,7 @@ Template.diagramsSortButton.helpers({
 		if (sort_by) {
 			_.each(items, function(item) {
 				if (item["type"] == sort_by) {
-					item["active"] = true;	
+					item["active"] = true;
 				}
 			});
 		}
@@ -174,7 +174,7 @@ Template.diagramsGroupsButton.helpers({
 		//selecting the active group
 		var prefix = get_panel_type();
 		var group_id = get_user_settings_property(prefix + "SelectedGroup");
-	
+
 		//adding default group
 		var item = {name: "Admin/Reader", _id: "Admin", defaultRole: true};
 		if (group_id == "Admin") {
@@ -255,13 +255,13 @@ Template.defaultDiagramsView.events({
 
 	"mouseover .diagram": function(e) {
 
-		var target = $(e.target);	
+		var target = $(e.target);
 
 		var container = target.closest(".diagram");
 		var drop_down = container.find(".diagram-dropdown-container");
 
 		var width = container.width();
-		
+
 		drop_down.removeClass("hidden")
 		 			.css("left", width);
 	},
@@ -427,7 +427,7 @@ Template.diagramsSearchBar.helpers({
 // Start of addDiagram template
 
 Template.addDiagram.events({
-	
+
 	'click #create-diagram' : function(e, templ) {
 
 		$('#add-diagram').attr("OKPressed", true);
@@ -455,7 +455,7 @@ Template.addDiagram.events({
 
 
 Template.importOntology.events({
-	
+
 	'click #ok-import-ontology' : function(e, templ) {
 
 		//hidding the form
@@ -488,7 +488,7 @@ Template.importOntology.events({
 
 
 Template.ontologySettings.events({
-	
+
 	'click #ok-ontology-settings' : function(e, templ) {
 
 		var list = {projectId: Session.get("activeProject"),
@@ -668,14 +668,14 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 	diagram["children"] = Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
 		function(child_diagram) {
 			var new_child_diagram = build_diagram_tree(child_diagram, proj_id, version_id, is_edit_mode, query, sort_by);
-			return new_child_diagram;	
+			return new_child_diagram;
 		});
 
 	var is_collapsed = UserVersionSettings.findOne({collapsedDiagrams: diagram["_id"], versionId: Session.get("versionId")});
 
 	//collapsed
 	if (is_collapsed) {
-		diagram["collapsed"] = "display: none; visibility: visible;";				
+		diagram["collapsed"] = "display: none; visibility: visible;";
 		diagram["expanded"] = "display: block; visibility: visible;";
 		diagram["childrenList"] = "display: none;";
 	}
@@ -684,7 +684,7 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 	else {
 		diagram["collapsed"] = "display: block; visibility: visible;";
 		diagram["expanded"] = "display: none; visibility: visible;";
-		diagram["childrenList"] = "";			
+		diagram["childrenList"] = "";
 	}
 
 	//checks if there was a search
@@ -698,7 +698,7 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 	diagram["projectId"] = proj_id;
 	diagram["versionId"] = version_id;
 	if (is_edit_mode) {
-		diagram["editMode"] = "edit"; 
+		diagram["editMode"] = "edit";
 	}
 
 	return diagram;
