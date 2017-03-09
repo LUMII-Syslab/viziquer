@@ -505,14 +505,14 @@ Template.ontologySettings.events({
 Template.ontologySettings.helpers({
 
 	uri: function() {
-		var proj = Projects.findOne();
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return proj.uri;
 		}
 	},
 
 	endpoint: function() {
-		var proj = Projects.findOne();
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return proj.endpoint;
 		}

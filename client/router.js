@@ -667,4 +667,19 @@ Router.map( function () {
 
   });
 
+  this.route('dump', {
+      path: '/dump/tool/:tool_id',
+      template: "dump",
+      // layoutTemplate: "mainLayoutWithoutRibbon",
+
+      waitOn: function() {
+
+          var tool_id = this.params.tool_id;
+          Session.set("toolId", tool_id);
+
+          return [];
+      },
+  });
+
+
 });
