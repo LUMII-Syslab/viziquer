@@ -43,3 +43,4 @@ nimble:restivus
 shell-server@0.2.2
 mikowals:batch-insert
 peerlibrary:xml2js
+rzymek:pegjs
