@@ -1,5 +1,5 @@
 Interpreter.customMethods({
-  // This method can be called by ajoo editor, e.g., context menu
+  // These method can be called by ajoo editor, e.g., context menu
 
  // -->
   // method just prints active diagram's Abstract Query Syntax tree to the console
@@ -14,11 +14,88 @@ Interpreter.customMethods({
     });
 
     // Print All Queries within the diagram
-    _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) { console.log(JSON.stringify(q,null,2))});
+    _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) {
+         console.log(JSON.stringify(q,null,2));
+         console.log(JSON.stringify(resolveTypesAndBuildSymbolTable(q),null,2));
+       })
+    //_.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) { console.log(JSON.stringify(q,null,2))});
     // console.log("GenerateAbstractQuery ends");
   },
 });
 
+
+//[JSON] --> {root:[JSON], symbolTable:[some_name:{scope:?, type:?, elType:?} }]}
+// For the query in abstract syntax
+// this function resolves the types (adds to identification property what is missing)
+// and creats symbol table with resolved types
+// it should parse expressions ??
+function resolveTypesAndBuildSymbolTable(query) {
+  // string -->[IdObject]
+  // This is stub
+  function resolveClassByName(className) {
+    return {URI:"http://foo.foo/"+className}
+  };
+
+  // string -->[IdObject]
+  // This is stub
+  function resolveLinkByName(linkName) {
+    return {URI:"http://foo.foo/"+linkName}
+  };
+
+  // string, string -->[IdObject]
+  // This is stub
+  function resolveAttributeByName(className, attributeName) {
+    return {URI:"http://foo.foo/"+className+"."+attributeName}
+  };
+
+  var symbol_table = {};
+
+  //JSON -->
+  // function recursively modifies query by adding identification info
+  function resolveClass(obj_class) {
+    _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
+    if (obj_class.linkIdentification) {
+        _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
+    };
+
+    obj_class.conditionLinks.forEach(function(cl) {_.extend(cl.identification,resolveLinkByName(cl.identification.localName))});
+
+    if (obj_class.instanceAlias) {
+      if(symbol_table[obj_class.instanceAlias]) {
+        // name exists - ERROR
+        console.log("Duplicate instanceAlias name")
+      } else {
+        symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName)};
+    }};
+
+    obj_class.fields.forEach(function(f) {
+        if (f.alias) {
+          if (symbol_table[f.alias]) {
+             // name exists - ERROR
+             console.log("Duplicate alias name")
+          } else {
+             symbol_table[f.alias]={type:null}
+        }};
+    });
+
+    obj_class.children.forEach(resolveClass);
+
+    return;
+  };
+
+  resolveClass(query.root);
+
+  function resolveClassExpressions(obj_class) {
+    obj_class.conditions.forEach(function(c) {
+      console.log(grammer.parse(c.exp))
+    })
+    return;
+  };
+
+  resolveClassExpressions(query.root);
+
+  return {root:query.root, symbolTable:symbol_table}
+};
 
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
@@ -76,7 +153,7 @@ function genAbstractQueryForElementList(element_id_list) {
                   linkType: link.link.getType(),
                   isInverse:true,
                   isSubQuery:link.link.isSubQuery(),
-                  identification: { _id: elem._id(), localname: elem.getName()},
+                  identification: { _id: elem._id(), localName: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
                   isVariable:elem.isVariable(),
@@ -99,7 +176,7 @@ function genAbstractQueryForElementList(element_id_list) {
                   // not really correct because of isInverse option
                   isInverse:false,
                   isSubQuery:link.link.isSubQuery(),
-                  identification: { _id: elem._id(), localname: elem.getName()},
+                  identification: { _id: elem._id(), localName: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
                   isVariable:elem.isVariable(),
@@ -118,7 +195,7 @@ function genAbstractQueryForElementList(element_id_list) {
   };
 
     return { root: {
-      identification: { _id: e._id(), localname: e.getName()},
+      identification: { _id: e._id(), localName: e.getName()},
       stereotype: e.getStereotype(),
       instanceAlias: e.getInstanceAlias(),
       isVariable:e.isVariable(),
