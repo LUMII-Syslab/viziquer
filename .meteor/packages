@@ -30,7 +30,6 @@ nemo64:bootstrap
 less@2.7.9
 froala:editor-reactive
 http@1.2.11
-okgrow:analytics
 tap:i18n-db
 spacebars-compiler@1.0.12
 natestrauser:bootstrap-colorpicker
