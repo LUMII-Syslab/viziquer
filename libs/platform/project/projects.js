@@ -212,7 +212,6 @@ function dublicateDiagram(diagram, new_project_id, new_version_id) {
 
 function afterInsert(user_id, doc) {
 
-
 	var proj_id = doc["_id"];
 	var tool_id = doc["toolId"];
 	var date = new Date();
@@ -220,7 +219,7 @@ function afterInsert(user_id, doc) {
 	//selects the last tool version
 	var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
 	if (!tool_version) {
-		console.log("There is no tool version for tool: ", tool_id);
+		console.error("There is no tool version for tool: ", tool_id);
 		return;
 	}
 

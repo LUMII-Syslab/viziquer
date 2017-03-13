@@ -150,8 +150,9 @@ ImportAjooConfiguration.prototype = {
 			var new_box_type_id = ElementTypes.insert(object);
 			self.obj_type_map[box_type_id] = new_box_type_id;
 
-			self.importCompartmentTypes(box_type.compartmentTypes);
 			self.importDialogTypes(box_type);
+			self.importCompartmentTypes(box_type.compartmentTypes);
+
 		});
 	},
 
@@ -164,6 +165,9 @@ ImportAjooConfiguration.prototype = {
 			var line_type_id = object._id;
 			_.extend(object, {_id: undefined,
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
+								startElementTypeId: self.obj_type_map[object.startElementTypeId],
+								endElementTypeId: self.obj_type_map[object.endElementTypeId],
+
 								startElementId: self.obj_type_map[object.startElementId],
 								endElementId: self.obj_type_map[object.endElementId],
 								diagramId: self.obj_type_map[object.diagramId],
@@ -175,8 +179,9 @@ ImportAjooConfiguration.prototype = {
 			var new_line_type_id = ElementTypes.insert(object);
 			self.obj_type_map[line_type_id] = new_line_type_id;
 
-			self.importCompartmentTypes(line_type.compartmentTypes);
 			self.importDialogTypes(line_type);
+			self.importCompartmentTypes(line_type.compartmentTypes);
+
 		});
 	},
 
@@ -194,6 +199,8 @@ ImportAjooConfiguration.prototype = {
 
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
+
+								dialogTabId: self.obj_type_map[object.dialogTabId],
 
 								toolId: self.toolId,
 								versionId: self.versionId,
