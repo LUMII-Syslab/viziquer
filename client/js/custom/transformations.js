@@ -5,6 +5,15 @@ Interpreter.customMethods({
 		console.log("SetParametrs called, not implemented");
 	},
 
+	TestPr: function() {
+
+		var schema = new VQ_Schema();
+  		console.log(schema);
+		console.log(schema.resolveClassByName("Teacher"));
+		console.log(schema.resolveLinkByName("teaches"));
+		console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
+	},
+	
 	VQsetClassTypeValue: function(list) {
 		//class->element->extensions->after create elements
 	},

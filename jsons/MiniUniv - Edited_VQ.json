@@ -1,0 +1,227 @@
+{
+  "Name": "Schema",
+  "Schema":
+{
+  "URI": "http://lumii.lv/ontologies/UnivExample.owl",
+  "Classes": [
+    {
+      "SuperClasses": [ "Person" ],
+      "localName": "Teacher"
+    },
+    {
+      "SuperClasses": [ "Thing" ],
+      "localName": "FacultyLevel"
+    },
+    {
+      "SuperClasses": [ "Person"],
+      "localName": "Student"
+    },
+    {
+      "SuperClasses": [ "Thing"],
+      "localName": "AcademicProgram"
+    },
+    {
+      "SuperClasses": [ "Thing"],
+      "localName": "Course"
+    },
+    {
+      "SuperClasses": [ "Course" ],
+      "localName": "OptionalCourse"
+    },
+    {
+      "SuperClasses": [ "Course" ],
+      "localName": "MandatoryCourse"
+    },
+    {
+      "SuperClasses": [ "Registration" ],
+      "localName": "CompletedRegistration"
+    },
+    {
+      "SuperClasses": [ "Thing"],
+      "localName": "Registration"
+    },
+    {
+      "SuperClasses": [ "Thing"],
+      "localName": "Person"
+    },
+    {
+      "SuperClasses": [ "Teacher" ],
+      "localName": "Professor"
+    },
+    {
+      "SuperClasses": [ "Thing"],
+      "localName": "Nationality"
+    },
+    {
+      "SuperClasses": [ "Teacher"],
+      "localName": "Assistant"
+    },	
+    {
+      "SuperClasses": [],
+      "localName": "Thing",
+	  "URI": "http://www.w3.org/2002/07/owl#Thing"
+    }
+  ],
+  "Attributes": [
+    {
+      "localName": "nCode",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Nationality" ]
+    },
+    {
+      "localName": "dateCompleted",
+      "type": "XSD_DATE_TIME",
+      "SourceClasses": [ "CompletedRegistration"]
+    },
+    {
+      "localName": "studentNumber",
+      "type": "XSD_STRING",
+      "SourceClasses": ["Student"]
+    },
+    {
+      "localName": "studentName",
+      "type": "XSD_STRING",
+      "SourceClasses": ["Student"]
+    },
+    {
+      "localName": "acadTitle",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "FacultyLevel"]
+    },
+    {
+      "localName": "salary",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Teacher"]
+    },
+    {
+      "localName": "programName",
+      "type": "XSD_STRING",
+      "SourceClasses": ["AcademicProgram"]
+    },
+    {
+      "localName": "personName",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Person" ]
+    },
+    {
+      "localName": "mark",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "CompletedRegistration"]
+    },
+    {
+      "localName": "courseName",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Course" ]
+    },
+    {
+      "localName": "datePaid",
+      "type": "XSD_DATE_TIME",
+      "SourceClasses": [ "Registration"]
+    },
+    {
+      "localName": "courseCredits",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Course"]
+    },
+    {
+      "localName": "courseExtInfo",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Course"]
+    },
+    {
+      "localName": "nValue",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Nationality"]
+    },
+    {
+      "localName": "courseCode",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Course"]
+    },
+    {
+      "localName": "personID",
+      "type": "XSD_STRING",
+      "SourceClasses": ["Person"]
+    },
+    {
+      "localName": "teacherName",
+      "type": "XSD_STRING",
+      "SourceClasses": [ "Teacher"]
+    }
+  ],
+  "Associations": [
+    {
+      "localName": "course",
+      "ClassPairs": [
+        {
+          "SourceClass":  "Registration",
+          "TargetClass":  "Course"
+        }
+      ]
+    },
+    {
+      "localName": "teaches",
+      "ClassPairs": [
+        {
+          "SourceClass":  "Teacher",
+          "TargetClass":  "Course"
+        }
+      ]
+    },
+    {
+      "localName": "student",
+      "ClassPairs": [
+        {
+          "SourceClass": "Registration",
+          "TargetClass":  "Student"
+        }
+      ]
+    },
+    {
+      "localName": "enrolled",
+      "ClassPairs": [
+        {
+          "SourceClass": "Student",
+          "TargetClass": "AcademicProgram"
+        }
+      ]
+    },
+    {
+      "localName": "facultyLevel",
+      "ClassPairs": [
+        {
+          "SourceClass": "Teacher",
+          "TargetClass": "FacultyLevel"
+        }
+      ]
+    },
+    {
+      "localName": "nationality",
+      "ClassPairs": [
+        {
+          "SourceClass":  "Person",
+          "TargetClass": "Nationality"
+        }
+      ]
+    },
+    {
+      "localName": "takes",
+      "ClassPairs": [
+        {
+          "SourceClass":  "Student",
+          "TargetClass":  "Course"
+        }
+      ]
+    },
+    {
+      "localName": "includes",
+      "ClassPairs": [
+        {
+          "SourceClass": "AcademicProgram",
+           "TargetClass": "Course"
+        }
+      ]
+    }
+  ]
+}
+}

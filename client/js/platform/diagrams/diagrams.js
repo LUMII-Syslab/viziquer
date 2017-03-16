@@ -465,20 +465,23 @@ Template.importOntology.events({
 	    _.each(fileList, function(file) {
 
 	        var reader = new FileReader();
-	        reader.onload = function(event) {
 
+	        reader.onload = function(event) {
+				var data = JSON.parse(reader.result)
 	        	var list = {projectId: Session.get("activeProject"),
 	        				versionId: Session.get("versionId"),
-	                        data: JSON.parse(reader.result),
+	                        data: data,
 	                    };
 
-	            Utilities.callMeteorMethod("loadOntology", list);
+				if ( data.Schema ) { 
+					Utilities.callMeteorMethod("loadMOntology", list); }
+				else {
+					Utilities.callMeteorMethod("loadOntology", list); }
 	        }
 
 	        reader.onerror = function(error) {
 	            console.error("Error: ", error);
 	        }
-
 	        reader.readAsText(file);
 	    });
 

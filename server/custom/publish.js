@@ -6,13 +6,11 @@ Meteor.publish("Ontology", function(list) {
 	}
 
 	if (is_project_admin(this.userId, list)) {
-
-		console.log("in publish Ontology");
-
 		return [
 				Associations.find({projectId: list.projectId, versionId: list.versionId}),
 				Attributes.find({projectId: list.projectId, versionId: list.versionId}),
 				Classes.find({projectId: list.projectId, versionId: list.versionId}),
+				Schema.find({projectId: list.projectId, versionId: list.versionId}),
 			];
 	}
 	else {
