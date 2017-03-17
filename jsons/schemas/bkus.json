@@ -1,0 +1,1720 @@
+{
+  "Name": "BKUS",
+  "Schema": {
+    "URI": "http://lumii.lv/ontologies/BKUS.owl",
+    "Classes": [
+      {
+        "SuperClasses": [],
+        "localName": "Element"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KBkusArsts"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KArsts"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KDiagnoze"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KDieta"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KIzrakstisanasIemesls"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KUznemsanasIemesls"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KManipVeids"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KMedicinasIestade"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KSpecialitate"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "Pacients"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "RtgNosutijums"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "RtgIzmeklejums"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "RtgDiagnoze"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "Epizode"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "Manipulacija"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "Operacija"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "UznemsanasDiagnoze"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "UznemsanasDieta"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "Kustiba"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "KustibasDiagnoze"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "PEpizode"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "PApmeklejums"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "PManipulacija"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "PDiagnoze"
+      },
+      {
+        "SuperClasses": [
+          "Element"
+        ],
+        "localName": "PVizite"
+      }
+    ],
+    "Attributes": [
+      {
+        "localName": "npk",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Element"
+        ]
+      },
+      {
+        "localName": "id",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Element"
+        ]
+      },
+      {
+        "localName": "source",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Element"
+        ]
+      },
+      {
+        "localName": "personasKods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KBkusArsts",
+          "KArsts",
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "vards",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KBkusArsts",
+          "KArsts",
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "uzvards",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KBkusArsts",
+          "KArsts",
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "irLigumarsts",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KBkusArsts"
+        ]
+      },
+      {
+        "localName": "kods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KDiagnoze",
+          "KDieta",
+          "KMedicinasIestade",
+          "KSpecialitate"
+        ]
+      },
+      {
+        "localName": "nosaukums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KDiagnoze",
+          "KDieta",
+          "KIzrakstisanasIemesls",
+          "KUznemsanasIemesls",
+          "KManipVeids",
+          "KMedicinasIestade",
+          "KSpecialitate"
+        ]
+      },
+      {
+        "localName": "iemeslaKods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KIzrakstisanasIemesls",
+          "KUznemsanasIemesls"
+        ]
+      },
+      {
+        "localName": "manipKods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KManipVeids"
+        ]
+      },
+      {
+        "localName": "kodaTips",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "KManipVeids"
+        ]
+      },
+      {
+        "localName": "dzimums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "apdzVieta",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "iela",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "valsts",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "atvk",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "dzimsanasDatums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "vecumsTagad",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "vecumsGados",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "vecumsMenesos",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "vecumsDienas",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Pacients"
+        ]
+      },
+      {
+        "localName": "nosSpec",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums"
+        ]
+      },
+      {
+        "localName": "nodala",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums",
+          "Manipulacija",
+          "Kustiba"
+        ]
+      },
+      {
+        "localName": "nosutisanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums"
+        ]
+      },
+      {
+        "localName": "izmeklesanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums"
+        ]
+      },
+      {
+        "localName": "vesturesNum",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums",
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "iemesls",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums"
+        ]
+      },
+      {
+        "localName": "nosInfo",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums"
+        ]
+      },
+      {
+        "localName": "veids",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgNosutijums",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "specKods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgIzmeklejums"
+        ]
+      },
+      {
+        "localName": "aprakstisanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgIzmeklejums"
+        ]
+      },
+      {
+        "localName": "apraksts",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgIzmeklejums"
+        ]
+      },
+      {
+        "localName": "sledziens",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgIzmeklejums"
+        ]
+      },
+      {
+        "localName": "rekomendacijas",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgIzmeklejums"
+        ]
+      },
+      {
+        "localName": "diagnoze",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "RtgDiagnoze"
+        ]
+      },
+      {
+        "localName": "nosDiagn",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "vecumsUznemsanasBridi",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "uznemsanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "izrakstisanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "ilgums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode",
+          "Manipulacija",
+          "Kustiba",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "ilgumsDienas",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "kartesVertibaBezPacientaIemaksas",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "pacientaMaksajamaPacientaIemaksa",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "valstsKompensetaPacientaIemaksa",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "summaApmaksai",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "kliniskaDiagnoze",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "pamatdiagnoze",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "galvenaBlakusdiagnoze",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Epizode"
+        ]
+      },
+      {
+        "localName": "sakumaLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Manipulacija",
+          "Operacija",
+          "Kustiba",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "beiguLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Manipulacija",
+          "Operacija",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "ilgumsMinutes",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Manipulacija",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "skaits",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Manipulacija",
+          "PManipulacija"
+        ]
+      },
+      {
+        "localName": "opZale",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "operacijasIlgums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "operacijasIlgumsMinutes",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "pozicija",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "maksas",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "statuss",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija",
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "akuts",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "ievesanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "izvesanasLaiks",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "zalesIlgums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "zalesIlgumsMinutes",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Operacija"
+        ]
+      },
+      {
+        "localName": "diagnTips",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "UznemsanasDiagnoze"
+        ]
+      },
+      {
+        "localName": "npkBkus",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "UznemsanasDiagnoze",
+          "KustibasDiagnoze"
+        ]
+      },
+      {
+        "localName": "palata",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Kustiba"
+        ]
+      },
+      {
+        "localName": "datumsNo",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "datumsLidz",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "iem_kat",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "iem_kat2",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "iem_kat3",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "apm_veids",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "strv_kods",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "irNosutijums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "apr_veids",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "palidz_veids",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "nos_uz",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "petijumaEpizode",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "unknown01",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "vecumsEpizodesSakuma",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PEpizode"
+        ]
+      },
+      {
+        "localName": "apmeklejumaDatums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PApmeklejums"
+        ]
+      },
+      {
+        "localName": "apmekl_veids",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PApmeklejums"
+        ]
+      },
+      {
+        "localName": "apmekl_tips",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PApmeklejums"
+        ]
+      },
+      {
+        "localName": "status",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PApmeklejums"
+        ]
+      },
+      {
+        "localName": "petijumaManipulacija",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PManipulacija"
+        ]
+      },
+      {
+        "localName": "vizitesDatums",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "kabineta_id",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "maksasVizite",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "atkartoti",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "slimnicas_id",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      }
+    ],
+    "Associations": [
+      {
+        "localName": "nosArsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "RtgNosutijums",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "rtgNosutijumi",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KArsts",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KArsts",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "rtgNosutijumi",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "RtgNosutijums",
+            "inverseRole": "nosArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Pacients",
+            "TargetClass": "RtgNosutijums",
+            "inverseRole": "pacients",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "arsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "RtgIzmeklejums",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "rtgIzmeklejumi",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "Operacija",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "operacijas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PVizite",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "pVizites",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "rtgIzmeklejumi",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "RtgIzmeklejums",
+            "inverseRole": "arsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "RtgNosutijums",
+            "TargetClass": "RtgIzmeklejums",
+            "inverseRole": "rtgNosutijums",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "atbArsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "epizodes",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Epizode",
+            "inverseRole": "atbArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KArsts",
+            "TargetClass": "Epizode",
+            "inverseRole": "nosArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KIzrakstisanasIemesls",
+            "TargetClass": "Epizode",
+            "inverseRole": "izrIem",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KUznemsanasIemesls",
+            "TargetClass": "Epizode",
+            "inverseRole": "uznIem",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KMedicinasIestade",
+            "TargetClass": "Epizode",
+            "inverseRole": "nosIest",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KMedicinasIestade",
+            "TargetClass": "Epizode",
+            "inverseRole": "parvUz",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Pacients",
+            "TargetClass": "Epizode",
+            "inverseRole": "pacients",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "izpilditajs",
+        "ClassPairs": [
+          {
+            "SourceClass": "Manipulacija",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "manipulacijas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "manipulacijas",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Manipulacija",
+            "inverseRole": "izpilditajs",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KManipVeids",
+            "TargetClass": "Manipulacija",
+            "inverseRole": "manipVeids",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "Manipulacija",
+            "inverseRole": "epizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "operacijas",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Operacija",
+            "inverseRole": "arsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Operacija",
+            "inverseRole": "anesteziologs",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "Operacija",
+            "inverseRole": "epizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "anesteziologs",
+        "ClassPairs": [
+          {
+            "SourceClass": "Operacija",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "operacijas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "arstArsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "Kustiba",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "kustibas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "kustibas",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Kustiba",
+            "inverseRole": "arstArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "Kustiba",
+            "inverseRole": "aizvArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "Kustiba",
+            "inverseRole": "epizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "aizvArsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "Kustiba",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "kustibas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KBkusArsts",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pEpizodes",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "PEpizode",
+            "inverseRole": "arsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "PEpizode",
+            "inverseRole": "aizvArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KArsts",
+            "TargetClass": "PEpizode",
+            "inverseRole": "nosArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "pamatDiagnoze",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "blakusDiagnoze1",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "blakusDiagnoze2",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "blakusDiagnoze3",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "profApskatesDiagnoze",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KMedicinasIestade",
+            "TargetClass": "PEpizode",
+            "inverseRole": "nosIestade",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KSpecialitate",
+            "TargetClass": "PEpizode",
+            "inverseRole": "arstaSpecialitate",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KSpecialitate",
+            "TargetClass": "PEpizode",
+            "inverseRole": "nosArstaSpecialitate",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Pacients",
+            "TargetClass": "PEpizode",
+            "inverseRole": "pacients",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "pVizites",
+        "ClassPairs": [
+          {
+            "SourceClass": "KBkusArsts",
+            "TargetClass": "PVizite",
+            "inverseRole": "arsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "KSpecialitate",
+            "TargetClass": "PVizite",
+            "inverseRole": "arstaSpecialitate",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Pacients",
+            "TargetClass": "PVizite",
+            "inverseRole": "pacients",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "gimenesArsts",
+        "ClassPairs": [
+          {
+            "SourceClass": "Pacients",
+            "TargetClass": "KArsts",
+            "inverseRole": "pacienti",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pacienti",
+        "ClassPairs": [
+          {
+            "SourceClass": "KArsts",
+            "TargetClass": "Pacients",
+            "inverseRole": "gimenesArsts",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "diagnoze",
+        "ClassPairs": [
+          {
+            "SourceClass": "UznemsanasDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "uznemsanasDiagnozes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "KustibasDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "kustibasDiagnozes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "uznemsanasDiagnozes",
+        "ClassPairs": [
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "UznemsanasDiagnoze",
+            "inverseRole": "diagnoze",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "UznemsanasDiagnoze",
+            "inverseRole": "epizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "kustibasDiagnozes",
+        "ClassPairs": [
+          {
+            "SourceClass": "KDiagnoze",
+            "TargetClass": "KustibasDiagnoze",
+            "inverseRole": "diagnoze",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Kustiba",
+            "TargetClass": "KustibasDiagnoze",
+            "inverseRole": "kustiba",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "pamatDiagnoze",
+        "ClassPairs": [
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "blakusDiagnoze1",
+        "ClassPairs": [
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "blakusDiagnoze2",
+        "ClassPairs": [
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "blakusDiagnoze3",
+        "ClassPairs": [
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "profApskatesDiagnoze",
+        "ClassPairs": [
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "KDiagnoze",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "dieta",
+        "ClassPairs": [
+          {
+            "SourceClass": "UznemsanasDieta",
+            "TargetClass": "KDieta",
+            "inverseRole": "uznemsanasDietas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "uznemsanasDietas",
+        "ClassPairs": [
+          {
+            "SourceClass": "KDieta",
+            "TargetClass": "UznemsanasDieta",
+            "inverseRole": "dieta",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "UznemsanasDieta",
+            "inverseRole": "epizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "izrIem",
+        "ClassPairs": [
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KIzrakstisanasIemesls",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "uznIem",
+        "ClassPairs": [
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KUznemsanasIemesls",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "manipVeids",
+        "ClassPairs": [
+          {
+            "SourceClass": "Manipulacija",
+            "TargetClass": "KManipVeids",
+            "inverseRole": "manipulacijas",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PManipulacija",
+            "TargetClass": "KManipVeids",
+            "inverseRole": "pManipulacijas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pManipulacijas",
+        "ClassPairs": [
+          {
+            "SourceClass": "KManipVeids",
+            "TargetClass": "PManipulacija",
+            "inverseRole": "manipVeids",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          },
+          {
+            "SourceClass": "PApmeklejums",
+            "TargetClass": "PManipulacija",
+            "inverseRole": "pApmeklejums",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "nosIest",
+        "ClassPairs": [
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KMedicinasIestade",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "parvUz",
+        "ClassPairs": [
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "KMedicinasIestade",
+            "inverseRole": "epizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "nosIestade",
+        "ClassPairs": [
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KMedicinasIestade",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "arstaSpecialitate",
+        "ClassPairs": [
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KSpecialitate",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PVizite",
+            "TargetClass": "KSpecialitate",
+            "inverseRole": "pVizites",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "nosArstaSpecialitate",
+        "ClassPairs": [
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "KSpecialitate",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pacients",
+        "ClassPairs": [
+          {
+            "SourceClass": "RtgNosutijums",
+            "TargetClass": "Pacients",
+            "inverseRole": "rtgNosutijumi",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "Epizode",
+            "TargetClass": "Pacients",
+            "inverseRole": "epizodes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "Pacients",
+            "inverseRole": "pEpizodes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PVizite",
+            "TargetClass": "Pacients",
+            "inverseRole": "pVizites",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "rtgNosutijums",
+        "ClassPairs": [
+          {
+            "SourceClass": "RtgIzmeklejums",
+            "TargetClass": "RtgNosutijums",
+            "inverseRole": "rtgIzmeklejumi",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "RtgDiagnoze",
+            "TargetClass": "RtgNosutijums",
+            "inverseRole": "rtgDiagnozes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "rtgDiagnozes",
+        "ClassPairs": [
+          {
+            "SourceClass": "RtgNosutijums",
+            "TargetClass": "RtgDiagnoze",
+            "inverseRole": "rtgNosutijums",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "epizode",
+        "ClassPairs": [
+          {
+            "SourceClass": "Manipulacija",
+            "TargetClass": "Epizode",
+            "inverseRole": "manipulacijas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "Operacija",
+            "TargetClass": "Epizode",
+            "inverseRole": "operacijas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "UznemsanasDiagnoze",
+            "TargetClass": "Epizode",
+            "inverseRole": "uznemsanasDiagnozes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "UznemsanasDieta",
+            "TargetClass": "Epizode",
+            "inverseRole": "uznemsanasDietas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "Kustiba",
+            "TargetClass": "Epizode",
+            "inverseRole": "kustibas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "kustiba",
+        "ClassPairs": [
+          {
+            "SourceClass": "KustibasDiagnoze",
+            "TargetClass": "Kustiba",
+            "inverseRole": "kustibasDiagnozes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pEpizode",
+        "ClassPairs": [
+          {
+            "SourceClass": "PApmeklejums",
+            "TargetClass": "PEpizode",
+            "inverseRole": "pApmeklejumi",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "PDiagnoze",
+            "TargetClass": "PEpizode",
+            "inverseRole": "pDiagnozes",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "pApmeklejumi",
+        "ClassPairs": [
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "PApmeklejums",
+            "inverseRole": "pEpizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "pDiagnozes",
+        "ClassPairs": [
+          {
+            "SourceClass": "PEpizode",
+            "TargetClass": "PDiagnoze",
+            "inverseRole": "pEpizode",
+            "minCardinality": 0,
+            "maxCardinality": 2147483647
+          }
+        ]
+      },
+      {
+        "localName": "pApmeklejums",
+        "ClassPairs": [
+          {
+            "SourceClass": "PManipulacija",
+            "TargetClass": "PApmeklejums",
+            "inverseRole": "pManipulacijas",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      }
+    ],
+    "schemaVersion": "2017-03-17"
+  },
+  "formatVersion": "0.1"
+}
