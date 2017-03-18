@@ -161,14 +161,14 @@
     "Attributes": [
       {
         "localName": "npk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
       },
       {
         "localName": "id",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
@@ -209,7 +209,7 @@
       },
       {
         "localName": "irLigumarsts",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "KBkusArsts"
         ]
@@ -239,7 +239,7 @@
       },
       {
         "localName": "iemeslaKods",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "KIzrakstisanasIemesls",
           "KUznemsanasIemesls"
@@ -254,14 +254,14 @@
       },
       {
         "localName": "kodaTips",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "KManipVeids"
         ]
       },
       {
         "localName": "dzimums",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Pacients"
         ]
@@ -296,35 +296,35 @@
       },
       {
         "localName": "dzimsanasDatums",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "Pacients"
         ]
       },
       {
         "localName": "vecumsTagad",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "Pacients"
         ]
       },
       {
         "localName": "vecumsGados",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Pacients"
         ]
       },
       {
         "localName": "vecumsMenesos",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Pacients"
         ]
       },
       {
         "localName": "vecumsDienas",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Pacients"
         ]
@@ -347,14 +347,14 @@
       },
       {
         "localName": "nosutisanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "RtgNosutijums"
         ]
       },
       {
         "localName": "izmeklesanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "RtgNosutijums"
         ]
@@ -385,8 +385,7 @@
         "localName": "veids",
         "type": "xsd:string",
         "SourceClasses": [
-          "RtgNosutijums",
-          "PVizite"
+          "RtgNosutijums"
         ]
       },
       {
@@ -398,7 +397,7 @@
       },
       {
         "localName": "aprakstisanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "RtgIzmeklejums"
         ]
@@ -440,28 +439,28 @@
       },
       {
         "localName": "vecumsUznemsanasBridi",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "uznemsanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "izrakstisanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "ilgums",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "Epizode",
           "Manipulacija",
@@ -471,35 +470,35 @@
       },
       {
         "localName": "ilgumsDienas",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "kartesVertibaBezPacientaIemaksas",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "pacientaMaksajamaPacientaIemaksa",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "valstsKompensetaPacientaIemaksa",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "Epizode"
         ]
       },
       {
         "localName": "summaApmaksai",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "Epizode"
         ]
@@ -527,7 +526,7 @@
       },
       {
         "localName": "sakumaLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Manipulacija",
           "Operacija",
@@ -537,7 +536,7 @@
       },
       {
         "localName": "beiguLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Manipulacija",
           "Operacija",
@@ -546,7 +545,7 @@
       },
       {
         "localName": "ilgumsMinutes",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Manipulacija",
           "PVizite"
@@ -554,7 +553,7 @@
       },
       {
         "localName": "skaits",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Manipulacija",
           "PManipulacija"
@@ -569,14 +568,14 @@
       },
       {
         "localName": "operacijasIlgums",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "operacijasIlgumsMinutes",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Operacija"
         ]
@@ -590,14 +589,14 @@
       },
       {
         "localName": "maksas",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "statuss",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Operacija",
           "PVizite"
@@ -605,49 +604,49 @@
       },
       {
         "localName": "akuts",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "ievesanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "izvesanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "zalesIlgums",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "zalesIlgumsMinutes",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Operacija"
         ]
       },
       {
         "localName": "diagnTips",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "UznemsanasDiagnoze"
         ]
       },
       {
         "localName": "npkBkus",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "UznemsanasDiagnoze",
           "KustibasDiagnoze"
@@ -662,119 +661,119 @@
       },
       {
         "localName": "datumsNo",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "datumsLidz",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "iem_kat",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "iem_kat2",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "iem_kat3",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "apm_veids",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "strv_kods",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "irNosutijums",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "apr_veids",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "palidz_veids",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "nos_uz",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "petijumaEpizode",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "unknown01",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "vecumsEpizodesSakuma",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "PEpizode"
         ]
       },
       {
         "localName": "apmeklejumaDatums",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "PApmeklejums"
         ]
       },
       {
         "localName": "apmekl_veids",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PApmeklejums"
         ]
       },
       {
         "localName": "apmekl_tips",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PApmeklejums"
         ]
@@ -788,14 +787,14 @@
       },
       {
         "localName": "petijumaManipulacija",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "PManipulacija"
         ]
       },
       {
         "localName": "vizitesDatums",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "PVizite"
         ]
@@ -809,21 +808,28 @@
       },
       {
         "localName": "maksasVizite",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
         "SourceClasses": [
           "PVizite"
         ]
       },
       {
         "localName": "atkartoti",
-        "type": "xsd:string",
+        "type": "xsd:boolean",
+        "SourceClasses": [
+          "PVizite"
+        ]
+      },
+      {
+        "localName": "veids",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PVizite"
         ]
       },
       {
         "localName": "slimnicas_id",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PVizite"
         ]

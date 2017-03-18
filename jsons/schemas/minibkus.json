@@ -71,14 +71,14 @@
     "Attributes": [
       {
         "localName": "npk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
       },
       {
         "localName": "id",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
@@ -129,7 +129,7 @@
       },
       {
         "localName": "cena",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "KManipulacija"
         ]
@@ -164,49 +164,49 @@
       },
       {
         "localName": "pacDzimsanasDatums",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "Pacients"
         ]
       },
       {
         "localName": "polVizitesDatums",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "PoliklinikasEpizode"
         ]
       },
       {
         "localName": "polVizitesIlgums",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "PoliklinikasEpizode"
         ]
       },
       {
         "localName": "polVizitesIzmaksas",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "PoliklinikasEpizode"
         ]
       },
       {
         "localName": "polNpk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "PoliklinikasDiagnoze"
         ]
       },
       {
         "localName": "slimUznemsanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "SlimnicasEpizode"
         ]
       },
       {
         "localName": "slimIzrakstisanasLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "SlimnicasEpizode"
         ]
@@ -220,28 +220,28 @@
       },
       {
         "localName": "slimKopIzmaksas",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "SlimnicasEpizode"
         ]
       },
       {
         "localName": "slimVesturesNr",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "SlimnicasEpizode"
         ]
       },
       {
         "localName": "uznemNpk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "UznemsanasDiagnoze"
         ]
       },
       {
         "localName": "izrakstNpk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "IzrakstisanasDiagnoze"
         ]
@@ -255,35 +255,35 @@
       },
       {
         "localName": "kustSakumaLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Kustiba"
         ]
       },
       {
         "localName": "kustBeiguLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Kustiba"
         ]
       },
       {
         "localName": "kustNpk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Kustiba"
         ]
       },
       {
         "localName": "kmanSakumaLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "KustibasManipulacija"
         ]
       },
       {
         "localName": "kmanBeiguLaiks",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "KustibasManipulacija"
         ]

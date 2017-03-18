@@ -71,14 +71,14 @@
     "Attributes": [
       {
         "localName": "npk",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
       },
       {
         "localName": "id",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "Element"
         ]
@@ -126,7 +126,7 @@
       },
       {
         "localName": "cost",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "CManipulation"
         ]
@@ -140,49 +140,49 @@
       },
       {
         "localName": "birthDate",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "Patient"
         ]
       },
       {
         "localName": "visitDate",
-        "type": "xsd:string",
+        "type": "xsd:date",
         "SourceClasses": [
           "OutpatientEpisode"
         ]
       },
       {
         "localName": "visitDuration",
-        "type": "xsd:string",
+        "type": "xsd:duration",
         "SourceClasses": [
           "OutpatientEpisode"
         ]
       },
       {
         "localName": "visitCost",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "OutpatientEpisode"
         ]
       },
       {
         "localName": "outNo",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "OutpatientDiagnosis"
         ]
       },
       {
         "localName": "admissionTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "HospitalEpisode"
         ]
       },
       {
         "localName": "dischargeTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "HospitalEpisode"
         ]
@@ -196,28 +196,28 @@
       },
       {
         "localName": "totalCost",
-        "type": "xsd:string",
+        "type": "xsd:double",
         "SourceClasses": [
           "HospitalEpisode"
         ]
       },
       {
         "localName": "caseRecordNo",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "HospitalEpisode"
         ]
       },
       {
         "localName": "admNo",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "AdmissionDiagnosis"
         ]
       },
       {
         "localName": "disNo",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "DischargeDiagnosis"
         ]
@@ -231,35 +231,35 @@
       },
       {
         "localName": "arrivalTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "TreatmentWard"
         ]
       },
       {
         "localName": "transferTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "TreatmentWard"
         ]
       },
       {
         "localName": "trNo",
-        "type": "xsd:string",
+        "type": "xsd:integer",
         "SourceClasses": [
           "TreatmentWard"
         ]
       },
       {
         "localName": "startingTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Manipulation"
         ]
       },
       {
         "localName": "endingTime",
-        "type": "xsd:string",
+        "type": "xsd:dateTime",
         "SourceClasses": [
           "Manipulation"
         ]
