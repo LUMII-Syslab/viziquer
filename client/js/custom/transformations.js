@@ -35,6 +35,7 @@ Interpreter.customMethods({
 			});
 
 			class_names = _.union([{value: " ", input: " ", }], class_names);
+			class_names = _.sortBy(class_names, "input");
 
 		 	var is_sorted = false;
 		 	return _.uniq(class_names, is_sorted, function(item) {
@@ -169,6 +170,7 @@ Interpreter.customMethods({
 	 	}
 
 	 	// return atr_names;
+		atr_names = _.sortBy(atr_names, "input");
 	 	var is_sorted = false;
 
 	 	return _.uniq(atr_names, is_sorted, function(item) {
@@ -530,6 +532,14 @@ Interpreter.customMethods({
 
 	VQsetSubQueryNameSuffix: function(val) {
 		//arrow ->compartments->extensions->dynamicSuffix
+		//params: (value), return: String
+		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
+
+			return [val.value]
+	},
+	
+	VQsetSubQueryNamePrefix: function(val) {
+		//arrow ->compartments->extensions->dynamicPrefix
 		//params: (value), return: String
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
 
