@@ -533,6 +533,7 @@ SPARQL.prototype = {
 					classDesriptor: self.getClassInformation(name),
 					instance: instance, 
 					attribute: attribute,
+					conditions: condition,
 					conditionLinks: condLink,			
 					link: link2Class,
 					stereotype: stereoType,
