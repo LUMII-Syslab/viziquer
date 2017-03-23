@@ -9,9 +9,9 @@ Interpreter.customMethods({
 
 		var schema = new VQ_Schema();
   		console.log(schema);
-		console.log(schema.resolveClassByName("Teacher"));
-		console.log(schema.resolveLinkByName("teaches"));
-		console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
+		//console.log(schema.resolveClassByName("Teacher"));
+		//console.log(schema.resolveLinkByName("teaches"));
+		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
 	},
 	
 	VQsetClassTypeValue: function(list) {

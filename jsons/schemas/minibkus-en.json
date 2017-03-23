@@ -1,7 +1,8 @@
 {
-  "Name": "MINIBKUS-En",
+  "Name": "Schema",
   "Schema": {
     "URI": "http://lumii.lv/ontologies/MINIBKUS-En.owl",
+    "Name": "MINIBKUS-En",	
     "Classes": [
       {
         "SuperClasses": [],

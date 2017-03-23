@@ -1,7 +1,8 @@
 {
-  "Name": "BKUS",
+  "Name": "Schema",
   "Schema": {
     "URI": "http://lumii.lv/ontologies/BKUS.owl",
+	"Name": "BKUS",
     "Classes": [
       {
         "SuperClasses": [],
