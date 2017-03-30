@@ -9,7 +9,11 @@ Interpreter.customMethods({
 
 		var schema = new VQ_Schema();
   		console.log(schema);
-		//console.log(schema.resolveClassByName("Teacher"));
+		console.log(schema.findClassByName("Course").getAllAssociations());
+		//console.log(schema.findClassByName("Student").getAllAttributes());
+		//console.log(schema.getAllClasses());
+		//console.log(schema.findClassByName("Teacher3"));
+		//console.log(schema.resolveClassByName("Teacher3"));
 		//console.log(schema.resolveLinkByName("teaches"));
 		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
 	},
@@ -22,8 +26,29 @@ Interpreter.customMethods({
 		//class->compartments->ClassType->extensions->after update
 		//params: (compartType, compartId)		
 	},
-
 	VQgetClassNames: function() { 	
+		//Class -> compartments->Name->extension->dynamicDropDown	
+		var schema = new VQ_Schema();
+		var cls = schema.getAllClasses();
+
+		if (_.size(cls) > 0) {
+
+			//Create array of needed structure from class' names
+			var class_names = cls.map(function (user) {
+				return {value: user["name"], input: user["name"],};
+			});
+
+			class_names = _.sortBy(class_names, "input");
+
+		 	var is_sorted = false;
+		 	return _.uniq(class_names, is_sorted, function(item) {
+		 		return item["input"];
+		 	});
+	 	}
+
+	},
+	
+	VQgetClassNamesOld: function() { 	
 		//Class -> compartments->Name->extension->dynamicDropDown	
 		var cls = Classes.find();
 
@@ -69,6 +94,90 @@ Interpreter.customMethods({
 	},
 
 	VQgetAttributeNames: function() {
+
+		console.log("VQgetAttributeNames executed");
+
+		//atribute value for class
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		} 
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+
+		//Active element is given as Class type element
+		var atr_names = [{value: " ", input: " ", }];
+			
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+
+		if (act_el) {
+		//check if Class name is defined for active element
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+
+			if (!compart_type) {
+				return atr_names;
+			}
+
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			if (!compart) {
+				return atr_names;
+			}
+
+		//Read attribute values from DB
+		
+			var schema = new VQ_Schema();
+			
+			if (!schema.classExist(compart["input"])) {
+				console.error("VQgetAttributeNames: No Classs with such Name");
+				return ;
+			}		
+			
+			var klass = schema.findClassByName(compart["input"]);	
+
+			_.each(klass.getAllAttributes(), function(att){
+				var att_val = att["name"];
+				atr_names.push({value: att_val, input: att_val});
+			})
+				
+		}
+	 	
+	 	//Chech for Optional-Negation check-boxes simultaneous active
+	 	compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+	 	if (compart_type) {
+
+	 		Compartments.find({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")}).forEach(function(c){
+	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" && 
+	 				c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] == "true") {
+	 				
+
+	 				console.error("Choose optional OR negation type");	 			
+
+	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false"; 
+	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
+	 				// Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+	 			}
+	 		})
+	 	}
+
+	 	// return atr_names;
+		atr_names = _.sortBy(atr_names, "input");
+	 	var is_sorted = false;
+
+	 	return _.uniq(atr_names, is_sorted, function(item) {
+	 		return item["input"];
+	 	});
+
+		
+	},
+	VQgetAttributeNamesOld: function() {
 
 		console.log("VQgetAttributeNames executed");
 

@@ -27,6 +27,22 @@ Template.AddLink.helpers({
 				return [{name: "empty", class: "-"}];
 			}
 			
+			var className = act_comp["input"];
+			var schema = new VQ_Schema();
+			
+			if (!schema.classExist(className)) {
+				return [{name: "empty", class: "-"}];
+			}	
+			
+			asc = schema.findClassByName(className).getAllAssociations();
+			
+			if (asc.length == 0) {
+				return [{name: "empty", class: "-", type: "-"}];
+			}
+
+			return asc;
+			
+			/*
 			var cls_value = [{name: act_comp["input"], type: "direct"}];
 
 			//Read all asociations' name, from&to elements
@@ -93,7 +109,7 @@ Template.AddLink.helpers({
 				return [{name: "empty", class: "-", type: "-"}];
 			}
 
-			return asc;
+			return asc; */
 		}
 	},
 	

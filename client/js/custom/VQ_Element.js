@@ -16,7 +16,8 @@ function collectClasses(cl, all, first){
 }
 function createLink(s_class, t_class, s_role, t_role){
 	s_class[s_role][t_class.getID()] = t_class; 
-	t_class[t_role][s_class.getID()] = s_class; 
+	t_class[t_role] = s_class; 
+	//t_class[t_role][s_class.getID()] = s_class; 
 }
 
 VQ_Schema = function () {
@@ -40,6 +41,8 @@ VQ_Schema = function () {
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
+	schema.addClass( new VQ_Class({}, schema));
+	
 	_.each(data.Classes, function(old_cl){
 		var cl = schema.findClassByName(old_cl.localName); 
 		_.each(old_cl.SuperClasses, function (sc){
@@ -52,6 +55,10 @@ VQ_Schema = function () {
 	_.each(this.Classes, function (cl){
 	    cl.addAllSuperClasses();
 		cl.addAllSubClasses();
+		var allSuperSubClasses = {};
+		_.extend(allSuperSubClasses, cl.allSuperClasses);  
+		_.extend(allSuperSubClasses, cl.allSubClasses);  
+		cl.allSuperSubClasses = allSuperSubClasses;
 	})
 	
 	_.each(data.Attributes, function(atr){
@@ -64,9 +71,10 @@ VQ_Schema = function () {
 			schema.addSchemaProperty(newSchAttr, schema);
 			scClass.addProperty(newSchAttr);
 			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass")
+			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
 		})
 	})
+	schema.addAttribute( new VQ_Attribute({}, schema));
 	
 	_.each(data.Associations, function(asoc){
 		var newRole = new VQ_Role(asoc, schema);
@@ -83,6 +91,7 @@ VQ_Schema = function () {
 			createLink(tClass, newSchRole, "inAssoc", "targetClass");
 		})
 	})
+	schema.addRole( new VQ_Role({}, schema));
 };
 
 VQ_Schema.prototype = {
@@ -100,17 +109,37 @@ VQ_Schema.prototype = {
 	this.currentId = this.currentId + 1;
     return "ID_" + this.currentId + "_" + name;
   },
+  classExist: function (name) {
+    var cl = this.findClassByName(name);
+	if ( cl.localName == name) return true;
+	else return false;
+  },
+  getAllClasses: function (){
+    return _.map(this.Classes, function (cl) {
+				return {name: cl["localName"]};
+			});
+  },
+  findElementByName: function (name, coll) {
+    var element = _.find(coll, function(el){
+		if (el.localName == name) { return el; }; })
+	if (element) return element;
+	return _.find(coll, function(el){
+		if (el.localName == " ") { return el; }; })
+  }, 
   findClassByName: function(name) {
-	return _.find(this.Classes, function(cl){
-		if (cl.localName == name) { return cl; }; })
+     return this.findElementByName(name, this.Classes);
+	//return _.find(this.Classes, function(cl){
+	//	if (cl.localName == name) { return cl; }; })
   },
   findAssociationByName: function(name) {
-	return _.find(this.Associations, function(a){
-		if (a.localName == name) { return a; }; })
+	return this.findElementByName(name, this.Associations);
+	//return _.find(this.Associations, function(a){
+	//	if (a.localName == name) { return a; }; })
   },
   findAttributeByName: function(name) {
-	return _.find(this.Attributes, function(a){
-		if (a.localName == name) { return a; }; })
+	return this.findElementByName(name, this.Attributes);
+	//return _.find(this.Attributes, function(a){
+	//	if (a.localName == name) { return a; }; })
   },
   addElement: function(newElement) {
 	this.Elements[newElement.getID()] = newElement;
@@ -151,7 +180,8 @@ VQ_Schema.prototype = {
 }
 
 VQ_Elem = function (elemInfo, schema, elemType){
-	var localName = elemInfo.localName;
+    var localName = " ";
+    if (elemInfo.localName) {var localName = elemInfo.localName };
 	this.ID = schema.getNewIdString(localName) + " (" + elemType + ")";
 	this.localName = localName;
 	this.schema = schema;
@@ -165,6 +195,7 @@ VQ_Elem.prototype = {
   schema: null,
   getID: function() { return this.ID},
   getElemInfo: function() {
+    if (this.localName == " ") return {};
     var uri = null;
 	if (this.URI) { uri = this.URI; }
 	else { uri = this.schema.URI + "#" + this.localName;}	
@@ -180,6 +211,7 @@ VQ_Class = function (classInfo, schema){
     this.subClasses = {}; 
     this.allSuperClasses = {};
     this.allSubClasses = {};
+	this.allSuperSubClasses = {};
 	this.schemaAttribute = {};
 	this.inAssoc = {};
 	this.outAssoc = {};
@@ -192,10 +224,36 @@ VQ_Class.prototype.superClasses = null;
 VQ_Class.prototype.subClasses = null;
 VQ_Class.prototype.allSuperClasses = null;
 VQ_Class.prototype.allSubClasses = null;
+VQ_Class.prototype.allSuperSubClasses = null;
 VQ_Class.prototype.schemaAttribute = null;
 VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
+VQ_Class.prototype.getAssociations = function() {
+    var out_assoc =  _.map(this.outAssoc, function (a) { 
+				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
+    var in_assoc =  _.map(this.inAssoc, function (a) { 
+				return {name: a.localName, class: a.sourceClass.localName , type: "<="}; });				
+	return _.union(out_assoc, in_assoc);		
+  };
+VQ_Class.prototype.getAllAssociations = function() {
+	var assoc = this.getAssociations();
+	_.each(this.allSuperSubClasses, function(sc){
+			assoc = _.union(assoc, sc.getAssociations());
+	})	
+	return assoc;
+  };
+VQ_Class.prototype.getAttributes = function() {
+	return _.map(this.schemaAttribute, function (a) { 
+				return {name: a["localName"]}; });
+  };
+VQ_Class.prototype.getAllAttributes = function() {
+	var attributes = this.getAttributes();
+	_.each(this.allSuperSubClasses, function(sc){ 
+			attributes = _.union(attributes, sc.getAttributes());
+	})	
+	return attributes;
+  };
 VQ_Class.prototype.addSubClass = function(subClass) {
 	this.subClasses[subClass.getID()] = subClass;
   };
@@ -226,8 +284,12 @@ VQ_Attribute.prototype = Object.create(VQ_Elem.prototype);
 VQ_Attribute.prototype.constructor = VQ_Attribute;
 VQ_Attribute.prototype.schemaAttribute = null;
 VQ_Attribute.prototype.type = null;
+VQ_Attribute.prototype.getTypeInfo = function() {
+  if (this.type) return {type:this.type};
+  else return {};
+  };
 VQ_Attribute.prototype.getAttributeInfo = function() {
-  return _.extend(this.getElemInfo(), {type:this.type});
+  return _.extend(this.getElemInfo(), this.getTypeInfo());
   };
 
 
