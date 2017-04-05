@@ -4,7 +4,7 @@ Interpreter.customMethods({
  // -->
   // method just prints active diagram's Abstract Query Syntax tree to the console
   GenerateAbstractQuery: function() {
-    //console.log("GenerateAbstractQuery called");
+    console.log("GenerateAbstractQuery called");
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
@@ -12,14 +12,15 @@ Interpreter.customMethods({
     var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
       return e["_id"]
     });
-
+    console.log(elems_in_diagram_ids);
     // Print All Queries within the diagram
     _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) {
-         console.log(JSON.stringify(q,null,2));
+         //console.log(JSON.stringify(q,null,2));
          console.log(JSON.stringify(resolveTypesAndBuildSymbolTable(q),null,2));
+         //resolveTypesAndBuildSymbolTable(q);
        })
     //_.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) { console.log(JSON.stringify(q,null,2))});
-    // console.log("GenerateAbstractQuery ends");
+     console.log("GenerateAbstractQuery ends");
   },
 });
 
@@ -30,27 +31,29 @@ Interpreter.customMethods({
 // and creats symbol table with resolved types
 // it should parse expressions ??
 function resolveTypesAndBuildSymbolTable(query) {
+
+
+  var schema = new VQ_Schema();
+
   // string -->[IdObject]
-  // This is stub
   function resolveClassByName(className) {
-    return {URI:"http://foo.foo/"+className}
+    return schema.resolveClassByName(className)
   };
 
   // string -->[IdObject]
-  // This is stub
   function resolveLinkByName(linkName) {
-    return {URI:"http://foo.foo/"+linkName}
+    //return {URI:"booo"};
+    return schema.resolveLinkByName(linkName)
   };
 
   // string, string -->[IdObject]
-  // This is stub
   function resolveAttributeByName(className, attributeName) {
-    return {URI:"http://foo.foo/"+className+"."+attributeName}
+    return schema.resolveAttributeByName(className, attributeName)
   };
 
   var symbol_table = {};
 
-  //JSON -->
+   //JSON -->
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class) {
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
@@ -85,10 +88,24 @@ function resolveTypesAndBuildSymbolTable(query) {
 
   resolveClass(query.root);
 
+  function parseExpObject(exp_obj) {
+    try {
+      var parsed_exp = vq_grammar.parse(exp_obj.exp, {schema:schema, symbol_table:symbol_table});
+      exp_obj.parsed_exp = parsed_exp;
+    } catch (e) {
+      console.log(e)
+    } finally {
+      //nothing
+    };
+  };
+
   function resolveClassExpressions(obj_class) {
-    obj_class.conditions.forEach(function(c) {
-      console.log(grammer.parse(c.exp))
-    })
+    obj_class.conditions.forEach(parseExpObject);
+    obj_class.fields.forEach(parseExpObject);
+    if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
+    if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
+
+    obj_class.children.forEach(resolveClassExpressions);
     return;
   };
 
@@ -99,6 +116,7 @@ function resolveTypesAndBuildSymbolTable(query) {
 
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
+// element_id_list is the list of potential root elements
 function genAbstractQueryForElementList(element_id_list) {
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});

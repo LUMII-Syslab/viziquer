@@ -1,6 +1,6 @@
 Interpreter.customMethods({
 
-	ExecuteSPARQL: function(resp) {
+	ExecuteSPARQLb: function(resp) {
 
 		if (!resp) {
 			var sparql = new SPARQL();
@@ -43,7 +43,7 @@ Interpreter.customMethods({
 
 	},
 
-	GenerateSPARQL: function() {
+	GenerateSPARQLb: function() {
 
 		console.log("GenerateSPARQL executed")
 
@@ -55,20 +55,20 @@ Interpreter.customMethods({
 });
 
 
-function SPARQL() {
+function SPARQLb() {
 }
 
-SPARQL.prototype = {
-//Main function	
+SPARQLb.prototype = {
+//Main function
 	generateSPARQLQuery : function() {
 
 		var self = this;
 		var IDtable = self.getIDtable();
 		var diagramData;
 		var parsedDiagram;
-		
+
 		console.log("70", IDtable);
-		if (IDtable.length > 0) {			
+		if (IDtable.length > 0) {
 			diagramData = self.createDiagramTree (IDtable, 0);
 			console.log("73", diagramData);
 			//parsedDiagram = createSPARQLTree (diagramData);
@@ -77,7 +77,7 @@ SPARQL.prototype = {
 	},
 
 //Get structure without information
-	getIDtable : function() { 
+	getIDtable : function() {
 		var editor = Interpreter.editor;
 		var elem_ids = _.keys(editor.getSelectedElements());
 		var class_t;
@@ -93,8 +93,8 @@ SPARQL.prototype = {
 			var ctype = ElementTypes.findOne({name: "Class"});
 			var ltype = ElementTypes.findOne({name: "Link"});
 			var comp_type
-			//console.log("elem_ids = ", elem_ids); 
-			
+			//console.log("elem_ids = ", elem_ids);
+
 			if (ctype && ltype){
 
 				class_t = ctype["_id"];
@@ -105,22 +105,22 @@ SPARQL.prototype = {
 				_.each(elem_ids, function(el){
 		//If chosen element is class-type
 					comp_type = Elements.findOne({_id: el, elementTypeId: class_t});
-					if (comp_type){		
-							
+					if (comp_type){
+
 						comp_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: class_t});
-						
+
 						if (comp_type){
-								
+
 							type = Compartments.findOne({elementId: el, compartmentTypeId: comp_type["_id"]});
-							
+
 							if (!type){
-									
+
 								typeInput = "query";
 								query_count++;
 							} else {
-								
+
 								typeInput = type["input"];
-								
+
 								if (type["input"] == "query") {
 									query_count++;
 								}
@@ -133,14 +133,14 @@ SPARQL.prototype = {
 						}
 
 						elem_table.push({
-							id: el, 
-							type: typeInput, 								
+							id: el,
+							type: typeInput,
 							visited: 0
-						});						
-					} else {		
+						});
+					} else {
 		//If chosen element is link-type
 						comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: link_t});
-						if (comp_type){			
+						if (comp_type){
 
 							name = Compartments.findOne({elementId: el, compartmentTypeId: comp_type["_id"]});
 							if (name){
@@ -158,12 +158,12 @@ SPARQL.prototype = {
 								})
 
 								if (link_type == "") {
-									link_type = "Link"; 
-								}						
+									link_type = "Link";
+								}
 
-								elem_table.push({ 
+								elem_table.push({
 									id: el,
-									type: link_type,							
+									type: link_type,
 									start: act_elem["startElement"], //ID
 									end: act_elem["endElement"], //ID
 									visited: 0
@@ -179,10 +179,10 @@ SPARQL.prototype = {
 					console.error("Wrong number of queries");
 					return [];
 				}
-				
+
 				var start = elem_table.find(function (el) {
 					return el["type"] == "query"});
-				
+
 				var top_elem_id = _.indexOf(elem_table, start);
 
 				if (top_elem_id == -1) {
@@ -206,79 +206,79 @@ SPARQL.prototype = {
 //Sort ID according to visit
 	sortID : function (elem_table, index, count){
 		var self = this;
-		if (elem_table[index]){				
+		if (elem_table[index]){
 				if (elem_table[index]["visited"] == 0 && !(elem_table[index]["type"].includes("Link"))){ //Not visited and is class type
 					var next_ind;
-					
+
 					elem_table[index]["visited"] = count;
 					count = count + 1;
 
-					_.each(elem_table, function(e){ //visit Conditional links						
-						if(e["type"].includes("Condition Link") && e["visited"] == 0 ){					
+					_.each(elem_table, function(e){ //visit Conditional links
+						if(e["type"].includes("Condition Link") && e["visited"] == 0 ){
 							next_ind = -1;
-							
+
 							if (e["start"] == elem_table[index]["id"]) {
 
 								_.each(elem_table, function(el){
-									
+
 									if (el["id"] == e["end"]) {
 										next_ind = _.indexOf(elem_table, el);
 									}
 								})
-								
-							} else if (e["end"] == elem_table[index]["id"]) {							
-								
+
+							} else if (e["end"] == elem_table[index]["id"]) {
+
 								_.each(elem_table, function(el){
-									
+
 									if (el["id"] == e["start"]) {
 										next_ind = _.indexOf(elem_table, el);
 									}
 								})
 
 							}
-							
-							if (next_ind > -1 && elem_table[next_ind]["visited"] > 0){								
+
+							if (next_ind > -1 && elem_table[next_ind]["visited"] > 0){
 								e["visited"] = count;
 								count = count + 1;
-							}						
+							}
 						}
-					})	
+					})
 
 					_.each(elem_table, function(e){ //visit links and create tree
-						
-						if(e["type"].includes("Link") && e["visited"] == 0 && !e["type"].includes("Condition Link")){					
+
+						if(e["type"].includes("Link") && e["visited"] == 0 && !e["type"].includes("Condition Link")){
 							next_ind = -1;
-							
+
 							if (e["start"] == elem_table[index]["id"]) {
 
 								_.each(elem_table, function(el){
-									
+
 									if (el["id"] == e["end"]) {
 										next_ind = _.indexOf(elem_table, el);
 									}
 								})
-								
-							} else if (e["end"] == elem_table[index]["id"]) {							
-								
+
+							} else if (e["end"] == elem_table[index]["id"]) {
+
 								_.each(elem_table, function(el){
-									
+
 									if (el["id"] == e["start"]) {
 										next_ind = _.indexOf(elem_table, el);
 									}
 								})
 
 							}
-							
+
 							if (next_ind > -1 && elem_table[next_ind]["visited"] == 0) {
 								e["visited"] = count;
 								count = count + 1;
 								//console.log(elem_table, next_ind, count);
 								elem_table = self.sortID(elem_table, next_ind, count);
-							}						
+							}
 						}
 					})
 
-									
+
 				}
 
 				elem_table.sort(function(a, b){
@@ -320,14 +320,14 @@ SPARQL.prototype = {
 					var skipRow;
 					var having;
 					var order;
-					var distinct;					
+					var distinct;
 				//Name
 					comparType = CompartmentTypes.findOne({name: "Name", elementTypeId: classType["_id"]});
 					if (!comparType) {
 						console.error("Can't find Class name");
 						return [];
 					}
-					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]}); 					
+					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]});
 					if (!compart){
 						name = "";
 					} else {
@@ -337,7 +337,7 @@ SPARQL.prototype = {
 							name = "";
 						}
 					}
-					
+
 				//Instance
 					comparType = CompartmentTypes.findOne({name: "Instance", elementTypeId: classType["_id"]});
 					if (!comparType) {
@@ -394,13 +394,13 @@ SPARQL.prototype = {
 					if (!comparType) {
 						console.error("Can't find Class Conditions");
 						return [];
-					}									
+					}
 					compart = Compartments.find({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]}).forEach(function(c){
 						if (c["input"]){
 							condition.push(c["input"]);
 						}
 					})
-				
+
 				//Attribute list
 					comparType = CompartmentTypes.findOne({name: "Attributes", elementTypeId: classType["_id"]});
 					if (!comparType) {
@@ -423,7 +423,7 @@ SPARQL.prototype = {
 					// 	if (a["input"]){
 					// 		attribute.push(a["input"]);
 					// 	}
-					// })	
+					// })
 
 				//Having
 					comparType = CompartmentTypes.findOne({name: "Having", elementTypeId: classType["_id"]});
@@ -434,9 +434,9 @@ SPARQL.prototype = {
 					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]})
 					having = "";
 					if (compart) {
-						having = compart["input"];						
-					}	
-				
+						having = compart["input"];
+					}
+
 				//Distinct
 					comparType = CompartmentTypes.findOne({name: "Distinct", elementTypeId: classType["_id"]});
 					if (!comparType) {
@@ -446,9 +446,9 @@ SPARQL.prototype = {
 					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]})
 					distinct = "";
 					if (compart) {
-						distinct = compart["input"];						
-					}		
-				
+						distinct = compart["input"];
+					}
+
 				//Show rows
 					comparType = CompartmentTypes.findOne({name: "Show rows", elementTypeId: classType["_id"]});
 					if (!comparType) {
@@ -458,28 +458,28 @@ SPARQL.prototype = {
 					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]})
 					showRow = "";
 					if (compart) {
-						showRow = compart["input"];						
+						showRow = compart["input"];
 					}
 
-				
+
 				//Skip rows
 					comparType = CompartmentTypes.findOne({name: "Skip rows", elementTypeId: classType["_id"]});
 					if (!comparType) {
 						console.error("Can't find Class attribute");
 						return [];
 					}
-					
+
 					compart = Compartments.findOne({elementId: table[ind]["id"], compartmentTypeId: comparType["_id"]})
 					skipRow = "";
 					if (compart) {
-						skipRow = compart["input"];						
-					}									
-				
+						skipRow = compart["input"];
+					}
+
 			//Condition links - proceeded in this class
 				while (table[i] && table[i]["type"].includes("Condition Link")){
 					var nameType = CompartmentTypes.findOne({name: "Name", elementTypeId: linkType["_id"]});
 					if (nameType){
-						
+
 						var condLinkName = Compartments.findOne({compartmentTypeId: nameType["_id"]});
 						if (!condLinkName) {
 							condLinkName = "";
@@ -492,10 +492,10 @@ SPARQL.prototype = {
 							startID: table[i]["start"],
 							endID: table[i]["end"]
 						})
-						
+
 						i++;
 					}
-				}				
+				}
 
 			//If next element exists - it should be link+class pair at least
 				var nextClass;
@@ -504,7 +504,7 @@ SPARQL.prototype = {
 				} else {
 					nextClass = "";
 				}
-				
+
 			//If not 1st element, create link description
 				var link2Class;
 				if (ind > 0) {
@@ -523,27 +523,27 @@ SPARQL.prototype = {
 						endID: table[ind-1]["end"]
 					};
 				} else if (table[i]){
-					link2Class = "";									
-				}				
+					link2Class = "";
+				}
 
 				var obj = {
 					id: table[ind]["id"],
 					name: name,
 					type: table[ind]["type"],
 					classDesriptor: self.getClassInformation(name),
-					instance: instance, 
+					instance: instance,
 					attribute: attribute,
 					conditions: condition,
-					conditionLinks: condLink,			
+					conditionLinks: condLink,
 					link: link2Class,
 					stereotype: stereoType,
 					orderBy: orderBy,
 					having: having,
 					showRow: showRow,
-					skipRow: skipRow, 
+					skipRow: skipRow,
 					distinct: distinct,
 					nextClass: nextClass
-				};		
+				};
 			} else {
 		//If type is not class, see next element
 				self.createDiagramTree(table, ind+1);
@@ -555,7 +555,7 @@ SPARQL.prototype = {
 //Get full information about class
 	getClassInformation : function(className) {
 		var classData = Classes.findOne({localName: className});
-		
+
 		if (!classData) {
 			console.error("Class not found");
 			return;
@@ -596,7 +596,7 @@ SPARQL.prototype = {
 		classDescription = {
 				name: className,
 				uri: classData.URI,
-				namespace: classData.namespace,				
+				namespace: classData.namespace,
 				subClasses: subClass,
 				directSub: directSuperCl,
 				superClasses: superClass,
@@ -611,7 +611,7 @@ SPARQL.prototype = {
 	},
 
 //Parse diagramm data and create table for SPARQL generation
-	createSPARQLTree : function(diagramData){		
+	createSPARQLTree : function(diagramData){
 	},
 
 //Create SPARQL from tree
@@ -620,14 +620,14 @@ SPARQL.prototype = {
 
 //Function proceeding before parser
 	capitalizeString: function(str) {
-		// var capitalize = ["in", "not", "str", "lang", "langmatches", "datatype", "bound", "iri", "uri", "bnode", "rand", "abs", "ceil", "floor", 
-		// 					"round", "concat", "strlen", "ucase", "lcase", "encode_for_uri", "contains", "strstarts", "strends", "strbefore", 
-		// 					"strafter", "year", "month", "day", "timezone", "tz", "now", "uuid", "struuid", "md5", "sha1", "sha256", "sha384", 
-		// 					"sha512", "coalesce", "if", "strlang", "strdt", "sameterm", "isiri", "isuri", "isblank", "isliteral", "isnumeric", 
-		// 					"distinct", "regex", "substr", "replace", "exists", "count", "sum", "min", "max", "avg", "sample", "group_concat", 
-		// 					"separator", "or", "and", "substring", "inv"]; 
+		// var capitalize = ["in", "not", "str", "lang", "langmatches", "datatype", "bound", "iri", "uri", "bnode", "rand", "abs", "ceil", "floor",
+		// 					"round", "concat", "strlen", "ucase", "lcase", "encode_for_uri", "contains", "strstarts", "strends", "strbefore",
+		// 					"strafter", "year", "month", "day", "timezone", "tz", "now", "uuid", "struuid", "md5", "sha1", "sha256", "sha384",
+		// 					"sha512", "coalesce", "if", "strlang", "strdt", "sameterm", "isiri", "isuri", "isblank", "isliteral", "isnumeric",
+		// 					"distinct", "regex", "substr", "replace", "exists", "count", "sum", "min", "max", "avg", "sample", "group_concat",
+		// 					"separator", "or", "and", "substring", "inv"];
 		// var uncapitalize = ["true", "false", "days", "years", "months", "hours", "minutes", "seconds"];
-		
+
 		// var wordsInit = [];
 		// var words = [];
 		// var position;
@@ -660,7 +660,7 @@ SPARQL.prototype = {
 		// 		})
 		// 	}
 
-		// 	changed = false;			
+		// 	changed = false;
 		// })
 		// return nStr;
 	},
