@@ -1061,7 +1061,7 @@ var ImportTDAConfiguration = {
 		style_out["align"] = aligns[style["alignment"]] || "left";
 
 		//visibility
-		style_out["visible"] = (Number(style["isVisible"]) == 0) || true;
+		style_out["visible"] = Number(style["isVisible"]) == 1 ? true : false;
 
 		//fonts
 		var font_styles = {	"0": "normal",

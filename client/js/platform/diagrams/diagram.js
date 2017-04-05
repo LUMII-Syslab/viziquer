@@ -477,6 +477,30 @@ Template.diagramEditor.helpers({
 	},
 });
 
+
+var is_mouse_down = false;
+
+Template.diagramEditor.events({
+
+	"mouseover #horizontal-line": function(e) {
+		$obj = $(e.target);
+		$obj.css('cursor', 'ns-resize');
+	},
+
+	"mouseout #horizontal-line": function(e) {
+		if (!is_mouse_down) {
+			$obj = $(e.target);
+			$obj.css('cursor', 'initial');
+		}
+	},
+
+	"mousedown #horizontal-line": function(e) {
+		is_mouse_down = true;
+	},
+
+});
+
+
 Template.diagramEditor.onRendered(function() {
 
 	Session.set("editingDialog", reset_variable())
@@ -485,6 +509,21 @@ Template.diagramEditor.onRendered(function() {
     $('body').on('keydown', function(e) { 
     	Interpreter.processKeyDown(e);
     }); 
+
+    $('.padding-md').on('mousemove', function(e) { 
+    	if (is_mouse_down) {
+
+    		var new_height = e.pageY - Math.round($("#ajoo_scene").offset().top);
+
+    	    $("#ajoo_scene").height(new_height);
+    	    editor.size.setSize(editor.size.state.width, new_height);
+    	}
+    }); 
+
+    $('.padding-md').on('mouseup', function(e) { 
+		is_mouse_down = false;
+    }); 
+
 
     //adding the graphical editor
 	var editor = Interpreter.createEditor();

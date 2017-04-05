@@ -111,7 +111,7 @@ VQ_Schema.prototype = {
   },
   classExist: function (name) {
     var cl = this.findClassByName(name);
-	if ( cl.localName == name) return true;
+	if (cl && cl.localName == name) return true;
 	else return false;
   },
   getAllClasses: function (){

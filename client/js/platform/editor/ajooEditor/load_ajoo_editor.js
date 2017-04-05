@@ -24,7 +24,7 @@ Interpreter.loadAjooEditor = function(diagram) {
 	var settings = {
 			        container: container_name,
 			        width: container_width,			        
-			        height: container_height,
+			        height: container_height * 0.9,
 			            	
 	                isEditModeEnabled: is_edit_mode,
 	                data: {boxes: [], lines: []},

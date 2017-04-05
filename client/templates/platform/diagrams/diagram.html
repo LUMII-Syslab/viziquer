@@ -6,13 +6,13 @@
 
         {{#with diagram_type}}
 
-            <div id="diagram" class="col-sm-12 col-md-12 col-lg-{{diagram_size}}" style="padding-left:2px;">
+            <div id="diagram" class="col-sm-12 col-md-12 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;">
 
                 {{> diagramEditor}}
 
             </div>
 
-            <div id="compartment-forms" class="col-sm-12 col-md-12 col-lg-{{dialog_size}}">
+            <div id="compartment-forms" class="col-sm-12 col-md-12 col-lg-{{dialog_size}} col-xl-2">
 
                 {{> editingMessage editing=editing}}
                 
@@ -24,7 +24,6 @@
             </div>
         {{/with}}
     </div>
-
 
     <div class="row">
 
@@ -119,6 +118,8 @@
     <div elements="{{elements}}"></div>
 
     <div id="Diagram_Editor" oncontextmenu="return false"></div>
+
+    <div id="horizontal-line" style="height: 7px;"></div>
 
     <div id="contextMenuContainer">
         {{> contextMenuTemplate}}

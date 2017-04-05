@@ -503,6 +503,26 @@ Template.ontologySettings.events({
 		Utilities.callMeteorMethod("updateProjectOntology", list);
 	},
 
+
+	"click #end-point": function(e) {
+
+		console.log("test end point")
+
+
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+					uri: $("#ontology-uri").val(),
+					endpoint: $("#ontology-endpoint").val(),
+				};
+
+		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
+
+			console.log("end point tested ", res)
+
+		});
+
+	},
+
 });
 
 Template.ontologySettings.helpers({
