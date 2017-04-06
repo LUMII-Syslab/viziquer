@@ -12,7 +12,7 @@ Interpreter.customMethods({
     var elems_in_diagram_ids = Elements.find({diagramId:diagramId}).map(function(e) {
       return e["_id"]
     });
-    console.log(elems_in_diagram_ids);
+    //console.log(elems_in_diagram_ids);
     // Print All Queries within the diagram
     _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) {
          //console.log(JSON.stringify(q,null,2));
@@ -29,10 +29,9 @@ Interpreter.customMethods({
 // For the query in abstract syntax
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
-// it should parse expressions ??
 function resolveTypesAndBuildSymbolTable(query) {
 
-
+  // TODO: This is not efficient to recreate schema each time
   var schema = new VQ_Schema();
 
   // string -->[IdObject]
@@ -42,7 +41,6 @@ function resolveTypesAndBuildSymbolTable(query) {
 
   // string -->[IdObject]
   function resolveLinkByName(linkName) {
-    //return {URI:"booo"};
     return schema.resolveLinkByName(linkName)
   };
 
@@ -57,6 +55,7 @@ function resolveTypesAndBuildSymbolTable(query) {
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class) {
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
+
     if (obj_class.linkIdentification) {
         _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
     };
@@ -65,8 +64,7 @@ function resolveTypesAndBuildSymbolTable(query) {
 
     if (obj_class.instanceAlias) {
       if(symbol_table[obj_class.instanceAlias]) {
-        // name exists - ERROR
-        console.log("Duplicate instanceAlias name")
+        console.log("Duplicate instanceAlias name " + obj_class.instanceAlias +" in " + obj_class.identification.localName)
       } else {
         symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName)};
     }};
@@ -74,8 +72,7 @@ function resolveTypesAndBuildSymbolTable(query) {
     obj_class.fields.forEach(function(f) {
         if (f.alias) {
           if (symbol_table[f.alias]) {
-             // name exists - ERROR
-             console.log("Duplicate alias name")
+             console.log("Duplicate attribute alias name " + f.alias + " in " + obj_class.identification.localName)
           } else {
              symbol_table[f.alias]={type:null}
         }};
@@ -88,18 +85,24 @@ function resolveTypesAndBuildSymbolTable(query) {
 
   resolveClass(query.root);
 
+  // JSON -->
+  // Parses object's property "exp" and puts the result in the "parsed_exp" property
   function parseExpObject(exp_obj) {
     try {
       var parsed_exp = vq_grammar.parse(exp_obj.exp, {schema:schema, symbol_table:symbol_table});
       exp_obj.parsed_exp = parsed_exp;
     } catch (e) {
+      // TODO: error handling
       console.log(e)
     } finally {
       //nothing
     };
   };
 
+  // JSON -->
+  // Parses all expressions in the object and recursively in all children
   function resolveClassExpressions(obj_class) {
+
     obj_class.conditions.forEach(parseExpObject);
     obj_class.fields.forEach(parseExpObject);
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
@@ -156,7 +159,7 @@ function genAbstractQueryForElementList(element_id_list) {
     };
 
     // VQ_Element --> [JSON for linked class]
-    // Recursive. Traverses the query via deep first search
+    // Recursive. Traverses the query via depth first search
     // TODO: Optimize!!!!
     function genLinkedElements(current_elem) {
       // {link:VQ_Element, start:bool} --> JSON for linked class

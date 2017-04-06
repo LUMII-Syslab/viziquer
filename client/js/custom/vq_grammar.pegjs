@@ -3,7 +3,7 @@
 	// tabula ar parametriem
 
 	  {
-			 // parse can have multiple arguments
+			// parse can have multiple arguments
 			// parse(string, options) where options is an object
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
       options = arguments[1];
@@ -19,11 +19,12 @@
 				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
         // It does not make sense calculate this every time function is called, but ...
 				var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
-				console.log(o);
+				//console.log(o);
 
 				if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]) > -1) {
 						return {Reference: {name:o["Path"][0]["path"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"])}, PrimaryExpression : o["PrimaryExpression"], ReferenceToClass: o["ReferenceToClass"], ValueScope:o["ValueScope"], FunctionBETWEEN : o["ValueScope"], FunctionLike : o["FunctionLike"]}
 				//                 referenceta klase
+
 				}
 				return o;
       }

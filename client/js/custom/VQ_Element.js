@@ -7,21 +7,21 @@ function collectClasses(cl, all, first){
 		}
 	else {
 		_.each(cl[first], function(sc){
-			superClasses[sc.getID()] = sc; 
+			superClasses[sc.getID()] = sc;
 			var allSuperClasses = collectClasses(sc, all, first);
 			_.extend(superClasses, allSuperClasses);
-			})					
+			})
 	}
 	return superClasses;
 }
 function createLink(s_class, t_class, s_role, t_role){
-	s_class[s_role][t_class.getID()] = t_class; 
-	t_class[t_role] = s_class; 
-	//t_class[t_role][s_class.getID()] = s_class; 
+	s_class[s_role][t_class.getID()] = t_class;
+	t_class[t_role] = s_class;
+	//t_class[t_role][s_class.getID()] = s_class;
 }
 
 VQ_Schema = function () {
-   
+
    this.Classes = {};
    this.Elements = {};
    this.Attributes = {};
@@ -29,38 +29,38 @@ VQ_Schema = function () {
    this.SchemaProperties = {};
    this.Associations = {};
    this.SchemaRoles = {};
-   
+
    if (Schema.find().count() == 0)
    { return; }
 
    var data = Schema.findOne({ "Name": "Schema"}).Schema;
    //console.log(data);
-   
+
    var schema = this;
    this.URI = data.URI;
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
 	schema.addClass( new VQ_Class({}, schema));
-	
+
 	_.each(data.Classes, function(old_cl){
-		var cl = schema.findClassByName(old_cl.localName); 
+		var cl = schema.findClassByName(old_cl.localName);
 		_.each(old_cl.SuperClasses, function (sc){
 			var superClass = schema.findClassByName(sc);
 			superClass.addSubClass(cl);
 			cl.addSuperClass(superClass);
 		})
 	})
-	
+
 	_.each(this.Classes, function (cl){
 	    cl.addAllSuperClasses();
 		cl.addAllSubClasses();
 		var allSuperSubClasses = {};
-		_.extend(allSuperSubClasses, cl.allSuperClasses);  
-		_.extend(allSuperSubClasses, cl.allSubClasses);  
+		_.extend(allSuperSubClasses, cl.allSuperClasses);
+		_.extend(allSuperSubClasses, cl.allSubClasses);
 		cl.allSuperSubClasses = allSuperSubClasses;
 	})
-	
+
 	_.each(data.Attributes, function(atr){
 		var newAttr = new VQ_Attribute(atr, schema);
 	    schema.addAttribute(newAttr);
@@ -75,7 +75,7 @@ VQ_Schema = function () {
 		})
 	})
 	schema.addAttribute( new VQ_Attribute({}, schema));
-	
+
 	_.each(data.Associations, function(asoc){
 		var newRole = new VQ_Role(asoc, schema);
 		schema.addRole(newRole, schema);
@@ -101,11 +101,11 @@ VQ_Schema.prototype = {
   Classes: null,
   Attributes:null,
   Associations:null,
-  SchemaAttributes:null, 
+  SchemaAttributes:null,
   SchemaRoles:null,
   SchemaProperties:null,
-  currentId: 0, 
-  getNewIdString: function(name) { 
+  currentId: 0,
+  getNewIdString: function(name) {
 	this.currentId = this.currentId + 1;
     return "ID_" + this.currentId + "_" + name;
   },
@@ -125,7 +125,7 @@ VQ_Schema.prototype = {
 	if (element) return element;
 	return _.find(coll, function(el){
 		if (el.localName == " ") { return el; }; })
-  }, 
+  },
   findClassByName: function(name) {
      return this.findElementByName(name, this.Classes);
 	//return _.find(this.Classes, function(cl){
@@ -143,7 +143,7 @@ VQ_Schema.prototype = {
   },
   addElement: function(newElement) {
 	this.Elements[newElement.getID()] = newElement;
-  },  
+  },
   addClass: function(newClass) {
 	this.Classes[newClass.getID()] = newClass;
 	this.addElement(newClass);
@@ -175,7 +175,7 @@ VQ_Schema.prototype = {
   },
   resolveAttributeByName: function (className, attributeName) {
     // Pagaidām klases vards netiek ņemts vērā
-  	return this.findAttributeByName(attributeName).getAttributeInfo();  
+  	return this.findAttributeByName(attributeName).getAttributeInfo();
   },
 }
 
@@ -198,7 +198,7 @@ VQ_Elem.prototype = {
     if (this.localName == " ") return {};
     var uri = null;
 	if (this.URI) { uri = this.URI; }
-	else { uri = this.schema.URI + "#" + this.localName;}	
+	else { uri = this.schema.URI + "#" + this.localName;}
 	var info = {localName:this.localName, URI:uri};
     return info;
   }
@@ -208,7 +208,7 @@ VQ_Class = function (classInfo, schema){
     VQ_Elem.call(this, classInfo, schema, "class");
 	if ( classInfo.URI ){ this.URI = classInfo.URI;	}
 	this.superClasses = {};
-    this.subClasses = {}; 
+    this.subClasses = {};
     this.allSuperClasses = {};
     this.allSubClasses = {};
 	this.allSuperSubClasses = {};
@@ -230,28 +230,28 @@ VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
 VQ_Class.prototype.getAssociations = function() {
-    var out_assoc =  _.map(this.outAssoc, function (a) { 
+    var out_assoc =  _.map(this.outAssoc, function (a) {
 				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
-    var in_assoc =  _.map(this.inAssoc, function (a) { 
-				return {name: a.localName, class: a.sourceClass.localName , type: "<="}; });				
-	return _.union(out_assoc, in_assoc);		
+    var in_assoc =  _.map(this.inAssoc, function (a) {
+				return {name: a.localName, class: a.sourceClass.localName , type: "<="}; });
+	return _.union(out_assoc, in_assoc);
   };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
 	_.each(this.allSuperSubClasses, function(sc){
 			assoc = _.union(assoc, sc.getAssociations());
-	})	
+	})
 	return assoc;
   };
 VQ_Class.prototype.getAttributes = function() {
-	return _.map(this.schemaAttribute, function (a) { 
+	return _.map(this.schemaAttribute, function (a) {
 				return {name: a["localName"]}; });
   };
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes();
-	_.each(this.allSuperSubClasses, function(sc){ 
+	_.each(this.allSuperSubClasses, function(sc){
 			attributes = _.union(attributes, sc.getAttributes());
-	})	
+	})
 	return attributes;
   };
 VQ_Class.prototype.addSubClass = function(subClass) {
@@ -527,7 +527,7 @@ VQ_Element.prototype = {
     return this.getMultiCompartmentValues("Having").map(function(c) {return {exp:c}});
   },
   // --> [{link:VQ_Element, start:bool}, ...]
-  // returns an array of obects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
+  // returns an array of objects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
   // start true means that the link has been retrieved from link "end"
   getLinks: function() {
     return _.union(
