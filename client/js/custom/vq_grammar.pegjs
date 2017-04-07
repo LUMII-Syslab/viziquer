@@ -21,8 +21,8 @@
 				var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
 				//console.log(o);
 
-				if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]) > -1) {
-						return {Reference: {name:o["Path"][0]["path"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"])}, PrimaryExpression : o["PrimaryExpression"], ReferenceToClass: o["ReferenceToClass"], ValueScope:o["ValueScope"], FunctionBETWEEN : o["ValueScope"], FunctionLike : o["FunctionLike"]}
+				if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]["name"]) > -1) {
+						return {Reference: {name:o["Path"][0]["path"]["name"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"]["name"])}, PrimaryExpression : o["PrimaryExpression"], ReferenceToClass: o["ReferenceToClass"], ValueScope:o["ValueScope"], FunctionBETWEEN : o["ValueScope"], FunctionLike : o["FunctionLike"]}
 				//                 referenceta klase
 
 				}
