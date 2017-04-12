@@ -985,13 +985,6 @@
             "maxCardinality": 2147483647
           },
           {
-            "SourceClass": "KMedicinasIestade",
-            "TargetClass": "Epizode",
-            "inverseRole": "parvUz",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
             "SourceClass": "Pacients",
             "TargetClass": "Epizode",
             "inverseRole": "pacients",
@@ -1049,13 +1042,6 @@
             "maxCardinality": 2147483647
           },
           {
-            "SourceClass": "KBkusArsts",
-            "TargetClass": "Operacija",
-            "inverseRole": "anesteziologs",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
             "SourceClass": "Epizode",
             "TargetClass": "Operacija",
             "inverseRole": "epizode",
@@ -1099,13 +1085,6 @@
             "maxCardinality": 2147483647
           },
           {
-            "SourceClass": "KBkusArsts",
-            "TargetClass": "Kustiba",
-            "inverseRole": "aizvArsts",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
             "SourceClass": "Epizode",
             "TargetClass": "Kustiba",
             "inverseRole": "epizode",
@@ -1144,13 +1123,6 @@
             "maxCardinality": 2147483647
           },
           {
-            "SourceClass": "KBkusArsts",
-            "TargetClass": "PEpizode",
-            "inverseRole": "aizvArsts",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
             "SourceClass": "KArsts",
             "TargetClass": "PEpizode",
             "inverseRole": "nosArsts",
@@ -1165,34 +1137,6 @@
             "maxCardinality": 2147483647
           },
           {
-            "SourceClass": "KDiagnoze",
-            "TargetClass": "PDiagnoze",
-            "inverseRole": "blakusDiagnoze1",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
-            "SourceClass": "KDiagnoze",
-            "TargetClass": "PDiagnoze",
-            "inverseRole": "blakusDiagnoze2",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
-            "SourceClass": "KDiagnoze",
-            "TargetClass": "PDiagnoze",
-            "inverseRole": "blakusDiagnoze3",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
-            "SourceClass": "KDiagnoze",
-            "TargetClass": "PDiagnoze",
-            "inverseRole": "profApskatesDiagnoze",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
             "SourceClass": "KMedicinasIestade",
             "TargetClass": "PEpizode",
             "inverseRole": "nosIestade",
@@ -1203,13 +1147,6 @@
             "SourceClass": "KSpecialitate",
             "TargetClass": "PEpizode",
             "inverseRole": "arstaSpecialitate",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
-            "SourceClass": "KSpecialitate",
-            "TargetClass": "PEpizode",
-            "inverseRole": "nosArstaSpecialitate",
             "minCardinality": 0,
             "maxCardinality": 2147483647
           },

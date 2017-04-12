@@ -38,6 +38,7 @@ VQ_Schema = function () {
 
    var schema = this;
    this.URI = data.URI;
+   this.Name = data.Name;
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
@@ -97,6 +98,7 @@ VQ_Schema = function () {
 VQ_Schema.prototype = {
   constructor: VQ_Schema,
   URI:null,
+  Name:null,
   Elements: null,
   Classes: null,
   Attributes:null,
@@ -114,10 +116,19 @@ VQ_Schema.prototype = {
 	if (cl && cl.localName == name) return true;
 	else return false;
   },
+  associationExist: function (name) {
+    var cl = this.findAssociationByName(name);
+	if ( cl.localName == name) return true;
+	else return false;
+  },
+  attributeExist: function (name) {
+    var cl = this.findAttributeByName(name);
+	if ( cl.localName == name) return true;
+	else return false;
+  },
   getAllClasses: function (){
     return _.map(this.Classes, function (cl) {
-				return {name: cl["localName"]};
-			});
+				return {name: cl["localName"]}; });
   },
   findElementByName: function (name, coll) {
     var element = _.find(coll, function(el){
@@ -128,18 +139,12 @@ VQ_Schema.prototype = {
   },
   findClassByName: function(name) {
      return this.findElementByName(name, this.Classes);
-	//return _.find(this.Classes, function(cl){
-	//	if (cl.localName == name) { return cl; }; })
   },
   findAssociationByName: function(name) {
 	return this.findElementByName(name, this.Associations);
-	//return _.find(this.Associations, function(a){
-	//	if (a.localName == name) { return a; }; })
   },
   findAttributeByName: function(name) {
 	return this.findElementByName(name, this.Attributes);
-	//return _.find(this.Attributes, function(a){
-	//	if (a.localName == name) { return a; }; })
   },
   addElement: function(newElement) {
 	this.Elements[newElement.getID()] = newElement;
@@ -168,14 +173,23 @@ VQ_Schema.prototype = {
 	this.SchemaProperties[newProperty.getID()] = newProperty;
   },
   resolveClassByName: function (className) {
-    return this.findClassByName(className).getClassInfo();
+    if (this.classExist(className)) 
+		return this.findClassByName(className).getClassInfo();
+	else
+        return null;	
   },
   resolveLinkByName: function (linkName) {
-	return this.findAssociationByName(linkName).getAssociationInfo();
+    if (this.associationExist(linkName))
+		return this.findAssociationByName(linkName).getAssociationInfo();
+	else
+		return null;
   },
   resolveAttributeByName: function (className, attributeName) {
     // Pagaidām klases vards netiek ņemts vērā
-  	return this.findAttributeByName(attributeName).getAttributeInfo();
+	if (this.attributeExist(attributeName)) 
+		return this.findAttributeByName(attributeName).getAttributeInfo();  
+	else
+		return null;
   },
 }
 
@@ -192,21 +206,29 @@ VQ_Elem.prototype = {
   ID: null,
   localName: null,
   URI: null,
+  Namespace: null,
+  Prefix: null,
   schema: null,
   getID: function() { return this.ID},
   getElemInfo: function() {
     if (this.localName == " ") return {};
     var uri = null;
-	if (this.URI) { uri = this.URI; }
-	else { uri = this.schema.URI + "#" + this.localName;}
-	var info = {localName:this.localName, URI:uri};
+	var namespace = null;
+	var prefix = null;
+	if (this.URI) { uri = this.URI; namespace = this.Namespace; prefix = this.prefix;}
+	else { uri = this.schema.URI + "#" + this.localName; namespace = this.schema.URI; prefix = this.schema.Name; }	
+	var info = {localName:this.localName, URI:uri, Namespace:namespace, Prefix:prefix};
     return info;
   }
 }
 
 VQ_Class = function (classInfo, schema){
     VQ_Elem.call(this, classInfo, schema, "class");
-	if ( classInfo.URI ){ this.URI = classInfo.URI;	}
+	if ( classInfo.URI ){ 
+		this.URI = classInfo.URI;
+		this.NameSpace = classInfo.Namespace;
+		this.Prefix = classInfo.Prefix;
+	}
 	this.superClasses = {};
     this.subClasses = {};
     this.allSuperClasses = {};

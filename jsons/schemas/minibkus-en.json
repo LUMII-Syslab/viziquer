@@ -340,13 +340,6 @@
           {
             "SourceClass": "CPhysician",
             "TargetClass": "HospitalEpisode",
-            "inverseRole": "referringPhysician",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
-          {
-            "SourceClass": "CPhysician",
-            "TargetClass": "HospitalEpisode",
             "inverseRole": "responsiblePhysician",
             "minCardinality": 0,
             "maxCardinality": 2147483647

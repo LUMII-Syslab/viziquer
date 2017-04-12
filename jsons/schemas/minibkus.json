@@ -21,51 +21,35 @@
         "localName": "KManipulacija"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element"],
         "localName": "Pacients"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "PoliklinikasEpizode"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "PoliklinikasDiagnoze"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "SlimnicasEpizode"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "UznemsanasDiagnoze"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "IzrakstisanasDiagnoze"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "Kustiba"
       },
       {
-        "SuperClasses": [
-          "Element"
-        ],
+        "SuperClasses": [ "Element" ],
         "localName": "KustibasManipulacija"
       }
     ],
@@ -361,13 +345,6 @@
       {
         "localName": "slimnicasEpizodes",
         "ClassPairs": [
-          {
-            "SourceClass": "KArsts",
-            "TargetClass": "SlimnicasEpizode",
-            "inverseRole": "slimNosutitajsArsts",
-            "minCardinality": 0,
-            "maxCardinality": 2147483647
-          },
           {
             "SourceClass": "KArsts",
             "TargetClass": "SlimnicasEpizode",
