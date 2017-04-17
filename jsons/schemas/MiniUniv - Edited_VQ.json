@@ -60,7 +60,7 @@
     {
       "SuperClasses": [],
       "localName": "Thing",
-	  "prefix: "owl",
+	  "prefix": "owl",
 	  "namespace": "http://www.w3.org/2002/07/owl#",
 	  "URI": "http://www.w3.org/2002/07/owl#Thing"
     }
