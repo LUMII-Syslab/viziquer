@@ -12,8 +12,8 @@
 			function makeVar(o) { return makeString(o);};
 
 			function resolveTypeFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.type } else { return null } };
-      function resolveTypeFromSchemaForClass(id) {var cn=options.schema.resolveClassByName(id); if (cn.localName==null) {return null} else {return cn} };
-			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (aorl.localName==null) {aorl = options.schema.resolveLinkByName(id)}; if (aorl.localName==null) {return null} else {return aorl}};
+      function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
+			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (!aorl) { aorl = options.schema.resolveLinkByName(id)}; return aorl};
 
 		  function pathOrReference(o) {
 				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
