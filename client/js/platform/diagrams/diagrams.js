@@ -328,6 +328,7 @@ Template.defaultDiagramsView.events({
 
 
 Template.treeDiagramsView.helpers({
+
 	diagrams: function() {
 
 		var proj_id = Session.get("activeProject");
@@ -490,6 +491,24 @@ Template.importOntology.events({
 });
 
 
+Template.ontologySettings.helpers({
+
+	msg: function() {
+		return Session.get("msg");
+	},
+
+});
+
+Template.ontologySettings.onCreated(function() {
+	Session.set("msg", undefined);
+});
+
+
+Template.ontologySettings.onDestroyed(function() {
+	Session.set("msg", undefined);
+});
+
+
 Template.ontologySettings.events({
 
 	'click #ok-ontology-settings' : function(e, templ) {
@@ -503,11 +522,7 @@ Template.ontologySettings.events({
 		Utilities.callMeteorMethod("updateProjectOntology", list);
 	},
 
-
-	"click #end-point": function(e) {
-
-		console.log("test end point")
-
+	"click #test-endpoint": function(e) {
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -517,7 +532,23 @@ Template.ontologySettings.events({
 
 		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
 
-			console.log("end point tested ", res)
+			var class_name = "danger";
+			var text = "Connection is not ok";
+
+			if (res.status == 200) {
+				class_name = "success";
+				text = "Connection is ok";
+			}
+
+			var msg = {text: text,
+						class: class_name,
+					};
+
+			Session.set("msg", msg);
+
+			setTimeout(function() {
+				Session.set("msg", undefined);
+			}, 4000);
 
 		});
 

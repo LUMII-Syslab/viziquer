@@ -401,10 +401,17 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
 
+                    <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
                     <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
+
+                    {{#if msg.text}}
+                        <ul class="parsley-error-list" style="display: block;">
+                            <li style="display: list-item;">{{msg.text}}</li>
+                        </ul>
+                    {{/if}}
+
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
