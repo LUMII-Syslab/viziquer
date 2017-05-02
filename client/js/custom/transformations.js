@@ -9,7 +9,7 @@ Interpreter.customMethods({
 
 		var schema = new VQ_Schema();
   		console.log(schema);
-		console.log(schema.findClassByName("Course").getAllAssociations());
+		//console.log(schema.findClassByName("Course").getAllAssociations());
 		//console.log(schema.findClassByName("Student").getAllAttributes());
 		//console.log(schema.getAllClasses());
 		//console.log(schema.findClassByName("Teacher3"));
@@ -356,7 +356,6 @@ Interpreter.customMethods({
 
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
-
 		var act_elem = Session.get("activeElement");
 		//No active Element or unpropriate type
 		if (!act_elem) {return [{value: " ", input: " ", }];}	
@@ -366,6 +365,284 @@ Interpreter.customMethods({
 		var elem_strt = Elements.findOne({_id: act_elem})["startElement"];
 		var elem_end = Elements.findOne({_id: act_elem})["endElement"];
 		
+		
+		if (!elem_strt || !elem_end) { 
+			return [{value: " ", input: " ", }];
+		}
+		//End-elemen - Name direct + Super_Sub Classes
+		//All possible Classes
+		//If start and end elements both exist
+		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id});
+		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id})
+		
+		var schema = new VQ_Schema();
+		
+		if(comp_start && comp_end){
+			//Start element
+			var elemS_name = [];
+			elemS_name.push(comp_start["input"]);		
+				
+			//If Super/SubClass exists - add to possible start elements
+			_.each(schema.findClassByName(elemS_name[0]).allSuperSubClasses, function(nm){
+				elemS_name.push(nm["localName"]);
+			})
+
+
+			//End elem
+			var elemE_name = [];
+			elemE_name.push(comp_end["input"]);
+			
+				//If Super/SubClass exists - add to possible end elements
+			_.each(schema.findClassByName(elemE_name[0]).allSuperSubClasses, function(nm){
+				elemE_name.push(nm["localName"]);
+			})
+
+			//Read Associations from DB and make unique
+			var asc = [];
+			var asc_inv = []; 
+			var asc_all = [];
+			var i; 
+			var exists;
+			
+			asc_all.push({value: " ", input: " ", });	
+
+			//Read all asociations' name, from&to elements
+			var roles = schema.SchemaRoles;
+
+			if (roles){
+				var asc_val = [];
+
+				_.each(roles, function (use) {
+
+				      asc_val.push({
+				      	assoc: use["localName"], 
+				      	start: use.sourceClass["localName"], 
+				      	end: use.targetClass["localName"]
+				      });   
+				})
+			} else {
+				return [{value: " ", input: " ", }];
+			}
+			
+			//Direct
+			_.each(asc_val, function(v){				
+				exists = false;
+				
+				_.each(elemS_name, function(ns){
+					_.each(elemE_name, function (ne){
+						if (v["start"] == ns && v["end"] == ne) {exists = true;}
+					})			
+				})
+				
+				if (exists) {
+					asc.push(v["assoc"]);
+				}
+			})
+
+
+				//Add unique
+			_.each(asc, function(el){
+				exists = false;
+				
+				_.each(asc_all, function(ea){
+					if(ea["input"] == el) {exists = true;}
+				})
+
+				if(!exists) {
+					asc_all.push({value: el, input: el, })
+				}
+			})
+		
+			//Inverse
+			_.each(asc_val, function(v){
+				exists = false;
+				
+				_.each(elemS_name, function(ns){
+
+					_.each(elemE_name, function (ne){
+						if (v["start"] == ne && v["end"] == ns) {exists = true;}
+					})			
+				})
+				
+				if (exists) {
+					asc_inv.push(v["assoc"]);
+				}
+			})
+
+				//Add unique
+			_.each(asc_inv, function(el){
+				exists = false;
+
+				_.each(asc_all, function(ea){
+					if(ea["input"] == ("inv("+el+")")) {exists = true;}
+				})
+
+				if(!exists) {
+					asc_all.push({value: "inv("+el+")", input: "inv("+el+")", })
+				}
+			})
+
+			//Additional options - inverse, negation, condition, group visual representation
+				var ct = null;
+				var c = null; 
+				var compart_id = null; 
+				var c_cal = null;
+				//Inverse Link value - from chosen association		
+				ct = CompartmentTypes.findOne({name: "Inverse Link"});
+
+				if (ct) {
+					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+					if (c) {
+						compart_id = c["_id"];
+						c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
+						
+						if (c_cal) {
+							
+							if (String(c_cal["input"]).indexOf("inv") > -1){
+								Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
+							} else if (Compartments.findOne({elementId: act_elem, value: "<inv>"})){
+								Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+							}
+						}
+					}
+				}
+				
+				//Negation Link
+				ct = CompartmentTypes.findOne({name: "Negation Link"});
+
+				if (ct) {
+					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+					if (c) {
+						compart_id = c["_id"];	
+
+						if (c["input"] == "true" && c["value"] != "{not}"){
+							Dialog.updateCompartmentValue(ct, "true", "{not}", compart_id);
+
+							//Remove Optional link
+							ct = CompartmentTypes.findOne({name: "Optional Link"});
+
+							if (ct) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+								if (c) {
+									compart_id = c["_id"];	
+
+									if (compart_id) {
+										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
+									}
+								}
+							}
+						} else if (c["input"] == "false" && c["value"] == "{not}") {
+							Dialog.updateCompartmentValue(ct, "false", " ", compart_id);							
+						}
+					}
+				}
+
+
+				// Optional link - remove negation link
+				ct = CompartmentTypes.findOne({name: "Optional Link"});
+
+				if (ct) {
+					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+					if (c) {
+						compart_id = c["_id"];	
+
+						if (c["input"] == "true"){							
+							ct = CompartmentTypes.findOne({name: "Negation Link"});
+
+							if (ct) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+								if (c && c["input"] == "true") {
+									compart_id = c["_id"];	
+
+									if (compart_id) {
+										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
+									}
+								}
+							}
+						}
+					}
+				}
+
+
+				//Condition Link
+				ct = CompartmentTypes.findOne({name: "Condition Link"});
+
+				if (ct) {
+					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+					if (c) {
+						compart_id = c["_id"];	
+
+						if (c["input"] == "true" && c["value"] != "{condition}") {
+							Dialog.updateCompartmentValue(ct, "true", "{condition}", compart_id);
+							//Remove Subquery if exists
+							ct = CompartmentTypes.findOne({name: "Subquery Link"});
+							if (ct) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+								if (c) {
+									compart_id = c["_id"];
+									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+								}
+							}
+
+						} else if (c["input"] == "false" && c["value"] == "{condition}") {
+							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						}
+					}
+				}
+				
+				//"Subquery Link"
+				ct = CompartmentTypes.findOne({name: "Subquery Link"});
+
+				if (ct) {
+					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+					if (c) {
+						compart_id = c["_id"];
+
+						if (c["input"] == "true" && c["value"] != "{subquery}") {
+							Dialog.updateCompartmentValue(ct, "true", "{subquery}", compart_id);
+							//Remove Condition if exists
+							ct = CompartmentTypes.findOne({name: "Condition Link"});
+							if (ct) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+
+								if (c) {
+									compart_id = c["_id"];
+									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+								}
+							}
+						} else if (c["input"] == "false" && c["value"] == "{subquery}"){
+							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						}
+					}
+				}
+		} else {
+			return [{value: " ", input: " ", }];
+		}				
+
+		return asc_all;
+
+				
+	},
+		VQgetAssociationNamesOld: function() {
+		//arrow ->compartments->extensions-> dynamic drop down
+
+		var act_elem = Session.get("activeElement");
+		//No active Element or unpropriate type
+		if (!act_elem) {return [{value: " ", input: " ", }];}	
+		if (Elements.findOne({_id: act_elem})["type"] != "Line") {return [{value: " ", input: " ", }];}  
+		
+		//Start and end elements - ID and no-end-check
+		var elem_strt = Elements.findOne({_id: act_elem})["startElement"];
+		var elem_end = Elements.findOne({_id: act_elem})["endElement"];
+	
 		if (!elem_strt || !elem_end) { 
 			return [{value: " ", input: " ", }];
 		}
@@ -376,7 +653,7 @@ Interpreter.customMethods({
 		//If start and end elements both exist
 		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id});
 		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id})
-
+	
 		if(comp_start && comp_end){
 			//Start element
 			var elemS_name = [];
