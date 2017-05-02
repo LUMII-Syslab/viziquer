@@ -371,6 +371,10 @@ Interpreter.customMethods({
 		}
 		//End-elemen - Name direct + Super_Sub Classes
 		//All possible Classes
+		var cls = Classes.find();
+		var class_type = ElementTypes.findOne({name:"Class"});
+		var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id});
+
 		//If start and end elements both exist
 		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id});
 		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id})
@@ -478,7 +482,7 @@ Interpreter.customMethods({
 				})
 
 				if(!exists) {
-					asc_all.push({value: "inv("+el+")", input: "inv("+el+")", })
+					asc_all.push({value: "inv("+el+")", input: el})
 				}
 			})
 
@@ -499,7 +503,7 @@ Interpreter.customMethods({
 						
 						if (c_cal) {
 							
-							if (String(c_cal["input"]).indexOf("inv") > -1){
+							if (String(c_cal["value"]).indexOf("inv") > -1){
 								Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
 							} else if (Compartments.findOne({elementId: act_elem, value: "<inv>"})){
 								Dialog.updateCompartmentValue(ct, "false", "", compart_id);
