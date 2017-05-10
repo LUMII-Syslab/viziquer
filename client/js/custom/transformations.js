@@ -177,6 +177,7 @@ Interpreter.customMethods({
 
 		
 	},
+	
 	VQgetAttributeNamesOld: function() {
 
 		console.log("VQgetAttributeNames executed");
@@ -323,19 +324,20 @@ Interpreter.customMethods({
 
 		if (act_elem && ct && ctn) {
 			var c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-			var cn = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctn["_id"]});					
+			var cn = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctn["_id"]});
+			var c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});					
 
 			if (c && cn) {
 
-				if (c["input"] == "true"){
+				if (c["input"] == "true" && String(c_cal["value"]).indexOf("inv") == -1){
 
 					// Dialog.updateCompartmentValue(ct, "true", "<inv>", c["_id"]);
-					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]);
+					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]); 
 				}
-				else {
-					var s = cn["input"].indexOf("(");
-					var e = cn["input"].lastIndexOf(")");
-					var name = cn["input"].substring(s + 1, e)
+				else if (c["input"] == "false" && String(c_cal["value"]).indexOf("inv") > -1) {
+					var s = cn["value"].indexOf("(");
+					var e = cn["value"].lastIndexOf(")");
+					var name = cn["value"].substring(s + 1, e);
 
 					// Dialog.updateCompartmentValue(ct, "false", "", c["_id"]);
 					Dialog.updateCompartmentValue(ctn, name, name, cn["_id"]);
@@ -376,8 +378,8 @@ Interpreter.customMethods({
 		var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id});
 
 		//If start and end elements both exist
-		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id});
-		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id})
+		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id});
+		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id})
 		
 		var schema = new VQ_Schema();
 		
@@ -497,7 +499,7 @@ Interpreter.customMethods({
 				if (ct) {
 					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
 
-					if (c) {
+					if (c) { 
 						compart_id = c["_id"];
 						c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
 						
@@ -583,20 +585,20 @@ Interpreter.customMethods({
 						compart_id = c["_id"];	
 
 						if (c["input"] == "true" && c["value"] != "{condition}") {
-							Dialog.updateCompartmentValue(ct, "true", "{condition}", compart_id);
+							Dialog.updateCompartmentValue(c, "true", "{condition}", compart_id);
 							//Remove Subquery if exists
-							ct = CompartmentTypes.findOne({name: "Subquery Link"});
+							ctc = CompartmentTypes.findOne({name: "Subquery Link"});
 							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
 
 								if (c) {
 									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+									Dialog.updateCompartmentValue(c, "false", "", compart_id);
 								}
 							}
 
-						} else if (c["input"] == "false" && c["value"] == "{condition}") {
-							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						} else if (c["input"] == "false" && (c["value"] == "{condition}" || c["value"] == "false")) {
+							Dialog.updateCompartmentValue(c, "false", "", compart_id);
 						}
 					}
 				}
@@ -607,23 +609,24 @@ Interpreter.customMethods({
 				if (ct) {
 					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
 
-					if (c) {
-						compart_id = c["_id"];
+					if (c) {console.log("612=", c);
+						compart_id = c["_id"]; 
 
-						if (c["input"] == "true" && c["value"] != "{subquery}") {
-							Dialog.updateCompartmentValue(ct, "true", "{subquery}", compart_id);
+						if (c["input"] == "true" && c["value"] != "{subquery}") {console.log("615");
+							
+							Dialog.updateCompartmentValue(c, "true", "{subquery}", compart_id);
 							//Remove Condition if exists
-							ct = CompartmentTypes.findOne({name: "Condition Link"});
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+							var ctc = CompartmentTypes.findOne({name: "Condition Link"});
+							if (ctc) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
 
 								if (c) {
 									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+									Dialog.updateCompartmentValue(c, "false", "", compart_id);
 								}
 							}
-						} else if (c["input"] == "false" && c["value"] == "{subquery}"){
-							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						} else if (c["input"] == "false" && (c["value"] == "{subquery}" || c["value"] == "false")){console.log("620");
+							Dialog.updateCompartmentValue(c, "false", "", compart_id);
 						}
 					}
 				}
