@@ -870,20 +870,20 @@ Interpreter.customMethods({
 						compart_id = c["_id"];	
 
 						if (c["input"] == "true" && c["value"] != "{condition}") {
-							Dialog.updateCompartmentValue(ct, "true", "{condition}", compart_id);
+							Dialog.updateCompartmentValue(c, "true", "{condition}", compart_id);
 							//Remove Subquery if exists
-							ct = CompartmentTypes.findOne({name: "Subquery Link"});
+							ctc = CompartmentTypes.findOne({name: "Subquery Link"});
 							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
 
 								if (c) {
 									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+									Dialog.updateCompartmentValue(c, "false", "", compart_id);
 								}
 							}
 
-						} else if (c["input"] == "false" && c["value"] == "{condition}") {
-							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						} else if (c["input"] == "false" && (c["value"] == "{condition}" || c["value"] == "false")) {
+							Dialog.updateCompartmentValue(c, "false", "", compart_id);
 						}
 					}
 				}
@@ -894,23 +894,24 @@ Interpreter.customMethods({
 				if (ct) {
 					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
 
-					if (c) {
-						compart_id = c["_id"];
+					if (c) {console.log("612=", c);
+						compart_id = c["_id"]; 
 
-						if (c["input"] == "true" && c["value"] != "{subquery}") {
-							Dialog.updateCompartmentValue(ct, "true", "{subquery}", compart_id);
+						if (c["input"] == "true" && c["value"] != "{subquery}") {console.log("615");
+							
+							Dialog.updateCompartmentValue(c, "true", "{subquery}", compart_id);
 							//Remove Condition if exists
-							ct = CompartmentTypes.findOne({name: "Condition Link"});
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
+							var ctc = CompartmentTypes.findOne({name: "Condition Link"});
+							if (ctc) {
+								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
 
 								if (c) {
 									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+									Dialog.updateCompartmentValue(c, "false", "", compart_id);
 								}
 							}
-						} else if (c["input"] == "false" && c["value"] == "{subquery}"){
-							Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+						} else if (c["input"] == "false" && (c["value"] == "{subquery}" || c["value"] == "false")){console.log("620");
+							Dialog.updateCompartmentValue(c, "false", "", compart_id);
 						}
 					}
 				}
