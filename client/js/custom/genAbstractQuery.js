@@ -29,7 +29,7 @@ Interpreter.customMethods({
 // For the query in abstract syntax
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
-function resolveTypesAndBuildSymbolTable(query) {
+resolveTypesAndBuildSymbolTable = function (query) {
 
   // TODO: This is not efficient to recreate schema each time
   var schema = new VQ_Schema();
@@ -120,7 +120,7 @@ function resolveTypesAndBuildSymbolTable(query) {
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
-function genAbstractQueryForElementList(element_id_list) {
+genAbstractQueryForElementList = function (element_id_list) {
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
   // determine which elements are root elements
