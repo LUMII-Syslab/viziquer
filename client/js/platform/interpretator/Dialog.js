@@ -34,7 +34,7 @@ Interpreter.methods({
 		return [
 			{value: "item1", input: "item1", elementStyle: "NoStyle"},
 			{value: "item2", input: "item2", elementStyle: "NoStyle", compartmentStyle: "NoStyle"},
-			{value: "item3", input: "item32", compartmentStyle: "NoStyle"}		
+			{value: "item3", input: "item32", compartmentStyle: "NoStyle"}
 		];
 	},
 
@@ -42,7 +42,7 @@ Interpreter.methods({
 		return [
 			{value: "item1", input: "item1", elementStyle: "NoStyle"},
 			{value: "item2", input: "item2", elementStyle: "NoStyle", compartmentStyle: "NoStyle"},
-			{value: "item3", input: "item32", compartmentStyle: "NoStyle"}		
+			{value: "item3", input: "item32", compartmentStyle: "NoStyle"}
 		];
 	},
 
@@ -120,7 +120,7 @@ Dialog = {
 				elementTypeId: compart_type["elementTypeId"],
 				versionId: Session.get("versionId"),
 				compartmentTypeId: compart_type["_id"],
-				
+
 				input: input,
 				value: value,
 				index: compart_type["index"],
@@ -170,7 +170,7 @@ Dialog = {
 		var sub_compart_tree = compart_tree[compart_type["name"]];
 
 		var sub_compartments = [];
-		_.each(sub_compart_types, function(sub_compart_type, i) {
+		_.each(_.sortBy(sub_compart_types, function(sc) {return sc["index"];} ), function(sub_compart_type, i) {
 
 			var sub_sub_compart_types = sub_compart_type["subCompartmentTypes"];
 			if (sub_sub_compart_types.length == 0) {
@@ -214,7 +214,7 @@ Dialog = {
 					else {
 					 	input_value = "false";
 					}
-					
+
 					if (tmp_val) {
 						mapped_value = input_control.attr("trueValue");
 						elem_style_id = input_control.attr("trueElementStyle");
@@ -223,15 +223,15 @@ Dialog = {
 					else {
 						mapped_value = input_control.attr("falseValue");
 						elem_style_id = input_control.attr("falseElementStyle");
-						compart_style_id = input_control.attr("falseCompartmentStyle");				
+						compart_style_id = input_control.attr("falseCompartmentStyle");
 					}
 				}
-					
+
 				var value = Dialog.buildCompartmentValue(sub_compart_type, input_value, mapped_value);
 				sub_compart_tree[sub_compart_type["name"]] = {value: value, input: input_value};
 				res.push(value);
 			}
-			
+
 			else {
 
 				var val = Dialog.buildSubCompartmentTree(parent, sub_compart_type, sub_compart_tree);
@@ -247,7 +247,7 @@ Dialog = {
 				}
 
 				res.push(val);
-		
+
 			}
 
 			//if there are more then one compartment; checking the last compartment
@@ -268,12 +268,12 @@ Dialog = {
 		}
 		else {
 	 		compart_type["field_value"] = "";
-	 		compart_type["compartmentId"] = reset_variable();					
+	 		compart_type["compartmentId"] = reset_variable();
 		}
 
 		if (compart_type["inputType"]) {
 			//compart_type["fieldType"] = compart_type["inputType"]["type"];
-			
+
 			compart_type[compart_type["inputType"]["type"]] = true;
 			compart_type["input_type"] = compart_type["inputType"]["inputType"];
 			compart_type["_rows"] = compart_type["inputType"]["rows"];
@@ -301,17 +301,17 @@ Dialog = {
 				values = compart_type["inputType"]["values"];
 			}
 
-			compart_type["values"] = _.map(values, 
+			compart_type["values"] = _.map(values,
 				function(value_item) {
 
 					if (compart_input === value_item["input"]) {
-						value_item["selected"] = true;	
-						value_item["checked"] = "checked";		
+						value_item["selected"] = true;
+						value_item["checked"] = "checked";
 					}
 
 					value_item["compartmentTypeId"] = compart_type["_id"];
 					value_item["compartemntId"] = compart_id;
-					value_item["disabled"] = compart_type["disabled"];									
+					value_item["disabled"] = compart_type["disabled"];
 
 					return value_item;
 				}
@@ -330,13 +330,13 @@ Dialog = {
 
 					if (cbx_value["input"] == "true") {
 						true_value = cbx_value["value"];
-						true_elem_style = cbx_value["elementStyle"];				
+						true_elem_style = cbx_value["elementStyle"];
 						true_compart_style = cbx_value["compartmentStyle"];
 					}
 
 					else {
 						false_value = cbx_value["value"];
-						false_elem_style = cbx_value["elementStyle"];				
+						false_elem_style = cbx_value["elementStyle"];
 						false_compart_style = cbx_value["compartmentStyle"];
 					}
 				});
@@ -418,7 +418,7 @@ Dialog = {
 							}
 
 							else {
-								diagram_file["url"] = file["url"];	
+								diagram_file["url"] = file["url"];
 							}
 						}
 
@@ -489,7 +489,7 @@ Dialog = {
 
 	showTooltip: function(e, placement) {
 
-		//checks if tootip is already open	
+		//checks if tootip is already open
 		if (Session.get("tooltip")) {
 			return false;
 		}
@@ -510,7 +510,7 @@ Dialog = {
 	},
 
 	destroyTooltip: function(e, callback) {
-	    
+
 	    //resets tooltip variable
 	    Session.set("tooltip", false);
 
@@ -539,7 +539,7 @@ function override_element_style(style_obj_in) {
 	var style_obj_out = {};
 	var is_overriden1 = override_style_properties(style_obj_in["elementStyle"], style_obj_out, "elementStyle");
 	var is_overriden2 = override_style_properties(style_obj_in["startShapeStyle"], style_obj_out, "startShapeStyle");
-	var is_overriden3 = override_style_properties(style_obj_in["endShapeStyle"], style_obj_out, "endShapeStyle");	
+	var is_overriden3 = override_style_properties(style_obj_in["endShapeStyle"], style_obj_out, "endShapeStyle");
 
 	if (is_overriden1 || is_overriden2 || is_overriden3) {
 		style_obj_out["styleId"] = style_obj_in["id"];
@@ -554,7 +554,7 @@ function override_compartment_style(style_obj_in) {
 
 	var style_obj_out = {};
 	var is_overriden = override_style_properties(style_obj_in["style"], style_obj_out);
-	
+
 	if (is_overriden) {
 		style_obj_out["styleId"] = style_obj_in["id"];
 		return style_obj_out;
@@ -570,7 +570,7 @@ function override_style_properties(style_in, style_obj_out, name) {
 	}
 
 	//iterates over the style properties
-	var is_overriden = false;	
+	var is_overriden = false;
 	_.each(style_in, function(val, key) {
 
 		//if empty value or not defined, then not setting
@@ -582,7 +582,7 @@ function override_style_properties(style_in, style_obj_out, name) {
  		style_obj_out["style" + style_name + "." + key] = style_in[key];
 
  		//atleast one property was overriden
-		is_overriden = true;		
+		is_overriden = true;
 	});
 
 	//if atleast one property was overriden
@@ -616,4 +616,3 @@ function insert_compartment(list) {
 function update_compartment(list) {
 	Utilities.callMeteorMethod("updateCompartment", list);
 }
-
