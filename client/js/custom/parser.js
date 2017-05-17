@@ -67,6 +67,7 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count) {
 
 }
 
+// for JH GenerateSPARQL
 parse_attribute = function(str, alias) {
 	alias = alias || "";
 	initiate_variables(vna, count);
