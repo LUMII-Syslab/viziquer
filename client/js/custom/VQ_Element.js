@@ -173,10 +173,10 @@ VQ_Schema.prototype = {
 	this.SchemaProperties[newProperty.getID()] = newProperty;
   },
   resolveClassByName: function (className) {
-    if (this.classExist(className)) 
+    if (this.classExist(className))
 		return this.findClassByName(className).getClassInfo();
 	else
-        return null;	
+        return null;
   },
   resolveLinkByName: function (linkName) {
     if (this.associationExist(linkName))
@@ -186,8 +186,8 @@ VQ_Schema.prototype = {
   },
   resolveAttributeByName: function (className, attributeName) {
     // Pagaidām klases vards netiek ņemts vērā
-	if (this.attributeExist(attributeName)) 
-		return this.findAttributeByName(attributeName).getAttributeInfo();  
+	if (this.attributeExist(attributeName))
+		return this.findAttributeByName(attributeName).getAttributeInfo();
 	else
 		return null;
   },
@@ -216,7 +216,7 @@ VQ_Elem.prototype = {
 	var namespace = null;
 	var prefix = null;
 	if (this.URI) { uri = this.URI; namespace = this.Namespace; prefix = this.prefix;}
-	else { uri = this.schema.URI + "#" + this.localName; namespace = this.schema.URI; prefix = this.schema.Name; }	
+	else { uri = this.schema.URI + "#" + this.localName; namespace = this.schema.URI; prefix = this.schema.Name; }
 	var info = {localName:this.localName, URI:uri, Namespace:namespace, Prefix:prefix};
     return info;
   }
@@ -224,7 +224,7 @@ VQ_Elem.prototype = {
 
 VQ_Class = function (classInfo, schema){
     VQ_Elem.call(this, classInfo, schema, "class");
-	if ( classInfo.URI ){ 
+	if ( classInfo.URI ){
 		this.URI = classInfo.URI;
 		this.NameSpace = classInfo.Namespace;
 		this.Prefix = classInfo.Prefix;
@@ -498,6 +498,10 @@ VQ_Element.prototype = {
   isSubQuery: function() {
     return this.getCompartmentValue("Subquery Link")=="true"
   },
+	// determines whether the link is glogal subquery link
+  isGlobalSubQuery: function() {
+    return this.getCompartmentValue("Global Subquery Link")=="true"
+  },
   // determines whether the link is inverse
   isInverse: function() {
     return this.getCompartmentValue("Inverse Link")=="true"
@@ -546,7 +550,11 @@ VQ_Element.prototype = {
   // --> [{exp:string}]
   // returns an array of having's expressions
   getHavings: function() {
-    return this.getMultiCompartmentValues("Having").map(function(c) {return {exp:c}});
+    //return this.getMultiCompartmentSubValues("Having").map(function(c) {return {exp:c}});
+		return this.getMultiCompartmentSubCompartmentValues("Having",
+	[
+		{title:"exp",name:"Expression"}
+	])
   },
   // --> [{link:VQ_Element, start:bool}, ...]
   // returns an array of objects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
@@ -575,5 +583,58 @@ VQ_Element.prototype = {
   // Returns link's end VQ_Element
   getEndElement: function() {
     return new VQ_Element(this.obj["endElement"]);
-  }
+  },
+
+  // sets link "query" type. Possible values: SUBQUERY, GLOBAL_SUBQUERY, CONDITION, NONE
+  setLinkQueryType: function(value) {
+		 if (this.isLink) {
+
+			 var setSQ = this.boolToString(value=="SUBQUERY");
+			 var setGSQ = this.boolToString(value=="GLOBAL_SUBQUERY");
+			 var setCL = this.boolToString(value=="CONDITION");
+
+			 this.setCompartmentValue("Subquery Link",setSQ," ");
+			 this.setCompartmentValue("Global Subquery Link",setGSQ," ");
+			 this.setCompartmentValue("Condition Link",setCL," ");
+
+		 }
+	},
+
+	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
+	setLinkType: function(value) {
+		 if (this.isLink()) {
+        // By default link is REQUIRED
+				var setNeg = "false";
+				var setNegValue = " ";
+				var setOpt = "false";
+				if (value=="NOT") {
+					  setNeg = "true";
+						setNegValue = "{not}";
+						setOpt = "false";
+				} else if (value=="OPTIONAL") {
+					  setOpt = "true";
+						setNeg = "false";
+						setNegValue = " ";
+				};
+
+			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
+				this.setCompartmentValue("Optional Link",setOpt," ");
+		 }
+	},
+
+	// updates compartments value (if that compartment exists)
+	// string, string, string -> int (0 ir update failed, 1 otherwise)
+	setCompartmentValue: function(comp_name, input, value) {
+		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
+		if (ct) {
+			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
+			if (c) {
+					Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
+					return 1;
+			}
+		};
+		return 0;
+	},
+
+	boolToString: function(bool) {if (bool) {return "true"} else {return "false"}}
 }

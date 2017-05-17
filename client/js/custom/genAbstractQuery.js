@@ -4,7 +4,7 @@ Interpreter.customMethods({
  // -->
   // method just prints active diagram's Abstract Query Syntax tree to the console
   GenerateAbstractQuery: function() {
-    console.log("GenerateAbstractQuery called");
+    console.log("Generate AbstractQuery called");
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
@@ -66,7 +66,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
       if(symbol_table[obj_class.instanceAlias]) {
         console.log("Duplicate instanceAlias name " + obj_class.instanceAlias +" in " + obj_class.identification.localName)
       } else {
-        symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName)};
+        symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName), kind:"CLASS_ALIAS"};
     }};
 
     obj_class.fields.forEach(function(f) {
@@ -74,7 +74,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
           if (symbol_table[f.alias]) {
              console.log("Duplicate attribute alias name " + f.alias + " in " + obj_class.identification.localName)
           } else {
-             symbol_table[f.alias]={type:null}
+             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
         }};
     });
 

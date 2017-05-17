@@ -9,11 +9,36 @@
 
 			function makeVar(o) { return makeString(o);};
 
+      // string -> idObject
+			// returns type of the identifier from symbol table. Null if does not exist.
 			function resolveTypeFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.type } else { return null } };
-      function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
+			// string -> idObject
+			// returns kind of the identifier from symbol table. Null if does not exist.
+			function resolveKindFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.kind } else { return null } };
+			// string -> idObject
+			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
+			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
+			// string -> idObject
+			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
 			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (!aorl) { aorl = options.schema.resolveLinkByName(id)}; return aorl};
-
-		  function pathOrReference(o) {
+			// string -> idObject
+			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
+			// then in schema. Null if does not exist
+			function resolveType(id) {var t=resolveTypeFromSymbolTable(id); if (!t) {t=resolveTypeFromSchemaForClass(id); if (!t) {t=resolveTypeFromSchemaForAttributeAndLink(id)}} return t;};
+      //string -> string
+			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
+ 	    function resolveKind(id) {
+				    var k=resolveKindFromSymbolTable(id);
+						if (!k) {
+							if (resolveTypeFromSchemaForClass(id)) {
+							    k="CLASS_NAME";
+						  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
+								  k="PROPERTY_NAME";
+							}
+					  }
+						return k;
+		  };
+			function pathOrReference(o) {
 				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
         // It does not make sense calculate this every time function is called, but ...
 				var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
@@ -249,7 +274,7 @@
 			invPath2 = ("^" Chars_String:Chars_String) {return {name:("^" + makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
 			invPath3 = (Chars_String:Chars_String) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
-			LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 																																																			//atributs vai associacija
 			LN =((LNameINV / LNameINV2 / LName) )
 			LNameINV2 = ("^" LNameSimple )
