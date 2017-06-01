@@ -89,7 +89,7 @@ Meteor.methods({
 						new_list["startElementTypeId"] = data["startElementTypeId"];
 						new_list["endElementTypeId"] = data["endElementTypeId"];
 						new_list["styles"][0]["startShapeStyle"] = list["style"]["startShapeStyle"];
-						new_list["styles"][0]["endShapeStyle"] = list["style"]["endShapeStyle"];				
+						new_list["styles"][0]["endShapeStyle"] = list["style"]["endShapeStyle"];
 
 						//by default line is directional and otrhogonal
 						new_list["direction"] = "Directional";
@@ -119,7 +119,7 @@ Meteor.methods({
 												});
 
 					if (!(list["isAbstract"] || list["swimlane"])) {
-						
+
 						PaletteButtons.insert({toolId: new_list["toolId"],
 												versionId: new_list["versionId"],
 												diagramTypeId: new_list["diagramTypeId"],
@@ -147,7 +147,7 @@ Meteor.methods({
 								compart_type["diagramId"] = list["diagramId"];
 
 								compart_type["dialogTabId"] = tab_id;
-					
+
 								CompartmentTypes.insert(compart_type);
 							});
 					}
@@ -194,9 +194,9 @@ Meteor.methods({
 								projectId: list["projectId"]}, {$set: update_element});
 
 			var edit = {userId: user_id,
-						action: "edit",
+						action: "updated",
 						time: new Date(),
-						actionData: {elementId: elementId},
+						actionData: {elementId: list["elementId"]},
 					};
 
 			var notification = build_diagram_notification(user_id, list, edit);
@@ -211,7 +211,7 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list)) {
- 
+
 				if (list["elements"]) {
 					Clipboard.update({userId: user_id,
 									projectId: list["projectId"],
@@ -248,7 +248,7 @@ Meteor.methods({
 												});
 
 				if (clipboard) {
-					
+
 					var x = list["x"];
 					var y = list["y"];
 
@@ -265,7 +265,7 @@ Meteor.methods({
 						var count = clipboard["count"];
 						var offset = count * 10;
 						offset_x = offset;
-						offset_y = offset;	
+						offset_y = offset;
 					}
 
 					var element_ids = clipboard["elements"];
@@ -358,7 +358,7 @@ Meteor.methods({
 					if (!x && !y)
 						Clipboard.update({_id: clipboard["_id"]}, {$inc: {count: 1}});
 
-					//var edit = {userId: user_id, action: "pasted", time: new Date()};			
+					//var edit = {userId: user_id, action: "pasted", time: new Date()};
 					//Diagrams.update({_id: list["diagramId"]}, {$set: {edit: edit}});
 
 					return {boxes: boxes, lines: lines};
@@ -379,7 +379,7 @@ Meteor.methods({
 								versionId: list["versionId"],
 								diagramId: list["diagramId"],
 							};
-							
+
 				change_position(list, query, user_id);
 			}
 		}
@@ -431,11 +431,11 @@ Meteor.methods({
 
 				var inc = list["increment"];
 				if (list["horizontalIndex"] || list["horizontalIndex"] === 0) {
-					
+
 					query2["swimlane.row"] = {$gte: list["horizontalIndex"]};
 					compart_update = {$inc: {"swimlane.row": inc}};
 
-					query3["swimlane.row"] = list["horizontalIndex"];	
+					query3["swimlane.row"] = list["horizontalIndex"];
 				}
 
 				else if (list["verticalIndex"] || list["verticalIndex"] === 0) {
@@ -443,7 +443,7 @@ Meteor.methods({
 					query2["swimlane.column"] = {$gte: list["verticalIndex"]};
 					compart_update = {$inc: {"swimlane.column": inc}};
 
-					query3["swimlane.column"] = list["verticalIndex"];	
+					query3["swimlane.column"] = list["verticalIndex"];
 				}
 
 				else
@@ -486,7 +486,7 @@ function resize_element(list, query, system_id) {
 	var elem_query = {_id: list["elementId"]};
 	_.extend(elem_query, query);
 
-	var edit = {userId: system_id, action: "resized", time: new Date(), 
+	var edit = {userId: system_id, action: "resized", time: new Date(),
 				actionData: {elementId: list["elementId"]}};
 	var notification = build_diagram_notification(system_id, list, edit);
 	DiagramLogs.insert(notification);
@@ -562,7 +562,7 @@ function change_position(list, query, system_id) {
 function delete_elements(system_id, list) {
 
 	var element_list = list["elements"];
-	
+
 	//a transaction is needed
 	var edit = {userId: system_id,
 				action: "deleted",
@@ -600,15 +600,13 @@ build_diagram_notification = function(system_id, list, edit) {
 
 	if (list["projectId"]) {
 		notification["projectId"] = list["projectId"];
-		notification["versionId"] = list["versionId"];	
+		notification["versionId"] = list["versionId"];
 	}
 
 	else if (list["toolId"]) {
 		notification["toolId"] = list["toolId"];
-		notification["versionId"] = list["versionId"];	
+		notification["versionId"] = list["versionId"];
 	}
 
 	return notification;
 }
-
-
