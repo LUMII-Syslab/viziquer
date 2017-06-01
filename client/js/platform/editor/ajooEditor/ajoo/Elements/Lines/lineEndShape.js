@@ -14,7 +14,7 @@ LineEndShape.prototype.create = function(style) {
 
 	var shape_name = style["shape"]
 	if (shape_name && shape_name != "None") {
-		
+
 		//regular shapes, circle and arrow
 		if (!style["width"])
 			style["width"] = style["radius"];
@@ -32,7 +32,7 @@ LineEndShape.prototype.addEndShapeRepresentation = function(style) {
 	var line_end = this;
 
 	//adding the shape
-	var shape_obj = line_end.addEndShapeRepresentationElement(style);		
+	var shape_obj = line_end.addEndShapeRepresentationElement(style);
 
 	var shapes = shape_obj["element"];
 	line_end.presentation = shapes;
@@ -41,7 +41,7 @@ LineEndShape.prototype.addEndShapeRepresentation = function(style) {
 
 	var parent = line_end.link.line.getParent();
 	_.each(shapes, function(shape) {
-		parent.add(shape);	
+		parent.add(shape);
 	});
 }
 
@@ -62,7 +62,7 @@ LineEndShape.prototype.addEndShapeRepresentationElement = function(style) {
 			var self = {shapes: arrow["element"]};
 
 			Arrow.prototype.updateShapeSize.call(self, {width: style["width"], height: style["height"]});
-			
+
 			return arrow;
 		},
 
@@ -126,7 +126,7 @@ LineEndShape.prototype.computeLineEndShape = function() {
 
 		//computing the end shape's rotation and position
 		var rotation = line_end.computeRotation(points, x1, y1, x2, y2, end_point_x, end_point_y);
-		shape.rotation(rotation["rotation"]);		
+		shape.rotation(rotation["rotation"]);
 
 		var center = line_end.moveCenter(shape, points, end_point_x, end_point_y, rotation);
 
@@ -161,7 +161,7 @@ LineEndShape.prototype.computeRotation = function(points, x1_index, y1_index, x2
 			var k = y_delta / x_delta;
 			rotation = Math.atan(k) * (180 / Math.PI);
 			if (x1 < x2) {
-				rotation = 180 + rotation; 
+				rotation = 180 + rotation;
 			}
 		}
 	}
@@ -197,7 +197,7 @@ LineEndShape.prototype.moveCenter = function(shape, points, end_point_x_index, e
 			var points = shape.points();
 
 			var x_middle = (points[0] + points[points.length-2]) / 2;
-			var y_middle = (points[1] + points[points.length-1]) / 4;			
+			var y_middle = (points[1] + points[points.length-1]) / 4;
 
 			//left-right
 			if (rotation == 90) {
@@ -284,7 +284,7 @@ LineEndShape.prototype.updateEndShape = function(style) {
 
 		//computing the style
 		var base_style = {};
-		if (shapes.length > 0) {
+		if (shapes && shapes.length > 0) {
 			base_style = shapes[0].getAttrs();
 		}
 
@@ -298,10 +298,10 @@ LineEndShape.prototype.updateEndShape = function(style) {
 	}
 
 	else {
-		line_end.updateLineEndShapeStyle(style);	
+		line_end.updateLineEndShapeStyle(style);
 		line_end.computeLineEndShape();
 	}
-} 
+}
 
 LineEndShape.prototype.removePresentation = function() {
 	var line_end = this;
@@ -321,6 +321,3 @@ LineEndShape.prototype.updateLineEndShapeStyle = function(style) {
 	});
 
 }
-
-
-
