@@ -162,6 +162,11 @@ Meteor.methods({
 			var update = {};
 			update["styles." + list["styleIndex"] +"." + list["attrName"]] = attr_value;
 
+			if (list["attrName"] == "radius") {
+				update["styles." + list["styleIndex"] +"." + "width"] = attr_value;
+				update["styles." + list["styleIndex"] +"." + "height"] = attr_value;
+			}
+
 			ElementTypes.update({_id: list["id"]}, {$set: update});
 
 			//if changing the styles attribute, then changing compartments as well

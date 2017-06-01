@@ -31,6 +31,7 @@ Configurator = {
 	getInputFieldValue: function(e) {
 
 		var src = $(e.target).closest(".dialog-input");
+
 		var attr_name = src.attr("id");
 		var val = src.val();
 
@@ -146,6 +147,7 @@ Configurator = {
 //Style
 	updateElementStyleFromInput: function(e, style_type) {
 		var pair = Configurator.getInputFieldValue(e);
+
 		var attr_name = pair["_attr"];
 		var attr_value = pair["_value"];
 

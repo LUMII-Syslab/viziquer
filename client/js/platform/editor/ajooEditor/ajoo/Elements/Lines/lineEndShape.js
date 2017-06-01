@@ -16,11 +16,13 @@ LineEndShape.prototype.create = function(style) {
 	if (shape_name && shape_name != "None") {
 		
 		//regular shapes, circle and arrow
-		if (!style["width"])
+		if (!style["width"]) {
 			style["width"] = style["radius"];
+		}
 
-		if (!style["height"])
+		if (!style["height"]) {
 			style["height"] = style["radius"];
+		}
 
 		//adding the shape
 		line_end.addEndShapeRepresentation(style);
@@ -269,8 +271,9 @@ LineEndShape.prototype.updateEndShape = function(style) {
 
 	var line_end = this;
 
-	if (!style)
+	if (!style) {
 		return;
+	}
 
 	//if no end shape is specified, then removing the end shape
 	if (style["shape"] == "None") {
@@ -289,6 +292,15 @@ LineEndShape.prototype.updateEndShape = function(style) {
 		}
 
 		_.extend(base_style, style);
+
+		//regular shapes, circle and arrow
+		if (!style["width"]) {
+			base_style["width"] = style["radius"];
+		}
+
+		if (!style["height"]) {
+			base_style["height"] = style["radius"];
+		}
 
 		//removing the shape
 		line_end.removePresentation();

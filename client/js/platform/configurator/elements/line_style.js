@@ -21,7 +21,7 @@ Template.lineObjectStyle.events({
 
 	'blur .dialog-input' : function(e) {
 		e.preventDefault();
-		Configurator.updateElementStyleFromSelection(e);
+		Configurator.updateElementStyleFromInput(e);
 		return false;
 	},
 
@@ -41,7 +41,7 @@ Template.startShapeStyle.events({
 	
 	'blur .dialog-input' : function(e) {
 		e.preventDefault();
-		Configurator.updateElementStyleFromSelection(e, "startShapeStyle");
+		Configurator.updateElementStyleFromInput(e, "startShapeStyle");
 		return false;
 	},
 
@@ -67,7 +67,7 @@ Template.endShapeStyle.events({
 
 	'blur .dialog-input' : function(e) {
 		e.preventDefault();
-		Configurator.updateElementStyleFromSelection(e, "endShapeStyle");
+		Configurator.updateElementStyleFromInput(e, "endShapeStyle");
 		return false;
 	},
 
