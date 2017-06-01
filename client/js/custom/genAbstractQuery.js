@@ -88,6 +88,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
   function parseExpObject(exp_obj) {
+
     try {
       var parsed_exp = vq_grammar.parse(exp_obj.exp, {schema:schema, symbol_table:symbol_table});
       exp_obj.parsed_exp = parsed_exp;
@@ -104,7 +105,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
   function resolveClassExpressions(obj_class) {
 
     obj_class.conditions.forEach(parseExpObject);
-    obj_class.fields.forEach(parseExpObject);
+    obj_class.aggregations.forEach(parseExpObject);
+    obj_class.fields.forEach(function(f) {
+      // CAUTION!!!!! Hack for (.)
+      if (f.exp=="(.)") {f.exp=obj_class.instanceAlias};
+      parseExpObject(f)
+    });
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
     if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
 
@@ -174,6 +180,7 @@ genAbstractQueryForElementList = function (element_id_list) {
                   linkType: link.link.getType(),
                   isInverse:true,
                   isSubQuery:link.link.isSubQuery(),
+                  isGlobalSubQuery:link.link.isGlobalSubQuery(),
                   identification: { _id: elem._id(), localName: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
@@ -182,6 +189,7 @@ genAbstractQueryForElementList = function (element_id_list) {
                   // should not add the link which was used to get to the elem
                   conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                   fields: elem.getFields(),
+                  aggregations: elem.getAggregateFields(),
                   conditions: elem.getConditions(),
                   children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l}),
                 }
@@ -196,7 +204,8 @@ genAbstractQueryForElementList = function (element_id_list) {
                   linkType: link.link.getType(),
                   // not really correct because of isInverse option
                   isInverse:false,
-                  isSubQuery:link.link.isSubQuery(),
+                  isSubQuery: link.link.isSubQuery(),
+                  isGlobalSubQuery: link.link.isGlobalSubQuery(),
                   identification: { _id: elem._id(), localName: elem.getName()},
                   stereotype: elem.getStereotype(),
                   instanceAlias: elem.getInstanceAlias(),
@@ -205,6 +214,7 @@ genAbstractQueryForElementList = function (element_id_list) {
                   // should not add the link which was used to get to the elem
                   conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                   fields: elem.getFields(),
+                  aggregations: elem.getAggregateFields(),
                   conditions: elem.getConditions(),
                   children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l}),
                 }
@@ -223,6 +233,7 @@ genAbstractQueryForElementList = function (element_id_list) {
       variableName:e.getVariableName(),
       conditionLinks:_.filter(_.map(e.getLinks(), genConditionalLink), function(l) {return l}),
       fields: e.getFields(),
+      aggregations: e.getAggregateFields(),
       conditions: e.getConditions(),
       orderings: e.getOrderings(),
       distinct:e.isDistinct(),

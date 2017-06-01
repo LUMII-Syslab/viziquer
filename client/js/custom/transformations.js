@@ -17,17 +17,17 @@ Interpreter.customMethods({
 		//console.log(schema.resolveLinkByName("teaches"));
 		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
 	},
-	
+
 	VQsetClassTypeValue: function(list) {
 		//class->element->extensions->after create elements
 	},
 
 	VQsetEnabledFieldsFromClassTypeChange: function() {
 		//class->compartments->ClassType->extensions->after update
-		//params: (compartType, compartId)		
+		//params: (compartType, compartId)
 	},
-	VQgetClassNames: function() { 	
-		//Class -> compartments->Name->extension->dynamicDropDown	
+	VQgetClassNames: function() {
+		//Class -> compartments->Name->extension->dynamicDropDown
 		var schema = new VQ_Schema();
 		var cls = schema.getAllClasses();
 
@@ -47,9 +47,9 @@ Interpreter.customMethods({
 	 	}
 
 	},
-	
-	VQgetClassNamesOld: function() { 	
-		//Class -> compartments->Name->extension->dynamicDropDown	
+
+	VQgetClassNamesOld: function() {
+		//Class -> compartments->Name->extension->dynamicDropDown
 		var cls = Classes.find();
 
 		if (cls.count() > 0) {
@@ -80,17 +80,17 @@ Interpreter.customMethods({
 		//params: (compartType, compartId)
 	},
 
-	VQattributeGrammar: function() {	
+	VQattributeGrammar: function() {
 	},
 
-	VQsetIsNegationAttribute: function() {	
+	VQsetIsNegationAttribute: function() {
 
-	console.log("is negations enetered");	
+	console.log("is negations enetered");
 
 	},
 
 	VQsetIsOptionalAttribute: function() {
-		console.log("is optional enetered");	
+		console.log("is optional enetered");
 	},
 
 	VQgetAttributeNames: function() {
@@ -102,7 +102,7 @@ Interpreter.customMethods({
 		//Active element does not exist OR has no Name OR is of an unpropriate type
 		if (!act_elem) {
 			return [];
-		} 
+		}
 		var act_comp = Compartments.findOne({elementId: act_elem})
 		if (!act_comp) {
 			return [];
@@ -115,7 +115,7 @@ Interpreter.customMethods({
 
 		//Active element is given as Class type element
 		var atr_names = [{value: " ", input: " ", }];
-			
+
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
 		if (act_el) {
@@ -132,37 +132,37 @@ Interpreter.customMethods({
 			}
 
 		//Read attribute values from DB
-		
+
 			var schema = new VQ_Schema();
-			
+
 			if (!schema.classExist(compart["input"])) {
 				console.error("VQgetAttributeNames: No Classs with such Name");
 				return ;
-			}		
-			
-			var klass = schema.findClassByName(compart["input"]);	
+			}
+
+			var klass = schema.findClassByName(compart["input"]);
 
 			_.each(klass.getAllAttributes(), function(att){
 				var att_val = att["name"];
 				atr_names.push({value: att_val, input: att_val});
 			})
-				
+
 		}
-	 	
-	 	//Chech for Optional-Negation check-boxes simultaneous active
+
+	 	//TODO: IT SHOULD NOT BE HERE: Chech for Optional-Negation check-boxes simultaneous active
 	 	compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 	 	if (compart_type) {
 
 	 		Compartments.find({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")}).forEach(function(c){
-	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" && 
+	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" &&
 	 				c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] == "true") {
-	 				
 
-	 				console.error("Choose optional OR negation type");	 			
 
-	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false"; 
-	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
-	 				// Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+	 				console.error("Choose optional OR negation type");
+
+	 				 c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false";
+	 				 c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
+	 				 //TODO Dialog.updateCompartmentValue(compart_type, "false", "", compart_id);
 	 			}
 	 		})
 	 	}
@@ -175,9 +175,9 @@ Interpreter.customMethods({
 	 		return item["input"];
 	 	});
 
-		
+
 	},
-	
+
 	VQgetAttributeNamesOld: function() {
 
 		console.log("VQgetAttributeNames executed");
@@ -187,7 +187,7 @@ Interpreter.customMethods({
 		//Active element does not exist OR has no Name OR is of an unpropriate type
 		if (!act_elem) {
 			return [];
-		} 
+		}
 		var act_comp = Compartments.findOne({elementId: act_elem})
 		if (!act_comp) {
 			return [];
@@ -200,7 +200,7 @@ Interpreter.customMethods({
 
 		//Active element is given as Class type element
 		var atr_names = [{value: " ", input: " ", }];
-			
+
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
 		if (act_el) {
@@ -218,7 +218,7 @@ Interpreter.customMethods({
 
 		//Read attribute values from DB
 			//direct
-			var klass = Classes.findOne({name: compart["input"]});			
+			var klass = Classes.findOne({name: compart["input"]});
 
 			if (!klass) {
 				console.error("VQgetAttributeNames: No Classs with such Name");
@@ -229,7 +229,7 @@ Interpreter.customMethods({
 				var att_val = att["localName"];
 				atr_names.push({value: att_val, input: att_val});
 			})
-				
+
 			//from Super Class
 			_.each(klass["AllSuperClasses"], function(supC){
 
@@ -245,7 +245,7 @@ Interpreter.customMethods({
 				}
 			})
 
-			//from Sub Class		
+			//from Sub Class
 			_.each(klass["AllSubClasses"], function(supC){
 
 				var cs_val = supC["localName"];
@@ -260,19 +260,19 @@ Interpreter.customMethods({
 				}
 			})
 		}
-	 	
+
 	 	//Chech for Optional-Negation check-boxes simultaneous active
 	 	compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 	 	if (compart_type) {
 
 	 		Compartments.find({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")}).forEach(function(c){
-	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" && 
+	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" &&
 	 				c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] == "true") {
-	 				
 
-	 				console.error("Choose optional OR negation type");	 			
 
-	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false"; 
+	 				console.error("Choose optional OR negation type");
+
+	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false";
 	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
 	 				// Dialog.updateCompartmentValue(ct, "false", "", compart_id);
 	 			}
@@ -287,7 +287,7 @@ Interpreter.customMethods({
 	 		return item["input"];
 	 	});
 
-		
+
 	},
 
 	VQsetIsGroup: function() {
@@ -295,29 +295,84 @@ Interpreter.customMethods({
 		//params: (compartType, compartId)
 	},
 
-	VQsetIsCondition: function() {
+	VQsetIsCondition: function(params) {
 		//arrow ->compartments->Conditional Link->extensions->after Update
 		//params: (compartType, compartId)
+		console.log(params);
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt ="PLAIN";
+			 if (input=="true") { lt="CONDITION"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkQueryType(lt);
+		}
 	},
 
-	VQsetIsOptional: function() {
+	VQsetIsSubquery: function(params) {
+		//arrow ->compartments->Conditional Link->extensions->after Update
+		//params: (compartType, compartId)
+		console.log(params);
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "PLAIN";
+			 if (input=="true") { lt="SUBQUERY"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkQueryType(lt);
+		}
+	},
+
+	VQsetIsGlobalSubquery: function(params) {
+		//arrow ->compartments->Conditional Link->extensions->after Update
+		//params: (compartType, compartId)
+		console.log(params);
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "PLAIN";
+			 if (input=="true") { lt="GLOBAL_SUBQUERY"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkQueryType(lt);
+		}
+	},
+
+	VQsetIsOptional: function(params) {
 		//arrow ->compartments->Optional Link->extensions->after Update
-		//params: (compartType, compartId)		
+		//params: Object {compartmentType: Object, compartmentId: "RxncBJNQ693NTCudS", input: "true", value: "true"}
+	  console.log(params);
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "REQUIRED";
+			 if (input=="true") { lt="OPTIONAL"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkType(lt);
+		}
 	},
 
-	VQsetIsNegation: function() {
+	VQsetIsNegation: function(params) {
 		//arrow ->compartments->Inverse Link->extensions->after Update
-		//params: (compartType, compartId)				
+		//params: Object {compartmentType: Object, compartmentId: "RxncBJNQ693NTCudS", input: "true", value: "true"}
+		console.log(params);
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "REQUIRED";
+			 if (input=="true") { lt="NOT"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkType(lt);
+		}
 	},
 
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
-		//return: String		
+		//return: String
 	},
 
 	VQsetSubQueryInverseLink: function() {
 		//arrow ->compartments->Inverse Link->extensions->after Update
-		//params: (compartType, compartId)		
+		//params: (compartType, compartId)
 		var ct = CompartmentTypes.findOne({name: "Inverse Link"});
 		var ctn = CompartmentTypes.findOne({name: "Name", elementTypeId: Session.get("activeElementType")});
 		var act_elem = Session.get("activeElement");
@@ -325,14 +380,14 @@ Interpreter.customMethods({
 		if (act_elem && ct && ctn) {
 			var c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
 			var cn = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctn["_id"]});
-			var c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});					
+			var c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
 
 			if (c && cn) {
 
 				if (c["input"] == "true" && String(c_cal["value"]).indexOf("inv") == -1){
 
 					// Dialog.updateCompartmentValue(ct, "true", "<inv>", c["_id"]);
-					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]); 
+					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]);
 				}
 				else if (c["input"] == "false" && String(c_cal["value"]).indexOf("inv") > -1) {
 					var s = cn["value"].indexOf("(");
@@ -348,7 +403,7 @@ Interpreter.customMethods({
 
 	VQgetAssociationName: function() {
 		//arrow ->compartments->extensions->dynamic default value
-		//return: String		
+		//return: String
 	},
 
 	VQsetIsInverse: function() {
@@ -360,15 +415,15 @@ Interpreter.customMethods({
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
 		//No active Element or unpropriate type
-		if (!act_elem) {return [{value: " ", input: " ", }];}	
-		if (Elements.findOne({_id: act_elem})["type"] != "Line") {return [{value: " ", input: " ", }];}  
-		
+		if (!act_elem) {return [{value: " ", input: " ", }];}
+		if (Elements.findOne({_id: act_elem})["type"] != "Line") {return [{value: " ", input: " ", }];}
+
 		//Start and end elements - ID and no-end-check
 		var elem_strt = Elements.findOne({_id: act_elem})["startElement"];
 		var elem_end = Elements.findOne({_id: act_elem})["endElement"];
-		
-		
-		if (!elem_strt || !elem_end) { 
+
+
+		if (!elem_strt || !elem_end) {
 			return [{value: " ", input: " ", }];
 		}
 		//End-elemen - Name direct + Super_Sub Classes
@@ -380,14 +435,14 @@ Interpreter.customMethods({
 		//If start and end elements both exist
 		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id});
 		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id})
-		
+
 		var schema = new VQ_Schema();
-		
+
 		if(comp_start && comp_end){
 			//Start element
 			var elemS_name = [];
-			elemS_name.push(comp_start["input"]);		
-				
+			elemS_name.push(comp_start["input"]);
+
 			//If Super/SubClass exists - add to possible start elements
 			_.each(schema.findClassByName(elemS_name[0]).allSuperSubClasses, function(nm){
 				elemS_name.push(nm["localName"]);
@@ -397,7 +452,7 @@ Interpreter.customMethods({
 			//End elem
 			var elemE_name = [];
 			elemE_name.push(comp_end["input"]);
-			
+
 				//If Super/SubClass exists - add to possible end elements
 			_.each(schema.findClassByName(elemE_name[0]).allSuperSubClasses, function(nm){
 				elemE_name.push(nm["localName"]);
@@ -405,12 +460,12 @@ Interpreter.customMethods({
 
 			//Read Associations from DB and make unique
 			var asc = [];
-			var asc_inv = []; 
+			var asc_inv = [];
 			var asc_all = [];
-			var i; 
+			var i;
 			var exists;
-			
-			asc_all.push({value: " ", input: " ", });	
+
+			asc_all.push({value: " ", input: " ", });
 
 			//Read all asociations' name, from&to elements
 			var roles = schema.SchemaRoles;
@@ -421,25 +476,25 @@ Interpreter.customMethods({
 				_.each(roles, function (use) {
 
 				      asc_val.push({
-				      	assoc: use["localName"], 
-				      	start: use.sourceClass["localName"], 
+				      	assoc: use["localName"],
+				      	start: use.sourceClass["localName"],
 				      	end: use.targetClass["localName"]
-				      });   
+				      });
 				})
 			} else {
 				return [{value: " ", input: " ", }];
 			}
-			
+
 			//Direct
-			_.each(asc_val, function(v){				
+			_.each(asc_val, function(v){
 				exists = false;
-				
+
 				_.each(elemS_name, function(ns){
 					_.each(elemE_name, function (ne){
 						if (v["start"] == ns && v["end"] == ne) {exists = true;}
-					})			
+					})
 				})
-				
+
 				if (exists) {
 					asc.push(v["assoc"]);
 				}
@@ -449,7 +504,7 @@ Interpreter.customMethods({
 				//Add unique
 			_.each(asc, function(el){
 				exists = false;
-				
+
 				_.each(asc_all, function(ea){
 					if(ea["input"] == el) {exists = true;}
 				})
@@ -458,18 +513,18 @@ Interpreter.customMethods({
 					asc_all.push({value: el, input: el, })
 				}
 			})
-		
+
 			//Inverse
 			_.each(asc_val, function(v){
 				exists = false;
-				
+
 				_.each(elemS_name, function(ns){
 
 					_.each(elemE_name, function (ne){
 						if (v["start"] == ne && v["end"] == ns) {exists = true;}
-					})			
+					})
 				})
-				
+
 				if (exists) {
 					asc_inv.push(v["assoc"]);
 				}
@@ -489,439 +544,38 @@ Interpreter.customMethods({
 			})
 
 			//Additional options - inverse, negation, condition, group visual representation
+			// TODO: Why it is here? It should not be here :( )
 				var ct = null;
-				var c = null; 
-				var compart_id = null; 
+				var c = null;
+				var compart_id = null;
 				var c_cal = null;
-				//Inverse Link value - from chosen association		
+				//Inverse Link value - from chosen association
 				ct = CompartmentTypes.findOne({name: "Inverse Link"});
 
 				if (ct) {
 					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
 
-					if (c) { 
+					if (c) {
 						compart_id = c["_id"];
 						c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
-						
+
 						if (c_cal) {
-							
+
 							if (String(c_cal["value"]).indexOf("inv") > -1){
-								Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
+								//Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
 							} else if (Compartments.findOne({elementId: act_elem, value: "<inv>"})){
-								Dialog.updateCompartmentValue(ct, "false", "", compart_id);
+								//Dialog.updateCompartmentValue(ct, "false", "", compart_id);
 							}
-						}
-					}
-				}
-				
-				//Negation Link
-				ct = CompartmentTypes.findOne({name: "Negation Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true" && c["value"] != "{not}"){
-							Dialog.updateCompartmentValue(ct, "true", "{not}", compart_id);
-
-							//Remove Optional link
-							ct = CompartmentTypes.findOne({name: "Optional Link"});
-
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];	
-
-									if (compart_id) {
-										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
-									}
-								}
-							}
-						} else if (c["input"] == "false" && c["value"] == "{not}") {
-							Dialog.updateCompartmentValue(ct, "false", " ", compart_id);							
-						}
-					}
-				}
-
-
-				// Optional link - remove negation link
-				ct = CompartmentTypes.findOne({name: "Optional Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true"){							
-							ct = CompartmentTypes.findOne({name: "Negation Link"});
-
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-								if (c && c["input"] == "true") {
-									compart_id = c["_id"];	
-
-									if (compart_id) {
-										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
-									}
-								}
-							}
-						}
-					}
-				}
-
-
-				//Condition Link
-				ct = CompartmentTypes.findOne({name: "Condition Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true" && c["value"] != "{condition}") {
-							Dialog.updateCompartmentValue(c, "true", "{condition}", compart_id);
-							//Remove Subquery if exists
-							ctc = CompartmentTypes.findOne({name: "Subquery Link"});
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(c, "false", "", compart_id);
-								}
-							}
-
-						} else if (c["input"] == "false" && (c["value"] == "{condition}" || c["value"] == "false")) {
-							Dialog.updateCompartmentValue(c, "false", "", compart_id);
-						}
-					}
-				}
-				
-				//"Subquery Link"
-				ct = CompartmentTypes.findOne({name: "Subquery Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {console.log("612=", c);
-						compart_id = c["_id"]; 
-
-						if (c["input"] == "true" && c["value"] != "{subquery}") {console.log("615");
-							
-							Dialog.updateCompartmentValue(c, "true", "{subquery}", compart_id);
-							//Remove Condition if exists
-							var ctc = CompartmentTypes.findOne({name: "Condition Link"});
-							if (ctc) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(c, "false", "", compart_id);
-								}
-							}
-						} else if (c["input"] == "false" && (c["value"] == "{subquery}" || c["value"] == "false")){console.log("620");
-							Dialog.updateCompartmentValue(c, "false", "", compart_id);
 						}
 					}
 				}
 		} else {
-			return [{value: " ", input: " ", }];
-		}				
-
-		return asc_all;
-
-				
-	},
-		VQgetAssociationNamesOld: function() {
-		//arrow ->compartments->extensions-> dynamic drop down
-
-		var act_elem = Session.get("activeElement");
-		//No active Element or unpropriate type
-		if (!act_elem) {return [{value: " ", input: " ", }];}	
-		if (Elements.findOne({_id: act_elem})["type"] != "Line") {return [{value: " ", input: " ", }];}  
-		
-		//Start and end elements - ID and no-end-check
-		var elem_strt = Elements.findOne({_id: act_elem})["startElement"];
-		var elem_end = Elements.findOne({_id: act_elem})["endElement"];
-	
-		if (!elem_strt || !elem_end) { 
 			return [{value: " ", input: " ", }];
 		}
-		//End-elemen - Name direct + Super_Sub Classes
-		//All possible Classes
-		var cls = Classes.find();
-
-		//If start and end elements both exist
-		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id});
-		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name"})._id})
-	
-		if(comp_start && comp_end){
-			//Start element
-			var elemS_name = [];
-			elemS_name.push(comp_start["input"]);		
-				
-				//If Super/SubClass exists - add to possible start elements
-			_.each(Classes.findOne({name: elemS_name[0]})["AllSubClasses"], function(nm){
-				elemS_name.push(nm["localName"]);
-			})
-
-			_.each(Classes.findOne({name: elemS_name[0]})["AllSuperClasses"], function(nm){
-				elemS_name.push(nm["localName"]);
-			})
-			
-			//End elem
-			var elemE_name = [];
-			elemE_name.push(comp_end["input"]);
-			
-				//If Super/SubClass exists - add to possible end elements
-			_.each(Classes.findOne({name: elemE_name[0]})["AllSubClasses"], function(nm){
-				elemS_name.push(nm["localName"]);
-			})
-
-			_.each(Classes.findOne({name: elemE_name[0]})["AllSuperClasses"], function(nm){
-				elemS_name.push(nm["localName"]);
-			})
-		
-			//Read Associations from DB and make unique
-			var asc = [];
-			var asc_inv = []; 
-			var asc_all = [];
-			var i; 
-			var exists;
-			
-			asc_all.push({value: " ", input: " ", });	
-
-			//Read all asociations' name, from&to elements
-			cls = Associations.find();
-
-			if (cls){
-				var asc_val = [];
-
-				cls.forEach(function (use) {
-
-				      asc_val.push({
-				      	assoc: use["name"], 
-				      	start: use.ClassPairs["0"].SourceClass["localName"], 
-				      	end: use.ClassPairs["0"].TargetClass["localName"]
-				      });   
-				})
-			} else {
-				return [{value: " ", input: " ", }];
-			}
-			
-			//Direct
-			_.each(asc_val, function(v){				
-				exists = false;
-				
-				_.each(elemS_name, function(ns){
-					_.each(elemE_name, function (ne){
-						if (v["start"] == ns && v["end"] == ne) {exists = true;}
-					})			
-				})
-				
-				if (exists) {
-					asc.push(v["assoc"]);
-				}
-			})
-
-
-				//Add unique
-			_.each(asc, function(el){
-				exists = false;
-				
-				_.each(asc_all, function(ea){
-					if(ea["input"] == el) {exists = true;}
-				})
-
-				if(!exists) {
-					asc_all.push({value: el, input: el, })
-				}
-			})
-		
-			//Inverse
-			_.each(asc_val, function(v){
-				exists = false;
-				
-				_.each(elemS_name, function(ns){
-
-					_.each(elemE_name, function (ne){
-						if (v["start"] == ne && v["end"] == ns) {exists = true;}
-					})			
-				})
-				
-				if (exists) {
-					asc_inv.push(v["assoc"]);
-				}
-			})
-
-				//Add unique
-			_.each(asc_inv, function(el){
-				exists = false;
-
-				_.each(asc_all, function(ea){
-					if(ea["input"] == ("inv("+el+")")) {exists = true;}
-				})
-
-				if(!exists) {
-					asc_all.push({value: "inv("+el+")", input: "inv("+el+")", })
-				}
-			})
-
-			//Additional options - inverse, negation, condition, group visual representation
-				var ct = null;
-				var c = null; 
-				var compart_id = null; 
-				var c_cal = null;
-				//Inverse Link value - from chosen association		
-				ct = CompartmentTypes.findOne({name: "Inverse Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];
-						c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
-						
-						if (c_cal) {
-							
-							if (String(c_cal["input"]).indexOf("inv") > -1){
-								Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
-							} else if (Compartments.findOne({elementId: act_elem, value: "<inv>"})){
-								Dialog.updateCompartmentValue(ct, "false", "", compart_id);
-							}
-						}
-					}
-				}
-				
-				//Negation Link
-				ct = CompartmentTypes.findOne({name: "Negation Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true" && c["value"] != "{not}"){
-							Dialog.updateCompartmentValue(ct, "true", "{not}", compart_id);
-
-							//Remove Optional link
-							ct = CompartmentTypes.findOne({name: "Optional Link"});
-
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];	
-
-									if (compart_id) {
-										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
-									}
-								}
-							}
-						} else if (c["input"] == "false" && c["value"] == "{not}") {
-							Dialog.updateCompartmentValue(ct, "false", " ", compart_id);							
-						}
-					}
-				}
-
-
-				// Optional link - remove negation link
-				ct = CompartmentTypes.findOne({name: "Optional Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true"){							
-							ct = CompartmentTypes.findOne({name: "Negation Link"});
-
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-								if (c && c["input"] == "true") {
-									compart_id = c["_id"];	
-
-									if (compart_id) {
-										Dialog.updateCompartmentValue(ct, "false", " ", compart_id);
-									}
-								}
-							}
-						}
-					}
-				}
-
-
-				//Condition Link
-				ct = CompartmentTypes.findOne({name: "Condition Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];	
-
-						if (c["input"] == "true" && c["value"] != "{condition}") {
-							Dialog.updateCompartmentValue(c, "true", "{condition}", compart_id);
-							//Remove Subquery if exists
-							ctc = CompartmentTypes.findOne({name: "Subquery Link"});
-							if (ct) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(c, "false", "", compart_id);
-								}
-							}
-
-						} else if (c["input"] == "false" && (c["value"] == "{condition}" || c["value"] == "false")) {
-							Dialog.updateCompartmentValue(c, "false", "", compart_id);
-						}
-					}
-				}
-				
-				//"Subquery Link"
-				ct = CompartmentTypes.findOne({name: "Subquery Link"});
-
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {console.log("612=", c);
-						compart_id = c["_id"]; 
-
-						if (c["input"] == "true" && c["value"] != "{subquery}") {console.log("615");
-							
-							Dialog.updateCompartmentValue(c, "true", "{subquery}", compart_id);
-							//Remove Condition if exists
-							var ctc = CompartmentTypes.findOne({name: "Condition Link"});
-							if (ctc) {
-								c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ctc["_id"]});
-
-								if (c) {
-									compart_id = c["_id"];
-									Dialog.updateCompartmentValue(c, "false", "", compart_id);
-								}
-							}
-						} else if (c["input"] == "false" && (c["value"] == "{subquery}" || c["value"] == "false")){console.log("620");
-							Dialog.updateCompartmentValue(c, "false", "", compart_id);
-						}
-					}
-				}
-		} else {
-			return [{value: " ", input: " ", }];
-		}				
 
 		return asc_all;
 
-				
+
 	},
 
 	VQsetSubQueryNameSuffix: function(val) {
@@ -931,7 +585,7 @@ Interpreter.customMethods({
 
 			return [val.value]
 	},
-	
+
 	VQsetSubQueryNamePrefix: function(val) {
 		//arrow ->compartments->extensions->dynamicPrefix
 		//params: (value), return: String

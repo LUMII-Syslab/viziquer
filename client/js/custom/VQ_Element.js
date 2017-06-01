@@ -510,6 +510,14 @@ VQ_Element.prototype = {
   isConditional: function() {
     return this.getCompartmentValue("Condition Link")=="true"
   },
+	// determines whether the link is negation
+  isNegation: function() {
+    return this.getCompartmentValue("Negation Link")=="true"
+  },
+	// determines whether the link is negation
+  isOptional: function() {
+    return this.getCompartmentValue("Optional Link")=="true"
+  },
   // determines whether the class has distinct property
   isDistinct: function() {
     return this.getCompartmentValue("Distinct")=="true";
@@ -535,7 +543,19 @@ VQ_Element.prototype = {
     {title:"stereotype",name:"Stereotype"},
     {title:"alias",name:"Alias"},
     {title:"requireValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
-    {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}}]);
+    {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}},
+	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
+  },
+	// --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
+  // returns an array of aggregate attributes: expression, stereotype, alias, etc. ...
+  getAggregateFields: function() {
+    return this.getMultiCompartmentSubCompartmentValues("Aggregates",
+    [{title:"exp",name:"Name"},
+    {title:"stereotype",name:"Stereotype"},
+    {title:"alias",name:"Alias"},
+    {title:"requireValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
+    {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}},
+	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
   // returns an array of orderings - expression and whether is descending
@@ -580,24 +600,42 @@ VQ_Element.prototype = {
     return new VQ_Element(this.obj["startElement"]);
   },
   // --> VQ_Element
-  // Returns link's end VQ_Element
+  // Re turns link's end VQ_Element
   getEndElement: function() {
     return new VQ_Element(this.obj["endElement"]);
   },
+	// --> string
+	// Determines which end of the link is towards the root
+	// returns "start","end" or "none"
+	getRootDirection: function() {
+		var visited_elems = {};
+    visited_elems[this._id()]=true;
 
-  // sets link "query" type. Possible values: SUBQUERY, GLOBAL_SUBQUERY, CONDITION, NONE
-  setLinkQueryType: function(value) {
-		 if (this.isLink) {
+		function findRoot(e) {
+			//console.log(e);
+      if (e.isRoot()) {return true};
+      var res = false;
+			visited_elems[e._id()]=true;
+			_.each(e.getLinks(),function(link) {
+				  if (!visited_elems[link.link._id()] && !link.link.isConditional()) {
+						visited_elems[link.link._id()]=true;
+            var next_el = null;
+						if (link.start) {
+							next_el=link.link.getStartElement();
+						} else {
+							next_el=link.link.getEndElement();
+						};
+						if (!visited_elems[next_el._id()]) {
+							 res = res || findRoot(next_el);
+						};
+					};
+			});
+			return res;
+		};
 
-			 var setSQ = this.boolToString(value=="SUBQUERY");
-			 var setGSQ = this.boolToString(value=="GLOBAL_SUBQUERY");
-			 var setCL = this.boolToString(value=="CONDITION");
-
-			 this.setCompartmentValue("Subquery Link",setSQ," ");
-			 this.setCompartmentValue("Global Subquery Link",setGSQ," ");
-			 this.setCompartmentValue("Condition Link",setCL," ");
-
-		 }
+		if (findRoot(this.getStartElement())) {return "start"};
+		if (findRoot(this.getEndElement())) {return "end"};
+		return "none";
 	},
 
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
@@ -611,10 +649,32 @@ VQ_Element.prototype = {
 					  setNeg = "true";
 						setNegValue = "{not}";
 						setOpt = "false";
+						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#ff0000"},
+						                      {attrName:"elementStyle.dash",attrValue:[0,0]},
+																	{attrName:"startShapeStyle.stroke", attrValue:"#ff0000"},
+																	{attrName:"endShapeStyle.stroke", attrValue:"#ff0000"},
+																]);
+						if (this.isSubQuery() || this.isGlobalSubQuery()) {
+							 this.setLinkQueryType("PLAIN");
+						};
 				} else if (value=="OPTIONAL") {
 					  setOpt = "true";
 						setNeg = "false";
 						setNegValue = " ";
+						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#18b6d1"},
+						                      {attrName:"elementStyle.dash",attrValue:[6,5]},
+																	{attrName:"startShapeStyle.stroke", attrValue:"#18b6d1"},
+																	{attrName:"endShapeStyle.stroke", attrValue:"#18b6d1"},
+																]);
+						if (this.isConditional()) {
+							 this.setLinkQueryType("PLAIN");
+						};
+				} else {
+					this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#000000"},
+																{attrName:"elementStyle.dash",attrValue:[0,0]},
+																{attrName:"startShapeStyle.stroke", attrValue:"#000000"},
+																{attrName:"endShapeStyle.stroke", attrValue:"#000000"},
+															]);
 				};
 
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
@@ -622,6 +682,93 @@ VQ_Element.prototype = {
 		 }
 	},
 
+	// sets link type. Possible values: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
+	setLinkQueryType: function(value) {
+		 if (this.isLink()) {
+        // By default link is PLAIN
+				var setSub = "false";
+				var setGSub = "false";
+				var setCond = "false";
+        var root_dir =this.getRootDirection();
+				if (value=="SUBQUERY") {
+					  setSub = "true";
+						setGSub = "false";
+						setCond = "false";
+
+						if (root_dir=="start") {
+							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#000000"},
+																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
+																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																	  {attrName:"endShapeStyle.radius",attrValue:8},
+																	]);
+						} else if (root_dir=="end") {
+							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
+																		{attrName:"endShapeStyle.fill",attrValue:"#000000"},
+																		{attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"startShapeStyle.shape",attrValue:"None"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"startShapeStyle.radius",attrValue:8},
+																	]);
+						};
+						if (this.isNegation()) {
+							this.setLinkType("REQUIRED");
+						};
+ 				} else if (value=="GLOBAL_SUBQUERY") {
+					  setSub = "false";
+						setGSub = "true";
+						setCond = "false";
+
+						if (root_dir=="start") {
+							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
+																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																	  {attrName:"endShapeStyle.radius",attrValue:8},
+																	]);
+						} else if (root_dir=="end") {
+							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
+																		{attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"startShapeStyle.shape",attrValue:"None"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"startShapeStyle.radius",attrValue:8},
+																	]);
+						};
+						if (this.isNegation()) {
+							this.setLinkType("REQUIRED");
+						};
+				} else if (value=="CONDITION") {
+					  setSub = "false";
+						setGSub = "false";
+						setCond = "true";
+						this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Diamond"},
+																 {attrName:"startShapeStyle.fill",attrValue:"#ffffff"},
+																 {attrName:"startShapeStyle.radius",attrValue:8},
+																 {attrName:"endShapeStyle.shape",attrValue:"Diamond"},
+																 {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																 {attrName:"endShapeStyle.radius",attrValue:8},
+																]);
+						if (this.isOptional()) {
+									this.setLinkType("REQUIRED");
+						};
+				} else {
+					this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"None"},
+															 {attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+															 {attrName:"startShapeStyle.radius",attrValue:8},
+															 {attrName:"endShapeStyle.shape",attrValue:"Arrow"},
+															 {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+															 {attrName:"endShapeStyle.radius",attrValue:8},
+															]);
+				};
+
+			  this.setCompartmentValue("Subquery Link",setSub," ");
+				this.setCompartmentValue("Global Subquery Link",setGSub," ");
+				this.setCompartmentValue("Condition Link",setCond," ");
+		 }
+	},
 	// updates compartments value (if that compartment exists)
 	// string, string, string -> int (0 ir update failed, 1 otherwise)
 	setCompartmentValue: function(comp_name, input, value) {
@@ -636,5 +783,25 @@ VQ_Element.prototype = {
 		return 0;
 	},
 
-	boolToString: function(bool) {if (bool) {return "true"} else {return "false"}}
+	// sets style
+	// Style_attr is an object, e.g., {attrName:"startShapeStyle.shape",attrValue:"Circle"}
+	// Should provide a list of style_attrs
+	setCustomStyle: function(style_attr_list) {
+	   console.log(style_attr_list);
+     var element_id = this._id();
+		 var diagram_id = this.getDiagram_id();
+		 _.forEach(style_attr_list, function(a) {
+			 a["elementId"] = element_id
+			 a["diagramId"] = diagram_id
+			 a["projectId"] = Session.get("activeProject");
+			 a["versionId"] = Session.get("versionId");
+			 a["styleId"] = "custom";
+
+			 Utilities.callMeteorMethod("updateElementStyle", a);
+		 })
+
+	},
+
+	boolToString: function(bool) {if (bool) {return "true"} else {return "false"}},
+
 }
