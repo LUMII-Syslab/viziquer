@@ -7,7 +7,7 @@
       options = arguments[1];
 			//console.log(options);
 
-			function makeVar(o) { return makeString(o);};
+			function makeVar(o) {return makeString(o);};
 
       // string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
@@ -44,50 +44,72 @@
 				var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
 
 				if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]["name"]) > -1) {
-						return {Reference: {name:o["Path"][0]["path"]["name"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"]["name"])}, var : o["PrimaryExpression"]["var"], Substring : o["PrimaryExpression"]["Substring"], ReferenceToClass: o["ReferenceToClass"], ValueScope:o["ValueScope"], FunctionBETWEEN : o["ValueScope"], FunctionLike : o["FunctionLike"]}
+						// return {Reference: {name:o["Path"][0]["path"]["name"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"]["name"])}, var : o["PrimaryExpression"]["var"], Substring : o["PrimaryExpression"]["Substring"], ReferenceToClass: o["ReferenceToClass"], ValueScope:o["ValueScope"], FunctionBETWEEN : o["FunctionBETWEEN"], FunctionLike : o["FunctionLike"]}
+						return {Reference: {name:o["Path"][0]["path"]["name"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"]["name"])}, var : o["PrimaryExpression"]["var"], Substring : o["PrimaryExpression"]["Substring"], ReferenceToClass: o["ReferenceToClass"], FunctionBETWEEN : o["FunctionBETWEEN"], FunctionLike : o["FunctionLike"]}
 				//                 referenceta klase
 
 				}
 				return o;
-      }
+			};
+			function transformExpressionIntegerScopeToList(start, end){
+				var s = parseInt(start["Number"]);
+				var e = parseInt(end["Number"]);
+				var expressionList = [];
+				for (var i = s; i <= e; i++) {
+					expressionList.push({"NumericLiteral": {"Number": i}});
+					if(i!=e) expressionList.push({"Comma": ","});
+				} 
+				return expressionList;
+			}
 		}
 
 			Main = (Expression space)
-			Expression = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
+			// Expression = classExpr / ExpressionA
+			Expression = classExpr / ValueScope / ConditionalOrExpressionA
+			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
+			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
+			
+			// ExpressionA = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
+			
+			classExpr = ("." / "(.)") {return {classExpr: "true"}}
 
-			OrExpression = (ANDExpression ( space OR space ANDExpression )*)
+			// OrExpression = (ANDExpression ( space OR space ANDExpression )*)
 
-			OR = "OR" {return {OROriginal:"||"}}
+			// OR = "OR" {return {OROriginal:"||"}}
 
-			ANDExpression = ANDExpression:ANDExpressionA {return {ANDExpression: ANDExpression}}
+			// ANDExpression = ANDExpression:ANDExpressionA {return {ANDExpression: ANDExpression}}
 
-			ANDExpressionA = (ConditionalOrExpressionA ( space AND space ConditionalOrExpressionA )*)
+			// ANDExpressionA = (ConditionalOrExpressionA ( space AND space ConditionalOrExpressionA )*)
 
-			AND = "AND" {return {ANDOriginal:"&&"}}
+			// AND = "AND" {return {ANDOriginal:"&&"}}
 
 			ConditionalOrExpressionA = (ConditionalOrExpression:ConditionalOrExpression){return {ConditionalOrExpression: ConditionalOrExpression}}
 
 			ConditionalOrExpression = (ConditionalAndExpression  ( space OROriginal space ConditionalAndExpression )*)
 
-			OROriginal = OROriginal:"||" {return {OROriginal:OROriginal}}
+			OROriginal = OROriginal:("||" / "OR" / "or") {return {OROriginal:OROriginal}}
 
 			ConditionalAndExpression = (ConditionalAndExpression:ValueLogicalA) {return {ConditionalAndExpression:ConditionalAndExpression}}
 
 			ValueLogicalA = (ValueLogical (space ANDOriginal space ValueLogical )*)
 
-			ANDOriginal = ANDOriginal:"&&" {return {ANDOriginal:ANDOriginal}}
+			ANDOriginal = ANDOriginal:("&&" / "AND" / "and") {return {ANDOriginal:ANDOriginal}}
 
 			ValueLogical = (RelationalExpression:RelationalExpression){return {RelationalExpression:RelationalExpression}}
 
-			RelationalExpression = RelationalExpressionC / RelationalExpressionB / RelationalExpressionA
+			RelationalExpression = RelationalExpressionC / RelationalExpressionC1 / RelationalExpressionB1/ RelationalExpressionB2/ RelationalExpressionB / RelationalExpressionA
 
 			RelationalExpressionA = (NumericExpressionL:NumericExpression {return {NumericExpressionL:NumericExpressionL}})
 
 			RelationalExpressionB = (NumericExpressionL:NumericExpression (space Relation:Relation space NumericExpressionR:NumericExpression)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, NumericExpressionR:NumericExpressionR}}
+			
+			RelationalExpressionB1 = (classExpr:classExpr (space Relation:Relation space NumericExpressionR:NumericExpression)) {return {classExpr:"true", Relation:Relation, NumericExpressionR:NumericExpressionR}}
+			RelationalExpressionB2 = (NumericExpressionL:NumericExpression (space Relation:Relation space classExpr:classExpr)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, classExpr:"true"}}
 
-			RelationalExpressionC = (NumericExpressionL:NumericExpression (space Relation:("IN" / NOTIN) space ExpressionList:ExpressionList2)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
+			RelationalExpressionC = (NumericExpressionL:NumericExpression (space Relation:("IN" / "in" / NOTIN) space ExpressionList:ExpressionList2)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
+			RelationalExpressionC1 = (NumericExpressionL:NumericExpression (space Relation:("IN" / "in" / NOTIN) space ExpressionList:(ExpressionList3/ ExpressionList4))) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
 
-			NOTIN = Not:("NOT" space "IN") {return Not.join("")}
+			NOTIN = Not:(("NOT" / "not") space ("IN" / "in")) {return Not.join("")}
 
 			NumericExpression = AdditiveExpression: AdditiveExpression {return {AdditiveExpression:AdditiveExpression}}
 
@@ -131,19 +153,20 @@
 
 			Aggregate = Aggregate:(AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
-			AggregateA = Aggregate: ("COUNT" / "SUM" / "MIN" / "MAX" / "AVG" / "SAMPLE") "(" DISTINCT:"DISTINCT" space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateA = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
-			AggregateB = Aggregate: ("COUNT" / "SUM" / "MIN" / "MAX" / "AVG" / "SAMPLE") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
+			AggregateB = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
-			AggregateC = Aggregate: ("GROUP_CONCAT") "(" DISTINCT:"DISTINCT" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
+			AggregateC = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
 
-			AggregateD = Aggregate: ("GROUP_CONCAT") "(" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, Expression:Expression, SEPARATOR:SEPARATOR}}
+			AggregateD = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, Expression:Expression, SEPARATOR:SEPARATOR}}
 
-			AggregateE = Aggregate: ("GROUP_CONCAT") "(" DISTINCT:"DISTINCT" space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateE = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
-			AggregateF = Aggregate: ("GROUP_CONCAT") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
+			AggregateF = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
-			SEPARATOR = SEPARATOR:( (";" space "SEPARATOR" "=" SEPARATOR: (StringQuotes) ) / ("," space SEPARATOR:(StringQuotes))) {return makeVar(SEPARATOR)}
+			SEPARATOR = (";" space "SEPARATOR" "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
+			
 
 			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC) {return {FunctionExpression:FunctionExpression}}
 
@@ -186,25 +209,28 @@
 
 			ExistsFunc = ExistsFunc:(ExistsFuncA1 / ExistsFuncA /ExistsFuncB)  {return {ExistsFunc:ExistsFunc}}
 
-			ExistsFuncA1 = "EXISTS" space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
-			ExistsFuncA = "EXISTS" space Expression:GroupGraphPattern {return{Expression:Expression}}
+			ExistsFuncA1 = ("EXISTS" / "exists") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			ExistsFuncA = ("EXISTS" / "exists") space Expression:GroupGraphPattern {return{Expression:Expression}}
 
 			ExistsFuncB = "{" space Expression:GroupGraphPattern space "}"{return{Expression:Expression}}
 			GroupGraphPattern = (Expression)
 
 			NotExistsFunc = NotExistsFunc:(NotExistsFuncA / NotExistsFuncB1 /NotExistsFuncB / NotExistsFuncC1/ NotExistsFuncC) {return {NotExistsFunc:NotExistsFunc}}
 
-			NotExistsFuncA = "NOT" space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
+			NotExistsFuncA = ("NOT" / "not") space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
 
-			NotExistsFuncB = "NOT" space  "EXISTS" space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncB1 = "NOT" space  "EXISTS" space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncB = ("NOT" / "not") space  ("EXISTS" / "exists") space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncB1 = ("NOT" / "not") space  ("EXISTS" / "exists") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
-			NotExistsFuncC = "NOT" space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncC1 = "NOT" space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncC = ("NOT" / "not") space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncC1 = ("NOT" / "not") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
-			ExpressionList = (NIL / "(" space Expression space  ( "," space Expression )* space ")" )
+			// ExpressionList = (NIL / "(" space Expression space  ( "," space Expression )* space ")" )
 
 			ExpressionList2 = (NIL / "(" space Expression space  ( Comma space Expression )* space ")" )
+			ExpressionList3 = ("{" space Expression space  ( Comma space Expression )* space "}" )
+			ExpressionList4 = ("{" space IntStart:INTEGER space ".." space IntEnd:INTEGER space "}" ) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
+			
 			Comma = Comma:"," {return {Comma:Comma}}
 
 			LANGTAG = "@" string
@@ -266,15 +292,17 @@
 			// QName = QNameB / QNameA
 			QName = QNameB:QNameB {return pathOrReference(QNameB)}
 			//!!!!!!QNameA = (Reference: Reference "." PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Reference:Reference, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			// QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			//!!!!!!Reference= Chars_String:Chars_String {return makeVar(Chars_String)} // referenceta klase
 			path =(path2:path2 ".") {return {path:path2}}
 			path2 =(invPath1 / (invPath2) / (invPath3))
-			invPath1 = ("INV(" Chars_String:Chars_String ")") {return {name:("^" + makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
-			invPath2 = ("^" Chars_String:Chars_String) {return {name:("^" + makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
+			invPath1 = ("INV(" Chars_String:Chars_String ")") {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
+			invPath2 = ("^" Chars_String:Chars_String) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
 			invPath3 = (Chars_String:Chars_String) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}} // atributs vai associacija
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
-			LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			// LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 																																																			//atributs vai associacija
 			LN =((LNameINV / LNameINV2 / LName) )
 			LNameINV2 = ("^" LNameSimple )
@@ -282,13 +310,14 @@
 			LNameSimple = (LName: Chars_String Substring:Substring){return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 																			//atributs vai associacija
 
-			ValueScope = (space "<-" space "{" ValueScope:((INTEGER ".." INTEGER) / (INTEGER ("," space INTEGER)*)) "}") {return {ValueScope:ValueScope}}
-			LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			// ValueScope = (space "<-" space "{" ValueScope:((INTEGER ".." INTEGER) / (INTEGER ("," space INTEGER)*)) "}") {return {ValueScope:ValueScope}}
+			// LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? ValueScope: ValueScope? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, ValueScope: ValueScope, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LName2 = (LName: Chars_String Substring:Substring) {return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 																		//atributs vai associacija
 			Relation = "=" / "!=" /  "<=" / ">=" /"<" / ">" / "<>"
 			space = ((" ")*) {return }
-			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.: ^$])+) {return {string: string.join("")}}
+			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$])+) {return {string: string.join("")}}
 
 			LikeExpression = ('LIKE' space string:(likeString1 / likeString2)) {return string}
 			likeString1 = ('"' start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? '"') {return {string: makeVar(string), start:start, end:end}}

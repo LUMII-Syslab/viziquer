@@ -5,6 +5,11 @@ var isExpression = false;
 var counter = 0;
 var variableNamesAll = [];
 var variableNamesClass = [];
+var expressionLevelNames = [];
+var prefixTable = [];
+var parseType;
+var isSimpleVaraible;
+var applyExistsToFilter = null;
 
 makeString = function (o){
 	var str='';
@@ -24,60 +29,75 @@ makeString = function (o){
 	return str;
 }
 
-function initiate_variables(vna, count){
+function initiate_variables(vna, count, pt){
 	tripleTable = [];
 	isAggregate = false;
 	isFunction = false;
 	isExpression = false;
+	applyExistsToFilter = null;
 	counter = count;
 	variableNamesAll = vna;
 	variableNamesClass = [];
+	expressionLevelNames = [];
+	prefixTable = [];
+	parseType = pt;
 }
 
 parse_filter = function(parsed_exp, className, vna, count) {
-	initiate_variables(vna, count);
+	initiate_variables(vna, count, "different");
 	
 	var parsed_exp1 = transformBetweenLike(parsed_exp);
 	var parsed_exp2 = transformSubstring(parsed_exp1);
 	// console.log(parsed_exp2);
 	var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
 	counter++;
-	var result = generateExpression(parsed_exp3, "", className, null, true);
+	var result = generateExpression(parsed_exp3, "", className, null, true, false);
 	
 	// console.log(JSON.stringify(parsed_exp3,null,2));
+	console.log("applyExistsToFilter", applyExistsToFilter);
 	
 	var uniqueTriples = createTriples(tripleTable).filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
 	
-	return {"exp":result, "triples":uniqueTriples, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression};
+	// if in filter expression is used variable name, then put filter inside EXISTS
+	if(applyExistsToFilter != null && applyExistsToFilter == true){
+		result = "EXISTS{" + uniqueTriples.join("\n") + "\nFILTER(" + result + ")}";
+		uniqueTriples = [];
+	}
+	
+	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable};
 }
 
 parse_attrib = function(parsed_exp, alias, className, vnc, vna, count) {
 	alias = alias || "";
-	initiate_variables(vna, count);
+	
+	//TODO check if use one variable or different
+	//when new abstrack syntax JSON ir ready
+	
+	initiate_variables(vna, count, "condition");
 	variableNamesClass = vnc;
 	
 	// check if given expression is simple variable name or agregation, function, expression
 	// if given expression is simple variable, then in triple use alias(if exists), else - use variable names
-	var isSimpleVaraible = checkIfIsSimpleVariable(parsed_exp, true);
+	isSimpleVaraible = checkIfIsSimpleVariable(parsed_exp, true);
 	if(isSimpleVaraible == false || alias == "") alias = null; 
-	var result = generateExpression(parsed_exp, "", className, alias, true);
-	return {"exp":result, "triples":createTriples(tripleTable), "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression};
+	var result = generateExpression(parsed_exp, "", className, alias, true, isSimpleVaraible);
+	return {"exp":result, "triples":createTriples(tripleTable), "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable};
 
 }
 
 // for JH GenerateSPARQL
 parse_attribute = function(str, alias) {
 	alias = alias || "";
-	initiate_variables(vna, count);
+	initiate_variables(vna, count, "condition");
 	variableNamesClass = vnc;
 	
 	// check if given expression is simple variable name or agregation, function, expression
 	// if given expression is simple variable, then in triple use alias(if exists), else - use variable names
-	var isSimpleVaraible = checkIfIsSimpleVariable(parsed_exp, true);
+	isSimpleVaraible = checkIfIsSimpleVariable(parsed_exp, true);
 	if(isSimpleVaraible == false || alias == "") alias = null; 
-	var result = generateExpression(parsed_exp, "", className, alias, true);
+	var result = generateExpression(parsed_exp, "", className, alias, true, isSimpleVaraible);
 	return result;
 
 }
@@ -87,7 +107,7 @@ function checkIfIsSimpleVariable(expressionTable, isSimpleVaraible){
 	for(var key in expressionTable){
 		
 		if(key == "Concat" || key == "Additive" || key == "Unary" || key == "Aggregate" || key == "Function" || key == "RegexExpression" ||
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri"){
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
 			isSimpleVaraible = false;
 		}
 		
@@ -102,7 +122,9 @@ function checkIfIsSimpleVariable(expressionTable, isSimpleVaraible){
 function createTriples(tripleTable){
 	var triples = []
 	_.each(tripleTable,function(triple) {
-		triples.push("?" + triple["object"] + " :" + triple["prefixedName"] + " ?" + triple["var"] +"." );
+		if(typeof triple["BIND"] === 'string') triples.push(triple["BIND"]);
+		else if(typeof triple["VALUES"] === 'string') triples.push(triple["VALUES"]);
+		else triples.push("?" + triple["object"] + " " + triple["prefixedName"] + " " + triple["var"] + "." );
 	})
 	return triples;
 }
@@ -191,18 +213,100 @@ function generateTriples(expressionTable){
 // else: if variable is not defined yet, in given class scope:
 	// if variable is not taken yet: use variable
 	// else use variable+_+counter
-function setVariableName(varName, alias){
-	if(alias != null) variableNamesClass[varName] = alias;
-	else if(typeof variableNamesClass[varName]=== 'undefined'){
-		if(typeof variableNamesAll[varName]=== 'undefined'){
-			variableNamesClass[varName] = varName;
-		} else {
-			variableNamesClass[varName] = varName + "_" +counter;
-			counter++;
-		}
-	}
 	
-	return variableNamesClass[varName];
+// function setVariableName(varName, alias){
+	// if(alias != null) variableNamesClass[varName] = alias;
+	// else if(typeof variableNamesClass[varName]=== 'undefined'){
+		// if(typeof variableNamesAll[varName]=== 'undefined'){
+			// variableNamesClass[varName] = varName;
+		// } else {
+			// variableNamesClass[varName] = varName + "_" +counter;
+			// counter++;
+		// }
+	// }
+	
+	// return variableNamesClass[varName];
+// }
+
+function setVariableName(varName, alias, variableData){
+	if(alias != null) {
+		variableNamesClass[varName] = alias;
+		return alias;
+	}
+	else if(variableData["kind"] == "PROPERTY_NAME"){
+		applyExistsToFilter = true;
+		if(parseType == "different"){
+			if(typeof expressionLevelNames[varName] === 'undefined'){
+				if(typeof variableNamesAll[varName]=== 'undefined'){
+					expressionLevelNames[varName] = varName;
+				} else {
+					expressionLevelNames[varName] = varName + "_" +counter;
+					counter++;
+				}
+			}else{
+				return expressionLevelNames[varName];
+			}
+		}else{
+			// if given expression is simple variable name
+			if(isSimpleVaraible == true){
+				// variable is not defined in given class attributes yet
+				if(typeof variableNamesClass[varName] === 'undefined'){
+					var tempVarName;
+					if(typeof variableNamesAll[varName]=== 'undefined'){
+						tempVarName = varName;
+					} else {
+						tempVarName = varName + "_" +counter;
+						counter++;
+					}
+					expressionLevelNames[varName] = tempVarName;
+					variableNamesClass[varName] = {alias : tempVarName, isvar : true};
+					return tempVarName;
+				} else {
+					//if is defined as one variable
+					if(typeof variableNamesClass[varName]["isvar"] !== 'undefined'){
+						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
+						return variableNamesClass[varName]["alias"];
+					}else {
+						expressionLevelNames[varName] = varName + "_" +counter;
+						counter++;
+						return expressionLevelNames[varName];
+					}
+				}
+			}else{
+				// if variable is not used it expression yet
+				if(typeof expressionLevelNames[varName] === 'undefined'){
+					// variable is not defined in given class attributes yet
+					if(typeof variableNamesClass[varName] === 'undefined'){
+						var tempVarName;
+						if(typeof variableNamesAll[varName]=== 'undefined'){
+							tempVarName = varName;
+						} else {
+							tempVarName = varName + "_" +counter;
+							counter++;
+						}
+						expressionLevelNames[varName] = tempVarName;
+						variableNamesClass[varName] = {alias : tempVarName};
+						return tempVarName;
+					} else {
+						//if is defined as one variable
+						if(typeof variableNamesClass[varName]["isvar"] !== 'undefined'){
+							expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
+							return variableNamesClass[varName]["alias"];
+						}else {
+							expressionLevelNames[varName] = varName + "_" +counter;
+							counter++;
+							return expressionLevelNames[varName];
+						}
+					}
+				}else{
+					return expressionLevelNames[varName];
+				}
+			}
+		}
+		return expressionLevelNames[varName];
+	} else {
+		return varName;
+	}
 }
 
 // generate prefixedName path from path experession
@@ -211,8 +315,11 @@ function getPath(expressionTable){
 	var path = "";
 	for(var key in expressionTable){
 		if(typeof expressionTable[key]["path"]!== 'undefined'){
-			if(path == "") path = expressionTable[key]["path"]["name"];
-			else path = path +"/:" + expressionTable[key]["path"]["name"];
+			var pathPart = expressionTable[key]["path"]["type"]["Prefix"] + ":" + expressionTable[key]["path"]["name"];
+			prefixTable[expressionTable[key]["path"]["type"]["Prefix"] + ":"] = "<"+expressionTable[key]["path"]["type"]["Namespace"]+"#>"
+			if(typeof expressionTable[key]["path"]["inv"] === "string") pathPart = "^" + pathPart;
+			if(path == "") path = pathPart;
+			else path = path +"/" + pathPart;
 		}
 	}
 	return path;
@@ -238,6 +345,7 @@ function findINExpressionTable(expressionTable, level){
 // transfort exists and not exists expressions
 function transformExistsNotExists(expressionTable, alias, className){
 	for(var key in expressionTable){
+		// var visited = 0;
 		if(key == "ExistsFunc" || key == "NotExistsFunc"){
 			var prefix = "";
 			var existsExpr = "ExistsExpr";
@@ -248,8 +356,12 @@ function transformExistsNotExists(expressionTable, alias, className){
 
 			var condOr = findINExpressionTable(expressionTable, "ConditionalOrExpression");
 			transformExistsOR(condOr, prefix, existsExpr, 0, alias, className);
+			// visited = 1;
 		}
 		
+		// if(key == "ConditionalAndExpression") transformVariableFilter(expressionTable[key], prefix, existsExpr, 0, alias, className);
+		
+		// if(visited == 0 && typeof expressionTable[key] == 'object'){
 		if(typeof expressionTable[key] == 'object'){
 			transformExistsNotExists(expressionTable[key], alias, className);
 		}
@@ -269,27 +381,30 @@ function transformExistsOR(expressionTable, prefix, existsExpr, countOR, alias, 
 
 function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, className){
 	if(typeof expressionTable[count]["RelationalExpression"]["Relation"] !== 'undefined'){
-		var tempAliasOrAttribute = "Attribute";
-		if(tempAliasOrAttribute == "Alias"){
+		// var tempAliasOrAttribute = "Attribute";
+		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
+		if(tempAliasOrAttribute == "PROPERTY_ALIAS" || tempAliasOrAttribute == "CLASS_ALIAS"){
 			expressionTable[count][prefix + "Bound"] = {"var":findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")}
-		} else if(tempAliasOrAttribute == "Attribute"){
+		} else if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
 			var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
 			var variable, prefixedName
 			if(typeof pe["Reference"] !== 'undefined'){
-				variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias);
-				prefixedName = pe["var"]["name"];
+				variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
+				prefixedName = pe["var"]["type"]["Prefix"]+":"+pe["var"]["name"];
+				prefixTable[pe["var"]["type"]["Prefix"] + ":"] = "<"+pe["var"]["type"]["Namespace"]+"#>";
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
 				prefixedName = getPath(pe["Path"]);
 				variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 				variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-				variable = setVariableName(pe["var"]["name"], alias)
+				variable = setVariableName(pe["var"]["name"], alias, pe["var"])
 			}
 			else if(typeof pe["var"] !== 'undefined') {
 				variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 				variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-				variable = setVariableName(pe["var"]["name"], alias);
-				prefixedName = pe["var"]["name"];
+				variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
+				prefixedName = pe["var"]["type"]["Prefix"]+":"+pe["var"]["name"];
+				prefixTable[pe["var"]["type"]["Prefix"] + ":"] = "<"+pe["var"]["type"]["Namespace"]+"#>";
 			}
 					
 			expressionTable[count] =  {
@@ -304,28 +419,31 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 			} 
 		}
 	} else {
-		var tempAliasOrAttribute = "Attribute";
-		if(tempAliasOrAttribute == "Alias"){
+		// var tempAliasOrAttribute = "Attribute";
+		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
+		if(tempAliasOrAttribute == "PROPERTY_ALIAS" || tempAliasOrAttribute == "CLASS_ALIAS"){
 			expressionTable[count][prefix + "Bound"] = {"var":findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")}
 			delete expressionTable[count]["RelationalExpression"];
-		} else if(tempAliasOrAttribute == "Attribute"){
+		} else if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
 			var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
 			var variable, prefixedName
 			if(typeof pe["Reference"] !== 'undefined'){
-				variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias);
-				prefixedName = pe["var"]["name"];
+				variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
+				prefixedName = pe["var"]["type"]["Prefix"]+":"+pe["var"]["name"];
+				prefixTable[pe["var"]["type"]["Prefix"] + ":"] = "<"+pe["var"]["type"]["Namespace"]+"#>";
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
 				prefixedName = getPath(pe["Path"]);
 				variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 				variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-				variable = setVariableName(pe["var"]["name"], alias);
+				variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
 			}
 			else if(typeof pe["var"] !== 'undefined') {
 				variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 				variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-				variable = setVariableName(pe["var"]["name"], alias);
-				prefixedName = pe["var"]["name"];
+				variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
+				prefixedName = pe["var"]["type"]["Prefix"]+":"+pe["var"]["name"];
+				prefixTable[pe["var"]["type"]["Prefix"] + ":"] = "<"+pe["var"]["type"]["Namespace"]+"#>";
 			}
 					
 			expressionTable[count] =  {
@@ -342,6 +460,81 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 
 	for(var key in expressionTable[1]){
 		if(typeof expressionTable[1][key][3] !== 'undefined') expressionTable[1][key] = transformExistsAND(expressionTable[1][key], prefix, existsExpr, 3, alias, className);
+	}
+	return expressionTable
+}
+
+function transformVariableFilter(expressionTable, prefix, existsExpr, count, alias, className){
+	if(typeof expressionTable[count]["ExistsExpr"] === 'undefined' && typeof expressionTable[count]["NotExistsExpr"] === 'undefined'){
+		if(typeof expressionTable[count]["RelationalExpression"]["Relation"] !== 'undefined'){
+			var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
+			if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
+				var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
+				var variable, prefixedName
+				if(typeof pe["Reference"] !== 'undefined'){
+					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
+					prefixedName = pe["var"]["name"];
+				}
+				else if(typeof pe["Path"] !== 'undefined'){
+					prefixedName = getPath(pe["Path"]);
+					variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
+					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
+					variable = setVariableName(pe["var"]["name"], alias, pe["var"])
+				}
+				else if(typeof pe["var"] !== 'undefined') {
+					variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
+					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
+					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
+					prefixedName = pe["var"]["name"];
+				}
+						
+				expressionTable[count] =  {
+					["ExistsExpr"] : {
+						"Triple" : {
+							"variable" : variable,
+							"prefixedName" : prefixedName,
+							"object" : className,
+						},
+						"Filter" : {"RelationalExpression":expressionTable[count]["RelationalExpression"]}
+					}
+				} 
+			}
+		} else {
+			var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
+			if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
+				var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
+				var variable, prefixedName
+				if(typeof pe["Reference"] !== 'undefined'){
+					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
+					prefixedName = pe["var"]["name"];
+				}
+				else if(typeof pe["Path"] !== 'undefined'){
+					prefixedName = getPath(pe["Path"]);
+					variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
+					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
+					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
+				}
+				else if(typeof pe["var"] !== 'undefined') {
+					variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
+					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
+					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
+					prefixedName = pe["var"]["name"];
+				}
+						
+				expressionTable[count] =  {
+					["ExistsExpr"] : {
+						"Triple" : {
+							"variable" : variable,
+							"prefixedName" : prefixedName,
+							"object" : className,
+						},
+					}
+				} 
+			}
+		}
+	}
+	for(var key in expressionTable[1]){
+		if(typeof expressionTable[1][key][3] !== 'undefined') expressionTable[1][key] = transformVariableFilter(expressionTable[1][key], prefix, existsExpr, 3, alias, className);
 	}
 	return expressionTable
 }
@@ -597,45 +790,68 @@ function transformSubstring(expressionTable){
 	return expressionTable
 }
 
-function generateExpression(expressionTable, SPARQLstring, className, alias, generateTriples){
+function generateExpression(expressionTable, SPARQLstring, className, alias, generateTriples, isSimpleVaraible){
 	for(var key in expressionTable){
 		var visited = 0;
 		
-		
+		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-			var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias)
-			if(generateTriples == true) tripleTable.push({"var":variable, "prefixedName":expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"]});
+			var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
+			if(generateTriples == true && expressionTable[key]["var"]['type'] != null) tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["Prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"]});
 			SPARQLstring = SPARQLstring + "?" + variable;
 			visited = 1;
 		}
 		
+		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
 			var prefixName = getPath(expressionTable[key]["Path"]);
-			var variable = setVariableName(expressionTable[key]["PrimaryExpression"]["var"]["name"], alias)
-			if(generateTriples == true) tripleTable.push({"var":variable, "prefixedName":prefixName+ "/:" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className});
+			var variable = setVariableName(expressionTable[key]["PrimaryExpression"]["var"]["name"], alias, expressionTable[key]["PrimaryExpression"]["var"])
+			if(generateTriples == true && expressionTable[key]["PrimaryExpression"]["var"]['type'] != null) {
+				tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"] + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className});
+				prefixTable[expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"] + ":"] = "<"+expressionTable[key]["PrimaryExpression"]["var"]["type"]["Namespace"]+"#>";
+			}
 			SPARQLstring = SPARQLstring + "?" + variable;
 			visited = 1;
 		}
 		
 		if (key == "BrackettedExpression") {
-			SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples) + ")";
+			SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			visited = 1;
 		}
 		
 		if (key == "NotExistsFunc" || key == "ExistsFunc") {
 			generateTriples = false
-			SPARQLstring = SPARQLstring + generateExpression(expressionTable[key], "", className, alias, generateTriples);
+			SPARQLstring = SPARQLstring + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible);
 			visited = 1;
 			generateTriples = true
+			applyExistsToFilter = false;
 		}
 		if (key == "BooleanLiteral") {
 			SPARQLstring = SPARQLstring + expressionTable[key];
 			visited = 1;
 		}
+		
+		if (key == "classExpr"){
+			SPARQLstring = SPARQLstring + "?" + className;
+			visited = 1;
+		}
+		
 		if(key == "var") {
-			var variable = setVariableName(expressionTable[key]["name"], alias)
+			var variable = setVariableName(expressionTable[key]["name"], alias, expressionTable[key])
 			SPARQLstring = SPARQLstring + "?" + variable;
-			if(generateTriples == true) tripleTable.push({"var":variable, "prefixedName":expressionTable[key]["name"], "object":className});
+			
+			if(generateTriples == true && expressionTable[key]['type'] != null) {
+				
+				if(expressionTable[key]['kind'] == "CLASS_NAME") tripleTable.push({"var": expressionTable[key]["type"]["Prefix"]+":"+expressionTable[key]["name"], "prefixedName" : "a", "object":variable});
+				else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && isSimpleVaraible == true && variable != expressionTable[key]["name"]){
+					tripleTable.push({"BIND":"BIND(?" + expressionTable[key]["name"] + " AS ?" + variable + ")"})
+				}else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && alias == null) {
+					
+				} else {
+					tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["type"]["Prefix"]+":"+expressionTable[key]["name"], "object":className});
+					prefixTable[expressionTable[key]["type"]["Prefix"] + ":"] = "<"+expressionTable[key]["type"]["Namespace"]+"#>";
+				}
+			}
 		}
 		if (key == "Additive" || key == "Unary") {
 			isExpression = true
@@ -670,16 +886,16 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				//	separator = '; SEPARATOR="' .. lQuery("Onto#Parameter[name='Default grouping separator']"):attr("input") .. '"'
 				//end
 				
-				SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples) + separator + ")";
+				SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples, isSimpleVaraible) + separator + ")";
 			}
 			else {
-				SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples) + ")";
+				SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			}
 			visited = 1
 		}
 		
 		if (key == "RelationalExpression") {
-			SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples); 
+			SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible); 
 			//TODO atributa tips XSD_STRING
 			if (typeof expressionTable[key]['Relation'] !== 'undefined'){
 				isExpression = true;
@@ -687,9 +903,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
 				else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
 				if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
-					SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, alias, generateTriples) + ")";//?????????????????? ExpressionList
+					SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, alias, generateTriples, isSimpleVaraible) + ")";//?????????????????? ExpressionList
 				}
-				if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples);
+				if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible);
+				if (typeof expressionTable[key]["classExpr"] !== 'undefined') SPARQLstring = SPARQLstring  + "?" +className;
 			}
 			visited = 1
 		}
@@ -700,11 +917,11 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		if (key == "MultiplicativeExpression") {
 			if(typeof expressionTable[key]["UnaryExpressionList"]!== 'undefined' && typeof expressionTable[key]["UnaryExpressionList"][0]!== 'undefined' && typeof expressionTable[key]["UnaryExpressionList"][0]["Unary"]!== 'undefined'
 			&& expressionTable[key]["UnaryExpressionList"][0]["Unary"] == "/"){
-				var res = generateExpression(expressionTable[key]["UnaryExpression"], "", className, alias, generateTriples)
+				var res = generateExpression(expressionTable[key]["UnaryExpression"], "", className, alias, generateTriples, isSimpleVaraible)
 				if(res != null && res != ""){
 					SPARQLstring = SPARQLstring  + "xsd:decimal(" + res + ")/";
 				}
-				res = generateExpression(expressionTable[key]["UnaryExpressionList"][0]["UnaryExpression"], "", className, alias, generateTriples)
+				res = generateExpression(expressionTable[key]["UnaryExpressionList"][0]["UnaryExpression"], "", className, alias, generateTriples, isSimpleVaraible)
 				if(res != null && res != ""){
 					SPARQLstring = SPARQLstring  + "xsd:decimal(" + res + ")";
 				}
@@ -713,11 +930,11 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			else{
 				if(typeof expressionTable[key]["UnaryExpression"]["Additive"]!== 'undefined'){
 					SPARQLstring = SPARQLstring  + expressionTable[key]["UnaryExpression"]["Additive"];
-					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["UnaryExpression"]["PrimaryExpression"], "", className, alias, generateTriples);
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["UnaryExpression"]["PrimaryExpression"], "", className, alias, generateTriples, isSimpleVaraible);
 				}
-				else SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["UnaryExpression"], "", className, alias, generateTriples);
+				else SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["UnaryExpression"], "", className, alias, generateTriples, isSimpleVaraible);
 				if (typeof expressionTable[key]["UnaryExpressionList"]!== 'undefined'){
-					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["UnaryExpressionList"], "", className, alias, generateTriples)
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["UnaryExpressionList"], "", className, alias, generateTriples, isSimpleVaraible)
 				}
 			}
 			visited = 1
@@ -727,7 +944,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			for(var k in expressionTable[key]){
 				if(typeof expressionTable[key][k]["Additive"]!== 'undefined'){
 					SPARQLstring = SPARQLstring  + expressionTable[key][k]["Additive"]
-					SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression:expressionTable[key][k]["MultiplicativeExpression"]}, "", className, alias, generateTriples)
+					SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression:expressionTable[key][k]["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible)
 					isExpression = true
 				}
 			}
@@ -743,14 +960,14 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				|| (typeof additiveExpression["MultiplicativeExpressionList"][1] === 'undefined'
 				&& typeof additiveExpression["MultiplicativeExpressionList"][0]["Additive"]!== 'undefined' 
 				&& typeof additiveExpression["MultiplicativeExpressionList"][0]["Additive"]=="-") )) {}
-			else {SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples) }
+			else {SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible) }
 			if (typeof additiveExpression["MultiplicativeExpressionList"] !== 'undefined') {
 				if (typeof additiveExpression["MultiplicativeExpressionList"][0] !== 'undefined' && typeof additiveExpression["MultiplicativeExpressionList"][0]["Concat"]!== 'undefined') {
-					var concat = " CONCAT(" + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples)
+					var concat = " CONCAT(" + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible)
 					for(var k in additiveExpression["MultiplicativeExpressionList"]){
 						if (typeof additiveExpression["MultiplicativeExpressionList"]["Concat"] !== 'undefined') {
 							isFunction = true
-							concat = concat + ", " + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpressionList"]["MultiplicativeExpression"]}, "", className, alias, generateTriples)
+							concat = concat + ", " + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpressionList"]["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible)
 						} else break
 					}
 					concat = concat + ") "
@@ -772,8 +989,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						var left = additiveExpression["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]
 						var right = additiveExpression["MultiplicativeExpressionList"][0]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]
 					
-						// var sl = generateExpression({PrimaryExpression : left}, "", className, alias, generateTriples)
-						// var sr = generateExpression({PrimaryExpression : right}, "", className, alias, generateTriples)
+						// var sl = generateExpression({PrimaryExpression : left}, "", className, alias, generateTriples, isSimpleVaraible)
+						// var sr = generateExpression({PrimaryExpression : right}, "", className, alias, generateTriples, isSimpleVaraible)
 						// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
 							// if isDateVar(left) == true and isDateVar(right) == true then
 								// SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")"
@@ -790,16 +1007,16 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 								// prefixes["xsd:"] = lQuery("Onto#Prefix[shortForm='xsd:']"):attr("fullForm")
 								// isFunction = true
 							// else
-								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression = value["MultiplicativeExpression"]}, "", className, alias, generateTriples)
-								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpressionList = value["MultiplicativeExpressionList"]}, "", className, alias, generateTriples)
+								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression = value["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible)
+								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpressionList = value["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
 							// end
 						// else
-							var value = generateExpression({MultiplicativeExpression : additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples) + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples)
+							var value = generateExpression({MultiplicativeExpression : additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible) + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
 							// if (isDateVar(left) == true or isDateVar(right) == true or isDateTimeVar(left) == true or isDateTimeVar(right) == true) and showIncorrectSyntaxForm == true then incorrectSyntaxForm(additiveExpression, "Unsupported Syntax for General SPARQL option") end
 							SPARQLstring = SPARQLstring  + value
 						// end
 					}
-				} else SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples)
+				} else SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
 			}
 			visited = 1
 		}
@@ -828,7 +1045,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				var DISTINCT = '';
 				if (typeof expressionTable[key]["ArgList"]["DISTINCT"]!== 'undefined') DISTINCT = expressionTable[key]["ArgList"]["DISTINCT"] + " ";
 				var o = {ArgList : expressionTable[key]["ArgList"]};
-				SPARQLstring = SPARQLstring  + "(" + DISTINCT + " " + generateExpression(o, "", className, alias, generateTriples) + ")";
+				SPARQLstring = SPARQLstring  + "(" + DISTINCT + " " + generateExpression(o, "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			}
 			visited = 1
 		}
@@ -838,10 +1055,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
 			}
 			if (typeof expressionTable[key]["Expression"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples) + ")";
+				SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			}
 			if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples) + ")";
+				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			}
 			if (typeof expressionTable[key]["FunctionTime"]!== 'undefined') {
 				// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
@@ -863,7 +1080,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						// SPARQLstring = SPARQLstring .. fun .. "(" .. sl .. "-" .. sr .. ")"
 					// end
 				// else
-					var s = expressionTable[key]["FunctionTime"] + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples) +  "-" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples) + ")"
+					var s = expressionTable[key]["FunctionTime"] + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVaraible) +  "-" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVaraible) + ")"
 					// if showIncorrectSyntaxForm == true then incorrectSyntaxForm(s, "Unsupported Syntax for General SPARQL option") end
 					SPARQLstring = SPARQLstring  + s
 				// end
@@ -871,8 +1088,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			//???????????????????????????
 			// var fipairs = "";
 			// for(var k in expressionTable[key]){
-				// if (fipairs == "") fipairs = generateExpression({0:expressionTable[key][k]}, "", className, alias, generateTriples)
-				// else fipairs = fipairs + ", " + generateExpression({0:expressionTable[key][k]}, "", className, alias, generateTriples)
+				// if (fipairs == "") fipairs = generateExpression({0:expressionTable[key][k]}, "", className, alias, generateTriples, isSimpleVaraible)
+				// else fipairs = fipairs + ", " + generateExpression({0:expressionTable[key][k]}, "", className, alias, generateTriples, isSimpleVaraible)
 			// }
 			// if (fipairs!="") SPARQLstring = SPARQLstring + "(" + fipairs + ")"
 			// ??????????????????????????
@@ -881,14 +1098,14 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 
 		if (key == "ExpressionList") {
 			for(var k in expressionTable[key]){
-				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, alias, generateTriples);
+				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, alias, generateTriples, isSimpleVaraible);
 			}
 			visited = 1
 		}
 
 		if (key == "ArgListExpression") {
 			for(var k in expressionTable[key]){
-				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, alias, generateTriples); 
+				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, alias, generateTriples, isSimpleVaraible); 
 			}
 			visited = 1
 		}
@@ -901,10 +1118,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			// else
 				// SPARQLstring = SPARQLstring  .. "SUBSTR(" .. generateExpression({ExpressionList = value}, "") .. ")"
 			// end
-		    var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples);
-		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples);
+		    var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVaraible);
+		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr2 != "") {expr2 = ", " + expr2};
-		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples);
+		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr3 != "") {expr3 = ", " + expr3};
 		    SPARQLstring = SPARQLstring  + "SUBSTR(" + expr1 + expr2 + expr3 + ")";
 		    visited = 1;
@@ -919,7 +1136,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				brackedOpen = "(";
 				brackedClose = ")";
 			}
-			SPARQLstring =  brackedOpen + "BOUND(" + generateExpression(expressionTable[key], "", className, alias, generateTriples) + ")" + and + SPARQLstring  + brackedClose;
+			SPARQLstring =  brackedOpen + "BOUND(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + ")" + and + SPARQLstring  + brackedClose;
 			visited = 1;
 		}
 		if(key == "notBound"){
@@ -931,13 +1148,13 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				brackedOpen = "(";
 				brackedClose = ")";
 			}
-			SPARQLstring = brackedOpen +  "!BOUND(" + generateExpression(expressionTable[key], "", className, alias, generateTriples) + ")" + and + SPARQLstring + brackedClose ;
+			SPARQLstring = brackedOpen +  "!BOUND(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + ")" + and + SPARQLstring + brackedClose ;
 			visited = 1;
 		}
 		if(key == "ExistsExpr"){
-			var triple = "?" + expressionTable[key]["Triple"]["object"] + " :" + expressionTable[key]["Triple"]["prefixedName"] + " ?" + expressionTable[key]["Triple"]["variable"]+ "." ;
+			var triple = "?" + expressionTable[key]["Triple"]["object"] + " " + expressionTable[key]["Triple"]["prefixedName"] + " ?" + expressionTable[key]["Triple"]["variable"]+ "." ;
 			// counter++;
-			SPARQLstring = SPARQLstring  + "EXISTS{" + triple + " " + generateExpression(expressionTable[key], "", className, alias, generateTriples) + "}";
+			SPARQLstring = SPARQLstring  + "EXISTS{" + triple + " " + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + "}";
 			visited = 1;
 			var temp = variableNamesAll[expressionTable[key]["Triple"]["variable"]];
 			delete variableNamesClass[temp];
@@ -945,9 +1162,9 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			variableNamesAll[temp] = temp;
 		}
 		if(key == "NotExistsExpr"){
-			var triple = "?" + expressionTable[key]["Triple"]["object"] + " :" + expressionTable[key]["Triple"]["prefixedName"] + " ?" + expressionTable[key]["Triple"]["variable"] + "." ;
+			var triple = "?" + expressionTable[key]["Triple"]["object"] + " " + expressionTable[key]["Triple"]["prefixedName"] + " ?" + expressionTable[key]["Triple"]["variable"] + "." ;
 			// counter++;
-			SPARQLstring = SPARQLstring  + "NOT EXISTS{" + triple + " " + generateExpression(expressionTable[key], "", className, alias, generateTriples) + "}";
+			SPARQLstring = SPARQLstring  + "NOT EXISTS{" + triple + " " + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + "}";
 			visited = 1;
 			var temp = variableNamesAll[expressionTable[key]["Triple"]["variable"]];
 			delete variableNamesClass[temp];
@@ -956,8 +1173,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if(key == "Filter"){
-			SPARQLstring = SPARQLstring  + " FILTER(" + generateExpression(expressionTable[key], "", className, alias, generateTriples) + ")";
+			// generateTriples = false;
+			SPARQLstring = SPARQLstring  + " FILTER(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			visited = 1;
+			// generateTriples = true;
 		}
 		
 		if (key == "Comma") {
@@ -973,16 +1192,16 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			visited = 1
 		}
 		if (key == "RegexExpression") {
-			SPARQLstring = SPARQLstring + "REGEX(" + generateExpression(expressionTable[key], "", className, alias, generateTriples) + ")";
+			SPARQLstring = SPARQLstring + "REGEX(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + ")";
 			visited = 1
 		}
 		
 		if (key == "SubstringBifExpression") {
 			isFunction = true;
-			var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples);
-		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples);
+			var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVaraible);
+		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr2 != "") {expr2 = ", " + expr2};
-		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples);
+		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr3 != "") {expr3 = ", " + expr3};
 		    SPARQLstring = SPARQLstring  + "bif:substring(" + expr1 + expr2 + expr3 + ")";
 			visited = 1
@@ -990,17 +1209,25 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		if (key == "StrReplaceExpression") {
 			isFunction = true;
-			var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples);
-		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples);
+			var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVaraible);
+		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr2 != "") {expr2 = ", " + expr2};
-		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples);
+		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr3 != "") {expr3 = ", " + expr3};
 		    SPARQLstring = SPARQLstring  + "REPLACE(" + expr1 + expr2 + expr3 + ")";
 			visited = 1
 		}
 		
+		if (key == "ValueScope"){
+			var tempAlias = alias;
+			if(tempAlias == null) tempAlias = "expr";
+			SPARQLstring = SPARQLstring  + "?" + tempAlias;
+			tripleTable.push({"VALUES":"VALUES ?" + tempAlias + " {" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible) + "}"});
+			visited = 1
+		}
+		
 		if(visited == 0 && typeof expressionTable[key] == 'object'){
-			SPARQLstring += generateExpression(expressionTable[key], "", className, alias, generateTriples);
+			SPARQLstring += generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVaraible);
 		}
 	}
 	return SPARQLstring
