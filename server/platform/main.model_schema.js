@@ -2704,6 +2704,24 @@ Schemas.Clipboard = new SimpleSchema({
         label: "Clipboard.versionId",
     },
 
+    toolId: {
+        type: String,
+        regEx: SimpleSchema.RegEx.Id,
+        label: "Clipboard.toolId",
+    },
+
+    // toolVersionId: {
+    //     type: String,
+    //     regEx: SimpleSchema.RegEx.Id,
+    //     label: "Clipboard.toolVersionId",
+    // },
+
+    diagramTypeId: {
+        type: String,
+        regEx: SimpleSchema.RegEx.Id,
+        label: "Clipboard.diagramTypeId",
+    },
+
     userId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,

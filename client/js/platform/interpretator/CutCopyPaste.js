@@ -12,13 +12,14 @@ Interpreter.methods({
 	Copy: function() {
 		var diagram_id = Session.get("activeDiagram");
 		var diagram = Diagrams.findOne({_id: diagram_id});
-
-		if (!diagram) {
-			return;
-		}
+		var project = Projects.findOne({_id: Session.get("activeProject")});
 
 		var diagram_type_id = diagram["diagramTypeId"];
 		var diagram_type = DiagramTypes.findOne({_id: diagram_type_id});
+
+		if (!diagram || !project || !diagram_type) {
+			return;
+		}
 
 		var selected_elements;
 		var editor = Interpreter.editor;
@@ -52,10 +53,13 @@ Interpreter.methods({
 			var res = Interpreter.executeExtensionPoint(diagram_type, "beforeCopyCollection", selected_elements);
 			if (res != false) {
 				var list = {
+							diagramTypeId: diagram_type._id,
+							toolId: project.toolId,
 							diagramId: diagram_id,
 							elements: selected_elem_list,
 							leftPoint: left_point,
 						};
+
 				Interpreter.executeExtensionPoint(diagram_type, "copyCollection", list);
 			}
 		}
@@ -83,11 +87,13 @@ Interpreter.methods({
 
 		var diagram_id = Session.get("activeDiagram");
 		var diagram = Diagrams.findOne({_id: diagram_id});
-		if (!diagram) {
+
+		var project = Projects.findOne({_id: Session.get("activeProject")});
+		var diagram_type = DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
+
+		if (!diagram || !project || !diagram_type) {
 			return;
 		}
-
-		var diagram_type = DiagramTypes.findOne({_id: diagram["diagramTypeId"]});
 
 		var editor_type = Interpreter.getEditorType();
 		if (is_ajoo_editor(editor_type)) {
@@ -106,6 +112,8 @@ Interpreter.methods({
 			}
 
 			var list = {
+						diagramTypeId: diagram_type._id,
+						toolId: project.toolId,
 						diagramId: diagram_id,
 						x: x,
 						y: y,

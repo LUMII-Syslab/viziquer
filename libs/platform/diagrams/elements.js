@@ -214,14 +214,15 @@ Meteor.methods({
 
 				if (list["elements"]) {
 					Clipboard.update({userId: user_id,
-									projectId: list["projectId"],
-									versionId: list["versionId"],
-									diagramId: list["diagramId"]},
+										toolId: list.toolId,
+										diagramTypeId: list.diagramTypeId,
+									},
 
 									{$set: {elements: list["elements"],
-											//elements: elements.fetch(),
-											//compartments: compartments.fetch(),
-											//elementsSections: elements_sections.fetch(),
+											projectId: list.projectId,
+											versionId: list.versionId,
+											diagramId: list.diagramId,
+
 											leftPoint: list["leftPoint"] || 0,
 											count: 1,
 											}},
@@ -236,18 +237,22 @@ Meteor.methods({
 	},
 
 	pasteElements: function(list) {
-
 		var user_id = Meteor.userId();
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list)) {
 
 				var clipboard = Clipboard.findOne({userId: user_id,
-													projectId: list["projectId"],
-													versionId: list["versionId"],
-													diagramId: list["diagramId"],
+													toolId: list.toolId,
+													diagramTypeId: list.diagramTypeId,
 												});
-
+				
 				if (clipboard) {
+
+					var new_ids = {
+								diagramId: list.diagramId,
+								projectId: list.projectId,
+								versionId: list.versionId,
+							};
 
 					var x = list["x"];
 					var y = list["y"];
@@ -296,6 +301,8 @@ Meteor.methods({
 							location["x"] = location["x"] + offset_x;
 							location["y"] = location["y"] + offset_y;
 
+							_.extend(element, new_ids);
+
 							var new_id = Elements.insert(element);
 
 							boxes.push(new_id);
@@ -333,6 +340,9 @@ Meteor.methods({
 								});
 
 								element["points"] = new_points;
+
+								_.extend(element, new_ids);
+
 								var new_id = Elements.insert(element);
 
 								lines.push(new_id);
@@ -346,17 +356,24 @@ Meteor.methods({
 					_.each(compartments, function(compartment) {
 						delete compartment["_id"];
 						compartment["elementId"] = old_new_id_list[compartment["elementId"]];
+
+						_.extend(compartment, new_ids);
+
 						Compartments.insert(compartment);
 					});
 
 					_.each(elements_sections, function(element_section) {
 						delete element_section["_id"];
 						element_section["elementId"] = old_new_id_list[element_section["elementId"]];
+
+						_.extend(element_section, new_ids);
+
 						ElementsSections.insert(element_section);
 					});
 
-					if (!x && !y)
+					if (!x && !y) {
 						Clipboard.update({_id: clipboard["_id"]}, {$inc: {count: 1}});
+					}
 
 					//var edit = {userId: user_id, action: "pasted", time: new Date()};
 					//Diagrams.update({_id: list["diagramId"]}, {$set: {edit: edit}});
