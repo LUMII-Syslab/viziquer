@@ -70,9 +70,33 @@ resolveTypesAndBuildSymbolTable = function (query) {
     }};
 
     obj_class.fields.forEach(function(f) {
-        if (f.alias) {
+        // CAUTION .............
+        // HACK: * and ** fields
+        if (f.exp=="*") {
+          var cl =schema.findClassByName(obj_class.identification.localName);
+          if (cl) {
+            cl.getAttributes().forEach(function(attr) {
+                obj_class.fields.push({exp:attr["name"],alias:null,requireValues:false,groupValues:false, isInternal:false});
+            });
+          };
+        } else if (f.exp=="**") {
+          var cl =schema.findClassByName(obj_class.identification.localName);
+          if (cl) {
+            cl.getAllAttributes().forEach(function(attr) {
+                obj_class.fields.push({exp:attr["name"],alias:null,requireValues:false,groupValues:false, isInternal:false});
+            });
+          };
+        } else if (f.alias) {
           if (symbol_table[f.alias]) {
              console.log("Duplicate attribute alias name " + f.alias + " in " + obj_class.identification.localName)
+          } else {
+             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
+        }};
+    });
+    obj_class.aggregations.forEach(function(f) {
+        if (f.alias) {
+          if (symbol_table[f.alias]) {
+             console.log("Duplicate aggregation alias name " + f.alias + " in " + obj_class.identification.localName)
           } else {
              symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
         }};
@@ -106,10 +130,19 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     obj_class.conditions.forEach(parseExpObject);
     obj_class.aggregations.forEach(parseExpObject);
+    // CAUTION!!!!! Hack for * and **
+    obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
+
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)
-      if (f.exp=="(.)") {f.exp=obj_class.instanceAlias};
-      parseExpObject(f)
+      if (f.exp=="(.)") {
+        if (obj_class.instanceAlias=="") {
+          obj_class.instanceAlias=f.alias;
+        };
+        f.exp=obj_class.instanceAlias;
+      };
+
+         parseExpObject(f)
     });
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
     if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
@@ -166,60 +199,48 @@ genAbstractQueryForElementList = function (element_id_list) {
 
     // VQ_Element --> [JSON for linked class]
     // Recursive. Traverses the query via depth first search
-    // TODO: Optimize!!!!
     function genLinkedElements(current_elem) {
       // {link:VQ_Element, start:bool} --> JSON for linked class
       var genLinkedElement = function(link) {
+          var elem = null;
+          var linkedElem_obj = {};
           if (link.start) {
-            var elem = link.link.getStartElement();
-            // generate if the element on the other end is not visited AND the link is not conditional
-            if (!visited[elem._id()] && !link.link.isConditional()) {
-                visited[elem._id()]=elem._id();
-                return {
-                  linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
-                  linkType: link.link.getType(),
-                  isInverse:true,
-                  isSubQuery:link.link.isSubQuery(),
-                  isGlobalSubQuery:link.link.isGlobalSubQuery(),
-                  identification: { _id: elem._id(), localName: elem.getName()},
-                  stereotype: elem.getStereotype(),
-                  instanceAlias: elem.getInstanceAlias(),
-                  isVariable:elem.isVariable(),
-                  variableName:elem.getVariableName(),
-                  // should not add the link which was used to get to the elem
-                  conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
-                  fields: elem.getFields(),
-                  aggregations: elem.getAggregateFields(),
-                  conditions: elem.getConditions(),
-                  children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l}),
-                }
-            }
+            elem = link.link.getStartElement();
+            linkedElem_obj["isInverse"] = true;
           } else {
             var elem = link.link.getEndElement();
-            // generate if the element on the other end is not visited AND the link is not conditional
-            if (!visited[elem._id()] && !link.link.isConditional()) {
-                visited[elem._id()]=elem._id();
-                return {
-                  linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
-                  linkType: link.link.getType(),
-                  // not really correct because of isInverse option
-                  isInverse:false,
-                  isSubQuery: link.link.isSubQuery(),
-                  isGlobalSubQuery: link.link.isGlobalSubQuery(),
-                  identification: { _id: elem._id(), localName: elem.getName()},
-                  stereotype: elem.getStereotype(),
-                  instanceAlias: elem.getInstanceAlias(),
-                  isVariable:elem.isVariable(),
-                  variableName:elem.getVariableName(),
-                  // should not add the link which was used to get to the elem
-                  conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
-                  fields: elem.getFields(),
-                  aggregations: elem.getAggregateFields(),
-                  conditions: elem.getConditions(),
-                  children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l}),
-                }
-            }
+            linkedElem_obj["isInverse"] = false;
           };
+          // generate if the element on the other end is not visited AND the link is not conditional
+          if (!visited[elem._id()] && !link.link.isConditional()) {
+              visited[elem._id()]=elem._id();
+              _.extend(linkedElem_obj,
+                {
+                    linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
+                    linkType: link.link.getType(),
+                    isSubQuery: link.link.isSubQuery(),
+                    isGlobalSubQuery: link.link.isGlobalSubQuery(),
+                    identification: { _id: elem._id(), localName: elem.getName()},
+                    instanceAlias: elem.getInstanceAlias(),
+                    isVariable:elem.isVariable(),
+                    variableName:elem.getVariableName(),
+                    // should not add the link which was used to get to the elem
+                    conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
+                    fields: elem.getFields(),
+                    aggregations: elem.getAggregateFields(),
+                    conditions: elem.getConditions(),
+                    fullSPARQL: elem.getFullSPARQL(),
+                    children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l})
+                  });
+                if (elem.isGlobalSubQueryRoot()) {
+                  _.extend(linkedElem_obj,{  orderings: elem.getOrderings(),
+                                             distinct:elem.isDistinct(),
+                                             limit:elem.getLimit(),
+                                             offset:elem.getOffset()  });
+                };
+                return linkedElem_obj;
+            };
+
       };
 
       return _.filter(_.map(current_elem.getLinks(), genLinkedElement), function(l) {return l})
@@ -227,7 +248,6 @@ genAbstractQueryForElementList = function (element_id_list) {
 
     return { root: {
       identification: { _id: e._id(), localName: e.getName()},
-      stereotype: e.getStereotype(),
       instanceAlias: e.getInstanceAlias(),
       isVariable:e.isVariable(),
       variableName:e.getVariableName(),
@@ -239,7 +259,7 @@ genAbstractQueryForElementList = function (element_id_list) {
       distinct:e.isDistinct(),
       limit:e.getLimit(),
       offset:e.getOffset(),
-      havingConditions:e.getHavings(),
+      fullSPARQL:e.getFullSPARQL(),
       children: genLinkedElements(e)
     }}
   });

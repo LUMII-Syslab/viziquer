@@ -8,40 +8,37 @@ Interpreter.customMethods({
 Template.AddLink.helpers({
 
 	associations: function() {
-		
+
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: start_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-		
+
 			//Associations
 			var asc_all = [];
 			var asc = [];
 			//Class Name - direct
 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
 			if (!compart_type) {
-				return [{name: "empty", class: "-"}];
+				return [{name: "++", class: "", type: "=>"}];
 			}
 
 			var act_comp = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start_elem_id});
 			if (!act_comp) {
-				return [{name: "empty", class: "-"}];
-			}
-			
-			var className = act_comp["input"];
-			var schema = new VQ_Schema();
-			
-			if (!schema.classExist(className)) {
-				return [{name: "empty", class: "-"}];
-			}	
-			
-			asc = schema.findClassByName(className).getAllAssociations();
-			
-			if (asc.length == 0) {
-				return [{name: "empty", class: "-", type: "-"}];
+				return [{name: "++", class: "", type: "=>"}];
 			}
 
+			var className = act_comp["input"];
+			var schema = new VQ_Schema();
+
+			if (!schema.classExist(className)) {
+				return [{name: "++", class: "", type: "=>"}];
+			}
+
+			asc = schema.findClassByName(className).getAllAssociations();
+      asc.push({name: "++", class: "", type: "=>"});
+
 			return asc;
-			
+
 			/*
 			var cls_value = [{name: act_comp["input"], type: "direct"}];
 
@@ -51,21 +48,21 @@ Template.AddLink.helpers({
 			if (cls){
 
 				asc_all = cls.map(function (use) {
-				      return [{assoc: use.name, start: use.ClassPairs["0"].SourceClass["localName"], end: use.ClassPairs["0"].TargetClass["localName"]}];   
+				      return [{assoc: use.name, start: use.ClassPairs["0"].SourceClass["localName"], end: use.ClassPairs["0"].TargetClass["localName"]}];
 				})
 			} else {
 				return [{name: "empty", class: "-"}];
 			}
-			
+
 			//List of all the classes, that could leave association direct (original class) and through sub_super class relation
 			var cls_list = Classes.findOne({name: cls_value["0"]["name"]});
 			if (cls_list) {
 				//Classes from Super Class
 				_.each(cls_list.AllSuperClasses, function(supC){
-					cls_value.push({name: supC["localName"], type: "super"});			
+					cls_value.push({name: supC["localName"], type: "super"});
 				})
 
-				//Classes from Sub Class		
+				//Classes from Sub Class
 				_.each(cls_list.AllSubClasses, function(supC){
 					cls_value.push({name: supC["localName"], type: "sub"})
 				})
@@ -74,7 +71,7 @@ Template.AddLink.helpers({
 			//Create list of unique associations
 			var exists = false;
 			_.each(asc_all, function(a){
-				_.each(cls_value, function(c){				
+				_.each(cls_value, function(c){
 					// if direct association
 					exists = false;
 
@@ -83,21 +80,21 @@ Template.AddLink.helpers({
 						_.each(asc, function(e){
 							if (e["name"] == a["0"]["assoc"]) {exists = true;}
 						})
-						
+
 						if (!exists) {
 							asc.push({name: a["0"]["assoc"], class: a["0"]["end"], type: "=>"});
 						}
 					}
-					
+
 					//if inverse association
 					exists = false;
 
-					if(c["name"] == a["0"]["end"]){	
+					if(c["name"] == a["0"]["end"]){
 
 						_.each(asc, function(e){
 							if (e["name"] == a["0"]["assoc"]) {exists = true;}
 						})
-						
+
 						if (!exists) {
 							asc.push({name: a["0"]["assoc"], class: a["0"]["start"], type: "<="});
 						}
@@ -112,7 +109,7 @@ Template.AddLink.helpers({
 			return asc; */
 		}
 	},
-	
+
 
 });
 
@@ -123,18 +120,15 @@ Template.AddLink.events({
 
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
+
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
-		if (!name || name == "empty") {
-			console.error("Cant create link: Class does not exists");
-			return ;
-		}
 
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
-		var elem_start = Elements.findOne({_id: start_elem_id});		
+		var elem_start = Elements.findOne({_id: start_elem_id});
 
 		//Initial coordinate values original box and new box
 		var d = 30;
@@ -142,13 +136,13 @@ Template.AddLink.events({
 		var y0 = elem_start["location"]["y"];
 		var x1 = x0;
 		var y1 = y0 + elem_start["location"]["height"]+d;
-		var w = elem_start["location"]["width"]; 
+		var w = elem_start["location"]["width"];
 		var h = elem_start["location"]["height"];
 
 
 		//If diagram is populated - search for overlap
 		//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
-		
+
 			var elem_list = [];
 			var elem_over = []; //Potentionally - for more complex search for a better place
 			var max_y;
@@ -156,22 +150,22 @@ Template.AddLink.events({
 			Elements.find({type: "Box"}).forEach(function(el) {
 				elem_list.push(el);
 			})
-		
-			do{												
+
+			do{
 				elem_over.length = 0;
 
 				_.each(elem_list, function(el) {
 					//Check, if start point of existing element could lead to overlap withexisting elements
-					if (el["location"]["x"] < (x1+w)){						
+					if (el["location"]["x"] < (x1+w)){
 						if (el["location"]["y"] < (y1+h)){
 							//Check, if end point of existing element could lead to overlap
 							if((el["location"]["x"]+el["location"]["width"]) > x1){
 								if((el["location"]["y"])+el["location"]["height"] > y1){
 									elem_over.push({
-										_id: el["_id"], 
-										x: el["location"]["x"], 
-										y: el["location"]["y"], 
-										w: el["location"]["width"], 
+										_id: el["_id"],
+										x: el["location"]["x"],
+										y: el["location"]["y"],
+										w: el["location"]["width"],
 										h: el["location"]["height"]
 									});
 								}
@@ -180,19 +174,19 @@ Template.AddLink.events({
 					}
 				})
 
-				if (elem_over.length > 0){													
+				if (elem_over.length > 0){
 					max_y = 0;
-	
+
 					_.each(elem_over, function(el){
 						if (max_y < (el["y"]+el["h"])) {
 							max_y = el["y"]+el["h"];
 						}
 					})
-	
+
 					y1 = max_y + d;
 				}
 			} while (elem_over.length > 0);
-		
+
 
 		//New elements
 		//Create Box; original constructor is used
@@ -223,11 +217,11 @@ Template.AddLink.events({
 
 			//If elements is created
 			if (elem_id) {
-				
-				var end_elem_id = elem_id;		
+
+				var end_elem_id = elem_id;
 
 				//New element: Name compartment
-				var end_elem = Elements.findOne({_id: end_elem_id});		
+				var end_elem = Elements.findOne({_id: end_elem_id});
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: end_elem.elementTypeId});
 
 				if (compart_type){
@@ -249,7 +243,7 @@ Template.AddLink.events({
 											input: class_name,
 											value: class_name,
 											isObjectRepresentation: false,
-							
+
 											style: compart_type.styles[0]["style"],
 											styleId: compart_type.styles[0]["id"],
 										},
@@ -263,12 +257,12 @@ Template.AddLink.events({
 					if (ct) {
 						var c = Compartments.findOne({elementId: end_elem_id, compartmentTypeId: ct["_id"]});
 
-						if (c) {							
+						if (c) {
 							var compart_id = c["_id"];
 							Dialog.updateCompartmentValue(ct, "condition", "condition", compart_id);
 						}
 					}
-						
+
 				}
 
 
@@ -295,7 +289,7 @@ Template.AddLink.events({
 								diagramId: Session.get("activeDiagram"),
 								diagramTypeId: line_type["diagramTypeId"],
 								elementTypeId: line_type["_id"],
-										
+
 								style: {startShapeStyle: line_style["startShapeStyle"],
 										endShapeStyle: line_style["endShapeStyle"],
 										elementStyle: line_style["elementStyle"],
@@ -318,7 +312,7 @@ Template.AddLink.events({
 								diagramId: Session.get("activeDiagram"),
 								diagramTypeId: line_type["diagramTypeId"],
 								elementTypeId: line_type["_id"],
-								
+
 								style: {startShapeStyle: line_style["startShapeStyle"],
 										endShapeStyle: line_style["endShapeStyle"],
 										elementStyle: line_style["elementStyle"],
@@ -333,7 +327,7 @@ Template.AddLink.events({
 
 							};
 				}
-	
+
 				Utilities.callMeteorMethod("insertElement", new_line, function(new_line_id) {
 
 					var line_id = new_line_id;
@@ -357,34 +351,28 @@ Template.AddLink.events({
 												input: name,
 												value: name,
 												isObjectRepresentation: false,
-								
+
 												style: line_compart_type.styles[0]["style"],
 												styleId: line_compart_type.styles[0]["id"],
 											},
 											elementStyleUpdate: undefined,
 										};
 
-						Utilities.callMeteorMethod("insertCompartment", name_compartment);	
+						Utilities.callMeteorMethod("insertCompartment", name_compartment);
 
 
 					}
 
 				});
 
-			}		
+			}
 
 		});
 
-		
+
 
 		return;
 
 	},
 
 });
-
-
-
-
-
-

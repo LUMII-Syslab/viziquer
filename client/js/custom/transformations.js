@@ -30,21 +30,25 @@ Interpreter.customMethods({
 		//Class -> compartments->Name->extension->dynamicDropDown
 		var schema = new VQ_Schema();
 		var cls = schema.getAllClasses();
-
+    var class_names = [];
 		if (_.size(cls) > 0) {
 
 			//Create array of needed structure from class' names
-			var class_names = cls.map(function (user) {
-				return {value: user["name"], input: user["name"],};
+			class_names = cls.map(function (c) {
+				return {value: c["name"], input: c["name"]};
 			});
 
 			class_names = _.sortBy(class_names, "input");
 
-		 	var is_sorted = false;
-		 	return _.uniq(class_names, is_sorted, function(item) {
-		 		return item["input"];
+		 	class_names =  _.uniq(class_names, false, function(c) {
+		 		return c["input"];
 		 	});
-	 	}
+	 	};
+
+		class_names.push({input:"[ ]", value:"[ ]"});
+		class_names.push({input:"[ + ]", value:"[ + ]"});
+
+		return class_names;
 
 	},
 
@@ -92,10 +96,82 @@ Interpreter.customMethods({
 	VQsetIsOptionalAttribute: function() {
 		console.log("is optional enetered");
 	},
+  VQgetAggregateNames: function() {
 
+		 var act_elem = Session.get("activeElement");
+		 if (!act_elem) {
+ 			return [];
+ 		}
+ 		var act_comp = Compartments.findOne({elementId: act_elem})
+ 		if (!act_comp) {
+ 			return [];
+ 		}
+
+ 		var elem_type = ElementTypes.findOne({name: "Class"});
+ 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+ 			return [];
+ 		}
+
+ 		//Active element is given as Class type element
+ 		var atr_names = [{value: " ", input: " ", }];
+
+ 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+
+ 		if (act_el) {
+ 		//check if Class name is defined for active element
+ 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+
+ 			if (!compart_type) {
+ 				return atr_names;
+ 			}
+
+ 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+ 			if (!compart) {
+ 				return atr_names;
+ 			}
+
+ 		//Read attribute values from DB
+
+ 			var schema = new VQ_Schema();
+
+ 			if (schema.classExist(compart["input"])) {
+ 				var klass = schema.findClassByName(compart["input"]);
+
+ 				_.each(klass.getAllAttributes(), function(att){
+ 					var att_val = "avg("+att["name"]+")";
+ 					atr_names.push({value: att_val, input: att_val});
+					att_val = "min("+att["name"]+")";
+ 					atr_names.push({value: att_val, input: att_val});
+					att_val = "max("+att["name"]+")";
+ 					atr_names.push({value: att_val, input: att_val});
+					att_val = "sum("+att["name"]+")";
+ 					atr_names.push({value: att_val, input: att_val});
+					att_val = "group_concat("+att["name"]+",',')";
+ 					atr_names.push({value: att_val, input: att_val});
+ 				})
+ 			}
+
+
+
+ 		}
+
+
+ 	 	// return atr_names;
+ 		atr_names = _.sortBy(atr_names, "input");
+
+ 	 	atr_names = _.uniq(atr_names, false, function(item) {
+ 	 		return item["input"];
+ 	 	});
+
+ 		atr_names.push({input:"count(.)",value:"count(.)"});
+ 		atr_names.push({input:"countdistinct(.)",value:"countdistinct(.)"});
+
+ 		return atr_names;
+
+	},
 	VQgetAttributeNames: function() {
 
-		console.log("VQgetAttributeNames executed");
+		//console.log("VQgetAttributeNames executed");
 
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
@@ -135,45 +211,32 @@ Interpreter.customMethods({
 
 			var schema = new VQ_Schema();
 
-			if (!schema.classExist(compart["input"])) {
-				console.error("VQgetAttributeNames: No Classs with such Name");
-				return ;
+			if (schema.classExist(compart["input"])) {
+				var klass = schema.findClassByName(compart["input"]);
+
+				_.each(klass.getAllAttributes(), function(att){
+					var att_val = att["name"];
+					atr_names.push({value: att_val, input: att_val});
+				})
 			}
 
-			var klass = schema.findClassByName(compart["input"]);
 
-			_.each(klass.getAllAttributes(), function(att){
-				var att_val = att["name"];
-				atr_names.push({value: att_val, input: att_val});
-			})
 
 		}
 
-	 	//TODO: IT SHOULD NOT BE HERE: Chech for Optional-Negation check-boxes simultaneous active
-	 	compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-	 	if (compart_type) {
-
-	 		Compartments.find({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")}).forEach(function(c){
-	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" &&
-	 				c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] == "true") {
-
-
-	 				console.error("Choose optional OR negation type");
-
-	 				 c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false";
-	 				 c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
-	 				 //TODO Dialog.updateCompartmentValue(compart_type, "false", "", compart_id);
-	 			}
-	 		})
-	 	}
 
 	 	// return atr_names;
 		atr_names = _.sortBy(atr_names, "input");
-	 	var is_sorted = false;
 
-	 	return _.uniq(atr_names, is_sorted, function(item) {
+	 	atr_names = _.uniq(atr_names, false, function(item) {
 	 		return item["input"];
 	 	});
+
+		atr_names.push({input:"(.)",value:"(.)"});
+		atr_names.push({input:"*",value:"*"});
+		atr_names.push({input:"**",value:"**"});
+
+		return atr_names;
 
 
 	},
@@ -354,7 +417,7 @@ Interpreter.customMethods({
 	VQsetIsNegation: function(params) {
 		//arrow ->compartments->Inverse Link->extensions->after Update
 		//params: Object {compartmentType: Object, compartmentId: "RxncBJNQ693NTCudS", input: "true", value: "true"}
-		console.log(params);
+		//console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];

@@ -459,6 +459,20 @@ VQ_Element.prototype = {
   isRoot: function() {
     return this.getType()=="query";
   },
+	// Determines whether the VQ_Element is the subquery root
+	isSubQueryRoot: function() {
+		return _.any(this.getLinks(), function(l) {
+			 var dir = l.link.getRootDirection();
+			 return l.link.isSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
+		});
+	},
+	// Determines whether the VQ_Element is the global subquery root
+	isGlobalSubQueryRoot: function() {
+		return _.any(this.getLinks(), function(l) {
+			 var dir = l.link.getRootDirection();
+			 return l.link.isGlobalSubQuery() && (l.start && dir == "start" || !l.start && dir == "end")
+		});
+	},
   // --> string
   // gets the name of the class or link, in fact it is the classname or rolename
   getName: function() {
@@ -522,6 +536,10 @@ VQ_Element.prototype = {
   isDistinct: function() {
     return this.getCompartmentValue("Distinct")=="true";
   },
+	// --> string
+	getFullSPARQL : function() {
+    return this.getCompartmentValue("FullSPARQL");
+	},
   // --> string
   getLimit: function() {
     return this.getCompartmentValue("Show rows");
@@ -539,23 +557,18 @@ VQ_Element.prototype = {
   // returns an array of attributes: expression, stereotype, alias, etc. ...
   getFields: function() {
     return this.getMultiCompartmentSubCompartmentValues("Attributes",
-    [{title:"exp",name:"Name"},
-    {title:"stereotype",name:"Stereotype"},
-    {title:"alias",name:"Alias"},
-    {title:"requireValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
-    {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}},
+    [{title:"exp",name:"Expression"},
+    {title:"alias",name:"Field Name"},
+    {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
+		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
   },
 	// --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of aggregate attributes: expression, stereotype, alias, etc. ...
   getAggregateFields: function() {
     return this.getMultiCompartmentSubCompartmentValues("Aggregates",
-    [{title:"exp",name:"Name"},
-    {title:"stereotype",name:"Stereotype"},
-    {title:"alias",name:"Alias"},
-    {title:"requireValues",name:"IsOptional",transformer:function(v) {return v=="false"}},
-    {title:"isLocal",name:"IsSubquery",transformer:function(v) {return v=="true"}},
-	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
+    [{title:"exp",name:"Expression"},
+    {title:"alias",name:"Field Name"}]);
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
   // returns an array of orderings - expression and whether is descending
@@ -746,10 +759,10 @@ VQ_Element.prototype = {
 						setCond = "true";
 						this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Diamond"},
 																 {attrName:"startShapeStyle.fill",attrValue:"#ffffff"},
-																 {attrName:"startShapeStyle.radius",attrValue:8},
+																 {attrName:"startShapeStyle.radius",attrValue:12},
 																 {attrName:"endShapeStyle.shape",attrValue:"Diamond"},
 																 {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
-																 {attrName:"endShapeStyle.radius",attrValue:8},
+																 {attrName:"endShapeStyle.radius",attrValue:12},
 																]);
 						if (this.isOptional()) {
 									this.setLinkType("REQUIRED");
@@ -787,7 +800,7 @@ VQ_Element.prototype = {
 	// Style_attr is an object, e.g., {attrName:"startShapeStyle.shape",attrValue:"Circle"}
 	// Should provide a list of style_attrs
 	setCustomStyle: function(style_attr_list) {
-	   console.log(style_attr_list);
+	  // console.log(style_attr_list);
      var element_id = this._id();
 		 var diagram_id = this.getDiagram_id();
 		 _.forEach(style_attr_list, function(a) {
