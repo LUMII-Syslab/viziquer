@@ -502,7 +502,8 @@ VQ_Element.prototype = {
   },
   // determines whether a class rather than instance is searched
   isVariable: function() {
-    return this.getName().charAt(0)=='?'
+    var name = this.getName();
+		return (name && name.charAt(0)=='?');
   },
   // gets class variable name (e.g. X for ?X)
   getVariableName: function() {
