@@ -52,8 +52,16 @@ Interpreter.customMethods({
      })
     })
   },
+  GenerateSPARQL_from_selection: function() {
+    // get _id-s of selected elements - it serves as potential root Classes
+    // and as allowed elements
+    var editor = Interpreter.editor;
+		var elem_ids = _.keys(editor.getSelectedElements());
 
-  GenerateSPARQL_jo: function() {
+    GenerateSPARQL_for_ids(elem_ids)
+  },
+
+  GenerateSPARQL_from_diagram: function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
@@ -62,17 +70,23 @@ Interpreter.customMethods({
       return e["_id"]
     });
 
-    // Print All SPARQL Queries within the diagram
-    _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) {
-         //console.log(JSON.stringify(q,null,2));
-     var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-		 var rootClass = abstractQueryTable["root"];
-		 var result = generateSPARQLtext(rootClass);
-		 console.log(result);
-		 Session.set("generatedSparql", result);
-       })
+    GenerateSPARQL_for_ids(elems_in_diagram_ids)
   },
 });
+
+
+// generate SPARQL for given id-s
+function GenerateSPARQL_for_ids(list_of_ids) {
+  // goes through all queries found within the list of VQ element ids
+  _.each(genAbstractQueryForElementList(list_of_ids),function(q) {
+       //console.log(JSON.stringify(q,null,2));
+   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+   var rootClass = abstractQueryTable["root"];
+   var result = generateSPARQLtext(rootClass);
+   console.log(result);
+   Session.set("generatedSparql", result);
+  })
+}
 
 //generate table with unique class names in form [_id] = class_unique_name
 //rootClass - abstract syntax table starting with 'rootClass' object

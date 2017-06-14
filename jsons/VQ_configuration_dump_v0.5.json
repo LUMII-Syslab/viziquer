@@ -200,7 +200,7 @@
         "noCollectionContextMenu": [
           {
             "item": "Generate SPARQL",
-            "procedure": "GenerateSPARQL_jo"
+            "procedure": "GenerateSPARQL_from_diagram"
           },
           {
             "item": "Paste (Ctrl-V) ",
@@ -235,7 +235,7 @@
           },
           {
             "item": "Generate SPARQL from selection",
-            "procedure": "GenerateSPARQL_jo"
+            "procedure": "GenerateSPARQL_from_selection"
           },
           {
             "item": "ExecuteSPARQL",
@@ -844,7 +844,7 @@
               },
               {
                 "item": "Generate SPARQL",
-                "procedure": "GenerateSPARQL_jo"
+                "procedure": "GenerateSPARQL_from_selection"
               },
               {
                 "item": "Execute SPARQL",
@@ -854,7 +854,7 @@
             "readModeContextMenu": [
               {
                 "item": "GenerateSPARQL",
-                "procedure": "GenerateSPARQL_jo"
+                "procedure": "GenerateSPARQL_from_selection"
               },
               {
                 "item": "ExecuteSPARQL",

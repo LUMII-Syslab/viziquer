@@ -185,6 +185,7 @@ genAbstractQueryForElementList = function (element_id_list) {
     // target is coded as _id
     // TODO: Optimize!!!
     var genConditionalLink = function(link) {
+     if (_.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
        if (link.start) {
           if (visited[link.link.getStartElement()._id()]) {
             return { identification: { _id: link.link._id(), localName: link.link.getName() },
@@ -202,6 +203,7 @@ genAbstractQueryForElementList = function (element_id_list) {
             };
           };
        };
+     };
        return null;
     };
 
@@ -220,7 +222,10 @@ genAbstractQueryForElementList = function (element_id_list) {
             linkedElem_obj["isInverse"] = false;
           };
           // generate if the element on the other end is not visited AND the link is not conditional
-          if (!visited[elem._id()] && !link.link.isConditional()) {
+          // AND it is within element_list AND the link is within element_list
+          if (!visited[elem._id()] && !link.link.isConditional()
+              && _.any(element_list, function(el) {return el.isEqualTo(elem)})
+              && _.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
               visited[elem._id()]=elem._id();
               _.extend(linkedElem_obj,
                 {

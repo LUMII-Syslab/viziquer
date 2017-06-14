@@ -730,6 +730,7 @@ VQ_Element.prototype = {
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
@@ -738,6 +739,7 @@ VQ_Element.prototype = {
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
 						};
 						if (this.isNegation()) {
@@ -755,6 +757,7 @@ VQ_Element.prototype = {
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
@@ -763,6 +766,7 @@ VQ_Element.prototype = {
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
 						};
 						if (this.isNegation()) {
@@ -778,6 +782,8 @@ VQ_Element.prototype = {
 																 {attrName:"endShapeStyle.shape",attrValue:"Diamond"},
 																 {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																 {attrName:"endShapeStyle.radius",attrValue:12},
+																 {attrName:"elementStyle.strokeWidth",attrValue:1},
+
 																]);
 						if (this.isOptional()) {
 									this.setLinkType("REQUIRED");
@@ -789,6 +795,7 @@ VQ_Element.prototype = {
 															 {attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 															 {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 															 {attrName:"endShapeStyle.radius",attrValue:8},
+															 {attrName:"elementStyle.strokeWidth",attrValue:3},
 															]);
 				};
 
