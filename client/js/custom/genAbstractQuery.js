@@ -33,7 +33,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   // TODO: This is not efficient to recreate schema each time
   var schema = new VQ_Schema();
-
+  // Adding default namespace
+  if (schema && query && query.root) {
+     query.root.defaultNamespace = schema.URI;
+  };
   // string -->[IdObject]
   function resolveClassByName(className) {
     return schema.resolveClassByName(className)
@@ -142,8 +145,13 @@ resolveTypesAndBuildSymbolTable = function (query) {
         f.exp=obj_class.instanceAlias;
       };
 
+      if (f.groupValues) {
+        f.exp="GROUP_CONCAT("+f.exp+")";
+      };
+
          parseExpObject(f)
     });
+
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
     if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
 

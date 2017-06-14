@@ -453,8 +453,22 @@ VQ_Element.prototype = {
     };
     return [];
   },
-  isClass: function() {return this.obj["type"]=="Box";},
-  isLink: function() {return this.obj["type"]=="Line";},
+	// --> string
+	// returns name of the VQ element's type Class, Link, Comment, CommentLink, null
+	getElementTypeName: function() {
+		var et = ElementTypes.findOne({_id:this.obj["elementTypeId"]});
+		if (et) {
+			return et["name"];
+		} else {
+			return null;
+		}
+	},
+  isClass: function() {
+		return this.getElementTypeName()=="Class";
+	},
+  isLink: function() {
+		return this.getElementTypeName()=="Link";
+	},
   // Determines whether the VQ_Element is the root class of the query
   isRoot: function() {
     return this.getType()=="query";
@@ -594,13 +608,13 @@ VQ_Element.prototype = {
   // returns an array of objects containing links as VQ_Elements and flag whether is has been retrieved by opposite end as start
   // start true means that the link has been retrieved from link "end"
   getLinks: function() {
-    return _.union(
+		return _.filter(_.union(
       Elements.find({startElement: this.obj["_id"]}).map(function(link) {
         return { link: new VQ_Element(link["_id"]), start: false };
       }),
       Elements.find({endElement: this.obj["_id"]}).map(function(link) {
         return { link: new VQ_Element(link["_id"]), start: true };
-      })
+      })), function(linkobj) { return linkobj.link.isLink()}
     );
   },
   // --> {start:VQ_Element, end:VQ_element}
@@ -712,7 +726,7 @@ VQ_Element.prototype = {
 						if (root_dir=="start") {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#000000"},
-																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"startShapeStyle.radius",attrValue:12},
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
@@ -720,7 +734,7 @@ VQ_Element.prototype = {
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"endShapeStyle.fill",attrValue:"#000000"},
-																		{attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"endShapeStyle.radius",attrValue:12},
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},
@@ -737,7 +751,7 @@ VQ_Element.prototype = {
 						if (root_dir=="start") {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
-																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"startShapeStyle.radius",attrValue:12},
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
@@ -745,7 +759,7 @@ VQ_Element.prototype = {
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
-																		{attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"endShapeStyle.radius",attrValue:12},
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},

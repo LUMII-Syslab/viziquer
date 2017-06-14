@@ -113,7 +113,7 @@ Interpreter.customMethods({
  		}
 
  		//Active element is given as Class type element
- 		var atr_names = [{value: " ", input: " ", }];
+ 		var atr_names = [];
 
  		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
@@ -122,12 +122,12 @@ Interpreter.customMethods({
  			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 
  			if (!compart_type) {
- 				return atr_names;
+ 				return [{input:"count(.)",value:"count(.)"},{input:"count_distinct(.)",value:"count_distinct(.)"}];
  			}
 
  			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
  			if (!compart) {
- 				return atr_names;
+ 				return [{input:"count(.)",value:"count(.)"},{input:"count_distinct(.)",value:"count_distinct(.)"}];
  			}
 
  		//Read attribute values from DB
@@ -159,12 +159,11 @@ Interpreter.customMethods({
  	 	// return atr_names;
  		atr_names = _.sortBy(atr_names, "input");
 
+		atr_names = _.union([{input:"count(.)",value:"count(.)"},{input:"count_distinct(.)",value:"count_distinct(.)"}], atr_names);
+
  	 	atr_names = _.uniq(atr_names, false, function(item) {
  	 		return item["input"];
  	 	});
-
- 		atr_names.push({input:"count(.)",value:"count(.)"});
- 		atr_names.push({input:"countdistinct(.)",value:"countdistinct(.)"});
 
  		return atr_names;
 
