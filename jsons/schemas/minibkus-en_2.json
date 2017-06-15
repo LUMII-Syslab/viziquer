@@ -2,7 +2,7 @@
   "Name": "Schema",
   "Schema": {
     "URI": "http://lumii.lv/ontologies/MINIBKUS-En.owl",
-    "Name": "MINIBKUS-En",	
+    "Name": "",	
     "Classes": [
       {
         "SuperClasses": [],
@@ -324,7 +324,6 @@
           {
             "SourceClass": "HospitalEpisode",
             "TargetClass": "CPhysician",
-            "inverseRole": "hospitalEpisode",
             "minCardinality": 0,
             "maxCardinality": 1
           }
@@ -336,7 +335,6 @@
           {
             "SourceClass": "CPhysician",
             "TargetClass": "HospitalEpisode",
-            "inverseRole": "responsiblePhysician",
             "minCardinality": 0,
             "maxCardinality": 2147483647
           },
@@ -355,7 +353,6 @@
           {
             "SourceClass": "HospitalEpisode",
             "TargetClass": "CPhysician",
-            "inverseRole": "hospitalEpisode",
             "minCardinality": 0,
             "maxCardinality": 1
           }
