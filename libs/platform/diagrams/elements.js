@@ -243,7 +243,7 @@ Meteor.methods({
 
 				var clipboard = Clipboard.findOne({userId: user_id,
 													toolId: list.toolId,
-													diagramTypeId: list.diagramTypeId,
+													// diagramTypeId: list.diagramTypeId,
 												});
 				
 				if (clipboard) {
