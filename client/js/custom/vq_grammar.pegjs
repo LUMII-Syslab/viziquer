@@ -151,8 +151,9 @@
 
 			BuiltInCall = Aggregate / FunctionExpression / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
 
-			Aggregate = Aggregate:(AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
+			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
+			AggregateAO = Aggregate: ("COUNT_DISTINCT" / "count_distinct") "(" space Expression: Expression space ")" {return {Aggregate:"COUNT", DISTINCT:"DISTINCT", Expression:Expression}}
 			AggregateA = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
 			AggregateB = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
@@ -282,7 +283,7 @@
 			INTEGER_NEGATIVE = Number:("-" INTEGER){return {Number:Number.join("")}}
 			DECIMAL_NEGATIVE = Number:("-" DECIMAL){return {Number:Number.join("")}}
 			DOUBLE_NEGATIVE = Number:("-" DOUBLE){return {Number:Number.join("")}}
-			Var = Var:(VAR1 / VAR2) {return {Var:makeVar(Var)}}
+			Var = Var:(VAR1 / VAR2) {return {VariableName:makeVar(Var)}}
 			VAR1 = "?" VARNAME
 			VAR2 = "$" VARNAME
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
