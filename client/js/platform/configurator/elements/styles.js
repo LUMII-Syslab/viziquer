@@ -177,7 +177,9 @@ function apply_selected_style(index) {
 	var elem_id = Session.get("activeElement");
 	if (elem_id) {
 
-		var selection_elems = get_selection_elements();
+		// var selection_elems = get_selection_elements();
+
+		var selection_elems = getSelectedElements();
 		if (selection_elems && selection_elems.length == 1) {
 
 			var elem_type = ElementTypes.findOne({elementId: elem_id});
@@ -186,9 +188,15 @@ function apply_selected_style(index) {
 			}
 
 			var style_obj = elem_type["styles"][index];
-			var kinetic_obj = selection_elems[0];
+			// var kinetic_obj = selection_elems[0];
 
-			set_element_style(kinetic_obj, style_obj);
+			var elem = selection_elems[0];
+
+
+			console.log("selection elems ", selection_elems)
+
+			// set_element_style(kinetic_obj, style_obj);
+			.setStyle(fields["style"]);
 
 			if (elem_type["type"] == "Box") {
 				kinetic_obj.draw();

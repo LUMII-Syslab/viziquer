@@ -20,7 +20,7 @@ BoxCompartments = function(element, comparts_in) {
 BoxCompartments.prototype = {
 
 	create: function(comparts_in) {
-	
+		
 		var compartments = this;
 		var element = compartments.element;
 		var editor = compartments.editor;
@@ -82,9 +82,13 @@ BoxCompartments.prototype = {
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
-			if (compart_in["value"] && compart_in["value"] != "" &&
-				(compart_in["style"] && compart_in["style"]["visible"] == false))
+			if (compart_in["value"] == undefined || compart_in["value"] == "") {
 				return;
+			}
+
+			if (compart_in["style"]) {
+				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true");
+			}
 
 			var compart = new Compartment(compartments, compart_in, compartments.textsGroup);
 			comparts.push(compart);

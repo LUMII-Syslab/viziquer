@@ -32,7 +32,6 @@ http@1.2.12
 tap:i18n-db
 spacebars-compiler@1.0.12
 natestrauser:bootstrap-colorpicker
-arturs:konva
 mizzao:user-status
 email@1.2.0
 nilsdannemann:pdfmake
