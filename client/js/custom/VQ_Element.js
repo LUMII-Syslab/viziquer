@@ -92,6 +92,17 @@ VQ_Schema = function () {
 			createLink(tClass, newSchRole, "inAssoc", "targetClass");
 		})
 	})
+
+	_.each(data.Associations, function(asoc){
+		_.each(asoc.ClassPairs, function(cp){
+			if (cp.inverseRole)
+			{
+			  var schRole = schema.findSchemaRoleByName(asoc.localName, cp.SourceClass, cp.TargetClass);
+			  var invSchRole = schema.findSchemaRoleByName(cp.inverseRole, cp.TargetClass, cp.SourceClass);
+			  schRole.inverseSchemaRole = invSchRole;
+			}
+		})
+	})
 	schema.addRole( new VQ_Role({}, schema));
 };
 
@@ -145,6 +156,11 @@ VQ_Schema.prototype = {
   },
   findAttributeByName: function(name) {
 	return this.findElementByName(name, this.Attributes);
+  },
+  findSchemaRoleByName: function(name, sourceClass, targetClass) {
+    var element = _.find(this.SchemaRoles, function(el){
+		if (el.localName == name && el.sourceClass.localName == sourceClass && el.targetClass.localName == targetClass) { return el; }; })
+	return element;
   },
   addElement: function(newElement) {
 	this.Elements[newElement.getID()] = newElement;
@@ -254,9 +270,11 @@ VQ_Class.prototype.properties = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
 				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
-    var in_assoc =  _.map(this.inAssoc, function (a) {
-				return {name: a.localName, class: a.sourceClass.localName , type: "<="}; });
-	return _.union(out_assoc, in_assoc);
+    _.each(this.inAssoc, function (a) {
+				 if ( _.size(a.inverseSchemaRole ) == 0 )
+					out_assoc = _.union(out_assoc, {name: a.localName, class: a.sourceClass.localName , type: "<="});
+				});
+    return out_assoc;	
   };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
@@ -344,6 +362,7 @@ VQ_SchemaRole = function (roleInfo, schema){
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
+	this.inverseSchemaRole = {};
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
@@ -351,6 +370,7 @@ VQ_SchemaRole.prototype.constructor = VQ_SchemaRole;
 VQ_SchemaRole.prototype.role = null;
 VQ_SchemaRole.prototype.sourceClass = null;
 VQ_SchemaRole.prototype.targetClass = null;
+VQ_SchemaRole.prototype.inverseSchemaRole = null;
 
 
 
