@@ -185,6 +185,7 @@ Dialog = {
 
 				else if (input_control.hasClass("textarea")) {
 					input_value = input_control.val();
+					input_control.val("");
 				}
 
 				else if (input_control.hasClass("dialog-selection")) {
