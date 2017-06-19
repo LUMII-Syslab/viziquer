@@ -2,7 +2,7 @@
 BoxCompartments = function(element, comparts_in) {
 
 	var compartments = this;
-	compartments.element = element;	
+	compartments.element = element;
 	compartments.editor = element.editor;
 
 	compartments.textsGroup = find_child(element.presentation, "TextsGroup");
@@ -20,7 +20,7 @@ BoxCompartments = function(element, comparts_in) {
 BoxCompartments.prototype = {
 
 	create: function(comparts_in) {
-		
+
 		var compartments = this;
 		var element = compartments.element;
 		var editor = compartments.editor;
@@ -47,7 +47,7 @@ BoxCompartments.prototype = {
 			compartments.minHeight = min_shape_height;
 
 			if (min_shape_width > size.width || min_shape_height > size.height) {
-				
+
 				var new_width = Math.max(size.width, min_shape_width);
 				var new_height = Math.max(size.height, min_shape_height);
 
@@ -79,7 +79,7 @@ BoxCompartments.prototype = {
 		var element = compartments.element;
 		var editor = compartments.editor;
 
-		var comparts = compartments.compartments;	
+		var comparts = compartments.compartments;
 		_.each(comparts_in, function(compart_in) {
 
 			if (compart_in["value"] == undefined || compart_in["value"] == "") {
@@ -87,7 +87,7 @@ BoxCompartments.prototype = {
 			}
 
 			if (compart_in["style"]) {
-				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true");
+				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true" || compart_in["style"]["visible"] == true);
 			}
 
 			var compart = new Compartment(compartments, compart_in, compartments.textsGroup);
@@ -104,7 +104,7 @@ BoxCompartments.prototype = {
 		var min_width = 0;
 		var total_height = 0;
 
-		var comparts = compartments.compartments;	
+		var comparts = compartments.compartments;
 		_.each(compartments.compartments, function(compart) {
 
 			min_width = Math.max(min_width, compart.textWidth);
@@ -136,7 +136,7 @@ BoxCompartments.prototype = {
 		var prop_h = area_height / size.height;
 		var min_shape_height = total_height / prop_h;
 
-		return {width: Math.max(area_width, min_shape_width), 
+		return {width: Math.max(area_width, min_shape_width),
 				height: Math.max(area_height, min_shape_height)};
 	},
 
@@ -163,7 +163,7 @@ BoxCompartments.prototype = {
 			var text = compart.presentation;
 
 			text.width(text_width);
-			text.y(total_height);	
+			text.y(total_height);
 
 			var text_height = text.getHeight();
 			total_height = total_height + text_height;
@@ -175,7 +175,7 @@ BoxCompartments.prototype = {
 		});
 
 		//selecting text group
-		var texts_group = compartments.textsGroup;		
+		var texts_group = compartments.textsGroup;
 		//texts_group.x(pos.x1 + (pos.x2 - pos.x1) / 2 - min_width / 2)
 		//texts_group.y(pos.y1 + (pos.y2 - pos.y1) / 2 - min_height / 2);
 
@@ -191,7 +191,7 @@ BoxCompartments.prototype = {
 		compartments.compartments = [];
 		texts_group.destroyChildren();
 
-		compartments.recomputeCompartmentsPosition();		
+		compartments.recomputeCompartmentsPosition();
 	},
 
 	removeOne: function(compart_id) {
@@ -269,4 +269,3 @@ Compartment.prototype = {
 	},
 
 }
-
