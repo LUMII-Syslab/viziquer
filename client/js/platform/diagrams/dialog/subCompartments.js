@@ -79,8 +79,9 @@ Template.show_multi_field_form.helpers({
 	field_obj: function() {
 
 		var data_in = Template.currentData();
-		if (!data_in)
+		if (!data_in) {
 			return;
+		}
 
 		//var compart_type_id = $(this).$(".multi-field").attr("id");
 		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
@@ -91,8 +92,9 @@ Template.show_multi_field_form.helpers({
 		var fields = [];
 
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-		if (!compart_type)
+		if (!compart_type) {
 			return {fields: fields};
+		}
 
 		var sub_compartment;
 		var compart_id;

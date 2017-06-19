@@ -180,6 +180,7 @@ Dialog = {
 				var input_control = parent.find("." + sub_compart_type["_id"]);
 				if (input_control.hasClass("dialog-input")) {
 					input_value = input_control.val();
+					input_control.val("");
 				}
 
 				else if (input_control.hasClass("textarea")) {
@@ -197,6 +198,8 @@ Dialog = {
 					mapped_value = input_control.attr("mappedValue");
 					elem_style_id = input_control.attr("elementStyleId");
 					compart_style_id = input_control.attr("compartmentStyleId");
+
+					input_control.val("");
 				}
 
 
@@ -225,6 +228,8 @@ Dialog = {
 						elem_style_id = input_control.attr("falseElementStyle");
 						compart_style_id = input_control.attr("falseCompartmentStyle");
 					}
+
+					input_control.prop('checked', false);
 				}
 
 				var value = Dialog.buildCompartmentValue(sub_compart_type, input_value, mapped_value);

@@ -325,26 +325,6 @@ function add_template_helpers(id) {
 	});
 }
 
-function update_compartment_from_sub_fields(parent) {
-
-	var compart_type_id = parent.attr("id");
-
-	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-	if (!compart_type)
-		return;
-
-	var sub_compart_tree = {};
-	var res = build_sub_compartment_tree(parent, compart_type, sub_compart_tree);
-
-	var src_id = parent.attr("compartmentId");
-	var input = res;
-	var value = input;
-
-	var compart_style, elem_style;
-
-	update_compartment_value(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
-}
-
 
 build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 
@@ -757,6 +737,7 @@ function update_compartment_from_sub_fields(parent) {
 	Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 }
 
+
 function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId, compartStyleId) {
 
 	//selecting the compartment type
@@ -779,6 +760,9 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 					};
 
 		Interpreter.execute(after_update, [params], compart_type);
+
 	}
+
+	$(e.target).val();
 }
 
