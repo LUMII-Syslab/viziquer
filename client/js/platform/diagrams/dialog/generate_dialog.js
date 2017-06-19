@@ -29,7 +29,6 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", reset_variable());
 
 		return false;
-
 	},
 
 	'focus .dialog-input': function(e) {

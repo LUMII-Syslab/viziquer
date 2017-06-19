@@ -10,7 +10,6 @@ aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.1
 aldeed:simple-schema@1.5.3
 allow-deny@1.0.5
-arturs:konva@1.0.3
 autoupdate@1.3.12
 babel-compiler@6.18.2
 babel-runtime@1.0.1
