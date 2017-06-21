@@ -274,7 +274,7 @@ VQ_Class.prototype.getAssociations = function() {
 				 if ( _.size(a.inverseSchemaRole ) == 0 )
 					out_assoc = _.union(out_assoc, {name: a.localName, class: a.sourceClass.localName , type: "<="});
 				});
-    return out_assoc;	
+    return out_assoc;
   };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
@@ -563,7 +563,7 @@ VQ_Element.prototype = {
   isNegation: function() {
     return this.getCompartmentValue("Negation Link")=="true"
   },
-	// determines whether the link is negation
+	// determines whether the link is optional
   isOptional: function() {
     return this.getCompartmentValue("Optional Link")=="true"
   },
@@ -652,6 +652,11 @@ VQ_Element.prototype = {
   getEndElement: function() {
     return new VQ_Element(this.obj["endElement"]);
   },
+  // --> bool
+	// returns true if "Hide default link name" checkbox is checked
+  shouldHideDefaultLinkName: function() {
+		 return this.getCompartmentValue("Hide default link name")=="true";
+	},
 	// --> string
 	// Determines which end of the link is towards the root
 	// returns "start","end" or "none"
@@ -705,32 +710,36 @@ VQ_Element.prototype = {
 		 if (this.isLink()) {
 			 var schema = new VQ_Schema();
 			 var assoc = schema.findAssociationByName(this.getName());
-			 console.log(assoc);
-			 var start_class = schema.findClassByName(this.getStartElement().getName());
-			 var end_class = schema.findClassByName(this.getEndElement().getName());
+			 //console.log(assoc);
+			 if (assoc) {
+				 var start_class = schema.findClassByName(this.getStartElement().getName());
+				 var end_class = schema.findClassByName(this.getEndElement().getName());
+	       if (start_class && end_class) {
+					 var all_assoc_from_start = start_class.getAllAssociations();
+					 //console.log(all_assoc_from_start);
+					 var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+					 //console.log(all_sub_super_of_end);
+					 var possible_assoc = _.filter(all_assoc_from_start, function(a) {
+							return _.find(all_sub_super_of_end, function(c) {
+									return c.localName == a.class
+							})
+					});
+          //console.log(possible_assoc);
+					//console.log(_.size(possible_assoc));
 
-			 var all_assoc_from_start = start_class.getAllAssociations();
-        console.log(all_assoc_from_start);
-			 var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-        console.log(all_sub_super_of_end);
-			 var possible_assoc = _.filter(all_assoc_from_start, function(a) {
-				    return _.find(all_sub_super_of_end, function(c) {
-							  return c.localName == a.class
-						})
-			 });
-			  console.log(possible_assoc);
-
-			 if (possible_assoc.size<1 || possible_assoc.size>2) {
-				 return false;
-			 } else {
-				 if (possible_assoc.size==1 && possible_assoc[0].name == assoc.name) {
-					 return true
-				 } else {
-					 // if there are two associations, then should check if they are inverse
-					 return
+					 if (_.size(possible_assoc)==1 && possible_assoc[0].name == assoc.localName) {
+						 //console.log(possible_assoc[0].name);
+	 					 //console.log(assoc.localName);
+						 return true
+					 } else {
+						 return false;
+					 }
 				 }
+
 			 }
-		 }
+
+			 }
+
 	},
 	// bool -->
 	// sets the link name compartment's visibility
@@ -754,6 +763,13 @@ VQ_Element.prototype = {
 		};
 	};
 	},
+
+  // sets name
+	// string -->
+	setName: function(name) {
+		   this.setCompartmentValue("Name",name,name);
+	},
+
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
 	setLinkType: function(value) {
 		 if (this.isLink()) {
