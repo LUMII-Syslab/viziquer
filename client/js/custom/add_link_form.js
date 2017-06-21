@@ -332,6 +332,9 @@ Template.AddLink.events({
 
 					var line_id = new_line_id;
 					var line_elem = Elements.findOne({_id: line_id});
+					var vq_line = new VQ_Element(line_id);
+					vq_line.setLinkType("REQUIRED");
+					//vq_line.setName(name);
 					var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 					if (line_compart_type) {
 

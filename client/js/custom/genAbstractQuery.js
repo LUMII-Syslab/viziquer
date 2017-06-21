@@ -57,13 +57,18 @@ resolveTypesAndBuildSymbolTable = function (query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class) {
+
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
 
     if (obj_class.linkIdentification) {
         _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
+        _.extend(obj_class.linkIdentification, parsePathExpression(obj_class.linkIdentification.localName))
     };
 
-    obj_class.conditionLinks.forEach(function(cl) {_.extend(cl.identification,resolveLinkByName(cl.identification.localName))});
+    obj_class.conditionLinks.forEach(function(cl) {
+      _.extend(cl.identification,resolveLinkByName(cl.identification.localName));
+      _.extend(cl.identification, parsePathExpression(cl.identification.localName))
+    });
 
     if (obj_class.instanceAlias) {
       if(symbol_table[obj_class.instanceAlias]) {
@@ -111,6 +116,20 @@ resolveTypesAndBuildSymbolTable = function (query) {
   };
 
   resolveClass(query.root);
+
+  // String --> JSON
+  // Parses the text and returns object with property "parsed_exp"
+  function parsePathExpression(str_expr) {
+    try {
+      var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+      return { parsed_exp: parsed_exp};
+    } catch (e) {
+      // TODO: error handling
+      console.log(e)
+    } finally {
+      // nothing
+    }
+  }
 
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
@@ -161,6 +180,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   resolveClassExpressions(query.root);
 
+  //console.log(query.root);
   return {root:query.root, symbolTable:symbol_table}
 };
 

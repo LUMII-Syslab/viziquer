@@ -358,9 +358,6 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsCondition: function(params) {
-		//arrow ->compartments->Conditional Link->extensions->after Update
-		//params: (compartType, compartId)
-		console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
@@ -372,9 +369,6 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsSubquery: function(params) {
-		//arrow ->compartments->Conditional Link->extensions->after Update
-		//params: (compartType, compartId)
-		console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
@@ -386,9 +380,6 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsGlobalSubquery: function(params) {
-		//arrow ->compartments->Conditional Link->extensions->after Update
-		//params: (compartType, compartId)
-		console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
@@ -400,9 +391,6 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsOptional: function(params) {
-		//arrow ->compartments->Optional Link->extensions->after Update
-		//params: Object {compartmentType: Object, compartmentId: "RxncBJNQ693NTCudS", input: "true", value: "true"}
-	  console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
@@ -414,9 +402,6 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsNegation: function(params) {
-		//arrow ->compartments->Inverse Link->extensions->after Update
-		//params: Object {compartmentType: Object, compartmentId: "RxncBJNQ693NTCudS", input: "true", value: "true"}
-		//console.log(params);
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
@@ -427,6 +412,15 @@ Interpreter.customMethods({
 		}
 	},
 
+	VQSetHideDefaultLinkName: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var hide = (input == "true");
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.hideDefaultLinkName(hide);
+		}
+	},
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
 		//return: String
@@ -468,9 +462,22 @@ Interpreter.customMethods({
 		//return: String
 	},
 
-	VQsetIsInverse: function() {
-		//arrow ->compartments->Name->extensions->after update
-		//params: (compartType, compartId)
+	VQsetLinkName: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var link = new VQ_Element(c["elementId"]);
+			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+		}
+	},
+
+	VQsetClassName: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var elem = new VQ_Element(c["elementId"]);
+       _.each(elem.getLinks().map(function(l) {return l.link}), function(link) { 
+					link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+			 });
+		}
 	},
 
 	VQgetAssociationNames: function() {

@@ -274,7 +274,7 @@ VQ_Class.prototype.getAssociations = function() {
 				 if ( _.size(a.inverseSchemaRole ) == 0 )
 					out_assoc = _.union(out_assoc, {name: a.localName, class: a.sourceClass.localName , type: "<="});
 				});
-    return out_assoc;	
+    return out_assoc;
   };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
@@ -563,7 +563,7 @@ VQ_Element.prototype = {
   isNegation: function() {
     return this.getCompartmentValue("Negation Link")=="true"
   },
-	// determines whether the link is negation
+	// determines whether the link is optional
   isOptional: function() {
     return this.getCompartmentValue("Optional Link")=="true"
   },
@@ -652,6 +652,11 @@ VQ_Element.prototype = {
   getEndElement: function() {
     return new VQ_Element(this.obj["endElement"]);
   },
+  // --> bool
+	// returns true if "Hide default link name" checkbox is checked
+  shouldHideDefaultLinkName: function() {
+		 return this.getCompartmentValue("Hide default link name")=="true";
+	},
 	// --> string
 	// Determines which end of the link is towards the root
 	// returns "start","end" or "none"
@@ -684,6 +689,85 @@ VQ_Element.prototype = {
 		if (findRoot(this.getStartElement())) {return "start"};
 		if (findRoot(this.getEndElement())) {return "end"};
 		return "none";
+	},
+	// bool -->
+	// hides or shows link name if it is default; true - hide, false - show
+  hideDefaultLinkName: function(hide) {
+		if (hide) {
+			   if (this.isDefaultLink()) {
+				   this.setLinkNameVisibility(false);
+				 } else {
+					 this.setLinkNameVisibility(true);
+				 }
+		} else {
+		    this.setLinkNameVisibility(true);
+	  }
+	},
+	// function which in fact should be in the schema
+	// --> bool
+	// Determines whether the link is the only possible option between two classes
+	isDefaultLink: function() {
+		 if (this.isLink()) {
+			 var schema = new VQ_Schema();
+			 var assoc = schema.findAssociationByName(this.getName());
+			 //console.log(assoc);
+			 if (assoc) {
+				 var start_class = schema.findClassByName(this.getStartElement().getName());
+				 var end_class = schema.findClassByName(this.getEndElement().getName());
+	       if (start_class && end_class) {
+					 var all_assoc_from_start = start_class.getAllAssociations();
+					 //console.log(all_assoc_from_start);
+					 var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+					 //console.log(all_sub_super_of_end);
+					 var possible_assoc = _.filter(all_assoc_from_start, function(a) {
+							return _.find(all_sub_super_of_end, function(c) {
+									return c.localName == a.class
+							})
+					});
+          //console.log(possible_assoc);
+					//console.log(_.size(possible_assoc));
+
+					 if (_.size(possible_assoc)==1 && possible_assoc[0].name == assoc.localName) {
+						 //console.log(possible_assoc[0].name);
+	 					 //console.log(assoc.localName);
+						 return true
+					 } else {
+						 return false;
+					 }
+				 }
+
+			 }
+
+			 }
+
+	},
+	// bool -->
+	// sets the link name compartment's visibility
+	setLinkNameVisibility: function(visible) {
+		if (this.isLink()) {
+			var elem_type_id = this.obj["elementTypeId"];
+	    var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
+	    if (comp_type) {
+	      var comp_type_id = comp_type["_id"];
+	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+	      if (comp) {
+					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+            a["input"] = comp["input"];
+						a["value"] = comp["value"];
+						a["id"] = comp["_id"];
+						a["projectId"] = Session.get("activeProject");
+			 			a["versionId"] = Session.get("versionId");
+
+			 			Utilities.callMeteorMethod("updateCompartment", a);
+	      };
+		};
+	};
+	},
+
+  // sets name
+	// string -->
+	setName: function(name) {
+		   this.setCompartmentValue("Name",name,name);
 	},
 
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
