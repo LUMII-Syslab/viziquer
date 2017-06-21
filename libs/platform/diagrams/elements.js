@@ -214,8 +214,8 @@ Meteor.methods({
 
 				if (list["elements"]) {
 					Clipboard.update({userId: user_id,
-										toolId: list.toolId,
-										diagramTypeId: list.diagramTypeId,
+										// toolId: list.toolId,
+										// diagramTypeId: list.diagramTypeId,
 									},
 
 									{$set: {elements: list["elements"],
@@ -242,7 +242,7 @@ Meteor.methods({
 			if (is_project_version_admin(user_id, list)) {
 
 				var clipboard = Clipboard.findOne({userId: user_id,
-													toolId: list.toolId,
+													// toolId: list.toolId,
 													// diagramTypeId: list.diagramTypeId,
 												});
 				

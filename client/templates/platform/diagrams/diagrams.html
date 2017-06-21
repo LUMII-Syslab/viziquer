@@ -300,6 +300,42 @@
 
 </template>
 
+
+<template name="uploadProject">
+
+    <!-- Modal for new document -->
+    <div id="upload-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="projectFileList" type='file' multiple/>
+                            </div>
+                        </div>
+
+                    </form>  
+                </div>
+
+                <div class="modal-footer">
+                    <button id="ok-upload-project" type="button" class="btn btn-default">Upload</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{_ "close"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+
+
 <template name="configuratorDiagramOptions">
     {{#each configuratorDiagrams}}
         <option id="{{_id}}">{{name}}</option>
@@ -354,7 +390,9 @@
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right">
-                <button id="settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
+            	<button id="settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
+            	<a id="download-project" class="btn btn-ribbon" data-title="Download Project"><i class="fa fa-cloud-download"></i></a>
+            	<a id="upload-project" class="btn btn-ribbon" data-title="Upload Project"><i class="fa fa-cloud-upload"></i></a>
                 <button id="import" class="btn btn-ribbon" data-title="Import Ontology"><i class="fa fa-upload"></i></button>
             	<button id="add" class="btn btn-ribbon" data-title='{{_ "add_diagram"}}'><i class="fa fa-plus"></i></button>
             </span>
@@ -365,6 +403,7 @@
 
     {{> addDiagram}}
     {{> importOntology}}
+    {{> uploadProject}}
     {{> ontologySettings}}
 
 </template>

@@ -52,6 +52,30 @@ Template.diagramsRibbon.events({
 		$('#add-diagram').modal("show");
 	},
 
+	'click #download-project': function(e) {
+
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+				};
+
+		Utilities.callMeteorMethod("getProjectJson", list, function(resp) {
+
+			if (resp.diagrams) {
+
+			    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
+
+				var src = $("#download-project");
+			    src.attr("href", "data:" + data);
+			    src.attr("download", "data.json");
+			}
+			
+		});
+	},
+
+	'click #upload-project': function(e, templ) {
+		$('#upload-project-form').modal("show");
+	},
+
 	'click #import': function(e, templ) {
 		$('#import-ontology-form').modal("show");
 	},
@@ -489,6 +513,41 @@ Template.importOntology.events({
 	},
 
 });
+
+
+Template.uploadProject.events({
+
+	'click #ok-upload-project' : function(e, templ) {
+
+		//hidding the form
+		$('#upload-project-form').modal("hide");
+
+		var fileList = $("#projectFileList")[0].files;
+	    _.each(fileList, function(file) {
+
+	        var reader = new FileReader();
+
+	        reader.onload = function(event) {
+				var diagrams = JSON.parse(reader.result)
+	        	var list = {projectId: Session.get("activeProject"),
+	        				versionId: Session.get("versionId"),
+	                        data: diagrams,
+	                    };
+
+				Utilities.callMeteorMethod("uploadProjectData", list);
+			}
+
+	        reader.onerror = function(error) {
+	            console.error("Error: ", error);
+	        }
+	        reader.readAsText(file);
+	    });
+
+	},
+
+});
+
+
 
 
 Template.ontologySettings.helpers({

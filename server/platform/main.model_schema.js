@@ -2704,11 +2704,11 @@ Schemas.Clipboard = new SimpleSchema({
         label: "Clipboard.versionId",
     },
 
-    toolId: {
-        type: String,
-        regEx: SimpleSchema.RegEx.Id,
-        label: "Clipboard.toolId",
-    },
+    // toolId: {
+    //     type: String,
+    //     regEx: SimpleSchema.RegEx.Id,
+    //     label: "Clipboard.toolId",
+    // },
 
     // toolVersionId: {
     //     type: String,
@@ -2716,11 +2716,11 @@ Schemas.Clipboard = new SimpleSchema({
     //     label: "Clipboard.toolVersionId",
     // },
 
-    diagramTypeId: {
-        type: String,
-        regEx: SimpleSchema.RegEx.Id,
-        label: "Clipboard.diagramTypeId",
-    },
+    // diagramTypeId: {
+    //     type: String,
+    //     regEx: SimpleSchema.RegEx.Id,
+    //     label: "Clipboard.diagramTypeId",
+    // },
 
     userId: {
         type: String,
