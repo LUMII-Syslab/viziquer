@@ -206,13 +206,14 @@ function generateSPARQLtext(rootClass){
 
 		 //table with unique variable names
 		 var variableNamesAll = [];
-
+		 var fieldNames = [];
+		 
 		//counter for variables with equals names
 		 var counter = 0;
 
-		 var result = forAbstractQueryTable(rootClass, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix);
+		 var result = forAbstractQueryTable(rootClass, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames);
 		 sparqlTable = result["sparqlTable"];
-		 // console.log(result);
+		 //console.log(result);
 
 		 var prefixTable = result["prefixTable"];
 
@@ -248,7 +249,7 @@ function generateSPARQLtext(rootClass){
 		 if(rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + groupBy;
 
 		 //ORDER BY
-		 var orderBy = getOrderBy(rootClass["orderings"]);
+		 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"]);
 		 if (orderBy != "") SPARQL_text = SPARQL_text + "\nORDER BY " + orderBy;
 
 		 //OFFSET
@@ -280,7 +281,7 @@ function getPrefix(emptyPrefix, givenPrefix){
 // counter - counter for variables with equals names
 // sparqlTable - table with SPARQL structure generated so far
 // underNotLink - label, that class is under NOT link
-function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix){
+function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames){
 	var variableNamesClass = [];
 	var prefixTable = [];
 
@@ -288,6 +289,7 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 
 	var sparqlTable = [];
 	sparqlTable["class"] = "?" + instance;
+	sparqlTable["id"] = clazz["identification"]["_id"];
 	if(clazz["isVariable"] == true) {
 		sparqlTable["classTriple"] = "?" + instance + " a ?" + clazz["variableName"]+ ".";
 		sparqlTable["variableName"] = "?" + clazz["variableName"];
@@ -317,7 +319,8 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 	sparqlTable["selectDistinct"]["expressionVariables"] = [];
 	sparqlTable["selectDistinct"]["functionVariables"] = [];
 	sparqlTable["selectDistinct"]["aggrigateVariables"] = [];
-
+	sparqlTable["fullSPARQL"] = clazz["fullSPARQL"];
+	
 	//conditions
 	_.each(clazz["conditions"],function(condition) {
 		var result = parse_filter(condition["parsed_exp"], instance, variableNamesAll, counter, emptyPrefix);
@@ -341,7 +344,12 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 	_.each(clazz["fields"],function(field) {
 		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix);
 		counter = result["counter"]
-		for (var attrname in result["variableNamesClass"]) { variableNamesClass[attrname] = result["variableNamesClass"][attrname]; }
+		
+		for (var attrname in result["variableNamesClass"]) { 
+			variableNamesClass[attrname] = result["variableNamesClass"][attrname]; 
+			if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
+			if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"]
+		}
 		for (var prefix in result["prefixTable"]) { prefixTable[prefix] = result["prefixTable"][prefix]; }
 
 		var alias = field["alias"];
@@ -452,9 +460,14 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 	for (var attrname in variableNamesClass) {variableNamesAll[attrname] = variableNamesClass[attrname]; }
 	_.each(clazz["children"],function(subclazz) {
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
-		var temp = forAbstractQueryTable(subclazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink);
+		var temp = forAbstractQueryTable(subclazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames);
 		counter = temp["counter"];
-		for (var attrname in temp["variableNamesAll"]) { variableNamesClass[attrname] = temp["variableNamesAll"][attrname]; }
+		for (var attrname in temp["variableNamesAll"]) {
+			variableNamesClass[attrname] = temp["variableNamesAll"][attrname]; 
+			//if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
+			//if(typeof temp["variableNamesAll"][attrname] === 'object')fieldNames[attrname].push({"class":subclazz["identification"]["_id"], "name":temp["variableNamesAll"][attrname]["alias"]});
+			//if(typeof temp["variableNamesAll"][attrname] === 'object')fieldNames[attrname][subclazz["identification"]["_id"]] = temp["variableNamesAll"][attrname]["alias"];
+		}
 		for (var prefix in temp["prefixTable"]) { prefixTable[prefix] = temp["prefixTable"][prefix]; }
 		underNotLink = false;
 		//link triple
@@ -466,7 +479,12 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 					temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
 				} else {
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
-					if(subclazz["linkIdentification"]["localName"] != "==") prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+subclazz["linkIdentification"]["Namespace"]+"#>";
+					
+					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+						preditate = " " + getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+					}
+					
+					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+subclazz["linkIdentification"]["Namespace"]+"#>";
 				}
 				if(subclazz["isInverse"] == true) {
 					object = instance;
@@ -476,7 +494,10 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 					object = idTable[subclazz["identification"]["_id"]];
 				}
 				// if is global subQuery then no need in link between classes
-				if(subclazz["isGlobalSubQuery"] != true && subclazz["linkIdentification"]["localName"] != "==")temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
+				if(subclazz["isGlobalSubQuery"] != true && subclazz["linkIdentification"]["localName"] != "=="){
+					temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
+					
+				}
 				if(subclazz["linkIdentification"]["localName"] == "==") sparqlTable["filter"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
 			}
 
@@ -489,8 +510,7 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 				// temp["sparqlTable"]["having"] = getHaving(subclazz["havingConditions"]);
 
 				//ORDER BY
-				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"]);
-
+				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"]);
 				 //OFFSET
 				temp["sparqlTable"]["offset"] = subclazz["offset"];
 
@@ -519,13 +539,12 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 	})
 
 	for (var attrname in variableNamesClass) { variableNamesAll[attrname] = variableNamesClass[attrname]; }
-	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter};
+	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames};
 }
 
 
-function getOrderBy(orderings){
+function getOrderBy(orderings, fieldNames, rootClass_id){
 	var orderTable = [];
-
 	_.each(orderings,function(order) {
 		var descendingStart = "";
 		var descendingEnd = "";
@@ -533,10 +552,16 @@ function getOrderBy(orderings){
 			descendingStart = "DESC("
 			descendingEnd = ")"
 		}
-
-		var result = parse_attrib(order["parsed_exp"], null, "", [], [], 0);
-		orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
-
+		if(typeof fieldNames[order["exp"]] !== 'undefined'){
+			var result = fieldNames[order["exp"]][rootClass_id];
+			if(typeof result === 'undefined'){
+				for (var ordr in fieldNames[order["exp"]]) { 
+					result = fieldNames[order["exp"]][ordr];
+					break;
+				}
+			}
+			orderTable.push(descendingStart + result + descendingEnd + " ");
+		}
 	})
 	var uniqueTriples = orderTable.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
@@ -663,6 +688,10 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 		}
 	}
 
+	if(sparqlTable["fullSPARQL"]!= null){
+		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") == true) whereStatements.unshift("{" + sparqlTable["fullSPARQL"] + "}");
+	}
+	
 	var subQueries = [];
 
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
@@ -685,44 +714,55 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 
 					var tempSelect = selectResult["select"];
 					tempSelect= tempSelect.concat(selectResult["aggregate"])
-					if(tempSelect.length > 0){
-						var subQuery = "{SELECT " ;
-
-						//DISTINCT
-						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
-
-						subQuery = subQuery + tempSelect.join(" ") + " WHERE{\n";
-
-						//SELECT DISTINCT
-						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "SELECT DISTINCT " + selectResult["selectDistinct"].join(" ") + " WHERE{\n";
-
-						subQuery = subQuery + temp.join("\n")  + "}";
-						var groupBy = selectResult["groupBy"].join(" ");
-						if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
-
-						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
-
-						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
-
-
-						//ORDER BY
-						// console.log("ORDER ORDER", sparqlTable["subClasses"][subclass]["order"]);
-						 var orderBy = sparqlTable["subClasses"][subclass]["order"];
-						 if (orderBy != "") subQuery = subQuery + "\nORDER BY " + orderBy;
-
-						 //OFFSET
-						 if (sparqlTable["subClasses"][subclass]["offset"] != null) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
-
-						 //LIMIT
-						if (sparqlTable["subClasses"][subclass]["limit"] != null) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
-
-						subQuery = subQuery + "}";
-
-						if(sparqlTable["class"] == "?[ + ]")subQueries.push(subQuery);
-						else whereStatements.unshift(subQuery);
+					if(sparqlTable["subClasses"][subclass]["linkType"] != "NOT"){
+					
+						if(tempSelect.length > 0){
+							
+							var subQuery = "{SELECT " ;
+							
+							//DISTINCT
+							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
+							
+							subQuery = subQuery + tempSelect.join(" ") + " WHERE{\n";
+							
+							//SELECT DISTINCT
+							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "SELECT DISTINCT " + selectResult["selectDistinct"].join(" ") + " WHERE{\n";
+							
+							
+							
+							subQuery = subQuery + temp.join("\n")  + "}";
+							var groupBy = selectResult["groupBy"].join(" ");
+							if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
+							
+							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
+							
+							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
+							
+							
+							//ORDER BY
+							// console.log("ORDER ORDER", sparqlTable["subClasses"][subclass]["order"]);
+							 var orderBy = sparqlTable["subClasses"][subclass]["order"];
+							 if (orderBy != "") subQuery = subQuery + "\nORDER BY " + orderBy;
+							 
+							 //OFFSET
+							 if (sparqlTable["subClasses"][subclass]["offset"] != null) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
+							 
+							 //LIMIT 
+							if (sparqlTable["subClasses"][subclass]["limit"] != null) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
+							
+							subQuery = subQuery + "}";
+							
+							
+							
+							if(sparqlTable["class"] == "?[ + ]")subQueries.push(subQuery);
+							else whereStatements.unshift(subQuery);
+						} else {
+							var subQuery = "FILTER(EXISTS{" + temp.join("\n") + "})"
+							whereStatements.unshift(subQuery);
+						}
+					
 					} else {
-						var subQuery = "FILTER(EXISTS{" + temp.join("\n") + "})"
-						whereStatements.unshift(subQuery);
+						whereStatements.push("MINUS{" + temp.join("\n")+ "}");
 					}
 				}
 			}
@@ -748,6 +788,10 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 		return arr.indexOf(el) === i;
 	});
 
+	if(sparqlTable["fullSPARQL"]!= null){
+		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") != true) whereStatements.push(sparqlTable["fullSPARQL"]);
+	}
+	
 	//link type
 	if(typeof sparqlTable["linkType"] === 'string' && sparqlTable["linkType"] == "OPTIONAL"){
 		whereStatements = whereStatements.concat(filters);

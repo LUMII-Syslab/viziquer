@@ -320,7 +320,7 @@ function setVariableName(varName, alias, variableData){
 
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
-function getPath(expressionTable){
+getPath = function(expressionTable){
 	var path = "";
 	for(var key in expressionTable){
 		if(typeof expressionTable[key]["path"]!== 'undefined'){
@@ -933,20 +933,143 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if (key == "RelationalExpression") {
-			SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible); 
-			//TODO atributa tips XSD_STRING
-			if (typeof expressionTable[key]['Relation'] !== 'undefined'){
-				isExpression = true;
-				if (expressionTable[key]["Relation"] == "<>") SPARQLstring = SPARQLstring  + " != ";
-				else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
-				else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
-				if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
-					SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, alias, generateTriples, isSimpleVaraible) + ")";//?????????????????? ExpressionList
+			
+			var Usestringliteralconversion = "Use simple string literals";
+			if(Usestringliteralconversion == "Use simple string literals" && typeof expressionTable[key]["Relation"]!== 'undefined' && expressionTable[key]["Relation"] == "=") {
+				if (typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&&typeof  expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& ((typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]== 'xsd:string'
+				) 
+				|| (typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"] !== 'undefined'
+				&& expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"] == 'xsd:string'
+				))
+				
+				&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]=== 'undefined'
+				&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false
+				){
+					SPARQLstring = SPARQLstring  + "STR(" + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible) + ") = ";
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible)	
+					visited = 1
 				}
-				if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible);
-				if (typeof expressionTable[key]["classExpr"] !== 'undefined') SPARQLstring = SPARQLstring  + "?" +className;
+				
+				if(typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& ((typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "xsd:string")
+				|| (typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"] == "xsd:string"))
+				
+				&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"] === 'undefined'
+				&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false
+				){
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible)+" = "
+					SPARQLstring = SPARQLstring  + "STR(" + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible)+")"
+					visited = 1
+				}
 			}
-			visited = 1
+			
+			if(Usestringliteralconversion == "Use typed string literals" && typeof expressionTable[key]["Relation"]!== 'undefined' && expressionTable[key]["Relation"] == "=") {
+				if (typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "xsd:string"
+				
+				&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]==='undefined'
+				&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false)
+				{
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible) + " = ";
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible) + "^^xsd:string";
+					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+					visited = 1
+				}
+				
+				if (typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "xsd:string"
+				
+				&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]==='undefined'
+				&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false)
+				{
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible)+"^^xsd:string = ";
+					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible);
+					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+					visited = 1
+				}
+			}
+			
+			// if visited~=1 then
+				// if lQuery("Onto#Parameter[name='Use string literal conversion']"):attr("expressionTable[key]") == "Use simple string literals" && checkIfINRelExpr(expressionTable[key]) == true && isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false then
+					// SPARQLstring = SPARQLstring  + "STR(" + getSPARQLGpoupGraphPatternExpression(expressionTable[key]["NumericExpressionL"], "") + ")"	
+				// else
+					// SPARQLstring = SPARQLstring  + getSPARQLGpoupGraphPatternExpression(expressionTable[key]["NumericExpressionL"], "") 
+				// end
+				// if expressionTable[key]["Relation"]~= nil then 
+					// if expressionTable[key]["Relation"] == "<>" then SPARQLstring = SPARQLstring  + " !=" 
+					// else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] end
+					// if expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOT IN" then
+						// SPARQLstring = SPARQLstring + "(" + getSPARQLGpoupGraphPatternExpression2(expressionTable[key], "") + ")" 
+					// end
+					// if expressionTable[key]["NumericExpressionR"]~= nil then
+						// SPARQLstring = SPARQLstring  + getSPARQLGpoupGraphPatternExpression(expressionTable[key]["NumericExpressionR"], "") 
+					// end
+				// end
+				// visited = 1
+			// end
+			
+			if(visited != 1){
+				SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVaraible); 
+				
+				if (typeof expressionTable[key]['Relation'] !== 'undefined'){
+					isExpression = true;
+					if (expressionTable[key]["Relation"] == "<>") SPARQLstring = SPARQLstring  + " != ";
+					else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
+					else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
+					if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
+						SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, alias, generateTriples, isSimpleVaraible) + ")";//?????????????????? ExpressionList
+					}
+					if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVaraible);
+					if (typeof expressionTable[key]["classExpr"] !== 'undefined') SPARQLstring = SPARQLstring  + "?" +className;
+				}
+				visited = 1
+			}
 		}
 		if (key == "NumericLiteral") {
 			SPARQLstring = SPARQLstring + expressionTable[key]['Number'];
@@ -958,10 +1081,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				var res = generateExpression(expressionTable[key]["UnaryExpression"], "", className, alias, generateTriples, isSimpleVaraible)
 				if(res != null && res != ""){
 					SPARQLstring = SPARQLstring  + "xsd:decimal(" + res + ")/";
+					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 				}
 				res = generateExpression(expressionTable[key]["UnaryExpressionList"][0]["UnaryExpression"], "", className, alias, generateTriples, isSimpleVaraible)
 				if(res != null && res != ""){
 					SPARQLstring = SPARQLstring  + "xsd:decimal(" + res + ")";
+					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 				}
 				isFunction = true
 			}
@@ -1027,27 +1152,28 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						var left = additiveExpression["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]
 						var right = additiveExpression["MultiplicativeExpressionList"][0]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]
 					
-						// var sl = generateExpression({PrimaryExpression : left}, "", className, alias, generateTriples, isSimpleVaraible)
-						// var sr = generateExpression({PrimaryExpression : right}, "", className, alias, generateTriples, isSimpleVaraible)
+						var sl = generateExpression({PrimaryExpression : left}, "", className, alias, generateTriples, isSimpleVaraible);
+						var sr = generateExpression({PrimaryExpression : right}, "", className, alias, generateTriples, isSimpleVaraible);
 						// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
-							// if isDateVar(left) == true and isDateVar(right) == true then
-								// SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")"
-								// isFunction = true
-							// elseif isDateTimeVar(left) == true and isDateTimeVar(right) == true then
-								// SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")"
-								// isFunction = true
-							// elseif isDateTimeVar(left) == true and isValidForConvertation(right) then
-								// SPARQLstring = SPARQLstring + 'bif:datediff("day", xsd:dateTime(' + sr + '),' + sl + ")"
-								// prefixes["xsd:"] = lQuery("Onto#Prefix[shortForm='xsd:']"):attr("fullForm")
-								// isFunction = true
-							// elseif isDateTimeVar(left) == true then
-								// SPARQLstring = SPARQLstring + 'bif:datediff("day",  ' + sr + ', xsd:dateTime(' + sl + "))"
-								// prefixes["xsd:"] = lQuery("Onto#Prefix[shortForm='xsd:']"):attr("fullForm")
-								// isFunction = true
-							// else
-								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression = value["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible)
-								// SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpressionList = value["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
-							// end
+							if(isDateVar(left, "xsd:date") == true && isDateVar(right, "xsd:date") == true){
+								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
+								isFunction = true;
+							} else if(isDateVar(left, "xsd:dateTime") == true && isDateVar(right, "xsd:dateTime") == true){
+								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
+								isFunction = true;
+							} else if(isDateVar(left, "xsd:dateTime") == true && isValidForConvertation(right) == true ){
+								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+								SPARQLstring = SPARQLstring + 'bif:datediff("day", xsd:dateTime(' + sr + '),' + sl + ")";
+								isFunction = true;
+							} else if(isDateVar(left, "xsd:dateTime") == true){
+								SPARQLstring = SPARQLstring + 'bif:datediff("day",  ' + sr + ', xsd:dateTime(' + sl + "))";
+								isFunction = true;
+								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+							} else {
+								var value = generateExpression({MultiplicativeExpression : additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible) + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
+							// if (isDateVar(left) == true or isDateVar(right) == true or isDateTimeVar(left) == true or isDateTimeVar(right) == true) and showIncorrectSyntaxForm == true then incorrectSyntaxForm(additiveExpression, "Unsupported Syntax for General SPARQL option") end
+							SPARQLstring = SPARQLstring  + value
+							}
 						// else
 							var value = generateExpression({MultiplicativeExpression : additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible) + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible)
 							// if (isDateVar(left) == true or isDateVar(right) == true or isDateTimeVar(left) == true or isDateTimeVar(right) == true) and showIncorrectSyntaxForm == true then incorrectSyntaxForm(additiveExpression, "Unsupported Syntax for General SPARQL option") end
@@ -1153,17 +1279,15 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		if (key == "SubstringExpression") {
 		    isExpression = true
-			// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
-				// SPARQLstring = SPARQLstring  .. "bif:substring(" .. generateExpression({ExpressionList = value}, "") .. ")"
-			// else
-				// SPARQLstring = SPARQLstring  .. "SUBSTR(" .. generateExpression({ExpressionList = value}, "") .. ")"
-			// end
+			var substr = "SUBSTR(";
+			// if(SPARQL engine type) 
+				substr = "bif:substring(";
 		    var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr2 != "") {expr2 = ", " + expr2};
 		    var expr3 = generateExpression({Expression3 : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVaraible);
 		    if(expr3 != "") {expr3 = ", " + expr3};
-		    SPARQLstring = SPARQLstring  + "SUBSTR(" + expr1 + expr2 + expr3 + ")";
+		    SPARQLstring = SPARQLstring  + substr + expr1 + expr2 + expr3 + ")";
 		    visited = 1;
 		}
 		
@@ -1303,4 +1427,15 @@ function isValidForConvertation(v){
 		}
 	}
 	return false
+}
+
+function isFunctionExpr(value){
+	var r = false;
+	if (typeof value == 'object') {
+		for(var k in value){
+			if (k == "FunctionExpression") r = true;
+			else r = isFunctionExpr(value[k]);
+		}
+	}
+	return r;
 }
