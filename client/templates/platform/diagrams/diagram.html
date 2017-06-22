@@ -15,7 +15,7 @@
             <div id="compartment-forms" class="col-sm-12 col-md-12 col-lg-{{dialog_size}} col-xl-2">
 
                 {{> editingMessage editing=editing}}
-                
+
                 {{> errorMessages}}
 
                 <div class="panel-group" id="dialog">
@@ -38,7 +38,7 @@
     {{/each}}
 
     {{> AddLink}}
-    {{> SPARQL}}    
+    {{> SPARQL}}
 
 </template>
 <!-- End of diagram template -->
@@ -52,7 +52,7 @@
             <div class="panel-heading">
                 SPARQL
             </div>
-            
+
             <div class="panel-body">
 
                 <div class="row">
@@ -66,12 +66,12 @@
                         <div class="form-group">
                             <div class="col-lg-12" style="margin-top:10px;">
                                 <button id="reset-sparql" class="btn btn-danger btn-sm">Reset</button>
-                                <button id="execute-sparql" class="btn btn-success btn-sm">Execute</button>
+                              <!--  <button id="execute-sparql" class="btn btn-success btn-sm">Execute</button> -->
                             </div>
 
                         </div>
-                            
-                       
+
+
                     </form>
                 </div>
             </div>
@@ -81,27 +81,33 @@
             <div class="panel-heading">
                 Result
             </div>
-            
+
             <div class="panel-body">
 
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <div class="table-responsive">
                             <table class="table table-bordered table-condensed table-hover table-striped">
+                                {{#with executedSparql}}
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Class</th>
+                                      <th>#</th>
+                                      {{#each sparql.head.[0].variable}}
+                                         <th>{{$.name}}</th>
+                                      {{/each}}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each executedSparql}}
-                                        <tr index="{{index}}">
-                                            <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{index}}</div></td>
-                                            <td><div class="toolbar-item" attribute="item" contentEditable="true">{{value}}</div></td>
+                                    {{#each sparql.results.[0].result}}
+                                        <tr index="{{plusOne @index}}">
+                                            <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOne @index}}</div></td>
+                                            {{#each binding}}
+                                            <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
+                                            {{/each}}
                                         </tr>
                                     {{/each}}
                                 </tbody>
+                                {{/with}}
                             </table>
                         </div>
                     </div>
@@ -157,11 +163,11 @@
 
                         {{#if style}}
                             <span class="gritter-title">{{user}} changed style for some elements</span>
-                        {{/if}}                        
+                        {{/if}}
 
                         {{#if updated}}
                             <span class="gritter-title">{{user}} changed an element</span>
-                        {{/if}}                       
+                        {{/if}}
 
                     </div>
                     <div style="clear:both"></div>
@@ -192,7 +198,7 @@
     {{#if editable}}
         {{#if editMode}}
             <div class="row element-sections-header">
-                <div class="pull-right"> 
+                <div class="pull-right">
                     {{#if addSectionsEnabled}}
                         <a id="addSections" class="btn btn-success"><i class="fa fa-file"></i> {{_ "add_document_sections"}}</a>
                     {{/if}}
@@ -201,8 +207,8 @@
         {{/if}}
     {{/if}}
 
-                
-    <ul id="sections" class="dd-list">                        
+
+    <ul id="sections" class="dd-list">
         {{#each sections}}
 
             <li class="dd-item section-item" id="{{_id}}" index="{{index}}">
@@ -210,7 +216,7 @@
                     <div class="section">{{{text}}}</div>
                     <div class="row">
                         <div class="pull-right">
-                            <ul class="list-inline font-xs list-section"> 
+                            <ul class="list-inline font-xs list-section">
                                 <li>
                                     <a href="{{pathFor 'document' _id=this.documentId}}" class="text-muted">{{documentName}}</a>
                                 </li>
@@ -236,17 +242,17 @@
 
 <!-- Start of add sections form dialog -->
 <template name="addSectionsForm">
-    <!-- Add form-->   
+    <!-- Add form-->
     <div id="add-sections-form" class="modal fade">
         <div id="sections-dialog" class="modal-dialog">
-            <div class="modal-content add-sections-content" style="overflow:auto;">      
+            <div class="modal-content add-sections-content" style="overflow:auto;">
                 <div class="modal-header">
                     <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">{{_ "add_sections"}}</h4>
                 </div>
                 <div class="modal-body">
                     {{> sectionsFormDropDown}}
-                    <hr>   
+                    <hr>
                     {{> docSections}}
                 </div>
             </div><!-- /.modal-content -->
@@ -256,7 +262,7 @@
 </template>
 
 <template name="sectionsFormDropDown">
-    
+
     <form class="form-horizontal" role="form">
         <div class="form-group">
             <label for="modalDocument" class="control-label col-sm-2">{{_ "document_dialog"}}</label>
@@ -280,8 +286,8 @@
                 <div class="row">
                     <div class="pull-right">
                         <ul class="list-inline font-xs list-section">
-                            <li> 
-                            <a href="#" class="text-danger sectionAddRemove">{{_ "document_dialog_add_section"}}</a> 
+                            <li>
+                            <a href="#" class="text-danger sectionAddRemove">{{_ "document_dialog_add_section"}}</a>
                             </li>
                         </ul>
                     </div>
@@ -303,7 +309,7 @@
 <template name="contextMenuTemplate">
 {{#with context_menu_item}}
     <ul id="contextMenu" class="dropdown-menu" role="menu" x="{{x}}" y="{{y}}" style="display:{{display}}; position:absolute; left:{{left}}; top:{{top}};">
-        {{#each menu}} 
+        {{#each menu}}
             {{> menu_item}}
         {{/each}}
     </ul>
@@ -346,7 +352,7 @@
 <template name="editingMessage">
 
     {{#with editing}}
-        
+
         {{#if lockingButton}}
             <div class="alert alert-success clearfix">
                 {{_ "diagram_can_be_edited"}}
@@ -367,8 +373,7 @@
                 <button id="lockDiagram" type="button" class="btn btn-warning btn-xs pull-right">{{_ "diagram_unlock_button"}}</button>
             </div>
         {{/if}}
-        
+
     {{/with}}
 
 </template>
-

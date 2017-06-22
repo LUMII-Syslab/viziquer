@@ -7,7 +7,7 @@ Interpreter.methods({
 
 		return {serverMethod: "updateDiagram"};
 	},
-	
+
 });
 
 _.extend(Interpreter, {
@@ -45,7 +45,7 @@ _.extend(Interpreter, {
 		}
 
 		Session.set("editorType", editor_type);
-		
+
 		Interpreter.editor = editor;
 
 		return editor;
@@ -115,7 +115,7 @@ Template.diagramTemplate.helpers({
 
 			ElementTypes.find().forEach(function(elem_type) {
 
-				//contextMenu	
+				//contextMenu
 				get_templates(elem_type.contextMenu);
 				get_templates(elem_type.readModeContextMenu);
 
@@ -146,12 +146,12 @@ Template.sparqlForm.events({
 	"click #execute-sparql": function(e) {
 		e.preventDefault();
 
-		var resp = {status: 200,
-					query: $("#generated-sparql").val(),
-					error: "Error in execute SPARQL",
-				};
+		//var resp = {status: 200,
+	 var	query = $("#generated-sparql").val();
+			//		error: "Error in execute SPARQL",
+			//	};
 
-		Interpreter.customExtensionPoints.ExecuteSPARQL(resp);
+		Interpreter.execute("ExecuteSPARQL_from_text",query);
 	},
 
 });
@@ -168,10 +168,15 @@ Template.sparqlForm.helpers({
 
 		var result = Session.get("executedSparql");
 
-		return _.map(result, function(item, i) {
+		return result;
+		/*return _.map(result, function(item, i) {
 			return {value: item, index: i+1};
-		});
+		});*/
 	},
+
+	plusOne: function(number) {
+		return number + 1;
+	}
 
 });
 
@@ -187,7 +192,7 @@ Template.editingMessage.helpers({
 
 			//diagram is being edited
 			if (diagram && diagram["editingUserId"]) {
-				
+
 				//diagram is being edited by someone else
 				if (diagram["editingUserId"] != user_id) {
 
@@ -355,7 +360,7 @@ Template.sectionsTemplate.events({
 
 //opens element and section mapping dialog
 	'click #addSections' : function(e, templ) {
-		
+
 		//sets default selection
 		$('#modalDocument').prop('selectedIndex', 0);
 
@@ -383,7 +388,7 @@ Template.addSectionsForm.onRendered(function() {
 Template.addSectionsForm.events({
 	'click #modalCloseButton' : function(e) {
 		Session.set("activeDocument", reset_variable())
-		Session.set("documentSections", Utilities.resetQuery()); 
+		Session.set("documentSections", Utilities.resetQuery());
 	},
 })
 
@@ -419,7 +424,7 @@ Template.diagramEditor.helpers({
 
 				var nodes = [];
 				var links = [];
-			
+
 				elems.forEach(function(elem) {
 
 					var id = elem["_id"];
@@ -506,11 +511,11 @@ Template.diagramEditor.onRendered(function() {
 	Session.set("editingDialog", reset_variable())
 
 	//a hack to register keydowns for the editor
-    $('body').on('keydown', function(e) { 
+    $('body').on('keydown', function(e) {
     	Interpreter.processKeyDown(e);
-    }); 
+    });
 
-    $('.padding-md').on('mousemove', function(e) { 
+    $('.padding-md').on('mousemove', function(e) {
     	if (is_mouse_down) {
 
     		var new_height = e.pageY - Math.round($("#ajoo_scene").offset().top);
@@ -518,16 +523,16 @@ Template.diagramEditor.onRendered(function() {
     	    $("#ajoo_scene").height(new_height);
     	    editor.size.setSize(editor.size.state.width, new_height);
     	}
-    }); 
+    });
 
-    $('.padding-md').on('mouseup', function(e) { 
+    $('.padding-md').on('mouseup', function(e) {
 		is_mouse_down = false;
-    }); 
+    });
 
 
     //adding the graphical editor
 	var editor = Interpreter.createEditor();
-	
+
 	if (!editor) {
 		console.error("Error: no editor");
 		return;
@@ -580,22 +585,22 @@ Template.diagramEditor.onDestroyed(function() {
 	if (is_ajoo_editor(editor_type)) {
 
 		var palette_handle = this.paletteHandle.get();
-		palette_handle.stop();	
+		palette_handle.stop();
 
 		var diagram_handle = this.diagramHandle.get();
-		diagram_handle.stop();	
+		diagram_handle.stop();
 
 		var elem_handle = this.elementHandle.get();
-		elem_handle.stop();	
+		elem_handle.stop();
 
 		var compart_handle = this.compartmentHandle.get();
 		compart_handle.stop();
 
 		var elem_type_handle = this.elementTypeHandle.get();
-		elem_type_handle.stop();			
+		elem_type_handle.stop();
 
 		var diagram_type_handle = this.diagramTypeHandle.get();
-		diagram_type_handle.stop();	
+		diagram_type_handle.stop();
 
 
 		//if the diagram was in edit mode, then refreshing the diagram image
@@ -621,7 +626,7 @@ Template.diagramEditor.onDestroyed(function() {
 	else if (is_zoom_chart_editor(editor_type)) {
 
 		var elem_handle = this.elementHandle.get();
-		elem_handle.stop();	
+		elem_handle.stop();
 
 		var compart_handle = this.compartmentHandle.get();
 		compart_handle.stop();
@@ -700,7 +705,7 @@ Template.docSections.events({
 
 		var index = ElementsSections.find({elementId: elem_id}).count() + 1;
 
-		var list = {projectId: Session.get("activeProject"), 
+		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 					sectionId: section_id,
 					elementId: elem_id,
@@ -710,7 +715,7 @@ Template.docSections.events({
 				};
 
 		Utilities.callMeteorMethod("addSectionToElement", list);
-	},	
+	},
 });
 
 /* End of doc sections */
@@ -768,7 +773,7 @@ function update_seen_count(list) {
 function make_sections_sortable() {
 
 	var current_elem_sec_id;
-    $("#sections").sortable({              
+    $("#sections").sortable({
         items: ".section-item",
        // distance: 3,
 
@@ -790,7 +795,7 @@ function make_sections_sortable() {
 	        	if (before)
 	        		prev_index = $(before).attr("index");
 
-	        	//update 
+	        	//update
 	           	var params = {prevIndex: Number(prev_index),
 		    				currentIndex: Number(el.attr("index")),
 
@@ -798,11 +803,11 @@ function make_sections_sortable() {
 		    				projectId: Session.get("activeProject"),
 		    				versionId: Session.get("versionId"),
 		    				diagramId: Session.get("activeDiagram"),
-		    			}; 	
+		    			};
 
 	        	Utilities.callMeteorMethod("reoredrSectionToElement", params);
-	        } 
-      
+	        }
+
         },
     });
 }
