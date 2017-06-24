@@ -44,20 +44,20 @@
 
     <div id="viewButtons" class="btn-group">
         <a href="#" class="btn btn-default btn-sm" data-toggle="dropdown">
-            <i class="fa fa-gear fa-lg"></i> 
+            <i class="fa fa-gear fa-lg"></i>
             <i class="fa fa-caret-down"></i>
         </a>
         <ul class="dropdown-menu text-left">
             {{#with diagramViews}}
                 <li>
                     <a class="view-switch" view="Default" href="#">
-                        <i class="fa fa-check" style="{{defaultStyle}}"></i> 
-                        {{_ "default_view"}} 
+                        <i class="fa fa-check" style="{{defaultStyle}}"></i>
+                        {{_ "default_view"}}
                     </a>
                 </li>
                 <li>
                     <a class="view-switch" view="Tree" href="#">
-                        <i class="fa fa-check" style="{{treeStyle}}"></i> 
+                        <i class="fa fa-check" style="{{treeStyle}}"></i>
                         {{_ "tree_view"}}
                     </a>
                 </li>
@@ -110,7 +110,7 @@
                     </a>
                 </li>
             {{/each}}
-            
+
             <li class="divider"></li>
             <li class="select-group-item" value="none"><a href="#">{{_ "reset"}}</a></li>
         </ul>
@@ -155,25 +155,25 @@
                 {{#if isEditMode}}
                     <div class="diagram-dropdown-container hidden" style="position: absolute; top: 3px;">
                         <a class="edit-project" href="#" data-toggle="dropdown">
-                            <i class="fa fa-angle-down fa-lg"></i> 
+                            <i class="fa fa-angle-down fa-lg"></i>
                         </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;">
                             <li>
                                 <a class="dublicate-diagram" href="#">
-                                    <i class="fa fa-files-o fa-lg"></i> 
+                                    <i class="fa fa-files-o fa-lg"></i>
                                     Dublicate
                                 </a>
                             </li>
 
                             <li>
                                 <a class="rename-diagram" href="#">
-                                    <i class="fa fa-pencil fa-lg"></i> 
+                                    <i class="fa fa-pencil fa-lg"></i>
                                     Rename
                                 </a>
                             </li>
                             <li>
                                 <a class="remove-diagram" href="#">
-                                    <i class="fa fa-trash-o fa-lg"></i> 
+                                    <i class="fa fa-trash-o fa-lg"></i>
                                     {{_ "delete"}}
                                 </a>
                             </li>
@@ -183,7 +183,7 @@
 
             </div>
         </div>
-    {{/each}}   
+    {{/each}}
 </template>
 
 <template name="treeDiagramsView">
@@ -211,7 +211,7 @@
             <button class="expand treeNodeButton" data-action="expand" type="button" style="{{expanded}}">Expand</button>
         {{/if}}
 
-      
+
         <a href="{{pathFor 'diagram'}}" style="text-decoration:none;" class="diagram-title" diagramId="{{_id}}"  data-container="body" data-toggle="popover" data-placement="right" data-content="">
             <div class="dd-handle {{colorClass}}">{{name}}</div>
         </a>
@@ -221,7 +221,7 @@
                 {{#each children}}
                     {{> treeDiagrams}}
                 {{/each}}
-            </ol> 
+            </ol>
         {{/if}}
     </li>
 
@@ -253,7 +253,7 @@
                                 </select>
                             </div>
                         </div>
-                    </form>  
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
@@ -286,7 +286,7 @@
                             </div>
                         </div>
 
-                    </form>  
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -320,7 +320,7 @@
                             </div>
                         </div>
 
-                    </form>  
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -354,7 +354,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
-                       
+
                         <div class="form-group">
                             <label for="diagram-name-field" class="col-sm-2 control-label">Name</label>
                             <div class="col-sm-10">
@@ -362,7 +362,7 @@
                             </div>
                         </div>
 
-                    </form>  
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -422,21 +422,21 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
 
+                      <div class="form-group">
+                          <label for="ontology-endpoint" class="col-sm-2 control-label">SPARQL Endpoint</label>
+                          <div class="col-sm-10">
+                              <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}">
+                          </div>
+                      </div>
+
                         <div class="form-group">
-                            <label for="ontology-uri" class="col-sm-2 control-label">URI</label>
+                            <label for="ontology-uri" class="col-sm-2 control-label">Named Graph</label>
                             <div class="col-sm-10">
                                 <input id="ontology-uri" type="text" class="form-control" value="{{uri}}">
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="ontology-endpoint" class="col-sm-2 control-label">Endpoint</label>
-                            <div class="col-sm-10">
-                                <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}">
-                            </div>
-                        </div>
-
-                    </form>  
+                    </form>
                 </div>
 
                 <div class="modal-footer">
@@ -458,7 +458,3 @@
     <!-- End of modal -->
 
 </template>
-
-
-
-
