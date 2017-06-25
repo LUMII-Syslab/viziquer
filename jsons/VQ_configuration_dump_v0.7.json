@@ -244,7 +244,7 @@
           },
           {
             "item": "Execute SPARQL from selection",
-            "procedure": "ExecuteSPARQL_as"
+            "procedure": "ExecuteSPARQL_from_selection"
           }
         ],
         "readModeCollectionContextMenu": [
