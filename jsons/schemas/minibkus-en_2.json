@@ -1,7 +1,7 @@
 {
   "Name": "Schema",
   "Schema": {
-    "URI": "http://lumii.lv/ontologies/MINIBKUS-En.owl",
+    "URI": "http://lumii.lv/ontologies/2016/mini-bkus-en",
     "Name": "",	
     "Classes": [
       {

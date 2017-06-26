@@ -3,11 +3,12 @@ Meteor.methods({
 	executeSparql: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
-
+    //console.log("ex-SPARQL");
+		//if (is_project_version_admin(user_id, list)) {
+      //console.log(list);
 			var options = list.options;
 
-			Future = Npm.require('fibers/future'); 
+			Future = Npm.require('fibers/future');
 			var future = new Future();
 
 			HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
@@ -23,12 +24,12 @@ Meteor.methods({
 	                		future.return({status: 500,});
 	                	}
 	                	else {
+											//console.log(JSON.stringify(json_res,null,2));
+	                		/*var result = _.map(json_res["sparql"]["results"][0]["result"], function(item) {
+												return item.binding;
+	                		});*/
 
-	                		var result = _.map(json_res["sparql"]["results"][0]["result"], function(item) {
-	                			return item.binding[0].uri[0];
-	                		});
-
-	                		future.return({status: 200, result: result,});
+	                		future.return({status: 200, result: json_res,});
 	                	}
 
 	                });
@@ -37,21 +38,21 @@ Meteor.methods({
 			});
 
 			return future.wait();
-		}
+		//}
 
 	},
 
 	testProjectEndPoint: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		//if (is_project_version_admin(user_id, list)) {
 
-			if (!list.endpoint || !list.uri || !isURL(list.uri)) {
+			if (!list.endpoint || !list.uri) {
 				console.error("No data specified");
 				return {status: 500,};
 			}
 
-			Future = Npm.require('fibers/future'); 
+			Future = Npm.require('fibers/future');
 			var future = new Future();
 
 			var params = {};
@@ -76,7 +77,7 @@ Meteor.methods({
 			});
 
 			return future.wait();
-		}
+		//}
 	},
 
 });
