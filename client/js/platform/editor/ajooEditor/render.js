@@ -275,14 +275,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 	   			else {
 
-	   				console.log("doc in compart ", doc);
-
 	   				element.compartments.removeAllRespresentations();
 	   				var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
-	   				// element.compartments.create(compartments);
-
-	   				// box.compartments = new BoxCompartments(box, compartments);
-	   				element.compartments = new BoxCompartments(element, compartments);
+	   				element.compartments.create(compartments);
 
 	   				var element_presentation = element.presentation;
 		   			var parent_layer = element_presentation.getLayer();

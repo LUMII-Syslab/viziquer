@@ -90,6 +90,11 @@ BoxCompartments.prototype = {
 				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true" || compart_in["style"]["visible"] == true);
 			}
 
+			if (!compart_in["style"]["visible"]) {
+				return;
+			}
+
+
 			var compart = new Compartment(compartments, compart_in, compartments.textsGroup);
 			comparts.push(compart);
 
