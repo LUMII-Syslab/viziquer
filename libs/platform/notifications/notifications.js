@@ -12,14 +12,16 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 		var role = doc.data.role;
 
 		//selecting the versions that are allowed for the user
-		var versions;
-		if (role == "Admin")
-			versions = Versions.find({projectId: proj_id}, {sort: {createdAt: -1}});
-			//versions = Versions.find({projectId: proj_id}, {sort: {publishedAt: -1}});
+		// var versions;
+		// if (role == "Admin")
+		// 	versions = Versions.find({projectId: proj_id}, {sort: {createdAt: -1}});
+		// 	//versions = Versions.find({projectId: proj_id}, {sort: {publishedAt: -1}});
 
-		else //if (doc.data.role == "Reader")
-			versions = Versions.find({projectId: proj_id, status: "Published"},
-										{sort: {publishedAt: -1}});
+		// else //if (doc.data.role == "Reader")
+		// 	versions = Versions.find({projectId: proj_id, status: "Published"},
+		// 								{sort: {publishedAt: -1}});
+
+		var versions = Versions.find({projectId: proj_id}, {sort: {createdAt: -1}});
 
 		//building reader roles for admin
 		var tmp_role = role;
