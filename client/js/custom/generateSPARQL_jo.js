@@ -560,7 +560,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id){
 					break;
 				}
 			}
-			orderTable.push(descendingStart + result + descendingEnd + " ");
+			orderTable.push(descendingStart + "?" + result + descendingEnd + " ");
 		}
 	})
 	var uniqueTriples = orderTable.filter(function (el, i, arr) {
