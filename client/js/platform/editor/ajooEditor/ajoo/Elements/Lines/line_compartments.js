@@ -48,9 +48,17 @@ LinkCompartments.prototype = {
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
-			if (compart_in["value"] && compart_in["value"] != "" &&
-				(compart_in["style"] && compart_in["style"]["visible"] == false))
+			if (compart_in["value"] == undefined || compart_in["value"] == "") {
 				return;
+			}
+
+			if (compart_in["style"]) {
+				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true" || compart_in["style"]["visible"] == true);
+			}
+
+			if (!compart_in["style"]["visible"]) {
+				return;
+			}
 
 			var compart_style = compart_in["style"];
 			
