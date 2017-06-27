@@ -142,7 +142,18 @@ Interpreter.methods({
 		list["projectId"] = Session.get("activeProject");
 		list["versionId"] = Session.get("versionId");
 
-		Utilities.callMeteorMethod("pasteElements", list);
+		Utilities.callMeteorMethod("pasteElements", list, function(res) {
+
+			var editor = Interpreter.editor;
+
+			var editor_elems = editor.getElements();
+			var pasted_elems = _.map(_.union(res.boxes, res.lines), function(pasted_elem_id) {
+									return editor_elems[pasted_elem_id];
+								});
+
+			editor.selection.clearSelection();
+			editor.selectElements(pasted_elems);
+		});
 	},
 
 });
