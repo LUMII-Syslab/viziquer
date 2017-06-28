@@ -413,7 +413,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
-   			compartment.compartments.removeOne(id);
+   			if (compartment) {
+   				compartment.compartments.removeOne(id);
+   			}
    		},
 
    	});
