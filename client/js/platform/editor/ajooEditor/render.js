@@ -118,12 +118,18 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 										location: {x: pos.x, y: pos.y, width: size.width, height: size.height,},
 										style: {elementStyle: new_style},
 										compartments: _.map(element.compartments.compartments, function(compartment) {
-											return {_id: compartment._id,
-													style: compartment.presentation.getAttrs(),
-													value: compartment.value,
-													input: compartment.input,
-												};
-										}),
+
+											var res = {_id: compartment._id,
+														value: compartment.value,
+														input: compartment.input,
+													};
+
+											if (compartment.presentation) {
+												res.style = compartment.presentation.getAttrs();
+											}
+
+											return res;
+										});
 									};
 
 
@@ -312,7 +318,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
    			if (!_.isUndefined(fields["value"])) {
 
-   				compart_presentation.text(fields["value"]);
+   				if (compart_presentation) {
+	   				compart_presentation.text(fields["value"]);
+	   			}
 
    				if (element.type == "Swimlane") {
    					var swimlane_layer = element_presentation.getLayer();
@@ -346,14 +354,19 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	   		}
 
    			if (fields["style"]) {
-   				compart_presentation.setAttrs(fields["style"]);
-   				
+
+   				if (compart_presentation) {
+	   				compart_presentation.setAttrs(fields["style"]);
+   				}
+
 				if (element.type == "Line") {
 
 	   				if (fields.style.placement) {
 	   					var placement = compartments.getPlacementByName(fields.style.placement);
 
-	   					compartment.presentation.moveTo(placement.group);
+	   					if (compartment.presentation) {
+ 	   						compartment.presentation.moveTo(placement.group);
+	   					}
 
 	   					compartment.placement = placement;
 	   				}
