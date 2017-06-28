@@ -309,6 +309,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
+   			if (!compartment) {
+   				return;
+   			}
 
    			var compart_presentation = compartment.presentation;
    			var compartments = compartment.compartments
