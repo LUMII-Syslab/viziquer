@@ -129,7 +129,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 											}
 
 											return res;
-										});
+										}),
 									};
 
 
