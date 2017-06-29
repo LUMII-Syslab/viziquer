@@ -489,6 +489,12 @@ VQ_Element.prototype = {
   isLink: function() {
 		return this.getElementTypeName()=="Link";
 	},
+  isUnion: function() {
+		return this.getName()== "[ + ]";
+	},
+	isUnit: function() {
+		return this.getName()=="[ ]";
+	},
   // Determines whether the VQ_Element is the root class of the query
   isRoot: function() {
     return this.getType()=="query";
