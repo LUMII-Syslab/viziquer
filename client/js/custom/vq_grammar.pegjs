@@ -65,7 +65,7 @@
 
 			Main = (Expression space)
 			// Expression = classExpr / ExpressionA
-			Expression = classExpr / ValueScope / ConditionalOrExpressionA
+			Expression = "[ ]" / "[ + ]" / "(no_class)" / classExpr / ValueScope / ConditionalOrExpressionA
 			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
 			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
 			
