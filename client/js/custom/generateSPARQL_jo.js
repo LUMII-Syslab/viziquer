@@ -325,21 +325,21 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 		sparqlTable["classTriple"] = "?" + instance + " a ?" + clazz["variableName"]+ ".";
 		sparqlTable["variableName"] = "?" + clazz["variableName"];
 	}
-	else if(clazz["identification"]["localName"] != "[ ]" && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
-		//var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix);
-		//counter = resultClass["counter"]
-		//var temp = [];
-		//for (var triple in resultClass["triples"]){
-		//	if(typeof resultClass["triples"][triple] === 'string')temp.push(resultClass["triples"][triple]);
-		//}
-		//if(resultClass["isAggregate"] == true || resultClass["isExpression"] == true || resultClass["isFunction"] == true){
-		//	var tempTripleTable = [];
-		//	tempTripleTable["bind"] = "BIND(" + resultClass["exp"] + " AS ?" + instance + ")";
-		//	sparqlTable["expressionTriples"].push(tempTripleTable);
-		//}
-		//sparqlTable["classTriple"] = temp.join("\n");
+	else if(clazz["identification"]["localName"] != "[ ]" && clazz["identification"]["isUnion"] != true && clazz["identification"]["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
+		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix);
+		counter = resultClass["counter"]
+		var temp = [];
+		for (var triple in resultClass["triples"]){
+			if(typeof resultClass["triples"][triple] === 'string')temp.push(resultClass["triples"][triple]);
+		}
+		if(resultClass["isAggregate"] == true || resultClass["isExpression"] == true || resultClass["isFunction"] == true){
+			var tempTripleTable = [];
+			tempTripleTable["bind"] = "BIND(" + resultClass["exp"] + " AS ?" + instance + ")";
+			sparqlTable["expressionTriples"].push(tempTripleTable);
+		}
+		sparqlTable["classTriple"] = temp.join("\n");
 		
-		sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["localName"] + ".";
+		// sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["localName"] + ".";
 		if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+clazz["identification"]["Namespace"]+"#>";
 	}
 	
@@ -528,7 +528,7 @@ function forAbstractQueryTable(clazz, rootClassId, idTable, variableNamesAll, co
 					object = idTable[subclazz["identification"]["_id"]];
 				}
 				// if is global subQuery then no need in link between classes
-				if(subclazz["isGlobalSubQuery"] != true && subclazz["linkIdentification"]["localName"] != "=="){
+				if(subclazz["linkIdentification"]["localName"] != "=="){
 					temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
 					
 				}
@@ -758,7 +758,7 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 							//DISTINCT
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
 							
-							subQuery = subQuery + tempSelect.join(" ") + " WHERE{\n";
+							subQuery = subQuery + sparqlTable["class"] + " " + tempSelect.join(" ") + " WHERE{\n";
 							
 							//SELECT DISTINCT
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "SELECT DISTINCT " + selectResult["selectDistinct"].join(" ") + " WHERE{\n";
