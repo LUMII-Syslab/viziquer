@@ -59,6 +59,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   function resolveClass(obj_class) {
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
+    _.extend(obj_class.identification, parseExpression(obj_class.identification.localName));
 
     if (obj_class.linkIdentification) {
         _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
@@ -116,6 +117,21 @@ resolveTypesAndBuildSymbolTable = function (query) {
   };
 
   resolveClass(query.root);
+
+  // String --> JSON
+  // Parses the text and returns object with property "parsed_exp"
+  function parseExpression(str_expr) {
+    try {
+      var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+      return { parsed_exp: parsed_exp};
+    } catch (e) {
+      // TODO: error handling
+      console.log(e)
+    } finally {
+      // nothing
+    }
+  }
+
 
   // String --> JSON
   // Parses the text and returns object with property "parsed_exp"
@@ -256,6 +272,8 @@ genAbstractQueryForElementList = function (element_id_list) {
                     identification: { _id: elem._id(), localName: elem.getName()},
                     instanceAlias: elem.getInstanceAlias(),
                     isVariable:elem.isVariable(),
+                    isUnion:elem.isUnion(),
+                    isUnit:elem.isUnit(),
                     variableName:elem.getVariableName(),
                     // should not add the link which was used to get to the elem
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
@@ -283,6 +301,8 @@ genAbstractQueryForElementList = function (element_id_list) {
       identification: { _id: e._id(), localName: e.getName()},
       instanceAlias: e.getInstanceAlias(),
       isVariable:e.isVariable(),
+      isUnion:e.isUnion(),
+      isUnit:e.isUnit(),
       variableName:e.getVariableName(),
       conditionLinks:_.filter(_.map(e.getLinks(), genConditionalLink), function(l) {return l}),
       fields: e.getFields(),
