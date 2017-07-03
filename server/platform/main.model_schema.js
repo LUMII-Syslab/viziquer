@@ -207,7 +207,7 @@ Schemas.Projects = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,        
         label: "Projects.toolId",
-        denyUpdate: true,  
+        // denyUpdate: true,  
     },
 });
 Projects.attachSchema(Schemas.Projects);
@@ -494,7 +494,7 @@ Schemas.Diagrams = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.diagramTypeId",
-        denyUpdate: true,            
+        // denyUpdate: true,            
     },
 
 //if diagram belongs to the project
@@ -511,7 +511,7 @@ Schemas.Diagrams = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.toolId",
-        denyUpdate: true,        
+        // denyUpdate: true,        
         optional: true,       
     },
 
@@ -692,7 +692,7 @@ Schemas.Elements = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.elementTypeId",
-        denyUpdate: true,       
+        // denyUpdate: true,    
     },
 
     diagramId: {
@@ -706,7 +706,7 @@ Schemas.Elements = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.diagramTypeId",
-        denyUpdate: true,      
+        // denyUpdate: true,   
     },
 
     projectId: {
@@ -722,7 +722,7 @@ Schemas.Elements = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.toolId",
         optional: true,
-        denyUpdate: true,      
+        // denyUpdate: true,    
     },
 
     versionId: {
@@ -2805,7 +2805,7 @@ Schemas.Versions = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Versions.toolId",
-        denyUpdate: true,
+        // denyUpdate: true,
     },
 
     createdBy: {
