@@ -151,7 +151,7 @@ Template.sparqlForm.events({
 			//		error: "Error in execute SPARQL",
 			//	};
 
-		Interpreter.execute("ExecuteSPARQL_from_text",query);
+		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
 	},
 
 });

@@ -10,32 +10,36 @@ Meteor.methods({
 
 			Future = Npm.require('fibers/future');
 			var future = new Future();
+      try {
+				HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
 
-			HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
+					if (err) {
+						future.return({status: 505, error:err});
+					}
+					else {
 
-				if (err) {
-					future.return({status: 500,});
-				}
-				else {
+										xml2js.parseString(resp.content, function(json_err, json_res) {
 
-	                xml2js.parseString(resp.content, function(json_err, json_res) {
+											if (json_err) {
+												future.return({status: 504, error:json_err});
+											}
+											else {
+												//console.log(JSON.stringify(json_res,null,2));
+												/*var result = _.map(json_res["sparql"]["results"][0]["result"], function(item) {
+													return item.binding;
+												});*/
 
-	                	if (json_err) {
-	                		future.return({status: 500,});
-	                	}
-	                	else {
-											//console.log(JSON.stringify(json_res,null,2));
-	                		/*var result = _.map(json_res["sparql"]["results"][0]["result"], function(item) {
-												return item.binding;
-	                		});*/
+												future.return({status: 200, result: json_res,});
+											}
 
-	                		future.return({status: 200, result: json_res,});
-	                	}
+										});
+					}
 
-	                });
-				}
+				});
+			} catch (ex) {
+				future.return({status: 503, ex:ex});
+			};
 
-			});
 
 			return future.wait();
 		//}
