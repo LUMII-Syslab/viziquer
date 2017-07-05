@@ -77,8 +77,8 @@ Interpreter.customMethods({
     GenerateSPARQL_for_ids(elems_in_diagram_ids)
   },
 
-  ExecuteSPARQL_from_text: function(text) {
-      executeSparqlString(text);
+  ExecuteSPARQL_from_text: function(text, paging_info) {
+      executeSparqlString(text, paging_info);
   },
 });
 
@@ -106,9 +106,9 @@ function GenerateSPARQL_for_ids(list_of_ids) {
   })
 }
 
-// string -->
+// string, {limit: , offset:, total_rows:} -->
 // Executes the given Sparql end shows result in the GUI
-function executeSparqlString(sparql) {
+function executeSparqlString(sparql, paging_info) {
   // Default Data Set Name (Graph IRI) and SPARQL endpoint url
   var graph_iri = "MiniBkusEN";
   var endpoint = "http://185.23.162.167:8833/sparql";
@@ -130,17 +130,18 @@ function executeSparqlString(sparql) {
                                },
                         },
                         endPoint: endpoint,
+                        paging_info: paging_info
               },
            };
   //console.log(list);
   Utilities.callMeteorMethod("executeSparql", list, function(res) {
     if (res.status == 200) {
-      //console.log(res);
+      //console.log(res.result);
       Session.set("executedSparql", res.result);
       Interpreter.destroyErrorMsg();
     } else {
-      Session.set("executedSparql", undefined);
-      console.error(res);
+      Session.set("executedSparql", {limit_set:false, number_of_rows:0});
+      //console.error(res);
       if (res.status==503) {
           Interpreter.showErrorMsg("SPARQL execution failed: most probably the endpoint is not reachable.",-3)
       } else if (res.status==504) {
