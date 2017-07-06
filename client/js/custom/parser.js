@@ -56,8 +56,9 @@ parse_filter = function(parsed_exp, className, vna, count,ep) {
 	initiate_variables(vna, count, "different", ep);
 	
 	var parsed_exp1 = transformBetweenLike(parsed_exp);
+	
 	var parsed_exp2 = transformSubstring(parsed_exp1);
-	// console.log(parsed_exp2);
+	//console.log(JSON.stringify(parsed_exp2,null,2));
 	var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
 	counter++;
 	var result = generateExpression(parsed_exp3, "", className, null, true, false);
@@ -566,20 +567,37 @@ function transformBetweenLike(expressionTable){
 		expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionBETWEEN"]!= null 
 		){
 			var temp = expressionTable[key][0];
-			expressionTable["ConditionalAndExpression"] = [ {
-                  "RelationalExpression" : {
-                    "NumericExpressionL" : {
-                      "AdditiveExpression" : {
-                        "MultiplicativeExpression" : {
-                          "UnaryExpression" : {
-                            "PrimaryExpression" : {
+			var pe;
+			if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"] === 'undefined'){
+				pe = {
                             	"var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
 								"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
 					            "ReferenceToClass": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ReferenceToClass"],
 					            "ValueScope": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ValueScope"],
 					            "FunctionBETWEEN": null,
 					            "FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
-                            },
+                            }
+			} else {
+				pe = {
+					"Path" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"],
+					"PrimaryExpression" : {
+						"var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"],
+						"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["Substring"]
+					},
+                    "ReferenceToClass": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ReferenceToClass"],
+					"ValueScope": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ValueScope"],
+					"FunctionBETWEEN": null,
+					"FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
+               }
+			}
+			
+			expressionTable["ConditionalAndExpression"] = [ {
+                  "RelationalExpression" : {
+                    "NumericExpressionL" : {
+                      "AdditiveExpression" : {
+                        "MultiplicativeExpression" : {
+                          "UnaryExpression" : {
+                            "PrimaryExpression" : pe,
                           },
                           "UnaryExpressionList" : []
                         },
@@ -602,21 +620,13 @@ function transformBetweenLike(expressionTable){
                                     "AdditiveExpression": {
                                       "MultiplicativeExpression": {
                                         "UnaryExpression": {
-                                          "PrimaryExpression": {
-                                        	  "var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
-						                      "Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
-						                      "ReferenceToClass": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ReferenceToClass"],
-						                      "ValueScope": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ValueScope"],
-						                      "FunctionBETWEEN": null,
-						                      "FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
-                                          },
-										},
+                                          "PrimaryExpression": pe,
+										}, 
+										"UnaryExpressionList": []
                                        },
-                                        "UnaryExpressionList": []
+									   "MultiplicativeExpressionList": []
                                       },
-                                      "MultiplicativeExpressionList": []
                                     },
-                                  
                                   "Relation": "<=",
                                   "NumericExpressionR": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionBETWEEN"]["BetweenExpressionR"],
                                  }, 
@@ -710,8 +720,9 @@ function transformSubstring(expressionTable){
 
 		
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["var"]!== 'undefined' && typeof expressionTable[key]["Substring"] !== 'undefined' && expressionTable[key]["Substring"]!="" ){
-		
+			
 			var t = expressionTable[key];
+			//console.log(JSON.stringify(t,null,2));
 			var substringValues = expressionTable[key]["Substring"];
 			var substrStart, substrEnd = null;
 			substrStart = substringValues.substring(1,2);
@@ -798,6 +809,7 @@ function transformSubstring(expressionTable){
                 } }}
 		}
 	}
+	//console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", JSON.stringify(expressionTable,null,2));
 	return expressionTable
 }
 
@@ -1069,7 +1081,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			// end
 			
 			if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
-				if(typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
+				if(typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
+				&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
 				&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
 				&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
 				&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
@@ -1079,6 +1092,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['Reference'] === 'undefined'
 				&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_NAME'
 				
+				&& typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
 				&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'
 				&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
 				&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
@@ -1440,7 +1454,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 
 function isDateVar(v, dateType){
 	if(typeof v["var"] !== 'undefined'){
-		if( v["var"]["type"]["type"] == dateType) return true;
+		if(v["var"]["type"]!=null && v["var"]["type"]["type"] == dateType) return true;
 		else return false;
 	}
 	if(typeof v["RDFLiteral"] !== 'undefined'){
@@ -1452,7 +1466,7 @@ function isDateVar(v, dateType){
 		else return false;
 	}
 	if(typeof v["Path"] !== 'undefined'){
-		if( v["PrimaryExpression"]["var"]["type"]["type"] == dateType) return true;
+		if(  v["PrimaryExpression"]["var"]["type"]!=null && v["PrimaryExpression"]["var"]["type"]["type"] == dateType) return true;
 		else return false;
 	}
 	return false
