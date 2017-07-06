@@ -140,7 +140,7 @@ Template.sparqlForm.events({
 	"click #reset-sparql": function(e) {
 		e.preventDefault();
 		Session.set("generatedSparql", undefined);
-		Session.set("executedSparql", undefined);
+		Session.set("executedSparql", {limit_set:false, number_of_rows:0});
 	},
 
 	"click #execute-sparql": function(e) {
@@ -151,8 +151,33 @@ Template.sparqlForm.events({
 			//		error: "Error in execute SPARQL",
 			//	};
 
-		Interpreter.execute("ExecuteSPARQL_from_text",query);
+		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
 	},
+
+	"click #next-sparql": function(e) {
+		e.preventDefault();
+
+		//var resp = {status: 200,
+	 var	query = $("#generated-sparql").val();
+			//		error: "Error in execute SPARQL",
+			//	};
+    var obj = Session.get("executedSparql");
+		var paging_info = {offset:obj.offset, limit:obj.limit, number_of_rows:obj.number_of_rows};
+		//console.log(paging_info);
+		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
+	},
+	"click #prev-sparql": function(e) {
+		e.preventDefault();
+
+		//var resp = {status: 200,
+	 var	query = $("#generated-sparql").val();
+			//		error: "Error in execute SPARQL",
+			//	};
+    var obj = Session.get("executedSparql");
+		var paging_info = {offset:obj.offset - 100, limit:obj.limit, number_of_rows:obj.number_of_rows};
+		//console.log(paging_info);
+		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
+	}
 
 });
 
@@ -175,8 +200,33 @@ Template.sparqlForm.helpers({
 	},
 
 	plusOne: function(number) {
-		return number + 1;
-	}
+
+		  return number + 1;
+	},
+	plusOneOffset: function(number, offset) {
+    //console.log(offset);
+		///var result = Session.get("executedSparql");
+
+		if (offset) {
+			return number + offset - 50 + 1}
+		else {
+		  return number + 1;
+		}
+
+	},
+	augmentedResult: function() {
+        var self = Session.get("executedSparql");
+        return _.map(self.sparql.results[0].result, function(p) {
+            p.parent = self;
+            return p;
+        });
+    },
+		showPrev: function(offset) {
+			return offset>50;
+		},
+		showNext: function(offset, number) {
+			return offset < number;
+		}
 
 });
 

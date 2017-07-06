@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <div class="col-lg-12" style="margin-top:10px;">
                                 <button id="reset-sparql" class="btn btn-danger btn-sm">Reset</button>
-                              <!--  <button id="execute-sparql" class="btn btn-success btn-sm">Execute</button> -->
+                                <button id="execute-sparql" class="btn btn-success btn-sm">Execute</button>
                             </div>
 
                         </div>
@@ -76,10 +76,10 @@
                 </div>
             </div>
         </div>
-
+        {{#with executedSparql}}
         <div class="panel panel-default">
             <div class="panel-heading">
-                Result
+                Results.{{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
             </div>
 
             <div class="panel-body">
@@ -88,7 +88,6 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="table-responsive">
                             <table class="table table-bordered table-condensed table-hover table-striped">
-                                {{#with executedSparql}}
                                 <thead>
                                     <tr>
                                       <th>#</th>
@@ -98,22 +97,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each sparql.results.[0].result}}
+                                    {{#each augmentedResult}}
                                         <tr index="{{plusOne @index}}">
-                                            <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOne @index}}</div></td>
+                                            <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOneOffset @index parent.offset}}</div></td>
                                             {{#each binding}}
                                             <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
                                             {{/each}}
                                         </tr>
                                     {{/each}}
                                 </tbody>
-                                {{/with}}
                             </table>
                         </div>
+                        {{#if limit_set}}
+                          {{#if showPrev offset}}<button id="prev-sparql" class="btn btn-success btn-sm">Previous 50</button>{{/if}}
+                          {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
+                        {{/if}}
                     </div>
                 </div>
             </div>
         </div>
+        {{/with}}
     </div>
 </template>
 
