@@ -130,27 +130,27 @@ Versions.after.insert(function (user_id, doc) {
 });
 Versions.hookOptions.after.insert = {fetchPrevious: false};
 
-Versions.after.update(function (user_id, doc) {
+// Versions.after.update(function (user_id, doc) {
 
-	var version_id = doc["_id"];	
-	var project_id = doc["projectId"];
+// 	var version_id = doc["_id"];	
+// 	var project_id = doc["projectId"];
 
-	//sending the notification to the project members that a new version is published
-	var notification = {projectId: project_id,
-						isAdminsOnly: false,
-						notificationType: "PublishVersion",
-						userId: user_id,
-						versionId: version_id,
-					};
-	send_notifications(user_id, notification);
+// 	//sending the notification to the project members that a new version is published
+// 	var notification = {projectId: project_id,
+// 						isAdminsOnly: false,
+// 						notificationType: "PublishVersion",
+// 						userId: user_id,
+// 						versionId: version_id,
+// 					};
+// 	// send_notifications(user_id, notification);
 
-	//removing users from the admin role in this version
-	remove_from_admin_role(project_id, version_id);
+// 	//removing users from the admin role in this version
+// 	// remove_from_admin_role(project_id, version_id);
 
-	//assigning readers role to the project members
-	add_read_role(project_id, version_id);
-});
-Versions.hookOptions.after.update = {fetchPrevious: false};
+// 	//assigning readers role to the project members
+// 	// add_read_role(project_id, version_id);
+// });
+// Versions.hookOptions.after.update = {fetchPrevious: false};
 
 Versions.after.remove(function(user_id, doc) {
 
@@ -228,6 +228,14 @@ Meteor.methods({
 							status: "New",
 						});
 		}
+	},
+
+
+	addAdminRights: function(list) {
+
+		console.log("list in add amdin rights", list);
+
+		add_admin_role(list.projectId, list.versionId);
 	},
 
 });
