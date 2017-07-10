@@ -29,19 +29,33 @@ VQ_Schema = function () {
    this.SchemaProperties = {};
    this.Associations = {};
    this.SchemaRoles = {};
+   this.Ontologies = {};
 
    if (Schema.find().count() == 0)
    { return; }
 
-   var data = Schema.findOne({ "Name": "Schema"}).Schema;
+   var data = Schema.findOne();
+   if (data.Schema) data = data.Schema;
    //console.log(data);
-
+   
    var schema = this;
    this.URI = data.URI;
-   this.Name = data.Name;
+   this.namespace = data.URI;
+   if (data.URI && !(data.URI[data.URI.length-1] == "#") && !(data.URI[data.URI.length-1] == "/"))
+     this.namespace = this.namespace + "#";
+	 
+   this.Name = data.Name; 
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
+
+	if (!this.namespace) { 
+	  defaultOntology = _.max( this.Ontologies, function(ont) {return ont.count});
+	  this.namespace = defaultOntology.namespace; 
+	  defaultOntology.isDefault = true;
+	  defaultOntology.prefix = "";
+	}
+
 	schema.addClass( new VQ_Class({}, schema));
 
 	_.each(data.Classes, function(old_cl){
@@ -84,12 +98,13 @@ VQ_Schema = function () {
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
 			newSchRole = new VQ_SchemaRole(asoc, schema);
+			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole, schema);
 			schema.addSchemaProperty(newSchRole, schema);
 			scClass.addProperty(newSchRole);
 			createLink(newRole, newSchRole, "schemaRole", "role");
-			createLink(scClass, newSchRole, "outAssoc", "sourceClass");
-			createLink(tClass, newSchRole, "inAssoc", "targetClass");
+  		    createLink(scClass, newSchRole, "outAssoc", "sourceClass");
+         	createLink(tClass, newSchRole, "inAssoc", "targetClass"); 
 		})
 	})
 
@@ -109,6 +124,7 @@ VQ_Schema = function () {
 VQ_Schema.prototype = {
   constructor: VQ_Schema,
   URI:null,
+  namespace:null,
   Name:null,
   Elements: null,
   Classes: null,
@@ -117,6 +133,7 @@ VQ_Schema.prototype = {
   SchemaAttributes:null,
   SchemaRoles:null,
   SchemaProperties:null,
+  Ontologies:null,
   currentId: 0,
   getNewIdString: function(name) {
 	this.currentId = this.currentId + 1;
@@ -124,26 +141,35 @@ VQ_Schema.prototype = {
   },
   classExist: function (name) {
     var cl = this.findClassByName(name);
-	if (cl && cl.localName == name) return true;
-	else return false;
+	return findName(name, cl);
   },
   associationExist: function (name) {
     var cl = this.findAssociationByName(name);
-	if ( cl.localName == name) return true;
-	else return false;
+	return findName(name, cl);
   },
   attributeExist: function (name) {
     var cl = this.findAttributeByName(name);
-	if ( cl.localName == name) return true;
-	else return false;
+	return findName(name, cl);
+  },
+  ontologyExist: function (name) {
+    var ontology = _.find(this.Ontologies, function (ont) {
+	  if (ont.namespace == name) { ont.count = ont.count +1;  return ont}; });
+    return ontology;	  
+  },
+  checkOntologyPrefix: function (name){
+    var ontology = _.find(this.Ontologies, function (ont) {
+	  if (ont.prefix == name) { return ont}; });
+	if (ontology) return this.checkOntologyPrefix(name+"1"); 
+	else return name;
   },
   getAllClasses: function (){
     return _.map(this.Classes, function (cl) {
-				return {name: cl["localName"]}; });
+				if (cl.isUnique) return {name: cl.localName};
+				else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
   findElementByName: function (name, coll) {
     var element = _.find(coll, function(el){
-		if (el.localName == name) { return el; }; })
+		if ( findName(name, el)) { return el; }; })
 	if (element) return element;
 	return _.find(coll, function(el){
 		if (el.localName == " ") { return el; }; })
@@ -159,7 +185,7 @@ VQ_Schema.prototype = {
   },
   findSchemaRoleByName: function(name, sourceClass, targetClass) {
     var element = _.find(this.SchemaRoles, function(el){
-		if (el.localName == name && el.sourceClass.localName == sourceClass && el.targetClass.localName == targetClass) { return el; }; })
+		if ( findName(name, el) && findName(sourceClass, el.sourceClass) && findName(targetClass, el.targetClass)) { return el; }; })
 	return element;
   },
   addElement: function(newElement) {
@@ -188,6 +214,9 @@ VQ_Schema.prototype = {
   addSchemaProperty: function(newProperty) {
 	this.SchemaProperties[newProperty.getID()] = newProperty;
   },
+  addOntology: function(newOntology) {
+    this.Ontologies[newOntology.namespace] = newOntology;
+  },
   resolveClassByName: function (className) {
     if (this.classExist(className))
 		return this.findClassByName(className).getClassInfo();
@@ -201,7 +230,7 @@ VQ_Schema.prototype = {
 		return null;
   },
   resolveAttributeByName: function (className, attributeName) {
-    // Pagaidām klases vards netiek ņemts vērā
+    // Pagaidām klases vārds netiek ņemts vērā
 	if (this.attributeExist(attributeName))
 		return this.findAttributeByName(attributeName).getAttributeInfo();
 	else
@@ -209,42 +238,86 @@ VQ_Schema.prototype = {
   },
 }
 
+function findName(name, element) {
+  if (element && (element.localName == name || element.fullName == name )) return true;
+  return false
+}
+
+function findPrefix(arr, pos) {
+  if (arr[pos] == "" ) return findPrefix(arr, pos-1);
+  if (!isNaN(arr[pos][0])) return findPrefix(arr, pos-1);
+  return arr[pos].split("#")[0];
+}
+
+VQ_ontology = function (schema, URI, prefix) {
+  this.namespace = URI;
+  this.count = 1;
+  this.namesAreUnique = true;
+  if (schema.namespace == URI) { 
+   this.isDefault = true; 
+   this.prefix = "";
+  }
+  else { 
+    this.isDefault = false;
+	if (prefix) this.prefix = prefix;
+	else {
+		var arr = URI.split("/");
+		this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1)); 	
+	}
+  }
+};
+
+VQ_ontology.prototype = {
+  constructor:VQ_ontology,
+  namespace: null,
+  prefix: null,
+  count: null,
+  isDefault: null,
+  namesAreUnique:null
+}
+
 VQ_Elem = function (elemInfo, schema, elemType){
     var localName = " ";
-    if (elemInfo.localName) {var localName = elemInfo.localName };
+	var fullName = " ";
+    if (elemInfo.localName) localName = elemInfo.localName;
 	this.ID = schema.getNewIdString(localName) + " (" + elemType + ")";
 	this.localName = localName;
 	this.schema = schema;
-};
+	var uri = null;
+	
+	if (elemInfo.namespace) uri = elemInfo.namespace;
+	else uri = schema.namespace;
+	
+	var ontology = schema.ontologyExist(uri);
+	if (ontology) { this.ontology = ontology }
+	else { 
+	  ontology = new VQ_ontology(schema, uri, elemInfo.prefix);
+	  schema.addOntology(ontology);
+	  this.ontology = ontology;
+	}
+	
+	if (elemInfo.fullName) fullName = elemInfo.fullName;
+	else fullName = this.ontology.namespace + localName;
+	this.fullName = fullName;
+	
+  };
 
 VQ_Elem.prototype = {
   constructor: VQ_Elem,
   ID: null,
   localName: null,
-  URI: null,
-  Namespace: null,
-  Prefix: null,
+  fullName: null,
+  ontology: null,
   schema: null,
-  getID: function() { return this.ID},
+  getID: function() { return this.ID },
   getElemInfo: function() {
     if (this.localName == " ") return {};
-    var uri = null;
-	var namespace = null;
-	var prefix = null;
-	if (this.URI) { uri = this.URI; namespace = this.Namespace; prefix = this.prefix;}
-	else { uri = this.schema.URI + "#" + this.localName; namespace = this.schema.URI; prefix = this.schema.Name; }
-	var info = {localName:this.localName, URI:uri, Namespace:namespace, Prefix:prefix};
-    return info;
+	return {localName:this.localName, URI:this.fullName, Namespace:this.schema.URI, Prefix:this.ontology.prefix};  //this.ontology.namespace
   }
 }
 
 VQ_Class = function (classInfo, schema){
     VQ_Elem.call(this, classInfo, schema, "class");
-	if ( classInfo.URI ){
-		this.URI = classInfo.URI;
-		this.NameSpace = classInfo.Namespace;
-		this.Prefix = classInfo.Prefix;
-	}
 	this.superClasses = {};
     this.subClasses = {};
     this.allSuperClasses = {};
@@ -254,6 +327,14 @@ VQ_Class = function (classInfo, schema){
 	this.inAssoc = {};
 	this.outAssoc = {};
 	this.properties = {};
+	this.isUnique = true;
+	var e = schema.findClassByName(classInfo.localName);
+	if ( e && e.localName == classInfo.localName ){
+	  this.isUnique = false;
+	  e.isUnique = false;	
+	  this.ontology.namesAreUnique = false;
+	  e.ontology.namesAreUnigue = false;
+	}
 };
 
 VQ_Class.prototype = Object.create(VQ_Elem.prototype);
@@ -267,11 +348,12 @@ VQ_Class.prototype.schemaAttribute = null;
 VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
+VQ_Class.prototype.isUnique = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
 				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
     _.each(this.inAssoc, function (a) {
-				 if ( _.size(a.inverseSchemaRole ) == 0 )
+				 if ( _.size(a.inverseSchemaRole ) == 0 && !a.isSymmetric)
 					out_assoc = _.union(out_assoc, {name: a.localName, class: a.sourceClass.localName , type: "<="});
 				});
     return out_assoc;
@@ -281,7 +363,7 @@ VQ_Class.prototype.getAllAssociations = function() {
 	_.each(this.allSuperSubClasses, function(sc){
 			assoc = _.union(assoc, sc.getAssociations());
 	})
-	return assoc;
+	return _.sortBy(assoc, "name");
   };
 VQ_Class.prototype.getAttributes = function() {
 	return _.map(this.schemaAttribute, function (a) {
@@ -363,6 +445,7 @@ VQ_SchemaRole = function (roleInfo, schema){
 	this.sourceClass = {};
 	this.targetClass = {};
 	this.inverseSchemaRole = {};
+	this.isSymmetric = false;
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
@@ -371,6 +454,7 @@ VQ_SchemaRole.prototype.role = null;
 VQ_SchemaRole.prototype.sourceClass = null;
 VQ_SchemaRole.prototype.targetClass = null;
 VQ_SchemaRole.prototype.inverseSchemaRole = null;
+VQ_SchemaRole.prototype.isSymmetric = null;
 
 
 

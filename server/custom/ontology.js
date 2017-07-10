@@ -54,7 +54,7 @@ Meteor.methods({
                 var user_id = Meteor.userId();
                 if (is_project_version_admin(user_id, list)) {
 
-                        Schema.remove({projectId: list.projectId, versionId: list.versionId});
+                    Schema.remove({projectId: list.projectId, versionId: list.versionId});
 
                     var data = list.data;
 					var schema = _.extend(data, {projectId: list.projectId, versionId: list.versionId});
