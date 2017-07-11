@@ -387,7 +387,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		sparqlTable["classTriple"] = temp.join("\n");
 		
 		// sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["localName"] + ".";
-		if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+clazz["identification"]["Namespace"]+"#>";
+		var namespace = clazz["identification"]["Namespace"]
+		if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+		if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+namespace+">";
 	}
 	
 	
@@ -569,8 +571,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 						preditate = " " + getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 					}
-					
-					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+subclazz["linkIdentification"]["Namespace"]+"#>";
+					var namespace = subclazz["linkIdentification"]["Namespace"]
+					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 				}
 				if(subclazz["isInverse"] == true) {
 					if(clazz["isUnion"] != true) object = instance;
@@ -625,7 +628,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var triple = sourse + " " + getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) + ":" + condLink["identification"]["localName"] + " " + target + ".";
 		if(condLink["isNot"] == true) triple = "FILTER NOT EXISTS{" + triple + "}";
 		sparqlTable["conditionLinks"].push(triple);
-		prefixTable[getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) +":"] = "<"+condLink["identification"]["Namespace"]+"#>";
+		var namespace = condLink["identification"]["Namespace"]
+		if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+		prefixTable[getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) +":"] = "<"+namespace+">";
 	})
 
 	for (var attrname in variableNamesClass) { variableNamesAll[attrname] = variableNamesClass[attrname]; }
