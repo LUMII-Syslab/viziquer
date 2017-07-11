@@ -313,7 +313,7 @@ VQ_Elem.prototype = {
   getID: function() { return this.ID },
   getElemInfo: function() {
     if (this.localName == " ") return {};
-	return {localName:this.localName, URI:this.fullName, Namespace:this.schema.URI, Prefix:this.ontology.prefix};  //this.ontology.namespace
+	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace, Prefix:this.ontology.prefix, DefaultNamespace:this.schema.namespace};  
   }
 }
 
