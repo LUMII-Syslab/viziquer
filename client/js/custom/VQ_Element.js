@@ -52,6 +52,7 @@ VQ_Schema = function () {
 	if (!this.namespace) { 
 	  defaultOntology = _.max( this.Ontologies, function(ont) {return ont.count});
 	  this.namespace = defaultOntology.namespace; 
+	  this.URI = defaultOntology.namespace; 
 	  defaultOntology.isDefault = true;
 	  defaultOntology.prefix = "";
 	}
