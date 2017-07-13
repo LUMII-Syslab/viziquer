@@ -39,12 +39,12 @@ VQ_Schema = function () {
    //console.log(data);
    
    var schema = this;
-   this.URI = data.URI;
-   this.namespace = data.URI;
-   if (data.URI && !(data.URI[data.URI.length-1] == "#") && !(data.URI[data.URI.length-1] == "/"))
+   if (data.namespace) this.namespace = data.namespace;
+   if (data.URI) this.namespace = data.URI;
+   
+   if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
      this.namespace = this.namespace + "#";
 	 
-   this.Name = data.Name; 
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
@@ -52,7 +52,6 @@ VQ_Schema = function () {
 	if (!this.namespace) { 
 	  defaultOntology = _.max( this.Ontologies, function(ont) {return ont.count});
 	  this.namespace = defaultOntology.namespace; 
-	  this.URI = defaultOntology.namespace; 
 	  defaultOntology.isDefault = true;
 	  defaultOntology.prefix = "";
 	}
@@ -98,7 +97,7 @@ VQ_Schema = function () {
 		_.each(asoc.ClassPairs, function(cp){
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
-			newSchRole = new VQ_SchemaRole(asoc, schema);
+			newSchRole = new VQ_SchemaRole(asoc, cp, schema);
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole, schema);
 			schema.addSchemaProperty(newSchRole, schema);
@@ -124,9 +123,7 @@ VQ_Schema = function () {
 
 VQ_Schema.prototype = {
   constructor: VQ_Schema,
-  URI:null,
   namespace:null,
-  Name:null,
   Elements: null,
   Classes: null,
   Attributes:null,
@@ -240,7 +237,7 @@ VQ_Schema.prototype = {
 }
 
 function findName(name, element) {
-  if (element && (element.localName == name || element.fullName == name )) return true;
+  if (element && (element.localName == name || element.fullName == name || element.ontology.prefix + ":" + element.localName == name )) return true;
   return false
 }
 
@@ -440,13 +437,15 @@ VQ_Role.prototype.getAssociationInfo = function() {
   return this.getElemInfo();
   };
 
-VQ_SchemaRole = function (roleInfo, schema){
+VQ_SchemaRole = function (roleInfo, cpInfo, schema){
 	VQ_Elem.call(this, roleInfo, schema, "schemaRole");
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
+	if (cpInfo.maxCardinality) this.minCardinality = cpInfo.minCardinality;
+	if (cpInfo.maxCardinality) this.maxCardinality = cpInfo.maxCardinality;
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
@@ -456,8 +455,8 @@ VQ_SchemaRole.prototype.sourceClass = null;
 VQ_SchemaRole.prototype.targetClass = null;
 VQ_SchemaRole.prototype.inverseSchemaRole = null;
 VQ_SchemaRole.prototype.isSymmetric = null;
-
-
+VQ_SchemaRole.prototype.minCardinality = null;
+VQ_SchemaRole.prototype.maxCardinality = null;
 
 
 
