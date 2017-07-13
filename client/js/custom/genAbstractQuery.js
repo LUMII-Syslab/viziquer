@@ -174,10 +174,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)") {
-        if (obj_class.instanceAlias=="") {
-          obj_class.instanceAlias=f.alias;
-        };
-        f.exp=obj_class.instanceAlias;
+        if (obj_class.instanceAlias==null) {
+          if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
+        } else{
+		  f.exp=obj_class.instanceAlias;
+		};
+        //f.exp=obj_class.instanceAlias;
       };
 
       if (f.groupValues) {

@@ -1,0 +1,1696 @@
+{
+    "Classes" : [ {
+      "localName" : "interlink",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/interlink",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "actor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "Person",
+      "namespace" : "http://xmlns.com/foaf/0.1/",
+      "fullName" : "http://xmlns.com/foaf/0.1/Person",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "country",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "linkage_run",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/linkage_run",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "music_contributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/music_contributor",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "content_rating",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "content_rating_system",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_system",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_character",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_character",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_festival",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_festival_event",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "performance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "personal_film_appearance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "personal_film_appearance_type",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "special_film_performance_type",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/special_film_performance_type",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "writer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/writer",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "dubbing_performance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_company",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_company",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+    }, {
+      "localName" : "Agent",
+      "namespace" : "http://xmlns.com/foaf/0.1/",
+      "fullName" : "http://xmlns.com/foaf/0.1/Agent",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_featured_song",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_film_company_relationship",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_format",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_format",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_location",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_location",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_subject",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_subject",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "editor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/editor",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "film_story_contributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_story_contributor",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "cinematographer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/cinematographer",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/director",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "film_casting_director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_casting_director",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_costume_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_costume_designer",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+    }, {
+      "localName" : "film_cut",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_cut",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_art_director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_art_director",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_genre",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_genre",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_series",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_series",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_set_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_set_designer",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "producer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/producer",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "production_company",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/production_company",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_collection",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_collection",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_production_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_production_designer",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_regional_release_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_crew_gig",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_distribution_medium",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distribution_medium",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_distributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distributor",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_film_distributor_relationship",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_job",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_job",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_crewmember",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crewmember",
+      "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "film_critic",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_critic",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_festival_focus",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_focus",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_festival_sponsor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_sponsor",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_theorist",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_theorist",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_awards_ceremony",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_awards_ceremony",
+      "SuperClasses" : [ ]
+    }, {
+      "localName" : "film_screening_venue",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_screening_venue",
+      "SuperClasses" : [ ]
+    } ],
+    "Attributes" : [ {
+      "localName" : "film_character_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_character_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_character" ]
+    }, {
+      "localName" : "actor_nytimes_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor_nytimes_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "page",
+      "namespace" : "http://xmlns.com/foaf/0.1/",
+      "fullName" : "http://xmlns.com/foaf/0.1/page",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "film_featured_song_performed_by",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song_performed_by",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_featured_song" ]
+    }, {
+      "localName" : "film_screening_venue_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_screening_venue_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_screening_venue" ]
+    }, {
+      "localName" : "film_festival_event_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_event" ]
+    }, {
+      "localName" : "film_regional_release_date_film_regional_debut_venue",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_film_regional_debut_venue",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "film_job_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_job_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_job" ]
+    }, {
+      "localName" : "country_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "director_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/director_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "film_location_film_locationid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_location_film_locationid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_location" ]
+    }, {
+      "localName" : "dubbing_performance_character",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_character",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "content_rating_film_rating_system",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_film_rating_system",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating" ]
+    }, {
+      "localName" : "SeeAlso",
+      "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+      "fullName" : "http://www.w3.org/2000/01/rdf-schema#SeeAlso",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/writer" ]
+    }, {
+      "localName" : "film_awards_ceremony_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_awards_ceremony_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_awards_ceremony" ]
+    }, {
+      "localName" : "film_set_designer_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_set_designer_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_set_designer" ]
+    }, {
+      "localName" : "film_subject_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_subject_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_subject" ]
+    }, {
+      "localName" : "linkid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/linkid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/interlink" ]
+    }, {
+      "localName" : "film_festival_film_festivalid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_film_festivalid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival" ]
+    }, {
+      "localName" : "link_target",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/link_target",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/interlink" ]
+    }, {
+      "localName" : "film_awards_ceremony_film_awards_ceremonyid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_awards_ceremony_film_awards_ceremonyid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_awards_ceremony" ]
+    }, {
+      "localName" : "film_festival_event_film_festival_event_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event_film_festival_event_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_event" ]
+    }, {
+      "localName" : "special_film_performance_type_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/special_film_performance_type_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/special_film_performance_type" ]
+    }, {
+      "localName" : "film_critic_film_criticid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_critic_film_criticid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_critic" ]
+    }, {
+      "localName" : "performance_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_region",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_region",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "film_awards_ceremony_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_awards_ceremony_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_awards_ceremony" ]
+    }, {
+      "localName" : "film_job_film_jobid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_job_film_jobid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_job" ]
+    }, {
+      "localName" : "performance_actor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_actor",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "content_rating_system_content_rating_systemid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_system_content_rating_systemid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating_system" ]
+    }, {
+      "localName" : "film_festival_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival" ]
+    }, {
+      "localName" : "film_crewmember_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crewmember_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crewmember" ]
+    }, {
+      "localName" : "cinematographer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/cinematographer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/cinematographer" ]
+    }, {
+      "localName" : "dubbing_performance_language",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_language",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "sameAs",
+      "namespace" : "http://www.w3.org/2002/07/owl#",
+      "fullName" : "http://www.w3.org/2002/07/owl#sameAs",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "actor_actorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor_actorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/actor" ]
+    }, {
+      "localName" : "personal_film_appearance_type_personal_film_appearance_typeid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type_personal_film_appearance_typeid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type" ]
+    }, {
+      "localName" : "film_release_region",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_release_region",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_cut" ]
+    }, {
+      "localName" : "film_regional_release_date_film_release_distribution_medium",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_film_release_distribution_medium",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "film_screening_venue_film_screening_venue_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_screening_venue_film_screening_venue_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_screening_venue" ]
+    }, {
+      "localName" : "label",
+      "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+      "fullName" : "http://www.w3.org/2000/01/rdf-schema#label",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "title",
+      "namespace" : "http://purl.org/dc/terms/",
+      "fullName" : "http://purl.org/dc/terms/title",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "film_festival_event_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_event" ]
+    }, {
+      "localName" : "dubbing_performance_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "film_casting_director_film_casting_director_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_casting_director_film_casting_director_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_casting_director" ]
+    }, {
+      "localName" : "film_character_film_characterid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_character_film_characterid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_character" ]
+    }, {
+      "localName" : "relatedBook",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/relatedBook",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "language",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/language",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "film_film_company_relationship_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_company_relationship" ]
+    }, {
+      "localName" : "country_population",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_population",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "hasPhotoCollection",
+      "namespace" : "http://dbpedia.org/property/",
+      "fullName" : "http://dbpedia.org/property/hasPhotoCollection",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "type_of_film_cut",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/type_of_film_cut",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_cut" ]
+    }, {
+      "localName" : "content_rating_system_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_system_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating_system" ]
+    }, {
+      "localName" : "film_crew_gig_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crew_gig" ]
+    }, {
+      "localName" : "country_capital",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_capital",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_genre_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_genre_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_genre" ]
+    }, {
+      "localName" : "personal_film_appearance_person",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_person",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance" ]
+    }, {
+      "localName" : "film_festival_focus_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_focus_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_focus" ]
+    }, {
+      "localName" : "editor_editorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/editor_editorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/editor" ]
+    }, {
+      "localName" : "film_distribution_medium_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distribution_medium_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_distribution_medium" ]
+    }, {
+      "localName" : "performance_character",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_character",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "film_screening_venue_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_screening_venue_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_screening_venue" ]
+    }, {
+      "localName" : "film_theorist_film_theoristid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_theorist_film_theoristid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_theorist" ]
+    }, {
+      "localName" : "film_format_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_format_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_format" ]
+    }, {
+      "localName" : "film_genre_film_genreid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_genre_film_genreid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_genre" ]
+    }, {
+      "localName" : "film_company_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_company_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+    }, {
+      "localName" : "link_type",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/link_type",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/interlink" ]
+    }, {
+      "localName" : "film_art_director_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_art_director_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_art_director" ]
+    }, {
+      "localName" : "film_production_designer_film_production_designer_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_production_designer_film_production_designer_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_production_designer" ]
+    }, {
+      "localName" : "country_continent",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_continent",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_costume_designer_film_costume_designerid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_costume_designer_film_costume_designerid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_costume_designer" ]
+    }, {
+      "localName" : "writer_writerid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/writer_writerid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/writer" ]
+    }, {
+      "localName" : "dubbing_performance_actor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_actor",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_film_cut",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_film_cut",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "producer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/producer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/producer" ]
+    }, {
+      "localName" : "film_festival_sponsor_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_sponsor_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_sponsor" ]
+    }, {
+      "localName" : "content_rating_country",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_country",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating" ]
+    }, {
+      "localName" : "film_casting_director_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_casting_director_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_casting_director" ]
+    }, {
+      "localName" : "film_featured_song_film_featured_song_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song_film_featured_song_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_featured_song" ]
+    }, {
+      "localName" : "country_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_film_film_distributor_relationshipid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_film_film_distributor_relationshipid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "film_festival_event_opening_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event_opening_date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_event" ]
+    }, {
+      "localName" : "country_fips_code",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_fips_code",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_subject_film_subjectid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_subject_film_subjectid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_subject" ]
+    }, {
+      "localName" : "film_regional_release_date_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "film_featured_song_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_featured_song" ]
+    }, {
+      "localName" : "film_production_designer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_production_designer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_production_designer" ]
+    }, {
+      "localName" : "film_production_designer_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_production_designer_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_production_designer" ]
+    }, {
+      "localName" : "film_featured_song_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_featured_song" ]
+    }, {
+      "localName" : "film_crew_gig_film_crew_gigid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig_film_crew_gigid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crew_gig" ]
+    }, {
+      "localName" : "film_festival_focus_film_festival_focus_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_focus_film_festival_focus_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_focus" ]
+    }, {
+      "localName" : "film_series_film_seriesid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_series_film_seriesid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_series" ]
+    }, {
+      "localName" : "content_rating_system_jurisdiction",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_system_jurisdiction",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating_system" ]
+    }, {
+      "localName" : "film_festival_sponsor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_sponsor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_sponsor" ]
+    }, {
+      "localName" : "film_film_company_relationship_role_service",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship_role_service",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_company_relationship" ]
+    }, {
+      "localName" : "film_regional_release_date_film_release_region",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_film_release_region",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "initial_release_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/initial_release_date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "producer_producerid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/producer_producerid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/producer" ]
+    }, {
+      "localName" : "performance_note",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_note",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "writer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/writer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/writer" ]
+    }, {
+      "localName" : "based_near",
+      "namespace" : "http://xmlns.com/foaf/0.1/",
+      "fullName" : "http://xmlns.com/foaf/0.1/based_near",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "content_rating_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating" ]
+    }, {
+      "localName" : "film_film_company_relationship_film_film_company_relationshipid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship_film_film_company_relationshipid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_company_relationship" ]
+    }, {
+      "localName" : "music_contributor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/music_contributor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/music_contributor" ]
+    }, {
+      "localName" : "film_distributor_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distributor_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_distributor" ]
+    }, {
+      "localName" : "film_regional_release_date_film_regional_release_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_film_regional_release_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "film_collection_film_collectionid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_collection_film_collectionid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_collection" ]
+    }, {
+      "localName" : "content_rating_minimum_unaccompanied_age",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_minimum_unaccompanied_age",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating" ]
+    }, {
+      "localName" : "linkage_score",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/linkage_score",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/interlink" ]
+    }, {
+      "localName" : "runtime",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/runtime",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_cut" ]
+    }, {
+      "localName" : "country_currency",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_currency",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_crew_gig_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crew_gig" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_distributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_distributor",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "linkage_date",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/linkage_date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/linkage_run" ]
+    }, {
+      "localName" : "film_distributor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distributor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_distributor" ]
+    }, {
+      "localName" : "personal_film_appearance_type_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type" ]
+    }, {
+      "localName" : "performance_performanceid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_performanceid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "personal_film_appearance_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance" ]
+    }, {
+      "localName" : "film_series_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_series_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_series" ]
+    }, {
+      "localName" : "film_crewmember_film_crewmemberid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crewmember_film_crewmemberid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crewmember" ]
+    }, {
+      "localName" : "film_regional_release_date_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "film_set_designer_film_set_designer_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_set_designer_film_set_designer_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_set_designer" ]
+    }, {
+      "localName" : "actor_netflix_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor_netflix_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/actor" ]
+    }, {
+      "localName" : "editor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/editor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "film_cut_note",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_cut_note",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_cut" ]
+    }, {
+      "localName" : "film_costume_designer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_costume_designer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+    }, {
+      "localName" : "music_contributor_music_contributorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/music_contributor_music_contributorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/music_contributor" ]
+    }, {
+      "localName" : "country_languages",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_languages",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "dubbing_performance_film",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_film",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "film_theorist_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_theorist_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_theorist" ]
+    }, {
+      "localName" : "film_collection_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_collection_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_collection" ]
+    }, {
+      "localName" : "film_location_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_location_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_location" ]
+    }, {
+      "localName" : "special_film_performance_type_special_film_performance_typeid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/special_film_performance_type_special_film_performance_typeid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/special_film_performance_type" ]
+    }, {
+      "localName" : "film_casting_director_freebase_url",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_casting_director_freebase_url",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_casting_director" ]
+    }, {
+      "localName" : "production_company_production_companyid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/production_company_production_companyid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/production_company" ]
+    }, {
+      "localName" : "film_distributor_film_distributorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distributor_film_distributorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_distributor" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "country_iso_alpha2",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_iso_alpha2",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "country_iso_alpha3",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_iso_alpha3",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_set_designer_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_set_designer_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_set_designer" ]
+    }, {
+      "localName" : "film_film_company_relationship_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_company_relationship" ]
+    }, {
+      "localName" : "film_festival_sponsor_film_festival_sponsor_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_sponsor_film_festival_sponsor_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_sponsor" ]
+    }, {
+      "localName" : "country_areaInSqKm",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_areaInSqKm",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_film_distribution_medium",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_film_distribution_medium",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "dubbing_performance_dubbing_performanceid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance_dubbing_performanceid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/dubbing_performance" ]
+    }, {
+      "localName" : "cinematographer_cinematographerid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/cinematographer_cinematographerid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/cinematographer" ]
+    }, {
+      "localName" : "film_critic_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_critic_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_critic" ]
+    }, {
+      "localName" : "film_regional_release_date_release_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date_release_date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_regional_release_date" ]
+    }, {
+      "localName" : "performance_film",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_film",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/performance" ]
+    }, {
+      "localName" : "film_crew_role",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_role",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_crew_gig" ]
+    }, {
+      "localName" : "film_festival_focus_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_focus_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_focus" ]
+    }, {
+      "localName" : "film_distribution_medium_film_distribution_mediumid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distribution_medium_film_distribution_mediumid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_distribution_medium" ]
+    }, {
+      "localName" : "film_cut_film_cutid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_cut_film_cutid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_cut" ]
+    }, {
+      "localName" : "personal_film_appearance_personal_film_appearanceid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_personal_film_appearanceid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance" ]
+    }, {
+      "localName" : "actor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+    }, {
+      "localName" : "date",
+      "namespace" : "http://purl.org/dc/terms/",
+      "fullName" : "http://purl.org/dc/terms/date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "content_rating_content_ratingid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_content_ratingid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/content_rating" ]
+    }, {
+      "localName" : "filmid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/filmid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film" ]
+    }, {
+      "localName" : "director_directorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/director_directorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/director" ]
+    }, {
+      "localName" : "film_film_distributor_relationship_year",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship_year",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship" ]
+    }, {
+      "localName" : "film_story_contributor_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_story_contributor_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_story_contributor" ]
+    }, {
+      "localName" : "film_company_film_companyid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_company_film_companyid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_company" ]
+    }, {
+      "localName" : "film_format_film_formatid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_format_film_formatid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_format" ]
+    }, {
+      "localName" : "production_company_name",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/production_company_name",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/production_company" ]
+    }, {
+      "localName" : "country_iso_numeric",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country_iso_numeric",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/country" ]
+    }, {
+      "localName" : "film_festival_event_closing_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event_closing_date",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_festival_event" ]
+    }, {
+      "localName" : "film_story_contributor_film_story_contributorid",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_story_contributor_film_story_contributorid",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_story_contributor" ]
+    }, {
+      "localName" : "linkage_method",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/linkage_method",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/oddlinker/linkage_run" ]
+    }, {
+      "localName" : "film_art_director_id",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_art_director_id",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/film_art_director" ]
+    }, {
+      "localName" : "personal_film_appearance_type_of_appearance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type_of_appearance",
+      "type" : "XSD_STRING",
+      "SourceClasses" : [ "http://data.linkedmdb.org/resource/movie/personal_film_appearance" ]
+    } ],
+    "Associations" : [ {
+      "localName" : "story_contributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/story_contributor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_story_contributor"
+      } ]
+    }, {
+      "localName" : "film_casting_director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_casting_director",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_casting_director"
+      } ]
+    }, {
+      "localName" : "film_production_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_production_designer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_production_designer"
+      } ]
+    }, {
+      "localName" : "director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/director",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://xmlns.com/foaf/0.1/Person"
+      } ]
+    }, {
+      "localName" : "film_film_company_relationship",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship"
+      } ]
+    }, {
+      "localName" : "film_collection",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_collection",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_collection"
+      } ]
+    }, {
+      "localName" : "subject",
+      "namespace" : "http://www.w3.org/2004/02/skos/core#",
+      "fullName" : "http://www.w3.org/2004/02/skos/core#subject",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_subject"
+      } ]
+    }, {
+      "localName" : "music_contributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/music_contributor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/music_contributor"
+      } ]
+    }, {
+      "localName" : "film_distributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distributor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_distributor"
+      } ]
+    }, {
+      "localName" : "film_set_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_set_designer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_set_designer"
+      } ]
+    }, {
+      "localName" : "performance_special_performance_type",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance_special_performance_type",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/performance",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/special_film_performance_type"
+      } ]
+    }, {
+      "localName" : "film_company",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_company",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_film_company_relationship",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_company"
+      } ]
+    }, {
+      "localName" : "featured_film_location",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/featured_film_location",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_location"
+      } ]
+    }, {
+      "localName" : "film_cut",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_cut",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_cut"
+      } ]
+    }, {
+      "localName" : "link_source",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/link_source",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/oddlinker/interlink",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    }, {
+      "localName" : "actor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/actor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/actor"
+      } ]
+    }, {
+      "localName" : "film_featured_song",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_featured_song",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_featured_song"
+      } ]
+    }, {
+      "localName" : "film_distribution_medium",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_distribution_medium",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_distribution_medium"
+      } ]
+    }, {
+      "localName" : "producer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/producer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/producer"
+      } ]
+    }, {
+      "localName" : "production_company",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/production_company",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/production_company"
+      } ]
+    }, {
+      "localName" : "personal_film_appearance_type",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance_type"
+      } ]
+    }, {
+      "localName" : "country",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/country",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/country"
+      } ]
+    }, {
+      "localName" : "personal_film_appearance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/personal_film_appearance"
+      } ]
+    }, {
+      "localName" : "executive_producer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/executive_producer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/producer"
+      } ]
+    }, {
+      "localName" : "film_festival_event",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_festival_event",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_festival",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_festival_event"
+      } ]
+    }, {
+      "localName" : "linkage_run",
+      "namespace" : "http://data.linkedmdb.org/resource/oddlinker/",
+      "fullName" : "http://data.linkedmdb.org/resource/oddlinker/linkage_run",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/oddlinker/interlink",
+        "TargetClass" : "http://data.linkedmdb.org/resource/oddlinker/linkage_run"
+      } ]
+    }, {
+      "localName" : "dubbing_performance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/dubbing_performance",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/dubbing_performance"
+      } ]
+    }, {
+      "localName" : "film_crew_gig_film_job",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig_film_job",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_crew_gig",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_job"
+      } ]
+    }, {
+      "localName" : "editor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/editor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/editor"
+      } ]
+    }, {
+      "localName" : "film_of_distributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_of_distributor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_film_distributor_relationship",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    }, {
+      "localName" : "content_rating_system",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/content_rating_system",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/content_rating",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/content_rating_system"
+      } ]
+    }, {
+      "localName" : "rating",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/rating",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/content_rating"
+      } ]
+    }, {
+      "localName" : "cinematographer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/cinematographer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/cinematographer"
+      } ]
+    }, {
+      "localName" : "film_regional_release_date",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_regional_release_date"
+      } ]
+    }, {
+      "localName" : "film_series",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_series",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_series"
+      } ]
+    }, {
+      "localName" : "sequel",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/sequel",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    }, {
+      "localName" : "genre",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/genre",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_genre"
+      } ]
+    }, {
+      "localName" : "location",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/location",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_location"
+      } ]
+    }, {
+      "localName" : "film_character",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_character",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/performance",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_character"
+      } ]
+    }, {
+      "localName" : "performance",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/performance",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/performance"
+      } ]
+    }, {
+      "localName" : "writer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/writer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/writer"
+      } ]
+    }, {
+      "localName" : "film_format",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_format",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_format"
+      } ]
+    }, {
+      "localName" : "film_crew_gig_film",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crew_gig_film",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_crew_gig",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    }, {
+      "localName" : "prequel",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/prequel",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    }, {
+      "localName" : "film_subject",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_subject",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_subject"
+      } ]
+    }, {
+      "localName" : "film_story_contributor",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_story_contributor",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_story_contributor"
+      } ]
+    }, {
+      "localName" : "film_art_director",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_art_director",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_art_director"
+      } ]
+    }, {
+      "localName" : "film_crewmember",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/film_crewmember",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film_crew_gig",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_crewmember"
+      } ]
+    }, {
+      "localName" : "costume_designer",
+      "namespace" : "http://data.linkedmdb.org/resource/movie/",
+      "fullName" : "http://data.linkedmdb.org/resource/movie/costume_designer",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://data.linkedmdb.org/resource/movie/film",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film_costume_designer"
+      } ]
+    }, {
+      "localName" : "made",
+      "namespace" : "http://xmlns.com/foaf/0.1/",
+      "fullName" : "http://xmlns.com/foaf/0.1/made",
+      "ClassPairs" : [ {
+        "SourceClass" : "http://xmlns.com/foaf/0.1/Person",
+        "TargetClass" : "http://data.linkedmdb.org/resource/movie/film"
+      } ]
+    } ]
+  }

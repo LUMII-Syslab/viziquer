@@ -8,7 +8,7 @@ Interpreter.customMethods({
 	TestPr: function() {
 
 		var schema = new VQ_Schema();
-  		console.log(schema);
+  		//console.log(schema);
 		//console.log(schema.findClassByName("Course").getAllAssociations());
 		//console.log(schema.findClassByName("Student").getAllAttributes());
 		//console.log(schema.getAllClasses());
@@ -30,7 +30,7 @@ Interpreter.customMethods({
 		//Class -> compartments->Name->extension->dynamicDropDown
 		var schema = new VQ_Schema();
 		var cls = schema.getAllClasses();
-    var class_names = [];
+		var class_names = [];
 		if (_.size(cls) > 0) {
 
 			//Create array of needed structure from class' names
