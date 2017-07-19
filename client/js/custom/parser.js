@@ -12,6 +12,7 @@ var parseType;
 var isSimpleVaraible;
 var applyExistsToFilter = null;
 var emptyPrefix = null;
+var symbolTable = null;
 
 makeString = function (o){
 	var str='';
@@ -36,7 +37,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep){
+function initiate_variables(vna, count, pt, ep, st){
 	tripleTable = [];
 	variableTable = [];
 	isAggregate = false;
@@ -50,10 +51,11 @@ function initiate_variables(vna, count, pt, ep){
 	prefixTable = [];
 	parseType = pt;
 	emptyPrefix = ep;
+	symbolTable = st;
 }
 
-parse_filter = function(parsed_exp, className, vna, count,ep) {
-	initiate_variables(vna, count, "different", ep);
+parse_filter = function(parsed_exp, className, vna, count, ep, st) {
+	initiate_variables(vna, count, "different", ep, st);
 	
 	var parsed_exp1 = transformBetweenLike(parsed_exp);
 	
@@ -79,13 +81,13 @@ parse_filter = function(parsed_exp, className, vna, count,ep) {
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep) {
+parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st) {
 	alias = alias || "";
 	
 	//TODO check if use one variable or different
 	//when new abstrack syntax JSON ir ready
 	
-	initiate_variables(vna, count, "condition", ep);
+	initiate_variables(vna, count, "condition", ep, st);
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
 	// check if given expression is simple variable name or agregation, function, expression
@@ -93,6 +95,7 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep) {
 	isSimpleVaraible = checkIfIsSimpleVariable(parsed_exp1, true);
 	if(isSimpleVaraible == false || alias == "") alias = null; 
 	var result = generateExpression(parsed_exp1, "", className, alias, true, isSimpleVaraible);
+	console.log("ssss", isSimpleVaraible, parsed_exp1)
 	return {"exp":result, "triples":createTriples(tripleTable), "variables":variableTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable};
 
 }
@@ -1478,8 +1481,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 }
 
 function isDateVar(v, dateType){
+	console.log(symbolTable);
 	if(typeof v["var"] !== 'undefined'){
-		if(v["var"]["type"]!=null && v["var"]["type"]["type"] == dateType) return true;
+		console.log("qqqq",v["var"], symbolTable[v["var"]]);
+		if((v["var"]["type"]!=null && v["var"]["type"]["type"] == dateType) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && symbolTable[v["var"]["name"]]["type"]["type"] == dateType)) return true;
 		else return false;
 	}
 	if(typeof v["RDFLiteral"] !== 'undefined'){
@@ -1491,7 +1496,7 @@ function isDateVar(v, dateType){
 		else return false;
 	}
 	if(typeof v["Path"] !== 'undefined'){
-		if(  v["PrimaryExpression"]["var"]["type"]!=null && v["PrimaryExpression"]["var"]["type"]["type"] == dateType) return true;
+		if((v["PrimaryExpression"]["var"]["type"]!=null && v["PrimaryExpression"]["var"]["type"]["type"] == dateType) || (typeof symbolTable[v["PrimaryExpression"]["var"]["name"]] !== 'undefined' && symbolTable[v["PrimaryExpression"]["var"]["name"]]["type"] != null && symbolTable[v["PrimaryExpression"]["var"]["name"]]["type"]["type"] == dateType)) return true;
 		else return false;
 	}
 	return false
