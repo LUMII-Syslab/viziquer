@@ -315,6 +315,9 @@ genAbstractQueryForElementList = function (element_id_list) {
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset()  });
                 };
+                if (elem.isSubQueryRoot()) {
+                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct() });
+                };
                 return linkedElem_obj;
             };
 
