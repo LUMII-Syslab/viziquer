@@ -97,7 +97,11 @@ VQ_Schema = function () {
 		_.each(asoc.ClassPairs, function(cp){
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
-			newSchRole = new VQ_SchemaRole(asoc, cp, schema);
+			newSchRole = new VQ_SchemaRole(asoc, cp, newRole, schema);
+			if ( !newRole.maxCardinality) {
+			  newRole.minCardinality = 0;
+			  newRole.maxCardinality = 2147483647;
+			}
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole, schema);
 			schema.addSchemaProperty(newSchRole, schema);
@@ -398,18 +402,29 @@ VQ_Attribute = function (attrInfo, schema){
 	VQ_Elem.call(this, attrInfo, schema, "attribute");
 	this.schemaAttribute = {};
 	this.type = attrInfo.type;
+	if (attrInfo.maxCardinality) {
+	  this.minCardinality = attrInfo.minCardinality;
+	  this.maxCardinality = attrInfo.maxCardinality;
+	} 
+	else {
+	  this.minCardinality = 1;
+	  this.maxCardinality = 1;	
+	}
 };
 
 VQ_Attribute.prototype = Object.create(VQ_Elem.prototype);
 VQ_Attribute.prototype.constructor = VQ_Attribute;
 VQ_Attribute.prototype.schemaAttribute = null;
 VQ_Attribute.prototype.type = null;
-VQ_Attribute.prototype.getTypeInfo = function() {
-  if (this.type) return {type:this.type};
-  else return {};
+VQ_Attribute.prototype.minCardinality = null;
+VQ_Attribute.prototype.maxCardinality = null;
+VQ_Attribute.prototype.getAttrInfo = function() {
+  var rez = {minCardinality:this.minCardinality, maxCardinality:this.maxCardinality};
+  if (this.type) return _.extend( rez, {type:this.type});
+  else return rez;
   };
 VQ_Attribute.prototype.getAttributeInfo = function() {
-  return _.extend(this.getElemInfo(), this.getTypeInfo());
+  return _.extend(this.getElemInfo(), this.getAttrInfo());
   };
 
 
@@ -428,24 +443,43 @@ VQ_SchemaAttribute.prototype.sourceClass = null;
 VQ_Role = function (roleInfo, schema){
 	VQ_Elem.call(this, roleInfo, schema, "role");
 	this.schemaRole = {};
+	if (roleInfo.maxCardinality) {
+	  this.minCardinality = roleInfo.minCardinality;
+	  this.maxCardinality = roleInfo.maxCardinality;
+	} 
 };
 
 VQ_Role.prototype = Object.create(VQ_Elem.prototype);
 VQ_Role.prototype.constructor = VQ_Role;
 VQ_Role.prototype.schemaRole = null;
+VQ_Role.prototype.minCardinality = null;
+VQ_Role.prototype.maxCardinality = null;
+VQ_Role.prototype.getAssocInfo = function() {
+  return {minCardinality:this.minCardinality, maxCardinality:this.maxCardinality};
+  };
 VQ_Role.prototype.getAssociationInfo = function() {
-  return this.getElemInfo();
+  return _.extend(this.getElemInfo(), this.getAssocInfo());
   };
 
-VQ_SchemaRole = function (roleInfo, cpInfo, schema){
+VQ_SchemaRole = function (roleInfo, cpInfo, role, schema){
 	VQ_Elem.call(this, roleInfo, schema, "schemaRole");
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
-	if (cpInfo.maxCardinality) this.minCardinality = cpInfo.minCardinality;
-	if (cpInfo.maxCardinality) this.maxCardinality = cpInfo.maxCardinality;
+	if (cpInfo.maxCardinality) {
+	  this.minCardinality = cpInfo.minCardinality;
+	  this.maxCardinality = cpInfo.maxCardinality;
+	  if (role.maxCardinality) {
+	    if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
+		if (this.maxCardinality > role.maxCardinality) role.maxCardinality = this.maxCardinality;
+	  }
+	  else {
+	    role.minCardinality = this.minCardinality;
+	    role.maxCardinality = this.maxCardinality;	    
+	  }
+	} 
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
