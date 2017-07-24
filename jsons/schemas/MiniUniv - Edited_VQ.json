@@ -1,68 +1,68 @@
 {
-  "Name": "Schema",
-  "Schema":
-{
-  "URI": "http://lumii.lv/ontologies/UnivExample.owl",
+  "namespace": "http://lumii.lv/ontologies/UnivExample.owl#",
   "Name":"UnivExample",
+  "schemaVersion": "2017-07-12",
+  "formatVersion": "0.2",
   "Classes": [
     {
-      "SuperClasses": [ "Person" ],
-      "localName": "Teacher"
+      "localName": "Teacher",	
+      "SuperClasses": [ "Person" ]
     },
     {
-      "SuperClasses": [ "Thing" ],
-      "localName": "FacultyLevel"
+	  "localName": "FacultyLevel",
+      "SuperClasses": [ "Thing" ]
     },
     {
-      "SuperClasses": [ "Person"],
-      "localName": "Student"
+	  "localName": "Student",
+      "SuperClasses": [ "Person"]
     },
     {
-      "SuperClasses": [ "Thing"],
-      "localName": "AcademicProgram"
+	  "localName": "AcademicProgram",
+      "SuperClasses": [ "Thing"]
     },
     {
-      "SuperClasses": [ "Thing"],
-      "localName": "Course"
+	  "localName": "Course",
+      "SuperClasses": [ "Thing"]
     },
     {
-      "SuperClasses": [ "Course" ],
-      "localName": "OptionalCourse"
+      "localName": "OptionalCourse",
+      "SuperClasses": [ "Course" ]
+
     },
     {
-      "SuperClasses": [ "Course" ],
-      "localName": "MandatoryCourse"
+      "localName": "MandatoryCourse",
+      "SuperClasses": [ "Course" ]
     },
     {
-      "SuperClasses": [ "Registration" ],
-      "localName": "CompletedRegistration"
+      "localName": "CompletedRegistration",
+      "SuperClasses": [ "Registration" ]
     },
     {
-      "SuperClasses": [ "Thing"],
-      "localName": "Registration"
+	  "localName": "Registration",
+      "SuperClasses": [ "Thing"]
     },
     {
-      "SuperClasses": [ "Thing"],
-      "localName": "Person"
+      "localName": "Person",
+      "SuperClasses": [ "Thing"]
     },
     {
-      "SuperClasses": [ "Teacher" ],
-      "localName": "Professor"
+	  "localName": "Professor",
+      "SuperClasses": [ "Teacher" ]
     },
     {
-      "SuperClasses": [ "Thing"],
-      "localName": "Nationality"
+      "localName": "Nationality",
+      "SuperClasses": [ "Thing"]
     },
     {
-      "SuperClasses": [ "Teacher"],
-      "localName": "Assistant"
+      "localName": "Assistant",
+      "SuperClasses": [ "Teacher"]
     },	
     {
-      "SuperClasses": [],
       "localName": "Thing",
 	  "prefix": "owl",
 	  "namespace": "http://www.w3.org/2002/07/owl#",
-	  "URI": "http://www.w3.org/2002/07/owl#Thing"
+	  "fullName": "http://www.w3.org/2002/07/owl#Thing",
+	  "SuperClasses": []
     }
   ],
   "Attributes": [
@@ -227,4 +227,4 @@
     }
   ]
 }
-}
+

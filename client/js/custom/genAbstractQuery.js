@@ -174,10 +174,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)") {
-        if (obj_class.instanceAlias=="") {
-          obj_class.instanceAlias=f.alias;
-        };
-        f.exp=obj_class.instanceAlias;
+        if (obj_class.instanceAlias==null) {
+          if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
+        } else{
+		  f.exp=obj_class.instanceAlias;
+		};
+        //f.exp=obj_class.instanceAlias;
       };
 
       if (f.groupValues) {
@@ -185,6 +187,30 @@ resolveTypesAndBuildSymbolTable = function (query) {
       };
 
          parseExpObject(f)
+         // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
+         // if expression is just the property name, then resolve its type.
+         var p = f.parsed_exp;
+         // Don't know shorter/better way to check ...
+         if (f.alias && p && p[0] && p[0].ConditionalOrExpression && p[0].ConditionalOrExpression[0] && p[0].ConditionalOrExpression[1] &&  p[0].ConditionalOrExpression[1].length == 0 &&
+             p[0].ConditionalOrExpression[0].ConditionalAndExpression && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
+             p[0].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[0].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
+             p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList.length == 0
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList.length == 0
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
+             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
+         ) {
+           var var_obj = p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+           if (var_obj["kind"]=="PROPERTY_NAME") {
+             symbol_table[f.alias].type = var_obj["type"];
+           }
+         }
     });
 
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
@@ -288,6 +314,9 @@ genAbstractQueryForElementList = function (element_id_list) {
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset()  });
+                };
+                if (elem.isSubQueryRoot()) {
+                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct() });
                 };
                 return linkedElem_obj;
             };

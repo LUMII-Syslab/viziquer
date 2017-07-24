@@ -492,16 +492,21 @@ Template.importOntology.events({
 	        var reader = new FileReader();
 
 	        reader.onload = function(event) {
+				
 				var data = JSON.parse(reader.result)
-	        	var list = {projectId: Session.get("activeProject"),
-	        				versionId: Session.get("versionId"),
-	                        data: data,
-	                    };
-
-				if ( data.Schema ) { 
-					Utilities.callMeteorMethod("loadMOntology", list); }
-				else {
-					Utilities.callMeteorMethod("loadOntology", list); }
+				if (data) 
+				{
+					var list = {projectId: Session.get("activeProject"),
+								versionId: Session.get("versionId"),
+								data: data,
+							};	
+					Utilities.callMeteorMethod("loadMOntology", list);							
+					//if ( data.Schema ) { 
+					//	Utilities.callMeteorMethod("loadMOntology", list); }
+					//else {
+					//	Utilities.callMeteorMethod("loadOntology", list); }							
+				}
+				//else  Te būs kļūdas ziņojums lietotājam};
 	        }
 
 	        reader.onerror = function(error) {

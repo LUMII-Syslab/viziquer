@@ -541,6 +541,17 @@
               "index": 0,
               "toolId": "wbFgEL7fKn29fAGxJ",
               "versionId": "KjAwfkjNrxF6zi5w7"
+            },
+            {
+              "_id": "2mYXlh6ieGcyZTKWZ",
+              "toolId": "wbFgEL7fKn29fAGxJ",
+              "versionId": "KjAwfkjNrxF6zi5w7",
+              "diagramTypeId": "oQ4WPmhWQdAmHL68y",
+              "diagramId": "qTzHgycYWdnesdApY",
+              "type": "elementStyleAccordion",
+              "name": "Style",
+              "elementTypeId": "sRuku5dXbSyCBwdHe",
+              "index": 1
             }
           ]
         },
