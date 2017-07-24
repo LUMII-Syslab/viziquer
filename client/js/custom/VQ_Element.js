@@ -37,21 +37,21 @@ VQ_Schema = function () {
    var data = Schema.findOne();
    if (data.Schema) data = data.Schema;
    //console.log(data);
-   
+
    var schema = this;
    if (data.namespace) this.namespace = data.namespace;
    if (data.URI) this.namespace = data.URI;
-   
+
    if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
      this.namespace = this.namespace + "#";
-	 
+
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
 
-	if (!this.namespace) { 
+	if (!this.namespace) {
 	  defaultOntology = _.max( this.Ontologies, function(ont) {return ont.count});
-	  this.namespace = defaultOntology.namespace; 
+	  this.namespace = defaultOntology.namespace;
 	  defaultOntology.isDefault = true;
 	  defaultOntology.prefix = "";
 	}
@@ -108,7 +108,7 @@ VQ_Schema = function () {
 			scClass.addProperty(newSchRole);
 			createLink(newRole, newSchRole, "schemaRole", "role");
   		    createLink(scClass, newSchRole, "outAssoc", "sourceClass");
-         	createLink(tClass, newSchRole, "inAssoc", "targetClass"); 
+         	createLink(tClass, newSchRole, "inAssoc", "targetClass");
 		})
 	})
 
@@ -156,12 +156,12 @@ VQ_Schema.prototype = {
   ontologyExist: function (name) {
     var ontology = _.find(this.Ontologies, function (ont) {
 	  if (ont.namespace == name) { ont.count = ont.count +1;  return ont}; });
-    return ontology;	  
+    return ontology;
   },
   checkOntologyPrefix: function (name){
     var ontology = _.find(this.Ontologies, function (ont) {
 	  if (ont.prefix == name) { return ont}; });
-	if (ontology) return this.checkOntologyPrefix(name+"1"); 
+	if (ontology) return this.checkOntologyPrefix(name+"1");
 	else return name;
   },
   getAllClasses: function (){
@@ -255,16 +255,16 @@ VQ_ontology = function (schema, URI, prefix) {
   this.namespace = URI;
   this.count = 1;
   this.namesAreUnique = true;
-  if (schema.namespace == URI) { 
-   this.isDefault = true; 
+  if (schema.namespace == URI) {
+   this.isDefault = true;
    this.prefix = "";
   }
-  else { 
+  else {
     this.isDefault = false;
 	if (prefix) this.prefix = prefix;
 	else {
 		var arr = URI.split("/");
-		this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1)); 	
+		this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
 	}
   }
 };
@@ -286,22 +286,22 @@ VQ_Elem = function (elemInfo, schema, elemType){
 	this.localName = localName;
 	this.schema = schema;
 	var uri = null;
-	
+
 	if (elemInfo.namespace) uri = elemInfo.namespace;
 	else uri = schema.namespace;
-	
+
 	var ontology = schema.ontologyExist(uri);
 	if (ontology) { this.ontology = ontology }
-	else { 
+	else {
 	  ontology = new VQ_ontology(schema, uri, elemInfo.prefix);
 	  schema.addOntology(ontology);
 	  this.ontology = ontology;
 	}
-	
+
 	if (elemInfo.fullName) fullName = elemInfo.fullName;
 	else fullName = this.ontology.namespace + localName;
 	this.fullName = fullName;
-	
+
   };
 
 VQ_Elem.prototype = {
@@ -314,7 +314,7 @@ VQ_Elem.prototype = {
   getID: function() { return this.ID },
   getElemInfo: function() {
     if (this.localName == " ") return {};
-	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace, Prefix:this.ontology.prefix, DefaultNamespace:this.schema.namespace};  
+	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace, Prefix:this.ontology.prefix, DefaultNamespace:this.schema.namespace};
   }
 }
 
@@ -333,7 +333,7 @@ VQ_Class = function (classInfo, schema){
 	var e = schema.findClassByName(classInfo.localName);
 	if ( e && e.localName == classInfo.localName ){
 	  this.isUnique = false;
-	  e.isUnique = false;	
+	  e.isUnique = false;
 	  this.ontology.namesAreUnique = false;
 	  e.ontology.namesAreUnigue = false;
 	}
@@ -405,10 +405,10 @@ VQ_Attribute = function (attrInfo, schema){
 	if (attrInfo.maxCardinality) {
 	  this.minCardinality = attrInfo.minCardinality;
 	  this.maxCardinality = attrInfo.maxCardinality;
-	} 
+	}
 	else {
 	  this.minCardinality = 1;
-	  this.maxCardinality = 1;	
+	  this.maxCardinality = 1;
 	}
 };
 
@@ -446,7 +446,7 @@ VQ_Role = function (roleInfo, schema){
 	if (roleInfo.maxCardinality) {
 	  this.minCardinality = roleInfo.minCardinality;
 	  this.maxCardinality = roleInfo.maxCardinality;
-	} 
+	}
 };
 
 VQ_Role.prototype = Object.create(VQ_Elem.prototype);
@@ -477,9 +477,9 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role, schema){
 	  }
 	  else {
 	    role.minCardinality = this.minCardinality;
-	    role.maxCardinality = this.maxCardinality;	    
+	    role.maxCardinality = this.maxCardinality;
 	  }
-	} 
+	}
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
@@ -910,8 +910,29 @@ VQ_Element.prototype = {
 																	{attrName:"startShapeStyle.stroke", attrValue:"#ff0000"},
 																	{attrName:"endShapeStyle.stroke", attrValue:"#ff0000"},
 																]);
-						if (this.isSubQuery() || this.isGlobalSubQuery()) {
-							 this.setLinkQueryType("PLAIN");
+						if (this.isSubQuery() ) {
+						//	 this.setLinkQueryType("PLAIN");
+						   var root_dir =this.getRootDirection();
+               if (root_dir=="start") {
+								 this.setCustomStyle([
+																	{attrName:"startShapeStyle.fill",attrValue:"#ff0000"},
+																 ]);
+							 } else if (root_dir=="end") {
+								 this.setCustomStyle([
+																	{attrName:"endShapeStyle.fill",attrValue:"#ff0000"},
+																 ]);
+							 };
+						} else if (this.isGlobalSubQuery()) {
+							var root_dir =this.getRootDirection();
+							if (root_dir=="start") {
+								this.setCustomStyle([
+																 {attrName:"startShapeStyle.fill",attrValue:"#ffffff"},
+																]);
+							} else if (root_dir=="end") {
+								this.setCustomStyle([
+																 {attrName:"endShapeStyle.fill",attrValue:"#ffffff"},
+																]);
+							};
 						};
 				} else if (value=="OPTIONAL") {
 					  setOpt = "true";
@@ -924,6 +945,19 @@ VQ_Element.prototype = {
 																]);
 						if (this.isConditional()) {
 							 this.setLinkQueryType("PLAIN");
+						} else if (this.isSubQuery() ) {
+						//	 this.setLinkQueryType("PLAIN");
+						   var root_dir =this.getRootDirection();
+               if (root_dir=="start") {
+								 this.setCustomStyle([
+																	{attrName:"startShapeStyle.fill",attrValue:"#18b6d1"},
+																 ]);
+							 } else if (root_dir=="end") {
+								 this.setCustomStyle([
+																	{attrName:"endShapeStyle.fill",attrValue:"#18b6d1"},
+																 ]);
+							 };
+
 						};
 				} else {
 					this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#000000"},
@@ -931,6 +965,18 @@ VQ_Element.prototype = {
 																{attrName:"startShapeStyle.stroke", attrValue:"#000000"},
 																{attrName:"endShapeStyle.stroke", attrValue:"#000000"},
 															]);
+				  if (this.isSubQuery() ) {
+										var root_dir =this.getRootDirection();
+									  if (root_dir=="start") {
+																	 this.setCustomStyle([
+																										{attrName:"startShapeStyle.fill",attrValue:"#000000"},
+																									 ]);
+										} else if (root_dir=="end") {
+																	 this.setCustomStyle([
+																										{attrName:"endShapeStyle.fill",attrValue:"#000000"},
+																									 ]);
+										};
+				  };
 				};
 
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
@@ -953,26 +999,50 @@ VQ_Element.prototype = {
 
 						if (root_dir=="start") {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
-																		{attrName:"startShapeStyle.fill",attrValue:"#000000"},
+																		//{attrName:"startShapeStyle.fill",attrValue:"#000000"},
 																		{attrName:"startShapeStyle.radius",attrValue:12},
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
 																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
+						  if (this.isNegation()) {
+									this.setCustomStyle([
+																	     {attrName:"startShapeStyle.fill",attrValue:"#ff0000"},
+																	   ]);
+							} else if (this.isOptional()) {
+								this.setCustomStyle([
+																		 {attrName:"startShapeStyle.fill",attrValue:"#18b6d1"},
+																	 ]);
+							} else {
+									this.setCustomStyle([
+																			 {attrName:"startShapeStyle.fill",attrValue:"#000000"},
+																		 ]);
+							};
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
-																		{attrName:"endShapeStyle.fill",attrValue:"#000000"},
+																		//{attrName:"endShapeStyle.fill",attrValue:"#000000"},
 																		{attrName:"endShapeStyle.radius",attrValue:12},
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},
 																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
+							if (this.isNegation()) {
+										this.setCustomStyle([
+																				{attrName:"endShapeStyle.fill",attrValue:"#ff0000"},
+																			 ]);
+							} else if (this.isOptional()) {
+								this.setCustomStyle([
+																		 {attrName:"startShapeStyle.fill",attrValue:"#18b6d1"},
+																	 ]);
+							} else {
+									  this.setCustomStyle([
+																				{attrName:"endShapeStyle.fill",attrValue:"#000000"},
+																			 ]);
+							};
 						};
-						if (this.isNegation()) {
-							this.setLinkType("REQUIRED");
-						};
+
  				} else if (value=="GLOBAL_SUBQUERY") {
 					  setSub = "false";
 						setGSub = "true";
@@ -987,6 +1057,7 @@ VQ_Element.prototype = {
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
 																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
+
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
@@ -997,9 +1068,9 @@ VQ_Element.prototype = {
 																		{attrName:"elementStyle.strokeWidth",attrValue:3},
 																	]);
 						};
-						if (this.isNegation()) {
-							this.setLinkType("REQUIRED");
-						};
+						//if (this.isNegation()) {
+						//	this.setLinkType("REQUIRED");
+						//};
 				} else if (value=="CONDITION") {
 					  setSub = "false";
 						setGSub = "false";
