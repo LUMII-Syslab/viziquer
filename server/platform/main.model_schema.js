@@ -1148,24 +1148,30 @@ Schemas.Compartments = new SimpleSchema({
         type: String,
         label: "Compartmetns.input",
         optional: true,
+        
+        
         //removeEmptyStrings: false,
-        //autoConvert: false,      
+        //      
     },
 
     value: {
         type: String,
         label: "Compartmetns.value",
         optional: true,
+        
+        
         //removeEmptyStrings: false,
-        //autoConvert: false,           
+        //           
     },
 
     valueLC: {
         type: String,
         label: "Compartmetns.valueLC",
         optional: true,
+        
+        
         //removeEmptyStrings: false,
-        //autoConvert: false,
+        //
     },
 
     index: {
@@ -2354,18 +2360,23 @@ Schemas.CompartmentTypes = new SimpleSchema({
         type: String,
         label: "CompartmentTypes.prefix",
         optional: true,
+        
+        
     },
 
     suffix: {
         type: String,
         label: "CompartmentTypes.suffix",
         optional: true,
+        
+        
     },
 
     concatStyle: {
         type: String,
         label: "CompartmentTypes.concatStyle",
         optional: true,
+        
     },
 
     subCompartmentTypes: {

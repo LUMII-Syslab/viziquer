@@ -121,10 +121,7 @@ Meteor.methods({
 			var update = {};
 			update[list["attrName"]] = list["attrValue"];
 
-
-			console.log("update ", update);
-
-			CompartmentTypes.update({_id: list["id"]}, {$set: update});
+			CompartmentTypes.update({_id: list["id"]}, {$set: update}, {trimStrings: false});
 		}
 	},
 

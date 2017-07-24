@@ -45,7 +45,7 @@ Meteor.methods({
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
-				Compartments.insert(compart_in);
+				Compartments.insert(compart_in, {trimStrings: false});
 
 				if (list["elementStyleUpdate"]) {
 					Elements.update({_id: compart_in.elementId, projectId: compart_in.projectId, versionId: compart_in.versionId},
@@ -84,7 +84,7 @@ Meteor.methods({
 
 					Compartments.update({_id: list["id"], projectId: list["projectId"],
 										versionId: list["versionId"]},
-									{$set: update});
+									{$set: update}, {trimStrings: false});
 				}
 
 				if (list["elementStyleUpdate"]) {
@@ -130,10 +130,12 @@ add_compartments = function(list) {
 	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {sort: {index: 1}}).forEach(
 		function(compart_type) {
 
-			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField")
+			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
 				return;
-			else if (compart_type["defaultValue"])
+			}
+			else if (compart_type["defaultValue"]) {
 				add_compartment(compart_type, list);
+			}
 		});
 }
 
