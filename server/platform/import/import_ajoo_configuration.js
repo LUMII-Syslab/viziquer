@@ -132,7 +132,7 @@ ImportAjooConfiguration.prototype = {
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
-								versionId: self.versionId,							
+								versionId: self.versionId,
 							});
 
 			var new_line_type_id = ElementTypes.insert(object);
@@ -165,7 +165,7 @@ ImportAjooConfiguration.prototype = {
 								versionId: self.versionId,
 							});
 
-			var new_copmart_type_id = CompartmentTypes.insert(object);
+			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
 			self.obj_type_map[compart_type_id] = new_copmart_type_id;
 		});
 	},
