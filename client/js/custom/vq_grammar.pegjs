@@ -242,15 +242,16 @@
 
 			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])* ">") {return {IRIREF:IRIREF}}
 
-			PrefixedName = PrefixedName:(PNAME_LN / PNAME_NS) {return {PrefixedName:makeVar(PrefixedName)}}
+			PrefixedName = PrefixedName:(PNAME_LN / PNAME_NS) {return {PrefixedName:PrefixedName}}
 
-			PNAME_NS = PN_PREFIX? ":"
+			PNAME_NS = (Prefix:PN_PREFIX?) ":" {return makeVar(Prefix)}
 
-			PNAME_LN = PNAME_NS PN_LOCAL
+			// PNAME_LN = Prefix:PNAME_NS Var:LName {return {Prefix:Prefix, var:Var}}
+			PNAME_LN = (Prefix:PNAME_NS LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{Prefix: Prefix, name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			PN_PREFIX = Chars_String
 
-			PN_LOCAL = Chars_String
+			PN_LOCAL = Var:Chars_String {return makeVar(Var)}
 
 
 
