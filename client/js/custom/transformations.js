@@ -474,7 +474,7 @@ Interpreter.customMethods({
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var elem = new VQ_Element(c["elementId"]);
-       _.each(elem.getLinks().map(function(l) {return l.link}), function(link) { 
+       _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
 					link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
 			 });
 		}
@@ -513,9 +513,10 @@ Interpreter.customMethods({
 			elemS_name.push(comp_start["input"]);
 
 			//If Super/SubClass exists - add to possible start elements
+      if (schema.findClassByName(elemS_name[0])) {
 			_.each(schema.findClassByName(elemS_name[0]).allSuperSubClasses, function(nm){
 				elemS_name.push(nm["localName"]);
-			})
+			})};
 
 
 			//End elem
@@ -523,9 +524,10 @@ Interpreter.customMethods({
 			elemE_name.push(comp_end["input"]);
 
 				//If Super/SubClass exists - add to possible end elements
+      if (schema.findClassByName(elemE_name[0])) {
 			_.each(schema.findClassByName(elemE_name[0]).allSuperSubClasses, function(nm){
 				elemE_name.push(nm["localName"]);
-			})
+			})};
 
 			//Read Associations from DB and make unique
 			var asc = [];
