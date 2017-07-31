@@ -137,7 +137,7 @@ Meteor.methods({
 	dublicateProject: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (is_project_member(user_id, list)) {
 
 			var project_id = list.projectId;
 			var project = Projects.findOne({_id: project_id});
