@@ -1776,9 +1776,10 @@
                       "value": "select distinct"
                     },
                     {
-                      "compartmentStyle": "NoStyle",
+                      "compartmentStyle": "828245acc3241ea17517a71b",
                       "elementStyle": "NoStyle",
-                      "input": "false"
+                      "input": "false",
+                      "value": " "
                     }
                   ]
                 },
@@ -2342,6 +2343,10 @@
               {
                 "extensionPoint": "resizeElement",
                 "procedure": "ResizeElement"
+              },
+              {
+                "extensionPoint": "afterCreateElement",
+                "procedure": "VQafterCreateLink"
               }
             ],
             "keyStrokes": [
@@ -2400,7 +2405,7 @@
                   "fill": "#375d8a",
                   "fillPriority": "color",
                   "stroke": "#000000",
-                  "strokeWidth": "2",
+                  "strokeWidth": "1",
                   "shadowColor": "red",
                   "shadowBlur": 0,
                   "shadowOpacity": 1,

@@ -421,6 +421,12 @@ Interpreter.customMethods({
 			 elem.hideDefaultLinkName(hide);
 		}
 	},
+
+	VQafterCreateLink: function(params) {
+		 //console.log(params);
+		 var link = new VQ_Element(params["_id"]); 
+		 link.setLinkType("REQUIRED");
+	},
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
 		//return: String
