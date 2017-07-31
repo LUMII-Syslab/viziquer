@@ -571,6 +571,7 @@ Template.diagramEditor.onRendered(function() {
     		var new_height = e.pageY - Math.round($("#ajoo_scene").offset().top);
 
     	    $("#ajoo_scene").height(new_height);
+    	    $("#ajoo_palette").height(new_height);
     	    editor.size.setSize(editor.size.state.width, new_height);
     	}
     });
