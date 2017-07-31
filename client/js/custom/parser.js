@@ -14,6 +14,7 @@ var isSimpleVaraible;
 var applyExistsToFilter = null;
 var emptyPrefix = null;
 var symbolTable = null;
+var isInternal = null;
 
 makeString = function (o){
 	var str='';
@@ -38,7 +39,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st){
+function initiate_variables(vna, count, pt, ep, st,internal){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -54,10 +55,11 @@ function initiate_variables(vna, count, pt, ep, st){
 	parseType = pt;
 	emptyPrefix = ep;
 	symbolTable = st;
+	isInternal = internal;
 }
 
 parse_filter = function(parsed_exp, className, vna, count, ep, st) {
-	initiate_variables(vna, count, "different", ep, st);
+	initiate_variables(vna, count, "different", ep, st, false);
 	
 	var parsed_exp1 = transformBetweenLike(parsed_exp);
 	
@@ -83,13 +85,13 @@ parse_filter = function(parsed_exp, className, vna, count, ep, st) {
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st) {
+parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal) {
 	alias = alias || "";
 	
 	//TODO check if use one variable or different
 	//when new abstrack syntax JSON ir ready
 	
-	initiate_variables(vna, count, "condition", ep, st);
+	initiate_variables(vna, count, "condition", ep, st, internal);
 	// initiate_variables(vna, count, "different", ep, st);
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -903,7 +905,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			var tempAlias;
 			if(alias == "" || alias == null) tempAlias = expressionTable[key]+"_";
 			else tempAlias = "?"+alias;
-			SPARQLstring = SPARQLstring + expressionTable[key] + " " + tempAlias;
+			if(isInternal !=true) SPARQLstring = SPARQLstring + expressionTable[key] + " " + tempAlias;
+			else SPARQLstring = SPARQLstring + expressionTable[key];
 			tripleTable.push({"var":tempAlias, "prefixedName":expressionTable[key], "object":className});
 			visited = 1;
 		}
