@@ -80,7 +80,11 @@
                                                 <td style="width:3%;"><div class="toolbar-item" attribute="item" contentEditable="true">{{plusOneOffset @index parent.offset}}</div></td>
                                                 {{#each binding}}
                                                 {{#if literal}}
+                                                  {{#if literal.[0]._}}
                                                 <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
+                                                  {{else}}
+                                                <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]}}</div></td>  
+                                                  {{/if}}
                                                 {{/if}}
                                                 {{#if uri}}
                                                 <td><div class="toolbar-item" attribute="item" contentEditable="true">{{uri.[0]}}</div></td>
