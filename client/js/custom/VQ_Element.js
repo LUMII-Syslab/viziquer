@@ -1103,8 +1103,12 @@ VQ_Element.prototype = {
 				this.setCompartmentValue("Condition Link",setCond," ");
 		 }
 	},
+
+	setIsInverseLink: function(value) {
+		 this.setCompartmentValue("Inverse Link",value,"");
+	},
 	// updates compartments value (if that compartment exists)
-	// string, string, string -> int (0 ir update failed, 1 otherwise)
+	// string, string, string -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
 	setCompartmentValue: function(comp_name, input, value) {
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
@@ -1112,7 +1116,10 @@ VQ_Element.prototype = {
 			if (c) {
 					Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
 					return 1;
-			}
+			} else {
+				  Dialog.updateCompartmentValue(ct, input, value);
+					return 3;
+			};
 		};
 		return 0;
 	},

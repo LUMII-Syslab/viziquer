@@ -251,7 +251,8 @@ genAbstractQueryForElementList = function (element_id_list) {
        if (link.start) {
           if (visited[link.link.getStartElement()._id()]) {
             return { identification: { _id: link.link._id(), localName: link.link.getName() },
-                      isInverse: true,
+                      //If link is inverse, then we got it right
+                      isInverse: !link.link.isInverse(),
                       isNot: link.link.getType()=="NOT",
                       target: visited[link.link.getStartElement()._id()]
             };
@@ -259,7 +260,7 @@ genAbstractQueryForElementList = function (element_id_list) {
        } else {
           if (visited[link.link.getEndElement()._id()]) {
             return { identification: { _id: link.link._id(), localName: link.link.getName() },
-                      isInverse: false,
+                      isInverse: link.link.isInverse(),
                       isNot: link.link.getType()=="NOT",
                       target: visited[link.link.getEndElement()._id()]
             };
@@ -278,10 +279,10 @@ genAbstractQueryForElementList = function (element_id_list) {
           var linkedElem_obj = {};
           if (link.start) {
             elem = link.link.getStartElement();
-            linkedElem_obj["isInverse"] = true;
+            linkedElem_obj["isInverse"] = !link.link.isInverse();
           } else {
-            var elem = link.link.getEndElement();
-            linkedElem_obj["isInverse"] = false;
+            elem = link.link.getEndElement();
+            linkedElem_obj["isInverse"] = link.link.isInverse();
           };
           // generate if the element on the other end is not visited AND the link is not conditional
           // AND it is within element_list AND the link is within element_list

@@ -424,7 +424,7 @@ Interpreter.customMethods({
 
 	VQafterCreateLink: function(params) {
 		 //console.log(params);
-		 var link = new VQ_Element(params["_id"]); 
+		 var link = new VQ_Element(params["_id"]);
 		 link.setLinkType("REQUIRED");
 	},
 	VQgetAssociationIsInverse: function() {
@@ -435,6 +435,7 @@ Interpreter.customMethods({
 	VQsetSubQueryInverseLink: function() {
 		//arrow ->compartments->Inverse Link->extensions->after Update
 		//params: (compartType, compartId)
+		console.log("SSSAAASSS");
 		var ct = CompartmentTypes.findOne({name: "Inverse Link"});
 		var ctn = CompartmentTypes.findOne({name: "Name", elementTypeId: Session.get("activeElementType")});
 		var act_elem = Session.get("activeElement");
@@ -473,6 +474,8 @@ Interpreter.customMethods({
 		if (c) {
 			 var link = new VQ_Element(c["elementId"]);
 			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+
+			 link.setIsInverseLink(c["value"].substring(0,4)=="inv(");
 		}
 	},
 
@@ -620,32 +623,7 @@ Interpreter.customMethods({
 				}
 			})
 
-			//Additional options - inverse, negation, condition, group visual representation
-			// TODO: Why it is here? It should not be here :( )
-				var ct = null;
-				var c = null;
-				var compart_id = null;
-				var c_cal = null;
-				//Inverse Link value - from chosen association
-				ct = CompartmentTypes.findOne({name: "Inverse Link"});
 
-				if (ct) {
-					c = Compartments.findOne({elementId: act_elem, compartmentTypeId: ct["_id"]});
-
-					if (c) {
-						compart_id = c["_id"];
-						c_cal = Compartments.findOne({elementId: act_elem, input: {$nin: ["true", "false"]}});
-
-						if (c_cal) {
-
-							if (String(c_cal["value"]).indexOf("inv") > -1){
-								//Dialog.updateCompartmentValue(ct, "true", "<inv>", compart_id);
-							} else if (Compartments.findOne({elementId: act_elem, value: "<inv>"})){
-								//Dialog.updateCompartmentValue(ct, "false", "", compart_id);
-							}
-						}
-					}
-				}
 		} else {
 			return [{value: " ", input: " ", }];
 		}
@@ -659,7 +637,7 @@ Interpreter.customMethods({
 		//arrow ->compartments->extensions->dynamicSuffix
 		//params: (value), return: String
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
-
+    //  console.log(val);
 			return [val.value]
 	},
 
@@ -667,8 +645,8 @@ Interpreter.customMethods({
 		//arrow ->compartments->extensions->dynamicPrefix
 		//params: (value), return: String
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
-
-			return [val.value]
+   //console.log(val);
+		return [val.value]
 	},
 
 
