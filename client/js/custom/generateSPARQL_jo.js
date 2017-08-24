@@ -364,6 +364,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	
 	var sparqlTable = [];
 	sparqlTable["class"] = "?" + instance;
+	sparqlTable["isSimpleClassName"] = true;
 	sparqlTable["stereotype"] = clazz["stereotype"];
 	sparqlTable["distinct"] = clazz["distinct"];
 	sparqlTable["agregationInside"] = false;
@@ -398,10 +399,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable);
 		counter = resultClass["counter"]
 		var temp = [];
+
 		for (var triple in resultClass["triples"]){
 			if(typeof resultClass["triples"][triple] === 'string')temp.push(resultClass["triples"][triple]);
 		}
 		if(resultClass["isAggregate"] == true || resultClass["isExpression"] == true || resultClass["isFunction"] == true){
+			sparqlTable["isSimpleClassName"] = false;
 			var tempTripleTable = [];
 			tempTripleTable["bind"] = "BIND(" + resultClass["exp"] + " AS ?" + instance + ")";
 			sparqlTable["expressionTriples"].push(tempTripleTable);
@@ -417,7 +420,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	
 	//conditions
 	_.each(clazz["conditions"],function(condition) {
-		var result = parse_filter(condition["parsed_exp"], instance, variableNamesAll, counter, emptyPrefix, symbolTable);
+		var result = parse_filter(condition["parsed_exp"], instance, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"]);
 
 		for (var reference in result["references"]){
 			if(typeof result["references"][reference] === 'string') sparqlTable["selectMain"]["referenceVariables"].push(result["references"][reference]);
@@ -436,7 +439,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		sparqlTable["filterTriples"].push(tempTripleTable);
 		if(result["exp"] != "") sparqlTable["filter"].push("FILTER(" + result["exp"] + ")");
 
-		// console.log("CONDITION", condition["exp"], result);
+		// console.log("CONDITION", result["exp"], result, instance, sparqlTable["classTriple"]);
 	})
 
 	//attributes
@@ -750,6 +753,7 @@ function getTriple(result, alias, required, notAgrageted){
 // genrerate SPARQL WHERE statements
 // sparqlTable - table with sparql parts
 function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
+
 	whereStatements = [];
 	filters = [];
 	links = [];
@@ -861,8 +865,9 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 				}else {
 					//sub selects
 					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
-					// console.log("RRRRRRRRRRRRRRRR", selectResult["reference"], selectResult["classes"], selectResult["selectDistinct"]);
+
 					var wheresubStatements = generateSPARQLWHEREStatements(sparqlTable["subClasses"][subclass], [], [], []);
+
 					var temp = wheresubStatements["triples"];
 					temp = temp.concat(wheresubStatements["links"]);
 					temp = temp.concat(wheresubStatements["filters"]);
@@ -972,9 +977,11 @@ function generateSPARQLWHEREStatements(sparqlTable, ws, fil, lin){
 	if(typeof sparqlTable["linkType"] === 'string' && sparqlTable["linkType"] == "OPTIONAL"){
 		whereStatements = whereStatements.concat(filters);
 		whereStatements = whereStatements.concat(links);
-		var tempString = "OPTIONAL{" + whereStatements.join("\n") + "}";
-		whereStatements = [];
-		whereStatements.push(tempString);
+		if(sparqlTable["isSimpleClassName"] == true){
+			var tempString = "OPTIONAL{" + whereStatements.join("\n") + "}";
+			whereStatements = [];
+			whereStatements.push(tempString);
+		} else {console.log("OPTIONAL subselect replaced with required")}
 		filters = [];
 		links = [];
 	}
