@@ -68,7 +68,7 @@ Template.diagramsRibbon.events({
 			    src.attr("href", "data:" + data);
 			    src.attr("download", "data.json");
 			}
-			
+
 		});
 	},
 
@@ -492,19 +492,19 @@ Template.importOntology.events({
 	        var reader = new FileReader();
 
 	        reader.onload = function(event) {
-				
+
 				var data = JSON.parse(reader.result)
-				if (data) 
+				if (data)
 				{
 					var list = {projectId: Session.get("activeProject"),
 								versionId: Session.get("versionId"),
 								data: data,
-							};	
-					Utilities.callMeteorMethod("loadMOntology", list);							
-					//if ( data.Schema ) { 
+							};
+					Utilities.callMeteorMethod("loadMOntology", list);
+					//if ( data.Schema ) {
 					//	Utilities.callMeteorMethod("loadMOntology", list); }
 					//else {
-					//	Utilities.callMeteorMethod("loadOntology", list); }							
+					//	Utilities.callMeteorMethod("loadOntology", list); }
 				}
 				//else  Te būs kļūdas ziņojums lietotājam};
 	        }
@@ -581,9 +581,32 @@ Template.ontologySettings.events({
 					versionId: Session.get("versionId"),
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
+          useStringLiteralConversion: $("#use-string-literal-conversion").val(),
+          queryEngineType: $("#query-engine-type").val(),
+					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
+					defaultGroupingSeparator: $("#default-grouping-separator").val(),
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
+	},
+
+	'click #use-default-grouping-separator' : function(e, templ) {
+						$("#default-grouping-separator").prop('disabled', !$("#use-default-grouping-separator").is(":checked"))
+
+	},
+
+	'click #cancel-ontology-settings' : function(e, templ) {
+	 var proj = Projects.findOne({_id: Session.get("activeProject")});
+	 if (proj) {
+		 $("#ontology-uri").val(proj.uri);
+		 $("#ontology-endpoint").val(proj.endpoint);
+		 $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
+		 $("#query-engine-type").val(proj.queryEngineType);
+		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
+		 $("#default-grouping-separator").prop('disabled', proj.useDefaultGroupingSeparator=="false");
+		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
+	 }
+
 	},
 
 	"click #test-endpoint": function(e) {
@@ -636,6 +659,38 @@ Template.ontologySettings.helpers({
 		}
 	},
 
+	useStringLiteralConversion: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.useStringLiteralConversion;
+		}
+	},
+
+	queryEngineType: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.queryEngineType;
+		}
+	},
+
+	defaultGroupingSeparator: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.defaultGroupingSeparator;
+		}
+	},
+	NOTuseDefaultGroupingSeparator: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.useDefaultGroupingSeparator=="false");
+		}
+	},
+	useDefaultGroupingSeparator: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.useDefaultGroupingSeparator=="true");
+		}
+	}
 });
 
 

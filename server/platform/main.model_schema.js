@@ -80,8 +80,8 @@ Schemas.Users = new SimpleSchema({
 	tags: {
         type: [String],
         label: "Users.tags",
-    },    
- 
+    },
+
     lastModified: {
         type: Date,
         label: "Users.lastModified",
@@ -113,28 +113,28 @@ Schemas.Users = new SimpleSchema({
     "logins.$.connectionId": {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Users.logins.$.connectionId",      
+        label: "Users.logins.$.connectionId",
     },
 
     "logins.$.userAgent": {
         type: String,
-        label: "Users.logins.$.userAgent",        
+        label: "Users.logins.$.userAgent",
     },
 
     "logins.$.ipAddress": {
         type: String,
-        label: "Users.logins.$.ipAddress",      
+        label: "Users.logins.$.ipAddress",
     },
 
     "logins.$.loginTime": {
         type: Date,
-        label: "Users.logins.$.loginTime",        
+        label: "Users.logins.$.loginTime",
     },
 
     "logins.$.logoutTime": {
         type: Date,
         label: "Users.logins.$.logoutTime",
-        optional: true,   
+        optional: true,
     },
 
     loginFails: {
@@ -144,18 +144,18 @@ Schemas.Users = new SimpleSchema({
 
     "loginFails.$.time": {
         type: Date,
-        label: "Users.loginFails.$.time",        
+        label: "Users.loginFails.$.time",
     },
 
     "loginFails.$.ipAddress": {
         type: String,
-        label: "Users.loginFails.$.ipAddress",        
+        label: "Users.loginFails.$.ipAddress",
     },
 
     loginFailsCount: {
         type: Number,
         label: "Users.loginFailsCount",
-    },    
+    },
 
 });
 Users.attachSchema(Schemas.Users);
@@ -164,7 +164,7 @@ Schemas.Projects = new SimpleSchema({
     createdAt: {
         type: Date,
         label: "Projects.createdAt",
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     createdBy: {
@@ -176,38 +176,61 @@ Schemas.Projects = new SimpleSchema({
 
     name: {
         type: String,
-        label: "Projects.name",   
+        label: "Projects.name",
     },
 
     icon: {
         type: String,
         label: "Projects.icon",
-        optional: true, 
+        optional: true,
     },
 
     uri: {
         type: String,
         label: "Projects.uri",
-        optional: true, 
+        optional: true,
     },
 
     endpoint: {
         type: String,
         label: "Projects.endpoint",
-        optional: true,          
+        optional: true,
     },
+
+		useStringLiteralConversion: {
+			  type: String,
+			  label: "Projects.useStringLiteralConversion",
+			  optional: true,
+		},
+
+		queryEngineType: {
+			  type: String,
+			  label: "Projects.queryEngineType",
+			  optional: true,
+		},
+    useDefaultGroupingSeparator: {
+			type: String,
+			label: "Projects.useDefaultGroupingSeparator",
+			optional: true,
+		},
+
+		defaultGroupingSeparator: {
+			  type: String,
+			  label: "Projects.defaultGroupingSeparator",
+			  optional: true,
+		},
 
     category: {
         type: String,
         label: "Projects.category",
-        optional: true, 
+        optional: true,
     },
 
     toolId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "Projects.toolId",
-        // denyUpdate: true,  
+        // denyUpdate: true,
     },
 });
 Projects.attachSchema(Schemas.Projects);
@@ -238,7 +261,7 @@ Schemas.ProjectsUsers = new SimpleSchema({
     role: {
         type: String,
         //allowedValues: ["Admin", "Reader"],
-        label: "ProjectsUsers.role", 
+        label: "ProjectsUsers.role",
     },
 
     status: {
@@ -252,12 +275,12 @@ Schemas.ProjectsUsers = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "ProjectsUsers.invitedBy",
         denyUpdate: true,
-    },    
+    },
 
     createdAt: {
         type: Date,
         label: "ProjectsUsers.createdAt",
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     modifiedAt: {
@@ -283,12 +306,12 @@ Schemas.ProjectsGroups = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "ProjectsGroups.invitedBy",
         denyUpdate: true,
-    },    
+    },
 
     createdAt: {
         type: Date,
         label: "ProjectsGroups.createdAt",
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     modifiedAt: {
@@ -298,7 +321,7 @@ Schemas.ProjectsGroups = new SimpleSchema({
 
     name: {
         type: String,
-        label: "ProjectsGroups.name",   
+        label: "ProjectsGroups.name",
     },
 
 });
@@ -309,7 +332,7 @@ Schemas.UserVersionSettings = new SimpleSchema({
     projectId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "UserVersionSettings.projectId", 
+        label: "UserVersionSettings.projectId",
         denyUpdate: true,
     },
 
@@ -317,20 +340,20 @@ Schemas.UserVersionSettings = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "UserVersionSettings.versionId",
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     userSystemId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "UserVersionSettings.userSystemId",
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     view: {
         type: String,
         allowedValues: ["Default", "Tree"],
-        label: "UserVersionSettings.view",   
+        label: "UserVersionSettings.view",
     },
 
     collapsedDiagrams: {
@@ -346,29 +369,29 @@ Schemas.UserVersionSettings = new SimpleSchema({
 
     consistencyCheck: {
         type: Boolean,
-        label: "UserVersionSettings.consistencyCheck",   
+        label: "UserVersionSettings.consistencyCheck",
     },
 
     diagramsSortBy: {
         type: String,
         allowedValues: ["alphabetTopDown", "dateTopDown", "popularTopDown"],
-        label: "UserVersionSettings.diagramsSortBy",   
+        label: "UserVersionSettings.diagramsSortBy",
     },
 
     diagramsSelectedGroup: {
         type: String,
-        label: "UserVersionSettings.diagramsSelectedGroup",   
+        label: "UserVersionSettings.diagramsSelectedGroup",
     },
 
     documentsSortBy: {
         type: String,
         allowedValues: ["alphabetTopDown", "dateTopDown", "popularTopDown"],
-        label: "UserVersionSettings.documentsSortBy",   
+        label: "UserVersionSettings.documentsSortBy",
     },
 
     documentsSelectedGroup: {
         type: String,
-        label: "UserVersionSettings.documentsSelectedGroup",   
+        label: "UserVersionSettings.documentsSelectedGroup",
     },
 
 });
@@ -380,7 +403,7 @@ Schemas.DiagramNotifications = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramNotifications.diagramId",
-        denyUpdate: true,     
+        denyUpdate: true,
     },
 
     projectId: {
@@ -388,7 +411,7 @@ Schemas.DiagramNotifications = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramNotifications.projectId",
         denyUpdate: true,
-        optional: true,  
+        optional: true,
     },
 
     toolId: {
@@ -403,7 +426,7 @@ Schemas.DiagramNotifications = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramNotifications.versionId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     action: {
@@ -417,14 +440,14 @@ Schemas.DiagramNotifications = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramNotifications.authorId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     createdAt: {
         type: Date,
         label: "DiagramNotifications.createdAt",
-        denyUpdate: true   
-    },    
+        denyUpdate: true
+    },
 });
 DiagramNotifications.attachSchema(Schemas.DiagramNotifications);
 
@@ -434,7 +457,7 @@ Schemas.DiagramLogs = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramLogs.diagramId",
-        denyUpdate: true,     
+        denyUpdate: true,
     },
 
     projectId: {
@@ -442,7 +465,7 @@ Schemas.DiagramLogs = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramLogs.projectId",
         denyUpdate: true,
-        optional: true,  
+        optional: true,
     },
 
     toolId: {
@@ -457,7 +480,7 @@ Schemas.DiagramLogs = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramLogs.versionId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     action: {
@@ -471,20 +494,20 @@ Schemas.DiagramLogs = new SimpleSchema({
         type: Object,
         label: "DiagramLogs.actionData",
         blackbox: true,
-    },   
+    },
 
     authorId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramLogs.authorId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     createdAt: {
         type: Date,
         label: "DiagramLogs.createdAt",
-        denyUpdate: true   
-    },    
+        denyUpdate: true
+    },
 });
 DiagramLogs.attachSchema(Schemas.DiagramLogs);
 
@@ -494,7 +517,7 @@ Schemas.Diagrams = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.diagramTypeId",
-        // denyUpdate: true,            
+        // denyUpdate: true,
     },
 
 //if diagram belongs to the project
@@ -502,8 +525,8 @@ Schemas.Diagrams = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.projectId",
-        denyUpdate: true,          
-        optional: true,      
+        denyUpdate: true,
+        optional: true,
     },
 
 //if diagram is a configurator diagram
@@ -511,15 +534,15 @@ Schemas.Diagrams = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.toolId",
-        // denyUpdate: true,        
-        optional: true,       
+        // denyUpdate: true,
+        optional: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Diagrams.versionId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     createdBy: {
@@ -528,17 +551,17 @@ Schemas.Diagrams = new SimpleSchema({
         label: "Diagrams.createdBy",
         denyUpdate: true,
         optional: true,
-    }, 
+    },
 
     createdAt: {
         type: Date,
         label: "Diagrams.createdAt",
-        denyUpdate: true,       
+        denyUpdate: true,
     },
 
     name: {
         type: String,
-        label: "Diagrams.name",        
+        label: "Diagrams.name",
     },
 
     editorType: {
@@ -552,89 +575,89 @@ Schemas.Diagrams = new SimpleSchema({
     style: {
         type: Object,
         label: "Diagrams.style",
-        blackbox: true,       
+        blackbox: true,
     },
 
     "style.fill": {
         type: String,
-        label: "Diagrams.style.fill", 
+        label: "Diagrams.style.fill",
     },
 
     // "style.fillLinearGradientColorStops": {
     //     type: [String],
-    //     label: "Diagrams.fillLinearGradientColorStops", 
+    //     label: "Diagrams.fillLinearGradientColorStops",
     // },
 
     "style.fillLinearGradientEndPointX": {
         type: Number,
         decimal: true,
-        label: "Diagrams.fillLinearGradientEndPointX", 
+        label: "Diagrams.fillLinearGradientEndPointX",
     },
 
     "style.fillLinearGradientEndPointY": {
         type: Number,
         decimal: true,
-        label: "Diagrams.fillLinearGradientEndPointY", 
+        label: "Diagrams.fillLinearGradientEndPointY",
     },
 
     "style.fillLinearGradientStartPointX": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillLinearGradientStartPointX", 
-    },    
+        decimal: true,
+        label: "Diagrams.fillLinearGradientStartPointX",
+    },
 
     "style.fillLinearGradientStartPointY": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillLinearGradientStartPointY", 
-    },  
+        decimal: true,
+        label: "Diagrams.fillLinearGradientStartPointY",
+    },
 
     "style.fillPriority": {
         type: String,
-        allowedValues: ["color", "linear-gradient", "radial-gradient", "pattern"],      
-        label: "Diagrams.fillPriority", 
-    },  
+        allowedValues: ["color", "linear-gradient", "radial-gradient", "pattern"],
+        label: "Diagrams.fillPriority",
+    },
 
     // "style.fillRadialGradientColorStops": {
-    //     type: [String],     
-    //     label: "Diagrams.fillRadialGradientColorStops", 
+    //     type: [String],
+    //     label: "Diagrams.fillRadialGradientColorStops",
     // },  Array[4]
 
     "style.fillRadialGradientEndPointX": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientEndPointX", 
-    },    
+        decimal: true,
+        label: "Diagrams.fillRadialGradientEndPointX",
+    },
 
     "style.fillRadialGradientEndPointY": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientEndPointY", 
-    }, 
+        decimal: true,
+        label: "Diagrams.fillRadialGradientEndPointY",
+    },
 
     "style.fillRadialGradientEndRadius": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientEndRadius", 
-    },    
+        decimal: true,
+        label: "Diagrams.fillRadialGradientEndRadius",
+    },
 
     "style.fillRadialGradientStartPointX": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientStartPointX", 
-    }, 
+        decimal: true,
+        label: "Diagrams.fillRadialGradientStartPointX",
+    },
 
     "style.fillRadialGradientStartPointY": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientStartPointY", 
-    }, 
+        decimal: true,
+        label: "Diagrams.fillRadialGradientStartPointY",
+    },
 
     "style.fillRadialGradientStartRadius": {
         type: Number,
-        decimal: true,        
-        label: "Diagrams.fillRadialGradientStartRadius", 
-    }, 
+        decimal: true,
+        label: "Diagrams.fillRadialGradientStartRadius",
+    },
 
     imageUrl: {
         type: String,
@@ -656,30 +679,30 @@ Schemas.Diagrams = new SimpleSchema({
     allowedGroups: {
         type: [String],
         label: "Diagrams.allowedGroups",
-    },   
+    },
 
     seenCount: {
         type: Number,
-        label: "Diagrams.seenCount",   
+        label: "Diagrams.seenCount",
     },
 
     "editingUserId": {
-        type: String,       
+        type: String,
         label: "Diagrams.editingUserId",
-        optional: true,       
+        optional: true,
     },
 
     "editingStartedAt": {
         type: Date,
         label: "Diagrams.editingStartedAt",
-        optional: true,       
+        optional: true,
     },
 
     data: {
         type: Object,
         label: "Diagrams.data",
-        optional: true, 
-        blackbox: true,  
+        optional: true,
+        blackbox: true,
     },
 
 });
@@ -692,21 +715,21 @@ Schemas.Elements = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.elementTypeId",
-        // denyUpdate: true,    
+        // denyUpdate: true,
     },
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.diagramId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.diagramTypeId",
-        // denyUpdate: true,   
+        // denyUpdate: true,
     },
 
     projectId: {
@@ -714,7 +737,7 @@ Schemas.Elements = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.projectId",
         optional: true,
-        denyUpdate: true, 
+        denyUpdate: true,
     },
 
     toolId: {
@@ -722,14 +745,14 @@ Schemas.Elements = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.toolId",
         optional: true,
-        // denyUpdate: true,    
+        // denyUpdate: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.versionId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     type: {
@@ -778,157 +801,157 @@ Schemas.Elements = new SimpleSchema({
 
     // "style.dash": {
     //     type: [Number],
-    //     label: "Diagrams.dash", 
+    //     label: "Diagrams.dash",
     // },
 
     // "style.dash.$": {
     //     type: Number,
     //     decimal: true,
-    //     label: "Diagrams.dash.$", 
+    //     label: "Diagrams.dash.$",
     // },
 
     // "style.fill": {
     //     type: String,
-    //     label: "Diagrams.style.fill", 
+    //     label: "Diagrams.style.fill",
     // },
 
     // "style.fillLinearGradientColorStops": {
     //     type: [String],
-    //     label: "Diagrams.fillLinearGradientColorStops", 
+    //     label: "Diagrams.fillLinearGradientColorStops",
     // },
 
     // "style.fillLinearGradientEndPointX": {
     //     type: Number,
     //     decimal: true,
-    //     label: "Diagrams.fillLinearGradientEndPointX", 
+    //     label: "Diagrams.fillLinearGradientEndPointX",
     // },
 
     // "style.fillLinearGradientEndPointY": {
     //     type: Number,
     //     decimal: true,
-    //     label: "Diagrams.fillLinearGradientEndPointY", 
+    //     label: "Diagrams.fillLinearGradientEndPointY",
     // },
 
     // "style.fillLinearGradientStartPointX": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillLinearGradientStartPointX", 
-    // },    
+    //     decimal: true,
+    //     label: "Diagrams.fillLinearGradientStartPointX",
+    // },
 
     // "style.fillLinearGradientStartPointY": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillLinearGradientStartPointY", 
-    // },  
+    //     decimal: true,
+    //     label: "Diagrams.fillLinearGradientStartPointY",
+    // },
 
     // "style.fillPriority": {
     //     type: String,
-    //     allowedValues: ["color", "linear-gradient", "radial-gradient", "pattern"],      
-    //     label: "Diagrams.fillPriority", 
-    // },  
+    //     allowedValues: ["color", "linear-gradient", "radial-gradient", "pattern"],
+    //     label: "Diagrams.fillPriority",
+    // },
 
     // // "style.fillRadialGradientColorStops": {
-    // //     type: [String],     
-    // //     label: "Diagrams.fillRadialGradientColorStops", 
+    // //     type: [String],
+    // //     label: "Diagrams.fillRadialGradientColorStops",
     // // },  Array[4]
 
     // "style.fillRadialGradientEndPointX": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientEndPointX", 
-    // },    
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientEndPointX",
+    // },
 
     // "style.fillRadialGradientEndPointY": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientEndPointY", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientEndPointY",
+    // },
 
     // "style.fillRadialGradientEndRadius": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientEndRadius", 
-    // },    
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientEndRadius",
+    // },
 
     // "style.fillRadialGradientStartPointX": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientStartPointX", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientStartPointX",
+    // },
 
     // "style.fillRadialGradientStartPointY": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientStartPointY", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientStartPointY",
+    // },
 
     // "style.fillRadialGradientStartRadius": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.fillRadialGradientStartRadius", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.fillRadialGradientStartRadius",
+    // },
 
     // "style.opacity": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.opacity", 
+    //     decimal: true,
+    //     label: "Diagrams.opacity",
     // },
 
     // "style.shadowBlur": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.shadowBlur", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.shadowBlur",
+    // },
 
     // "style.shadowColor": {
-    //     type: String,     
-    //     label: "Diagrams.shadowColor", 
-    // }, 
+    //     type: String,
+    //     label: "Diagrams.shadowColor",
+    // },
 
     // "style.shadowOffsetX": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.shadowOffsetX", 
-    // }, 
+    //     decimal: true,
+    //     label: "Diagrams.shadowOffsetX",
+    // },
 
     // "style.shadowOffsetY": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.shadowOffsetY", 
+    //     decimal: true,
+    //     label: "Diagrams.shadowOffsetY",
     // },
 
     // "style.shadowOpacity": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.shadowOpacity", 
-    // },     
+    //     decimal: true,
+    //     label: "Diagrams.shadowOpacity",
+    // },
 
     // "style.shape": {
-    //     type: String,        
-    //     label: "Diagrams.shape", 
-    // },  
+    //     type: String,
+    //     label: "Diagrams.shape",
+    // },
 
     // "style.stroke": {
-    //     type: String,      
-    //     label: "Diagrams.stroke", 
-    // }, 
+    //     type: String,
+    //     label: "Diagrams.stroke",
+    // },
 
     // "style.strokeWidth": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.strokeWidth", 
-    // }, 
-
-    // "style.tension": {
-    //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.tension", 
+    //     decimal: true,
+    //     label: "Diagrams.strokeWidth",
     // },
 
     // "style.tension": {
     //     type: Number,
-    //     decimal: true,        
-    //     label: "Diagrams.tension", 
+    //     decimal: true,
+    //     label: "Diagrams.tension",
+    // },
+
+    // "style.tension": {
+    //     type: Number,
+    //     decimal: true,
+    //     label: "Diagrams.tension",
     // },
 
     // "style.lineType": {
@@ -943,37 +966,37 @@ Schemas.Elements = new SimpleSchema({
 	 	type: Object,
         label: "Elements.location",
         optional: true,
-    },    
+    },
 
 	"location.x": {
 		type: Number,
         decimal: true,
         label: "Elements.location.x",
-        optional: true,	
+        optional: true,
 	},
 
 	"location.y": {
 		type: Number,
         decimal: true,
         label: "Elements.location.y",
-        optional: true,		
+        optional: true,
 	},
 
 	"location.width": {
 		type: Number,
         decimal: true,
         label: "Elements.location.width",
-        optional: true,			
+        optional: true,
 	},
 
 	"location.height": {
 		type: Number,
         decimal: true,
         label: "Elements.location.height",
-        optional: true,		
+        optional: true,
 	},
 
-    
+
 //points for lines
     points: {
 	 	type: [Number],
@@ -1019,27 +1042,27 @@ Schemas.Elements = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.startElement",
-        optional: true,      
+        optional: true,
     },
 
     endElement: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.endElement",
-        optional: true,     
+        optional: true,
     },
 
     domain: {
         type: Object,
         label: "Elements.domain",
-        optional: true,     
+        optional: true,
     },
 
     "domain.type": {
         type: String,
         allowedValues: ["Specialization", "NewLine", "NewBox"],
         label: "Elements.domain.type",
-    },  
+    },
 
     "domain.data": {
         type: Object,
@@ -1049,20 +1072,20 @@ Schemas.Elements = new SimpleSchema({
 
     "domain.data.diagramTypeId": {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "Elements.domain.data.diagramTypeId",
-    }, 
+    },
 
     "domain.data.startElementTypeId": {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "Elements.domain.data.startElementTypeId",
         optional: true,
-    }, 
+    },
 
     "domain.data.endElementTypeId": {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "Elements.domain.data.endElementTypeId",
         optional: true,
     },
@@ -1071,20 +1094,20 @@ Schemas.Elements = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.targetId",
-        optional: true,        
+        optional: true,
     },
 
     data: {
         type: Object,
         label: "Elements.data",
-        optional: true, 
-        blackbox: true,  
+        optional: true,
+        blackbox: true,
     },
 
     isInVisible: {
         type: Boolean,
         label: "Elements.isInVisible",
-        optional: true,        
+        optional: true,
     },
 
 });
@@ -1095,88 +1118,88 @@ Schemas.Compartments = new SimpleSchema({
     compartmentTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Compartmetns.compartmentTypeId",        
+        label: "Compartmetns.compartmentTypeId",
     },
 
     elementId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Compartmetns.elementId",
-        optional: true,     
+        optional: true,
     },
 
     elementTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Compartmetns.elementTypeId",
-        optional: true,   
+        optional: true,
     },
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Compartmetns.diagramId",        
+        label: "Compartmetns.diagramId",
     },
 
     diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Compartmetns.diagramTypeId",      
+        label: "Compartmetns.diagramTypeId",
     },
 
     projectId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Elements.projectId",
-        optional: true,       
+        optional: true,
     },
 
     toolId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Compartmetns.toolId",
-        optional: true,       
+        optional: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Compartmetns.versionId",      
-    },  
+        label: "Compartmetns.versionId",
+    },
 
     input: {
         type: String,
         label: "Compartmetns.input",
         optional: true,
-        
-        
+
+
         //removeEmptyStrings: false,
-        //      
+        //
     },
 
     value: {
         type: String,
         label: "Compartmetns.value",
         optional: true,
-        
-        
+
+
         //removeEmptyStrings: false,
-        //           
+        //
     },
 
     valueLC: {
         type: String,
         label: "Compartmetns.valueLC",
         optional: true,
-        
-        
+
+
         //removeEmptyStrings: false,
         //
     },
 
     index: {
         type: Number,
-        label: "Compartmetns.index",  
+        label: "Compartmetns.index",
     },
 
     style: {
@@ -1184,12 +1207,12 @@ Schemas.Compartments = new SimpleSchema({
         label: "Compartmetns.style",
         blackbox: true,
         optional: true,
-    },    
+    },
 
     styleId: {
         type: String,
         label: "Compartmetns.styleId",
-        optional: true,        
+        optional: true,
     },
 
     isObjectRepresentation: {
@@ -1203,7 +1226,7 @@ Schemas.Compartments = new SimpleSchema({
         optional: true,
         blackbox: true,
     },
-    
+
     swimlane: {
         type: Object,
         label: "Compartments.swimlane",
@@ -1223,8 +1246,8 @@ Schemas.Compartments = new SimpleSchema({
     data: {
         type: Object,
         label: "Compartmetns.data",
-        optional: true, 
-        blackbox: true,  
+        optional: true,
+        blackbox: true,
     },
 
 });
@@ -1236,42 +1259,42 @@ Schemas.ElementsSections = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.elementId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.elementId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     documentId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.sectionId",
-        denyUpdate: true,         
+        denyUpdate: true,
     },
 
     sectionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.sectionId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     projectId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.projectId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementsSections.versionId",
-        denyUpdate: true,         
+        denyUpdate: true,
     },
 
     createdAt: {
@@ -1295,35 +1318,35 @@ Schemas.DiagramFiles = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramFiles.elementId",
         denyUpdate: true,
-        optional: true,       
+        optional: true,
     },
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramFiles.elementId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     fileId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramFiles.fileId",
-        denyUpdate: true,         
+        denyUpdate: true,
     },
 
     projectId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramFiles.projectId",
-        denyUpdate: true,          
+        denyUpdate: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramFiles.versionId",
-        denyUpdate: true,         
+        denyUpdate: true,
     },
 
     createdAt: {
@@ -1345,21 +1368,21 @@ Schemas.Posts = new SimpleSchema({
     text: {
         type: String,
         max: 400,
-        label: "Posts.text",        
+        label: "Posts.text",
     },
 
     authorId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Posts.authorId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     projectId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Posts.projectId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     likesCount: {
@@ -1380,7 +1403,7 @@ Schemas.Posts = new SimpleSchema({
         label: "Posts.parentId",
         optional: true,
         denyUpdate: true,
-    },  
+    },
 });
 Posts.attachSchema(Schemas.Posts);
 
@@ -1390,7 +1413,7 @@ Schemas.Likers = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Likes.projectId",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 
     postId: {
@@ -1404,13 +1427,13 @@ Schemas.Likers = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Likes.userSystemId",
-        denyUpdate: true,       
+        denyUpdate: true,
     },
 
     createdAt: {
         type: Date,
         label: "Likes.createdAt",
-        denyUpdate: true,        
+        denyUpdate: true,
     },
 });
 Likers.attachSchema(Schemas.Likers);
@@ -1422,7 +1445,7 @@ Schemas.Notifications = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Notifications.projectId",
         denyUpdate: true,
-    },  
+    },
 
     createdAt: {
         type: Date,
@@ -1487,45 +1510,45 @@ Schemas.Chats = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Chats.authorId",
-        denyUpdate: true, 	 	
+        denyUpdate: true,
 	},
 
 	createdAt: {
 	 	type: Date,
         label: "Chats.date",
-        denyUpdate: true, 	 	
+        denyUpdate: true,
 	},
 
 	messageCount: {
 	 	type: Number,
-        label: "Chats.messageCount", 	 	
-	},		
+        label: "Chats.messageCount",
+	},
 
 	seen: {
 	 	type: [String],
-        label: "Chats.seen",	
+        label: "Chats.seen",
 	},
 
 	"seen.$": {
        type: String,
        regEx: SimpleSchema.RegEx.Id,
-       label: "Chats.seen.$", 	 	
+       label: "Chats.seen.$",
 	},
 
 	users: {
 	 	type: [String],
-        label: "Chats.users", 	 	
+        label: "Chats.users",
 	},
 
 	"users.$": {
        type: String,
        regEx: SimpleSchema.RegEx.Id,
-       label: "Chats.users.$",	
+       label: "Chats.users.$",
 	},
 
 	lastModified: {
 	 	type: Date,
-        label: "Chats.lastModified", 	 	
+        label: "Chats.lastModified",
 	},
 
 	lastMessage: {
@@ -1537,7 +1560,7 @@ Schemas.Chats = new SimpleSchema({
 
 	lastAuthorId: {
 	 	type: String,
-       	regEx: SimpleSchema.RegEx.Id,	 	
+       	regEx: SimpleSchema.RegEx.Id,
         label: "Chats.lastAuthorId",
         optional: true,
         denyInsert: true,
@@ -1545,28 +1568,28 @@ Schemas.Chats = new SimpleSchema({
 
 	messages: {
 	 	type: [Object],
-        label: "Chats.messages",	 	
+        label: "Chats.messages",
 	},
 
 	"messages.$.date": {
 	 	type: Date,
-        label: "ChatMessages.messages.$.date", 	 	
+        label: "ChatMessages.messages.$.date",
 	},
 
 	"messages.$.message": {
 	 	type: String,
-        label: "ChatMessages.$.message", 	 	
+        label: "ChatMessages.$.message",
 	},
 
 	"messages.$.sender": {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "ChatMessages.messages.$.sender", 	 	
+        label: "ChatMessages.messages.$.sender",
 	},
 
 	messagesLC: {
 	 	type: [String],
-        label: "Chats.messagesLC",	 	
+        label: "Chats.messagesLC",
 	},
 
 });
@@ -1578,19 +1601,19 @@ Schemas.UserChatsAuthors = new SimpleSchema({
 	userSystemId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "UserChatsAuthors.userSystemId", 	 	
+        label: "UserChatsAuthors.userSystemId",
 	},
 
 	users: {
         type: [String],
-        label: "UserChatsAuthors.users", 	 	
+        label: "UserChatsAuthors.users",
 	},
 
 	"users.$": {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "UserChatsAuthors.users.$", 	 	
-	},	
+        label: "UserChatsAuthors.users.$",
+	},
 });
 UserChatsAuthors.attachSchema(Schemas.UserChatsAuthors);
 
@@ -1600,15 +1623,15 @@ Schemas.Contacts = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Contacts.userSystemId",
-        denyUpdate: true,	 	
+        denyUpdate: true,
 	},
 
 	contactId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "Contacts.contactId", 
-        denyUpdate: true,	 	
-	},	
+        label: "Contacts.contactId",
+        denyUpdate: true,
+	},
 
 });
 Contacts.attachSchema(Schemas.Contacts);
@@ -1620,7 +1643,7 @@ Schemas.DocumentTypes = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "DocumentTypes.diagramId",
         denyUpdate: true,
-    }, 
+    },
 
     toolId: {
         type: String,
@@ -1667,21 +1690,21 @@ Schemas.DiagramTypes = new SimpleSchema({
         label: "DiagramTypes.diagramId",
         optional: true,
         denyUpdate: true,
-    }, 
+    },
 
     toolId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramTypes.toolId",
         denyUpdate: true,
-    },  
+    },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramTypes.versionId",
         denyUpdate: true,
-    },      
+    },
 
     editorType: {
         type: String,
@@ -1694,13 +1717,13 @@ Schemas.DiagramTypes = new SimpleSchema({
         type: Object,
         label: "DiagramTypes.style",
         blackbox: true,
-    },   
+    },
 
 //selection style
     selectionStyle: {
         type: Object,
         label: "DiagramTypes.selectionStyle",
-    },  
+    },
 
     "selectionStyle.fill": {
         type: String,
@@ -1722,41 +1745,41 @@ Schemas.DiagramTypes = new SimpleSchema({
         type: Number,
         decimal: true,
         label: "DiagramTypes.selectionStyle.strokeWidth",
-    },    
+    },
 
     palette: {
         type: Object,
         label: "DiagramTypes.palette",
         optional: true,
-    },  
+    },
 
     "palette.padding": {
         type: Number,
         label: "DiagramTypes.palette.padding",
         optional: true,
-    }, 
+    },
 
     "palette.buttonWidth": {
         type: Number,
         label: "DiagramTypes.palette.buttonWidth",
         optional: true,
-    }, 
+    },
 
     "palette.buttonHeight": {
         type: Number,
         label: "DiagramTypes.palette.buttonHeight",
         optional: true,
-    }, 
+    },
 
     toolbar: {
         type: [Object],
         label: "DiagramTypes.toolbar",
-    }, 
+    },
 
     "toolbar.$.id": {
         type: String,
         label: "DiagramTypes.toolbar.$.id",
-    }, 
+    },
 
     "toolbar.$.icon": {
         type: String,
@@ -1766,7 +1789,7 @@ Schemas.DiagramTypes = new SimpleSchema({
     "toolbar.$.name": {
         type: String,
         label: "DiagramTypes.toolbar.$.name",
-    }, 
+    },
 
     "toolbar.$.procedure": {
         type: String,
@@ -1782,12 +1805,12 @@ Schemas.DiagramTypes = new SimpleSchema({
     readModeToolbar: {
         type: [Object],
         label: "DiagramTypes.readModeToolbar",
-    }, 
+    },
 
     "readModeToolbar.$.id": {
         type: String,
         label: "DiagramTypes.readModeToolbar.$.id",
-    }, 
+    },
 
     "readModeToolbar.$.icon": {
         type: String,
@@ -1797,7 +1820,7 @@ Schemas.DiagramTypes = new SimpleSchema({
     "readModeToolbar.$.name": {
         type: String,
         label: "DiagramTypes.readModeToolbar.$.name",
-    }, 
+    },
 
     "readModeToolbar.$.procedure": {
         type: String,
@@ -1878,7 +1901,7 @@ Schemas.DiagramTypes = new SimpleSchema({
     "globalKeyStrokes.$.keyStroke": {
         type: String,
         label: "DiagramTypes.globalKeyStrokes.$.item",
-    }, 
+    },
 
     "globalKeyStrokes.$.procedure": {
         type: String,
@@ -1904,7 +1927,7 @@ Schemas.DiagramTypes = new SimpleSchema({
                         "updateDiagram", "changeCollectionPosition", "canvasToImage",
                         ],
         label: "DiagramTypes.extensionPoints.$.extensionPoint",
-    }, 
+    },
 
     "extensionPoints.$.procedure": {
         type: String,
@@ -1926,26 +1949,26 @@ Schemas.DiagramTypes = new SimpleSchema({
     },
 
     size: {
-        type: Object,      
+        type: Object,
         label: "DiagramTypes.size",
     },
 
     "size.diagramSize": {
         type: Number,
         min: 1,
-        max: 11,   
-        label: "DiagramTypes.size.diagramSize", 
+        max: 11,
+        label: "DiagramTypes.size.diagramSize",
     },
 
     "size.dialogSize": {
         type: Number,
         min: 1,
         max: 11,
-        label: "DiagramTypes.size.dialogSize", 
+        label: "DiagramTypes.size.dialogSize",
     },
 
     layout: {
-        type: Object,      
+        type: Object,
         label: "DiagramTypes.layout",
         optional: true,
     },
@@ -1954,23 +1977,23 @@ Schemas.DiagramTypes = new SimpleSchema({
     "layout.mode": {
         type: String,
         allowedValues: ["dynamic", "static", "radial"],
-        label: "DiagramTypes.layout.mode", 
+        label: "DiagramTypes.layout.mode",
     },
 
     "layout.nodeSpacing": {
         type: Number,
         min: 0,
-        label: "DiagramTypes.layout.nodeSpacing", 
+        label: "DiagramTypes.layout.nodeSpacing",
     },
 
     "layout.layoutFreezeTimeout": {
         type: Number,
-        label: "DiagramTypes.layout.layoutFreezeTimeout", 
+        label: "DiagramTypes.layout.layoutFreezeTimeout",
     },
 
     "layout.globalLayoutOnChanges": {
         type: Boolean,
-        label: "DiagramTypes.layout.globalLayoutOnChanges", 
+        label: "DiagramTypes.layout.globalLayoutOnChanges",
     },
 
 //ajoo layout
@@ -1985,7 +2008,7 @@ Schemas.DiagramTypes = new SimpleSchema({
         type: Object,
         blackbox: true,
         optional: true,
-    },    
+    },
 
 });
 DiagramTypes.attachSchema(Schemas.DiagramTypes);
@@ -1997,35 +2020,35 @@ Schemas.ElementTypes = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.toolId",
-        denyUpdate: true, 	 	
+        denyUpdate: true,
 	},
 
 	versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.versionId",
-        denyUpdate: true, 	
-	},	
+        denyUpdate: true,
+	},
 
 	diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "ElementTypes.diagramTypeId", 
-        denyUpdate: true,	 	
+        label: "ElementTypes.diagramTypeId",
+        denyUpdate: true,
 	},
 
 	diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.diagramId",
-        optional: true,	 	
+        optional: true,
 	},
 
 	elementId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.elementId",
-        optional: true,	 	
+        optional: true,
 	},
 
     isAbstract: {
@@ -2037,7 +2060,7 @@ Schemas.ElementTypes = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.targetDiagramTypeId",
-        optional: true,     
+        optional: true,
     },
 
     superTypeIds: {
@@ -2055,15 +2078,15 @@ Schemas.ElementTypes = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.startElementTypeId",
-        optional: true,       
+        optional: true,
     },
 
     endElementTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "ElementTypes.endElementTypeId",
-        optional: true,       
-    }, 
+        optional: true,
+    },
 
     contextMenu: {
         type: [Object],
@@ -2104,7 +2127,7 @@ Schemas.ElementTypes = new SimpleSchema({
     "readModeContextMenu.$.template": {
         type: String,
         label: "ElementTypes.readModeContextMenu.$.template",
-        optional: true,        
+        optional: true,
     },
 
     keyStrokes: {
@@ -2173,7 +2196,7 @@ Schemas.ElementTypes = new SimpleSchema({
         type: String,
         allowedValues: ["Directional", "BiDirectional", "ReverseDirectional"],
         label: "ElementTypes.direction",
-        optional: true,     
+        optional: true,
     },
 
     lineType: {
@@ -2280,15 +2303,15 @@ Schemas.CompartmentTypes = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.toolId",
-        denyUpdate: true,	 	
+        denyUpdate: true,
 	},
 
 	versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.versionId",
-        denyUpdate: true,	 	
-	},	
+        denyUpdate: true,
+	},
 
     dialogTabId: {
         type: String,
@@ -2302,14 +2325,14 @@ Schemas.CompartmentTypes = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.diagramId",
         optional: true,
-        denyUpdate: true,       
+        denyUpdate: true,
     },
 
 	diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.diagramTypeId",
-        denyUpdate: true,	 	
+        denyUpdate: true,
 	},
 
 	elementTypeId: {
@@ -2317,7 +2340,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.elementTypeId",
         denyUpdate: true,
-        optional: true, 	
+        optional: true,
 	},
 
     elementId: {
@@ -2325,7 +2348,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.elementId",
         denyUpdate: true,
-        optional: true,     
+        optional: true,
     },
 
     name: {
@@ -2360,23 +2383,23 @@ Schemas.CompartmentTypes = new SimpleSchema({
         type: String,
         label: "CompartmentTypes.prefix",
         optional: true,
-        
-        
+
+
     },
 
     suffix: {
         type: String,
         label: "CompartmentTypes.suffix",
         optional: true,
-        
-        
+
+
     },
 
     concatStyle: {
         type: String,
         label: "CompartmentTypes.concatStyle",
         optional: true,
-        
+
     },
 
     subCompartmentTypes: {
@@ -2394,7 +2417,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
 
     "styles.$.id": {
         type: String,
-       // regEx: SimpleSchema.RegEx.Id,        
+       // regEx: SimpleSchema.RegEx.Id,
         label: "CompartmentTypes.styles.$.id",
     },
 
@@ -2436,28 +2459,28 @@ Schemas.CompartmentTypes = new SimpleSchema({
 
     "styles.$.style.fontStyle": {
         type: String,
-        allowedValues: ["normal", "bold", "italic"],        
+        allowedValues: ["normal", "bold", "italic"],
         label: "CompartmentTypes.styles.$.style.fontStyle",
     },
 
     "styles.$.style.fontVariant": {
         type: String,
-        allowedValues: ["normal", "small-caps"],        
+        allowedValues: ["normal", "small-caps"],
         label: "CompartmentTypes.styles.$.style.fontVariant",
     },
 
     "styles.$.style.fill": {
-        type: String,       
+        type: String,
         label: "CompartmentTypes.styles.$.style.fill",
     },
 
     "styles.$.style.padding": {
-        type: Number,       
+        type: Number,
         label: "CompartmentTypes.styles.$.style.padding",
     },
 
     "styles.$.style.visible": {
-        type: Boolean,       
+        type: Boolean,
         label: "CompartmentTypes.styles.$.style.visible",
     },
 
@@ -2483,19 +2506,19 @@ Schemas.CompartmentTypes = new SimpleSchema({
         type: Number,
         label: "CompartmentTypes.inputType.rows",
         optional: true,
-    }, 
+    },
 
     "inputType.placeholder": {
         type: String,
         label: "CompartmentTypes.placeholder",
         optional: true,
-    }, 
+    },
 
     "inputType.values": {
         type: [Object],
         label: "CompartmentTypes.values",
         optional: true,
-    }, 
+    },
 
     "inputType.values.$.input": {
         type: String,
@@ -2512,7 +2535,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
     "inputType.values.$.elementStyle": {
         type: String,
         label: "CompartmentTypes.values.$.elementStyle",
-    },     
+    },
 
     "inputType.values.$.compartmentStyle": {
         type: String,
@@ -2535,7 +2558,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
         allowedValues: ["beforeUpdate", "update", "afterUpdate", "dynamicPrefix",
                         "dynamicDefaultValue", "dynamicSuffix", "dynamicDropDown"],
         label: "CompartmentTypes.extensionPoints.$.extensionPoint",
-    }, 
+    },
 
     "extensionPoints.$.procedure": {
         type: String,
@@ -2585,28 +2608,28 @@ Schemas.DialogTabs = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DialogTabs.toolId",
-        denyUpdate: true,	 	
+        denyUpdate: true,
 	},
 
 	versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DialogTabs.versionId",
-        denyUpdate: true, 	
-	},	
+        denyUpdate: true,
+	},
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DialogTabs.diagramId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
 	diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "DialogTabs.diagramTypeId",
-        denyUpdate: true,	
+        denyUpdate: true,
 	},
 
 	elementTypeId: {
@@ -2619,13 +2642,13 @@ Schemas.DialogTabs = new SimpleSchema({
 
 	name: {
         type: String,
-        label: "DialogTabs.name", 	 	
-	},	
+        label: "DialogTabs.name",
+	},
 
     index: {
         type: Number,
-        label: "DialogTabs.index",       
-    },  
+        label: "DialogTabs.index",
+    },
 
     type: {
         type: String,
@@ -2634,7 +2657,7 @@ Schemas.DialogTabs = new SimpleSchema({
         label: "DialogTabs.type",
         optional: true,
         denyUpdate: true,
-    },  
+    },
 });
 DialogTabs.attachSchema(Schemas.DialogTabs);
 
@@ -2644,57 +2667,57 @@ Schemas.PaletteButtons = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "PaletteButtons.toolId",
-        denyUpdate: true,       
+        denyUpdate: true,
     },
 
     versionId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "PaletteButtons.versionId",
-        denyUpdate: true,   
-    },  
+        denyUpdate: true,
+    },
 
     diagramId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "PaletteButtons.diagramId",
         optional: true,
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "PaletteButtons.diagramTypeId",
-        denyUpdate: true,   
+        denyUpdate: true,
     },
 
     elementTypeIds: {
         type: [String],
         label: "PaletteButtons.elementTypeId",
-        denyUpdate: true,       
+        denyUpdate: true,
     },
 
     "elementTypeIds.$": {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "PaletteButtons.elementTypeIds.$",     
+        label: "PaletteButtons.elementTypeIds.$",
     },
 
     name: {
         type: String,
-        label: "PaletteButtons.name",       
+        label: "PaletteButtons.name",
     },
 
     type: {
         type: String,
         allowedValues: ["Box", "Line"],
-        label: "PaletteButtons.type",       
+        label: "PaletteButtons.type",
     },
 
     index: {
         type: Number,
-        label: "PaletteButtons.index",       
+        label: "PaletteButtons.index",
     },
 
 });
@@ -2707,7 +2730,7 @@ Schemas.Clipboard = new SimpleSchema({
         type: String,
         regEx: SimpleSchema.RegEx.Id,
         label: "Clipboard.projectId",
-    }, 
+    },
 
     versionId: {
         type: String,
@@ -2760,12 +2783,12 @@ Schemas.Clipboard = new SimpleSchema({
     // readModeToolbar: {
     //     type: [Object],
     //     label: "DiagramTypes.readModeToolbar",
-    // }, 
+    // },
 
     // "elements.$.id": {
     //     type: String,
     //     label: "DiagramTypes.readModeToolbar.$.id",
-    // }, 
+    // },
 
     // "elements.$.icon": {
     //     type: String,
@@ -2804,7 +2827,7 @@ Schemas.Versions = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Versions.projectId",
         denyUpdate: true,
-    }, 
+    },
 
     toolVersionId: {
         type: String,
@@ -2847,7 +2870,7 @@ Schemas.Versions = new SimpleSchema({
 
     publishedBy: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "Versions.publishedBy",
         optional: true,
         denyInsert: true,
@@ -2984,44 +3007,44 @@ Schemas.ImportedTranslets = new SimpleSchema({
     diagramTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "ImportedTranslets.diagramTypeId", 
-        denyUpdate: true,     
+        label: "ImportedTranslets.diagramTypeId",
+        denyUpdate: true,
     },
 
     elementTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "ImportedTranslets.elementTypeId", 
+        label: "ImportedTranslets.elementTypeId",
         denyUpdate: true,
-        optional: true,     
+        optional: true,
     },
 
     compartmentTypeId: {
         type: String,
         regEx: SimpleSchema.RegEx.Id,
-        label: "ImportedTranslets.compartmentTypeId", 
+        label: "ImportedTranslets.compartmentTypeId",
         denyUpdate: true,
-        optional: true,     
+        optional: true,
     },
 
     subCompartmentTypeId: {
         type: String,
         //regEx: SimpleSchema.RegEx.Id,
-        label: "ImportedTranslets.subCompartmentTypeId", 
+        label: "ImportedTranslets.subCompartmentTypeId",
         denyUpdate: true,
-        optional: true,     
+        optional: true,
     },
 
     extensionPoint: {
         type: String,
-        label: "ImportedTranslets.extensionPoint", 
-        denyUpdate: true,  
+        label: "ImportedTranslets.extensionPoint",
+        denyUpdate: true,
     },
 
     procedureName: {
         type: String,
-        label: "ImportedTranslets.procedureName", 
-        denyUpdate: true,   
+        label: "ImportedTranslets.procedureName",
+        denyUpdate: true,
     },
 
 });
@@ -3069,12 +3092,12 @@ Schemas.Searches = new SimpleSchema({
         type: Number,
         label: "Searches.counter",
         optional: true,
-    },    
+    },
 
 //search in chats
     userSystemId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "Searches.userSystemId",
         optional: true,
     },
@@ -3113,7 +3136,7 @@ Schemas.Searches = new SimpleSchema({
 
     //users Object is already defined
 
-//end of search in project artifacts    
+//end of search in project artifacts
 
 });
 Searches.attachSchema(Schemas.Searches);
@@ -3136,18 +3159,18 @@ Schemas.ForumPosts = new SimpleSchema({
         type: Date,
         label: "ForumPosts.createdAt",
         denyUpdate: true,
-    },    
+    },
 
     authorId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPosts.authorId",
         denyUpdate: true,
     },
 
     projectId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPosts.projectId",
         denyUpdate: true,
     },
@@ -3184,25 +3207,25 @@ Schemas.ForumPostComments = new SimpleSchema({
     createdAt: {
         type: Date,
         label: "ForumPostComments.createdAt",
-    },    
+    },
 
     authorId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPostComments.authorId",
         denyUpdate: true,
     },
 
     forumPostId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPostComments.forumPostId",
         denyUpdate: true,
     },
 
     projectId: {
         type: String,
-        regEx: SimpleSchema.RegEx.Id, 
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPostComments.projectId",
         denyUpdate: true,
     },
@@ -3213,13 +3236,13 @@ Schemas.ForumPostComments = new SimpleSchema({
     },
 
     "replies.$.id": {
-        type: String,     
+        type: String,
         label: "ForumPostComments.replies.$.id",
     },
 
     "replies.$.authorId": {
         type: String,
-        regEx: SimpleSchema.RegEx.Id,        
+        regEx: SimpleSchema.RegEx.Id,
         label: "ForumPostComments.replies.$.authorId",
     },
 
@@ -3229,9 +3252,8 @@ Schemas.ForumPostComments = new SimpleSchema({
     },
 
     "replies.$.text": {
-        type: String,      
+        type: String,
         label: "ForumPostComments.replies.$.text",
     },
 });
 ForumPostComments.attachSchema(Schemas.ForumPostComments);
-

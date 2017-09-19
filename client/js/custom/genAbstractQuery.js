@@ -223,7 +223,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   resolveClassExpressions(query.root);
 
   //console.log(query.root);
-  return {root:query.root, symbolTable:symbol_table}
+  return {root:query.root, symbolTable:symbol_table, params:query.params}
 };
 
 // [string]--> JSON
@@ -279,10 +279,10 @@ genAbstractQueryForElementList = function (element_id_list) {
           var linkedElem_obj = {};
           if (link.start) {
             elem = link.link.getStartElement();
-            linkedElem_obj["isInverse"] = !link.link.isInverse();
+            linkedElem_obj["isInverse"] = link.link.isInverse();
           } else {
             elem = link.link.getEndElement();
-            linkedElem_obj["isInverse"] = link.link.isInverse();
+            linkedElem_obj["isInverse"] = !link.link.isInverse();
           };
           // generate if the element on the other end is not visited AND the link is not conditional
           // AND it is within element_list AND the link is within element_list
@@ -327,6 +327,20 @@ genAbstractQueryForElementList = function (element_id_list) {
       return _.filter(_.map(current_elem.getLinks(), genLinkedElement), function(l) {return l})
   };
 
+    function getProjectParams() {
+     var proj = Projects.findOne({_id: Session.get("activeProject")});
+   	 if (proj) {
+          var proj_params = {
+            useStringLiteralConversion: proj.useStringLiteralConversion,
+            queryEngineType: proj.queryEngineType,
+          };
+          if (proj.useDefaultGroupingSeparator=="true") {
+            proj_params.defaultGroupingSeparator = proj.defaultGroupingSeparator;
+          };
+          return proj_params;
+     }
+   };
+
     return { root: {
       identification: { _id: e._id(), localName: e.getName()},
       instanceAlias: e.getInstanceAlias(),
@@ -344,6 +358,7 @@ genAbstractQueryForElementList = function (element_id_list) {
       offset:e.getOffset(),
       fullSPARQL:e.getFullSPARQL(),
       children: genLinkedElements(e)
-    }}
+    },
+     params: getProjectParams() }
   });
 };
