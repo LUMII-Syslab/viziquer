@@ -243,7 +243,8 @@ Accounts.validateLoginAttempt(function(obj) {
 	//This is a tmp solution because the verification is not working as expected
 	if (true) {
 
-		var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 3}});
+		var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 30000}});
+
 		if (user) {
 			return true;
 		}

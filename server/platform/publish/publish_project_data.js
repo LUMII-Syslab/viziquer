@@ -193,20 +193,27 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 
 			//diagram types and element types
 			var diagram_type_query = {_id: list["diagramTypeId"],
-									toolId: tool_id, versionId: tool_version_id};
+										toolId: tool_id,
+										versionId: tool_version_id,
+									};
+										
 			var diagram_type_limit = {fields: {diagramId: 0, diagramTypeId: 0,
 												toolId: 0, versionId: 0}};
 
 			//elements and compartments
 			var element_query = {diagramId: list["id"], 
 								projectId: list["projectId"],
-								versionId: list["versionId"]};
+								versionId: list["versionId"],
+							};
+
 			var element_limit = {fields: limit_element_fields()};
 			var compart_limit = {fields: {}};
 
 
 			var type_query = {diagramTypeId: list["diagramTypeId"],
-								toolId: tool_id, versionId: tool_version_id};
+								toolId: tool_id, versionId: tool_version_id,
+							};
+
 			var elem_type_limit = {fields: {}};
 			var palette_button_type_limit = {fields: {toolId: 0, versionId: 0, diagramId: 0}};
 
@@ -222,7 +229,8 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 				return this.stop();				
 			}
 			
-			else
+			else {
+
 				return [diagrams,
 						Elements.find(element_query, element_limit),
 						Compartments.find(element_query, compart_limit),
@@ -231,6 +239,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 						ElementTypes.find(type_query, elem_type_limit),
 						PaletteButtons.find(type_query, palette_button_type_limit),
 					];
+			}
 		}
 	}
 	else {
@@ -301,7 +310,10 @@ Meteor.publish("Diagram_Types", function(list) {
 			var tool_id = version["toolId"];
 			var tool_version_id = version["toolVersionId"];
 
-			var type_query = {diagramTypeId: list["diagramTypeId"], toolId: tool_id, versionId: tool_version_id};
+			var type_query = {diagramTypeId: list["diagramTypeId"],
+								toolId: tool_id,
+								versionId: tool_version_id,
+							};
 			
 			//var elem_type_limit = {fields: {}};
 			var compart_type_limit = {fields: {}};
