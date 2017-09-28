@@ -216,6 +216,23 @@ Template.sparqlForm.helpers({
 	},
 	augmentedResult: function() {
         var self = Session.get("executedSparql");
+				var binding_map = _.map(self.sparql.head[0].variable, function(v) {
+					return v["$"].name;
+				});
+				
+        _.each(self.sparql.results[0].result, function(res) {
+
+					var new_bindings = _.map(binding_map, function(map_item) {
+             var  existing_binding = _.find(res.binding, function(binding) {return binding["$"].name==map_item});
+						 if (existing_binding) {
+							 return existing_binding;
+						 } else {
+							 return {};
+						 }
+				  });
+					res.binding = new_bindings;
+				})
+
         return _.map(self.sparql.results[0].result, function(p) {
             p.parent = self;
             return p;
