@@ -216,9 +216,14 @@ Template.sparqlForm.helpers({
 	},
 	augmentedResult: function() {
         var self = Session.get("executedSparql");
-				var binding_map = _.map(self.sparql.head[0].variable, function(v) {
-					return v["$"].name;
-				});
+
+        if (!self.sparql) {
+        	return;
+        }
+
+		var binding_map = _.map(self.sparql.head[0].variable, function(v) {
+			return v["$"].name;
+		});
 				
         _.each(self.sparql.results[0].result, function(res) {
 
