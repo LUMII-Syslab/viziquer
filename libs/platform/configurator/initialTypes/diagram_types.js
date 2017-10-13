@@ -38,7 +38,7 @@ build_initial_diagram_type = function(list, editor_type) {
 
 			{id: generate_id(), name: "Action history", procedure: "ShowDiagramLog", icon: "fa-history"},
 
-			{id: generate_id(), name: "Diagram settings", procedure: "ShowDiagramSettings", icon: "fa-gear"},			
+			{id: generate_id(), name: "Diagram Info", procedure: "ShowDiagramSettings", icon: "fa-gear"},			
 			{id: generate_id(), name: "Permissions", procedure: "Permissions", icon: "fa-lock"},
 
 			{id: generate_id(), name: "Delete", procedure: "DeleteDiagram", icon: "fa-trash-o"},	
@@ -49,7 +49,7 @@ build_initial_diagram_type = function(list, editor_type) {
 			{id: generate_id(), name: "Action history", procedure: "ShowDiagramLog",
 			icon: "fa-history", isInEditableVersion: false, isForAdminOnly: false},
 
-			{id: generate_id(), name: "Diagram settings", procedure: "ShowDiagramSettings",
+			{id: generate_id(), name: "Diagram Info", procedure: "ShowDiagramSettings",
 			icon: "fa-gear", isInEditableVersion: false, isForAdminOnly: false},
 
 			{id: generate_id(), name: "Permissions", procedure: "Permissions",

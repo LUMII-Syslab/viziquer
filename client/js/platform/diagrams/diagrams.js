@@ -64,15 +64,19 @@ Template.diagramsRibbon.events({
 
 			    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
 
-				var src = $("#download-project");
+				var src = $("#download-hack");
 			    src.attr("href", "data:" + data);
 			    src.attr("download", "data.json");
+
+			    src[0].click();
 			}
 
 		});
 	},
 
 	'click #upload-project': function(e, templ) {
+		// e.preventDefault();
+
 		$('#upload-project-form').modal("show");
 	},
 
@@ -107,6 +111,10 @@ Template.diagramsRibbon.helpers({
 	//if the version is editable and there is atleast one diagram type
 	is_toolbar_enabled: function() {
 		return is_toolbar_enabled();
+	},
+
+	project_id: function() {
+		return Session.get("activeProject");
 	},
 
 });

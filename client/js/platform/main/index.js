@@ -121,7 +121,7 @@ function redirect_on_login(user) {
 	}
 
 	else {
-		Router.go("project", {projectId: user["activeProject"]});
+		Router.go("structure");
 	}
 }
 
