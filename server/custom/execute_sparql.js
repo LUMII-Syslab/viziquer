@@ -125,7 +125,7 @@ Meteor.methods({
 	testProjectEndPoint: function(list) {
 
 		var user_id = Meteor.userId();
-		//if (is_project_version_admin(user_id, list)) {
+		if (is_project_version_admin(user_id, list)) {
 
 			if (!list.endpoint || !list.uri) {
 				console.error("No data specified");
@@ -157,7 +157,7 @@ Meteor.methods({
 			});
 
 			return future.wait();
-		//}
+		}
 	},
 
 });
