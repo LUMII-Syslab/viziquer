@@ -117,6 +117,24 @@ Template.diagramsRibbon.helpers({
 		return Session.get("activeProject");
 	},
 
+	tool_name: function() {
+		var project_id = Session.get("activeProject");
+		var project = Projects.findOne({_id: project_id,});
+		if (!project) {
+			console.error("No project ", project_id);
+			return;
+		}
+
+		var tool = Tools.findOne({_id: project.toolId,});
+		if (!tool) {
+			console.error("No tool", project.toolId);
+			return;
+		}		
+
+		return tool.name;
+	}
+
+
 });
 
 // End of diagramsRibbon template

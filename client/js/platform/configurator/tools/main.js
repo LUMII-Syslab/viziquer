@@ -1,21 +1,30 @@
 
 
 Template.renameTool.helpers({
-	tool_name: function() {
+	tool: function() {
 		var tool = Tools.findOne({_id: Session.get("toolId")});
 		if (tool) {
-			return tool["name"];
+			
+			tool.checked = "";
+			if (tool.isDeprecated) {
+				tool.checked = "checked";
+			}
+
+			return tool;
 		}
 	},
+
 });
 
 Template.renameTool.events({
 
 	'click #update-tool-name' : function(e) {
 		var tool_name = $("#tool-name").val();
+		var is_deprecetad = $("#isDeprecated").is(":checked");
+
 		$('#rename-tool-form').modal('hide');
 
-		var list = {toolId: Session.get("toolId"), set: {name: tool_name}};
+		var list = {toolId: Session.get("toolId"), set: {name: tool_name, isDeprecated: is_deprecetad,}};
 		Utilities.callMeteorMethod("updateTool", list);
 	},
 

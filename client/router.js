@@ -82,7 +82,7 @@ Router.map( function () {
     template: "enrollTemplate",
 
     waitOn: function() {
-      //Meteor.logout();
+      // Meteor.logout();
 
         var token = this.params.token;
         Session.set("token", token);

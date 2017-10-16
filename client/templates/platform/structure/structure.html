@@ -47,18 +47,21 @@
                                         </a>
                                     </li>
 
-    	                            <li>
-    	                                <a class="edit-project-obj" href="#">
-    	                                    <i class="fa fa-pencil fa-lg"></i> 
-    	                                    {{_ "edit"}}
-    	                                </a>
-    	                            </li>
-    	                            <li>
-    	                                <a class="remove-project-obj" href="#">
-    	                                    <i class="fa fa-trash-o fa-lg"></i> 
-    	                                    {{_ "delete"}}
-    	                                </a>
-    	                            </li>
+                                    {{#if isOwner}}
+        	                            <li>
+        	                                <a class="edit-project-obj" href="#">
+        	                                    <i class="fa fa-pencil fa-lg"></i> 
+        	                                    {{_ "edit"}}
+        	                                </a>
+        	                            </li>
+        	                            <li>
+        	                                <a class="remove-project-obj" href="#">
+        	                                    <i class="fa fa-trash-o fa-lg"></i> 
+        	                                    {{_ "delete"}}
+        	                                </a>
+        	                            </li>
+                                    {{/if}}
+
     	                        </ul>
     		                </div>
     	                {{/if}}

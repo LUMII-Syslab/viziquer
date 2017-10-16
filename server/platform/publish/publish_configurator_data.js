@@ -8,7 +8,7 @@ Meteor.publish("Structure_Tools", function(list) {
 	if (user_id) {
 
 		//removes the configurator from the query
-		var query = {_id: {$ne: get_configurator_tool_id()}};
+		var query = {_id: {$ne: get_configurator_tool_id()}, isDeprecated: false,};
 		
 		return Tools.find(query, {fields: {name: 1}});
 	}

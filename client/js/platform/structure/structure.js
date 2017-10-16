@@ -9,6 +9,8 @@ Template.structureTemplate.helpers({
 	    var categories = {};
 
 	    var active_project = Session.get("activeProject");
+	    var user_id = Session.get("userSystemId");
+
 		ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).forEach(
 
 			function(user_proj, i) {
@@ -21,40 +23,58 @@ Template.structureTemplate.helpers({
 					user_proj["name"] = project["name"];
 					user_proj["icon"] = project["icon"];
 
+					if (project.createdBy == user_id) {
+						user_proj.isOwner = true;
+					}
+
 					category = project["category"] || "";
 				}
 
 				user_proj["styleClass"] = "bg-info";
-				if (proj_id == active_project)
+				if (proj_id == active_project) {
 					user_proj["styleClass"] = "bg-danger";
+				}
 
-				if (user_proj["role"] == "Admin" && user_proj["status"] == "Member")
+				if (user_proj["role"] == "Admin" && user_proj["status"] == "Member") {
 					user_proj["isEditable"] = true;
+				}
 
-				if (user_proj["role"] == "Admin" || user_proj["role"] == "Reader")
+				if (user_proj["role"] == "Admin" || user_proj["role"] == "Reader") {
 					user_proj["isDefault"] = true;
+				}
 
-				if (categories[category])
+				if (categories[category]) {
 					categories[category].push(user_proj);
-
-				else
+				}
+				else {
 					categories[category] = [user_proj];
+				}
+
 		});
 
 		var res = [];
 
 		//if no category name, then these projects are rendered at the begining
-		if (categories[""])
+		if (categories[""]) {
 			res.push({name: "", projects: categories[""]});
+		}
 
 		//selecting all the proceses that are have category name
 		_.each(categories, function(projects, category_name) {
-			if (category_name)
+			if (category_name) {
 				res.push({name: category_name, projects: projects});
+			}
 		});
+
+		console.log("res ", res)
+
 
 		return res;
 	},
+
+	// isOwner: function() {
+	// }
+
 });
 
 Template.structureTemplate.events({
@@ -149,7 +169,7 @@ Template.structureRibbon.events({
 Template.createProjectModal.helpers({
 
 	tools: function() {
-		return Tools.find({}, {sort: {name: 1}});
+		return Tools.find({isDeprecated: false,}, {sort: {name: 1}});
 	},
 });
 

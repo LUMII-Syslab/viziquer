@@ -81,17 +81,31 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Rename Tool</h4>
+                        <h4 class="modal-title">Edit Tool</h4>
                     </div>
                     <div class="modal-body">
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <label for="diagram-name" class="col-sm-1 control-label">Name</label>
-                                <div class="col-sm-10">
-                                    <input id="tool-name" type="text" class="form-control" value="{{tool_name}}" placeholder="">
+
+                        {{#with tool}}
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="diagram-name" class="col-sm-1 control-label">Name</label>
+                                    <div class="col-sm-10">
+                                        <input id="tool-name" type="text" class="form-control" value="{{name}}" placeholder="">
+                                    </div>
                                 </div>
-                            </div>
-                        </form>  
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-1 col-sm-10">
+                                        <label class="label-checkbox inline">
+                                            <input type="checkbox" class="dialog-checkbox" id="isDeprecated" {{checked}}>
+                                            <span class="custom-checkbox"></span>
+                                            isDeprecated
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>  
+                        {{/with}}
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

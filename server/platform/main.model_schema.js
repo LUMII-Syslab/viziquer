@@ -2932,6 +2932,12 @@ Schemas.Tools = new SimpleSchema({
         optional: true,
     },
 
+    isDeprecated: {
+        type: Boolean,
+        label: "Tools.isDeprecated",
+        optional: true,
+    },
+
 });
 Tools.attachSchema(Schemas.Tools);
 

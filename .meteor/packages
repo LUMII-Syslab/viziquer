@@ -33,7 +33,7 @@ tap:i18n-db
 spacebars-compiler@1.0.12
 natestrauser:bootstrap-colorpicker
 mizzao:user-status
-email@1.2.0
+email
 nilsdannemann:pdfmake
 session@1.1.7
 nimble:restivus

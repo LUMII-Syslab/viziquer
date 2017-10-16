@@ -185,11 +185,11 @@ get_maximal_user_query_limit = function() {
 }
 
 build_site_name = function() {
-	return "ajoo";
+	return "viziquer";
 }
 
 build_from_address = function() {
-	return 'ajoo <no-reply@ajoo.lv>';
+	return 'ajoo <no-reply-viziquer@lumii.lv>';
 }
 
 is_test_user = function(email) {

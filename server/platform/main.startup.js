@@ -14,6 +14,9 @@
 
 	    //mail server settings
   		// process.env.MAIL_URL = 'smtp://postmaster@sandbox3eb2756f94924ab0838893d4c969e4e8.mailgun.org:683dbf555c8b46b4ecfd3508c8f1da39@smtp.mailgun.org:587';
+  		process.env.MAIL_URL = 'smtp://postmaster@viziquer.lumii.lv:46c1183101c042354b083dd2420bfe61@smtp.mailgun.org:587';
+
+
 
  //  		var settings = Meteor.settings;
 // 		if (settings.AWSAccessKeyId) {

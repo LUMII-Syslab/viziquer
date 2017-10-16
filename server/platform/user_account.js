@@ -156,8 +156,9 @@ Meteor.methods({
 
 	enrollUserAccepted: function(list) {
 
-		if (!list)
+		if (!list) {
 			return;
+		}
 
 		var user = Meteor.users.findOne({"services.password.reset.token": list["token"]});
 		if (user) {
@@ -175,6 +176,28 @@ Meteor.methods({
 			return email;
 		}
 
+	},
+
+	verifyAccount: function(list) {
+
+		if (!list) {
+			return;
+		}
+
+		// console.log("verify ");
+
+		// Email.send({
+		//   to: "arturs.sprogis@gmail.com",
+		//   from: "viziquer@viziquer.lv",
+		//   subject: "Example Email",
+		//   text: "The contents of our email in plain text.",
+		// });
+
+		var user = Meteor.users.findOne({"services.email.verificationTokens.token": list["token"]});
+		if (user) {
+			var email = user["emails"][0]["address"];
+			Meteor.users.update({_id: user["_id"], "emails.address": email}, {$set: {"emails.$.verified": true,}});
+		}
 	},
 
 	//for testing
@@ -237,13 +260,12 @@ Accounts.validateLoginAttempt(function(obj) {
 	}
 
 	//checking if the user's mail is verified
-	// if (obj && obj["user"] &&  obj["user"]["emails"] && obj["user"]["emails"][0] ) {
-		//&& obj["user"]["emails"][0]["verified"]) {
+	// if (obj && obj["user"] &&  obj["user"]["emails"] && obj["user"]["emails"][0] && obj["user"]["emails"][0]["verified"]) {
 
 	//This is a tmp solution because the verification is not working as expected
 	if (true) {
 
-		var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 30000}});
+		var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
 
 		if (user) {
 			return true;
