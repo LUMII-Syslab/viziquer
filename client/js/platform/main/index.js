@@ -5,8 +5,6 @@ Template.index.events({
 	'click #signin': function(e) {
 		e.preventDefault();
 
-		console.log("in sign in")
-
 		login(e);
 		return false;
 	},
@@ -54,32 +52,27 @@ login = function(e, name, password) {
 		if (meteor_user) {
 			var user = Users.findOne({systemId: meteor_user["_id"]});
 			if (user) {
-				redirect_on_login(user);
+				// redirect_on_login(user);
+
+				Meteor.logout(function(err){
+					if (err) {
+						console.error("Logout error", err)
+					}
+
+					else {
+
+						if (UserStatus.isMonitoring()) {
+					    	UserStatus.stopMonitor();
+						}
+
+						loginWithPassword(name, password);
+					}
+				});
 			}
 		}
 
 		//logs in the user
-		else {
-
-		    Meteor.loginWithPassword(name, password, function (err) {
-				if (err) {
-
-					//login error msg
-					if (err["error"] == "not-verified")
-						Session.set("loginError", {not_verified: true});
-
-					else if (err["error"] == "403")
-						Session.set("loginError", {incorrect_password: true});
-
-					else if (err["error"] == "too-many-fails")
-						Session.set("loginError", {too_many_attempts: true});
-				}
-
-				else {
-					login_on_success();
-				}
-		    });
-		}
+		loginWithPassword(name, password);
 	}
 
 	else {
@@ -87,6 +80,30 @@ login = function(e, name, password) {
 	}
 
 }
+
+
+function loginWithPassword(name, password) {
+
+    Meteor.loginWithPassword(name, password, function (err) {
+		if (err) {
+
+			//login error msg
+			if (err["error"] == "not-verified")
+				Session.set("loginError", {not_verified: true});
+
+			else if (err["error"] == "403")
+				Session.set("loginError", {incorrect_password: true});
+
+			else if (err["error"] == "too-many-fails")
+				Session.set("loginError", {too_many_attempts: true});
+		}
+
+		else {
+			login_on_success();
+		}
+    });
+}
+
 
 login_on_success = function() {
 
