@@ -722,7 +722,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 				}
-				if(subclazz["isInverse"] == false) {
+				if(subclazz["isInverse"] == true) {
 					if(clazz["isUnion"] != true) object = instance;
 					else if (clazz["isUnion"] == true && parentClass == null) object = null;
 					else object = idTable[parentClass["identification"]["_id"]];
@@ -767,7 +767,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	_.each(clazz["conditionLinks"],function(condLink) {
 		if(clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + idTable[condLink["target"]], "value" : "?" + idTable[condLink["target"]]});
 		var sourse, target;
-		if(condLink["isInverse"] == false) {
+		if(condLink["isInverse"] == true) {
 			target = "?" + idTable[clazz["identification"]["_id"]];
 			sourse = "?" + idTable[condLink["target"]];
 		} else {
