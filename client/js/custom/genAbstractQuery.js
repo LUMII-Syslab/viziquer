@@ -279,10 +279,10 @@ genAbstractQueryForElementList = function (element_id_list) {
           var linkedElem_obj = {};
           if (link.start) {
             elem = link.link.getStartElement();
-            linkedElem_obj["isInverse"] = link.link.isInverse();
+            linkedElem_obj["isInverse"] = !link.link.isInverse();
           } else {
             elem = link.link.getEndElement();
-            linkedElem_obj["isInverse"] = !link.link.isInverse();
+            linkedElem_obj["isInverse"] = link.link.isInverse();
           };
           // generate if the element on the other end is not visited AND the link is not conditional
           // AND it is within element_list AND the link is within element_list
