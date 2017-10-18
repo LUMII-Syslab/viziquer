@@ -49,7 +49,6 @@ VQ_Schema = function () {
 
    var data = Schema.findOne();
    if (data.Schema) data = data.Schema;
-   //console.log(data);
 
    var schema = this;
    if (data.namespace) this.namespace = data.namespace;
@@ -72,11 +71,17 @@ VQ_Schema = function () {
 	schema.addClass( new VQ_Class({}, schema));
 
 	_.each(data.Classes, function(old_cl){
-		var cl = schema.findClassByName(old_cl.localName);
+		var c_name = "";
+	    if (old_cl.fullName) c_name = old_cl.fullName; 
+		else c_name = old_cl.localName;
+		var cl = schema.findClassByName(c_name);
 		_.each(old_cl.SuperClasses, function (sc){
 			var superClass = schema.findClassByName(sc);
-			superClass.addSubClass(cl);
-			cl.addSuperClass(superClass);
+			if (superClass.localName != " ")
+			{
+				superClass.addSubClass(cl);
+				cl.addSuperClass(superClass);
+			}
 		})
 	})
 
@@ -87,8 +92,8 @@ VQ_Schema = function () {
 		_.extend(allSuperSubClasses, cl.allSuperClasses);
 		_.extend(allSuperSubClasses, cl.allSubClasses);
 		cl.allSuperSubClasses = allSuperSubClasses;
-	})
-
+	})	
+	
 	_.each(data.Attributes, function(atr){
 		var newAttr = new VQ_Attribute(atr, schema);
 	    schema.addAttribute(newAttr);
@@ -102,6 +107,7 @@ VQ_Schema = function () {
 			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
 		})
 	})
+	
 	schema.addAttribute( new VQ_Attribute({}, schema));
 
 	_.each(data.Associations, function(asoc){
@@ -180,7 +186,8 @@ VQ_Schema.prototype = {
   getAllClasses: function (){
     return _.map(this.Classes, function (cl) {
 				if (cl.isUnique) return {name: cl.localName};
-				else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+				else  if (cl.ontology.prefix == "") return {name: cl.localName};
+				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
   findElementByName: function (name, coll) {
     var element = _.find(coll, function(el){
