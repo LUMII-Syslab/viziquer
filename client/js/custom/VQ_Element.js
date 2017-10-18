@@ -19,7 +19,20 @@ function createLink(s_class, t_class, s_role, t_role){
 	t_class[t_role] = s_class;
 	//t_class[t_role][s_class.getID()] = s_class;
 }
-
+function findCardinality(card, type)
+{
+	if (type == "MIN")
+	{
+		if (card == 1) return 1;
+		else return 0;
+		
+	}
+	if (type == "MAX")
+	{
+		if (card == 1) return 1;
+		else return -1;
+	}
+}
 VQ_Schema = function () {
 
    this.Classes = {};
@@ -100,7 +113,7 @@ VQ_Schema = function () {
 			newSchRole = new VQ_SchemaRole(asoc, cp, newRole, schema);
 			if ( !newRole.maxCardinality) {
 			  newRole.minCardinality = 0;
-			  newRole.maxCardinality = 2147483647;
+			  newRole.maxCardinality = -1;
 			}
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole, schema);
@@ -403,11 +416,11 @@ VQ_Attribute = function (attrInfo, schema){
 	this.schemaAttribute = {};
 	this.type = attrInfo.type;
 	if (attrInfo.maxCardinality) {
-	  this.minCardinality = attrInfo.minCardinality;
-	  this.maxCardinality = attrInfo.maxCardinality;
+	  this.minCardinality = findCardinality(attrInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(attrInfo.maxCardinality, "MAX");
 	}
 	else {
-	  this.minCardinality = 1;
+	  this.minCardinality = 0;
 	  this.maxCardinality = 1;
 	}
 };
@@ -444,8 +457,8 @@ VQ_Role = function (roleInfo, schema){
 	VQ_Elem.call(this, roleInfo, schema, "role");
 	this.schemaRole = {};
 	if (roleInfo.maxCardinality) {
-	  this.minCardinality = roleInfo.minCardinality;
-	  this.maxCardinality = roleInfo.maxCardinality;
+	  this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");
 	}
 };
 
@@ -469,11 +482,11 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role, schema){
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
 	if (cpInfo.maxCardinality) {
-	  this.minCardinality = cpInfo.minCardinality;
-	  this.maxCardinality = cpInfo.maxCardinality;
+	  this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
 	  if (role.maxCardinality) {
 	    if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
-		if (this.maxCardinality > role.maxCardinality) role.maxCardinality = this.maxCardinality;
+		if (this.maxCardinality < role.maxCardinality) role.maxCardinality = this.maxCardinality;
 	  }
 	  else {
 	    role.minCardinality = this.minCardinality;
