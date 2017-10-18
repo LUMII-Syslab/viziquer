@@ -1,0 +1,634 @@
+{
+  "Classes" : [ {
+    "localName" : "Resource",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+    "SuperClasses" : [ "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ]
+  }, {
+    "localName" : "Class",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#Class",
+    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Class" ]
+  }, {
+    "localName" : "ObjectProperty",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#ObjectProperty",
+    "SuperClasses" : [ "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ]
+  }, {
+    "localName" : "DatatypeProperty",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#DatatypeProperty",
+    "SuperClasses" : [ "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ]
+  }, {
+    "localName" : "RoleInTime",
+    "namespace" : "http://purl.org/spar/pro/",
+    "fullName" : "http://purl.org/spar/pro/RoleInTime",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent" ]
+  }, {
+    "localName" : "Situation",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "RoleDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" ]
+  }, {
+    "localName" : "TimeIndexedSituation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" ]
+  }, {
+    "localName" : "Membership",
+    "namespace" : "http://www.w3.org/ns/org#",
+    "fullName" : "http://www.w3.org/ns/org#Membership",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent" ]
+  }, {
+    "localName" : "AffiliationDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" ]
+  }, {
+    "localName" : "List",
+    "namespace" : "http://purl.org/co/",
+    "fullName" : "http://purl.org/co/List",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Collection" ]
+  }, {
+    "localName" : "Collection",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Collection",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#SocialObject" ]
+  }, {
+    "localName" : "Object",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "SocialObject",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#SocialObject",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object" ]
+  }, {
+    "localName" : "List",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List",
+    "SuperClasses" : [ "http://purl.org/co/List" ]
+  }, {
+    "localName" : "ListItem",
+    "namespace" : "http://purl.org/co/",
+    "fullName" : "http://purl.org/co/ListItem",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem" ]
+  }, {
+    "localName" : "ListItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object" ]
+  }, {
+    "localName" : "AcademicEvent",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#AcademicEvent",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#OrganisedEvent" ]
+  }, {
+    "localName" : "ConferenceEvent",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#ConferenceEvent",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#AcademicEvent" ]
+  }, {
+    "localName" : "OrganisedEvent",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#OrganisedEvent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event" ]
+  }, {
+    "localName" : "Event",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent" ]
+  }, {
+    "localName" : "Vevent",
+    "namespace" : "http://www.w3.org/2002/12/cal/icaltzd#",
+    "fullName" : "http://www.w3.org/2002/12/cal/icaltzd#Vevent",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#OrganisedEvent" ]
+  }, {
+    "localName" : "AcademicEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#OrganisedEvent" ]
+  }, {
+    "localName" : "Conference",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#ConferenceEvent" ]
+  }, {
+    "localName" : "OrganisedEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "AcademicProceedings",
+    "namespace" : "http://purl.org/spar/fabio/",
+    "fullName" : "http://purl.org/spar/fabio/AcademicProceedings",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Proceedings" ]
+  }, {
+    "localName" : "InformationObject",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#InformationObject",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#SocialObject" ]
+  }, {
+    "localName" : "Proceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Proceedings",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#InformationObject" ]
+  }, {
+    "localName" : "Dataset",
+    "namespace" : "http://rdfs.org/ns/void#",
+    "fullName" : "http://rdfs.org/ns/void#Dataset",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "ProceedingsPaper",
+    "namespace" : "http://purl.org/spar/fabio/",
+    "fullName" : "http://purl.org/spar/fabio/ProceedingsPaper",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#InProceedings" ]
+  }, {
+    "localName" : "InProceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#InProceedings",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#InformationObject" ]
+  }, {
+    "localName" : "Ontology",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#Ontology",
+    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "Agent",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/Agent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent" ]
+  }, {
+    "localName" : "Organization",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/Organization",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Organisation" ]
+  }, {
+    "localName" : "Agent",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object" ]
+  }, {
+    "localName" : "Agent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent" ]
+  }, {
+    "localName" : "Organisation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Organisation",
+    "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+  }, {
+    "localName" : "Person",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/Person",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person" ]
+  }, {
+    "localName" : "Person",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person",
+    "SuperClasses" : [ "http://xmlns.com/foaf/0.1/Agent" ]
+  }, {
+    "localName" : "TrackEvent",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#TrackEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Track" ]
+  }, {
+    "localName" : "Track",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Track",
+    "SuperClasses" : [ "http://data.semanticweb.org/ns/swc/ontology#AcademicEvent" ]
+  } ],
+  "Attributes" : [ {
+    "localName" : "title",
+    "namespace" : "http://purl.org/dc/elements/1.1/",
+    "fullName" : "http://purl.org/dc/elements/1.1/title",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "name",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/name",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "acronym",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#acronym",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "endDate",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#endDate",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "dtend",
+    "namespace" : "http://www.w3.org/2002/12/cal/icaltzd#",
+    "fullName" : "http://www.w3.org/2002/12/cal/icaltzd#dtend",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference" ]
+  }, {
+    "localName" : "keyword",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#keyword",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://purl.org/spar/fabio/ProceedingsPaper" ]
+  }, {
+    "localName" : "range",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#range",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "description",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#description",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "name",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#name",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "hasSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasSeries",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference" ]
+  }, {
+    "localName" : "subject",
+    "namespace" : "http://purl.org/dc/elements/1.1/",
+    "fullName" : "http://purl.org/dc/elements/1.1/subject",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#InformationObject" ]
+  }, {
+    "localName" : "dtstart",
+    "namespace" : "http://www.w3.org/2002/12/cal/icaltzd#",
+    "fullName" : "http://www.w3.org/2002/12/cal/icaltzd#dtstart",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "title",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#title",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "familyName",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/familyName",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+  }, {
+    "localName" : "location",
+    "namespace" : "http://www.w3.org/2002/12/cal/icaltzd#",
+    "fullName" : "http://www.w3.org/2002/12/cal/icaltzd#location",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference" ]
+  }, {
+    "localName" : "sameAs",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#sameAs",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "startDate",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#startDate",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "abstract",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#abstract",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#InformationObject" ]
+  }, {
+    "localName" : "domain",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#domain",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "hadPrimarySource",
+    "namespace" : "http://www.w3.org/ns/prov#",
+    "fullName" : "http://www.w3.org/ns/prov#hadPrimarySource",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://rdfs.org/ns/void#Dataset" ]
+  }, {
+    "localName" : "created",
+    "namespace" : "http://purl.org/dc/terms/",
+    "fullName" : "http://purl.org/dc/terms/created",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://rdfs.org/ns/void#Dataset" ]
+  }, {
+    "localName" : "label",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ null ]
+  }, {
+    "localName" : "mbox_sha1sum",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/mbox_sha1sum",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person" ]
+  }, {
+    "localName" : "title",
+    "namespace" : "http://purl.org/dc/terms/",
+    "fullName" : "http://purl.org/dc/terms/title",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://rdfs.org/ns/void#Dataset" ]
+  }, {
+    "localName" : "abstract",
+    "namespace" : "http://swrc.ontoware.org/ontology#",
+    "fullName" : "http://swrc.ontoware.org/ontology#abstract",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+  }, {
+    "localName" : "givenname",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/givenname",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://xmlns.com/foaf/0.1/Person" ]
+  } ],
+  "Associations" : [ {
+    "localName" : "hasFirstItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasFirstItem",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "holdsRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#holdsRole",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent"
+    } ]
+  }, {
+    "localName" : "isAffiliationOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isAffiliationOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person"
+    } ]
+  }, {
+    "localName" : "inverseOf",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#inverseOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "hasAuthorList",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasAuthorList",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "subClassOf",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "isHeldBy",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isHeldBy",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person"
+    } ]
+  }, {
+    "localName" : "equivalentClass",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#equivalentClass",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Class",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Class"
+    } ]
+  }, {
+    "localName" : "authorList",
+    "namespace" : "http://purl.org/ontology/bibo/",
+    "fullName" : "http://purl.org/ontology/bibo/authorList",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object",
+      "TargetClass" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object"
+    } ]
+  }, {
+    "localName" : "equivalentProperty",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#equivalentProperty",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "isPartOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isPartOf",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "member",
+    "namespace" : "http://www.w3.org/ns/org#",
+    "fullName" : "http://www.w3.org/ns/org#member",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent"
+    } ]
+  }, {
+    "localName" : "creator",
+    "namespace" : "http://purl.org/dc/terms/",
+    "fullName" : "http://purl.org/dc/terms/creator",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://rdfs.org/ns/void#Dataset",
+      "TargetClass" : "http://xmlns.com/foaf/0.1/Person"
+    } ]
+  }, {
+    "localName" : "disjointWith",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#disjointWith",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "during",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#during",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "hasContent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasContent",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "imports",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#imports",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Ontology",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Ontology"
+    } ]
+  }, {
+    "localName" : "withRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#withRole",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "maker",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/maker",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "hasLastItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasLastItem",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "hasItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasItem",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Collection",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem"
+    } ]
+  }, {
+    "localName" : "hasAffiliation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasAffiliation",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent"
+    } ]
+  }, {
+    "localName" : "isProceedingsOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isProceedingsOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://purl.org/spar/fabio/AcademicProceedings",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference"
+    } ]
+  }, {
+    "localName" : "isSubEventOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isSubEventOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "subPropertyOf",
+    "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
+    "fullName" : "http://www.w3.org/2000/01/rdf-schema#subPropertyOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "isSuperEventOf",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#isSuperEventOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "hasProceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasProceedings",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "hasMember",
+    "namespace" : "http://www.w3.org/ns/org#",
+    "fullName" : "http://www.w3.org/ns/org#hasMember",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person"
+    } ]
+  }, {
+    "localName" : "previous",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#previous",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem"
+    } ]
+  }, {
+    "localName" : "withOrganisation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#withOrganisation",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Organisation"
+    } ]
+  }, {
+    "localName" : "creator",
+    "namespace" : "http://purl.org/dc/elements/1.1/",
+    "fullName" : "http://purl.org/dc/elements/1.1/creator",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#InProceedings"
+    } ]
+  }, {
+    "localName" : "next",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#next",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "withRole",
+    "namespace" : "http://purl.org/spar/pro/",
+    "fullName" : "http://purl.org/spar/pro/withRole",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2000/01/rdf-schema#Resource",
+      "TargetClass" : "http://www.w3.org/2000/01/rdf-schema#Resource"
+    } ]
+  }, {
+    "localName" : "isSubEventOf",
+    "namespace" : "http://data.semanticweb.org/ns/swc/ontology#",
+    "fullName" : "http://data.semanticweb.org/ns/swc/ontology#isSubEventOf",
+    "ClassPairs" : [ {
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference"
+    } ]
+  }, {
+    "localName" : "hasPart",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasPart",
+    "ClassPairs" : [ { } ]
+  }, {
+    "localName" : "made",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/made",
+    "ClassPairs" : [ {
+      "TargetClass" : "http://purl.org/spar/fabio/ProceedingsPaper"
+    } ]
+  }, {
+    "localName" : "hasSubEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasSubEvent",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference"
+    } ]
+  } ]
+}
