@@ -88,6 +88,9 @@ Template.diagramsRibbon.events({
 		$('#ontology-settings-form').modal("show");
 	},
 
+	'click #migrate' : function(e, templ) {
+		$("#migrate-form").modal("show");
+	},
 
 //shows button's tooltip on mouse over
     'mouseenter .btn-ribbon' : function(e, templ) {
@@ -121,7 +124,7 @@ Template.diagramsRibbon.helpers({
 		var project_id = Session.get("activeProject");
 		var project = Projects.findOne({_id: project_id,});
 		if (!project) {
-			console.error("No project ", project_id);
+			// console.error("No project ", project_id);
 			return;
 		}
 
@@ -902,3 +905,23 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 
 	return diagram;
 }
+
+Template.migrateForm.helpers({
+
+	tools: function() {
+		return Tools.find({isDeprecated: {$ne: true},});
+	},
+
+});
+
+
+Template.migrateForm.events({
+
+	'click #migrate-to': function(e, templ) {
+		
+		$('#migrate-form').modal("hide");
+		var tool_name = $("#migrate-tools").find(":selected").attr("value");
+		Meteor.call("migrate", {projectId: Session.get("activeProject"), toolName: tool_name,})
+	},
+
+});

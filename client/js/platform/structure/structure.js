@@ -49,7 +49,6 @@ Template.structureTemplate.helpers({
 				else {
 					categories[category] = [user_proj];
 				}
-
 		});
 
 		var res = [];
@@ -66,14 +65,8 @@ Template.structureTemplate.helpers({
 			}
 		});
 
-		console.log("res ", res)
-
-
 		return res;
 	},
-
-	// isOwner: function() {
-	// }
 
 });
 

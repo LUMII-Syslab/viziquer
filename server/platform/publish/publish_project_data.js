@@ -27,7 +27,12 @@ Meteor.publish("Diagrams", function(list) {
 		var fields = {_id: 1, name: 1, imageUrl: 1, seenCount: 1, createdAt: 1,
 					diagramTypeId: 1, parentDiagrams: 1, allowedGroups: 1};
 
-		return Diagrams.find(diagrams_query, {fields: fields, sort: {name: 1}});
+		var query = {_id: {$ne: get_configurator_tool_id()}, isDeprecated: {$ne: true},};
+		
+		return [Diagrams.find(diagrams_query, {fields: fields, sort: {name: 1}}),
+				Tools.find(query),
+			];
+
 	}
 	else {
 		error_msg();	

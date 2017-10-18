@@ -10,15 +10,54 @@ Meteor.methods({
 			var project_id = list.projectId;
 			var version_id = list.versionId;
 
+			var project = Projects.findOne({_id: project_id,});
+			if (!project) {
+				console.error("No project ", project_id);
+				return;
+			}
+
+			var tool = Tools.findOne({_id: project.toolId,});
+			if (!tool) {
+				console.error("No tool", project.toolId);
+				return;
+			}
+
+			var tool_name = tool.name;
+
 			var diagrams = Diagrams.find({projectId: project_id, versionId: version_id}).map(function(diagram) {
+
+				var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
+				if (!diagram_type) {
+					console.error("No DiagramType ", diagram.diagramTypeId);
+					return;
+				}
+
+				_.extend(diagram, {diagramTypeName: diagram_type.name, toolName: tool_name,});
 
 				diagram.elements = Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).map(function(element) {
 
-					element.compartments = Compartments.find({elementId: element._id,
-																diagramId: element.diagramId,
-																projectId: project_id,
-																versionId: version_id}).fetch();
+					var element_type = ElementTypes.findOne({_id: element.elementTypeId,});
+					if (!element_type) {
+						console.error("No ElementType ", element.elementTypeId);
+						return;
+					}
 
+					_.extend(element, {elementTypeName: element_type.name, toolName: tool_name,});
+
+					element.compartments = Compartments.find({elementId: element._id, diagramId: element.diagramId,
+															projectId: project_id, versionId: version_id})
+														.map(function(compartment) {
+
+															var compartment_type = CompartmentTypes.findOne({_id: compartment.compartmentTypeId,});
+															if (!compartment_type) {
+																console.error("No CompartmentType ", compartment.compartmentTypeId);
+																return;
+															}
+
+															_.extend(compartment, {compartmentTypeName: compartment_type.name, toolName: tool_name,});
+
+															return compartment;
+														});
 					return element;
 				});
 
@@ -49,8 +88,20 @@ Meteor.methods({
 				return;
 			}
 
-			var tool_id = project.toolId;
+			// var tool_id = tool._id;
 			_.each(data.diagrams, function(diagram) {
+
+				var tool = Tools.findOne({_id: project.toolId,});
+				if (!tool) {
+
+					tool = Tools.findOne({name: project.toolName,})
+					if (!tool) {
+						console.error("No Tool", project.toolId);
+						return;
+					}
+				}
+
+				var tool_id = tool._id;
 
 				var elements = diagram.elements;
 				delete diagram.elements;
@@ -63,12 +114,14 @@ Meteor.methods({
 
 					diagram_type = DiagramTypes.findOne({_id: diagram_type_id,});
 					if (!diagram_type) {
-						console.error("No DiagramType", diagram_type_id);
-						return;
-					}
 
-					var diagram_type_name = diagram_type.name;
-					diagram_type = DiagramTypes.findOne({name: diagram_type_name, toolId: tool_id,});
+						var diagram_type_name = diagram.diagramTypeName;
+						diagram_type = DiagramTypes.findOne({name: diagram_type_name, toolId: tool_id,});
+						if (!diagram_type) {
+							console.error("No DiagramType", diagram_type_id);
+							return;							
+						}
+					}
 				}
 
 				_.extend(diagram, {projectId: project_id,
@@ -87,21 +140,23 @@ Meteor.methods({
 
 					var elem_type_id = element.elementTypeId;
 
-
 					var element_type = ElementTypes.findOne({_id: elem_type_id, toolId: tool_id,});
 					if (!element_type) {
 
 						element_type = ElementTypes.findOne({_id: elem_type_id,});
 						if (!element_type) {
-							console.error("No ElementType", elem_type_id);
-							return;
-						}
 
-						var element_type_name = element_type.name;
-						element_type = ElementTypes.findOne({name: element_type_name,
-																toolId: tool_id,
-																diagramTypeId: diagram_type._id,
-															});
+							var element_type_name = element.elementTypeName;
+							element_type = ElementTypes.findOne({name: element_type_name,
+																	toolId: tool_id,
+																	diagramTypeId: diagram_type._id,
+																});
+
+							if (!element_type) {
+								console.error("No ElementType", elem_type_id);
+								return;
+							}
+						}
 					}
 
 					_.extend(element, {projectId: project_id,
@@ -124,16 +179,19 @@ Meteor.methods({
 
 							compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 							if (!compart_type) {
-								console.error("No CompartmentType", compart_type_id);
-								return;
-							}
 
-							var compart_type_name = compart_type.name;
-							compart_type = CompartmentTypes.findOne({name: compart_type_name,
-																		toolId: tool_id,
-																		diagramTypeId: diagram_type._id,
-																		elementTypeId: element_type._id,
-																	});
+								var compart_type_name = compartment.compartmentTypeName;
+								compart_type = CompartmentTypes.findOne({name: compart_type_name,
+																			toolId: tool_id,
+																			diagramTypeId: diagram_type._id,
+																			elementTypeId: element_type._id,
+																		});
+
+								if (!compart_type) {
+									console.error("No CompartmentType", compart_type_id);
+									return;
+								}
+							}
 						}
 
 						_.extend(compartment, {projectId: project_id,

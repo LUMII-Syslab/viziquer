@@ -219,7 +219,7 @@ function afterInsert(user_id, doc) {
 	//selects the last tool version
 	var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
 	if (!tool_version) {
-		console.error("There is no tool version for tool: ", tool_id);
+		// console.error("There is no tool version for tool: ", tool_id);
 		return;
 	}
 
