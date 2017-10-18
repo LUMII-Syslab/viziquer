@@ -195,7 +195,7 @@ function setVariableName(varName, alias, variableData){
 			}else{
 				return expressionLevelNames[varName];
 			}
-		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1)){
+		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1)){
 			// console.log("bbb");
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName] === 'undefined'){
