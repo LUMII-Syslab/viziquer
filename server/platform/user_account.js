@@ -265,16 +265,16 @@ Accounts.validateLoginAttempt(function(obj) {
 	//This is a tmp solution because the verification is not working as expected
 	if (true) {
 
-		var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
+		// var user = Users.findOne({systemId: obj["user"]["_id"], loginFailsCount: {$lte: 10}});
 
-		if (user) {
+		// if (user) {
 			return true;
-		}
+		// }
 
-		else {
-			throw new Meteor.Error("too-many-fails", "User has made too many login fails.");
-			return false;
-		}
+		// else {
+			// throw new Meteor.Error("too-many-fails", "User has made too many login fails.");
+			// return false;
+		// }
 	}
 
 	else {

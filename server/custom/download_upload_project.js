@@ -34,6 +34,8 @@ Meteor.methods({
 
 				_.extend(diagram, {diagramTypeName: diagram_type.name, toolName: tool_name,});
 
+				var elems_map = {};
+
 				diagram.elements = Elements.find({diagramId: diagram._id, projectId: project_id, versionId: version_id}).map(function(element) {
 
 					var element_type = ElementTypes.findOne({_id: element.elementTypeId,});
@@ -88,7 +90,6 @@ Meteor.methods({
 				return;
 			}
 
-			// var tool_id = tool._id;
 			_.each(data.diagrams, function(diagram) {
 
 				var tool = Tools.findOne({_id: project.toolId,});
@@ -132,7 +133,11 @@ Meteor.methods({
 
 				var diagram_id = Diagrams.insert(diagram);
 
+				var elem_map = {};
+
 				_.each(elements, function(element) {
+
+					var old_elem_id = element._id;
 
 					var compartments = element.compartments;
 					delete element.compartments;
@@ -167,7 +172,15 @@ Meteor.methods({
 										toolId: tool_id,
 									});
 					
+					if (element.type == "Line") {
+						_.extend(element, {startElement: elem_map[element.startElement],
+											endElement: elem_map[element.endElement],
+										});
+					}
+
 					var element_id = Elements.insert(element);
+					
+					elem_map[old_elem_id] = element_id;
 
 					_.each(compartments, function(compartment) {
 						delete compartment._id;

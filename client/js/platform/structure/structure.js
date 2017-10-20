@@ -146,6 +146,23 @@ Template.structureTemplate.events({
 	},
 
 
+	'click .leave-project': function(e) {
+		e.preventDefault();
+		//e.stopPropagation();
+
+		console.log("leave project")
+
+		var proj_id = $(e.target).closest(".project-path").attr("id");
+		var list = {projectId: proj_id};
+
+		Utilities.callMeteorMethod("leaveProject", list);
+
+		
+		
+
+		return;
+	},
+
 });
 
 Template.structureRibbon.events({

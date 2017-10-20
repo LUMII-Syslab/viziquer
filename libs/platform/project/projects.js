@@ -161,6 +161,17 @@ Meteor.methods({
 
 	},
 
+	leaveProject: function(list) {
+
+		var user_id = Meteor.userId();
+		if (is_project_member(user_id, list)) {
+
+			console.log("leave project11", list)
+
+			ProjectsUsers.remove({userSystemId: user_id, projectId: list.projectId,});
+		}
+
+	},
 
 });
 
