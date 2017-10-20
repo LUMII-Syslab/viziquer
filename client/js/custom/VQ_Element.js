@@ -190,8 +190,12 @@ VQ_Schema.prototype = {
 				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
   findElementByName: function (name, coll) {
+    var elements = _.filter(coll, function(el){
+		if ( findName(name, el)) { return el; }; })
     var element = _.find(coll, function(el){
 		if ( findName(name, el)) { return el; }; })
+	if (_.size(elements) > 1)
+		element = _.find(coll, function(el){ if ( el.ontology.prefix == "" ) { return el; }; })
 	if (element) return element;
 	return _.find(coll, function(el){
 		if (el.localName == " ") { return el; }; })
