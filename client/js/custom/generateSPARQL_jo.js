@@ -991,8 +991,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					tempSelect= tempSelect.concat(selectResult["aggregate"]);
 					
 					if(sparqlTable["subClasses"][subclass]["linkType"] != "NOT"){
-					
-						if(tempSelect.length > 0 || sparqlTable["subClasses"][subclass]["equalityLink"] == true){
+						var tempTable = selectResult["select"];
+						tempTable = tempTable.concat(selectResult["aggregate"]);
+						if(tempTable.length > 0 || sparqlTable["subClasses"][subclass]["equalityLink"] == true){
 							
 							var subQuery = "{SELECT " ;
 
