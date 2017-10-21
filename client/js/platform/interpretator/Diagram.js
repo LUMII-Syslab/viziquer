@@ -141,5 +141,16 @@ Interpreter.methods({
 	    Utilities.callMeteorMethod("changeCollectionPosition", list);
 	},
 
+
+	align_selected_boxes: function(list) {
+		console.log("align selected boxes")
+		// Interpreter.editor.alignSelection(0, 1);
+	    
+	 //    list["projectId"] = Session.get("activeProject");
+	 //    list["versionId"] = Session.get("versionId");
+
+	 //    Utilities.callMeteorMethod("changeCollectionPosition", list);
+	},
+
 });
 

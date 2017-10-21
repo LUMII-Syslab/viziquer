@@ -310,7 +310,21 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
    			if (!compartment) {
-   				return;
+
+   				var compart_in = Compartments.findOne({_id: id});
+   				if (!compart_in) {
+   					return;
+   				}
+
+   				var elem_id = compart_in.elementId;
+   				var elem = editor.elements.elementList[elem_id];
+   				if (!elem) {
+   					console.error("No element for compartment", elem_id, id);
+   					return;
+   				}
+
+   				elem.compartments.create([compart_in]);
+   				compartment = compart_list[id];
    			}
 
    			var compart_presentation = compartment.presentation;

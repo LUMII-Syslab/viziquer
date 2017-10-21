@@ -526,7 +526,18 @@ VQ_SchemaRole.prototype.maxCardinality = null;
 // ajoo element id --> VQ_Element
 VQ_Element = function(id) {
   // obj contains correspondind ajoo Element object
-  this.obj = Elements.findOne({_id:id});
+  
+  var elem = Elements.findOne({_id: id});
+  if (!elem) {
+  	elem = Elements.findOne({_id: Session.get("activeElement")});
+  }
+
+  if (!elem) {
+  	console.error("No active element");
+  	return;
+  }
+
+  this.obj = elem;
 };
 
 
@@ -923,7 +934,7 @@ VQ_Element.prototype = {
 		 if (this.isLink()) {
         // By default link is REQUIRED
 				var setNeg = "false";
-				var setNegValue = " ";
+				var setNegValue = "";
 				var setOpt = "false";
 				if (value=="NOT") {
 					  setNeg = "true";
@@ -961,7 +972,7 @@ VQ_Element.prototype = {
 				} else if (value=="OPTIONAL") {
 					  setOpt = "true";
 						setNeg = "false";
-						setNegValue = " ";
+						setNegValue = "";
 						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#18b6d1"},
 						                      {attrName:"elementStyle.dash",attrValue:[6,5]},
 																	{attrName:"startShapeStyle.stroke", attrValue:"#18b6d1"},
@@ -1004,7 +1015,7 @@ VQ_Element.prototype = {
 				};
 
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
-				this.setCompartmentValue("Optional Link",setOpt," ");
+				this.setCompartmentValue("Optional Link",setOpt,"");
 		 }
 	},
 

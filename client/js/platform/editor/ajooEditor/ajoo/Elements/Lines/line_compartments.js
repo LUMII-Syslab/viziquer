@@ -214,9 +214,16 @@ LinkCompartments.prototype = {
 		//assigning texts to the group
 		var text_x = 0;
 		var text_y = 0;
+
 		_.each(placement.group.getChildren(), function(text) {
+
+			var height = text.height();
+			if (text.getText() == "") {
+				height = 0;
+			}
+
 			text.setAttrs({x: text_x, y: text_y});
-			text_y += text.height();
+			text_y += height;
 		});
 	},
 
@@ -614,7 +621,6 @@ LinkCompartments.prototype = {
 	},
 
 	recomputeCompartmentsPosition: function(compartment) {
-
 		var compartments = this;
 
 		var placement_in = compartment.placement;
@@ -628,7 +634,12 @@ LinkCompartments.prototype = {
 		var parent_group = compartments.placements[placement_name].group;
 		_.each(parent_group.getChildren(), function(text) {
 			new_width = Math.max(new_width, text.getTextWidth());
-			new_height += text.getHeight();
+			var height = text.getHeight();
+			if (text.getText() == "") {
+				height = 0;
+			}
+
+			new_height += height;
 		});
 
 		placment_obj.width = new_width;
