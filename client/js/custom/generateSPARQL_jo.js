@@ -659,7 +659,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var alias = field["alias"];
 		if(alias == "") {
 			if(result["isExpression"] == false && result["isFunction"] == false) {
-				var tempAlias = result["exp"].substring(result["exp"].indexOf("(")+2, result["exp"].indexOf(")")) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+
+				var indexCole = result["exp"].indexOf(";");
+				var endIndex = result["exp"].indexOf(")");
+				if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
+				
+				var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
 				if(typeof variableNamesAll[tempAlias] !== 'undefined') alias = tempAlias + "_" + counter;
 				else alias = tempAlias;
 				variableNamesAll[tempAlias] = tempAlias;
