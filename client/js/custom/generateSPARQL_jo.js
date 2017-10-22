@@ -722,8 +722,11 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 						preditate = " " + getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+						var namespace = subclazz["linkIdentification"]["Namespace"];
+						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+						prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 					}
-					var namespace = subclazz["linkIdentification"]["Namespace"]
+					var namespace = subclazz["linkIdentification"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 				}
