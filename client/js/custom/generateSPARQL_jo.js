@@ -721,10 +721,11 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
 					
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
-						preditate = " " + getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
-						var namespace = subclazz["linkIdentification"]["Namespace"];
-						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-						prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
+						var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+						for (var prefix in path["prefixTable"]) { 
+							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						}	
+						preditate = " " + path["path"];
 					}
 					var namespace = subclazz["linkIdentification"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
