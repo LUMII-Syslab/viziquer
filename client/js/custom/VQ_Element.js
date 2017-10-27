@@ -677,6 +677,7 @@ VQ_Element.prototype = {
   },
   // determines whether the link is inverse
   isInverse: function() {
+		//console.log(this.getCompartmentValue("Inverse Link")==true);
     return this.getCompartmentValue("Inverse Link")=="true"
   },
   // determines whether the link is conditional
@@ -887,7 +888,26 @@ VQ_Element.prototype = {
 		};
 	};
 	},
+  // string, bool -->
+	// sets comartments visibility
+	setCompartmentVisibility: function(compartmentName,visible) {
+			var elem_type_id = this.obj["elementTypeId"];
+	    var comp_type = CompartmentTypes.findOne({name: compartmentName, elementTypeId: elem_type_id});
+	    if (comp_type) {
+	      var comp_type_id = comp_type["_id"];
+	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+	      if (comp) {
+					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
+            a["input"] = comp["input"];
+						a["value"] = comp["value"];
+						a["id"] = comp["_id"];
+						a["projectId"] = Session.get("activeProject");
+			 			a["versionId"] = Session.get("versionId");
 
+			 			Utilities.callMeteorMethod("updateCompartment", a);
+	      };
+		};
+	},
   // sets name
 	// string -->
 	setName: function(name) {
@@ -897,9 +917,10 @@ VQ_Element.prototype = {
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
 	setLinkType: function(value) {
 		 if (this.isLink()) {
+			 console.log(this);
         // By default link is REQUIRED
 				var setNeg = "false";
-				var setNegValue = " ";
+				var setNegValue = "";
 				var setOpt = "false";
 				if (value=="NOT") {
 					  setNeg = "true";
@@ -937,7 +958,7 @@ VQ_Element.prototype = {
 				} else if (value=="OPTIONAL") {
 					  setOpt = "true";
 						setNeg = "false";
-						setNegValue = " ";
+						setNegValue = "";
 						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#18b6d1"},
 						                      {attrName:"elementStyle.dash",attrValue:[6,5]},
 																	{attrName:"startShapeStyle.stroke", attrValue:"#18b6d1"},
@@ -980,6 +1001,7 @@ VQ_Element.prototype = {
 				};
 
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
+				this.setCompartmentVisibility("Negation Link", setNeg=="true");
 				this.setCompartmentValue("Optional Link",setOpt," ");
 		 }
 	},
