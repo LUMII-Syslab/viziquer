@@ -195,7 +195,7 @@ function setVariableName(varName, alias, variableData){
 			}else{
 				return expressionLevelNames[varName];
 			}
-		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1)){
+		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1)){
 			// console.log("bbb");
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName] === 'undefined'){
@@ -438,19 +438,21 @@ function setVariableName(varName, alias, variableData){
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
 getPath = function(expressionTable){
+	var prTable = [];
 	var path = "";
 	for(var key in expressionTable){
 		if(typeof expressionTable[key]["path"]!== 'undefined'){
 			var pathPart =  getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":" + expressionTable[key]["path"]["name"];
 			var namespace = expressionTable[key]["path"]["type"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-			prefixTable[getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+			// prefixTable[getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+			prTable[getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
 			if(typeof expressionTable[key]["path"]["inv"] === "string") pathPart = "^" + pathPart;
 			if(path == "") path = pathPart;
 			else path = path +"/" + pathPart;
 		}
 	}
-	return path;
+	return {path:path, prefixTable:prTable};
 }
 
 // find necessary level in expressionTable and return it
@@ -528,7 +530,11 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 				referenceCandidateTable.push(pe["Reference"]["name"]);
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
-				prefixedName = getPath(pe["Path"])+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
+				var path = getPath(pe["Path"]);
+				for (var prefix in path["prefixTable"]) { 
+					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				}
+				prefixedName = path["path"]+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
 				//variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = pe["PrimaryExpression"]["var"]["name"] + "_" + counter;
 				variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = {"alias" : pe["PrimaryExpression"]["var"]["name"] + "_" + counter, "isvar" : false};
 				variableNamesAll[pe["PrimaryExpression"]["var"]["name"]+ "_" + counter] = pe["PrimaryExpression"]["var"]["name"];
@@ -578,7 +584,11 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 				referenceCandidateTable.push(pe["Reference"]["name"]);
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
-				prefixedName = getPath(pe["Path"])+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
+				var path = getPath(pe["Path"]);
+				for (var prefix in path["prefixTable"]) { 
+					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				}
+				prefixedName = path["path"]+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
 				//variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = pe["PrimaryExpression"]["var"]["name"] + "_" + counter;
 				variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = {"alias" : pe["PrimaryExpression"]["var"]["name"] + "_" + counter, "isvar" : false};
 				variableNamesAll[pe["PrimaryExpression"]["var"]["name"]+ "_" + counter] = pe["PrimaryExpression"]["var"]["name"];
@@ -627,7 +637,11 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 					referenceCandidateTable.push(pe["Reference"]["name"]);
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
-					prefixedName = getPath(pe["Path"]);
+					var path = getPath(pe["Path"]);
+					for (var prefix in path["prefixTable"]) { 
+						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					}
+					prefixedName = path["path"];
 					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 					variableNamesClass[pe["var"]["name"]] ={"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
@@ -638,7 +652,12 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
 					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
-					prefixedName = pe["var"]["name"];
+				
+					var path = getPath(pe["var"]["name"]);
+					for (var prefix in path["prefixTable"]) { 
+						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					}
+					prefixedName = path["path"];
 				}
 						
 				expressionTable[count] =  {
@@ -664,7 +683,11 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 					referenceCandidateTable.push(pe["Reference"]["name"]);
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
-					prefixedName = getPath(pe["Path"]);
+					var path = getPath(pe["Path"]);
+					for (var prefix in path["prefixTable"]) { 
+						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					}
+					prefixedName = path["path"];
 					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
@@ -981,7 +1004,11 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
-			var prefixName = getPath(expressionTable[key]["Path"]);
+			var path = getPath(expressionTable[key]["Path"]);
+			for (var prefix in path["prefixTable"]) { 
+				if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+			}
+			var prefixName = path["path"];
 			// findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")
 			if(typeof expressionTable[key]["PrimaryExpression"]["SubstringExpression"] !== 'undefined'){
 				var substringvar = findINExpressionTable(expressionTable[key]["PrimaryExpression"], "var");

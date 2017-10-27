@@ -402,6 +402,7 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsNegation: function(params) {
+
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];

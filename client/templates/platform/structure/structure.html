@@ -62,8 +62,32 @@
         	                            </li>
                                     {{/if}}
 
+                                    <li>
+                                        <a class="leave-project" href="#">
+                                            <i class="fa fa-sign-out fa-lg"></i> 
+                                            Leave project
+                                        </a>
+                                    </li>
+
     	                        </ul>
     		                </div>
+
+                        {{else}}
+
+                            <div class="project-dropdown-container hidden" style="position: absolute; top: 3px;">
+                                <a class="edit-project" href="#" data-toggle="dropdown">
+                                    <i class="fa fa-angle-down fa-lg"></i> 
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="edit-project" style="left:-140px;"> 
+                                    <li>
+                                        <a class="leave-project" href="#">
+                                            <i class="fa fa-sign-out fa-lg"></i> 
+                                            Leave project
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
     	                {{/if}}
                     </a>
                 </div>

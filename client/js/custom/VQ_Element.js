@@ -19,7 +19,20 @@ function createLink(s_class, t_class, s_role, t_role){
 	t_class[t_role] = s_class;
 	//t_class[t_role][s_class.getID()] = s_class;
 }
+function findCardinality(card, type)
+{
+	if (type == "MIN")
+	{
+		if (card == 1) return 1;
+		else return 0;
 
+	}
+	if (type == "MAX")
+	{
+		if (card == 1) return 1;
+		else return -1;
+	}
+}
 VQ_Schema = function () {
 
    this.Classes = {};
@@ -36,7 +49,6 @@ VQ_Schema = function () {
 
    var data = Schema.findOne();
    if (data.Schema) data = data.Schema;
-   //console.log(data);
 
    var schema = this;
    if (data.namespace) this.namespace = data.namespace;
@@ -59,11 +71,17 @@ VQ_Schema = function () {
 	schema.addClass( new VQ_Class({}, schema));
 
 	_.each(data.Classes, function(old_cl){
-		var cl = schema.findClassByName(old_cl.localName);
+		var c_name = "";
+	    if (old_cl.fullName) c_name = old_cl.fullName;
+		else c_name = old_cl.localName;
+		var cl = schema.findClassByName(c_name);
 		_.each(old_cl.SuperClasses, function (sc){
 			var superClass = schema.findClassByName(sc);
-			superClass.addSubClass(cl);
-			cl.addSuperClass(superClass);
+			if (superClass.localName != " ")
+			{
+				superClass.addSubClass(cl);
+				cl.addSuperClass(superClass);
+			}
 		})
 	})
 
@@ -89,6 +107,7 @@ VQ_Schema = function () {
 			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
 		})
 	})
+
 	schema.addAttribute( new VQ_Attribute({}, schema));
 
 	_.each(data.Associations, function(asoc){
@@ -100,7 +119,7 @@ VQ_Schema = function () {
 			newSchRole = new VQ_SchemaRole(asoc, cp, newRole, schema);
 			if ( !newRole.maxCardinality) {
 			  newRole.minCardinality = 0;
-			  newRole.maxCardinality = 2147483647;
+			  newRole.maxCardinality = -1;
 			}
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole, schema);
@@ -167,7 +186,8 @@ VQ_Schema.prototype = {
   getAllClasses: function (){
     return _.map(this.Classes, function (cl) {
 				if (cl.isUnique) return {name: cl.localName};
-				else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+				else  if (cl.ontology.prefix == "") return {name: cl.localName};
+				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
   findElementByName: function (name, coll) {
     var element = _.find(coll, function(el){
@@ -403,11 +423,11 @@ VQ_Attribute = function (attrInfo, schema){
 	this.schemaAttribute = {};
 	this.type = attrInfo.type;
 	if (attrInfo.maxCardinality) {
-	  this.minCardinality = attrInfo.minCardinality;
-	  this.maxCardinality = attrInfo.maxCardinality;
+	  this.minCardinality = findCardinality(attrInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(attrInfo.maxCardinality, "MAX");
 	}
 	else {
-	  this.minCardinality = 1;
+	  this.minCardinality = 0;
 	  this.maxCardinality = 1;
 	}
 };
@@ -444,8 +464,8 @@ VQ_Role = function (roleInfo, schema){
 	VQ_Elem.call(this, roleInfo, schema, "role");
 	this.schemaRole = {};
 	if (roleInfo.maxCardinality) {
-	  this.minCardinality = roleInfo.minCardinality;
-	  this.maxCardinality = roleInfo.maxCardinality;
+	  this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");
 	}
 };
 
@@ -469,11 +489,11 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role, schema){
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
 	if (cpInfo.maxCardinality) {
-	  this.minCardinality = cpInfo.minCardinality;
-	  this.maxCardinality = cpInfo.maxCardinality;
+	  this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
+	  this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
 	  if (role.maxCardinality) {
 	    if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
-		if (this.maxCardinality > role.maxCardinality) role.maxCardinality = this.maxCardinality;
+		if (this.maxCardinality < role.maxCardinality) role.maxCardinality = this.maxCardinality;
 	  }
 	  else {
 	    role.minCardinality = this.minCardinality;
@@ -502,7 +522,18 @@ VQ_SchemaRole.prototype.maxCardinality = null;
 // ajoo element id --> VQ_Element
 VQ_Element = function(id) {
   // obj contains correspondind ajoo Element object
-  this.obj = Elements.findOne({_id:id});
+
+  var elem = Elements.findOne({_id: id});
+  if (!elem) {
+  	elem = Elements.findOne({_id: Session.get("activeElement")});
+  }
+
+  if (!elem) {
+  	console.error("No active element");
+  	return;
+  }
+
+  this.obj = elem;
 };
 
 
@@ -1002,7 +1033,7 @@ VQ_Element.prototype = {
 
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
 				this.setCompartmentVisibility("Negation Link", setNeg=="true");
-				this.setCompartmentValue("Optional Link",setOpt," ");
+				this.setCompartmentValue("Optional Link",setOpt,"");
 		 }
 	},
 

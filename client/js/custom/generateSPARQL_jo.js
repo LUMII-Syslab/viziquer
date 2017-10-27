@@ -659,7 +659,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var alias = field["alias"];
 		if(alias == "") {
 			if(result["isExpression"] == false && result["isFunction"] == false) {
-				var tempAlias = result["exp"].substring(result["exp"].indexOf("(")+2, result["exp"].indexOf(")")) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+
+				var indexCole = result["exp"].indexOf(";");
+				var endIndex = result["exp"].indexOf(")");
+				if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
+				
+				var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
 				if(typeof variableNamesAll[tempAlias] !== 'undefined') alias = tempAlias + "_" + counter;
 				else alias = tempAlias;
 				variableNamesAll[tempAlias] = tempAlias;
@@ -716,9 +721,13 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
 					
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
-						preditate = " " + getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+						var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+						for (var prefix in path["prefixTable"]) { 
+							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						}	
+						preditate = " " + path["path"];
 					}
-					var namespace = subclazz["linkIdentification"]["Namespace"]
+					var namespace = subclazz["linkIdentification"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 				}
@@ -991,8 +1000,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					tempSelect= tempSelect.concat(selectResult["aggregate"]);
 					
 					if(sparqlTable["subClasses"][subclass]["linkType"] != "NOT"){
-					
-						if(tempSelect.length > 0 || sparqlTable["subClasses"][subclass]["equalityLink"] == true){
+						var tempTable = selectResult["select"];
+						tempTable = tempTable.concat(selectResult["aggregate"]);
+						if(tempTable.length > 0 || sparqlTable["subClasses"][subclass]["equalityLink"] == true){
 							
 							var subQuery = "{SELECT " ;
 

@@ -49,7 +49,6 @@ Template.structureTemplate.helpers({
 				else {
 					categories[category] = [user_proj];
 				}
-
 		});
 
 		var res = [];
@@ -66,14 +65,8 @@ Template.structureTemplate.helpers({
 			}
 		});
 
-		console.log("res ", res)
-
-
 		return res;
 	},
-
-	// isOwner: function() {
-	// }
 
 });
 
@@ -153,6 +146,23 @@ Template.structureTemplate.events({
 	},
 
 
+	'click .leave-project': function(e) {
+		e.preventDefault();
+		//e.stopPropagation();
+
+		console.log("leave project")
+
+		var proj_id = $(e.target).closest(".project-path").attr("id");
+		var list = {projectId: proj_id};
+
+		Utilities.callMeteorMethod("leaveProject", list);
+
+		
+		
+
+		return;
+	},
+
 });
 
 Template.structureRibbon.events({
@@ -169,7 +179,7 @@ Template.structureRibbon.events({
 Template.createProjectModal.helpers({
 
 	tools: function() {
-		return Tools.find({isDeprecated: false,}, {sort: {name: 1}});
+		return Tools.find({isDeprecated: {$ne: true},}, {sort: {name: 1}});
 	},
 });
 

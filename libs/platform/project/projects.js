@@ -161,6 +161,17 @@ Meteor.methods({
 
 	},
 
+	leaveProject: function(list) {
+
+		var user_id = Meteor.userId();
+		if (is_project_member(user_id, list)) {
+
+			console.log("leave project11", list)
+
+			ProjectsUsers.remove({userSystemId: user_id, projectId: list.projectId,});
+		}
+
+	},
 
 });
 
@@ -219,7 +230,7 @@ function afterInsert(user_id, doc) {
 	//selects the last tool version
 	var tool_version = ToolVersions.findOne({toolId: tool_id}, {sort: {createdAt: -1}});
 	if (!tool_version) {
-		console.error("There is no tool version for tool: ", tool_id);
+		// console.error("There is no tool version for tool: ", tool_id);
 		return;
 	}
 

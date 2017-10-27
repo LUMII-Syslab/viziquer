@@ -84,7 +84,7 @@ Meteor.methods({
 
 					Compartments.update({_id: list["id"], projectId: list["projectId"],
 										versionId: list["versionId"]},
-									{$set: update}, {trimStrings: false});
+									{$set: update}, {trimStrings: false, removeEmptyStrings: false,});
 				}
 
 				if (list["elementStyleUpdate"]) {

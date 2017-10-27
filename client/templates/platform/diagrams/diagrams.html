@@ -396,6 +396,9 @@
             	<a id="download-project" class="btn btn-ribbon" data-title="Download Project"><i class="fa fa-cloud-download"></i></a>
 
             	<a id="upload-project" class="btn btn-ribbon" data-title="Upload Project"><i class="fa fa-cloud-upload"></i></a>
+
+                <button id="migrate" class="btn btn-ribbon" data-title="Migrate"><i class="fa fa-wrench"></i></button>
+
             </span>
         {{/if}}
 
@@ -406,6 +409,7 @@
     {{> importOntology}}
     {{> uploadProject}}
     {{> ontologySettings}}
+    {{> migrateForm}}
 
     <a id="download-hack" style="display:none;">project-data</a>
 
@@ -494,3 +498,38 @@
     <!-- End of modal -->
 
 </template>
+
+<template name="migrateForm">
+
+    <div id="migrate-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Migrate</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="diagramType" class="control-label col-sm-2">Migrate To</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="migrate-tools">
+                                    {{#each tools}}
+                                        <option id="{{_id}}" value={{name}}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="migrate-to" type="button" class="btn btn-primary">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<!-- End of modal -->
+</template>
+
