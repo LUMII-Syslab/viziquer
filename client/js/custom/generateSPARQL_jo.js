@@ -202,8 +202,9 @@ function generateIds(rootClass){
 	if(rootClassId == null) rootClassId = rootClass["identification"]["localName"];
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
-	if(rootClass["isVariable"] == true) rootClassId = "_" + rootClass["variableName"];
+	if(rootClass["isVariable"] == true && rootClass["instanceAlias"] == null) rootClassId = "_" + rootClass["variableName"];
 	idTable[rootClass["identification"]["_id"]] = rootClassId;
+	
 	
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
@@ -1261,7 +1262,11 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	var returnValue = whereInfo.join("\nUNION\n");
 	if(generateUpperSelect == true) returnValue = "SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}";
 	else if(sparqlTable["isSubQuery"] == true || sparqlTable["isGlobalSubQuery"] == true){
-		if(unionsubSELECTstaterents.length > 0) returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}}";
+		if(unionsubSELECTstaterents.length > 0) {
+			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}}";
+			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
+		}
+		else if(sparqlTable["linkType"] == "NOT") returnValue = "MINUS{FILTER NOT EXISTS{" + returnValue + "}}";
 		else returnValue = "FILTER(EXISTS{" + returnValue + "})";
 	}
 	return returnValue;

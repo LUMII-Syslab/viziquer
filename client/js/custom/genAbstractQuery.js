@@ -122,8 +122,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // Parses the text and returns object with property "parsed_exp"
   function parseExpression(str_expr) {
     try {
-      var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-      return { parsed_exp: parsed_exp};
+      if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
+		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  return { parsed_exp: parsed_exp};
+	  } else return { parsed_exp: []};
     } catch (e) {
       // TODO: error handling
       console.log(e)
@@ -137,8 +139,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // Parses the text and returns object with property "parsed_exp"
   function parsePathExpression(str_expr) {
     try {
-      var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-      return { parsed_exp: parsed_exp};
+	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
+		  var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  return { parsed_exp: parsed_exp};
+	  }else return { parsed_exp: []};
     } catch (e) {
       // TODO: error handling
       console.log(e)
