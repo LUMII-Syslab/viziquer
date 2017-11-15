@@ -28,7 +28,7 @@ Meteor.methods({
 			var id = Users.insert(user_data);
 
 			if (!is_test_user(list["email"]))
-				Accounts.sendVerificationEmail(user_id, list["email"]);
+				// Accounts.sendVerificationEmail(user_id, list["email"]);
 
 			if (is_first_user) {
 				var role = build_power_user_role();
