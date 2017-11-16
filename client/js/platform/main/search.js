@@ -42,7 +42,7 @@ Template.searchMenu.helpers({
 				var users_count = users.count();
 				if (users_count <= 10) {
 					var limit = 10 - users_count;
-					var searches = Searches.find({}, {sort: {counter: -1}, limit: limit});
+					var searches = Searches.find({}, {$sort: {counter: -1}, limit: limit});
 					searches.forEach(function(search, i) {
 						
 						var item = {};
@@ -68,7 +68,7 @@ Template.searchMenu.helpers({
 				var sort = {};
 				sort["users." + Session.get("userSystemId")] = -1;
 
-				var limit = {sort: sort, limit: 10};
+				var limit = {$sort: sort, $limit: 10};
 
 				return selecting_searches(query, limit);
 			},
@@ -89,7 +89,7 @@ function selecting_searches(query, limit) {
 		query = {};
 
 	if (!limit)
-		limit = {sort: {counter: -1}, limit: 10};
+		limit = {$sort: {counter: -1}, limit: 10};
 
 	var searches = Searches.find(query, limit);
 	var res = searches.map(function(search, i) {

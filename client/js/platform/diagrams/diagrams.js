@@ -288,7 +288,7 @@ Template.defaultDiagramsView.helpers({
 			var sort_by_str = user_version_settings["diagramsSortBy"];
 			var sort_by = get_sort_by_object(sort_by_str);
 
-			return Diagrams.find(query, {sort: sort_by}).map(function(diagram) {
+			return Diagrams.find(query, {$sort: sort_by}).map(function(diagram) {
 				diagram["projectId"] = proj_id;
 				diagram["versionId"] = version_id;
 
@@ -405,7 +405,7 @@ Template.treeDiagramsView.helpers({
 		sort_by = sort_by || {name: 1};
 
 		//selecting diagrams that have no parents
-		return Diagrams.find(parent_query, {sort: sort_by}).map(
+		return Diagrams.find(parent_query, {$sort: sort_by}).map(
 			function(diagram) {
 				return build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, sort_by);
 		});
@@ -729,7 +729,7 @@ Template.ontologySettings.helpers({
 
 Template.configuratorDiagramOptions.helpers({
 	configuratorDiagrams: function() {
-		return DiagramTypes.find({}, {sort: {name: 1}});
+		return DiagramTypes.find({}, {$sort: {name: 1}});
 	},
 });
 

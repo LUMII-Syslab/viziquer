@@ -12,7 +12,7 @@ Template.dialogAccordion.helpers({
 			var target_elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 			if (target_elem_type)
 				dialog_tabs = DialogTabs.find({elementTypeId: target_elem_type["_id"]},
-											{sort: {index: 1}});
+											{$sort: {index: 1}});
 		}
 		//if there is no active elements, then selects diagram's tabs
 		else {
@@ -21,7 +21,7 @@ Template.dialogAccordion.helpers({
 			if (diagram_type) {
 				dialog_tabs = DialogTabs.find({diagramTypeId: diagram_type["_id"],
 												elementTypeId: {$exists: false}},
-												{sort: {index: 1}});
+												{$sort: {index: 1}});
 			}
 		}
 
@@ -30,7 +30,7 @@ Template.dialogAccordion.helpers({
 
 			return dialog_tabs.map(function(dialog_tab) {
 					var rows = CompartmentTypes.find({dialogTabId: dialog_tab["_id"]},
-													{sort: {tabIndex: 1}});
+													{$sort: {tabIndex: 1}});
 					if (rows.count() > 0)
 						dialog_tab["_rows"] = rows;
 					else
@@ -201,7 +201,7 @@ Template.newTab.events({
 			list["elementTypeId"] = elem_type["_id"];
 
 			var dialog_tab = DialogTabs.findOne({elementTypeId: elem_type["_id"]},
-												{sort: {index: -1}});
+												{$sort: {index: -1}});
 			if (dialog_tab) {
 				list["index"] = dialog_tab["index"] + 1;
 			}
@@ -212,7 +212,7 @@ Template.newTab.events({
 		else {
 			var dialog_tab = DialogTabs.findOne({diagramTypeId: Session.get("targetDiagramType"),
 												elementTypeId: {$exists: false}},
-												{sort: {index: -1}});
+												{$sort: {index: -1}});
 			if (dialog_tab) {
 				list["index"] = dialog_tab["index"] + 1;
 			}

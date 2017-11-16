@@ -2,7 +2,7 @@
 Template.toolDiagrams.helpers({
 
 	diagrams: function() {
-		return Diagrams.find({}, {sort: {name: 1}}).map(function(diagram) {
+		return Diagrams.find({}, {$sort: {name: 1}}).map(function(diagram) {
 			return diagram;
 		});
 	},

@@ -15,7 +15,7 @@ Template.notificationsDropDownT.helpers({
 
 	//notifications
 	notifications: function() {
-	    var notifications = Notifications.find({receiver: Session.get("userSystemId")}, {sort: {createdAt: -1}, limit: 6});
+	    var notifications = Notifications.find({receiver: Session.get("userSystemId")}, {$sort: {createdAt: -1}, $limit: 6});
 	    return process_notifications(notifications);
 	},
 });

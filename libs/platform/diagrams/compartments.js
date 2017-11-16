@@ -127,7 +127,7 @@ function update_compartment(user_id, doc) {
 //adding compartments in the DB
 add_compartments = function(list) {
 
-	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {sort: {index: 1}}).forEach(
+	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
 		function(compart_type) {
 
 			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {

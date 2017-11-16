@@ -313,7 +313,7 @@ function add_template_helpers(id) {
 
 		compart_types: function() {
 
-			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
+			return CompartmentTypes.find({dialogTabId: id}, {$sort: {tabIndex: 1}}).map(
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"],
 						 									elementId: Session.get("activeElement")});
@@ -624,7 +624,7 @@ Template.dialog.helpers({
 		if (Session.get("activeElementType")) {
 			var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
 			if (elem_type) {
-				tabs = DialogTabs.find({elementTypeId: elem_type["_id"]}, {sort: {index: 1}});
+				tabs = DialogTabs.find({elementTypeId: elem_type["_id"]}, {$sort: {index: 1}});
 			}
 		}
 
@@ -634,7 +634,7 @@ Template.dialog.helpers({
 			if (diagram) {
 				tabs = DialogTabs.find({diagramTypeId: diagram["diagramTypeId"],
 										elementTypeId: {$exists: false}},
-										{sort: {index: 1}});
+										{$sort: {index: 1}});
 			}
 		}
 
@@ -706,7 +706,7 @@ function add_template_helpers(id) {
 
 		compart_types: function() {
 
-			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
+			return CompartmentTypes.find({dialogTabId: id}, {$sort: {tabIndex: 1}}).map(
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
 					return Dialog.renderDialogFields(compart_type, compartment);

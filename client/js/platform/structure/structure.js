@@ -179,7 +179,7 @@ Template.structureRibbon.events({
 Template.createProjectModal.helpers({
 
 	tools: function() {
-		return Tools.find({isDeprecated: {$ne: true},}, {sort: {name: 1}});
+		return Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}});
 	},
 });
 

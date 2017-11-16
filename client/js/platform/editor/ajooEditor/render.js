@@ -71,7 +71,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 				var comparts_query = build_comparts_query();
 				_.extend(comparts_query, {elementId: elem["_id"]});
-				elem["compartments"] = Compartments.find(comparts_query, {sort: {index: 1}}).fetch();
+				elem["compartments"] = Compartments.find(comparts_query, {$sort: {index: 1}}).fetch();
 			}
 
 			//if added later
@@ -282,7 +282,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	   			else {
 
 	   				element.compartments.removeAllRespresentations();
-	   				var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+	   				var compartments = Compartments.find({elementId: elem_id}, {$sort: {index: 1}}).fetch();
 	   				element.compartments.create(compartments);
 
 	   				var element_presentation = element.presentation;
@@ -404,7 +404,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    				if (compartments.removeAllRespresentations)
    					compartments.removeAllRespresentations();
 
-   				var comparts_in = Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetch();
+   				var comparts_in = Compartments.find({elementId: element._id}, {$sort: {index: 1}}).fetch();
    				compartments.create(comparts_in);
    				element_presentation.draw();
 
@@ -507,7 +507,7 @@ function rebuild_labels(element) {
 
 	//selecting element compartments
 	var elem_id = element._id;
-	var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+	var compartments = Compartments.find({elementId: elem_id}, {$sort: {index: 1}}).fetch();
 
 	//adding compartments
 	create_compartments(shape_group, compartments);

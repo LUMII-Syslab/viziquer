@@ -32,7 +32,7 @@ Template.renameTool.events({
 
 Template.loadModelForm.helpers({
 	projects: function() {
-		return Projects.find({toolId: Session.get("toolId")}, {sort: {name: 1}});
+		return Projects.find({toolId: Session.get("toolId")}, {$sort: {name: 1}});
 	},
 });
 

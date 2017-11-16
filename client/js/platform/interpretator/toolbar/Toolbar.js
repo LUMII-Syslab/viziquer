@@ -229,7 +229,7 @@ Template.diagram_log.helpers({
 			return names.join(delimiter);
 		}
 
-		return DiagramLogs.find({diagramId: Session.get("activeDiagram")}, {sort: {createdAt: -1}}).map(function(diagram_log) {
+		return DiagramLogs.find({diagramId: Session.get("activeDiagram")}, {$sort: {createdAt: -1}}).map(function(diagram_log) {
 
 			var user = Users.findOne({systemId: diagram_log["authorId"]});
 			if (user) {

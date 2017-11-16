@@ -30,7 +30,7 @@ Template.configuratorTemplate.helpers({
 
 		var divider = rows * row_elems;
 
-		return Tools.find({}, {sort: {name: 1}}).map(function(tool, i) {
+		return Tools.find({}, {$sort: {name: 1}}).map(function(tool, i) {
 
 			tool["date"] = joined_date(tool["createdAt"]);
 			tool["color"] = color_list[i % divider];

@@ -53,10 +53,10 @@ Template.compartmentMain.events({
 			compart_types_count = CompartmentTypes.find({elementTypeId: list["elementTypeId"]}).count();
 
 			//selecting the last compartment type
-			last_compart_type = CompartmentTypes.findOne({elementTypeId: list["elementTypeId"]}, {sort: {tabIndex: -1}});
+			last_compart_type = CompartmentTypes.findOne({elementTypeId: list["elementTypeId"]}, {$sort: {tabIndex: -1}});
 
 			//selecting the tab
-			tab = DialogTabs.findOne({elementTypeId: elem_type["_id"], type: {$exists: false}}, {sort: {index: -1}});
+			tab = DialogTabs.findOne({elementTypeId: elem_type["_id"], type: {$exists: false}}, {$sort: {index: -1}});
 		}
 
 		//if the new compartment type is attached to the diagram type
@@ -66,10 +66,10 @@ Template.compartmentMain.events({
 			compart_types_count = CompartmentTypes.find({diagramTypeId: list["diagramTypeId"], elementTypeId: {$exists: false}}).count();
 
 			//selecting the last compartment type
-			last_compart_type = CompartmentTypes.findOne({diagramTypeId: list["diagramTypeId"], elementTypeId: {$exists: false}}, {sort: {tabIndex: -1}});
+			last_compart_type = CompartmentTypes.findOne({diagramTypeId: list["diagramTypeId"], elementTypeId: {$exists: false}}, {$sort: {tabIndex: -1}});
 
 			//selecting the tab
-			tab = DialogTabs.findOne({elementTypeId: {$exists: false}, type: {$exists: false}}, {sort: {index: -1}});
+			tab = DialogTabs.findOne({elementTypeId: {$exists: false}, type: {$exists: false}}, {$sort: {index: -1}});
 		}
 
 		//setting the compartment type index in the diagram 
@@ -217,11 +217,11 @@ Template.compartmentProperties.events({
 function get_active_compartment_types() {
 	if (Session.get("activeElement")) {
 		return CompartmentTypes.find({elementId: Session.get("activeElement")},
-									{sort: {tabIndex: 1}});
+									{$sort: {tabIndex: 1}});
 	}
 	else {
 		return CompartmentTypes.find({diagramTypeId: Session.get("targetDiagramType"),
-									elementTypeId: {$exists: false}}, {sort: {tabIndex: 1}});
+									elementTypeId: {$exists: false}}, {$sort: {tabIndex: 1}});
 	}
 }
 

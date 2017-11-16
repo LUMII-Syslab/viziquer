@@ -494,13 +494,23 @@ Interpreter.customMethods({
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
 		//No active Element or unpropriate type
-		if (!act_elem) {return [{value: " ", input: " ", }];}
-		if (Elements.findOne({_id: act_elem})["type"] != "Line") {return [{value: " ", input: " ", }];}
+		if (!act_elem) {
+			return [{value: " ", input: " ", }];
+		}
+
+		var elem = Elements.findOne({_id: act_elem});
+		if (elem && elem["type"] != "Line") {
+			return [{value: " ", input: " ", }];
+		}
 
 		//Start and end elements - ID and no-end-check
-		var elem_strt = Elements.findOne({_id: act_elem})["startElement"];
-		var elem_end = Elements.findOne({_id: act_elem})["endElement"];
-
+		var elem = Elements.findOne({_id: act_elem});
+		var elem_strt = "";
+		var elem_end = "";
+		if (elem) {
+			elem_strt = elem["startElement"];
+			elem_end = elem["endElement"];
+		}
 
 		if (!elem_strt || !elem_end) {
 			return [{value: " ", input: " ", }];
