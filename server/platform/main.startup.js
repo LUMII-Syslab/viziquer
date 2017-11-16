@@ -17,17 +17,13 @@
   		process.env.MAIL_URL = 'smtp://postmaster@viziquer.lumii.lv:46c1183101c042354b083dd2420bfe61@smtp.mailgun.org:587';
 
 
-
-  		// CompartmentTypes.find().forEach(function(compart_type) {
-  		// 	CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
-  		// });
-
-  		var compart_type = CompartmentTypes.findOne();
-
-  		console.log(compart_type);
-
-  		console.log("done")
-
+  		// checking if CompartmentTypes contains attribute label
+  		var compart_type = CompartmentTypes.findOne({label: { $exists: false }});
+  		if (compart_type) {
+	  		CompartmentTypes.find().forEach(function(compart_type) {
+	  			CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
+	  		});
+  		}
 
 
  //  		var settings = Meteor.settings;
