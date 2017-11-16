@@ -18,6 +18,18 @@
 
 
 
+  		// CompartmentTypes.find().forEach(function(compart_type) {
+  		// 	CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
+  		// });
+
+  		var compart_type = CompartmentTypes.findOne();
+
+  		console.log(compart_type);
+
+  		console.log("done")
+
+
+
  //  		var settings = Meteor.settings;
 // 		if (settings.AWSAccessKeyId) {
 

@@ -1,0 +1,41 @@
+
+<template name="schemaTree">
+    <!-- Add form-->
+    <div id="schema-tree" class="modal fade">
+
+        <div class="modal-dialog">
+            <div class="modal-content" style="overflow:auto;">
+                <div class="modal-header">
+                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Schema</h4>
+                </div>
+                <div class="modal-body">
+
+                    <ul class="list-group">
+
+                        {{#each classes}}
+                            <li class="list-group-item" >
+                                {{localName}} {{fullName}}
+                            </li>
+
+                            <ul class="list-group" style="margin-left: 50px;">
+                                {{#each attributes}}
+                                    <li class="list-group-item">{{localName}}</li>
+                                {{/each}}
+                            </ul>
+
+                        {{/each}}
+                        
+                    </ul>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of add form-->
+</template>

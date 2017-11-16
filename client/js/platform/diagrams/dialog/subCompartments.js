@@ -99,7 +99,7 @@ Template.show_multi_field_form.helpers({
 		var sub_compartment;
 		var compart_id;
 		if (compart) {
-			sub_compartment = compart["subCompartments"][compart_type["name"]];
+			sub_compartment = compart["subCompartments"][compart_type["label"]];
 			compart_id = compart["_id"];
 		}
 
@@ -108,7 +108,7 @@ Template.show_multi_field_form.helpers({
 
 		var field_obj = {_id: compart_type["_id"],
 						compartmentId: compart_id,
-						name: compart_type["name"],
+						name: compart_type["label"],
 						fields: fields,
 					};
 

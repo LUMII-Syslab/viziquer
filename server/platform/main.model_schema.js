@@ -2357,6 +2357,12 @@ Schemas.CompartmentTypes = new SimpleSchema({
         optional: true,
     },
 
+    label: {
+        type: String,
+        label: "CompartmentTypes.label",
+        optional: true,
+    },
+
     description: {
         type: String,
         label: "CompartmentTypes.description",

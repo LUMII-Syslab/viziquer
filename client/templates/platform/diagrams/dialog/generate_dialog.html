@@ -55,7 +55,7 @@
 
 		{{#if input}}
 			<div id="{{_id}}" class="form-group compart-type">
-				<label for="{{compartmentId}}">{{name}}</label>
+				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 				placeholder="{{_placeholder}}" >
@@ -64,7 +64,7 @@
 
 		{{#if textarea}}
 			<div id="{{_id}}" class="form-group compart-type">
-				<label for="{{compartmentId}}">{{name}}</label>
+				<label for="{{compartmentId}}">{{label}}</label>
 				<textarea type="text" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				style="overflow:auto;resize:none;" id="{{compartmentId}}"
 				rows="{{_rows}}" disabled="{{disabled}}" placeholder="{{_placeholder}}"
@@ -77,7 +77,7 @@
 
 		{{#if selection}}
 			<div id="{{_id}}" class="form-group compart-type">
-				<label for="{{compartmentId}}">{{name}}</label>
+				<label for="{{compartmentId}}">{{label}}</label>
 				<select type="text" class="form-control dialog-selection {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 					placeholder="{{_placeholder}}" >
@@ -97,7 +97,7 @@
 
 		{{#if combobox}}
 			<div id="{{_id}}" class="form-group compart-type">
-				<label for="{{compartmentId}}">{{name}}</label>
+				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 					placeholder="{{_placeholder}}" list="row_{{_id}}">
@@ -145,7 +145,7 @@
 		{{#if radio}}
 			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}">
 				{{#each values}}
-					<label for="{{compartmentId}}" class="label-radio">{{name}}
+					<label for="{{compartmentId}}" class="label-radio">{{label}}
 
 						<input type="radio" class="dialog-radio" 
 						name="{{_id}}" 

@@ -822,7 +822,8 @@ Template.errorMessages.helpers({
 		return Session.get("errorMsg");
 	},
 
-})
+});
+
 
 //Functions
 function get_element_section_ids() {

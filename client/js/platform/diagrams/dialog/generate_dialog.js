@@ -334,8 +334,8 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 
 	var res = [];
 
-	compart_tree[compart_type["name"]] = {};
-	var sub_compart_tree = compart_tree[compart_type["name"]];
+	compart_tree[compart_type["label"]] = {};
+	var sub_compart_tree = compart_tree[compart_type["label"]];
 
 	var sub_compartments = [];
 	_.each(sub_compart_types, function(sub_compart_type, i) {
@@ -387,7 +387,7 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 			}
 				
 			var value = build_compartment_value(sub_compart_type, input_value, mapped_value);
-			sub_compart_tree[sub_compart_type["name"]] = {value: value, input: input_value};
+			sub_compart_tree[sub_compart_type["label"]] = {value: value, input: input_value};
 			res.push(value);
 		}
 		
