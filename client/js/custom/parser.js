@@ -163,7 +163,6 @@ function setVariableName(varName, alias, variableData){
 	console.log("----------------------------------------");
 	console.log("     ");*/
 	if(alias != null) {
-		//console.log("111");
 		for(var key in idTable){
 			if (idTable[key] == alias) {
 				alias = alias + "_" +counter;
@@ -175,11 +174,9 @@ function setVariableName(varName, alias, variableData){
 		return alias;
 	}
 	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined'){
-		// console.log("222");
 		if(typeof variableNamesClass[varName] === 'undefined' || (typeof variableNamesClass[varName] !== 'undefined' && typeof variableNamesClass[varName]["isvar"] !== 'undefined' && variableNamesClass[varName]["isvar"] != true))applyExistsToFilter = true;
 		//applyExistsToFilter = true;
 		if(parseType == "different" ){
-			// console.log("aaa");
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName]=== 'undefined'){
 					if(typeof variableNamesAll[varName]=== 'undefined'){
@@ -196,7 +193,6 @@ function setVariableName(varName, alias, variableData){
 				return expressionLevelNames[varName];
 			}
 		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1)){
-			// console.log("bbb");
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName] === 'undefined'){
 					if(typeof variableNamesAll[varName]=== 'undefined'){
@@ -222,21 +218,16 @@ function setVariableName(varName, alias, variableData){
 			}
 		}
 		else{
-			// console.log("ccc");
 			// if given expression is simple variable name
 			if(isSimpleVaraible == true){
-				//console.log("ccc111", varName, variableNamesClass[varName], variableNamesClass);
 				// if variable is not used it expression yet
 				if(typeof expressionLevelNames[varName] === 'undefined'){
 				// variable is not defined in given class attributes yet
 					if(typeof variableNamesClass[varName] === 'undefined'){
-						// console.log("   111");
 						var tempVarName;
 						if(typeof variableNamesAll[varName]=== 'undefined'){
-							// console.log("   111aaa");
 							tempVarName = varName;
 						} else {
-							// console.log("   111bbb");
 							tempVarName = varName + "_" +counter;
 							counter++;
 						}
@@ -246,14 +237,11 @@ function setVariableName(varName, alias, variableData){
 						variableNamesClass[varName] = {"alias" : tempVarName, "isvar" : tempIsVar};
 						return tempVarName;
 					} else {
-						// console.log("   222");
 						//if is defined as one variable
 						if(typeof variableNamesClass[varName]["isvar"] !== 'undefined' && variableNamesClass[varName]["isvar"] == true){
-							// console.log("   222aaa");
 							expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
 							return variableNamesClass[varName]["alias"];
 						}else {
-							 //console.log("   222bbb");
 							var tempIsVar = false;
 							if(parseType == "attribute") tempIsVar = true;
 							variableNamesClass[varName] = {"alias" : varName + "_" +counter, "isvar" : tempIsVar};
@@ -266,7 +254,6 @@ function setVariableName(varName, alias, variableData){
 					return expressionLevelNames[varName];
 				}
 			}else{
-				// console.log("ccc222");
 				// if variable is not used it expression yet
 				if(typeof expressionLevelNames[varName] === 'undefined'){
 					// variable is not defined in given class attributes yet
@@ -299,141 +286,9 @@ function setVariableName(varName, alias, variableData){
 		}
 		return expressionLevelNames[varName];
 	} else {
-		// console.log("333");
 		return varName;
 	}
 }
-/*
-function setVariableName(varName, alias, variableData){
-	
-	if(alias != null) {
-		//console.log("111");
-		for(var key in idTable){
-			if (idTable[key] == alias) {
-				alias = alias + "_" +counter;
-			}
-		}
-		variableNamesAll[alias] = alias;
-		//variableNamesClass[varName] = alias;
-		//variableNamesClass[varName] = {"alias" : alias, "isvar" : false};
-		return alias;
-	}
-	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined'){
-		// console.log("222");
-		applyExistsToFilter = true;
-		if(parseType == "different" ){
-			// console.log("aaa");
-			if(typeof expressionLevelNames[varName] === 'undefined'){
-				if(typeof variableNamesClass[varName]=== 'undefined'){
-					if(typeof variableNamesAll[varName]=== 'undefined'){
-						expressionLevelNames[varName] = varName;
-					} else {
-						expressionLevelNames[varName] = varName + "_" +counter;
-						counter++;
-					}
-				} else {
-					expressionLevelNames[varName] = varName + "_" +counter;
-					counter++;
-				}
-			}else{
-				return expressionLevelNames[varName];
-			}
-		} else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1)){
-			// console.log("bbb");
-			if(typeof variableNamesClass[varName] === 'undefined'){
-				if(typeof variableNamesAll[varName]=== 'undefined'){
-					//variableNamesClass[varName] = varName;
-					variableNamesClass[varName] = {"alias" : varName, "isvar" : false};
-					expressionLevelNames[varName] = varName;
-				} else {
-					//variableNamesClass[varName] = varName + "_" +counter;
-					variableNamesClass[varName] = {"alias" : varName + "_" +counter, "isvar" : false};
-					expressionLevelNames[varName] = varName + "_" +counter;
-					counter++;
-				}
-				return variableNamesClass[varName]["alias"];
-			}else{
-				//variableNamesClass[varName] = varName + "_" +counter;
-				variableNamesClass[varName] = {"alias" : varName + "_" +counter, "isvar" : false};
-				expressionLevelNames[varName] = varName + "_" +counter;
-				counter++;
-				return variableNamesClass[varName]["alias"];
-			}
-		}
-		else{
-			// console.log("ccc");
-			// if given expression is simple variable name
-			if(isSimpleVaraible == true){
-				// console.log("ccc111", varName, variableNamesClass[varName], variableNamesClass);
-
-				// variable is not defined in given class attributes yet
-				if(typeof variableNamesClass[varName] === 'undefined'){
-					// console.log("   111");
-					var tempVarName;
-					if(typeof variableNamesAll[varName]=== 'undefined'){
-						// console.log("   111aaa");
-						tempVarName = varName;
-					} else {
-						// console.log("   111bbb");
-						tempVarName = varName + "_" +counter;
-						counter++;
-					}
-					expressionLevelNames[varName] = tempVarName;
-					variableNamesClass[varName] = {"alias" : tempVarName, "isvar" : true};
-					return tempVarName;
-				} else {
-					// console.log("   222");
-					//if is defined as one variable
-					if(typeof variableNamesClass[varName]["isvar"] !== 'undefined' && variableNamesClass[varName]["isvar"] == true){
-						// console.log("   222aaa");
-						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
-						return variableNamesClass[varName]["alias"];
-					}else {
-						 //console.log("   222bbb");
-						variableNamesClass[varName] = {"alias" : varName + "_" +counter, "isvar" : true};
-						expressionLevelNames[varName] = varName + "_" +counter;
-						counter++;
-						return expressionLevelNames[varName];
-					}
-				}
-			}else{
-				// console.log("ccc222");
-				// if variable is not used it expression yet
-				if(typeof expressionLevelNames[varName] === 'undefined'){
-					// variable is not defined in given class attributes yet
-					if(typeof variableNamesClass[varName] === 'undefined'){
-						var tempVarName;
-						if(typeof variableNamesAll[varName]=== 'undefined'){
-							tempVarName = varName;
-						} else {
-							tempVarName = varName + "_" +counter;
-							counter++;
-						}
-						expressionLevelNames[varName] = tempVarName;
-						variableNamesClass[varName] = {"alias" : tempVarName, "isvar" : false};
-						return tempVarName;
-					} else {
-						//if is defined as one variable
-						if(typeof variableNamesClass[varName]["isvar"] !== 'undefined' && variableNamesClass[varName]["isvar"] == true){
-							expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
-							return variableNamesClass[varName]["alias"];
-						}else {
-							expressionLevelNames[varName] = varName + "_" +counter;
-							counter++;
-							return expressionLevelNames[varName];
-						}
-					}
-				}else{
-					return expressionLevelNames[varName];
-				}
-			}
-		}
-		return expressionLevelNames[varName];
-	} else {
-		// console.log("333");
-		return varName;
-	}
-}*/
 
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
@@ -1084,26 +939,29 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if(key == "var") {
-			var variable = setVariableName(expressionTable[key]["name"], alias, expressionTable[key])
+			var varName
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined') varName = expressionTable[key]['type']['localName'];
+			else varName = expressionTable[key]["name"];
+			var variable = setVariableName(varName, alias, expressionTable[key])
 			SPARQLstring = SPARQLstring + "?" + variable;
 			variableTable.push("?" + variable);
 			if(generateTriples == true && expressionTable[key]['type'] != null && className != "[ ]" && className != "[ + ]") {
-				if(expressionTable[key]['kind'] == "CLASS_ALIAS") referenceCandidateTable.push(expressionTable[key]["name"]);
+				if(expressionTable[key]['kind'] == "CLASS_ALIAS") referenceCandidateTable.push(varName);
 				if(expressionTable[key]['kind'] == "CLASS_NAME") {
 					var inFilter = false;
-					if(typeof variableNamesClass[expressionTable[key]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["name"]]["isvar"] != true) inFilter = true;
+					if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isvar"] != true) inFilter = true;
 					
-					if(isSimpleVaraible ==true) tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+expressionTable[key]["name"], "prefixedName" : "a", "object":className, "inFilter":inFilter});
-					else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+expressionTable[key]["name"], "prefixedName" : "a", "object":variable, "inFilter":inFilter});
+					if(isSimpleVaraible ==true) tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":className, "inFilter":inFilter});
+					else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":variable, "inFilter":inFilter});
 				}
-				else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && isSimpleVaraible == true && variable != expressionTable[key]["name"]){
-					tripleTable.push({"BIND":"BIND(?" + expressionTable[key]["name"] + " AS ?" + variable + ")"})
+				else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && isSimpleVaraible == true && variable != varName){
+					tripleTable.push({"BIND":"BIND(?" + varName + " AS ?" + variable + ")"})
 				}else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && alias == null || expressionTable[key]['kind'] == "PROPERTY_ALIAS") {
 					
 				} else {
 					var inFilter = false;
-					if(typeof variableNamesClass[expressionTable[key]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["name"]]["isvar"] != true) inFilter = true;
-					tripleTable.push({"var":"?"+variable, "prefixedName":getPrefix(expressionTable[key]["type"]["Prefix"])+":"+expressionTable[key]["name"], "object":className, "inFilter":inFilter});
+					if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isvar"] != true) inFilter = true;
+					tripleTable.push({"var":"?"+variable, "prefixedName":getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "object":className, "inFilter":inFilter});
 					var namespace = expressionTable[key]["type"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 					prefixTable[getPrefix(expressionTable[key]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
@@ -1492,6 +1350,15 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["iri"]!== 'undefined') {
 			if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
 				var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
+				if(expressionTable[key]["iri"]["PrefixedName"]['var']['type'] !== null){
+					//valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['type']['localName'];
+					//triple
+					//tripleTable.push({"var":"?"+valueString, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]['var']['name'], "object":className, "inFilter" : true});
+					//prefix
+					//if(expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Prefix'] !== null) prefixTable[expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Prefix']+":"] = expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Namespace'];
+					valueString = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation)
+				}
+				
 				if (valueString == "vq:datediff") valueString = "bif:datediff" ;
 				SPARQLstring = SPARQLstring  + valueString
 			}
@@ -1509,7 +1376,6 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		if (key == "FunctionExpression") { 
 			isFunction = true
 			if (typeof expressionTable[key]["Function"]!== 'undefined') {
-				console.log(expressionTable[key]["Function"]);
 				if(expressionTable[key]["Function"].toLowerCase() == 'date' || expressionTable[key]["Function"].toLowerCase() == 'datetime') {
 					SPARQLstring = SPARQLstring+ "xsd:";
 					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";

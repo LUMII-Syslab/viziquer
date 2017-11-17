@@ -92,6 +92,18 @@ Interpreter.customMethods({
   ExecuteSPARQL_from_text: function(text, paging_info) {
       executeSparqlString(text, paging_info);
   },
+  
+  test_auto_completion: function() {
+    var str = "2+3*div";
+	var completions = [];
+	try {
+		var parsed_exp = vq_arithmetic.parse(str, {completions});
+		console.log("parsed_exp", parsed_exp);
+    } catch (e) {
+      // TODO: error handling
+      console.log(e)
+    }
+  },
 });
 
 
@@ -810,11 +822,14 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
 			descendingStart = "DESC("
 			descendingEnd = ")"
 		}
-		if(typeof fieldNames[order["exp"]] !== 'undefined'){
-			var result = fieldNames[order["exp"]][rootClass_id];
+		var orderName = order["exp"];
+		if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
+		if(typeof fieldNames[orderName] !== 'undefined'){
+			
+			var result = fieldNames[orderName][rootClass_id];
 			if(typeof result === 'undefined'){
-				for (var ordr in fieldNames[order["exp"]]) { 
-					result = fieldNames[order["exp"]][ordr];
+				for (var ordr in fieldNames[orderName]) { 
+					result = fieldNames[orderName][ordr];
 					break;
 				}
 			}
