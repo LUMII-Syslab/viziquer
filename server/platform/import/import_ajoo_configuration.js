@@ -163,6 +163,8 @@ ImportAjooConfiguration.prototype = {
 
 								toolId: self.toolId,
 								versionId: self.versionId,
+
+								label: object.label || object.name,
 							});
 
 			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
