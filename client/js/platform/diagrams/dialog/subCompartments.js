@@ -8,7 +8,7 @@ Template.multiField.helpers({
 		if (!data_in)
 			return;
 
-		var res = {	_id: data_in["_id"], name: data_in["name"], fields: [],};
+		var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
 		var compartments = Compartments.find({compartmentTypeId: data_in["_id"],
 												elementId: Session.get("activeElement")});
 
@@ -99,7 +99,7 @@ Template.show_multi_field_form.helpers({
 		var sub_compartment;
 		var compart_id;
 		if (compart) {
-			sub_compartment = compart["subCompartments"][compart_type["label"]];
+			sub_compartment = compart["subCompartments"][compart_type["name"]];
 			compart_id = compart["_id"];
 		}
 
@@ -108,7 +108,8 @@ Template.show_multi_field_form.helpers({
 
 		var field_obj = {_id: compart_type["_id"],
 						compartmentId: compart_id,
-						name: compart_type["label"],
+						name: compart_type["name"],
+						label: compart_type["label"],
 						fields: fields,
 					};
 

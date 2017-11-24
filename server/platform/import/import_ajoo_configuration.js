@@ -167,11 +167,33 @@ ImportAjooConfiguration.prototype = {
 								label: object.label || object.name,
 							});
 
+			if (_.size(object.subCompartmentTypes) > 0) {
+				object.subCompartmentTypes = self.recomputeSubCompartmentTypeLabels(object.subCompartmentTypes);
+			}
+
 			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
 			self.obj_type_map[compart_type_id] = new_copmart_type_id;
 		});
 	},
 
+
+	recomputeSubCompartmentTypeLabels: function(sub_compart_types) {
+
+		var self = this;
+
+		return _.map(sub_compart_types, function(sub_compart_type) {
+					_.extend(sub_compart_type, {label: sub_compart_type.label || sub_compart_type.name},)
+
+					if (_.size(sub_compart_type.subCompartmentTypes) > 0) {
+						sub_compart_type.subCompartmentTypes = self.recomputeSubCompartmentTypeLabels(sub_compart_type.subCompartmentTypes);
+					}
+
+					return sub_compart_type; 
+				});
+
+	},
+
+	
 	importPaletteButtons: function(palette_buttons) {
 
 		var self = this;

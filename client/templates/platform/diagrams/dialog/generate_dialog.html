@@ -131,7 +131,7 @@
 					>
 
 					<span class="custom-checkbox"></span>
-					{{name}}
+					{{label}}
 
 				</label>
 
@@ -145,7 +145,7 @@
 		{{#if radio}}
 			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}">
 				{{#each values}}
-					<label for="{{compartmentId}}" class="label-radio">{{label}}
+					<label for="{{compartmentId}}" class="label-radio">{{name}}
 
 						<input type="radio" class="dialog-radio" 
 						name="{{_id}}" 

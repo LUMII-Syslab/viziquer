@@ -161,6 +161,7 @@ Dialog = {
 	buildSubCompartmentTree: function(parent, compart_type, compart_tree) {
 
 		var sub_compart_types = compart_type["subCompartmentTypes"];
+
 		var len = sub_compart_types.length;
 		var concat_style = compart_type["concatStyle"];
 

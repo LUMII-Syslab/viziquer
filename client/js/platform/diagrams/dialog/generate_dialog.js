@@ -743,6 +743,7 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 	//selecting the compartment type
 	var compart_type_id = $(e.target).closest(".compart-type").attr("id");
 	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+
 	if (!compart_type) {
 		return; 
 	}
