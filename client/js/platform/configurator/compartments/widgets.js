@@ -47,7 +47,7 @@ Template.compartmentDialog.events({
 			input_type_list["type"] = input_type;
 			input_type_list["rows"] = reset_variable();
 			input_type_list["inputType"] = reset_variable();
-			input_type_list["values"] = [];			
+			input_type_list["values"] = [];	
 		}
 
 		else if (input_type == "combobox") {
@@ -502,6 +502,7 @@ Template.compartmentDialogTab.events({
 
 function update_selection_table_input_field(e) {
 	var src = $(e.target);
+
 	var attr_name = src.attr("attr");
 	var input_value = src.text();
 
@@ -599,7 +600,7 @@ function add_selection_item(list) {
 }
 
 function update_selection_object(list) {
-	("updateSelectionItem", list);
+	Utilities.callMeteorMethod("updateSelectionItem", list);
 }
 
 function update_comparment_type_field(e) {

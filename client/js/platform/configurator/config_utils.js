@@ -74,6 +74,10 @@ Configurator = {
 //Updates
 	updateCompartmentType: function(list) {
 		list["id"] = Session.get("compartmentTargetTypeId");
+
+		console.log("updateCompartmentType ", list)
+
+
 		Utilities.callMeteorMethod("updateCompartmentType", list);
 	},
 
