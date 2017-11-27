@@ -117,11 +117,20 @@
 <template name="compartmentProperties">
 {{#with property}}
 	<div class="row">
-    	<div class="col-sm-12 col-md-12 col-lg-12">
+    	<div class="col-sm-6 col-md-6 col-lg-6">
 			<form role="form">
 				<div class="form-group">
 					<label for="name">Name</label>
 					<input type="text" class="form-control dialog-input" id="name" value="{{name}}">
+				</div>
+			</form>
+		</div>
+
+    	<div class="col-sm-6 col-md-6 col-lg-6">
+			<form role="form">
+				<div class="form-group">
+					<label for="name">Label</label>
+					<input type="text" class="form-control dialog-input" id="label" value="{{label}}">
 				</div>
 			</form>
 		</div>
