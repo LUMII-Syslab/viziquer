@@ -19,13 +19,13 @@ Interpreter.loadAjooEditor = function(diagram) {
     var container_name = "Diagram_Editor";
 
     var container_width = $("#" + container_name).width();
-    var container_height = $(window).height() - $("#" + container_name).offset().top - 30;
+    var container_height = $(window).height() - $("#" + container_name).offset().top - 200;
 
 	var settings = {
 			        container: container_name,
-			        width: container_width,			        
+			        width: container_width,
 			        height: container_height * 0.9,
-			            	
+
 	                isEditModeEnabled: is_edit_mode,
 	                data: {boxes: [], lines: []},
 
@@ -42,7 +42,7 @@ Interpreter.loadAjooEditor = function(diagram) {
                     	compartmentLayout: "processOrientedFlow",
                     },
 
-                    isPanningEnabled: false,        
+                    isPanningEnabled: false,
 
 	              	palette: {},
 	                selectionStyle: diagram_type["selectionStyle"],
@@ -63,14 +63,14 @@ function get_event_functions() {
 	    collectionPositionChanged: function(list) {
 	    	var diagram_id = Session.get("activeDiagram");
 	    	list["diagramId"] = diagram_id;
-	    	
+
 			var obj_type = get_object_type(diagram_id);
 			Interpreter.executeExtensionPoint(obj_type, "changeCollectionPosition", list);
 	    },
 
 	    elementResized: function(list) {
 	    	list["diagramId"] = Session.get("activeDiagram");
-	    	
+
 	        var obj_type = get_object_type(list["elementId"]);
 	        Interpreter.executeExtensionPoint(obj_type, "resizeElement", list);
 	    },
@@ -109,7 +109,7 @@ function get_event_functions() {
 				else {
 					menu = get_context_menu_list(diagram_type, "readModeNoCollectionContextMenu", "dynamicReadModeNoCollectionContextMenu");
 				}
-				
+
 				Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
 			}
 
@@ -137,7 +137,8 @@ function get_event_functions() {
 	        }
 	        else {
 	        	menu = get_context_menu_list(elem_type, "readModeContextMenu", "dynamicReadModeContextMenu");
-	        }
+	        };
+					console.log(menu);
 
 			Interpreter.processContextMenu(data.ev, elem_type[menu.attrName]);
 	    },
@@ -158,11 +159,11 @@ function get_event_functions() {
 	        	menu = get_context_menu_list(diagram_type, "collectionContextMenu", "dynamicCollectionContextMenu");
 	        }
 	        else {
-	        	menu = get_context_menu_list(diagram_type, "readModeCollectionContextMenu", "dynamicReadModeCollectionContextMenu");             
-	        }
-	        	
+	        	menu = get_context_menu_list(diagram_type, "readModeCollectionContextMenu", "dynamicReadModeCollectionContextMenu");
+	        };
+          console.log(menu);
 	        var ev = data.ev;
-	        
+
 	    	Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
 	    	Interpreter.resetActiveElement();
 	    },
@@ -182,7 +183,7 @@ function get_event_functions() {
 												});
 
 			data.element.compartments = _.map(comparts_with_defaults, function(compart_type) {
-					
+
 				var prefix = compart_type["prefix"] || "";
 				var suffix = compart_type["suffix"] || "";
 				var value = prefix + compart_type["defaultValue"] + suffix;
@@ -239,7 +240,7 @@ function get_event_functions() {
 			if (!is_allowed) {
 				return true;
 			}
-		},	
+		},
 
 		selectionFinshed: function(data) {
 
@@ -255,7 +256,7 @@ function get_event_functions() {
 			else {
 				Interpreter.resetActiveElement();
 			}
-		},	
+		},
 
 	    deleteElements: function(elements) {
 
@@ -353,7 +354,7 @@ function get_event_functions() {
 			if (!swimlane) {
 				return;
 			}
-	
+
 			var cell_pos = swimlane.compartments.get_cell_key(swimlane);
 
 	        if (cell_pos) {
@@ -494,7 +495,7 @@ function event_logging() {
 			//console.log("keystroke pressed")
 		},
 
-		newBoxCreated: function(data) {  
+		newBoxCreated: function(data) {
 
 			analytics.track("ajooEditor", {
 				eventName: "newBoxCreated",
@@ -552,6 +553,3 @@ function event_logging() {
 
 	};
 }
-
-
-

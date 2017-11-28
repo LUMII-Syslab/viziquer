@@ -50,12 +50,13 @@
 <template name="sparqlForm">
 
     <div id="diagram-footer" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:5px;padding-right:10px;margin-top:10px;">
-      <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#executed">Results</a></li>
-          <li><a data-toggle="tab" href="#sparql">SPARQL</a></li>
+      <ul class="nav nav-tabs" id="vq-tab">
+          <li class="active"><a data-toggle="tab" href="#sparql">SPARQL</a></li>
+          <li><a data-toggle="tab" href="#executed">Results</a></li>
+          <li class="disabled"><a data-toggle="tab" href="#">Messages</a></li>
       </ul>
       <div class="tab-content">
-          <div id="executed" class="tab-pane fade in active">
+          <div id="executed" class="tab-pane fade">
             {{#with executedSparql}}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -91,7 +92,7 @@
                                                   {{#if uri}}
                                                     <td><div class="toolbar-item" attribute="item" contentEditable="true">{{uri.[0]}}</div></td>
                                                   {{else}}
-                                                    <td><div class="toolbar-item" attribute="item" contentEditable="true"></div></td>     
+                                                    <td><div class="toolbar-item" attribute="item" contentEditable="true"></div></td>
                                                   {{/if}}
                                                 {{/if}}
                                                 {{/each}}
@@ -110,7 +111,7 @@
             </div>
             {{/with}}
           </div>
-          <div id="sparql" class="tab-pane fade">
+          <div id="sparql" class="tab-pane fade in active">
             <div class="panel panel-default">
                 <div class="panel-body">
 

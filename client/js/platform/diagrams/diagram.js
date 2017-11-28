@@ -224,7 +224,7 @@ Template.sparqlForm.helpers({
 		var binding_map = _.map(self.sparql.head[0].variable, function(v) {
 			return v["$"].name;
 		});
-				
+
         _.each(self.sparql.results[0].result, function(res) {
 
 					var new_bindings = _.map(binding_map, function(map_item) {
@@ -606,6 +606,7 @@ Template.diagramEditor.onRendered(function() {
     //adding the graphical editor
 	var editor = Interpreter.createEditor();
 
+
 	if (!editor) {
 		console.error("Error: no editor");
 		return;
@@ -742,7 +743,8 @@ Template.diagramEditor.onDestroyed(function() {
 	Session.set("toolId", reset_variable());
 	Session.set("targetDiagramType", reset_variable());
 	Session.set("toolVersionId", reset_variable());
-
+	Session.set("generatedSparql", undefined);
+	Session.set("executedSparql", {limit_set:false, number_of_rows:0});
 });
 
 // End of diagram editor

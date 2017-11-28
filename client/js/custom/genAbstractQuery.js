@@ -81,20 +81,17 @@ resolveTypesAndBuildSymbolTable = function (query) {
     obj_class.fields.forEach(function(f) {
         // CAUTION .............
         // HACK: * and ** fields
-        if (f.exp=="*") {
-          var cl =schema.findClassByName(obj_class.identification.localName);
-          if (cl) {
-            cl.getAttributes().forEach(function(attr) {
-                obj_class.fields.push({exp:attr["name"],alias:null,requireValues:false,groupValues:false, isInternal:false});
-            });
-          };
-        } else if (f.exp=="**") {
-          var cl =schema.findClassByName(obj_class.identification.localName);
-          if (cl) {
-            cl.getAllAttributes().forEach(function(attr) {
-                obj_class.fields.push({exp:attr["name"],alias:null,requireValues:false,groupValues:false, isInternal:false});
-            });
-          };
+        if (f.exp=="*" || f.exp=="**") {
+           var cl =schema.findClassByName(obj_class.identification.localName);
+           if (cl) {
+              var attr_list = {};
+              if (f.exp=="*") { attr_list = cl.getAttributes()} else { attr_list = cl.getAllAttributes()};
+              attr_list.forEach(function(attr) {
+                var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
+                var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                obj_class.fields.push({exp:attr["name"],alias:null,requireValues:false,groupValues:!attr_is_simple, isInternal:false});
+              });   
+           };
         } else if (f.alias) {
           if (symbol_table[f.alias]) {
              console.log("Duplicate attribute alias name " + f.alias + " in " + obj_class.identification.localName)

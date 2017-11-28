@@ -948,7 +948,7 @@ VQ_Element.prototype = {
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
 	setLinkType: function(value) {
 		 if (this.isLink()) {
-			 console.log(this);
+			 //console.log(this);
         // By default link is REQUIRED
 				var setNeg = "false";
 				var setNegValue = "";

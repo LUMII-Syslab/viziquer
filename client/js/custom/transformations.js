@@ -660,5 +660,17 @@ Interpreter.customMethods({
 		return [val.value]
 	},
 
+  // TODO: Dynamic Context Menus dont work
+	getVQ_Class_ContextMenuEditMode: function() {
+		var menu = [{item:"AddLink", procedure:"AddLink"},{item:"Copy", procedure:"Copy"},{item:"Delete", procedure:"Delete"},
+		            {item:"Generate SPARQL from single class",procedure:"GenerateSPARQL_from_selection"},
+							  {item:"Execute SPARQL from single class",procedure:"ExecuteSPARQL_from_selection"},
+						    {item:"Generate SPARQL from component",procedure:"GenerateSPARQL_from_component"},
+								{item:"Execute SPARQL from component",procedure:"ExecuteSPARQL_from_component"},
+							];
+
+		return menu;
+	}
+
 
 });
