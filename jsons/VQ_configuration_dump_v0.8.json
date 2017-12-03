@@ -1226,7 +1226,7 @@
                               "compartmentStyle": "NoStyle",
                               "elementStyle": "NoStyle",
                               "input": "true",
-                              "value": "{require values} "
+                              "value": "{+} "
                             },
                             {
                               "compartmentStyle": "NoStyle",
