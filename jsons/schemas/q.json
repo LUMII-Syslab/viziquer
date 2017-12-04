@@ -1,0 +1,1226 @@
+[
+  {
+    "subject": "#View1",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n   ,concat(Code, ' (', Credits, ')') AS COL1\r\n FROM XCourse t \r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b0",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XCourse/{Course_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b0",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Course",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b0",
+    "graph": ""
+  },
+  {
+    "subject": "_:b1",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#courseExtInfo",
+    "graph": ""
+  },
+  {
+    "subject": "_:b2",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"COL1\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b1",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b2",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b3",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#courseCode",
+    "graph": ""
+  },
+  {
+    "subject": "_:b4",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b3",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b4",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b3",
+    "graph": ""
+  },
+  {
+    "subject": "_:b5",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#courseCredits",
+    "graph": ""
+  },
+  {
+    "subject": "_:b6",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Credits\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b5",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b6",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b5",
+    "graph": ""
+  },
+  {
+    "subject": "_:b7",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#courseName",
+    "graph": ""
+  },
+  {
+    "subject": "_:b8",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Name\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b7",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b8",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap1",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b7",
+    "graph": ""
+  },
+  {
+    "subject": "#View2",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n   ,IDCode AS COL8\r\n   ,OPM1.Course_ID AS OPM1_Course_ID\r\n FROM XStudent t \r\n LEFT OUTER JOIN Registration DPM3 ON t.Student_ID=DPM3.Student_ID\r\n LEFT OUTER JOIN Registration OPM1 ON t.Student_ID=OPM1.Student_ID\r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View2",
+    "graph": ""
+  },
+  {
+    "subject": "_:b9",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XStudent/{Student_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b9",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Student",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b9",
+    "graph": ""
+  },
+  {
+    "subject": "_:b10",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#hasMark",
+    "graph": ""
+  },
+  {
+    "subject": "_:b11",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"MarkReceived\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b10",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b11",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b10",
+    "graph": ""
+  },
+  {
+    "subject": "_:b12",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#studentNumber",
+    "graph": ""
+  },
+  {
+    "subject": "_:b13",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"StudNumber\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b12",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b13",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b12",
+    "graph": ""
+  },
+  {
+    "subject": "_:b14",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#studentName",
+    "graph": ""
+  },
+  {
+    "subject": "_:b15",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Name\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b14",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b15",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b14",
+    "graph": ""
+  },
+  {
+    "subject": "_:b16",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#personID",
+    "graph": ""
+  },
+  {
+    "subject": "_:b17",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"COL8\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b16",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b17",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b16",
+    "graph": ""
+  },
+  {
+    "subject": "_:b18",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#enrolled",
+    "graph": ""
+  },
+  {
+    "subject": "_:b19",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap8",
+    "graph": ""
+  },
+  {
+    "subject": "_:b20",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Program_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b20",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Program_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b19",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b20",
+    "graph": ""
+  },
+  {
+    "subject": "_:b18",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b19",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b18",
+    "graph": ""
+  },
+  {
+    "subject": "_:b21",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#takes",
+    "graph": ""
+  },
+  {
+    "subject": "_:b22",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b23",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Course_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b23",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"OPM1_Course_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b22",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b23",
+    "graph": ""
+  },
+  {
+    "subject": "_:b21",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b22",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b21",
+    "graph": ""
+  },
+  {
+    "subject": "_:b24",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#nationality",
+    "graph": ""
+  },
+  {
+    "subject": "_:b25",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap4",
+    "graph": ""
+  },
+  {
+    "subject": "_:b26",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Nat_Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b26",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b25",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b26",
+    "graph": ""
+  },
+  {
+    "subject": "_:b24",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b25",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap2",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b24",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap3",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "_:b27",
+    "predicate": "http://www.w3.org/ns/r2rml#tableName",
+    "object": "\"Registration\"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap3",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "_:b27",
+    "graph": ""
+  },
+  {
+    "subject": "_:b28",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"Registration/{Registration_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b28",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#CompletedRegistration",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap3",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b28",
+    "graph": ""
+  },
+  {
+    "subject": "_:b29",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#dateCompleted",
+    "graph": ""
+  },
+  {
+    "subject": "_:b30",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"DateCompleted\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b29",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b30",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap3",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b29",
+    "graph": ""
+  },
+  {
+    "subject": "_:b31",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#mark",
+    "graph": ""
+  },
+  {
+    "subject": "_:b32",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"MarkReceived\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b31",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b32",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap3",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b31",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap4",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "_:b33",
+    "predicate": "http://www.w3.org/ns/r2rml#tableName",
+    "object": "\"Nationality\"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap4",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "_:b33",
+    "graph": ""
+  },
+  {
+    "subject": "_:b34",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"Nationality/{Code}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b34",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Nationality",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap4",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b34",
+    "graph": ""
+  },
+  {
+    "subject": "_:b35",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#nValue",
+    "graph": ""
+  },
+  {
+    "subject": "_:b36",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Value\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b35",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b36",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap4",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b35",
+    "graph": ""
+  },
+  {
+    "subject": "_:b37",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#nCode",
+    "graph": ""
+  },
+  {
+    "subject": "_:b38",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b37",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b38",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap4",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b37",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap5",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "_:b39",
+    "predicate": "http://www.w3.org/ns/r2rml#tableName",
+    "object": "\"Teacher_Level\"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap5",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "_:b39",
+    "graph": ""
+  },
+  {
+    "subject": "_:b40",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"Level_/{Level_Code}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b40",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap5",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b40",
+    "graph": ""
+  },
+  {
+    "subject": "_:b41",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#acadTitle",
+    "graph": ""
+  },
+  {
+    "subject": "_:b42",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Level_Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b41",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b42",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap5",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b41",
+    "graph": ""
+  },
+  {
+    "subject": "#View3",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n   ,IDCode AS COL14\r\n FROM XTeacher t \r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View3",
+    "graph": ""
+  },
+  {
+    "subject": "_:b43",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XTeacher/{Teacher_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b43",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Teacher",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b43",
+    "graph": ""
+  },
+  {
+    "subject": "_:b44",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#personID",
+    "graph": ""
+  },
+  {
+    "subject": "_:b45",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"COL14\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b44",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b45",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b44",
+    "graph": ""
+  },
+  {
+    "subject": "_:b46",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#teacherName",
+    "graph": ""
+  },
+  {
+    "subject": "_:b47",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Name\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b46",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b47",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b46",
+    "graph": ""
+  },
+  {
+    "subject": "_:b48",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#salary",
+    "graph": ""
+  },
+  {
+    "subject": "_:b49",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Salary\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b48",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b49",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b48",
+    "graph": ""
+  },
+  {
+    "subject": "_:b50",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel",
+    "graph": ""
+  },
+  {
+    "subject": "_:b51",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap5",
+    "graph": ""
+  },
+  {
+    "subject": "_:b52",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Level_Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b52",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Level_Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b51",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b52",
+    "graph": ""
+  },
+  {
+    "subject": "_:b50",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b51",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b50",
+    "graph": ""
+  },
+  {
+    "subject": "_:b53",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#teaches",
+    "graph": ""
+  },
+  {
+    "subject": "_:b54",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b53",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b54",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b53",
+    "graph": ""
+  },
+  {
+    "subject": "_:b55",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#nationality",
+    "graph": ""
+  },
+  {
+    "subject": "_:b56",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap4",
+    "graph": ""
+  },
+  {
+    "subject": "_:b57",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Nat_Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b57",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Code\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b56",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b57",
+    "graph": ""
+  },
+  {
+    "subject": "_:b55",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b56",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap6",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b55",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "_:b58",
+    "predicate": "http://www.w3.org/ns/r2rml#tableName",
+    "object": "\"Registration\"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "_:b58",
+    "graph": ""
+  },
+  {
+    "subject": "_:b59",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"Registration/{Registration_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b59",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Registration",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b59",
+    "graph": ""
+  },
+  {
+    "subject": "_:b60",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#datePaid",
+    "graph": ""
+  },
+  {
+    "subject": "_:b61",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"DatePaid\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b60",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b61",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b60",
+    "graph": ""
+  },
+  {
+    "subject": "_:b62",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#student",
+    "graph": ""
+  },
+  {
+    "subject": "_:b63",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap2",
+    "graph": ""
+  },
+  {
+    "subject": "_:b64",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Student_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b64",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Student_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b63",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b64",
+    "graph": ""
+  },
+  {
+    "subject": "_:b62",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b63",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b62",
+    "graph": ""
+  },
+  {
+    "subject": "_:b65",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#course",
+    "graph": ""
+  },
+  {
+    "subject": "_:b66",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b67",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Course_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b67",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Course_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b66",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b67",
+    "graph": ""
+  },
+  {
+    "subject": "_:b65",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b66",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap7",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b65",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap8",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "_:b68",
+    "predicate": "http://www.w3.org/ns/r2rml#tableName",
+    "object": "\"XProgram\"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap8",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "_:b68",
+    "graph": ""
+  },
+  {
+    "subject": "_:b69",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XProgram/{Program_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b69",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#AcademicProgram",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap8",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b69",
+    "graph": ""
+  },
+  {
+    "subject": "_:b70",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#programName",
+    "graph": ""
+  },
+  {
+    "subject": "_:b71",
+    "predicate": "http://www.w3.org/ns/r2rml#column",
+    "object": "\"Name\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b70",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b71",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap8",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b70",
+    "graph": ""
+  },
+  {
+    "subject": "_:b72",
+    "predicate": "http://www.w3.org/ns/r2rml#predicate",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#includes",
+    "graph": ""
+  },
+  {
+    "subject": "_:b73",
+    "predicate": "http://www.w3.org/ns/r2rml#parentTriplesMap",
+    "object": "#TriplesMap1",
+    "graph": ""
+  },
+  {
+    "subject": "_:b74",
+    "predicate": "http://www.w3.org/ns/r2rml#parent",
+    "object": "\"Program_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b74",
+    "predicate": "http://www.w3.org/ns/r2rml#child",
+    "object": "\"Program_ID\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b73",
+    "predicate": "http://www.w3.org/ns/r2rml#joinCondition",
+    "object": "_:b74",
+    "graph": ""
+  },
+  {
+    "subject": "_:b72",
+    "predicate": "http://www.w3.org/ns/r2rml#objectMap",
+    "object": "_:b73",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap8",
+    "predicate": "http://www.w3.org/ns/r2rml#predicateObjectMap",
+    "object": "_:b72",
+    "graph": ""
+  },
+  {
+    "subject": "#View4",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n FROM XTeacher t \r\n  WHERE Level_Code='Professor';\r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap9",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap9",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View4",
+    "graph": ""
+  },
+  {
+    "subject": "_:b75",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XTeacher/{Teacher_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b75",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Professor",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap9",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b75",
+    "graph": ""
+  },
+  {
+    "subject": "#View5",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n FROM XCourse t \r\n  WHERE Required=0;\r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap10",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap10",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View5",
+    "graph": ""
+  },
+  {
+    "subject": "_:b76",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XCourse/{Course_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b76",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#OptionalCourse",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap10",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b76",
+    "graph": ""
+  },
+  {
+    "subject": "#View6",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n FROM XCourse t \r\n  WHERE Required=1;\r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap11",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap11",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View6",
+    "graph": ""
+  },
+  {
+    "subject": "_:b77",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XCourse/{Course_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b77",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#MandatoryCourse",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap11",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b77",
+    "graph": ""
+  },
+  {
+    "subject": "#View7",
+    "predicate": "http://www.w3.org/ns/r2rml#sqlQuery",
+    "object": "\"\r\n  SELECT \r\n  t.*\r\n FROM XTeacher t \r\n  WHERE Level_Code='Assistant';\r\n\r\n; \"",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap12",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "object": "http://www.w3.org/ns/r2rml#TriplesMap",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap12",
+    "predicate": "http://www.w3.org/ns/r2rml#logicalTable",
+    "object": "#View7",
+    "graph": ""
+  },
+  {
+    "subject": "_:b78",
+    "predicate": "http://www.w3.org/ns/r2rml#template",
+    "object": "\"XTeacher/{Teacher_ID}\"",
+    "graph": ""
+  },
+  {
+    "subject": "_:b78",
+    "predicate": "http://www.w3.org/ns/r2rml#class",
+    "object": "http://lumii.lv/ontologies/UnivExample.owl#Assistant",
+    "graph": ""
+  },
+  {
+    "subject": "#TriplesMap12",
+    "predicate": "http://www.w3.org/ns/r2rml#subjectMap",
+    "object": "_:b78",
+    "graph": ""
+  }
+]

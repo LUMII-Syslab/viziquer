@@ -518,18 +518,36 @@ Template.importOntology.events({
 		var fileList = $("#fileList")[0].files;
 	    _.each(fileList, function(file) {
 
+		
+
 	        var reader = new FileReader();
 
 	        reader.onload = function(event) {
 
+			//console.log(reader.result);
+			//var x=require('n3').Parser().parse(require('fs').readFileSync('UnivExample_hasMarkS2.n3').toString())
+			//Utilities.callMeteorMethod("loadTriplesMaps", reader.result);
+			
 				var data = JSON.parse(reader.result)
+
 				if (data)
 				{
-					var list = {projectId: Session.get("activeProject"),
-								versionId: Session.get("versionId"),
-								data: data,
-							};
-					Utilities.callMeteorMethod("loadMOntology", list);
+					if ( data.Classes ){
+						var list = {projectId: Session.get("activeProject"),
+									versionId: Session.get("versionId"),
+									data: data,
+								};
+						  Utilities.callMeteorMethod("loadMOntology", list); 					
+					}
+					else {
+						var list = {projectId: Session.get("activeProject"),
+									versionId: Session.get("versionId"),
+									data: { Data: data },
+								};					
+						Utilities.callMeteorMethod("loadTriplesMaps", list ); 					
+					}
+					
+
 					//if ( data.Schema ) {
 					//	Utilities.callMeteorMethod("loadMOntology", list); }
 					//else {
@@ -543,6 +561,11 @@ Template.importOntology.events({
 	        }
 	        reader.readAsText(file);
 	    });
+		
+
+
+
+		
 
 	},
 

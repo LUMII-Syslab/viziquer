@@ -11,6 +11,7 @@ Meteor.publish("Ontology", function(list) {
 				Attributes.find({projectId: list.projectId, versionId: list.versionId}),
 				Classes.find({projectId: list.projectId, versionId: list.versionId}),
 				Schema.find({projectId: list.projectId, versionId: list.versionId}),
+				TriplesMaps.find({projectId: list.projectId, versionId: list.versionId}),
 			];
 	}
 	else {
