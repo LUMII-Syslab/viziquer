@@ -493,155 +493,32 @@ Interpreter.customMethods({
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
-		//No active Element or unpropriate type
-		if (!act_elem) {
-			return [{value: " ", input: " ", }];
-		}
-
-		var elem = Elements.findOne({_id: act_elem});
-		if (elem && elem["type"] != "Line") {
-			return [{value: " ", input: " ", }];
-		}
-
-		//Start and end elements - ID and no-end-check
-		var elem = Elements.findOne({_id: act_elem});
-		var elem_strt = "";
-		var elem_end = "";
-		if (elem) {
-			elem_strt = elem["startElement"];
-			elem_end = elem["endElement"];
-		}
-
-		if (!elem_strt || !elem_end) {
-			return [{value: " ", input: " ", }];
-		}
-		//End-elemen - Name direct + Super_Sub Classes
-		//All possible Classes
-		var cls = Classes.find();
-		var class_type = ElementTypes.findOne({name:"Class"});
-		var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id});
-
-		//If start and end elements both exist
-		var comp_start = Compartments.findOne({elementId: elem_strt, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id});
-		var comp_end = Compartments.findOne({elementId: elem_end, compartmentTypeId: CompartmentTypes.findOne({name: "Name", elementTypeId: class_type._id})._id})
-
-		var schema = new VQ_Schema();
-
-		if(comp_start && comp_end){
-			//Start element
-			var elemS_name = [];
-			elemS_name.push(comp_start["input"]);
-
-			//If Super/SubClass exists - add to possible start elements
-      if (schema.findClassByName(elemS_name[0])) {
-			_.each(schema.findClassByName(elemS_name[0]).allSuperSubClasses, function(nm){
-				elemS_name.push(nm["localName"]);
-			})};
-
-
-			//End elem
-			var elemE_name = [];
-			elemE_name.push(comp_end["input"]);
-
-				//If Super/SubClass exists - add to possible end elements
-      if (schema.findClassByName(elemE_name[0])) {
-			_.each(schema.findClassByName(elemE_name[0]).allSuperSubClasses, function(nm){
-				elemE_name.push(nm["localName"]);
-			})};
-
-			//Read Associations from DB and make unique
-			var asc = [];
-			var asc_inv = [];
-			var asc_all = [];
-			var i;
-			var exists;
-
-			asc_all.push({value: " ", input: " ", });
-
-			//Read all asociations' name, from&to elements
-			var roles = schema.SchemaRoles;
-
-			if (roles){
-				var asc_val = [];
-
-				_.each(roles, function (use) {
-
-				      asc_val.push({
-				      	assoc: use["localName"],
-				      	start: use.sourceClass["localName"],
-				      	end: use.targetClass["localName"]
-				      });
-				})
-			} else {
-				return [{value: " ", input: " ", }];
-			}
-
-			//Direct
-			_.each(asc_val, function(v){
-				exists = false;
-
-				_.each(elemS_name, function(ns){
-					_.each(elemE_name, function (ne){
-						if (v["start"] == ns && v["end"] == ne) {exists = true;}
-					})
-				})
-
-				if (exists) {
-					asc.push(v["assoc"]);
-				}
-			})
-
-
-				//Add unique
-			_.each(asc, function(el){
-				exists = false;
-
-				_.each(asc_all, function(ea){
-					if(ea["input"] == el) {exists = true;}
-				})
-
-				if(!exists) {
-					asc_all.push({value: el, input: el, })
-				}
-			})
-
-			//Inverse
-			_.each(asc_val, function(v){
-				exists = false;
-
-				_.each(elemS_name, function(ns){
-
-					_.each(elemE_name, function (ne){
-						if (v["start"] == ne && v["end"] == ns) {exists = true;}
-					})
-				})
-
-				if (exists) {
-					asc_inv.push(v["assoc"]);
-				}
-			})
-
-				//Add unique
-			_.each(asc_inv, function(el){
-				exists = false;
-
-				_.each(asc_all, function(ea){
-					if(ea["input"] == ("inv("+el+")")) {exists = true;}
-				})
-
-				if(!exists) {
-					asc_all.push({value: "inv("+el+")", input: el})
-				}
-			})
-
-
-		} else {
-			return [{value: " ", input: " ", }];
-		}
-
-		return asc_all;
-
-
+		var name_list = [{value: " ", input: " ", }];
+		if (act_elem) {
+			var vq_link = new VQ_Element(act_elem["_id"]);
+			if (vq_link.isLink()) {
+  			var myschema = new VQ_Schema();
+				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
+				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
+				if (start_class && end_class) {
+					var all_assoc_from_start = start_class.getAllAssociations();
+					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+					var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+					 	return _.find(all_sub_super_of_end, function(c) {
+							 	return c.localName == a.class
+					 	})
+			  	});
+					name_list = _.union(name_list, _.map(possible_assoc_list, function(assoc) {
+						var assoc_name = assoc["name"];
+						if (assoc["type"] == "<=") {
+							assoc_name = "inv("+assoc_name+")";
+						};
+						return {value:assoc_name, input:assoc_name};
+					}))
+				};
+			};
+		};
+		return name_list;
 	},
 
 	VQsetSubQueryNameSuffix: function(val) {

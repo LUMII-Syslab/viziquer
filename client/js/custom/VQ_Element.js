@@ -11,47 +11,47 @@ VQ_r2rml = function (schema) {
    var r2rml = this;
    var tmpData = {};
    var tmpViews = {};
-   
+
 	_.each(data.Data, function(d){
         tmpData[d.subject] = [];
-	}) 
-	
+	})
+
 	_.each(data.Data, function(d){
 		tmpData[d.subject] = _.union( tmpData[d.subject], [d]);
 		if (d.predicate == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
 			r2rml.triplesMaps[d.subject] = new TriplesMap(d.subject);
-	}) 
+	})
 
 	_.each(data.Data, function(d){
 		var name = d.subject;
-		var tr = r2rml.triplesMaps[name];	
+		var tr = r2rml.triplesMaps[name];
 		if (d.predicate == "http://www.w3.org/ns/r2rml#logicalTable")
-			tr.addLogicalTable(d, tmpData); 
+			tr.addLogicalTable(d, tmpData);
 		if (d.predicate == "http://www.w3.org/ns/r2rml#subjectMap"){
-			var subjectMap = tr.addSubjectMap(d, tmpData); 
+			var subjectMap = tr.addSubjectMap(d, tmpData);
 			var ontClass = schema.findClassByName(subjectMap.ontClass);
 			ontClass.triplesMaps = _.union(ontClass.triplesMaps, [tr]);
 		}
-	}) 
-	
+	})
+
 	_.each(data.Data, function(d){
 		var name = d.subject;
-		var tr = r2rml.triplesMaps[name];	
+		var tr = r2rml.triplesMaps[name];
 		if (d.predicate == "http://www.w3.org/ns/r2rml#predicateObjectMap") {
 			var predicateObjectMap = tr.addPredicateObjectMap(d, tmpData, r2rml);
-			if (predicateObjectMap.objectMap.column){		
-				var ontProperty = schema.findAttributeByName(predicateObjectMap.predicate); 
+			if (predicateObjectMap.objectMap.column){
+				var ontProperty = schema.findAttributeByName(predicateObjectMap.predicate);
 				ontProperty.triplesMaps = _.union(ontProperty.triplesMaps, [tr]);
 			}
 			else{
-				var ontProperty = schema.findAssociationByName(predicateObjectMap.predicate); 
-				ontProperty.triplesMaps = _.union(ontProperty.triplesMaps, [tr]);			
+				var ontProperty = schema.findAssociationByName(predicateObjectMap.predicate);
+				ontProperty.triplesMaps = _.union(ontProperty.triplesMaps, [tr]);
 			}
-			
+
 		}
 
-	}) 
-	
+	})
+
 	//console.log(r2rml.triplesMaps);
 };
 
@@ -84,9 +84,9 @@ function getJoinConditionData(data){
 function getPredicateObjectMapData(data, tmpData, r2rml){
 	if ( data.predicate == "http://www.w3.org/ns/r2rml#predicate")
 		return {predicate: data.object}
-	else 
+	else
 	{
-		var rez = {}; 
+		var rez = {};
 		//console.log(tmpData[data.object]);
 		_.each(tmpData[data.object], function(obj){
 			if (obj.predicate == "http://www.w3.org/ns/r2rml#column")
@@ -94,7 +94,7 @@ function getPredicateObjectMapData(data, tmpData, r2rml){
 			if (obj.predicate == "http://www.w3.org/ns/r2rml#parentTriplesMap")
 			{
 				var parentTriplesMap = r2rml.triplesMaps[obj.object];
-				_.extend(rez, {parentTriplesMap: { name:parentTriplesMap.name, logicalTable:parentTriplesMap.logicalTable, subjectMap:parentTriplesMap.subjectMap}}); 			
+				_.extend(rez, {parentTriplesMap: { name:parentTriplesMap.name, logicalTable:parentTriplesMap.logicalTable, subjectMap:parentTriplesMap.subjectMap}});
 			}
 			if (obj.predicate == "http://www.w3.org/ns/r2rml#joinCondition")
 			{
@@ -490,7 +490,7 @@ VQ_Elem.prototype = {
   getID: function() { return this.ID },
   getElemInfo: function() {
     if (this.localName == " ") return {};
-	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace, 
+	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace,
 			Prefix:this.ontology.prefix, DefaultNamespace:this.schema.namespace, triplesMaps:this.triplesMaps};
   }
 }
@@ -822,7 +822,13 @@ VQ_Element.prototype = {
   // --> string
   // gets the name of the class or link, in fact it is the classname or rolename
   getName: function() {
-    return this.getCompartmentValue("Name");
+    // Since we need inv(name) also in the input, we should extract the name in this case
+    var name = this.getCompartmentValue("Name");
+    if (name && name.substring(0,4)=="inv(") {
+        return name.substring(4,name.length-1);
+    } else {
+        return name;
+    }
   },
   // --> string
   getInstanceAlias: function() {
