@@ -5,6 +5,7 @@ var referenceCandidateTable = [];
 var isAggregate = false;
 var isFunction = false;
 var isExpression = false;
+var isTimeFunction = false;
 var counter = 0;
 var variableNamesAll = [];
 var variableNamesClass = [];
@@ -50,6 +51,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT){
 	isAggregate = false;
 	isFunction = false;
 	isExpression = false;
+	isTimeFunction = false;
 	applyExistsToFilter = null;
 	counter = count;
 	variableNamesAll = vna;
@@ -96,7 +98,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 		// uniqueTriples = [];
 	}
 	
-	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
+	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
 }
 
 parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT) {
@@ -112,7 +114,7 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, i
 	if(isSimpleVaraible == false || alias == "") alias = null; 
 	var result = generateExpression(parsed_exp1, "", className, alias, true, isSimpleVaraible, false);
 
-	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
+	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
 
 }
 
@@ -1246,7 +1248,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					SPARQLstring = SPARQLstring  + "xsd:decimal(" + res + ")";
 					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 				}
-				isFunction = true
+				isFunction = true;
 			}
 			else{
 				if(typeof expressionTable[key]["UnaryExpression"]["Additive"]!== 'undefined'){
@@ -1319,16 +1321,20 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							if(isDateVar(left, dateArray) == true && isDateVar(right, dateArray) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
 								isFunction = true;
+								isTimeFunction = true;
 							} else if(isDateVar(left, dateTimeArray) == true && isDateVar(right, dateTimeArray) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
 								isFunction = true;
+								isTimeFunction = true;
 							} else if(isDateVar(left, dateTimeArray) == true && isValidForConvertation(right) == true ){
 								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", xsd:dateTime(' + sr + '),' + sl + ")";
 								isFunction = true;
+								isTimeFunction = true;
 							} else if(isDateVar(left, dateTimeArray) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day",  ' + sr + ', xsd:dateTime(' + sl + "))";
 								isFunction = true;
+								isTimeFunction = true;
 								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 							} else {
 								var value = generateExpression({MultiplicativeExpression : additiveExpression["MultiplicativeExpression"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation) + generateExpression({MultiplicativeExpressionList : additiveExpression["MultiplicativeExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation)
@@ -1375,10 +1381,13 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		if (key == "FunctionExpression") { 
 			isFunction = true
+			if(typeof expressionTable[key]["Function"]!== 'undefined' && (expressionTable[key]["Function"].toLowerCase() == 'month' || expressionTable[key]["Function"].toLowerCase() == 'day' || expressionTable[key]["Function"].toLowerCase() == 'year'
+				|| expressionTable[key]["Function"].toLowerCase() == 'timezone' || expressionTable[key]["Function"].toLowerCase() == 'tz')) isTimeFunction = true;
 			if (typeof expressionTable[key]["Function"]!== 'undefined') {
 				if(expressionTable[key]["Function"].toLowerCase() == 'date' || expressionTable[key]["Function"].toLowerCase() == 'datetime') {
 					SPARQLstring = SPARQLstring+ "xsd:";
 					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+					isTimeFunction = true;
 				}
 				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
 			}
@@ -1389,6 +1398,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation) + ")";
 			}
 			if (typeof expressionTable[key]["FunctionTime"]!== 'undefined') {
+				isTimeFunction = true;
 				if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
 				// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
 					var fun = expressionTable[key]["FunctionTime"]
