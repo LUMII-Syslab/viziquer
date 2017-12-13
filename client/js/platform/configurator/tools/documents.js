@@ -2,7 +2,7 @@
 Template.toolDocuments.helpers({
 
 	document_type: function() {
-		return DocumentTypes.find({}, {$sort: {index: 1}});
+		return DocumentTypes.find({}, {sort: {index: 1}});
 	},
 
 });

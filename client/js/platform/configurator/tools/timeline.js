@@ -14,14 +14,14 @@ Template.timeline.helpers({
 		// //if no version is specified for the user, then selecs the last one
 		// else {
 		if (!active_version) {
-			var version = ToolVersions.findOne({}, {$sort: {createdAt: -1}})
+			var version = ToolVersions.findOne({}, {sort: {createdAt: -1}})
 			if (version) {
 			 		active_version = version["_id"];
 			 		Session.set("toolVersionId", active_version);
 			}
 		}
 
-		return ToolVersions.find({}, {$sort: {createdAt: -1}}).map(function(version) {
+		return ToolVersions.find({}, {sort: {createdAt: -1}}).map(function(version) {
 				
 			//transforms the published date in different form
 			var date = version["publishedAt"];
@@ -123,7 +123,7 @@ Template.tool_version_buttons.events({
 
 				if (user_tools["versionId"] === version_id) {
 
-					var last_version = ToolVersions.findOne({}, {$sort: {createdAt: -1}});
+					var last_version = ToolVersions.findOne({}, {sort: {createdAt: -1}});
 					if (last_version)
 						Router.go("tool", {_id: Session.get("toolId"), versionId: last_version["_id"]});
 					else

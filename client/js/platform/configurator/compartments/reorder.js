@@ -5,7 +5,7 @@ Template.compartmentReorder.helpers({
 		if (Session.get("activeElement")) {
 			var elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
 			if (elem_type)
-				return CompartmentTypes.find({elementTypeId: elem_type["_id"]}, {$sort: {index: 1}});
+				return CompartmentTypes.find({elementTypeId: elem_type["_id"]}, {sort: {index: 1}});
 		}
 	},
 });
