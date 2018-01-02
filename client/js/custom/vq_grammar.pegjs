@@ -85,13 +85,13 @@
 
 			ConditionalOrExpression = (ConditionalAndExpression  ( space OROriginal space ConditionalAndExpression )*)
 
-			OROriginal = OROriginal:("||" / "OR" / "or") {return {OROriginal:OROriginal}}
+			OROriginal = OROriginal:("||" / "OR"i) {return {OROriginal:"||"}}
 
 			ConditionalAndExpression = (ConditionalAndExpression:ValueLogicalA) {return {ConditionalAndExpression:ConditionalAndExpression}}
 
 			ValueLogicalA = (ValueLogical (space ANDOriginal space ValueLogical )*)
 
-			ANDOriginal = ANDOriginal:("&&" / "AND" / "and") {return {ANDOriginal:ANDOriginal}}
+			ANDOriginal = ANDOriginal:("&&" / "AND"i) {return {ANDOriginal:"&&"}}
 
 			ValueLogical = (RelationalExpression:RelationalExpression){return {RelationalExpression:RelationalExpression}}
 
@@ -104,10 +104,14 @@
 			RelationalExpressionB1 = (classExpr:classExpr (space Relation:Relation space NumericExpressionR:NumericExpression)) {return {classExpr:"true", Relation:Relation, NumericExpressionR:NumericExpressionR}}
 			RelationalExpressionB2 = (NumericExpressionL:NumericExpression (space Relation:Relation space classExpr:classExpr)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, classExpr:"true"}}
 
-			RelationalExpressionC = (NumericExpressionL:NumericExpression (space Relation:("IN" / "in" / NOTIN) space ExpressionList:ExpressionList2)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
-			RelationalExpressionC1 = (NumericExpressionL:NumericExpression (space Relation:("IN" / "in" / NOTIN) space ExpressionList:(ExpressionList3/ ExpressionList4))) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
+			RelationalExpressionC = (NumericExpressionL:NumericExpression (space Relation:(IN / NOTIN) space ExpressionList:ExpressionList2)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
+			RelationalExpressionC1 = (NumericExpressionL:NumericExpression (space Relation:(IN / NOTIN) space ExpressionList:(ExpressionList3/ ExpressionList4))) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
 
-			NOTIN = Not:(("NOT" / "not") space ("IN" / "in")) {return Not.join("")}
+			IN = "IN"i {return "IN"};
+			
+			NOT = "NOT"i {return "NOT"}
+			
+			NOTIN = Not:(NOT space IN) {return Not.join("")}
 
 			NumericExpression = AdditiveExpression: AdditiveExpression {return {AdditiveExpression:AdditiveExpression}}
 
@@ -137,7 +141,10 @@
 
 			PrimaryExpression2 = BooleanLiteral / BuiltInCall / RDFLiteral / BrackettedExpression / iriOrFunction  / NumericLiteral /  Var / LName2
 
-			BooleanLiteral = BooleanLiteral:("true"/ "false") {return {BooleanLiteral:BooleanLiteral}}
+			BooleanLiteral = BooleanLiteral:(TRUE/ FALSE) {return {BooleanLiteral:BooleanLiteral}}
+			
+			TRUE = "true"i {return "true"}
+			FALSE = "false"i {return "false"}
 
 			RDFLiteral = (RDFLiteral:(RDFLiteralA/RDFLiteralB/RDFLiteralC)) {return {RDFLiteral:RDFLiteral}}
 
@@ -151,31 +158,87 @@
 
 			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
-			AggregateAO = Aggregate: ("COUNT_DISTINCT" / "count_distinct") "(" space Expression: Expression space ")" {return {Aggregate:"COUNT", DISTINCT:"DISTINCT", Expression:Expression}}
-			AggregateA = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateAO = Aggregate: COUNT_DISTINCT "(" space Expression: Expression space ")" {return {Aggregate:COUNT, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateA = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" DISTINCT:(DISTINCT) space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
-			AggregateB = Aggregate: ("COUNT" / "count" / "SUM" / "sum" / "MIN" / "min" / "MAX" / "max" / "AVG" / "avg" / "SAMPLE" / "sample") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
+			AggregateB = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
-			AggregateC = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
+			AggregateC = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
 
-			AggregateD = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, Expression:Expression, SEPARATOR:SEPARATOR}}
+			AggregateD = Aggregate: (GROUP_CONCAT) "(" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, Expression:Expression, SEPARATOR:SEPARATOR}}
 
-			AggregateE = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" DISTINCT:("DISTINCT" / "distinct") space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateE = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
-			AggregateF = Aggregate: ("GROUP_CONCAT" / "group_concat") "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
+			AggregateF = Aggregate: (GROUP_CONCAT) "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
-			SEPARATOR = (";" space "SEPARATOR" "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
+			COUNT_DISTINCT = "COUNT_DISTINCT"i {return "COUNT_DISTINCT"}
+			DISTINCT = "DISTINCT"i {return "DISTINCT"}
+			COUNT = "COUNT"i {return "COUNT"}
+			SUM = "SUM"i {return "SUM"}
+			MIN = "MIN"i {return "MIN"}
+			MAX = "MAX"i {return "MAX"}
+			AVG = "AVG"i {return "AVG"}
+			SAMPLE = "SAMPLE"i {return "SAMPLE"}
+			GROUP_CONCAT = "GROUP_CONCAT"i {return "GROUP_CONCAT"}
+			SEPARATOR = "SEPARATOR"i {return "SEPARATOR"}
 			
-
+			SEPARATOR = (";" space SEPARATOR space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
+			
 			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC) {return {FunctionExpression:FunctionExpression}}
 
-			FunctionExpressionA = Function:("STR" / "LANG" / "DATATYPE" / "IRI" / "URI" / "ABS" / "CEIL" / "FLOOR" / "ROUND" / "round" / "STRLEN" / "UCASE" /
-					 "LCASE" / "ENCODE_FOR_URI" / "YEAR" / "MONTH" / "DAY" / "TIMEZONE" / "TZ" / "MD5" / "SHA1" / "SHA256" / "SHA512" / "isIRI" /
-					"isURI" / "isBLANK" / "dateTime" / "date" / "isLITERAL" / "isNUMERIC") "(" space Expression: Expression space ")" {return {Function:Function, Expression:Expression}}
+			STR = "STR"i {return "STR"}
+			LANG = "LANG"i {return "LANG"}
+			DATATYPE = "DATATYPE"i {return "DATATYPE"}
+			IRI = "IRI"i {return "IRI"}
+			URI = "URI"i {return "URI"}
+			ABS = "ABS"i {return "ABS"}
+			CEIL = "CEIL"i {return "CEIL"}
+			FLOOR = "FLOOR"i {return "FLOOR"}
+			ROUND = "ROUND"i {return "ROUND"}
+			STRLEN = "STRLEN"i {return "STRLEN"}
+			UCASE = "UCASE"i {return "UCASE"}
+			LCASE = "LCASE"i {return "LCASE"}
+			STRLEN = "STRLEN"i {return "STRLEN"}
+			ENCODE_FOR_URI = "ENCODE_FOR_URI"i {return "ENCODE_FOR_URI"}
+			YEAR = "YEAR"i {return "YEAR"}
+			MONTH = "MONTH"i {return "MONTH"}
+			DAY = "DAY"i {return "DAY"}
+			TIMEZONE = "TIMEZONE"i {return "TIMEZONE"}
+			TZ = "TZ"i {return "TZ"}
+			MD5 = "MD5"i {return "MD5"}
+			SHA1 = "SHA1"i {return "SHA1"}
+			SHA256 = "SHA256"i {return "SHA256"}
+			SHA512 = "SHA512"i {return "SHA512"}
+			isIRI = "isIRI"i {return "isIRI"}
+			isURI = "isURI"i {return "isURI"}
+			isBLANK = "isBLANK"i {return "isBLANK"}
+			dateTime = "dateTime"i {return "dateTime"}
+			date = "date"i {return "date"}
+			isLITERAL = "isLITERAL"i {return "isLITERAL"}
+			isNUMERIC = "isNUMERIC"i {return "isNUMERIC"}
+			LANGMATCHES = "LANGMATCHES"i {return "LANGMATCHES"}
+			CONTAINS = "CONTAINS"i {return "CONTAINS"}
+			STRSTARTS = "STRSTARTS"i {return "STRSTARTS"}
+			STRENDS = "STRENDS"i {return "STRENDS"}
+			STRBEFORE = "STRBEFORE"i {return "STRBEFORE"}
+			STRAFTER = "STRAFTER"i {return "STRAFTER"}
+			STRLANG = "STRLANG"i {return "STRLANG"}
+			STRDT = "STRDT"i {return "STRDT"}
+			sameTerm = "sameTerm"i {return "sameTerm"}
+			days = "days"i {return "days"}
+			years = "years"i {return "years"}
+			months = "months"i {return "months"}
+			hours = "hours"i {return "hours"}
+			minutes = "minutes"i {return "minutes"}
+			seconds = "seconds"i {return "seconds"}
 
-			FunctionExpressionB = Function:("LANGMATCHES" / "CONTAINS" / "STRSTARTS" / "STRENDS" / "STRBEFORE" / "STRAFTER" / "STRLANG" / "STRDT" / "sameTerm") "(" space Expression1:Expression space "," space Expression2:Expression space ")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2}}
+			FunctionExpressionA = Function:(STR / LANG / DATATYPE / IRI / URI / ABS / CEIL / FLOOR / ROUND / STRLEN / UCASE /
+					 LCASE / ENCODE_FOR_URI / YEAR / MONTH / DAY / TIMEZONE / TZ / MD5 / SHA1 / SHA256 / SHA512 / isIRI /
+					isURI / isBLANK / dateTime / date / isLITERAL / isNUMERIC) "(" space Expression: Expression space ")" {return {Function:Function, Expression:Expression}}
 
-			FunctionExpressionC = FunctionTime: ("days" / "DAYS" / "years" / "YEARS" / "months" / "MONTH" / "hours" / "HOURS" / "minutes" / "MINUTES" / "seconds" / "SECONDS") "(" space PrimaryExpressionL: PrimaryExpression space "-" space PrimaryExpressionR: PrimaryExpression space ")" {return {FunctionTime:FunctionTime, PrimaryExpressionL:PrimaryExpressionL, PrimaryExpressionR:PrimaryExpressionR}}
+			FunctionExpressionB = Function:(LANGMATCHES / CONTAINS / STRSTARTS / STRENDS / STRBEFORE / STRAFTER / STRLANG / STRDT / sameTerm) "(" space Expression1:Expression space "," space Expression2:Expression space ")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2}}
+
+			FunctionExpressionC = FunctionTime: (days / years / months / hours / minutes / seconds ) "(" space PrimaryExpressionL: PrimaryExpression space "-" space PrimaryExpressionR: PrimaryExpression space ")" {return {FunctionTime:FunctionTime, PrimaryExpressionL:PrimaryExpressionL, PrimaryExpressionR:PrimaryExpressionR}}
 
 			HASMAX = (HASMAX:'HASMAX' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASMAX, SpecialExpression:SpecialExpression}}
 			HASRANK = (HASRANK:'HASRANK' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASRANK, SpecialExpression:SpecialExpression}}
@@ -184,45 +247,53 @@
 
 			RegexExpression = RegexExpression:(RegexExpressionA / RegexExpressionB) {return {RegexExpression:RegexExpression}}
 
-			RegexExpressionA = ("REGEX" "(" space Expression1:Expression space  Comma space Expression2:Expression ( Comma space Expression3:Expression ) space ")")
+			RegexExpressionA = (REGEX "(" space Expression1:Expression space  Comma space Expression2:Expression ( Comma space Expression3:Expression ) space ")")
 
-			RegexExpressionB = ("REGEX" "(" space Expression1:Expression space  Comma space Expression2:Expression space ")")
+			RegexExpressionB = (REGEX "(" space Expression1:Expression space  Comma space Expression2:Expression space ")")
 
+			REGEX = "REGEX"i {return "REGEX"}
+			SUBSTRING = "SUBSTRING"i {return "SUBSTRING"}
+			SUBSTR = "SUBSTR"i {return "SUBSTR"}
+			bifSUBSTRING = "bif:SUBSTRING"i {return "bif:SUBSTRING"}
+			bifSUBSTR = "bif:SUBSTR"i {return "bif:SUBSTR"}
+			REPLACE = "REPLACE"i {return "REPLACE"}
+			EXISTS = "EXISTS"i {return "EXISTS"}
+			
 			SubstringExpression = SubstringExpression:(SubstringExpressionA/SubstringExpressionB) {return {SubstringExpression:SubstringExpression}}
 
-			SubstringExpressionA = (("SUBSTRING" / "SUBSTR" ) "(" space Expression1:Expression space  "," space Expression2:Expression  "," space Expression3:Expression  space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
+			SubstringExpressionA = ((SUBSTRING / SUBSTR ) "(" space Expression1:Expression space  "," space Expression2:Expression  "," space Expression3:Expression  space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
 
-			SubstringExpressionB = (("SUBSTRING" / "SUBSTR" ) "(" space Expression1:Expression space  "," space Expression2:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2}}
+			SubstringExpressionB = ((SUBSTRING / SUBSTR ) "(" space Expression1:Expression space  "," space Expression2:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2}}
 
 			SubstringBifExpression = SubstringBifExpression:(SubstringBifExpressionA/SubstringBifExpressionB) {return {SubstringBifExpression:SubstringBifExpression}}
 
-			SubstringBifExpressionA = (("bif:SUBSTRING" / "bif:SUBSTR" ) "(" space Expression1:Expression space  "," space Expression2:Expression "," space Expression3:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
+			SubstringBifExpressionA = ((bifSUBSTRING / bifSUBSTR ) "(" space Expression1:Expression space  "," space Expression2:Expression "," space Expression3:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
 
-			SubstringBifExpressionB = (("bif:SUBSTRING" / "bif:SUBSTR" ) "(" space Expression1:Expression space  "," space Expression2:Expression space ")")  {return {Expression1:Expression1, Expression2:Expression2}}
+			SubstringBifExpressionB = ((bifSUBSTRING / bifSUBSTR ) "(" space Expression1:Expression space  "," space Expression2:Expression space ")")  {return {Expression1:Expression1, Expression2:Expression2}}
 
 			StrReplaceExpression = StrReplaceExpression:(StrReplaceExpressionA/StrReplaceExpressionB) {return {StrReplaceExpression:StrReplaceExpression}}
 
-			StrReplaceExpressionA = ("REPLACE" "(" space Expression1:Expression space  "," space Expression2:Expression "," space Expression3:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
+			StrReplaceExpressionA = (REPLACE "(" space Expression1:Expression space  "," space Expression2:Expression "," space Expression3:Expression space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
 
-			StrReplaceExpressionB = ("REPLACE" "(" space Expression1:Expression space  "," space Expression2:Expression space ")")  {return {Expression1:Expression1, Expression2:Expression2}}
+			StrReplaceExpressionB = (REPLACE "(" space Expression1:Expression space  "," space Expression2:Expression space ")")  {return {Expression1:Expression1, Expression2:Expression2}}
 
 			ExistsFunc = ExistsFunc:(ExistsFuncA1 / ExistsFuncA /ExistsFuncB)  {return {ExistsFunc:ExistsFunc}}
 
-			ExistsFuncA1 = ("EXISTS" / "exists") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
-			ExistsFuncA = ("EXISTS" / "exists") space Expression:GroupGraphPattern {return{Expression:Expression}}
+			ExistsFuncA1 = EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			ExistsFuncA = EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
 
 			ExistsFuncB = "{" space Expression:GroupGraphPattern space "}"{return{Expression:Expression}}
 			GroupGraphPattern = (Expression)
 
 			NotExistsFunc = NotExistsFunc:(NotExistsFuncA / NotExistsFuncB1 /NotExistsFuncB / NotExistsFuncC1/ NotExistsFuncC) {return {NotExistsFunc:NotExistsFunc}}
 
-			NotExistsFuncA = ("NOT" / "not") space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
+			NotExistsFuncA = NOT space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
 
-			NotExistsFuncB = ("NOT" / "not") space  ("EXISTS" / "exists") space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncB1 = ("NOT" / "not") space  ("EXISTS" / "exists") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncB = NOT space EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncB1 = NOT  space  EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
-			NotExistsFuncC = ("NOT" / "not") space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncC1 = ("NOT" / "not") space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncC = NOT  space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncC1 = NOT  space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
 			ExpressionList2 = (NIL / "(" space Expression space  ( Comma space Expression )* space ")" )
 			ExpressionList3 = ("{" space Expression space  ( Comma space Expression )* space "}" )
@@ -261,7 +332,7 @@
 
 			ArgList = ArgListA / ArgListB / NIL
 
-			ArgListA = ("(" space DISTINCT: "DISTINCT" space ArgListExpression: ArgListExpression space ")" ) {return {DISTINCT:DISTINCT, ArgListExpression:ArgListExpression}}
+			ArgListA = ("(" space DISTINCT: DISTINCT space ArgListExpression: ArgListExpression space ")" ) {return {DISTINCT:DISTINCT, ArgListExpression:ArgListExpression}}
 
 			ArgListB = ("(" space ArgListExpression: ArgListExpression space ")" {return {ArgListExpression:ArgListExpression}})
 			NIL = "("  ")" {return}
@@ -315,10 +386,10 @@
 			space = ((" ")*) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$])+) {return {string: string.join("")}}
 
-			LikeExpression = ('LIKE' space string:(likeString1 / likeString2)) {return string}
+			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
 			likeString1 = ('"' start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? '"') {return {string: makeVar(string), start:start, end:end}}
 			likeString2 = ("'" start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? "'") {return {string: makeVar(string), start:start, end:end}}
 
 			// ReferenceToClass = (" : " Class:Chars_String) {return {name:makeVar(Class),type:resolveTypeFromSchemaForClass(makeVar(Class))}}
 
-			BetweenExpression = ('BETWEEN' space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}
+			BetweenExpression = ('BETWEEN'i space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}
