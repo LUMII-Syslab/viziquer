@@ -169,7 +169,7 @@
 
 			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC) {return {FunctionExpression:FunctionExpression}}
 
-			FunctionExpressionA = Function:("STR" / "LANG" / "DATATYPE" / "IRI" / "URI" / "ABS" / "CEIL" / "FLOOR" / "ROUND" / "STRLEN" / "UCASE" /
+			FunctionExpressionA = Function:("STR" / "LANG" / "DATATYPE" / "IRI" / "URI" / "ABS" / "CEIL" / "FLOOR" / "ROUND" / "round" / "STRLEN" / "UCASE" /
 					 "LCASE" / "ENCODE_FOR_URI" / "YEAR" / "MONTH" / "DAY" / "TIMEZONE" / "TZ" / "MD5" / "SHA1" / "SHA256" / "SHA512" / "isIRI" /
 					"isURI" / "isBLANK" / "dateTime" / "date" / "isLITERAL" / "isNUMERIC") "(" space Expression: Expression space ")" {return {Function:Function, Expression:Expression}}
 
