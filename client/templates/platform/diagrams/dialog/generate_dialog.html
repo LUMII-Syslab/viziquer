@@ -2,7 +2,50 @@
 
 <template name="dialog">
 
-	{{#each tabs}}
+	{{#if tabs}}
+
+	    <ul class="nav nav-tabs">
+
+		    {{#each tabs}}
+		    	{{#if isOpen}}
+					<li class="active"><a data-toggle="tab" href="#{{_id}}">{{name}}</a></li>
+				{{else}}
+					<li><a data-toggle="tab" href="#{{_id}}">{{name}}</a></li>
+				{{/if}}
+		    {{/each}}
+
+		</ul>
+
+		<div class="tab-content">
+
+			{{#each tabs}}
+
+				{{#if isOpen}}
+
+		        	<div id="{{_id}}" class="tab-pane fade in active">
+		        		<div class="panel-body">
+		            		{{> Template.dynamic template=templateId data=tab}}
+		        		</div>
+		        	</div>
+
+		        {{else}}
+
+				    <div id="{{_id}}" class="tab-pane fade">
+				    	<div class="panel-body">
+		            		{{> Template.dynamic template=templateId data=tab}}
+		            	</div>
+		        	</div>
+
+		        {{/if}}
+
+			{{/each}}
+
+		</div>
+
+	{{/if}}
+
+
+<!-- 	{{#each tabs}}
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -44,7 +87,7 @@
 
 		</div>
 	
-	{{/each}}
+	{{/each}} -->
 
 </template>
 
@@ -54,7 +97,7 @@
 	{{#each compart_types}}
 
 		{{#if input}}
-			<div id="{{_id}}" class="form-group compart-type">
+			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
@@ -63,7 +106,7 @@
 		{{/if}}
 
 		{{#if textarea}}
-			<div id="{{_id}}" class="form-group compart-type">
+			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
 				<textarea type="text" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				style="overflow:auto;resize:none;" id="{{compartmentId}}"
@@ -76,7 +119,7 @@
 		{{/if}}
 
 		{{#if selection}}
-			<div id="{{_id}}" class="form-group compart-type">
+			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
 				<select type="text" class="form-control dialog-selection {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
@@ -96,7 +139,7 @@
 		{{/if}}
 
 		{{#if combobox}}
-			<div id="{{_id}}" class="form-group compart-type">
+			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
@@ -116,7 +159,7 @@
 		{{/if}}
 
 		{{#if checkbox}}
-			<div id="{{_id}}" class="form-group compart-type">
+			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}" class="label-checkbox">
 				
 					<input type="checkbox" class="dialog-checkbox {{subCompartmentTypeId}} input-sm"
@@ -143,7 +186,7 @@
 		{{/if}}
 
 		{{#if radio}}
-			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}">
+			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}" style="margin-bottom:10px;">
 				{{#each values}}
 					<label for="{{compartmentId}}" class="label-radio">{{name}}
 
@@ -168,7 +211,7 @@
 		{{/if}}
 
 		{{#if cloudFiles}}
-			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}">
+			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}" style="margin-bottom:10px;">
 				
 				{{#unless disabled}}
 					
@@ -183,9 +226,9 @@
 				{{/unless}}
 				
 
-				<div class="row">
-					<div class="col-sm-12">
-						<table class="table table-bordered table-condensed table-hover table-striped">
+				<div class="row" style="margin-bottom:10px;">
+					<div class="col-sm-12" >
+						<table class="table table-bordered table-condensed table-hover table-striped" style="margin-bottom:0px;">
 							<tbody>
 
 							{{#each addedFiles}}	
@@ -249,7 +292,7 @@
 		{{/if}}
 
 		{{#if custom}}
-			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}">
+			<div class="custom-row {{subCompartmentTypeId}}" templateName="{{templateName}}" style="margin-bottom:10px;">
 				{{> Template.dynamic template=templateName data=this}}
 			</div>
 		{{/if}}
