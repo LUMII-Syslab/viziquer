@@ -1,3 +1,1 @@
-FROM meteorhacks/meteord:onbuild
-
-
+FROM aedm/minimeteor
