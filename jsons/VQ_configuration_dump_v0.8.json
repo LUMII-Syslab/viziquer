@@ -1180,6 +1180,7 @@
                         "_id": "479fc64e382dc2d31bcc0755",
                         "index": 7,
                         "name": "Field Name",
+                        "label":"Alias",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": "<-",
@@ -1378,6 +1379,7 @@
                         "_id": "479fc64e382dc2d31bdd0855",
                         "index": 7,
                         "name": "Field Name",
+                        "label":"Alias",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": "<-",
@@ -1916,6 +1918,7 @@
                       {
                         "_id": "5970a91e72dc2c91470e781d",
                         "name": "Name",
+                        "label": "Name (Alias or attribute)",
                         "extensionPoints": [],
                         "prefix": "order by ",
                         "suffix": null,
