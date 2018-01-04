@@ -158,7 +158,7 @@
 
 			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
-			AggregateAO = Aggregate: COUNT_DISTINCT "(" space Expression: Expression space ")" {return {Aggregate:COUNT, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateAO = Aggregate: COUNT_DISTINCT "(" space Expression: Expression space ")" {return {Aggregate:"COUNT", DISTINCT:"DISTINCT", Expression:Expression}}
 			AggregateA = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" DISTINCT:(DISTINCT) space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
 			AggregateB = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}

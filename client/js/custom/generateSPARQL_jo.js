@@ -1160,13 +1160,14 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "SELECT DISTINCT " + selectResult["innerDistinct"].join(" ") + " WHERE{\n";
 							
 							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL"){
-								temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
+								// temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
+								temp.unshift(sparqlTable["classTriple"]);
 							}
 							
 							var orderBy = sparqlTable["subClasses"][subclass]["order"];
 							//ad tripoles from order by
 							temp = temp.concat(orderBy["triples"])
-							
+
 							var temp = temp.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});
