@@ -61,7 +61,7 @@
 			}
 		}
 
-			Main = (Expression space)
+			Main = (space Expression space)
 			// Expression = classExpr / ExpressionA
 			Expression = "[ ]" / "[ + ]" / "(no_class)" / classExpr / ValueScope / ConditionalOrExpressionA
 			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
