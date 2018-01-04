@@ -851,8 +851,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					object = idTable[subclazz["identification"]["_id"]];
 				}
 				// if is global subQuery then no need in link between classes
-				if(subclazz["linkIdentification"]["localName"] != "==" && subject != null && object != null){
+				if(subclazz["linkIdentification"]["localName"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
 					temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
+				} else{
+					if(preditate == null || preditate.replace(" ", "") =="") Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["localName"] + "'", -3);
+					else if(subject == null) Interpreter.showErrorMsg("Unknown property '" + subclazz["identification"]["localName"] + "'", -3);
+					else if(object == null) Interpreter.showErrorMsg("Unknown property '" + parentClass["identification"]["localName"] + "'", -3);
 				}
 				// if(subclazz["linkIdentification"]["localName"] == "==") sparqlTable["filters"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
 				if(subclazz["linkIdentification"]["localName"] == "==") temp["sparqlTable"]["equalityLink"] = true;
@@ -1160,13 +1164,14 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "SELECT DISTINCT " + selectResult["innerDistinct"].join(" ") + " WHERE{\n";
 							
 							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL"){
-								temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
+								// temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
+								temp.unshift(sparqlTable["classTriple"]);
 							}
 							
 							var orderBy = sparqlTable["subClasses"][subclass]["order"];
 							//ad tripoles from order by
 							temp = temp.concat(orderBy["triples"])
-							
+
 							var temp = temp.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});
