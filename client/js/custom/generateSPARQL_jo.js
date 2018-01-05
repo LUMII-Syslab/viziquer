@@ -455,7 +455,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 tempSelect = tempSelect.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			 });
-			 
+			 if(tempSelect.length < 1) Interpreter.showErrorMsg("Please specify at least one attribute (or * to select all attributes of the class)");
 			 SPARQL_text = SPARQL_text + tempSelect.join(" ");
 			 SPARQL_text = SPARQL_text + " WHERE{\n";
 
@@ -819,6 +819,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		underNotLink = false;
 		//link triple
 		//if(typeof subclazz["linkIdentification"]["localName"] !== 'undefined'){
+			
+			if(subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
 			
 			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){
 				var subject, preditate, object;
