@@ -5,6 +5,31 @@ Interpreter.customMethods({
 		console.log("SetParametrs called, not implemented");
 	},
 
+	TogglePlainMode: function() {
+    //console.log(Router.current().params);
+		if (Router.current().params.plain) {
+			var path = {
+						projectId: Session.get("activeProject"),
+						_id: Session.get("activeDiagram"),
+						diagramTypeId: Session.get("diagramType"),
+						versionId: Session.get("versionId"),
+					};
+
+			Router.go("diagram", path);
+		} else {
+			var path = {
+					 plain:"true",
+					 projectId: Session.get("activeProject"),
+					 _id: Session.get("activeDiagram"),
+					 diagramTypeId: Session.get("diagramType"),
+					 versionId: Session.get("versionId"),
+				 };
+
+		 Router.go("plain", path);
+		}
+
+	},
+
 	TestPr: function() {
 
 		var schema = new VQ_Schema();

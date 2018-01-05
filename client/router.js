@@ -301,8 +301,8 @@ Router.map( function () {
   });
 
 // no diagram route
-this.route('nodiagram', {
-    path: 'nodiagram/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/',
+this.route('plain', {
+    path: 'plain/:plain/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/',
     template: "noDiagramTemplate",
     layoutTemplate: "mainLayout",
     yieldTemplates: {
@@ -314,7 +314,6 @@ this.route('nodiagram', {
         var dgr_id = this.params._id;
         var type_id = this.params.diagramTypeId;
         var version_id = this.params.versionId;
-
 
         Deps.autorun(function () {
             Meteor.subscribe("Document_Sections", Session.get("documentSections"));
@@ -341,9 +340,11 @@ this.route('nodiagram', {
       var type_id = this.params.diagramTypeId;
       var version_id = this.params.versionId;
 
+
     //sets panel item to activate
       Session.set("activePanelItem", "diagrams");
 
+      Session.set("editMode", reset_variable());
     //sets active diagram
       Session.set("activeDiagram", dgr_id);
       Session.set("diagramType", type_id);

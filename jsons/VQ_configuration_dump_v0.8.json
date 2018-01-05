@@ -119,6 +119,12 @@
             "name": "Delete",
             "procedure": "DeleteDiagram",
             "icon": "fa-trash-o"
+          },
+          {
+            "id": "49edcc5e3c7444257f9d916b",
+            "name": "Toggle Plain Mode",
+            "procedure": "TogglePlainMode",
+            "icon": "fa-angle-double-down"
           }
         ],
         "readModeToolbar": [
@@ -161,6 +167,14 @@
             "icon": "fa-lock",
             "isInEditableVersion": false,
             "isForAdminOnly": true
+          },
+          {
+            "id": "49edcc5e3c7444257f9d916b",
+            "name": "Toggle Plain Mode",
+            "procedure": "TogglePlainMode",
+            "icon": "fa-angle-double-down",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
           }
         ],
         "globalKeyStrokes": [
