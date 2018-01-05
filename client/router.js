@@ -37,7 +37,7 @@ Router.configure({
             Meteor.subscribe('navbar_user', {});
             Meteor.subscribe('Notifications', {limit: 6});
             // Meteor.subscribe('Chats', {unseen: true});
-        } 
+        }
     },
 
     notFoundTemplate: 'notFound',
@@ -197,22 +197,22 @@ Router.map( function () {
           Session.set("diagrams", diagrams_query);
 
           Meteor.subscribe("Diagrams", Session.get("diagrams"));
-          Meteor.subscribe("FoundDiagrams", Session.get("diagrams"));          
-          
+          Meteor.subscribe("FoundDiagrams", Session.get("diagrams"));
+
           Meteor.subscribe("DiagramTypes_UserVersionSettings", {projectId: proj_id, versionId: version_id});
 
           Meteor.subscribe("ProjectsGroups", {projectId: proj_id}),
 
           //searching suggestions
-          Deps.autorun(function () {    
+          Deps.autorun(function () {
               Meteor.subscribe("Searches", Session.get("diagramsSearch"));
           });
       },
 
       onStop: function() {
          var no_query = Utilities.resetQuery();
-         Session.set("diagrams", no_query); 
-         Session.set("sortBy", reset_variable());     
+         Session.set("diagrams", no_query);
+         Session.set("sortBy", reset_variable());
       },
   });
 
@@ -232,12 +232,12 @@ Router.map( function () {
 
 
           Deps.autorun(function () {
-              Meteor.subscribe("Document_Sections", Session.get("documentSections"));           
+              Meteor.subscribe("Document_Sections", Session.get("documentSections"));
           });
 
           // Meteor.subscribe("ElementsSections_Sections", {
           //                                       diagramId: dgr_id, projectId: proj_id,
-          //                                       versionId: version_id});          
+          //                                       versionId: version_id});
 
           Meteor.subscribe("ProjectsGroups", {projectId: proj_id});
 
@@ -267,7 +267,7 @@ Router.map( function () {
             Session.set("editMode", reset_variable());
         }
 
-      //sets active diagram  
+      //sets active diagram
         Session.set("activeDiagram", dgr_id);
         Session.set("diagramType", type_id);
         Session.set("activeElement", reset_variable());
@@ -300,6 +300,83 @@ Router.map( function () {
 
   });
 
+// no diagram route
+this.route('nodiagram', {
+    path: 'nodiagram/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/',
+    template: "noDiagramTemplate",
+    layoutTemplate: "mainLayout",
+    yieldTemplates: {
+        'diagramRibbon': {to: 'ribbon'},
+    },
+
+    onAfterAction: function() {
+        var proj_id = this.params.projectId;
+        var dgr_id = this.params._id;
+        var type_id = this.params.diagramTypeId;
+        var version_id = this.params.versionId;
+
+
+        Deps.autorun(function () {
+            Meteor.subscribe("Document_Sections", Session.get("documentSections"));
+        });
+
+        // Meteor.subscribe("ElementsSections_Sections", {
+        //                                       diagramId: dgr_id, projectId: proj_id,
+        //                                       versionId: version_id});
+
+        Meteor.subscribe("ProjectsGroups", {projectId: proj_id});
+
+        //loading posts dynamically depending on the limit value
+        Deps.autorun(function () {
+            Meteor.subscribe("DiagramLogs", Session.get("logs"));
+        });
+
+
+    },
+
+    waitOn: function() {
+
+      var proj_id = this.params.projectId;
+      var dgr_id = this.params._id;
+      var type_id = this.params.diagramTypeId;
+      var version_id = this.params.versionId;
+
+    //sets panel item to activate
+      Session.set("activePanelItem", "diagrams");
+
+    //sets active diagram
+      Session.set("activeDiagram", dgr_id);
+      Session.set("diagramType", type_id);
+      Session.set("activeElement", reset_variable());
+
+    //sets version id
+      Session.set("versionId", version_id);
+
+      //reseting the editor
+      // var stage = Interpreter.editor;
+      // if (stage)
+      //   stage["edit"] = reset_variable();
+
+      return [
+
+          Meteor.subscribe("Diagram_Types", {
+                          id: dgr_id, projectId: proj_id, versionId: version_id,
+                          diagramTypeId: type_id}),
+
+          Meteor.subscribe("Diagram_Palette_ElementType", {
+                        id: dgr_id, projectId: proj_id, versionId: version_id,
+                        diagramTypeId: type_id}),
+
+          Meteor.subscribe("Diagram_Locker", {projectId: proj_id,
+                                            diagramId: dgr_id,
+                                            versionId: version_id,
+                                          }),
+      ];
+
+    },
+
+});
+
 //user routes
 
   this.route('users', {
@@ -316,7 +393,7 @@ Router.map( function () {
           Session.set("activePanelItem", "users");
 
           //subscribes for project users
-          Deps.autorun(function () {  
+          Deps.autorun(function () {
 
               //subscribes for the users
               Meteor.subscribe("SearchNewProjectUsers", Session.get("searchUsers"));
@@ -406,7 +483,7 @@ Router.map( function () {
       onStop: function() {
           var no_query = Utilities.resetQuery();
 
-          Session.set("toolVersionId", reset_variable()); 
+          Session.set("toolVersionId", reset_variable());
       },
   });
 
@@ -522,7 +599,7 @@ Router.map( function () {
       layoutTemplate: "mainLayoutWithHeader",
       yieldTemplates: {
           'profileRibbon': {to: 'ribbon'},
-          'profileHeader': {to: 'header'},     
+          'profileHeader': {to: 'header'},
       },
 
       waitOn: function() {
@@ -603,7 +680,7 @@ Router.map( function () {
 
         if (proj_id == "all-projects" || proj_id === undefined) {
           proj_id = reset_variable();
- 
+
           project_ids = ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).map(
             function(proj_user) {
                 return proj_user["projectId"];
@@ -617,12 +694,12 @@ Router.map( function () {
 
         Session.set("tag", tag);
         Session.set("nr", nr);
- 
+
         var posts_per_page = 7;
         Session.set("postsPerPage", posts_per_page);
- 
+
         Meteor.subscribe("forumPostsCount", {tag: tag, projectIds: project_ids});
-        
+
         return [
           Meteor.subscribe("Forum_Posts", {tag: tag, step: posts_per_page, nr: nr, projectId: proj_id}),
           Meteor.subscribe("Forum_Tags", {projectId: proj_id}),
@@ -657,7 +734,7 @@ Router.map( function () {
         Session.set("forumPostProjectId", proj_id);
 
         Meteor.subscribe("Forum_Posts", {postId: id, projectId: proj_id});
-        Meteor.subscribe("Forum_PostComments", {postId: id, projectId: proj_id});     
+        Meteor.subscribe("Forum_PostComments", {postId: id, projectId: proj_id});
       },
 
       onStop: function() {

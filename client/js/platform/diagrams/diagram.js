@@ -53,7 +53,14 @@ _.extend(Interpreter, {
 
 });
 
-
+Template.noDiagramTemplate.helpers({
+	diagram_type: function() {
+		return {diagram_size: 10,
+				dialog_size: 2,
+				is_ajoo_editor: false
+			};
+	}
+})
 //Start of sections template
 Template.diagramTemplate.helpers({
 
@@ -130,7 +137,7 @@ Template.diagramTemplate.helpers({
 
 });
 
-Template.sparqlForm.events({
+var sparql_form_events = {
 
 	"blur #generated-sparql": function(e) {
 		var val = $(e.target).val();
@@ -179,11 +186,12 @@ Template.sparqlForm.events({
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
 	}
 
-});
+};
 
+Template.sparqlForm.events(sparql_form_events);
+Template.sparqlForm_see_results.events(sparql_form_events);
 
-
-Template.sparqlForm.helpers({
+var sparql_form_helpers = {
 
 	generatedSparql: function() {
 		return Session.get("generatedSparql");
@@ -250,7 +258,10 @@ Template.sparqlForm.helpers({
 			return offset < number;
 		}
 
-});
+};
+
+Template.sparqlForm.helpers(sparql_form_helpers);
+Template.sparqlForm_see_results.helpers(sparql_form_helpers);
 
 
 Template.editingMessage.helpers({
