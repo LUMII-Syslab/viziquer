@@ -646,7 +646,7 @@
               }
             ],
             "name": "NamedQuery",
-            "isAbstract": false,
+            "isAbstract": true,
             "targetDiagramTypeId": "oQ4WPmhWQdAmHL68y"
           },
           "compartmentTypes": [
@@ -3040,7 +3040,7 @@
                 "elementId": "fXSBiEzTmHZQnkWsj",
                 "index": 50,
                 "noRepresentation": false,
-                "tabIndex": 6,
+                "tabIndex": 50,
                 "dialogTabId": "Joi9mPQiMNuGa6Lgc",
                 "name": "Global Subquery Link",
                 "isObjectRepresentation": false,
