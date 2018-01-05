@@ -80,7 +80,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	var parsed_exp2 = transformSubstring(parsed_exp1);
 	//console.log(JSON.stringify(parsed_exp2,null,2));
 	var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
-	counter++;
+	//counter++;
 	var result = generateExpression(parsed_exp3, "", className, null, true, false, false);
 	
 	//console.log(JSON.stringify(parsed_exp3,null,2));
@@ -120,7 +120,7 @@ parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, 
 	//var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
 	//counter++;
 	var result = generateExpressionSQL(parsed_exp2, "", className, null, true, false, false);
-	
+		
 	return {"exp":result, "sqlSubSelectMap": sqlSubSelectMap, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression};
 }
 
@@ -342,10 +342,11 @@ function setVariableName(varName, alias, variableData){
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
 getPath = function(expressionTable){
+	
 	var prTable = [];
 	var path = "";
 	for(var key in expressionTable){
-		if(typeof expressionTable[key]["path"]!== 'undefined'){
+		if(typeof expressionTable[key]["path"]!== 'undefined' && typeof expressionTable[key]["path"]["type"]!== 'undefined' &&  expressionTable[key]["path"]["type"] != null){
 			var pathPart =  getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":" + expressionTable[key]["path"]["name"];
 			var namespace = expressionTable[key]["path"]["type"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -354,7 +355,12 @@ getPath = function(expressionTable){
 			if(typeof expressionTable[key]["path"]["inv"] === "string") pathPart = "^" + pathPart;
 			if(path == "") path = pathPart;
 			else path = path +"/" + pathPart;
+			
+		} else {
+			 Interpreter.showErrorMsg("Unrecognized property path. Please specify property path.");
+			 return null;
 		}
+		
 	}
 	return {path:path, prefixTable:prTable};
 }
@@ -426,15 +432,19 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
 				var path = getPath(pe["Path"]);
-				for (var prefix in path["prefixTable"]) { 
-					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				if(path == null) prefixedName = null;
+				else{
+					for (var prefix in path["prefixTable"]) { 
+						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					}
+					prefixedName = path["path"]+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
 				}
-				prefixedName = path["path"]+ "/" + getPrefix(pe["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + pe["PrimaryExpression"]["var"]["name"];
 				//variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = pe["PrimaryExpression"]["var"]["name"] + "_" + counter;
 				variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = {"alias" : pe["PrimaryExpression"]["var"]["name"] + "_" + counter, "isvar" : false};
 				variableNamesAll[pe["PrimaryExpression"]["var"]["name"]+ "_" + counter] = pe["PrimaryExpression"]["var"]["name"];
 				variable = setVariableName(pe["PrimaryExpression"]["var"]["name"], alias, pe["PrimaryExpression"]["var"]);
 				expressionLevelNames[pe["PrimaryExpression"]["var"]["name"]] = variable;
+				
 			}
 			else if(typeof pe["var"] !== 'undefined') {
 				//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
@@ -580,10 +590,13 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
 					var path = getPath(pe["Path"]);
-					for (var prefix in path["prefixTable"]) { 
-						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					if(path == null) prefixedName = null;
+					else{
+						for (var prefix in path["prefixTable"]) { 
+							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						}
+						prefixedName = path["path"];
 					}
-					prefixedName = path["path"];
 					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 					variableNamesClass[pe["var"]["name"]] ={"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
@@ -596,10 +609,13 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
 				
 					var path = getPath(pe["var"]["name"]);
-					for (var prefix in path["prefixTable"]) { 
-						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					if(path == null) prefixedName = null;
+					else{
+						for (var prefix in path["prefixTable"]) { 
+							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						}
+						prefixedName = path["path"];
 					}
-					prefixedName = path["path"];
 				}
 						
 				expressionTable[count] =  {
@@ -626,10 +642,13 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
 					var path = getPath(pe["Path"]);
-					for (var prefix in path["prefixTable"]) { 
-						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					if(path == null) prefixedName = null;
+					else{
+						for (var prefix in path["prefixTable"]) { 
+							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						}
+						prefixedName = path["path"];
 					}
-					prefixedName = path["path"];
 					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
@@ -949,16 +968,19 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
 			var path = getPath(expressionTable[key]["Path"]);
-			for (var prefix in path["prefixTable"]) { 
-				if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+			if(path == null) prefixName = null;
+			else{
+				for (var prefix in path["prefixTable"]) { 
+					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				}
+				var prefixName = path["path"];
 			}
-			var prefixName = path["path"];
 			// findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")
 			if(typeof expressionTable[key]["PrimaryExpression"]["SubstringExpression"] !== 'undefined'){
 				var substringvar = findINExpressionTable(expressionTable[key]["PrimaryExpression"], "var");
 				var variable = setVariableName(substringvar["name"], alias, substringvar);
 				variableTable.push("?" + variable);
-				if(generateTriples == true && substringvar['type'] != null) {
+				if(generateTriples == true && substringvar['type'] != null && path != null) {
 					var inFilter = false;
 					if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && variableNamesClass[substringvar["name"]]["isvar"] != true) inFilter = true;
 					tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + getPrefix(substringvar["type"]["Prefix"]) + ":" + substringvar["name"], "object":className, "inFilter":inFilter});
@@ -972,7 +994,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			} else {
 				var variable = setVariableName(expressionTable[key]["PrimaryExpression"]["var"]["name"], alias, expressionTable[key]["PrimaryExpression"]["var"])
 				variableTable.push("?" + variable);
-				if(generateTriples == true && expressionTable[key]["PrimaryExpression"]["var"]['type'] != null) {
+				if(generateTriples == true && expressionTable[key]["PrimaryExpression"]["var"]['type'] != null && path != null) {
 					var inFilter = false;
 					if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isvar"] != true) inFilter = true;
 					tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className, "inFilter":inFilter});
