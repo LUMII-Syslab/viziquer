@@ -41,7 +41,7 @@ Meteor.methods({
 
 				catch (ex) {
 					// ERROR - pass the original SPARQL to the server
-					_.extend(sparql_log_entry, {successfull:false})
+					_.extend(sparql_log_entry, {successfull:false, error_message:ex})
 					console.error(ex);
 				};
 			}
