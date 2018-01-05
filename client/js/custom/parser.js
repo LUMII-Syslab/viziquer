@@ -1049,7 +1049,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		if(key == "var") {
 			var varName
-			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined') varName = expressionTable[key]['type']['localName'];
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"] != "CLASS_ALIAS") varName = expressionTable[key]['type']['localName'];
 			else varName = expressionTable[key]["name"];
 			var variable = setVariableName(varName, alias, expressionTable[key])
 			SPARQLstring = SPARQLstring + "?" + variable;
