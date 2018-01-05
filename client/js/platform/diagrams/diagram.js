@@ -61,7 +61,14 @@ Template.noDiagramTemplate.helpers({
 			};
 	}
 })
+
 //Start of sections template
+
+Template.diagramTemplate.onRendered(function() {
+	$("#lockDiagram").trigger("click");
+});
+
+
 Template.diagramTemplate.helpers({
 
 	diagram_type: function() {

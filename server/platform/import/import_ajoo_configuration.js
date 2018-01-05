@@ -209,7 +209,10 @@ ImportAjooConfiguration.prototype = {
 				return self.obj_type_map[elem_type_id];
 			});
 
-			var new_palette_button_id = PaletteButtons.insert(object);
+
+			if (ElementTypes.find({_id: {$in: object.elementTypeIds,}, isAbstract: true,}).count() == 0) {
+				var new_palette_button_id = PaletteButtons.insert(object);
+			}
 		});
 	},
 

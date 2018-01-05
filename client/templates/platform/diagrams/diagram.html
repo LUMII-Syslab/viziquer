@@ -17,6 +17,7 @@
   </div>
 
 </template>
+
 <!-- Start of diagram template -->
 <template name="diagramTemplate">
 
@@ -492,22 +493,22 @@
 
         {{#if lockingButton}}
             <div class="alert alert-success clearfix">
+                <button id="lockDiagram" type="button" class="btn btn-success btn-xs pull-right1">{{_ "diagram_edit_button"}}</button>
                 {{_ "diagram_can_be_edited"}}
-                <button id="lockDiagram" type="button" class="btn btn-success btn-xs pull-right">{{_ "diagram_edit_button"}}</button>
             </div>
         {{/if}}
 
         {{#if unLockButton}}
             <div class="alert alert-info clearfix" style="min">
+                <button id="unLockDiagram" type="button" class="btn btn-info btn-xs pull-right1">{{_ "diagram_unlock_button"}}</button>
                 {{_ "diagram_is_edited"}}
-                <button id="unLockDiagram" type="button" class="btn btn-info btn-xs pull-right">{{_ "diagram_unlock_button"}}</button>
             </div>
         {{/if}}
 
         {{#if isEdited}}
             <div class="alert alert-warning clearfix">
+                <button id="lockDiagram" type="button" class="btn btn-warning btn-xs pull-right1">{{_ "diagram_unlock_button"}}</button>
                 {{_ "diagram_locked" user=userName}}
-                <button id="lockDiagram" type="button" class="btn btn-warning btn-xs pull-right">{{_ "diagram_unlock_button"}}</button>
             </div>
         {{/if}}
 
