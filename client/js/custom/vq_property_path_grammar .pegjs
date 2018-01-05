@@ -39,7 +39,7 @@
 			};
 		}
 
-			Main = (PrimaryExpression:(iri / PPE / VAR )) {return {PrimaryExpression:PrimaryExpression}}
+			Main = (space PrimaryExpression:(iri / PPE / VAR ) space) {return {PrimaryExpression:PrimaryExpression}}
 			
 			iri = iri:PrefixedName {return {iri:iri}}
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
@@ -59,4 +59,4 @@
 			invPath3 = (Chars_String:Chars_String) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
 			
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "+" / "=") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "+" / "="/ [0-9])*)
-			
+			space = ((" ")*) {return }
