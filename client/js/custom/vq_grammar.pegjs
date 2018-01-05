@@ -184,7 +184,7 @@
 			
 			SEPARATOR = (";" space SEPARATOR space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
 			
-			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC) {return {FunctionExpression:FunctionExpression}}
+			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC / IFFunction) {return {FunctionExpression:FunctionExpression}}
 
 			STR = "STR"i {return "STR"}
 			LANG = "LANG"i {return "LANG"}
@@ -231,6 +231,7 @@
 			hours = "hours"i {return "hours"}
 			minutes = "minutes"i {return "minutes"}
 			seconds = "seconds"i {return "seconds"}
+			IF = "IF"i {return "IF"}
 
 			FunctionExpressionA = Function:(STR / LANG / DATATYPE / IRI / URI / ABS / CEIL / FLOOR / ROUND / STRLEN / UCASE /
 					 LCASE / ENCODE_FOR_URI / YEAR / MONTH / DAY / TIMEZONE / TZ / MD5 / SHA1 / SHA256 / SHA512 / isIRI /
@@ -240,6 +241,8 @@
 
 			FunctionExpressionC = FunctionTime: (days / years / months / hours / minutes / seconds ) "(" space PrimaryExpressionL: PrimaryExpression space "-" space PrimaryExpressionR: PrimaryExpression space ")" {return {FunctionTime:FunctionTime, PrimaryExpressionL:PrimaryExpressionL, PrimaryExpressionR:PrimaryExpressionR}}
 
+			IFFunction = Function: IF "(" space Expression1:Expression space "," space Expression2:Expression space "," space Expression3:Expression space")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
+			
 			HASMAX = (HASMAX:'HASMAX' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASMAX, SpecialExpression:SpecialExpression}}
 			HASRANK = (HASRANK:'HASRANK' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASRANK, SpecialExpression:SpecialExpression}}
 

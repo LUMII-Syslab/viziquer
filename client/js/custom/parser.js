@@ -1049,7 +1049,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		if(key == "var") {
 			var varName
-			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined') varName = expressionTable[key]['type']['localName'];
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"] != "CLASS_ALIAS") varName = expressionTable[key]['type']['localName'];
 			else varName = expressionTable[key]["name"];
 			var variable = setVariableName(varName, alias, expressionTable[key])
 			SPARQLstring = SPARQLstring + "?" + variable;
@@ -1501,6 +1501,17 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			if (typeof expressionTable[key]["Expression"]!== 'undefined') {
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation) + ")";
 			}
+			var expTable = [];
+			if (typeof expressionTable[key]["Expression1"]!== 'undefined') {
+				expTable.push(generateExpression({Expression : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation));
+			}
+			if (typeof expressionTable[key]["Expression2"]!== 'undefined') {
+				expTable.push(generateExpression({Expression : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation));
+			}
+			if (typeof expressionTable[key]["Expression3"]!== 'undefined') {
+				expTable.push(generateExpression({Expression : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation));
+			}
+			if(expTable.length > 0) SPARQLstring = SPARQLstring  + " (" + expTable.join(", ") +")";
 			if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation) + ")";
 			}
