@@ -11,8 +11,6 @@
               </div>
           </div>
 
-
-
       {{/with}}
   </div>
 
@@ -21,46 +19,50 @@
 <!-- Start of diagram template -->
 <template name="diagramTemplate">
 
-    <div class="row">
+      <div style="display:{{plain.showPlain}}" >
 
-        {{#with diagram_type}}
-            <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:10px;">
-                <div class="row">
-                  <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:10px;">
+        {{> noDiagramTemplate}}
 
-                      {{> diagramEditor}}
+      </div>
 
+      <div class="row" style="display:{{plain.showDiagram}}" >
+
+          {{#with diagram_type}}
+              <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:10px;">
+                  <div class="row">
+                    <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:10px;">
+
+                        {{> diagramEditor}}
+
+                    </div>
                   </div>
-                </div>
-                <div class="row">
-                        {{> sparqlForm}}
-                </div>
-            </div>
+                  <div class="row">
+                      {{> sparqlForm}}
+                  </div>
+              </div>
 
 
-            <div id="compartment-forms" class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2">
+              <div id="compartment-forms" class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2">
 
-                {{> editingMessage editing=editing}}
+                  {{> editingMessage editing=editing}}
 
-                {{> errorMessages}}
+                  {{> errorMessages}}
 
-                <div class="panel-group" id="dialog">
-                    {{> dialog}}
-                </div>
-            </div>
-        {{/with}}
-    </div>
+                  <div class="panel-group" id="dialog">
+                      {{> dialog}}
+                  </div>
+              </div>
+          {{/with}}
+      </div>
 
+      {{#each templates}}
+          {{> Template.dynamic template=templateId}}
+      {{/each}}
 
+      {{> AddLink}}
+      {{> SPARQL}}
 
-    {{#each templates}}
-        {{> Template.dynamic template=templateId}}
-    {{/each}}
-
-    {{> AddLink}}
-    {{> SPARQL}}
-
-    {{> schemaTree}}
+      {{> schemaTree}}
 
 </template>
 <!-- End of diagram template -->

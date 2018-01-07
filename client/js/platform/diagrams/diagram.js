@@ -54,12 +54,14 @@ _.extend(Interpreter, {
 });
 
 Template.noDiagramTemplate.helpers({
+
 	diagram_type: function() {
 		return {diagram_size: 10,
 				dialog_size: 2,
 				is_ajoo_editor: false
 			};
-	}
+	},
+
 })
 
 //Start of sections template
@@ -70,6 +72,15 @@ Template.diagramTemplate.onRendered(function() {
 
 
 Template.diagramTemplate.helpers({
+
+	// isPlain: function() {
+	// 	return Session.get("isPlain");
+	// },
+
+
+	plain: function() {
+		return Session.get("plain");
+	},
 
 	diagram_type: function() {
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
@@ -662,6 +673,9 @@ Template.diagramEditor.onRendered(function() {
 });
 
 Template.diagramEditor.onDestroyed(function() {
+
+	console.log("on destroy diagram editor")
+
 
 	var list = {diagramId: Session.get("activeDiagram")};
 	Utilities.addingProjectOrToolParams(list);
