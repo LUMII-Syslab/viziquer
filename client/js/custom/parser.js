@@ -357,7 +357,7 @@ getPath = function(expressionTable){
 			else path = path +"/" + pathPart;
 			
 		} else {
-			 Interpreter.showErrorMsg("Unrecognized property path. Please specify property path.");
+			 Interpreter.showErrorMsg("Unrecognized link property or property path. Please specify link property or property path from ontology.");
 			 return null;
 		}
 		
@@ -1519,7 +1519,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				isTimeFunction = true;
 				if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
 				// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
-					var fun = expressionTable[key]["FunctionTime"]
+					var fun = expressionTable[key]["FunctionTime"].toLowerCase();
 					var sl = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation);
 					var sr = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVaraible, isUnderInRelation);
 					var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
