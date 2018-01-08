@@ -66,7 +66,7 @@ Meteor.methods({
 				return diagram;
 			});
 
-			return {"diagrams": diagrams};
+			return {diagrams: diagrams, project: project,};
 		}
 	},
 
@@ -89,6 +89,23 @@ Meteor.methods({
 				console.error("No project ", project_id);
 				return;
 			}
+
+			var project_data = {endpoint: "",
+								uri: "",
+								useDefaultGroupingSeparator: "",
+								useStringLiteralConversion: "",
+								queryEngineType: "",
+							};
+
+			_.extend(project_data, data.project);
+
+			Projects.update({_id: project_id,}, {$set: {endpoint: project_data.endpoint,
+														uri: project_data.uri,
+														useDefaultGroupingSeparator: project_data.useDefaultGroupingSeparator,
+														useStringLiteralConversion: project_data.useStringLiteralConversion,
+														queryEngineType: project_data.queryEngineType,
+													}});
+
 
 			_.each(data.diagrams, function(diagram) {
 
