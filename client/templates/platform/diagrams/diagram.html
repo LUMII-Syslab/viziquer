@@ -70,7 +70,7 @@
 
 <template name="sparqlForm">
 
-    <div id="diagram-footer" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:5px;padding-right:10px;margin-top:10px;">
+    <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:5px;padding-right:10px;margin-top:10px;">
       <ul class="nav nav-tabs" id="vq-tab">
           <li class="active"><a data-toggle="tab" href="#sparql">SPARQL</a></li>
           <li><a data-toggle="tab" href="#executed">Results</a></li>
@@ -162,14 +162,12 @@
 
 <template name="sparqlForm_see_results">
 
-    <div id="diagram-footer" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:5px;padding-right:10px;margin-top:5px;">
-      <ul class="nav nav-tabs" id="vq-tab-sparql">
-          <li class="active"><a data-toggle="tab" href="#sparql">SPARQL</a></li>
-      </ul>
-      <div class="tab-content">
-          <div id="sparql" class="tab-pane fade in active">
+    <div id="diagram-footer-b" class="col-sm-12 col-md-12 col-lg-12" style="margin-left:5px;padding-right:10px;margin-top:5px;">
             <div class="panel panel-default">
-                <div class="panel-body">
+              <div class="panel-heading">
+                  SPARQL
+              </div>
+              <div class="panel-body">
 
                     <div class="row">
                         <form>
@@ -188,17 +186,10 @@
                     </div>
                 </div>
             </div>
-          </div>
-      </div>
-      <ul class="nav nav-tabs" id="vq-tab-results">
-          <li class=active><a data-toggle="tab" href="#executed">Results</a></li>
-      </ul>
-      <div class="tab-content">
-          <div id="executed" class="tab-pane fade in active">
           {{#with executedSparql}}
           <div class="panel panel-default">
               <div class="panel-heading">
-                  {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
+                  Results: {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
               </div>
 
               <div class="panel-body">
@@ -248,8 +239,6 @@
               </div>
           </div>
           {{/with}}
-          </div>
-      </div>
 
     </div>
 </template>
