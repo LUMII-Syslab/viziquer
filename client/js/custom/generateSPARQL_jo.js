@@ -797,6 +797,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			for (var variable in result["variables"]){
 				if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
 			}
+		} else {
+			Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
 		}
 
 	})
