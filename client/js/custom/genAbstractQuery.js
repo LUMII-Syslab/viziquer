@@ -90,7 +90,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:false,groupValues:!attr_is_simple, isInternal:false});
-              });   
+              });
            };
         } else if (f.alias) {
           if (symbol_table[f.alias]) {
@@ -192,22 +192,24 @@ resolveTypesAndBuildSymbolTable = function (query) {
          // if expression is just the property name, then resolve its type.
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
-         if (f.alias && p && p[0] && p[0].ConditionalOrExpression && p[0].ConditionalOrExpression[0] && p[0].ConditionalOrExpression[1] &&  p[0].ConditionalOrExpression[1].length == 0 &&
-             p[0].ConditionalOrExpression[0].ConditionalAndExpression && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
-             p[0].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[0].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
-             p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList.length == 0
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList.length == 0
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
-             && p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
+         console.log(p);
+         console.log(f.alias);
+         if (f.alias && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
-           var var_obj = p[0].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+           var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
            if (var_obj["kind"]=="PROPERTY_NAME") {
              symbol_table[f.alias].type = var_obj["type"];
            }
