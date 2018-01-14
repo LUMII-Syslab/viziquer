@@ -3,18 +3,13 @@
     "localName" : "Resource",
     "namespace" : "http://www.w3.org/2000/01/rdf-schema#",
     "fullName" : "http://www.w3.org/2000/01/rdf-schema#Resource",
-    "SuperClasses" : [ ]
+    "SuperClasses" : [ "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ]
   }, {
     "localName" : "Class",
     "namespace" : "http://www.w3.org/2002/07/owl#",
     "fullName" : "http://www.w3.org/2002/07/owl#Class",
-    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Class" ]
   }, {
-    "localName" : "Property",
-    "namespace" : "http://www.w3.org/2002/07/owl#",
-    "fullName" : "http://www.w3.org/2002/07/owl#Property",
-    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
-  },{
     "localName" : "ObjectProperty",
     "namespace" : "http://www.w3.org/2002/07/owl#",
     "fullName" : "http://www.w3.org/2002/07/owl#ObjectProperty",
@@ -24,21 +19,21 @@
     "namespace" : "http://www.w3.org/2002/07/owl#",
     "fullName" : "http://www.w3.org/2002/07/owl#DatatypeProperty",
     "SuperClasses" : [ "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ]
-  },  {
-    "localName" : "Situation",
-    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
-    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation",
-    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
-  }, {
-    "localName" : "RoleDuringEvent",
-    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
-    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
-    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" ]
   }, {
     "localName" : "RoleInTime",
     "namespace" : "http://purl.org/spar/pro/",
     "fullName" : "http://purl.org/spar/pro/RoleInTime",
     "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent" ]
+  }, {
+    "localName" : "Situation",
+    "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+    "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "RoleDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+    "SuperClasses" : [ "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" ]
   }, {
     "localName" : "TimeIndexedSituation",
     "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
@@ -68,7 +63,7 @@
     "localName" : "Object",
     "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
     "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Object",
-    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
   }, {
     "localName" : "SocialObject",
     "namespace" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
@@ -128,7 +123,7 @@
     "localName" : "OrganisedEvent",
     "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
     "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
-    "SuperClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
   }, {
     "localName" : "AcademicProceedings",
     "namespace" : "http://purl.org/spar/fabio/",
@@ -215,7 +210,7 @@
     "namespace" : "http://purl.org/dc/elements/1.1/",
     "fullName" : "http://purl.org/dc/elements/1.1/title",
     "type" : "XSD_STRING",
-    "SourceClasses" : [ "http://www.w3.org/2000/01/rdf-schema#Resource" ]
+    "SourceClasses" : [ null ]
   }, {
     "localName" : "name",
     "namespace" : "http://xmlns.com/foaf/0.1/",

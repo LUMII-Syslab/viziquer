@@ -1,0 +1,108 @@
+{
+  "Classes" : [ {
+    "localName" : "MusicArtist",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/MusicArtist",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "SoloMusicArtist",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/SoloMusicArtist",
+    "SuperClasses" : [ "http://purl.org/ontology/mo/MusicArtist" ]
+  }, {
+    "localName" : "MusicGroup",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/MusicGroup",
+    "SuperClasses" : [ "http://purl.org/ontology/mo/MusicArtist" ]
+  }, {
+    "localName" : "Signal",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Signal",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Composition",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Composition",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "MusicalWork",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/MusicalWork",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "ReleaseEvent",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/ReleaseEvent",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Label",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Label",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Release",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Release",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Country",
+    "namespace" : "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "fullName" : "http://www.w3.org/2003/01/geo/wgs84_pos#Country",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Record",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Record",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "SignalGroup",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/SignalGroup",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "Track",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/Track",
+    "SuperClasses" : [ ]
+  } ],
+  "Attributes" : [ {
+    "localName" : "duration",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/duration",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://purl.org/ontology/mo/Signal" ]
+  }, {
+    "localName" : "name",
+    "namespace" : "http://xmlns.com/foaf/0.1/",
+    "fullName" : "http://xmlns.com/foaf/0.1/name",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://purl.org/ontology/mo/MusicArtist" ]
+  }, {
+    "localName" : "title",
+    "namespace" : "http://purl.org/dc/terms/",
+    "fullName" : "http://purl.org/dc/terms/title",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://purl.org/ontology/mo/Track" ]
+  }, {
+    "localName" : "name",
+    "namespace" : "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "fullName" : "http://www.w3.org/2003/01/geo/wgs84_pos#name",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://www.w3.org/2003/01/geo/wgs84_pos#Country" ]
+  }, {
+    "localName" : "sortLabel",
+    "namespace" : "http://open.vocab.org/terms/",
+    "fullName" : "http://open.vocab.org/terms/sortLabel",
+    "type" : "XSD_STRING",
+    "SourceClasses" : [ "http://purl.org/ontology/mo/MusicArtist" ]
+  } ],
+  "Associations" : [ {
+    "localName" : "composed_in",
+    "namespace" : "http://purl.org/ontology/mo/",
+    "fullName" : "http://purl.org/ontology/mo/composed_in",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://purl.org/ontology/mo/MusicalWork",
+      "TargetClass" : "http://purl.org/ontology/mo/Composition"
+    } ]
+  } ]
+}

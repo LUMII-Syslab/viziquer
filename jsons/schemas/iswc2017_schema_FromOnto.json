@@ -1,0 +1,569 @@
+{
+  "Classes" : [ {
+    "localName" : "Thing",
+    "namespace" : "http://www.w3.org/2002/07/owl#",
+    "fullName" : "http://www.w3.org/2002/07/owl#Thing",
+    "SuperClasses" : [ ]
+  }, {
+    "localName" : "AcademicEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent" ]
+  }, {
+    "localName" : "AffiliationAtTimeOfSubmission",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationAtTimeOfSubmission",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation" ]
+  }, {
+    "localName" : "AffiliationDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation" ]
+  }, {
+    "localName" : "AffiliationRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationRole",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Role" ]
+  }, {
+    "localName" : "Agent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "Break",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Break",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#NonAcademicEvent" ]
+  }, {
+    "localName" : "Conference",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "ConferenceSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ConferenceSeries",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries" ]
+  }, {
+    "localName" : "Document",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "EventSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "InProceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#InProceedings",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  }, {
+    "localName" : "List",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "ListItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "Meal",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Meal",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#NonAcademicEvent" ]
+  }, {
+    "localName" : "NonAcademicEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#NonAcademicEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent" ]
+  }, {
+    "localName" : "Organisation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Organisation",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent" ]
+  }, {
+    "localName" : "OrganisationalRoleDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisationalRoleDuringEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent" ]
+  }, {
+    "localName" : "OrganisedEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "OrganisingRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisingRole",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Role" ]
+  }, {
+    "localName" : "Panel",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Panel",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "Person",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent" ]
+  }, {
+    "localName" : "Proceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Proceedings",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  }, {
+    "localName" : "PublishingRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#PublishingRole",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Role" ]
+  }, {
+    "localName" : "PublishingRoleDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#PublishingRoleDuringEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent" ]
+  }, {
+    "localName" : "Role",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Role",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "RoleDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation" ]
+  }, {
+    "localName" : "Session",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Session",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "Site",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Site",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "SocialEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#SocialEvent",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#NonAcademicEvent" ]
+  }, {
+    "localName" : "Talk",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Talk",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "TimeIndexedSituation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "Topic",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Topic",
+    "SuperClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "Track",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Track",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "Tutorial",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Tutorial",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "TutorialSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TutorialSeries",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries" ]
+  }, {
+    "localName" : "Workshop",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Workshop",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AcademicEvent" ]
+  }, {
+    "localName" : "WorkshopSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#WorkshopSeries",
+    "SuperClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries" ]
+  } ],
+  "Attributes" : [ {
+    "localName" : "abstract",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#abstract",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  }, {
+    "localName" : "acronym",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#acronym",
+    "SourceClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "address",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#address",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Site" ]
+  }, {
+    "localName" : "atTime",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#atTime",
+    "SourceClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "description",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#description",
+    "SourceClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "doi",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#doi",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  }, {
+    "localName" : "duration",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#duration",
+    "SourceClasses" : [ "http://www.w3.org/2002/07/owl#Thing" ]
+  }, {
+    "localName" : "endDate",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#endDate",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent" ]
+  }, {
+    "localName" : "familyName",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#familyName",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person" ]
+  }, {
+    "localName" : "givenName",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#givenName",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person" ]
+  }, {
+    "localName" : "keyword",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#keyword",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  }, {
+    "localName" : "name",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#name",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent" ]
+  }, {
+    "localName" : "startDate",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#startDate",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent" ]
+  }, {
+    "localName" : "title",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#title",
+    "SourceClasses" : [ "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document" ]
+  } ],
+  "Associations" : [ {
+    "localName" : "broader",
+    "namespace" : "http://www.w3.org/2004/02/skos/core#",
+    "fullName" : "http://www.w3.org/2004/02/skos/core#broader",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "narrower",
+    "namespace" : "http://www.w3.org/2004/02/skos/core#",
+    "fullName" : "http://www.w3.org/2004/02/skos/core#narrower",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "during",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#during",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#TimeIndexedSituation",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent"
+    } ]
+  }, {
+    "localName" : "hasAddress",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasAddress",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Site",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "hasAffiliation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasAffiliation",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent"
+    } ]
+  }, {
+    "localName" : "hasAuthorList",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasAuthorList",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List"
+    } ]
+  }, {
+    "localName" : "hasContent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasContent",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "hasFirstItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasFirstItem",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "hasItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasItem",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem"
+    } ]
+  }, {
+    "localName" : "hasLastItem",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasLastItem",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#List",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "hasLocation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasLocation",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Site"
+    } ]
+  }, {
+    "localName" : "hasPart",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasPart",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "hasProceedings",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasProceedings",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Conference",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Proceedings"
+    } ]
+  }, {
+    "localName" : "hasSeries",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasSeries",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries"
+    } ]
+  }, {
+    "localName" : "hasSite",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasSite",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Site"
+    } ]
+  }, {
+    "localName" : "hasSubEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasSubEvent",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent"
+    } ]
+  }, {
+    "localName" : "hasTopic",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#hasTopic",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Topic"
+    } ]
+  }, {
+    "localName" : "holdsRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#holdsRole",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent"
+    } ]
+  }, {
+    "localName" : "inAffiliationDuringEvent",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#inAffiliationDuringEvent",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isAddressOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isAddressOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isAffiliationOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isAffiliationOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Person"
+    } ]
+  }, {
+    "localName" : "isDocumentRelatedTo",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isDocumentRelatedTo",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isFirstItemOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isFirstItemOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isHeldBy",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isHeldBy",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Agent"
+    } ]
+  }, {
+    "localName" : "isItemOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isItemOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isLastItemOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isLastItemOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isLocationFor",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isLocationFor",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isPartOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isPartOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isProceedingsOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isProceedingsOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isSeriesOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isSeriesOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#EventSeries",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#OrganisedEvent"
+    } ]
+  }, {
+    "localName" : "isSiteOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isSiteOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isSubEventOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isSubEventOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "isTopicOf",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#isTopicOf",
+    "ClassPairs" : [ {
+      "SourceClass" : "http://www.w3.org/2002/07/owl#Thing",
+      "TargetClass" : "http://www.w3.org/2002/07/owl#Thing"
+    } ]
+  }, {
+    "localName" : "next",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#next",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem"
+    } ]
+  }, {
+    "localName" : "previous",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#previous",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#ListItem"
+    } ]
+  }, {
+    "localName" : "relatesToDocument",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#relatesToDocument",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#PublishingRoleDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Document"
+    } ]
+  }, {
+    "localName" : "withOrganisation",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#withOrganisation",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#AffiliationDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Organisation"
+    } ]
+  }, {
+    "localName" : "withRole",
+    "namespace" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#",
+    "fullName" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#withRole",
+    "ClassPairs" : [ {
+      "SourceClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#RoleDuringEvent",
+      "TargetClass" : "https://w3id.org/scholarlydata/ontology/conference-ontology.owl#Role"
+    } ]
+  } ]
+}
