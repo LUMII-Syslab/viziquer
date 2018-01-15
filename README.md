@@ -1,4 +1,4 @@
-[![License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/LUMII-Syslab/viziquer/LICENSE)
+[![License](http://img.shields.io/:license-mit-blue.svg)](https://raw.githubusercontent.com/LUMII-Syslab/viziquer/master/LICENSE)
 # ViziQuer
 
 The aim of the ViziQuer project is to provide visual/diagrammatic environment for ontology-based data query definition and execution.
