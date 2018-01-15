@@ -39,7 +39,7 @@ ProjectsUsers.after.insert(function (user_id, doc) {
 		var proj_name = get_project_name(doc["projectId"]);
 		var text = "You have a new invitation for the project " + proj_name + ".";
 
-		sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
+		// sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
 	}
 });
 ProjectsUsers.hookOptions.after.insert = {fetchPrevious: false};
@@ -182,7 +182,7 @@ ProjectsUsers.after.update(function (user_id, doc, fieldNames, modifier, options
 		var proj_name = get_project_name(doc["projectId"]);
 		var text = "Your role in project " + proj_name + " was changed to the " + role + "."
 
-		sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
+		// sending_notification_email(doc["userSystemId"], doc["projectId"], subject, text);
 	}
 	
 	//if there is an invitation that is new or seen, then updates it
@@ -264,6 +264,7 @@ ProjectsUsers.hookOptions.after.remove = {fetchPrevious: false};
 Meteor.methods({
 
 	insertProjectsUsers: function(list) {
+
 		var user_id = Meteor.userId();
 		if (is_project_admin(user_id, list)) {
 

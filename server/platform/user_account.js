@@ -135,7 +135,7 @@ Meteor.methods({
 					var user_data = build_user_data(new_user_id, list);
 					Users.insert(user_data);
 
-					Accounts.sendEnrollmentEmail(new_user_id);
+					// Accounts.sendEnrollmentEmail(new_user_id);
 				}
 
 				else {

@@ -48,6 +48,8 @@ Template.diagramTemplate.onRendered(function() {
 
 
 Template.diagramTemplate.onDestroyed(function() {
-	var ontology_handle = this.ontologyHandle.get();
-	ontology_handle.stop();	
+	if (this.ontologyHandle) {
+		var ontology_handle = this.ontologyHandle.get();
+		ontology_handle.stop();		
+	}
 });
