@@ -5,7 +5,7 @@ Meteor.publish("Ontology", function(list) {
 		return this.stop();
 	}
 
-	if (is_project_admin(this.userId, list)) {
+	if (is_project_member(this.userId, list)) {
 		return [
 				Associations.find({projectId: list.projectId, versionId: list.versionId}),
 				Attributes.find({projectId: list.projectId, versionId: list.versionId}),

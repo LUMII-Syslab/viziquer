@@ -6,6 +6,9 @@ Meteor.methods({
     //add_sparql_log(list);
 		var user_id = Meteor.userId();
 		if (is_project_member(user_id, list)) {
+
+			console.log("in exec sparql");
+
 			var options = list.options;
 			var limit_set = false;
 			var number_of_rows = 0;
@@ -13,7 +16,8 @@ Meteor.methods({
 			var sparql_log_entry = {};
 			_.extend(sparql_log_entry, list);
 			_.extend(sparql_log_entry, {user:user_id});
-      var newDate = new Date();
+
+      		var newDate = new Date();
 			_.extend(sparql_log_entry, {date:newDate.toLocaleDateString(), time:newDate.toLocaleTimeString()});
 		    if (!options.paging_info) {
 
@@ -31,7 +35,7 @@ Meteor.methods({
 		      		if (qres.statusCode == 200) {
 					    var content = JSON.parse(qres.content);
 						number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
-            _.extend(sparql_log_entry, {successfull:true})
+            			_.extend(sparql_log_entry, {successfull:true});
 						if (number_of_rows > 50) {
 							options.params.params.query = buildEnhancedQuery(options.params.params.query, "SELECT", "SELECT * WHERE {", "} LIMIT 50");
 							limit_set = true;
@@ -99,7 +103,7 @@ Meteor.methods({
 	testProjectEndPoint: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		if (is_project_member(user_id, list)) {
 
 			if (!list.endpoint || !list.uri) {
 				console.error("No data specified");
