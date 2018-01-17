@@ -184,7 +184,7 @@
 			
 			SEPARATOR = (";" space SEPARATOR space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
 			
-			FunctionExpression = FunctionExpression: (FunctionExpressionA / FunctionExpressionB / FunctionExpressionC / IFFunction) {return {FunctionExpression:FunctionExpression}}
+			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction) {return {FunctionExpression:FunctionExpression}}
 
 			STR = "STR"i {return "STR"}
 			LANG = "LANG"i {return "LANG"}
@@ -228,13 +228,16 @@
 			days = "days"i {return "days"}
 			years = "years"i {return "years"}
 			months = "months"i {return "months"}
+			HOURS2 = "hours"i {return "HOURS"}
 			hours = "hours"i {return "hours"}
 			minutes = "minutes"i {return "minutes"}
+			MINUTES2 = "minutes"i {return "MINUTES"}
 			seconds = "seconds"i {return "seconds"}
+			SECONDS2 = "seconds"i {return "SECONDS"}
 			IF = "IF"i {return "IF"}
 
 			FunctionExpressionA = Function:(STR / LANG / DATATYPE / IRI / URI / ABS / CEIL / FLOOR / ROUND / STRLEN / UCASE /
-					 LCASE / ENCODE_FOR_URI / YEAR / MONTH / DAY / TIMEZONE / TZ / MD5 / SHA1 / SHA256 / SHA512 / isIRI /
+					 LCASE / ENCODE_FOR_URI / YEAR / MONTH  / DAY/ HOURS2 / MINUTES2 / SECONDS2 / TIMEZONE / TZ / MD5 / SHA1 / SHA256 / SHA512 / isIRI /
 					isURI / isBLANK / dateTime / date / isLITERAL / isNUMERIC) "(" space Expression: Expression space ")" {return {Function:Function, Expression:Expression}}
 
 			FunctionExpressionB = Function:(LANGMATCHES / CONTAINS / STRSTARTS / STRENDS / STRBEFORE / STRAFTER / STRLANG / STRDT / sameTerm) "(" space Expression1:Expression space "," space Expression2:Expression space ")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2}}

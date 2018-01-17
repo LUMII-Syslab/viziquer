@@ -493,11 +493,17 @@ function generateSPARQLtext(abstractQueryTable){
 			 if (orderBy["orders"] != "") SPARQL_text = SPARQL_text + "\nORDER BY " + orderBy["orders"];
 
 			 //OFFSET
-			 if (rootClass["offset"] != null) SPARQL_text = SPARQL_text + "\nOFFSET " + rootClass["offset"];
+			 if (rootClass["offset"] != null) {
+				if(!isNaN(rootClass["offset"])) SPARQL_text = SPARQL_text + "\nOFFSET " + rootClass["offset"];
+				else Interpreter.showErrorMsg("OFFSET should be numeric value");
+			 }
 
 			 //LIMIT
-			 if (rootClass["limit"] != null) SPARQL_text = SPARQL_text + "\nLIMIT " + rootClass["limit"];
-
+			 if (rootClass["limit"] != null) {
+				if(!isNaN(rootClass["limit"]))SPARQL_text = SPARQL_text + "\nLIMIT " + rootClass["limit"];
+				else Interpreter.showErrorMsg("LIMIT should be numeric value");
+			 }
+			 
 			 //Prefixes
 			 var prefixes = "";
 			 for (var prefix in prefixTable){
@@ -619,7 +625,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			for (var attrname in result["variableNamesClass"]) {
 				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 				if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
-				if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"]
+				if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"];
 			}
 			for (var prefix in result["prefixTable"]) {
 				if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
@@ -722,44 +728,13 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	classSimpleTriples = classSimpleTriples.concat(classFunctionTriples);
 	sparqlTable["simpleTriples"] = classSimpleTriples;
 
-	//conditions
-	_.each(clazz["conditions"],function(condition) {
-		var result = parse_filter(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable);
-		//console.log("FILTER", result);
-		for (var reference in result["referenceCandidateTable"]){
-			if(typeof result["referenceCandidateTable"][reference] === 'string')sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])
-		};
-		for (var reference in result["references"]){
-			if(typeof result["references"][reference] === 'string') sparqlTable["selectMain"]["referenceVariables"].push(result["references"][reference]);
-		}
-
-		counter = result["counter"]
-		// for (var attrname in result["variableNamesClass"]) { variableNamesClass[attrname] = result["variableNamesClass"][attrname]; }
-		for (var attrname in result["variableNamesClass"]) {
-				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
-		}
-		for (var attrname in result["expressionLevelNames"]) {
-			if(typeof result["expressionLevelNames"][attrname] === 'string') variableNamesAll[attrname] = result["expressionLevelNames"][attrname];
-		}
-		for (var prefix in result["prefixTable"]) {
-			if(typeof result["prefixTable"][prefix] === 'string')  prefixTable[prefix] = result["prefixTable"][prefix];
-		}
-
-		var tempTripleTable = [];
-		tempTripleTable["triple"] = [];
-		for (var triple in result["triples"]){
-			if(typeof result["triples"][triple] === 'string') tempTripleTable["triple"].push(result["triples"][triple]);
-		}
-		sparqlTable["filterTriples"].push(tempTripleTable);
-		if(result["exp"] != "") sparqlTable["filters"].push("FILTER(" + result["exp"] + ")");
-
-		// console.log("CONDITION", result["exp"], result, instance, sparqlTable["classTriple"]);
-	})
 
 	//aggregations
 	_.each(clazz["aggregations"],function(field) {
 
-		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable);
+		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, "aggregation");
+		
+		//console.log("RRRRRRRRRRRR", result);
 		counter = result["counter"];
 		for (var attrname in result["variableNamesClass"]) {
 			if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
@@ -776,9 +751,16 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
 
 				var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
-				if(typeof variableNamesAll[tempAlias] !== 'undefined') alias = tempAlias + "_" + counter;
-				else alias = tempAlias;
-				variableNamesAll[tempAlias] = tempAlias;
+				if(typeof variableNamesAll[tempAlias] !== 'undefined') {
+					var count = variableNamesAll[tempAlias]["counter"] + 1;
+					variableNamesAll[tempAlias]["counter"]  = count;
+					alias = tempAlias + "_" + count;
+				}
+				else {
+					alias = tempAlias;
+					variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false};
+				}
+				
 			} else {
 				alias = "expr_" + counter;
 				counter++;
@@ -804,19 +786,61 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	})
 
 
+	//conditions
+	_.each(clazz["conditions"],function(condition) {
+		var result = parse_filter(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable);
+		//console.log("FILTER", result);
+		for (var reference in result["referenceCandidateTable"]){
+			if(typeof result["referenceCandidateTable"][reference] === 'string')sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])
+		};
+		for (var reference in result["references"]){
+			if(typeof result["references"][reference] === 'string') sparqlTable["selectMain"]["referenceVariables"].push(result["references"][reference]);
+		}
+
+		counter = result["counter"]
+		// for (var attrname in result["variableNamesClass"]) { variableNamesClass[attrname] = result["variableNamesClass"][attrname]; }
+		for (var attrname in result["variableNamesClass"]) {
+				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+		}
+		for (var attrname in result["expressionLevelNames"]) {
+			if(typeof result["expressionLevelNames"][attrname] === 'string') {
+				if(typeof variableNamesAll[attrname] === 'undefined') variableNamesAll[attrname] = {"alias": result["expressionLevelNames"][attrname], "nameIsTaken": true, counter:0, "isVar" : false};
+			}
+		}
+		for (var prefix in result["prefixTable"]) {
+			if(typeof result["prefixTable"][prefix] === 'string')  prefixTable[prefix] = result["prefixTable"][prefix];
+		}
+
+		var tempTripleTable = [];
+		tempTripleTable["triple"] = [];
+		for (var triple in result["triples"]){
+			if(typeof result["triples"][triple] === 'string') tempTripleTable["triple"].push(result["triples"][triple]);
+		}
+		sparqlTable["filterTriples"].push(tempTripleTable);
+		if(result["exp"] != "") sparqlTable["filters"].push("FILTER(" + result["exp"] + ")");
+
+		// console.log("CONDITION", result["exp"], result, instance, sparqlTable["classTriple"]);
+	})
+	
 	//subClasses
 	if(clazz["children"].length > 0){
 		sparqlTable["subClasses"] = []; // class all sub classes
 	};
 	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
+		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') {
+			//if(typeof variableNamesAll[attrname] === 'undefined') 
+				variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"]};
+		}
 	}
 	_.each(clazz["children"],function(subclazz) {
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 		var temp = forAbstractQueryTable(subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable);
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
-			if(typeof temp["variableNamesAll"][attrname] === 'string') variableNamesClass[attrname] = {"alias":temp["variableNamesAll"][attrname], "isvar" : false};
+			if(typeof temp["variableNamesAll"][attrname] === 'string') {
+				variableNamesClass[attrname] = {"alias": temp["variableNamesAll"][attrname]["alias"], "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
+				//variableNamesClass[attrname] = {"alias":temp["variableNamesAll"][attrname], "isvar" : false};
+			}
 		}
 		for (var prefix in temp["prefixTable"]) {
 			if(typeof temp["prefixTable"][prefix] === 'string') prefixTable[prefix] = temp["prefixTable"][prefix];
@@ -911,7 +935,10 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	})
 
 	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string')variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
+		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string'){
+			//variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
+			variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"]};
+		}
 	}
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames};
 }
@@ -1203,11 +1230,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							 if (orderBy["orders"] != "") subQuery = subQuery + "\nORDER BY " + orderBy["orders"];
 
 							 //OFFSET
-							 if (sparqlTable["subClasses"][subclass]["offset"] != null) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
-
+							 if (sparqlTable["subClasses"][subclass]["offset"] != null) {
+								if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
+								else Interpreter.showErrorMsg("OFFSET should be numeric value");
+							 }
 							 //LIMIT
-							if (sparqlTable["subClasses"][subclass]["limit"] != null) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
-
+							if (sparqlTable["subClasses"][subclass]["limit"] != null) {
+								if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
+								else Interpreter.showErrorMsg("LIMIT should be numeric value");
+							}
 							subQuery = subQuery + "}";
 
 							whereInfo.unshift(subQuery);
@@ -1381,11 +1412,15 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						if (orderBy["orders"] != "") subQuery = subQuery + "\nORDER BY " + orderBy["orders"];
 
 						//OFFSET
-						if (sparqlTable["subClasses"][subclass]["offset"] != null) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
-
+						if (sparqlTable["subClasses"][subclass]["offset"] != null) {
+							if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
+							else Interpreter.showErrorMsg("OFFSET should be numeric value");
+						}
 						//LIMIT
-						if (sparqlTable["subClasses"][subclass]["limit"] != null) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
-
+						if (sparqlTable["subClasses"][subclass]["limit"] != null) {
+							if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
+							else Interpreter.showErrorMsg("LIMIT should be numeric value");
+						}
 						subQuery = subQuery + "}";
 
 						whereInfo.push(subQuery);
