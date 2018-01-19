@@ -24,10 +24,10 @@ Interpreter.customMethods({
      var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
 		 var rootClass = abstractQueryTable["root"];
 		 var result = generateSPARQLtext(abstractQueryTable);
-		 console.log(result);
-		 Session.set("generatedSparql", result);
+		 console.log(result["SPARQL_text"]);
+		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-     executeSparqlString(result);
+     executeSparqlString(result["SPARQL_text"]);
     })
   },
 
@@ -49,10 +49,10 @@ Interpreter.customMethods({
      var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
 		 var rootClass = abstractQueryTable["root"];
 		 var result = generateSPARQLtext(abstractQueryTable);
-		 console.log(result);
-		 Session.set("generatedSparql", result);
+		 console.log(result["SPARQL_text"]);
+		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-     executeSparqlString(result);
+     executeSparqlString(result["SPARQL_text"]);
     })
   },
 
@@ -101,10 +101,10 @@ Interpreter.customMethods({
        var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
    		 var rootClass = abstractQueryTable["root"];
    		 var result = generateSPARQLtext(abstractQueryTable);
-   		 console.log(result);
-   		 Session.set("generatedSparql", result);
+   		 console.log(result["SPARQL_text"]);
+   		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-       executeSparqlString(result);
+       executeSparqlString(result["SPARQL_text"]);
        })
     } else {
       // nothing selected
@@ -216,9 +216,9 @@ function GenerateSPARQL_for_ids(list_of_ids) {
    var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
    var rootClass = abstractQueryTable["root"];
   var result = generateSPARQLtext(abstractQueryTable);
-  console.log(result);
+  console.log(result["SPARQL_text"]);
 
-   Session.set("generatedSparql", result);
+   Session.set("generatedSparql", result["SPARQL_text"]);
 
    $('#vq-tab a[href="#sparql"]').tab('show');
    // Interpreter.destroyErrorMsg();
@@ -293,9 +293,9 @@ function GenerateSPARQL_for_all_queries(list_of_ids) {
    var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
 
    var result = generateSPARQLtext(abstractQueryTable);
-   console.log(result);
+   console.log(result["SPARQL_text"]);
 
-   Session.set("generatedSparql", result);
+   Session.set("generatedSparql", result["SPARQL_text"]);
    // Interpreter.destroyErrorMsg();
   })
 }
@@ -409,6 +409,8 @@ function findEmptyPrefix(prefixTable){
 // generate SPARQL query text
 // abstractQueryTable - abstract query sintex table
 function generateSPARQLtext(abstractQueryTable){
+		 var messages = [];
+		 
 		 var rootClass = abstractQueryTable["root"];
 		 var symbolTable = abstractQueryTable["symbolTable"];
 		 var parameterTable = abstractQueryTable["params"];
@@ -431,6 +433,9 @@ function generateSPARQLtext(abstractQueryTable){
 		 var counter = 0;
 
 		 var result = forAbstractQueryTable(rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable);
+		 
+		 messages = messages.concat(result["messages"]); 
+		 
 		 sparqlTable = result["sparqlTable"];
 		 //console.log(result, JSON.stringify(sparqlTable,null,2));
 
@@ -441,7 +446,9 @@ function generateSPARQLtext(abstractQueryTable){
 
 		 // if root class is Union
 		 if(rootClass["isUnion"] == true){
-			SPARQL_text = getUNIONClasses(sparqlTable, null, null, true, referenceTable);
+			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable);
+			SPARQL_text = unionResult["result"];
+			messages = messages.concat(unionResult["messages"]);
 		 } else{
 			SPARQL_text = "SELECT ";
 
@@ -458,7 +465,19 @@ function generateSPARQLtext(abstractQueryTable){
 			 tempSelect = tempSelect.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			 });
-			 if(tempSelect.length < 1) Interpreter.showErrorMsg("Please specify at least one attribute (or * to select all attributes of the class)");
+			 if(tempSelect.length < 1) {
+				//Interpreter.showErrorMsg("Please specify at least one attribute (or * to select all attributes of the class)");
+				var listOfElementId = [];
+				for(var id in idTable){
+					listOfElementId.push(id);
+				}
+				messages.push({
+					"type" : "Error",
+					"message" : "Please specify at least one attribute (or * to select all attributes of the class)",
+					"listOfElementId" : listOfElementId,
+					"isBlocking" : true
+				});
+			 }
 			 SPARQL_text = SPARQL_text + tempSelect.join(" ");
 			 SPARQL_text = SPARQL_text + " WHERE{\n";
 
@@ -475,8 +494,10 @@ function generateSPARQLtext(abstractQueryTable){
 			 var temp = whereInfo["triples"];
 			 temp = temp.concat(whereInfo["links"]);
 			 temp = temp.concat(whereInfo["filters"]);
+			 messages = messages.concat(whereInfo["messages"]);
 
 			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix);
+			 messages = messages.concat(orderBy["messages"]);
 			 //add triples from order by
 			 temp = temp.concat(orderBy["triples"]);
 
@@ -495,13 +516,29 @@ function generateSPARQLtext(abstractQueryTable){
 			 //OFFSET
 			 if (rootClass["offset"] != null) {
 				if(!isNaN(rootClass["offset"])) SPARQL_text = SPARQL_text + "\nOFFSET " + rootClass["offset"];
-				else Interpreter.showErrorMsg("OFFSET should be numeric value");
+				else {
+					//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
+					messages.push({
+						"type" : "Warning",
+						"message" : "OFFSET should contain only numeric values",
+						"listOfElementId" : [rootClass["identification"]["_id"]],
+						"isBlocking" : false
+					});
+				}
 			 }
 
 			 //LIMIT
 			 if (rootClass["limit"] != null) {
 				if(!isNaN(rootClass["limit"]))SPARQL_text = SPARQL_text + "\nLIMIT " + rootClass["limit"];
-				else Interpreter.showErrorMsg("LIMIT should be numeric value");
+				else {
+					//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
+					messages.push({
+						"type" : "Warning",
+						"message" : "LIMIT should contain only numeric values",
+						"listOfElementId" : [rootClass["identification"]["_id"]],
+						"isBlocking" : false
+					});
+				}
 			 }
 			 
 			 //Prefixes
@@ -511,7 +548,19 @@ function generateSPARQLtext(abstractQueryTable){
 			 }
 			 SPARQL_text = prefixes + SPARQL_text;
 		 }
-		 return SPARQL_text;
+		 
+		 var blocking = false;
+		 var showMessages = "";
+		 for (var message in messages){
+			if(typeof messages[message] === "object") {
+				if(messages[message]["isBlocking"] == true){
+					blocking = true;
+				}
+				showMessages = showMessages + "\n\n" + messages[message]["message"];
+			}
+		 }
+		 Interpreter.showErrorMsg(showMessages)
+		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking};
 }
 
 function getPrefix(emptyPrefix, givenPrefix){
@@ -533,6 +582,8 @@ function getPrefix(emptyPrefix, givenPrefix){
 // symbolTable - table with symbols presented in a query
 // parameterTable - table with user set SPARQL generation parameters
 function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable){
+	var messages = [];
+	
 	var variableNamesClass = [];
 	var prefixTable = [];
 
@@ -582,6 +633,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable);
 		counter = resultClass["counter"]
 		var temp = [];
+		messages = messages.concat(resultClass["messages"]);
 
 		for (var triple in resultClass["triples"]){
 			if(typeof resultClass["triples"][triple] === 'string')temp.push(resultClass["triples"][triple]);
@@ -601,16 +653,13 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+namespace+">";
 	}
 
-
-
-
-
 	//attributes
 	_.each(clazz["fields"],function(field) {
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
 			sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?"+field["exp"], "value" : "?"+field["exp"]});
 		} else {
 			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable);
+			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
 			sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
 			for (var reference in result["referenceCandidateTable"]){
@@ -733,7 +782,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	_.each(clazz["aggregations"],function(field) {
 
 		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, "aggregation");
-		
+		messages = messages.concat(result["messages"]);
 		//console.log("RRRRRRRRRRRR", result);
 		counter = result["counter"];
 		for (var attrname in result["variableNamesClass"]) {
@@ -780,7 +829,13 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
 			}
 		} else {
-			Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
+			//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
+			messages.push({
+				"type" : "Error",
+				"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.",
+				"listOfElementId" : [clazz["identification"]["_id"]],
+				"isBlocking" : false
+			});
 		}
 
 	})
@@ -789,6 +844,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	//conditions
 	_.each(clazz["conditions"],function(condition) {
 		var result = parse_filter(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable);
+		messages = messages.concat(result["messages"]);
 		//console.log("FILTER", result);
 		for (var reference in result["referenceCandidateTable"]){
 			if(typeof result["referenceCandidateTable"][reference] === 'string')sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])
@@ -835,6 +891,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	_.each(clazz["children"],function(subclazz) {
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 		var temp = forAbstractQueryTable(subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable);
+		messages = messages.concat(temp["messages"]); 
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
 			if(typeof temp["variableNamesAll"][attrname] === 'string') {
@@ -849,7 +906,15 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		//link triple
 		//if(typeof subclazz["linkIdentification"]["localName"] !== 'undefined'){
 
-			if(subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
+			if((subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") && subclazz["identification"]["localName"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["localName"] != "[ + ]") {
+				//Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
+				messages.push({
+					"type" : "Error",
+					"message" : "Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.",
+					"listOfElementId" : [subclazz["linkIdentification"]["_id"]],
+					"isBlocking" : false
+				});
+			}
 
 			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){
 				var subject, preditate, object;
@@ -861,10 +926,14 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 						var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
-						for (var prefix in path["prefixTable"]) {
-							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+						if(typeof path["messages"] !== 'undefined'){
+							messages = messages.concat(path["messages"]);
+						} else {
+							for (var prefix in path["prefixTable"]) {
+								if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+							}
+							preditate = " " + path["path"];
 						}
-						preditate = " " + path["path"];
 					}
 					var namespace = subclazz["linkIdentification"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -885,9 +954,33 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				if(subclazz["linkIdentification"]["localName"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
 					temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
 				} else{
-					if(preditate == null || preditate.replace(" ", "") =="") Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["localName"] + "'", -3);
-					else if(subject == null) Interpreter.showErrorMsg("Unknown property '" + subclazz["identification"]["localName"] + "'", -3);
-					else if(object == null) Interpreter.showErrorMsg("Unknown property '" + parentClass["identification"]["localName"] + "'", -3);
+					if(preditate == null || preditate.replace(" ", "") =="") {
+						//Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["localName"] + "'", -3);
+						messages.push({
+							"type" : "Error",
+							"message" : "Unrecognized link property or property path '" + subclazz["linkIdentification"]["localName"] + "'. Please specify link property or property path from ontology.",
+							"listOfElementId" : [subclazz["linkIdentification"]["_id"]],
+							"isBlocking" : true
+						});
+					}
+					else if(subject == null) {
+						//Interpreter.showErrorMsg("Unknown subject class '" + subclazz["identification"]["localName"] + "'", -3);
+						messages.push({
+							"type" : "Error",
+							"message" : "Unknown subject class '" + subclazz["identification"]["localName"] + "'",
+							"listOfElementId" : [subclazz["identification"]["_id"], subclazz["linkIdentification"]["_id"]],
+							"isBlocking" : true
+						});
+					}
+					else if(object == null) {
+						//Interpreter.showErrorMsg("Unknown object class '" + parentClass["identification"]["localName"] + "'", -3);
+						messages.push({
+							"type" : "Error",
+							"message" : "Unknown object class '" + parentClass["identification"]["localName"] + "'",
+							"listOfElementId" : [parentClass["identification"]["_id"], subclazz["linkIdentification"]["_id"]],
+							"isBlocking" : true
+						});
+					}
 				}
 				// if(subclazz["linkIdentification"]["localName"] == "==") sparqlTable["filters"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
 				if(subclazz["linkIdentification"]["localName"] == "==") temp["sparqlTable"]["equalityLink"] = true;
@@ -904,7 +997,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 				//ORDER BY
 				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix);
-				 //OFFSET
+				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
+
+				//OFFSET
 				temp["sparqlTable"]["offset"] = subclazz["offset"];
 
 				 //LIMIT
@@ -940,11 +1035,11 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"]};
 		}
 	}
-	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames};
+	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
 }
 
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
-	var warnings = [];
+	var messages = [];
 	var orderTable = [];
 	var orderTripleTable = [];
 	_.each(orderings,function(order) {
@@ -957,7 +1052,6 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
 		var orderName = order["exp"];
 		if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
 		if(typeof fieldNames[orderName] !== 'undefined'){
-
 			var result = fieldNames[orderName][rootClass_id];
 			if(typeof result === 'undefined'){
 				for (var ordr in fieldNames[orderName]) {
@@ -966,21 +1060,29 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
 				}
 			}
 			orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
-		 } else {
-			 var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable);
+		 } else {		
+			var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable);
+			 messages = messages.concat(result["messages"]);
 			 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 				 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
 				 orderTripleTable.push(result["triples"]);
-			 } else {warnings.push("order by allowed only over explicit selection fields, " + order["exp"] + " is not a selection field");}
+			 } else {
+				 messages.push({
+					"type" : "Warning",
+					"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
+					"listOfElementId":[rootClass_id],
+					"isBlocking" : false
+				 });
+			 }
 		 }
 	})
 
-	if(warnings.length > 0) Interpreter.showErrorMsg(warnings.join("\n"), -3);
+	//if(messages.length > 0) Interpreter.showErrorMsg(messages.join("\n"), -3);
 
 	orderTable = orderTable.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
-	return {"orders":orderTable.join(" "), "triples":orderTripleTable};
+	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages};
 }
 
 // generete HAVING info
@@ -1021,6 +1123,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	var filters = [];
 	var links = [];
 	var bind = [];
+	var messages = [];
 
 	// whereInfo.push(sparqlTable["classTriple"]);
 
@@ -1139,13 +1242,17 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
-				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) whereInfo.push(getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable));
+				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
+					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable)
+					whereInfo.push(unionResult["result"]);
+					messages = messages.concat(unionResult["messages"]);
+				}
 				else if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable);
 					filters = filters.concat(temp["filters"]);
-
 					links = links.concat(temp["links"]);
 					whereInfo = whereInfo.concat(temp["triples"]);
+					messages = messages.concat(temp["messages"]);
 				}else {
 					//sub selects
 					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
@@ -1163,6 +1270,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					var temp = wheresubInfo["triples"];
 					temp = temp.concat(wheresubInfo["links"]);
 					temp = temp.concat(wheresubInfo["filters"]);
+					messages = messages.concat(wheresubInfo["messages"]);
 
 					var tempSelect = refTable;
 					tempSelect= tempSelect.concat(selectResult["select"]);
@@ -1232,12 +1340,28 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							 //OFFSET
 							 if (sparqlTable["subClasses"][subclass]["offset"] != null) {
 								if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
-								else Interpreter.showErrorMsg("OFFSET should be numeric value");
+								else {
+									//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
+									 messages.push({
+										"type" : "Warning",
+										"message" : "OFFSET should contain only numeric values",
+										"listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+										"isBlocking" : false
+									 });
+								}
 							 }
 							 //LIMIT
 							if (sparqlTable["subClasses"][subclass]["limit"] != null) {
 								if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
-								else Interpreter.showErrorMsg("LIMIT should be numeric value");
+								else {
+									//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
+									 messages.push({
+										"type" : "Warning",
+										"message" : "LIMIT should contain only numeric values",
+										"listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+										"isBlocking" : false
+									 });
+								}
 							}
 							subQuery = subQuery + "}";
 
@@ -1299,7 +1423,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	filters.concat(fil);
 	links.concat(lin);
 
-	return {"triples" : whereInfo, "filters" : filters, "links":links}
+	return {"triples" : whereInfo, "filters" : filters, "links":links, "messages":messages}
 }
 
 function checkIfReference(reference, referenceTable, subQueryMainClass, isPlain){
@@ -1348,6 +1472,8 @@ function findSubQueryMainClass(referenceTable, subQueryMainClass){
 function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable){
 	var whereInfo = [];
 	var unionsubSELECTstaterents = [];
+	var messages = [];
+	
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
@@ -1357,6 +1483,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 				var temp = wheresubInfo["triples"];
 				temp = temp.concat(wheresubInfo["links"]);
 				temp = temp.concat(wheresubInfo["filters"]);
+				messages = messages.concat(wheresubInfo["messages"]);
 
 				var tempSelect = selectResult["select"];
 				tempSelect= tempSelect.concat(selectResult["aggregate"]);
@@ -1414,12 +1541,28 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						//OFFSET
 						if (sparqlTable["subClasses"][subclass]["offset"] != null) {
 							if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
-							else Interpreter.showErrorMsg("OFFSET should be numeric value");
+							else {
+								//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
+								 messages.push({
+										"type" : "Warning",
+										"message" : "OFFSET should contain only numeric values",
+										"listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+										"isBlocking" : false
+									 });
+							}
 						}
 						//LIMIT
 						if (sparqlTable["subClasses"][subclass]["limit"] != null) {
 							if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + "\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
-							else Interpreter.showErrorMsg("LIMIT should be numeric value");
+							else {
+								//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
+								messages.push({
+										"type" : "Warning",
+										"message" : "LIMIT should contain only numeric values",
+										"listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+										"isBlocking" : false
+							   });
+							}
 						}
 						subQuery = subQuery + "}";
 
@@ -1446,7 +1589,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 		else if(sparqlTable["linkType"] == "NOT") returnValue = "MINUS{FILTER NOT EXISTS{" + returnValue + "}}";
 		else returnValue = "FILTER(EXISTS{" + returnValue + "})";
 	}
-	return returnValue;
+	return {"result":returnValue, "messages":messages};
 }
 
 function generateSELECT(sparqlTable){

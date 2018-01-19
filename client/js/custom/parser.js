@@ -22,6 +22,7 @@ var parameterTable = [];
 var idTable = [];
 var joinWith = null;
 var classIdentificator = null;
+var messages = [];
 
 var sqlSubSelectMap = [];
 
@@ -69,6 +70,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT){
 	isInternal = internal;
 	parameterTable = prt;
 	idTable = idT;
+	messages = [];
 }
 
 parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT) {
@@ -104,7 +106,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 		// uniqueTriples = [];
 	}
 	
-	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
+	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
 parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, idT, joinW) {
@@ -123,7 +125,7 @@ parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, 
 	//counter++;
 	var result = generateExpressionSQL(parsed_exp2, "", className, null, true, false, false);
 		
-	return {"exp":result, "sqlSubSelectMap": sqlSubSelectMap, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression};
+	return {"exp":result, "sqlSubSelectMap": sqlSubSelectMap, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "messages":messages};
 }
 
 parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, parType) {
@@ -143,7 +145,7 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, i
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, alias, true, isSimpleVariable, false);
 	//console.log(resultSQL);
 
-	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable};
+	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 
 }
 
@@ -166,7 +168,7 @@ parse_attribSQL = function(parsed_exp, alias, className, vnc, vna, count, ep, st
 	var resultSQL = generateExpressionSQL(parsed_exp1, "", className, alias, true, isSimpleVariable, false);
 	//console.log(resultSQL);
 
-	return {"exp":resultSQL, "sqlSubSelectMap": sqlSubSelectMap, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression};
+	return {"exp":resultSQL, "sqlSubSelectMap": sqlSubSelectMap, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "messages":messages};
 
 }
 
@@ -588,7 +590,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
 getPath = function(expressionTable){
-	
+	//console.log("expressionTable", expressionTable);
 	var prTable = [];
 	var path = "";
 	for(var key in expressionTable){
@@ -603,8 +605,14 @@ getPath = function(expressionTable){
 			else path = path +"/" + pathPart;
 			
 		} else {
-			 Interpreter.showErrorMsg("Unrecognized link property or property path. Please specify link property or property path from ontology.");
-			 return null;
+
+			// Interpreter.showErrorMsg("Unrecognized link property or property path. Please specify link property or property path from ontology.");
+			 return {messages : {
+				"type" : "Error",
+				"message" : "Unrecognized link property or property path. Please specify link property or property path from ontology.",
+				//"listOfElementId" : [clId],
+				"isBlocking" : true
+			 }};
 		}
 		
 	}
@@ -681,7 +689,10 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
 				var path = getPath(pe["Path"]);
-				if(path == null) prefixedName = null;
+				if(typeof path["messages"] !== 'undefined' ) {
+					prefixedName = null;
+					messages = messages.concat(path["messages"]);
+				}
 				else{
 					for (var prefix in path["prefixTable"]) { 
 						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
@@ -843,7 +854,10 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
 					var path = getPath(pe["Path"]);
-					if(path == null) prefixedName = null;
+					if(typeof path["messages"] !== 'undefined') {
+						prefixedName = null;
+						messages = messages.concat(path["messages"]);
+					}
 					else{
 						for (var prefix in path["prefixTable"]) { 
 							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
@@ -862,7 +876,10 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
 				
 					var path = getPath(pe["var"]["name"]);
-					if(path == null) prefixedName = null;
+					if(typeof path["messages"] !== 'undefined') {
+						prefixedName = null;
+						messages = messages.concat(path["messages"]);
+					}
 					else{
 						for (var prefix in path["prefixTable"]) { 
 							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
@@ -895,7 +912,10 @@ function transformVariableFilter(expressionTable, prefix, existsExpr, count, ali
 				}
 				else if(typeof pe["Path"] !== 'undefined'){
 					var path = getPath(pe["Path"]);
-					if(path == null) prefixedName = null;
+					if(typeof path["messages"] !== 'undefined') {
+						prefixedName = null;
+						messages = messages.concat(path["messages"]);
+					}
 					else{
 						for (var prefix in path["prefixTable"]) { 
 							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
@@ -1225,7 +1245,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
 			var path = getPath(expressionTable[key]["Path"]);
-			if(path == null) prefixName = null;
+			if(typeof path["messages"] !== 'undefined') {
+				prefixName = null;
+				messages = messages.concat(path["messages"]);
+			}
 			else{
 				for (var prefix in path["prefixTable"]) { 
 					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
@@ -1343,7 +1366,21 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					if(expressionTable[key]['kind'] == "CLASS_ALIAS" || expressionTable[key]['kind'] == "PROPERTY_ALIAS") referenceTable.push("?"+variable)
 				}
 			} else{
-				Interpreter.showErrorMsg("Unrecognized variable '" + varName + "'. Please specify variable.");
+				var clId;
+				for(var key in idTable){
+					if (idTable[key] == className) {
+						clId = key;
+						break;
+					}
+				}
+
+				messages.push({
+					"type" : "Error",
+					"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
+					"listOfElementId" : [clId],
+					"isBlocking" : false
+				});
+				//Interpreter.showErrorMsg("Unrecognized variable '" + varName + "'. Please specify variable.");
 			}
 		}
 		if (key == "Additive" || key == "Unary") {
