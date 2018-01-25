@@ -23,6 +23,7 @@ var idTable = [];
 var joinWith = null;
 var classIdentificator = null;
 var messages = [];
+var classTable = [];
 
 var sqlSubSelectMap = [];
 
@@ -49,7 +50,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -71,10 +72,11 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT){
 	parameterTable = prt;
 	idTable = idT;
 	messages = [];
+	classTable = ct;
 }
 
-parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT);
+parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -110,7 +112,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 }
 
 parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, idT, joinW) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT);
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, []);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -128,12 +130,12 @@ parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, 
 	return {"exp":result, "sqlSubSelectMap": sqlSubSelectMap, "expressionLevelNames":expressionLevelNames, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "messages":messages};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, parType) {
+parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, parType) {
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT);
-
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable);
+	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
 	// check if given expression is simple variable name or agregation, function, expression
@@ -152,7 +154,7 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, i
 parse_attribSQL = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, classId, joinW) {
 	alias = alias || "";
 	
-	initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT);
+	initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, []);
 
 	sqlSubSelectMap = [];
 	joinWith = joinW;
@@ -590,7 +592,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
 getPath = function(expressionTable){
-	//console.log("expressionTable", expressionTable);
+
 	var prTable = [];
 	var path = "";
 	for(var key in expressionTable){
@@ -674,18 +676,15 @@ function transformExistsOR(expressionTable, prefix, existsExpr, countOR, alias, 
 }
 
 function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
-	// console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-	// console.log("variableNamesClass", variableNamesClass);
-	// console.log("variableNamesAll", variableNamesAll);
 	var variable, prefixedName
 			if(typeof pe["Reference"] !== 'undefined'){
-				variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
-				prefixedName = getPrefix(pe["var"]["type"]["Prefix"])+":"+pe["var"]["name"];
-				var namespace = pe["var"]["type"]["Namespace"];
-				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-				prefixTable[getPrefix(pe["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
-				referenceTable.push("?"+pe["Reference"]["name"]);
-				referenceCandidateTable.push(pe["Reference"]["name"]);
+					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
+					prefixedName = getPrefix(pe["var"]["type"]["Prefix"])+":"+pe["var"]["name"];
+					var namespace = pe["var"]["type"]["Namespace"];
+					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+					prefixTable[getPrefix(pe["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
+					referenceTable.push("?"+pe["Reference"]["name"]);
+					referenceCandidateTable.push(pe["Reference"]["name"]);
 			}
 			else if(typeof pe["Path"] !== 'undefined'){
 				var path = getPath(pe["Path"]);
@@ -715,10 +714,7 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				var namespace = pe["var"]["type"]["Namespace"];
 				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 				prefixTable[getPrefix(pe["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
-				// console.log("variable", variable);
-				// console.log("variableNamesClass", variableNamesClass);
-				// console.log("variableNamesAll", variableNamesAll);
-				// console.log("------------------------");
+
 			}
 	return {"variable":variable, "prefixedName":prefixedName};
 }
@@ -1218,28 +1214,70 @@ function transformSubstring(expressionTable){
 	return expressionTable
 }
 
+function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
+
+	for(var ref in refTable){
+		if(typeof refTable[ref] === 'object'){
+			if(typeof refTable[ref]["optionaPlain"] !== 'undefined' && refTable[ref]["optionaPlain"] == true) isOptionalPlain = true;
+
+			if(reference == ref){
+				if(isOptionalPlain == true) return true;
+			}else {
+				var result  = false;
+				for(var r in refTable[ref]["classes"]){
+					if(typeof refTable[ref]["classes"][r] === 'object'){
+						var tempResult = checkIfUnderOptionalPlain(reference, refTable[ref]["classes"][r], isOptionalPlain);
+						if(tempResult == true) result = true;
+					}
+				}
+				if(result == true) return true;
+			}
+		}
+	}
+	return false;
+}
+
 function generateExpression(expressionTable, SPARQLstring, className, alias, generateTriples, isSimpleVariable, isUnderInRelation){
 	for(var key in expressionTable){
 		var visited = 0;
 		
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-			var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
-			if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
-				var inFilter = false;
-				//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
+			if(checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false) == false){
+				var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
+				if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
+					var inFilter = false;
+					//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
+					
+					var variableData = expressionTable[key]["var"];
+					if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+					|| variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
+					tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["Prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
+				}
+				variableTable.push("?" + variable);
+				SPARQLstring = SPARQLstring + "?" + variable;
+				visited = 1;
 				
-				var variableData = expressionTable[key]["var"];
-				if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-				|| variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-				tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["Prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
+				referenceTable.push("?"+expressionTable[key]["Reference"]["name"]);
+				referenceCandidateTable.push(expressionTable[key]["Reference"]["name"]);
+			} else {
+				var clId;
+				for(var k in idTable){
+					if (idTable[k] == className) {
+						clId = k;
+						break;
+					}
+				}
+				
+				messages.push({
+					"type" : "Error",
+					"message" : "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'",
+					// "listOfElementId" : [clId],
+					"isBlocking" : true
+				});
+				
+				visited = 1;
 			}
-			variableTable.push("?" + variable);
-			SPARQLstring = SPARQLstring + "?" + variable;
-			visited = 1;
-			
-			referenceTable.push("?"+expressionTable[key]["Reference"]["name"]);
-			referenceCandidateTable.push(expressionTable[key]["Reference"]["name"]);
 		}
 		
 		//PATH

@@ -364,8 +364,13 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 	var className = idTable[clazz["identification"]["_id"]];
 	var linkType = "palin";
 	if(clazz["linkType"] != "REQUIRED" || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) linkType = "notPlain";
+	
 	referenceTable[className] = [];
 	referenceTable[className]["type"] = linkType;
+	
+	if(clazz["linkType"] == "OPTIONAL" && clazz["isSubQuery"] != true && clazz["isGlobalSubQuery"] != true) referenceTable[className]["optionaPlain"] = true;
+	else referenceTable[className]["optionaPlain"] = false;
+	
 	referenceTable[className]["classes"] = [];
 	_.each(clazz["children"],function(subclazz) {
 		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"]);
@@ -419,7 +424,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 var generateIdsResult = generateIds(rootClass);
 		 var idTable = generateIdsResult["idTable"];
 		 var referenceTable = generateIdsResult["referenceTable"];
-
+		 
 		 //empty prefix in query
 		 var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
 
@@ -432,7 +437,7 @@ function generateSPARQLtext(abstractQueryTable){
 		//counter for variables with equals names
 		 var counter = 0;
 
-		 var result = forAbstractQueryTable(rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable);
+		 var result = forAbstractQueryTable(rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable);
 		 
 		 messages = messages.concat(result["messages"]); 
 		 
@@ -550,16 +555,18 @@ function generateSPARQLtext(abstractQueryTable){
 		 }
 		 
 		 var blocking = false;
-		 var showMessages = "";
-		 for (var message in messages){
-			if(typeof messages[message] === "object") {
-				if(messages[message]["isBlocking"] == true){
-					blocking = true;
+		 if(messages.length > 0){
+			 var showMessages = "";
+			 for (var message in messages){
+				if(typeof messages[message] === "object") {
+					if(messages[message]["isBlocking"] == true){
+						blocking = true;
+					}
+					showMessages = showMessages + "\n\n" + messages[message]["message"];
 				}
-				showMessages = showMessages + "\n\n" + messages[message]["message"];
-			}
+			 }
+			 Interpreter.showErrorMsg(showMessages)
 		 }
-		 Interpreter.showErrorMsg(showMessages)
 		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking};
 }
 
@@ -581,7 +588,7 @@ function getPrefix(emptyPrefix, givenPrefix){
 // fieldNames - all field names in a query
 // symbolTable - table with symbols presented in a query
 // parameterTable - table with user set SPARQL generation parameters
-function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable){
+function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable){
 	var messages = [];
 	
 	var variableNamesClass = [];
@@ -630,7 +637,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	}
 	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
 
-		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable);
+		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable);
 		counter = resultClass["counter"]
 		var temp = [];
 		messages = messages.concat(resultClass["messages"]);
@@ -658,7 +665,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
 			sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?"+field["exp"], "value" : "?"+field["exp"]});
 		} else {
-			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable);
+			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable);
 			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
 			sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
@@ -781,7 +788,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	//aggregations
 	_.each(clazz["aggregations"],function(field) {
 
-		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, "aggregation");
+		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, "aggregation");
 		messages = messages.concat(result["messages"]);
 		//console.log("RRRRRRRRRRRR", result);
 		counter = result["counter"];
@@ -823,8 +830,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			sparqlTable["agregationInside"] = true;
 			sparqlTable["aggregateTriples"].push(getTriple(result, alias, field["requireValues"], false));
 			//MAIN SELECT agregate variables
-			sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
-
+			if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
+			
 			for (var variable in result["variables"]){
 				if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
 			}
@@ -843,7 +850,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 	//conditions
 	_.each(clazz["conditions"],function(condition) {
-		var result = parse_filter(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable);
+		var result = parse_filter(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable);
 		messages = messages.concat(result["messages"]);
 		//console.log("FILTER", result);
 		for (var reference in result["referenceCandidateTable"]){
@@ -890,7 +897,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	}
 	_.each(clazz["children"],function(subclazz) {
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
-		var temp = forAbstractQueryTable(subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable);
+		var temp = forAbstractQueryTable(subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable);
 		messages = messages.concat(temp["messages"]); 
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
@@ -1061,7 +1068,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
 			}
 			orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
 		 } else {		
-			var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable);
+			var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
 			 messages = messages.concat(result["messages"]);
 			 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 				 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
