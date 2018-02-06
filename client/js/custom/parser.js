@@ -24,6 +24,7 @@ var joinWith = null;
 var classIdentificator = null;
 var messages = [];
 var classTable = [];
+var primaryKey = null;
 
 var sqlSubSelectMap = [];
 
@@ -111,10 +112,11 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, idT, joinW) {
+parse_filterSQL = function(parsed_exp, className, vnc, vna, count, ep, st, prt, idT, joinW, pk) {
 	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, []);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
+	primaryKey = pk;
 	
 	sqlSubSelectMap = [];
 	joinWith = joinW;
@@ -151,14 +153,16 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, i
 
 }
 
-parse_attribSQL = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, classId, joinW) {
+parse_attribSQL = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, classId, joinW, parType, pk) {
 	alias = alias || "";
 	
-	initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, []);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, []);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, []);
 
 	sqlSubSelectMap = [];
 	joinWith = joinW;
 	classIdentificator = classId;
+	primaryKey = pk;
 	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -2051,19 +2055,19 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 		
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-			console.log("'Reference' exprassion not suported yet");
+			console.log("'Reference' expression not supported yet");
 			visited = 1;
 		}
 		
 		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
-			console.log("'Path' exprassion not suported yet");
+			console.log("'Path' expression not supported yet");
 			visited = 1;
 		}
 		
 		//VariableName (?a)
 		if (key == "VariableName") {
-			console.log("'VariableName' exprassion not suported yet");
+			console.log("'VariableName' expression not supported yet");
 			visited = 1;
 		}
 		
@@ -2073,7 +2077,39 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 		}
 		
 		if (key == "NotExistsFunc" || key == "ExistsFunc") {
-			console.log("'ExistsFunc / NotExistsFunc' exprassion not suported yet");
+			//console.log("'ExistsFunc / NotExistsFunc' expression not supported yet");
+			var res = generateExpressionSQL(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+			var notPart = "";
+			if(key == "NotExistsFunc") notPart = "NOT ";
+			var unionPart = [];
+			var selectPart = [];
+			var selectPartAlias = [];
+			
+			for(var map in sqlSubSelectMap){
+				if(typeof sqlSubSelectMap[map] === 'object'){
+					for(var fromP in sqlSubSelectMap[map]){
+						var fromPart = [];
+						var selectPart = [];
+						for(var f in sqlSubSelectMap[map][fromP]["From"]){	
+							 if(typeof sqlSubSelectMap[map][fromP]["From"][f] === 'object')fromPart.push(sqlSubSelectMap[map][fromP]["From"][f]["Expression"] + " " + sqlSubSelectMap[map][fromP]["From"][f]["Name"]);
+						}
+						if(typeof sqlSubSelectMap[map][fromP]["Select"] === 'object'){
+							 for(var sel in sqlSubSelectMap[map][fromP]["Select"]){
+								 selectPart.push(sqlSubSelectMap[map][fromP]["Select"][sel]["select"] + " AS " + sqlSubSelectMap[map][fromP]["Select"][sel]["alias"]);
+								 selectPartAlias.push(sqlSubSelectMap[map][fromP]["Select"][sel]["alias"]);
+							 }
+						}
+						unionPart.push("SELECT " + selectPart.join(", ") + " FROM " + fromPart.join("\n"));
+					}
+				}
+			}
+			
+			sqlSubSelectMap = [];
+			selectPartAlias = selectPartAlias.filter(function (el, i, arr) {
+				return arr.indexOf(el) === i;
+			});
+			// SPARQLstring = notPart+ "EXISTS(SELECT " + selectPartAlias.join(", ") + " FROM(SELECT " + selectPart.join(", ") + " FROM " + fromPart.join("\nUNION\n") + ") s WHERE "+ res +" )";
+			SPARQLstring = notPart+ "EXISTS(SELECT " + selectPartAlias.join(", ") + " FROM("+ unionPart.join("\nUNION\n")+") s WHERE "+ res +" )";
 			visited = 1;
 		}
 		if (key == "BooleanLiteral") {
@@ -2085,7 +2121,7 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 		}
 		//(.) . -> primary key
 		if (key == "classExpr"){
-			console.log("'classExpr' exprassion not suported yet");
+			SPARQLstring = SPARQLstring + primaryKey;
 			visited = 1;
 		}
 		
@@ -2098,37 +2134,54 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 			else varName = expressionTable[key]["name"];
 			var variable = setVariableName(varName, alias, expressionTable[key]);
 			
-			for(var map in expressionTable[key]["type"]["triplesMaps"]){
-				if(typeof expressionTable[key]["type"]["triplesMaps"][map] === 'object'){
-					var templete = expressionTable[key]["type"]["triplesMaps"][map]["subjectMap"]["templete"];
-					var logicalTable = expressionTable[key]["type"]["triplesMaps"][map]["logicalTable"];
-					var from;
-					var view;
-					if(logicalTable["type"] == "view") {
-						//var tempSqlQuery =logicalTable["sqlQuery"].replace(";", "");
-						var tempSqlQuery =logicalTable["sqlQuery"].split(";").join("");
-						from = {"Expression":"("+ removeQuotes(tempSqlQuery.replace(";", ""))+")", "Name":"view_"+counter};
-						view = "view_"+counter;
-					}
-					else {
-						from = {"Expression":removeQuotes(logicalTable["table"]), "Name":"table_"+counter};
-						view = "table_"+counter;
-					}
-					var select = null;
-					for(var pom in expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"]){
-						if(typeof expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"][pom] == 'object'){
-							var predicateObjectMap = expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"][pom];
-							if(predicateObjectMap["predicate"] == expressionTable[key]["type"]["URI"]){
-								
-								select = {"select": view + "." + removeQuotes(predicateObjectMap["objectMap"]["column"]), "alias": variable};
-							}
-
+			if(typeof expressionTable[key]["type"] !== 'undefined' && expressionTable[key]["type"] != null && typeof expressionTable[key]["type"]["triplesMaps"] !== 'undefined' && expressionTable[key]["type"]["triplesMaps"]!= null){
+				for(var map in expressionTable[key]["type"]["triplesMaps"]){
+					if(typeof expressionTable[key]["type"]["triplesMaps"][map] === 'object'){
+						var templete = expressionTable[key]["type"]["triplesMaps"][map]["subjectMap"]["templete"];
+						var logicalTable = expressionTable[key]["type"]["triplesMaps"][map]["logicalTable"];
+						var from;
+						var view;
+						if(logicalTable["type"] == "view") {
+							//var tempSqlQuery =logicalTable["sqlQuery"].replace(";", "");
+							var tempSqlQuery =logicalTable["sqlQuery"].split(";").join("");
+							from = {"Expression":"("+ removeQuotes(tempSqlQuery.replace(/;/g, ""))+")", "Name":"view_"+counter};
+							view = "view_"+counter;
 						}
+						else {
+							from = {"Expression":removeQuotes(logicalTable["table"]), "Name":"table_"+counter};
+							view = "table_"+counter;
+						}
+						var select = null;
+						for(var pom in expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"]){
+							if(typeof expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"][pom] == 'object'){
+								var predicateObjectMap = expressionTable[key]["type"]["triplesMaps"][map]["predicateObjectMap"][pom];
+								if(predicateObjectMap["predicate"] == expressionTable[key]["type"]["URI"]){
+									
+									select = [{"select": removeQuotes(predicateObjectMap["objectMap"]["column"]), "alias": variable, "viewName":view}];
+								}
+
+							}
+						}
+						sqlSubSelectMapVar.push({
+							"SelectJoin":[{
+								"ClassID":classIdentificator,
+								"Template": {
+									"alias": "Template_"+counter,
+									"name":templete.substring(1, templete.search("{")
+								)},
+								"PK": {
+									"name":templete.substring(templete.search("{")+1, templete.search("}")), 
+									"view":view, 
+									"alias":"key_"+counter
+								}
+							}],
+							"From" : [from],
+							"Select": select,
+							"JoinWith":joinWith});
+						//counter++;
 					}
-					sqlSubSelectMapVar.push({"SelectJoin":[{"ClassID":classIdentificator, "Template": {"alias": "Template_"+counter , "name":templete.substring(1, templete.search("{"))}, "PK": {"name":templete.substring(templete.search("{")+1, templete.search("}")), "view":view, "alias":"key_"+counter}}], "From" : [from], "Select": select, "JoinWith":joinWith});
-					//counter++;
 				}
-			}
+			} 
 			counter++;
 			sqlSubSelectMap.push(sqlSubSelectMapVar);
 			SPARQLstring = SPARQLstring + variable;
@@ -2139,16 +2192,16 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 			visited = 1;
 		}
 		if (key == "RDFLiteral") {
-			SPARQLstring = SPARQLstring + expressionTable[key]['String'];
+			SPARQLstring = SPARQLstring + expressionTable[key]['String'].replace(/"/g, "'");
 			if (typeof expressionTable[key]['LANGTAG'] !== 'undefined'){
-				console.log("'LANGTAG' exprassion not suported yet");
+				console.log("'LANGTAG' expression not supported yet");
 			}
 			if (typeof expressionTable[key]['iri'] !== 'undefined'){
 				if (typeof expressionTable[key]['iri']['PrefixedName'] !== 'undefined'){
-					console.log("'IRI PrefixedName' exprassion not suported yet");
+					console.log("'IRI PrefixedName' expression not supported yet");
 				}
 				if (typeof expressionTable[key]['iri']['IRIREF'] !== 'undefined'){
-					console.log("'IRI IRIREF' exprassion not suported yet");
+					console.log("'IRI IRIREF' expression not supported yet");
 				}
 			}
 			visited = 1;
@@ -2161,7 +2214,7 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 			var DISTINCT = "";
 			if (typeof expressionTable[key]['DISTINCT'] !== 'undefined') DISTINCT = expressionTable[key]['DISTINCT'] + " ";
 			if (expressionTable[key]['Aggregate'].toLowerCase() == 'group_concat'){
-				console.log("'Aggregate group_concat' exprassion not suported yet");
+				console.log("'Aggregate group_concat' expression not supported yet");
 			}
 			else {
 				SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpressionSQL(expressionTable[key]["Expression"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
@@ -2380,21 +2433,21 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 					}
 					if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpressionSQL(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 					if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
-						console.log("'classExpr' exprassion not suported yet");
+						console.log("'classExpr' expression not supported yet");
 					}
 				}
 				visited = 1
 			}
 		}
 		if (key == "NumericLiteral") {
-			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  '"' + expressionTable[key]['Number'] + '"';
+			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  "'" + expressionTable[key]['Number'] + "'";
 			else SPARQLstring = SPARQLstring + expressionTable[key]['Number'];
 			visited = 1;
 		}
 		if (key == "MultiplicativeExpression") {
 			if(typeof expressionTable[key]["UnaryExpressionList"]!== 'undefined' && typeof expressionTable[key]["UnaryExpressionList"][0]!== 'undefined' && typeof expressionTable[key]["UnaryExpressionList"][0]["Unary"]!== 'undefined'
 			&& expressionTable[key]["UnaryExpressionList"][0]["Unary"] == "/"){
-				console.log("'xsd:decimal(res)' exprassion not suported yet");
+				console.log("'xsd:decimal(res)' expression not supported yet");
 				isFunction = true
 				SPARQLstring = SPARQLstring + generateExpressionSQL(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
 			}
@@ -2475,11 +2528,11 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 							} else if(isDateVar(left, dateTimeArray) == true && isValidForConvertation(right) == true ){
 								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 								//SPARQLstring = SPARQLstring + 'DATEDIFF("day", xsd:dateTime(' + sr + '),' + sl + ")";
-								console.log("'dateTime convertion' exprassion not suported yet");
+								console.log("'dateTime convertion' expression not supported yet");
 								isFunction = true;
 							} else if(isDateVar(left, dateTimeArray) == true){
 								//SPARQLstring = SPARQLstring + 'DATEDIFF("day",  ' + sr + ', xsd:dateTime(' + sl + "))";
-								console.log("'dateTime convertion' exprassion not suported yet");
+								console.log("'dateTime convertion' expression not supported yet");
 								isFunction = true;
 								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 							} else {
@@ -2500,14 +2553,14 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 		
 		
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["iri"]!== 'undefined') {
-			console.log("'IRI' exprassion not suported yet");
+			console.log("'IRI' expression not supported yet");
 			visited = 1
 		}
 		if (key == "FunctionExpression") { 
 			isFunction = true
 			if (typeof expressionTable[key]["Function"]!== 'undefined') {
 				if(expressionTable[key]["Function"].toLowerCase() == 'date' || expressionTable[key]["Function"].toLowerCase() == 'datetime') {
-					console.log("'date / datetime' exprassion not suported yet");
+					console.log("'date / datetime' expression not supported yet");
 				}
 				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
 			}
@@ -2532,12 +2585,12 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 						SPARQLstring = SPARQLstring + 'DATEDIFF("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
 					}
 					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray) == true && isValidForConvertation(expressionTable[key]["PrimaryExpressionR"]) == true ){
-						console.log("'dateTime convertion' exprassion not suported yet");
+						console.log("'dateTime convertion' expression not supported yet");
 						//SPARQLstring = SPARQLstring + 'DATEDIFF("' + fun.substring(0, fun.length-1) + '",  xsd:dateTime(' + sr + "), " + sl + ")";
 						//prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 					}
 					else if(isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray) == true){
-						console.log("'dateTime convertion' exprassion not suported yet");
+						console.log("'dateTime convertion' expression not supported yet");
 						//SPARQLstring = SPARQLstring + 'DATEDIFF("' + fun.substring(0, fun.length-1) + '", ' + sr + ", xsd:dateTime(" + sl + "))";
 						//prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 					}
@@ -2587,19 +2640,19 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 		}
 		
 		if(key == "Bound"){
-			console.log("'Bound' exprassion not suported yet");
+			console.log("'Bound' expression not supported yet");
 			visited = 1;
 		}
 		if(key == "notBound"){
-			console.log("'NOT Bound' exprassion not suported yet");
+			console.log("'NOT Bound' expression not supported yet");
 			visited = 1;
 		}
 		if(key == "ExistsExpr"){
-			console.log("'ExistsExpr' exprassion not suported yet");
+			console.log("'ExistsExpr' expression not supported yet");
 			visited = 1;
 		}
 		if(key == "NotExistsExpr"){
-			console.log("'ExistsExpr' exprassion not suported yet");
+			console.log("'ExistsExpr' expression not supported yet");
 			visited = 1;
 		}
 		
@@ -2623,7 +2676,8 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 			visited = 1
 		}
 		if (key == "RegexExpression") {
-			SPARQLstring = SPARQLstring + "REGEX(" + generateExpressionSQL(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+			//SPARQLstring = SPARQLstring + "REGEX(" + generateExpressionSQL(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+			console.log("'REGEX' expression not supported yet");
 			visited = 1
 			isFunction = true;
 		}
@@ -2656,7 +2710,7 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 				var expr1 = generateExpressionSQL({Expression1 : expressionTable[key]["BetweenExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				var expr2 = generateExpressionSQL({Expression2 : expressionTable[key]["BetweenExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				
-				SPARQLstring = SPARQLstring  + " BETWEEN(" + expr1 + ", " + expr2 + ")";
+				SPARQLstring = SPARQLstring  + " BETWEEN " + expr1 + " AND " + expr2;
 				visited = 1
 			}
 		}
@@ -2667,17 +2721,18 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 				var start = expressionTable[key]["start"];
 				var end = expressionTable[key]["end"];
 				var string = expressionTable[key]["string"];
-				SPARQLstring = SPARQLstring  + " LIKE ";
-				if(start != null) SPARQLstring = SPARQLstring  + start;
+				SPARQLstring = SPARQLstring  + " LIKE '";
+				if(start != null) SPARQLstring = SPARQLstring + start;
 				SPARQLstring = SPARQLstring  + string;
 				if(end != null) SPARQLstring = SPARQLstring  + end;
+				SPARQLstring = SPARQLstring  + "'"
 				
 				visited = 1
 			}
 		}
 		
 		if (key == "ValueScope" && typeof expressionTable[key] !== 'undefined'){
-			console.log("'ValueScope' exprassion not suported yet");
+			console.log("'ValueScope' expression not supported yet");
 			visited = 1
 		}
 		

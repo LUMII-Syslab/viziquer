@@ -863,7 +863,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		counter = result["counter"]
 		// for (var attrname in result["variableNamesClass"]) { variableNamesClass[attrname] = result["variableNamesClass"][attrname]; }
 		for (var attrname in result["variableNamesClass"]) {
-				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+			if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 		}
 		for (var attrname in result["expressionLevelNames"]) {
 			if(typeof result["expressionLevelNames"][attrname] === 'string') {
