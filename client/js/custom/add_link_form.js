@@ -16,6 +16,9 @@ Template.AddLink.helpers({
 			//Associations
 			var asc_all = [];
 			var asc = [];
+			var atr = [];
+			var atrNameArray = [];
+			var asoc = [];
 			//Class Name - direct
 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
 			if (!compart_type) {
@@ -35,12 +38,27 @@ Template.AddLink.helpers({
 			}
 
 			asc = schema.findClassByName(className).getAllAssociations();
-      asc.push({name: "++", class: "", type: "=>"});
+			asoc = asc.map(function(elem){
+				atrNameArray = [];				
+				atr = schema.findClassByName(elem.class).getAllAttributes();
+				atr.map(function(a){					
+					atrNameArray.push(a.name);
+				})
+				//console.log(atrNameArray);								
+				return ({name: elem.name, class: elem.class, type: elem.type, attributes: atrNameArray});
+			})
+			asoc.push({name: "++", class: "", type: "=>", attributes: []});
+			//console.log(asoc);
+
+			atr = schema.findClassByName(className).getAllAttributes();	
+      		//asc.push({name: "++", class: "", type: "=>", attributes: "(-)"});
+
+			return asoc;
+/*      asc.push({name: "++", class: "", type: "=>"});
 
 			return asc;
 
-			/*
-			var cls_value = [{name: act_comp["input"], type: "direct"}];
+			/*var cls_value = [{name: act_comp["input"], type: "direct"}];
 
 			//Read all asociations' name, from&to elements
 			var cls = Associations.find();
@@ -132,7 +150,10 @@ Template.AddLink.events({
 
 		//Initial coordinate values original box and new box
 		var d = 30;
-		var x0 = elem_start["location"]["x"];
+		var schema = new VQ_Element(start_elem_id);		
+		var boxGeometry = schema.getCoordinateY(d);	
+		var finished = schema.drawLinkedClass(class_name, boxGeometry, name, line_direct);
+		/*var x0 = elem_start["location"]["x"];
 		var y0 = elem_start["location"]["y"];
 		var x1 = x0;
 		var y1 = y0 + elem_start["location"]["height"]+d;
@@ -374,7 +395,7 @@ Template.AddLink.events({
 
 
 
-		return;
+		return;*/
 
 	},
 
