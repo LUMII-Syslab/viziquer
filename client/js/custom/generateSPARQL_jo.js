@@ -501,7 +501,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 temp = temp.concat(whereInfo["filters"]);
 			 messages = messages.concat(whereInfo["messages"]);
 
-			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix);
+			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable);
 			 messages = messages.concat(orderBy["messages"]);
 			 //add triples from order by
 			 temp = temp.concat(orderBy["triples"]);
@@ -1003,7 +1003,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				// temp["sparqlTable"]["having"] = getHaving(subclazz["havingConditions"]);
 
 				//ORDER BY
-				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix);
+				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable);
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 
 				//OFFSET
@@ -1045,7 +1045,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
 }
 
-function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
+function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable){
 	var messages = [];
 	var orderTable = [];
 	var orderTripleTable = [];
@@ -1067,7 +1067,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix){
 				}
 			}
 			orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
-		 } else {		
+		} else {		
 			var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
 			 messages = messages.concat(result["messages"]);
 			 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
