@@ -1,11 +1,5 @@
 
 <template name="AddLink">
-    <style>
-        ul {
-            list-style-type: circle;    
-            padding-left: 20px;
-        }
-    </style>
 
 	<!-- Modal for new document -->
     <div id="add-link-form" class="modal fade">
@@ -27,11 +21,6 @@
                                         <input type="radio" name="stack-radio">
                                         <span class="custom-radio"></span>
                                         {{name}} {{type}} {{class}}
-                                        <br> Class describing attributes: 
-                                        <ul>
-                                        {{#each attributes}}                                        
-                                            <li> {{this}} </li>                                           
-                                        {{/each}}</ul>
                                     </label>
                                 </div>
                             {{/each}}
