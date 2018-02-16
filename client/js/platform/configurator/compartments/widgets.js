@@ -604,7 +604,7 @@ function update_selection_object(list) {
 }
 
 function update_comparment_type_field(e) {
-	var pair = get_input_field_value(e);
+	var pair = Configurator.getInputFieldValue(e);
 	var list = {attrName: pair["_attr"], attrValue: pair["_value"]};
 
 	Configurator.updateCompartmentType(list);

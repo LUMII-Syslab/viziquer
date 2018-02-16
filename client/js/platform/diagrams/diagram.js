@@ -609,7 +609,7 @@ Template.diagramEditor.events({
 
 Template.diagramEditor.onRendered(function() {
 
-	Session.set("editingDialog", reset_variable())
+	Session.set("editingDialog", reset_variable());
 
 	//a hack to register keydowns for the editor
     $('body').on('keydown', function(e) {
