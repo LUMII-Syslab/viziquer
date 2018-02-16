@@ -215,7 +215,7 @@ function generateSQLtext(abstractQueryTable){
 
 		  var result = forAbstractQueryTableSQl(rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, "", fieldNames, symbolTable, parameterTable);
 		  var sqlTable = result["sqlTable"];
-		 console.log(result, JSON.stringify(sqlTable,null,2));
+		// console.log(result, JSON.stringify(sqlTable,null,2));
 
 		 // table with prefixes used in query
 		 //var prefixTable = result["prefixTable"];
@@ -228,7 +228,8 @@ function generateSQLtext(abstractQueryTable){
 			 //DISTINCT
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length == 0) SQL_text = SQL_text + "DISTINCT ";
 
-			 
+			  //LIMIT
+			if (rootClass["limit"] != null) SQL_text = SQL_text + "TOP " + rootClass["limit"] + " ";
 			 
 			 var selectResult = generateSELECTSQL(sqlTable);
 			 
@@ -258,20 +259,30 @@ function generateSQLtext(abstractQueryTable){
 			 
 			 if(wherePart !== null && wherePart != "")SQL_text = SQL_text + "\nWHERE " + wherePart;
 			 
+			 //var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable);
+			 
+			 var groupByTemp = selectResult["groupBy"].concat(sqlTable["order"]["groupBy"]);
+			 
+			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
+				return arr.indexOf(el) === i;
+			});
+			 
 			 //GROUP BY
-			 var groupBy = selectResult["groupBy"].join(", ");
+			 var groupBy = groupByTemp.join(", ");
 			 if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
 
 			 if(rootClass["aggregations"].length > 0) SQL_text = SQL_text + groupBy;
 
+			// console.log("orderBy", sqlTable["order"]);
+			// messages = messages.concat(sqlTable["order"]["messages"]);
+			
 			 //ORDER BY
-			 //if (orderBy["orders"] != "") SQL_text = SQL_text + "\nORDER BY " + orderBy["orders"];
+			if (sqlTable["order"]["orders"] != "") SQL_text = SQL_text + "\nORDER BY " + sqlTable["order"]["orders"];
 
 			 //OFFSET
-			 if (rootClass["offset"] != null) SQL_text = SQL_text + "\nOFFSET " + rootClass["offset"];
+			 if (rootClass["offset"] != null) SQL_text = SQL_text + "\nOFFSET " + rootClass["offset"] + " ROWS";
 
-			 //LIMIT
-			if (rootClass["limit"] != null) SQL_text = SQL_text + "\nLIMIT " + rootClass["limit"];
+			
 
 
 		 return SQL_text;
@@ -307,12 +318,18 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 	sqlTable["variableReferenceCandidate"] = []; // list with candidates to reference
 	
 	sqlTable["selectSimple"] = [];
+	sqlTable["selectNot"] = [];
 	sqlTable["selectAgreggate"] = [];
+	sqlTable["localAggregateSubQueries"] = [];
 	sqlTable["classFrom"] = [];
 	sqlTable["from"] = [];
 	sqlTable["where"] = [];
+	sqlTable["isInverse"] = clazz["isInverse"];
+	sqlTable["isSubQuery"] = clazz["isSubQuery"];
+	sqlTable["isGlobalSubQuery"] = clazz["isGlobalSubQuery"];
 	
 	var resultClass;
+	var primaryKey = null;
 	if(clazz["isVariable"] == true) {
 		//TODO
 	}
@@ -322,9 +339,13 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		counter = resultClass["counter"]
 
 		for(var map in resultClass["sqlSubSelectMap"]){
-			if(typeof resultClass["sqlSubSelectMap"][map] === 'object')sqlTable["classFrom"].push(resultClass["sqlSubSelectMap"][map]);
+			if(typeof resultClass["sqlSubSelectMap"][map] === 'object'){
+				sqlTable["classFrom"].push(resultClass["sqlSubSelectMap"][map]);
+				primaryKey = findPrimaryKey(resultClass["sqlSubSelectMap"][map]);
+			}
 		}
 		//console.log("resultClass", resultClass);
+		
 	}
 	
 	var JoinClasses = [];
@@ -337,7 +358,7 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
 			//sqlTable["selectMain"]["simpleVariables"].push({"alias": "?"+field["exp"], "value" : "?"+field["exp"]});
 		} else {
-			var result = parse_attribSQL(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, null, {"JoinClassName":instance, "JoinWith":JoinClasses});
+			var result = parse_attribSQL(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, null, {"JoinClassName":instance, "JoinWith":JoinClasses}, null, primaryKey);
 			//console.log("ATTRIBUTE", result);
 			
 			counter = result["counter"]
@@ -360,6 +381,13 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 			//agregation in class
 			if(result["isAggregate"] == true) {
 				//local aggregation
+				var localFrom = [];
+				for(var map in result["sqlSubSelectMap"]){
+					if(typeof result["sqlSubSelectMap"][map] === 'object') localFrom.push(result["sqlSubSelectMap"][map]);
+				}
+				var localTemp = {"from":localFrom, "select":{"alias": alias, "value" : result["exp"]}};
+				sqlTable["localAggregateSubQueries"].push(localTemp);
+				sqlTable["selectSimple"].push({"alias": alias, "value" : alias});
 			}
 
 			//function in expression
@@ -369,10 +397,17 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 				for(var map in result["sqlSubSelectMap"]){
 					if(typeof result["sqlSubSelectMap"][map] === 'object') sqlTable["from"].push(result["sqlSubSelectMap"][map]);
 				}
+				
+				var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], sqlTable["from"]);
+					
+				sqlTable["classFrom"] = optimizationResult["classSQL"];
+				sqlTable["from"] = optimizationResult["fromSQL"];
+				
 				//MAIN SELECT function variables (not undet NOT link and is not internal)
 				if(underNotLink != true && field["isInternal"] != true){
 					sqlTable["selectSimple"].push({"alias": alias, "value" : result["exp"]});
 				}
+				if(underNotLink == true) sqlTable["selectNot"].push({"alias": alias, "value" : result["exp"]});
 			}
 
 			//expression in expression
@@ -382,48 +417,49 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 				for(var map in result["sqlSubSelectMap"]){
 					if(typeof result["sqlSubSelectMap"][map] === 'object') sqlTable["from"].push(result["sqlSubSelectMap"][map]);
 				}
+				
+				var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], sqlTable["from"]);
+					
+				sqlTable["classFrom"] = optimizationResult["classSQL"];
+				sqlTable["from"] = optimizationResult["fromSQL"];
+				
 				// MAIN SELECT expression variables (not undet NOT link and is not internal)
 				if(underNotLink != true && field["isInternal"] != true){
 					sqlTable["selectSimple"].push({"alias": alias, "value" : result["exp"]});
 				}
+				if(underNotLink == true) sqlTable["selectNot"].push({"alias": alias, "value" : result["exp"]});
 			}
 			//simple expression
 			else {
 					alias = result["exp"];
+					
+					// console.log("1111", sqlTable["classFrom"]);
 					
 					//sqlTable["from"].push(result["sqlSubSelectMap"]);
 					for(var map in result["sqlSubSelectMap"]){
 						if(typeof result["sqlSubSelectMap"][map] === 'object') sqlTable["from"].push(result["sqlSubSelectMap"][map]);
 					}
 
+					var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], sqlTable["from"]);
+					
+					sqlTable["classFrom"] = optimizationResult["classSQL"];
+					sqlTable["from"] = optimizationResult["fromSQL"];
+					
 					// MAIN SELECT simple variables (not undet NOT link and is not internal)
 					if(underNotLink != true && (field["isInternal"] != true || field["exp"].startsWith("?"))){
 						sqlTable["selectSimple"].push({"alias": alias, "value" : alias});
 					} 
+					if(underNotLink == true) sqlTable["selectNot"].push({"alias": alias, "value" : result["exp"]});
 			}
+			if(field["requireValues"] == true) sqlTable["where"].push({"where": alias + " IS NOT NULL"});
 		}
 	})
 
-	//conditions
-	_.each(clazz["conditions"],function(condition) {
-		var result = parse_filterSQL(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, parameterTable, idTable, {"JoinClassName":instance, "JoinWith":JoinClasses});
-
-		counter = result["counter"]
-		
-		for (var attrname in result["variableNamesClass"]) { 
-				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname]; 
-		}  
-		for (var attrname in result["expressionLevelNames"]) {
-			if(typeof result["expressionLevelNames"][attrname] === 'string') variableNamesAll[attrname] = result["expressionLevelNames"][attrname]; 
-		}
-		
-		sqlTable["where"].push({"where": result["exp"], "from" : result["sqlSubSelectMap"]});
-	})
  
 	//aggregations
 	_.each(clazz["aggregations"],function(field) {
 		
-		var result = parse_attribSQL(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, null, {"JoinClassName":instance, "JoinWith":JoinClasses});
+		var result = parse_attribSQL(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, null, {"JoinClassName":instance, "JoinWith":JoinClasses}, "aggregation", primaryKey);
 		counter = result["counter"];
 		for (var attrname in result["variableNamesClass"]) { 
 			if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname]; 
@@ -432,15 +468,22 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		var alias = field["alias"];
 		if(alias == null || alias == "") {
 			if(result["isExpression"] == false && result["isFunction"] == false) {
-
 				var indexCole = result["exp"].indexOf(";");
 				var endIndex = result["exp"].indexOf(")");
 				if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
 				
-				var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
-				if(typeof variableNamesAll[tempAlias] !== 'undefined') alias = tempAlias + "_" + counter;
-				else alias = tempAlias;
-				variableNamesAll[tempAlias] = tempAlias;
+				var tempAlias = result["exp"].substring(result["exp"].indexOf("(")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+
+				if(typeof variableNamesAll[tempAlias] !== 'undefined') {
+					var count = variableNamesAll[tempAlias]["counter"] + 1;
+					variableNamesAll[tempAlias]["counter"]  = count;
+					alias = tempAlias + "_" + count;
+				}
+				else {
+					alias = tempAlias;
+					variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false};
+				}
+				
 			} else {
 				alias = "expr_" + counter;
 				counter++;
@@ -455,6 +498,12 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 			for(var map in result["sqlSubSelectMap"]){
 				if(typeof result["sqlSubSelectMap"][map] === 'object') sqlTable["from"].push(result["sqlSubSelectMap"][map]);
 			}
+			
+			var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], sqlTable["from"]);
+					
+			sqlTable["classFrom"] = optimizationResult["classSQL"];
+			sqlTable["from"] = optimizationResult["fromSQL"];
+			
 			sqlTable["selectAgreggate"].push({"alias": alias, "value" : result["exp"]}); 
 			// console.log("alias: ", alias);
 			// console.log("value: ", result["exp"]);
@@ -463,23 +512,55 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		}
 
 	})
+	
+	//conditions
+	_.each(clazz["conditions"],function(condition) {
+		var result = parse_filterSQL(condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, parameterTable, idTable, {"JoinClassName":instance, "JoinWith":JoinClasses}, primaryKey);
+
+		counter = result["counter"]
+		
+		for (var attrname in result["variableNamesClass"]) { 
+			if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname]; 
+		}  
+		
+		for (var attrname in result["expressionLevelNames"]) {
+			if(typeof result["expressionLevelNames"][attrname] === 'string') {
+				if(typeof variableNamesAll[attrname] === 'undefined') variableNamesAll[attrname] = {"alias": result["expressionLevelNames"][attrname], "nameIsTaken": true, counter:0, "isVar" : false};
+			}
+		}
+		var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], result["sqlSubSelectMap"]);
+					
+		sqlTable["classFrom"] = optimizationResult["classSQL"];
+		result["sqlSubSelectMap"] = optimizationResult["fromSQL"];
+		
+		sqlTable["where"].push({"where": result["exp"], "from" : result["sqlSubSelectMap"]});
+	})
+	
+	sqlTable["from"] = optimizeAllAttributes(sqlTable["from"]);
 
 
 	//subClasses
 	if(clazz["children"].length > 0){
 		sqlTable["subClasses"] = []; // class all sub classes
 	};
+
 	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') variableNamesAll[attrname] = variableNamesClass[attrname]["alias"]; 
+		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') {
+			//if(typeof variableNamesAll[attrname] === 'undefined') 
+				variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"]};
+		}
 	}
+	
 	_.each(clazz["children"],function(subclazz) {
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 		var temp = forAbstractQueryTableSQl(subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable);
 		counter = temp["counter"];
+
 		for (var attrname in temp["variableNamesAll"]) {
-			if(typeof temp["variableNamesAll"][attrname] === 'string') variableNamesClass[attrname] = {"alias":temp["variableNamesAll"][attrname], "isvar" : false}; 
+			if(typeof temp["variableNamesAll"][attrname] === 'string') {
+				variableNamesClass[attrname] = {"alias": temp["variableNamesAll"][attrname]["alias"], "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
+			}
 		}
-		
 		underNotLink = false;
 		var tempSubSelect = [];
 		var count1 = counter;
@@ -567,6 +648,16 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 			}
 		}
 		
+		if(subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true){
+
+				//ORDER BY
+				//temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix);
+				 //OFFSET
+				temp["sqlTable"]["offset"] = subclazz["offset"];
+
+				 //LIMIT
+				 temp["sqlTable"]["limit"] = subclazz["limit"];
+		}
 		
 		//tempSubSelect.push({"JoinClasses":JoinClasses});
 		// temp["sqlTable"]["from"].unshift(tempSubSelect);
@@ -577,26 +668,161 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 			var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 		}
-
+		
 		sqlTable["subClasses"].push(temp["sqlTable"]);
+		
 	})
 
 	//conditionLinks
+	sqlTable["conditions"] = [];
 	_.each(clazz["conditionLinks"],function(condLink) {
 		//sqlTable["from"].push("FROM DEFFINITION FOR " + result["exp"]);
-		//console.log("CCCCCCCCCCCCCCCCCCcccc", condLink);
+		for (var map in condLink["identification"]["triplesMaps"]){
+			if(typeof condLink["identification"]["triplesMaps"][map] === 'object'){
+				for(var pom in condLink["identification"]["triplesMaps"][map]["predicateObjectMap"]){
+					if(typeof condLink["identification"]["triplesMaps"][map]["predicateObjectMap"][pom] == 'object'){
+						var predicateObjectMap = condLink["identification"]["triplesMaps"][map]["predicateObjectMap"][pom];
+						if(predicateObjectMap["predicate"] == condLink["identification"]["URI"]){ 
+							sqlTable["conditions"].push({
+								"parent":{
+									"id" : condLink["identification"]["_id"], 
+									"condition" : removeQuotes(predicateObjectMap["objectMap"]["joinCondition"]["parent"])
+								},
+								"child":{
+									"id" : condLink["target"], 
+									"condition" : removeQuotes(predicateObjectMap["objectMap"]["joinCondition"]["child"])
+								}
+							})
+						}
+					}
+				}
+			}
+		}
 	})
 
+	//ORDER BY
+		var orderInfo = getOrderBy(clazz["orderings"], fieldNames, clazz["identification"]["_id"], idTable, {"JoinClassName":instance, "JoinWith":JoinClasses}, counter);
+
+		sqlTable["order"] = orderInfo;
+		
+		var optimizationResult = optimizeAttributeSQLs(sqlTable["classFrom"], orderInfo["sqlSubSelectMap"]);
+					
+		sqlTable["classFrom"] = optimizationResult["classSQL"];
+		if(optimizationResult["fromSQL"].length > 0 )sqlTable["from"].concat(optimizationResult["fromSQL"]);
+		
+	
 	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string')variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
+		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string'){
+			//variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
+			variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"]};
+		}
 	}
+	
 	return {variableNamesAll:variableNamesAll, sqlTable:sqlTable, counter:counter, fieldNames:fieldNames};
+}
+
+function optimizeAttributeSQLs(classSQL, fromSQL){
+	for (var attr in fromSQL) {
+		for (var clazz in classSQL) {
+			for (var attr2 in  fromSQL[attr]) {
+				for (var clazz2 in classSQL[clazz]) {
+					var matchTable = [];
+					// if each record in fromSQL SelectJoin have the same in classSQL SelectJoin
+					var matchInSelectJoin = null;
+					for (var sja in  fromSQL[attr][attr2]["SelectJoin"]) {
+						var matchInOneSelectJoin = false;
+						for (var sjc in classSQL[clazz][clazz2]["SelectJoin"]) {
+							if(fromSQL[attr][attr2]["SelectJoin"][sja]["PK"]["name"] == classSQL[clazz][clazz2]["SelectJoin"][sjc]["PK"]["name"] &&
+							fromSQL[attr][attr2]["SelectJoin"][sja]["Template"]["name"] == classSQL[clazz][clazz2]["SelectJoin"][sjc]["Template"]["name"] ) matchInOneSelectJoin = true;
+						}
+						if(matchInSelectJoin != false) matchInSelectJoin = matchInOneSelectJoin;
+					}
+					var matchInFrom = null;
+					for (var sja in  fromSQL[attr][attr2]["From"]) {
+						var matchInOneFrom = false;
+						for (var sjc in classSQL[clazz][clazz2]["From"]) {
+							if(fromSQL[attr][attr2]["From"][sja]["Expression"] == classSQL[clazz][clazz2]["From"][sjc]["Expression"] &&
+							fromSQL[attr][attr2]["From"][sja]["Expression"] == classSQL[clazz][clazz2]["From"][sjc]["Expression"] ) {
+								matchInOneFrom = true;
+								matchTable[fromSQL[attr][attr2]["From"][sja]["Name"]] = classSQL[clazz][clazz2]["From"][sjc]["Name"];
+							}
+						}
+						if(matchInFrom != false) matchInFrom = matchInOneFrom;
+					}
+					if(matchInSelectJoin == true && matchInOneFrom == true){
+						for (var sel in fromSQL[attr][attr2]["Select"]){
+							var tempSel = {"select": fromSQL[attr][attr2]["Select"][sel]["select"], "alias": fromSQL[attr][attr2]["Select"][sel]["alias"], "viewName":matchTable[fromSQL[attr][attr2]["Select"][sel]["viewName"]]};
+							if(classSQL[clazz][clazz2]["Select"] == null) classSQL[clazz][clazz2]["Select"] = [tempSel];
+							else {
+								classSQL[clazz][clazz2]["Select"].push(tempSel);
+							}
+						}
+						//fromSQL = [];
+						fromSQL[attr] = null;
+					}
+				}
+			}
+		}
+	}
+	return {"classSQL":classSQL, "fromSQL":fromSQL};
+}
+
+function optimizeAllAttributes(fromSQL){
+	for (var clazz in fromSQL) {
+		for (var attr in fromSQL) {
+			if(attr != clazz){
+				for (var clazz2 in  fromSQL[attr]) {
+					for (var attr2 in fromSQL[clazz]) {
+						if(typeof fromSQL[attr][attr2] !== 'undefined' && typeof fromSQL[clazz][clazz2] !== 'undefined'){
+							var matchTable = [];
+							// if each record in fromSQL SelectJoin have the same in classSQL SelectJoin
+							var matchInSelectJoin = null;
+							for (var sja in  fromSQL[attr][attr2]["SelectJoin"]) {
+								var matchInOneSelectJoin = false;
+								for (var sjc in fromSQL[clazz][clazz2]["SelectJoin"]) {
+									if(fromSQL[attr][attr2]["SelectJoin"][sja]["PK"]["name"] == fromSQL[clazz][clazz2]["SelectJoin"][sjc]["PK"]["name"] &&
+									fromSQL[attr][attr2]["SelectJoin"][sja]["Template"]["name"] == fromSQL[clazz][clazz2]["SelectJoin"][sjc]["Template"]["name"] ) matchInOneSelectJoin = true;
+								}
+								if(matchInSelectJoin != false) matchInSelectJoin = matchInOneSelectJoin;
+							}
+							var matchInFrom = null;
+							for (var sja in  fromSQL[attr][attr2]["From"]) {
+								var matchInOneFrom = false;
+								for (var sjc in fromSQL[clazz][clazz2]["From"]) {
+									if(fromSQL[attr][attr2]["From"][sja]["Expression"] == fromSQL[clazz][clazz2]["From"][sjc]["Expression"] &&
+									fromSQL[attr][attr2]["From"][sja]["Expression"] == fromSQL[clazz][clazz2]["From"][sjc]["Expression"] ) {
+										matchInOneFrom = true;
+										matchTable[fromSQL[attr][attr2]["From"][sja]["Name"]] = fromSQL[clazz][clazz2]["From"][sjc]["Name"];
+									}
+								}
+								if(matchInFrom != false) matchInFrom = matchInOneFrom;
+							}
+							if(matchInSelectJoin == true && matchInOneFrom == true){
+								for (var sel in fromSQL[attr][attr2]["Select"]){
+									var tempSel = {"select": fromSQL[attr][attr2]["Select"][sel]["select"], "alias": fromSQL[attr][attr2]["Select"][sel]["alias"], "viewName":matchTable[fromSQL[attr][attr2]["Select"][sel]["viewName"]]};
+									if(fromSQL[clazz][clazz2]["Select"] == null) fromSQL[clazz][clazz2]["Select"] = [tempSel];
+									else {
+										fromSQL[clazz][clazz2]["Select"].push(tempSel);
+									}
+								}
+								//fromSQL[attr] = null;
+								delete fromSQL[attr];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	return fromSQL;
 }
 
 function generateSELECTSQL(sqlTable){
 	selectInfo = [];
 	aggregateSelectInfo = [];
 	groupBy = [];
+	selectNotInfo = [];
 
 	// simpleVariables
 	for (var number in sqlTable["selectSimple"]){
@@ -604,6 +830,15 @@ function generateSELECTSQL(sqlTable){
 			if(sqlTable["selectSimple"][number]["alias"] == sqlTable["selectSimple"][number]["value"]) selectInfo.push(sqlTable["selectSimple"][number]["alias"]);
 			else selectInfo.push(sqlTable["selectSimple"][number]["value"] + " AS " + sqlTable["selectSimple"][number]["alias"]);
 			groupBy.push(sqlTable["selectSimple"][number]["alias"]);
+		}
+	}
+	
+	// simpleVariables under NOT
+	for (var number in sqlTable["selectNot"]){
+		if(typeof sqlTable["selectNot"][number]["alias"] === 'string') {
+			if(sqlTable["selectNot"][number]["alias"] == sqlTable["selectNot"][number]["value"]) selectNotInfo.push(sqlTable["selectNot"][number]["alias"]);
+			else selectNotInfo.push(sqlTable["selectNot"][number]["value"] + " AS " + sqlTable["selectNot"][number]["alias"]);
+			groupBy.push(sqlTable["selectNot"][number]["alias"]);
 		}
 	}
 
@@ -614,6 +849,9 @@ function generateSELECTSQL(sqlTable){
 	
 	// remove duplicates
 	var selectInfo = selectInfo.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+	var selectNotInfo = selectNotInfo.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
 	var aggregateSelectInfo = aggregateSelectInfo.filter(function (el, i, arr) {
@@ -628,26 +866,29 @@ function generateSELECTSQL(sqlTable){
 			if(typeof sqlTable["subClasses"][subclass] === 'object' && sqlTable["subClasses"][subclass]["isSubQuery"] != true && sqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true) {
 				var temp = generateSELECTSQL(sqlTable["subClasses"][subclass]);
 				selectInfo = selectInfo.concat(temp["select"]);
+				selectNotInfo = selectNotInfo.concat(temp["select"]);
 				aggregateSelectInfo = aggregateSelectInfo.concat(temp["aggregate"]);
 				groupBy = groupBy.concat(temp["groupBy"]);
 			}
 		}
 	}
 
-	return {"select":selectInfo, "aggregate":aggregateSelectInfo, "groupBy":groupBy};
+	return {"select":selectInfo, "selectNotInfo":selectNotInfo, "aggregate":aggregateSelectInfo, "groupBy":groupBy};
 }
 
 // genrerate SQL FROM info
 // sqlTable - table with sql parts
 function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
-
+	//console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII", sqlTable);
 	var whereInfo = [];
 	var filters = [];
+	var localAggregateSubQueries = [];
 	
 	var linkJoin = null;
 	var joinOn = null;
 	var linkType = "\nINNER JOIN\n";
-	if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL") linkType = "\nLEFT OUTER JOIN\n";
+	if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL" && sqlTable["isInverse"] != true) linkType = "\nLEFT OUTER JOIN\n";
+	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL" && sqlTable["isInverse"] == true) linkType = "\nRIGHT OUTER JOIN\n";
 	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "NOT") linkType = "NOT EXISTS";
 	
 	// link from part 
@@ -656,8 +897,9 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 			//whereInfo.push(sqlTable["classFrom"][expression]);
 			joinOn=getJoinOn(sqlTable["link"][expression]);
 			// var subselects = [];
-				var joinPart = generateJoinPart(sqlTable["link"][expression]);
-				linkJoin = {"name": "select_"+counter, "joinWith": joinOn}
+			var joinPart = generateJoinPart(sqlTable["link"][expression]);
+			linkJoin = {"name": "select_"+counter, "joinWith": joinOn};
+			if(joinOn.length > 0 && joinPart != ""){
 				whereInfo.push({
 					"name": "select_"+counter,
 					"select":joinPart,
@@ -666,6 +908,7 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 					"linkType":linkType
 				}) 
 				counter++;
+			}
 			// whereInfo.push(subselects);
 			// console.log("UUUUUUUUUUUUUUUUUUUUUUUu",  subselects);
 		} 
@@ -677,12 +920,14 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 			var joinWithSuperClass = null;
 			var joinPart = generateJoinPart(sqlTable["classFrom"][expression]);
 			joinOn = getJoinOn(sqlTable["classFrom"][expression]);
-			whereInfo.push({
-				"name": sqlTable["class"],
-				"select":joinPart,
-				"joinOn":joinOn,
-				"joinWith":linkJoin
-			}) 
+			if(joinOn.length > 0 && joinPart != ""){
+				whereInfo.push({
+					"name": sqlTable["class"],
+					"select":joinPart,
+					"joinOn":joinOn,
+					"joinWith":linkJoin
+				}) 
+			}
 			// whereInfo.push(subselects);
 			// console.log("UUUUUUUUUUUUUUUUUUUUUUUu",  subselects);
 		} 
@@ -692,14 +937,16 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 	for (var expression in sqlTable["from"]){
 		if(typeof sqlTable["from"][expression] === 'object'){
 			var joinPart = generateJoinPart(sqlTable["from"][expression]);
-			whereInfo.push({
-				"name": "select_"+counter,
-				"select":joinPart,
-				"joinOn":getJoinOn(sqlTable["from"][expression]),
-				"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
-			}) 
-			counter++;
-					// whereInfo.push(subselects);
+			var joinOnCondition = getJoinOn(sqlTable["from"][expression]);
+			if(joinOnCondition.length > 0 && joinPart != ""){
+				whereInfo.push({
+					"name": "select_"+counter,
+					"select":joinPart,
+					"joinOn":joinOnCondition,
+					"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
+				}) 
+				counter++;
+			}
 			// console.log("aaaaaaaaaaaaaaaaaaaaaaa", subselects);
 		} 
 	}
@@ -710,40 +957,86 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 			filters.push(sqlTable["where"][expression]["where"]);
 			for (var fromPart in sqlTable["where"][expression]["from"]){
 				if(typeof sqlTable["where"][expression]["from"][fromPart] === 'object'){
-					// whereInfo.push(sqlTable["where"][expression]["from"][fromPart]);
-					// var subselects = [];
+					var joinOnFilter = getJoinOn(sqlTable["where"][expression]["from"][fromPart])
 					var joinPart = generateJoinPart(sqlTable["where"][expression]["from"][fromPart]);
-					whereInfo.push({
-						"name": "select_"+counter,
-						"select":joinPart,
-						"joinOn":getJoinOn(sqlTable["where"][expression]["from"][fromPart]),
-						"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
-					}) 
-					counter++;
+					if(joinOnFilter.length > 0 && joinPart != ""){
+						whereInfo.push({
+							"name": "select_"+counter,
+							"select":joinPart,
+							"joinOn":joinOnFilter,
+							"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
+						}) 
+						counter++;
+					}
 					 // whereInfo.push(subselects);
-					// console.log("sssssssssssssssssss", subselects);
+					// console.log("sssssssssssssssssss", whereInfo);
 				}
 			}
 			
 		}
 	}
 	
-	if(typeof sqlTable["subClasses"] !=='undefined'){
+	// localAggregateSubQueries
+	for (var expression in sqlTable["localAggregateSubQueries"]){
+		if(typeof sqlTable["localAggregateSubQueries"][expression] === 'object'){
+			var localTemp = [];
+			//localTemp["select"].push(sqlTable["localAggregateSubQueries"][expression]["select"]);
+			for (var fromPart in sqlTable["localAggregateSubQueries"][expression]["from"]){
+				if(typeof sqlTable["localAggregateSubQueries"][expression]["from"][fromPart] === 'object'){
+					// whereInfo.push(sqlTable["where"][expression]["from"][fromPart]);
+					// var subselects = [];
+					var joinPart = generateJoinPart(sqlTable["localAggregateSubQueries"][expression]["from"][fromPart]);
+					var joinOnLocal = getJoinOn(sqlTable["localAggregateSubQueries"][expression]["from"][fromPart])
+					if(joinOnLocal.length > 0 && joinPart != ""){
+						localTemp.push({
+							"name": "select_"+counter,
+							"select":joinPart,
+							"joinOn":joinOnLocal,
+							"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
+						}) 
+						counter++;
+					}
+					
+					//console.log("11111111111111111", {"name": sqlTable["class"], "joinWith": joinOn});
+					//console.log("22222222222222222", {"name": "select_"+counter, "joinWith": joinOnLocal});
+					
+					var subSelectResult = generateLocalAggregate(sqlTable["localAggregateSubQueries"][expression]["select"], {"name": sqlTable["class"], "joinWith": joinOn}, {"name": "select_"+counter, "joinWith": joinOnLocal}, counter, localTemp);
+					counter = subSelectResult["counter"];
+					
+					//whereInfo = [];
+					whereInfo.push({
+						"name": subSelectResult["name"],
+						"select":subSelectResult["select"],
+						"joinOn":subSelectResult["joinCondition"],
+						"joinWith":{"name": sqlTable["class"], "joinWith": joinOn},
+					})
+					 // whereInfo.push(subselects);
+					// console.log("sssssssssssssssssss",whereInfo);
+				}
+			}
+			
+			 
+		}
+	}
+	
+	//if(typeof sqlTable["subClasses"] !=='undefined'){
 		for (var subclass in sqlTable["subClasses"]){
 			if(typeof sqlTable["subClasses"][subclass] === 'object') {
 				if(sqlTable["subClasses"][subclass]["isUnion"] == true) {}// TO DO whereInfo.push(getUNIONClasses(sqlTable["subClasses"][subclass], sqlTable["class"], sqlTable["classTriple"], false, referenceTable));
-				else if(sqlTable["subClasses"][subclass]["isSubQuery"] != true && sqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
-					var temp = generateSQLWHEREInfo(sqlTable["subClasses"][subclass], whereInfo, filters, counter, {"name": sqlTable["class"], "joinWith": joinOn});
+				//else if(sqlTable["subClasses"][subclass]["isSubQuery"] != true && sqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
+				else{	
+				    var temp = generateSQLWHEREInfo(sqlTable["subClasses"][subclass], whereInfo, filters, counter, {"name": sqlTable["class"], "joinWith": joinOn});
 					filters = filters.concat(temp["filters"]);
 					whereInfo = whereInfo.concat(temp["whereInfo"]);
 					counter = temp["counter"];
 					// classFrom = classFrom.concat(temp["classFrom"]);
-				}else {
+					
+				//}else {
 					//sub selects
 				}
 			}
 		}
-	}
+	//}
 
 	// remove duplicates
 	var whereInfo = whereInfo.filter(function (el, i, arr) {
@@ -754,31 +1047,40 @@ function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn){
 		return arr.indexOf(el) === i;
 	});
 	
-	// var classFrom = classFrom.filter(function (el, i, arr) {
-		// return arr.indexOf(el) === i;
-	// });
-
-	//link type
-	/*if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL"){
-		whereInfo = whereInfo.concat(filters);
-		whereInfo = whereInfo.concat(links);
-		if(sqlTable["isSimpleClassName"] == true){
-			var tempString = "OPTIONAL{" + whereInfo.join("\n") + "}";
-			whereInfo = [];
-			whereInfo.push(tempString);
-		} else {console.log("OPTIONAL subselect replaced with required")}
-		filters = [];
-		links = [];
+	if((typeof sqlTable["isSubQuery"] !== 'undefined' && sqlTable["isSubQuery"] == true) || (typeof sqlTable["isGlobalSubQuery"] !== 'undefined' && sqlTable["isGlobalSubQuery"] == true)){
+		 var selectResult = generateSELECTSQL(sqlTable);
+		 var subSelectResult = generateSubSelect(selectResult, whereInfo, filters, linkJoin, parentClassJoinOn, counter, sqlTable);
+		 counter = subSelectResult["counter"];
+		 whereInfo = [];
+		 whereInfo.push({
+			"name": subSelectResult["name"],
+			"select":subSelectResult["select"],
+			"joinOn":subSelectResult["joinCondition"],
+			"joinWith":parentClassJoinOn,
+			"linkType":linkType
+		}) 
 	}
-	if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "NOT"){
-		whereInfo = whereInfo.concat(filters);
-		whereInfo = whereInfo.concat(links);
-		var tempString = "FILTER NOT EXISTS{" + whereInfo.join("\n") + "}";
-		whereInfo = [];
-		whereInfo.push(tempString);
-		filters = [];
-		links = [];
-	}*/
+	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL"){
+		 var selectResult = generateSELECTSQL(sqlTable);
+		 var optionalselectResult = generateOptionalSelect(selectResult, whereInfo, filters, linkJoin, parentClassJoinOn, counter);
+		 counter = optionalselectResult["counter"];
+		 whereInfo = [];
+		 whereInfo.push({
+			"name": optionalselectResult["name"],
+			"select":optionalselectResult["select"],
+			"joinOn":optionalselectResult["joinCondition"],
+			"joinWith":parentClassJoinOn,
+			"linkType":linkType
+		}) 
+	}
+	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "NOT"){
+		 var selectResult = generateSELECTSQL(sqlTable);
+		 var notselectResult = generateNotSelect(selectResult, whereInfo, filters, counter);
+		 whereInfo = [];
+		 filters = [];
+		 filters.push("NOT EXISTS(" + notselectResult + ")");
+	}
+
 	whereInfo.concat(ws);
 	filters.concat(fil);
 
@@ -852,12 +1154,10 @@ function generateFromPart(whereInfo){
 }
 
 function findJoinOnConditions(select1, select2){
-	// console.log("JJJJJJJJJJJJJJJJJJJJ", select1, select2);
 	var joinConditions = [];
 	
 	for (var i in select2["joinOn"]){
 		for (var k in select2["joinWith"]["joinWith"]){
-			// console.log("2222222222222222222222222222222", )
 			if(select2["joinOn"][i]["PK"]["name"] == select2["joinWith"]["joinWith"][k]["PK"]["name"] && select2["joinOn"][i]["Template"]["name"] ==  select2["joinWith"]["joinWith"][k]["Template"]["name"]){
 				joinConditions.push(select2["name"] + "." + select2["joinOn"][i]["Template"]["alias"] + " = " + select2["joinWith"]["name"] + "." + select2["joinWith"]["joinWith"][k]["Template"]["alias"] + " AND " + select2["name"] + "." + select2["joinOn"][i]["PK"]["alias"] + " = " +select2["joinWith"]["name"] + "."+ select2["joinWith"]["joinWith"][k]["PK"]["alias"]);
 			}
@@ -905,8 +1205,16 @@ function generateUnionPart(unionPart){
 	}
 	
 	if(unionPart["Select"] != null){
-		selectJoin.push(unionPart["Select"]["select"] + " AS " + unionPart["Select"]["alias"]);
+		for (var sel in unionPart["Select"]){
+			selectJoin.push(unionPart["Select"][sel]["viewName"] +"."+unionPart["Select"][sel]["select"] + " AS " + unionPart["Select"][sel]["alias"]);
+		}
 	}
+	
+	//remove duplicates
+	selectJoin = selectJoin.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+	
 	//console.log("YYYYYYYYYYYYYy", unionPart);
 	subSelect = subSelect + selectJoin.join(", ");
 	
@@ -932,4 +1240,228 @@ function removeQuotes(str){
 		if(str.endsWith('"') == true) str = str.substring(0, str.length-1);
 	}
 	return str;
+}
+
+function generateNotSelect(selectResult, whereInfo, filters, counter){
+	var SQL_text = "(SELECT ";
+	var tempSelect = selectResult["selectNotInfo"];
+	if(tempSelect.length == 0) SQL_text = SQL_text + "* ";
+	else SQL_text = SQL_text + tempSelect.join(", ");
+	
+	SQL_text = SQL_text + " FROM ";
+	
+	var fromPart = generateFromPart(whereInfo);
+	var wherePart = generateWherePart(filters);
+			 
+	SQL_text = SQL_text + fromPart;
+			 
+	if(wherePart !== null && wherePart != "")SQL_text = SQL_text + "\nWHERE " + wherePart;
+	SQL_text = SQL_text + ")";
+	
+	return SQL_text;
+}
+
+function generateLocalAggregate(selectResult, parentClassJoinOn, linkJoin, counter, whereInfo){
+	var SQL_text = "(SELECT ";
+	 var tempSelect = [];
+	 tempSelect.push(selectResult["value"] + " AS " + selectResult["alias"]);
+	 var selectName = "localAggregate_" + counter;
+	 var joinSelect = getJoinSelect(linkJoin, parentClassJoinOn, selectName);
+	 counter++;
+
+	 tempSelect = tempSelect.concat(joinSelect["select"]);
+	 
+	// remove duplicates
+	tempSelect = tempSelect.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+			 
+	SQL_text = SQL_text + tempSelect.join(", ");
+			 
+	SQL_text = SQL_text + " FROM ";
+	
+	var fromPart = generateFromPart(whereInfo);
+	// var wherePart = generateWherePart(filters);
+			 
+	SQL_text = SQL_text + fromPart;
+	
+	SQL_text = SQL_text + "\nGROUP BY " + joinSelect["select"].join(", ");
+	// if(wherePart !== null && wherePart != "")SQL_text = SQL_text + "\nWHERE " + wherePart;
+	SQL_text = SQL_text + ")";
+
+	return {"select" : SQL_text, "name": selectName, "joinCondition":joinSelect["joinCondition"],  "counter": counter};
+}
+
+function  generateOptionalSelect(selectResult, whereInfo, filters, linkJoin, parentClassJoinOn, counter){
+	 var SQL_text = "(SELECT ";
+	 var tempSelect = selectResult["select"];
+	 var selectName = "optionalSelect_" + counter;
+	 var joinSelect = getJoinSelect(linkJoin, parentClassJoinOn, selectName);
+	 counter++;
+	 
+	 tempSelect = tempSelect.concat(joinSelect["select"]);
+	 
+	// remove duplicates
+	tempSelect = tempSelect.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+			 
+	SQL_text = SQL_text + tempSelect.join(", ");
+			 
+	SQL_text = SQL_text + " FROM ";
+	
+	var fromPart = generateFromPart(whereInfo);
+	var wherePart = generateWherePart(filters);
+			 
+	SQL_text = SQL_text + fromPart;
+			 
+	if(wherePart !== null && wherePart != "")SQL_text = SQL_text + "\nWHERE " + wherePart;
+	SQL_text = SQL_text + ")";
+
+	return {"select" : SQL_text, "name": selectName, "joinCondition":joinSelect["joinCondition"],  "counter": counter};
+}
+
+function generateSubSelect(selectResult, whereInfo, filters, linkJoin, parentClassJoinOn, counter,sqlTable){
+	var SQL_text = "(SELECT ";
+	
+	//LIMIT
+	if (sqlTable["limit"] != null) SQL_text = SQL_text + "TOP " + sqlTable["limit"] + " ";
+	
+	 var tempSelect = selectResult["select"];
+	 var selectName = "subSelect_" + counter;
+	 var joinSelect = getJoinSelect(linkJoin, parentClassJoinOn, selectName);
+	 counter++;
+	 
+	 tempSelect = tempSelect.concat(selectResult["aggregate"]);
+	 tempSelect = tempSelect.concat(joinSelect["select"]);
+	 
+	// remove duplicates
+	tempSelect = tempSelect.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+			 
+	SQL_text = SQL_text + tempSelect.join(", ");
+			 
+	SQL_text = SQL_text + " FROM ";
+	
+	var fromPart = generateFromPart(whereInfo);
+	var wherePart = generateWherePart(filters);
+			 
+	SQL_text = SQL_text + fromPart;
+			 
+	if(wherePart !== null && wherePart != "")SQL_text = SQL_text + "\nWHERE " + wherePart;
+	
+	//GROUP BY
+	// var groupByArray = selectResult["groupBy"];
+	// groupByArray = groupByArray.concat(joinSelect["select"]);
+	// var groupBy = groupByArray.join(", ");
+	// if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
+	
+	var groupByTemp = selectResult["groupBy"].concat(sqlTable["order"]["groupBy"]);
+	groupByTemp = groupByTemp.concat(joinSelect["select"]);
+	
+	groupByTemp = groupByTemp.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+			 
+	//GROUP BY
+	var groupBy = groupByTemp.join(", ");
+	if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
+	
+
+	if(selectResult["aggregate"].length > 0) SQL_text = SQL_text + groupBy;
+	
+	 //ORDER BY
+	if (sqlTable["order"]["orders"] != "") SQL_text = SQL_text + "\nORDER BY " + sqlTable["order"]["orders"];
+
+	
+	 //OFFSET
+	 if (sqlTable["offset"] != null) SQL_text = SQL_text + "\nOFFSET " + sqlTable["offset"] + " ROWS";
+
+	 
+	
+	SQL_text = SQL_text + ")";
+
+	return {"select" : SQL_text, "name": selectName, "joinCondition":joinSelect["joinCondition"],  "counter": counter};
+}
+
+function getJoinSelect(select1, select2, name){
+	var joinConditions = [];
+	var selectResult = [];
+	
+	for (var i in select1["joinWith"]){
+		for (var k in select2["joinWith"]){
+			if(select1["joinWith"][i]["PK"]["name"] == select2["joinWith"][k]["PK"]["name"] && select1["joinWith"][i]["Template"]["name"] ==  select2["joinWith"][k]["Template"]["name"]){
+				//joinConditions.push(name + "." + select1["joinWith"][i]["Template"]["alias"] + " = " + select2["name"] + "." + select2["joinWith"][k]["Template"]["alias"] + " AND " + name + "." + select1["joinWith"][i]["PK"]["alias"] + " = " +select2["name"] + "."+ select2["joinWith"][k]["PK"]["alias"]);
+				selectResult.push(select1["joinWith"][i]["Template"]["alias"]);
+				selectResult.push(select1["joinWith"][i]["PK"]["alias"]);
+				joinConditions.push(select1["joinWith"][i]);
+			}
+		}
+	}
+	return {"joinCondition":joinConditions, "select":selectResult};
+}
+
+function getOrderBy(orderings, fieldNames, rootClass_id, idTable, joinConditions, counter){
+	var messages = [];
+	var groupBy = [];
+	var orderTable = [];
+	var sqlSubSelectMap = [];
+	_.each(orderings,function(order) {
+		var descendingEnd = "";
+		if(order["isDescending"] == true) {
+			descendingEnd = " DESC"
+		}
+		var orderName = order["exp"];
+		if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
+		if(typeof fieldNames[orderName] !== 'undefined'){
+			var result = fieldNames[orderName][rootClass_id];
+			if(typeof result === 'undefined'){
+				for (var ordr in fieldNames[orderName]) {
+					result = fieldNames[orderName][ordr];
+					break;
+				}
+			}
+			orderTable.push(result + descendingEnd);
+			groupBy.push(result);
+		 } else {		
+			//var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
+			var result = parse_attribSQL(order["parsed_exp"], null, idTable[rootClass_id], [], [], counter, null, [], false, [], idTable, null, joinConditions);
+
+			 //messages = messages.concat(result["messages"]);
+			 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["sqlSubSelectMap"].length > 0){
+				 orderTable.push(result["exp"] + descendingEnd);
+				 groupBy.push(result["exp"]);
+				 for(var map in result["sqlSubSelectMap"]){
+					if(typeof result["sqlSubSelectMap"][map] === 'object') sqlSubSelectMap.push(result["sqlSubSelectMap"][map]);
+				}
+			 } else {
+				/* messages.push({
+					"type" : "Warning",
+					"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
+					"listOfElementId":[rootClass_id],
+					"isBlocking" : false
+				 });*/
+			 }
+		 }
+	})
+
+	//if(messages.length > 0) Interpreter.showErrorMsg(messages.join("\n"), -3);
+
+	orderTable = orderTable.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+	return {"orders":orderTable.join(", "), "sqlSubSelectMap":sqlSubSelectMap, "messages":messages, "groupBy":groupBy};
+}
+
+function findPrimaryKey(map){
+	var pk;
+	for (var i in map){
+		for (var v in map[i]["SelectJoin"]){
+			//console.log("IIIIIIIIIIIIIIIIIIIIIIIII", map[i]["SelectJoin"][v]["PK"]["alias"]);
+			pk = map[i]["SelectJoin"][v]["PK"]["alias"];
+			break;
+		}
+	}
+	return pk;
 }
