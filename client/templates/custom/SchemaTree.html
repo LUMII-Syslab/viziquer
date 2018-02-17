@@ -6,12 +6,12 @@
             <ol class="dd-list">
 
                 {{#each classes}}
-                    <li class="dd-item" data-id="{{fullName}}">
-                        <button data-action="collapse" type="button" style="display: block;">Collapse</button>
+                    <li class="dd-item class-item" data-id="{{fullName}}">
+                        <button class="toggle-tree-button expand" type="button">Expand</button>
                         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
                         <div class="dd-handle">{{localName}}</div>
 
-                        <ol class="dd-list">
+                        <ol class="dd-list attributes-list" style="display: none;">
 
                             {{#each attributes}}
 
