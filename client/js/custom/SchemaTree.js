@@ -64,3 +64,27 @@ Template.schemaTree.helpers({
 	},
 
 });
+
+
+Template.schemaTree.events({
+
+	"click .toggle-tree-button": function(e) {
+		var toggle_button = $(e.target);
+		var class_item = toggle_button.closest(".class-item");
+
+		if (toggle_button.hasClass("expand")) {
+			class_item.find(".attributes-list").css({display: "block"});
+			toggle_button.removeClass("expand")
+						.addClass("collapse")
+						.text("Collapse");
+		}
+
+		else {
+			class_item.find(".attributes-list").css({display: "none"});
+			toggle_button.removeClass("collapse")
+						.addClass("expand")
+						.text("Expand");
+		}
+	},
+
+});
