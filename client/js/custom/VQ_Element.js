@@ -869,6 +869,10 @@ VQ_Element.prototype = {
   isGlobalSubQuery: function() {
     return this.getCompartmentValue("Global Subquery Link")=="true"
   },
+  // determines whether the link is PLAIN
+  isPlain: function() {
+    return !(this.isSubQuery() || this.isGlobalSubQuery() || this.isConditional())
+  },
   // determines whether the link is inverse
   isInverse: function() {
 		//console.log(this.getCompartmentValue("Inverse Link")==true);
@@ -885,6 +889,10 @@ VQ_Element.prototype = {
 	// determines whether the link is optional
   isOptional: function() {
     return this.getCompartmentValue("Optional Link")=="true"
+  },
+  // detemines whether the link is REQUIRED
+  isRequired: function() {
+    return this.getType()=="REQUIRED"
   },
   // determines whether the class has distinct property
   isDistinct: function() {
@@ -1060,6 +1068,42 @@ VQ_Element.prototype = {
 			 }
 
 	},
+  // VQ_Element --> bool
+  // Returns true if there is a path in the spanning tree
+  // from this to toElement
+  // (plain-required-unionfree UP/DOWN, otherwise UP in the tree)
+  // TODO: union-free
+  isTherePathToElement: function(toElement) {
+    var visited_elems = {};
+
+    function findToElem(e) {
+       if (e.isEqualTo(toElement)) { return true };
+       var res = false;
+       visited_elems[e._id()]=true;
+ 			_.each(e.getLinks(),function(link) {
+          if (!visited_elems[link.link._id()] && !link.link.isConditional()) {
+ 						visited_elems[link.link._id()]=true;
+            var next_el = null;
+            var UP_direction = link.link.getRootDirection();
+            if (link.start) {
+              if (UP_direction=="start" || (UP_direction=="end" && link.link.isPlain() && link.link.isRequired())) {
+                next_el=link.link.getStartElement();
+              }
+ 						} else {
+              if (UP_direction=="end" || (UP_direction=="start" && link.link.isPlain() && link.link.isRequired())) {
+                next_el=link.link.getEndElement();
+              }
+ 						};
+ 						if (next_el && !visited_elems[next_el._id()]) {
+ 							 res = res || findToElem(next_el);
+ 						};
+ 					};
+ 			});
+      return res;
+    };
+
+    return findToElem(this);
+  },
 	// bool -->
 	// sets the link name compartment's visibility
 	setLinkNameVisibility: function(visible) {

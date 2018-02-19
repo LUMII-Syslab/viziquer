@@ -242,31 +242,67 @@ genAbstractQueryForElementList = function (element_id_list) {
   return _.map(root_elements, function(e) {
 
     var visited = {};
+    var condition_links = [];
     visited[e._id()]=e._id();
 
     // Next auxilary functions
 
     // {link:VQ_Element, start:bool}-->JSON for conditional link
     // target is coded as _id
+    // It will return the result iff there is a path* to target
+    // Otherwise if there is a path from target, the link is registered in the condition_links array
+    // TODO: Otherwise an error
     // TODO: Optimize!!!
     var genConditionalLink = function(link) {
      if (_.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
        if (link.start) {
           if (visited[link.link.getStartElement()._id()]) {
-            return { identification: { _id: link.link._id(), localName: link.link.getName() },
-                      //If link is inverse, then we got it right
-                      isInverse: !link.link.isInverse(),
-                      isNot: link.link.getType()=="NOT",
-                      target: visited[link.link.getStartElement()._id()]
+            // if path exists - create link json
+            if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
+              return { identification: { _id: link.link._id(), localName: link.link.getName() },
+                        //If link is inverse, then we got it right
+                        isInverse: !link.link.isInverse(),
+                        isNot: link.link.getType()=="NOT",
+                        target: visited[link.link.getStartElement()._id()]
+              };
+            } else {
+              // if reverse path exists - register link json
+              if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
+                condition_links.push({ from: link.link.getStartElement()._id(),
+                                       link_info: {
+                                          identification: { _id: link.link._id(), localName: link.link.getName() },
+                                          isInverse: link.link.isInverse(),
+                                          isNot: link.link.getType()=="NOT",
+                                          target: visited[link.link.getEndElement()._id()] }
+                                     });
+              } else {
+                // no path ERROR
+              };
             };
           };
        } else {
           if (visited[link.link.getEndElement()._id()]) {
-            return { identification: { _id: link.link._id(), localName: link.link.getName() },
-                      isInverse: link.link.isInverse(),
-                      isNot: link.link.getType()=="NOT",
-                      target: visited[link.link.getEndElement()._id()]
-            };
+              // if path exists - create link json
+              if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
+                return { identification: { _id: link.link._id(), localName: link.link.getName() },
+                          isInverse: link.link.isInverse(),
+                          isNot: link.link.getType()=="NOT",
+                          target: visited[link.link.getEndElement()._id()]
+                };
+              } else {
+                // if reverse path exists - register link json
+                if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
+                  condition_links.push({ from: link.link.getEndElement()._id(),
+                                         link_info: {
+                                            identification: { _id: link.link._id(), localName: link.link.getName() },
+                                            isInverse: !link.link.isInverse(),
+                                            isNot: link.link.getType()=="NOT",
+                                            target: visited[link.link.getStartElement()._id()] }
+                                       });
+                } else {
+                  // no path ERROR
+                };
+              };
           };
        };
      };
@@ -343,8 +379,7 @@ genAbstractQueryForElementList = function (element_id_list) {
           return proj_params;
      }
    };
-
-    return { root: {
+    var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), localName: e.getName()},
       instanceAlias: e.getInstanceAlias(),
       isVariable:e.isVariable(),
@@ -362,6 +397,19 @@ genAbstractQueryForElementList = function (element_id_list) {
       fullSPARQL:e.getFullSPARQL(),
       children: genLinkedElements(e)
     },
-     params: getProjectParams() }
+     params: getProjectParams() };
+    //console.log(condition_links);
+    // push all registered condition links to json
+    function addConditionLinks(v) {
+      _.each(condition_links, function(cl) {
+        if (cl["from"]==v["identification"]["_id"]) {
+          v["conditionLinks"].push(cl["link_info"]);
+        }
+      });
+      _.each(v["children"], function(ch) {addConditionLinks(ch)});
+    };
+
+    addConditionLinks(query_in_abstract_syntax["root"]);
+    return query_in_abstract_syntax;
   });
 };
