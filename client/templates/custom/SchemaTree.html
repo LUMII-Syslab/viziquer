@@ -6,17 +6,17 @@
             <ol class="dd-list">
 
                 {{#each classes}}
-                    <li class="dd-item" data-id="{{fullName}}">
-                        <button data-action="collapse" type="button" style="display: block;">Collapse</button>
-                        <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
+                    <li class="dd-item dd-collapsed" data-id="{{localName}}">
+                        <button data-action="collapse" type="button" style="display: none;">Collapse</button>
+                        <button data-action="expand" type="button" style="display: block;">Expand</button>
                         <div class="dd-handle">{{localName}}</div>
 
                         <ol class="dd-list">
 
                             {{#each attributes}}
 
-                                <li class="dd-item" data-id="{{fullName}}">
-                                    <div class="dd-handle">{{localName}}</div>
+                                <li class="dd-item" data-id="{{name}}">
+                                    <div class="dd-handle">{{name}}</div>
                                 </li>
 
                             {{/each}}
@@ -57,7 +57,7 @@
                             </ul>
 
                         {{/each}}
-                        
+
                     </ul>
 
                 </div>

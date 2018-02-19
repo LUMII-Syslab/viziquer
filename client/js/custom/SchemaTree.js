@@ -53,23 +53,12 @@ ShowSchemaTree = function () {
 Template.schemaTree.helpers({
 
 	classes: function() {
-		var schema = Schema.findOne();
+    var schema = new VQ_Schema();
 		if (schema) {
-
-			var attributes = schema.Attributes;
-			var classes = _.sortBy(schema.Classes, "localName");
-
-			_.each(classes, function(cl) {
-
-				var full_name = cl.fullName;
-
-				cl.attributes = _.filter(attributes, function(attr) {
-												return _.find(attr.SourceClasses, function(source_class) {
-													return source_class == full_name;
-												});
-											});
-			});
-
+			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
+				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
+			}), "localName"), function(c) {return c.localName!=" "});
+  //console.log(classes);
 			return classes;
 		}
 	},
