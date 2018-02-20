@@ -42,6 +42,7 @@ ExportDiagramConfig.prototype = {
 		var diagram_type_id = diagram_type._id;
 			
 		var diagram_type_out = {object: diagram_type,
+								compartmentTypes: this.exportDiagramTypeCompartmentTypes(diagram_type_id),
 								boxTypes: this.exportBoxTypes(diagram_type_id),
 								lineTypes: this.exportLineTypes(diagram_type_id),
 								paletteButtons: this.exportPalette(diagram_type_id),
@@ -81,6 +82,17 @@ ExportDiagramConfig.prototype = {
 		});
 
 	},
+
+	exportDiagramTypeCompartmentTypes: function(diagram_type_id) {
+
+		var self = this;
+
+		return CompartmentTypes.find({diagramTypeId: diagram_type_id, elementTypeId: {$exists: false}}).map(function(compart_type) {
+			return {object: compart_type,};
+		});
+	},
+
+
 
 	exportCompartmentTypes: function(elem_type_id) {
 

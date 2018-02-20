@@ -81,6 +81,7 @@ ImportAjooConfiguration.prototype = {
 
 			self.importPaletteButtons(diagram_type.paletteButtons);
 
+			self.importDiagramTypeCompartmentTypes(diagram_type.compartmentTypes);
 
 			self.importSuperTypes(diagram_type_in.boxTypes);
 			self.importSuperTypes(diagram_type_in.lineTypes);
@@ -175,6 +176,35 @@ ImportAjooConfiguration.prototype = {
 			self.obj_type_map[compart_type_id] = new_copmart_type_id;
 		});
 	},
+
+
+	importDiagramTypeCompartmentTypes: function(compart_types) {
+
+		var self = this;
+		_.each(compart_types, function(compart_type) {
+
+			var object = compart_type.object;
+			var compart_type_id = object._id;
+
+			_.extend(object, {_id: undefined,
+								diagramTypeId: self.obj_type_map[object.diagramTypeId],
+
+								diagramId: self.obj_type_map[object.diagramId],
+								elementId: self.obj_type_map[object.elementId],
+
+								dialogTabId: self.obj_type_map[object.dialogTabId],
+
+								toolId: self.toolId,
+								versionId: self.versionId,
+
+								label: object.label || object.name,
+							});
+
+			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
+			self.obj_type_map[compart_type_id] = new_copmart_type_id;
+		});
+	},
+
 
 
 	recomputeSubCompartmentTypeLabels: function(sub_compart_types) {
