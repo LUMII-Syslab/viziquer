@@ -42,11 +42,11 @@ ExportDiagramConfig.prototype = {
 		var diagram_type_id = diagram_type._id;
 			
 		var diagram_type_out = {object: diagram_type,
+								dialog: this.exportDiagramTypeDialog(diagram_type_id),
 								compartmentTypes: this.exportDiagramTypeCompartmentTypes(diagram_type_id),
 								boxTypes: this.exportBoxTypes(diagram_type_id),
 								lineTypes: this.exportLineTypes(diagram_type_id),
 								paletteButtons: this.exportPalette(diagram_type_id),
-								dialog: this.exportDiagramTypeDialog(diagram_type_id),
 							};
 
 		this.types.push(diagram_type_out);

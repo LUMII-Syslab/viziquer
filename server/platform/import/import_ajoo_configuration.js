@@ -81,6 +81,7 @@ ImportAjooConfiguration.prototype = {
 
 			self.importPaletteButtons(diagram_type.paletteButtons);
 
+			self.importDiagramTypeDialogTypes(diagram_type);
 			self.importDiagramTypeCompartmentTypes(diagram_type.compartmentTypes);
 
 			self.importSuperTypes(diagram_type_in.boxTypes);
@@ -206,7 +207,6 @@ ImportAjooConfiguration.prototype = {
 	},
 
 
-
 	recomputeSubCompartmentTypeLabels: function(sub_compart_types) {
 
 		var self = this;
@@ -245,6 +245,27 @@ ImportAjooConfiguration.prototype = {
 			}
 		});
 	},
+
+
+	importDiagramTypeDialogTypes: function(diagram_type) {
+
+		var self = this;
+
+		_.each(diagram_type.dialog, function(dialog) {
+
+			var dialog_tab_id = dialog._id;
+			_.extend(dialog, {_id: undefined,
+								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
+								diagramId: self.obj_type_map[dialog.diagramId],
+								toolId: self.toolId,
+								versionId: self.versionId,
+							});
+
+			var new_dialog_tab_id = DialogTabs.insert(dialog);
+			self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
+		});
+	},
+
 
 	importDialogTypes: function(box_type) {
 
