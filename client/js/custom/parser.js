@@ -174,7 +174,7 @@ parse_attribSQL = function(parsed_exp, alias, className, vnc, vna, count, ep, st
 	var resultSQL = generateExpressionSQL(parsed_exp1, "", className, alias, true, isSimpleVariable, false);
 	//console.log(resultSQL);
 
-	return {"exp":resultSQL, "sqlSubSelectMap": sqlSubSelectMap, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "messages":messages};
+	return {"exp":resultSQL, "sqlSubSelectMap": sqlSubSelectMap, "expressionLevelNames":expressionLevelNames, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "messages":messages};
 
 }
 
@@ -2085,21 +2085,48 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 			var selectPart = [];
 			var selectPartAlias = [];
 			
+			// console.log(sqlSubSelectMap);
+			var whereInfo = [];
+			var joinWith;
+			var joinWithName;
+			
+			sqlSubSelectMap =  optimizeAllAttributes(sqlSubSelectMap)
 			for(var map in sqlSubSelectMap){
 				if(typeof sqlSubSelectMap[map] === 'object'){
+					var joinPart = generateJoinPart(sqlSubSelectMap[map]);
+					var joinOnCondition = getJoinOn(sqlSubSelectMap[map]);
+					if(joinOnCondition.length > 0 && joinPart != ""){
+						whereInfo.push({
+							"name": "select_"+counter,
+							"select":joinPart,
+							"joinOn":joinOnCondition,
+							"joinWith":{"name": joinWithName, "joinWith": joinWith}
+						}) 
+						joinWithName = "select_"+counter;
+						joinWith = joinOnCondition;
+						counter++;
+					}
+				} 
+			}
+			
+			var fromPart = generateFromPart(whereInfo);
+			//console.log("EEEE", whereInfo);
+			for(var map in sqlSubSelectMap){
+				if(typeof sqlSubSelectMap[map] === 'object'){
+					// console.log("EEEE", JSON.stringify(sqlSubSelectMap[map],null,2));
 					for(var fromP in sqlSubSelectMap[map]){
-						var fromPart = [];
-						var selectPart = [];
-						for(var f in sqlSubSelectMap[map][fromP]["From"]){	
-							 if(typeof sqlSubSelectMap[map][fromP]["From"][f] === 'object')fromPart.push(sqlSubSelectMap[map][fromP]["From"][f]["Expression"] + " " + sqlSubSelectMap[map][fromP]["From"][f]["Name"]);
-						}
+						//var fromPart = [];
+						//var selectPart = [];
+						//for(var f in sqlSubSelectMap[map][fromP]["From"]){	
+						//	 if(typeof sqlSubSelectMap[map][fromP]["From"][f] === 'object')fromPart.push(sqlSubSelectMap[map][fromP]["From"][f]["Expression"] + " " + sqlSubSelectMap[map][fromP]["From"][f]["Name"]);
+						//}
 						if(typeof sqlSubSelectMap[map][fromP]["Select"] === 'object'){
 							 for(var sel in sqlSubSelectMap[map][fromP]["Select"]){
-								 selectPart.push(sqlSubSelectMap[map][fromP]["Select"][sel]["select"] + " AS " + sqlSubSelectMap[map][fromP]["Select"][sel]["alias"]);
+								// selectPart.push(sqlSubSelectMap[map][fromP]["Select"][sel]["select"] + " AS " + sqlSubSelectMap[map][fromP]["Select"][sel]["alias"]);
 								 selectPartAlias.push(sqlSubSelectMap[map][fromP]["Select"][sel]["alias"]);
 							 }
 						}
-						unionPart.push("SELECT " + selectPart.join(", ") + " FROM " + fromPart.join("\n"));
+						//unionPart.push("SELECT " + selectPart.join(", ") + " FROM " + fromPart.join("\n"));
 					}
 				}
 			}
@@ -2109,7 +2136,7 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 				return arr.indexOf(el) === i;
 			});
 			// SPARQLstring = notPart+ "EXISTS(SELECT " + selectPartAlias.join(", ") + " FROM(SELECT " + selectPart.join(", ") + " FROM " + fromPart.join("\nUNION\n") + ") s WHERE "+ res +" )";
-			SPARQLstring = notPart+ "EXISTS(SELECT " + selectPartAlias.join(", ") + " FROM("+ unionPart.join("\nUNION\n")+") s WHERE "+ res +" )";
+			SPARQLstring = notPart+ "EXISTS(SELECT " + selectPartAlias.join(", ") + " FROM "+ fromPart +" WHERE "+ res +" )";
 			visited = 1;
 		}
 		if (key == "BooleanLiteral") {
@@ -2177,11 +2204,60 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 							}],
 							"From" : [from],
 							"Select": select,
+							"ClassID":classIdentificator,
 							"JoinWith":joinWith});
 						//counter++;
 					}
 				}
-			} 
+			} else if(typeof symbolTable[expressionTable[key]["name"]] !== 'undefined' && parseType!="attribute" && symbolTable[expressionTable[key]["name"]]["type"] != null){
+				var elem = symbolTable[expressionTable[key]["name"]];
+				for(var map in elem["type"]["triplesMaps"]){
+					if(typeof elem["type"]["triplesMaps"][map] === 'object'){
+						var templete = elem["type"]["triplesMaps"][map]["subjectMap"]["templete"];
+						var logicalTable = elem["type"]["triplesMaps"][map]["logicalTable"];
+						var from;
+						var view;
+						if(logicalTable["type"] == "view") {
+							//var tempSqlQuery =logicalTable["sqlQuery"].replace(";", "");
+							var tempSqlQuery =logicalTable["sqlQuery"].split(";").join("");
+							from = {"Expression":"("+ removeQuotes(tempSqlQuery.replace(/;/g, ""))+")", "Name":"view_"+counter};
+							view = "view_"+counter;
+						}
+						else {
+							from = {"Expression":removeQuotes(logicalTable["table"]), "Name":"table_"+counter};
+							view = "table_"+counter;
+						}
+						var select = null;
+						for(var pom in elem["type"]["triplesMaps"][map]["predicateObjectMap"]){
+							if(typeof elem["type"]["triplesMaps"][map]["predicateObjectMap"][pom] == 'object'){
+								var predicateObjectMap = elem["type"]["triplesMaps"][map]["predicateObjectMap"][pom];
+								if(predicateObjectMap["predicate"] == elem["type"]["URI"]){
+									
+									select = [{"select": removeQuotes(predicateObjectMap["objectMap"]["column"]), "alias": variable, "viewName":view}];
+								}
+
+							}
+						}
+						sqlSubSelectMapVar.push({
+							"SelectJoin":[{
+								"ClassID":classIdentificator,
+								"Template": {
+									"alias": "Template_"+counter,
+									"name":templete.substring(1, templete.search("{")
+								)},
+								"PK": {
+									"name":templete.substring(templete.search("{")+1, templete.search("}")), 
+									"view":view, 
+									"alias":"key_"+counter
+								}
+							}],
+							"From" : [from],
+							"Select": select,
+							"JoinWith":joinWith});
+						//counter++;
+					}
+				}
+			}
 			counter++;
 			sqlSubSelectMap.push(sqlSubSelectMapVar);
 			SPARQLstring = SPARQLstring + variable;
@@ -2435,6 +2511,16 @@ function generateExpressionSQL(expressionTable, SPARQLstring, className, alias, 
 					if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
 						console.log("'classExpr' expression not supported yet");
 					}
+				} else {
+					if (parseType == 'condition'
+				&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+				&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+				&& typeof  expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+				&& expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionBETWEEN"]=== null
+				&& expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]=== null){
+					SPARQLstring = SPARQLstring + " IS NOT NULL";
+				}
 				}
 				visited = 1
 			}
