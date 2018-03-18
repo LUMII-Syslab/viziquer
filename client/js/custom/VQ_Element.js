@@ -676,21 +676,55 @@ VQ_SchemaRole.prototype.maxCardinality = null;
 // It hides the ajoo platform specific details allowing to work in ViziQuer abstraction layer
 // all properties (except obj) are functions and they are evaluated upon request
 
+
+//  Create a new VQ_Element (class). Parameter is function to process the newly created
+// element.
+//    funtion(VQ_Element), {x:, y:, width:, height:}  -->
+Create_VQ_Element = function(func, location) {
+  var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
+  var elem_type = ElementTypes.findOne({name:"Class", diagramTypeId:active_diagram_type_id});
+  var elem_style = _.find(elem_type.styles, function(style) {
+              return style.name === "Default";
+  });
+
+  var new_box = {
+          projectId: Session.get("activeProject"),
+          versionId: Session.get("versionId"),
+
+          diagramId: Session.get("activeDiagram"),
+          diagramTypeId: elem_type["diagramTypeId"],
+          elementTypeId: elem_type["_id"],
+          style: {elementStyle: elem_style["elementStyle"]},
+          styleId: elem_style["id"],
+          type: "Box",
+          location:  location
+  };
+
+  Utilities.callMeteorMethod("insertElement", new_box, function(elem_id) {
+        var elem = Elements.findOne({_id: elem_id});
+        var vq_obj = new VQ_Element(elem_id);
+        if (func) { func(vq_obj) };
+  });
+};
 // ajoo element id --> VQ_Element
+
 VQ_Element = function(id) {
   // obj contains correspondind ajoo Element object
+  if (id) {
+    var elem = Elements.findOne({_id: id});
+    if (!elem) {
+  	   elem = Elements.findOne({_id: Session.get("activeElement")});
+    }
 
-  var elem = Elements.findOne({_id: id});
-  if (!elem) {
-  	elem = Elements.findOne({_id: Session.get("activeElement")});
+    if (!elem) {
+  	   console.error("No active element");
+  	   return;
+    };
+
+    this.obj = elem;
+  } else {
+
   }
-
-  if (!elem) {
-  	console.error("No active element");
-  	return;
-  }
-
-  this.obj = elem;
 };
 
 
@@ -1375,10 +1409,32 @@ VQ_Element.prototype = {
 			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
 			if (c) {
 					Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
-					return 1;
+          return 1;
 			} else {
-				  Dialog.updateCompartmentValue(ct, input, value);
-					return 3;
+				  //Dialog.updateCompartmentValue(ct, input, value);
+          var c_to_create = {
+										compartment: {
+											projectId: Session.get("activeProject"),
+											versionId: Session.get("versionId"),
+
+											diagramId: this.getDiagram_id(),
+											diagramTypeId: ct["diagramTypeId"],
+											elementTypeId: ct["elementTypeId"],
+
+											compartmentTypeId: ct._id,
+											elementId: this._id(),
+
+											index: ct.index,
+											input: input,
+											value: value,
+											isObjectRepresentation: false,
+
+											style: ct.styles[0]["style"],
+											styleId: ct.styles[0]["id"],
+										},
+									};
+              Utilities.callMeteorMethod("insertCompartment", c_to_create);
+          return 3;
 			};
 		};
 		return 0;
