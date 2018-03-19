@@ -45,7 +45,7 @@ Template.schemaTree.events({
 	"dblclick .class-body": function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
 
-		var loc = {x: 400, y: 400, width: 88, height: 66};
+		var loc = {x: 3, y: 3, width: 194, height: 66};
 		Create_VQ_Element(function(boo) {
 			boo.setName(class_name)
 		}, loc);
