@@ -44,8 +44,27 @@ Template.schemaTree.events({
 
 	"dblclick .class-body": function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
-
-		var loc = {x: 3, y: 3, width: 194, height: 66};
+    const BLACK_HEADER_HEIGHT = 45;
+		const DEFAULT_BOX_WIDTH = 194;
+		const DEFAULT_BOX_HEIGHT = 66;
+		const DEFAULT_OFFSET = 10;
+		// get location of the editor
+		var ajoo_scene_attrs = Interpreter.editor.stage.attrs;
+		var attrs = {scroll_h: ajoo_scene_attrs.container.scrollTop,
+		scroll_w: ajoo_scene_attrs.container.scrollLeft,
+		visible_h: ajoo_scene_attrs.container.clientHeight,
+		visible_w: ajoo_scene_attrs.container.clientWidth,
+		total_h: ajoo_scene_attrs.height,
+		y_relative_top: ajoo_scene_attrs.container.getBoundingClientRect().top,
+		y_relative_bottom: ajoo_scene_attrs.container.getBoundingClientRect().bottom,
+	};
+	console.log(attrs);
+    //// Place in bottom right corner of visible area
+		var loc = {x: attrs.visible_w + attrs.scroll_w - DEFAULT_OFFSET- DEFAULT_BOX_WIDTH,
+			 				 y: attrs.scroll_h + attrs.visible_h-DEFAULT_OFFSET-DEFAULT_BOX_HEIGHT,
+							 width: DEFAULT_BOX_WIDTH,
+							 height: DEFAULT_BOX_HEIGHT};
+  console.log(loc);
 		Create_VQ_Element(function(boo) {
 			boo.setName(class_name)
 		}, loc);
