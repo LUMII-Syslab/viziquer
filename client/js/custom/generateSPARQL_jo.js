@@ -565,7 +565,7 @@ function generateSPARQLtext(abstractQueryTable){
 					showMessages = showMessages + "\n\n" + messages[message]["message"];
 				}
 			 }
-			 Interpreter.showErrorMsg(showMessages)
+			 Interpreter.showErrorMsg(showMessages, -3);
 		 }
 		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking};
 }
