@@ -710,7 +710,7 @@ Create_VQ_Element = function(func, location) {
 
 VQ_Element = function(id) {
   // obj contains correspondind ajoo Element object
-  if (id) {
+
     var elem = Elements.findOne({_id: id});
     if (!elem) {
   	   elem = Elements.findOne({_id: Session.get("activeElement")});
@@ -722,9 +722,7 @@ VQ_Element = function(id) {
     };
 
     this.obj = elem;
-  } else {
-
-  }
+  
 };
 
 
