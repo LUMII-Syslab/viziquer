@@ -207,6 +207,19 @@ var sparql_form_events = {
 };
 
 Template.sparqlForm.events(sparql_form_events);
+
+Template.sparqlForm_see_results.onRendered(function() {
+
+	var yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), {
+		sparql: {
+			showQueryButton: false,
+		},
+	});
+
+	yasqe.setValue("");
+});
+
+
 Template.sparqlForm_see_results.events(sparql_form_events);
 
 var sparql_form_helpers = {
