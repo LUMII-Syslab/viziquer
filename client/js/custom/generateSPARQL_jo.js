@@ -27,7 +27,7 @@ Interpreter.customMethods({
 		 console.log(result["SPARQL_text"]);
 		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-     executeSparqlString(result["SPARQL_text"]);
+     if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
     })
   },
 
@@ -52,7 +52,7 @@ Interpreter.customMethods({
 		 console.log(result["SPARQL_text"]);
 		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-     executeSparqlString(result["SPARQL_text"]);
+     if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
     })
   },
 
@@ -104,7 +104,7 @@ Interpreter.customMethods({
    		 console.log(result["SPARQL_text"]);
    		 Session.set("generatedSparql", result["SPARQL_text"]);
 
-       executeSparqlString(result["SPARQL_text"]);
+       if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
        })
     } else {
       // nothing selected
@@ -309,10 +309,10 @@ function generateIds(rootClass){
 
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
-	if(rootClassId == null) rootClassId = rootClass["identification"]["localName"];
+	if(rootClassId == null || rootClassId.replace(" ", "") =="") rootClassId = rootClass["identification"]["localName"];
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
-	if(rootClass["isVariable"] == true && rootClass["instanceAlias"] == null) rootClassId = "_" + rootClass["variableName"];
+	if(rootClass["isVariable"] == true && (rootClass["instanceAlias"] == null || rootClass["instanceAlias"].replace(" ", "") =="")) rootClassId = "_" + rootClass["variableName"];
 	idTable[rootClass["identification"]["_id"]] = rootClassId;
 
 
@@ -339,9 +339,9 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 	var referenceTable = [];
 
 	// if instance if defined, use it
-	if(clazz["instanceAlias"] != null) idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"];
+	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"];
 	else if(clazz["isVariable"] == true) idTable[clazz["identification"]["_id"]] = "_" + clazz["variableName"];
-	else if(clazz["instanceAlias"] == null && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
+	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
 		idTable[clazz["identification"]["_id"]] = "expr_"+counter;
 		counter++;
 	} else if(clazz["linkIdentification"]["localName"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
@@ -636,8 +636,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(underNotLink != true)sparqlTable["variableName"] = "?" + clazz["variableName"];
 	}
 	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
-
-		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable);
+		var instAlias = clazz["instanceAlias"];
+		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
+		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable);
 		counter = resultClass["counter"]
 		var temp = [];
 		messages = messages.concat(resultClass["messages"]);

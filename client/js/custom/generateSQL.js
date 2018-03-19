@@ -218,7 +218,7 @@ function generateSQLtext(abstractQueryTable){
 		
 		
 		var sqlTable = setConditionLinks(result["sqlTable"], result["conditionLinks"]);
-		//console.log(result, JSON.stringify(result,null,2));
+		console.log(result, JSON.stringify(result,null,2));
 		 // table with prefixes used in query
 		 //var prefixTable = result["prefixTable"];
 		 
@@ -252,7 +252,7 @@ function generateSQLtext(abstractQueryTable){
 			 SQL_text = SQL_text + " FROM\n";
 
 			var whereResult = generateSQLWHEREInfo(sqlTable, [], [], counter, null);
-			//console.log("OOOOOOOOOOOOOOOOOOOOOOOOO",  JSON.stringify(whereResult,null,2));
+			//console.log("OOOOOOOOOOOOOOOOOOOOOOOOO",  JSON.stringify(whereResult["whereInfo"],null,2));
 			
 			var fromPart = generateFromPart(whereResult["whereInfo"]);
 			var wherePart = generateWherePart(whereResult["filters"]);
@@ -338,6 +338,7 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
 
 		resultClass = parse_attribSQL(clazz["identification"]["parsed_exp"], clazz["instanceAlias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, clazz["identification"]["_id"]);
+		
 		counter = resultClass["counter"]
 
 		for(var map in resultClass["sqlSubSelectMap"]){
@@ -351,8 +352,10 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 	}
 	
 	var JoinClasses = [];
-	for (var map in resultClass["sqlSubSelectMap"]) {
-		JoinClasses.push(getJoinOn(resultClass["sqlSubSelectMap"][map]));
+	if(typeof resultClass !== 'undefined'){
+		for (var map in resultClass["sqlSubSelectMap"]) {
+			JoinClasses.push(getJoinOn(resultClass["sqlSubSelectMap"][map]));
+		}
 	}
 	
 	//attributes
@@ -619,8 +622,69 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		}
 		
 		underNotLink = false;
-		var tempSubSelect = [];
-		var count1 = counter;
+		
+		
+		temp["sqlTable"]["link"] = [];
+		if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+			
+			var path = getPathSQL(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"], counter);
+			
+			counter = path["counter"];
+			//tempSubSelect = tempSubSelect.concat(path["path"]);
+			if(path["path"].length >1 && subclazz["linkType"] != "NOT" &&(subclazz["linkType"] == "OPTIONAL" || subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true)){
+				
+				var prewClass = sqlTable;
+				
+				for (p = 0; p < path["path"].length; p++) {
+					
+					var sqlTableTemp = {};
+					if(p == path["path"].length-1)sqlTableTemp = temp;
+					else{
+						sqlTableTemp = {};
+						sqlTableTemp["sqlTable"] =  {};
+						sqlTableTemp["sqlTable"]["class"] =  "expr_";
+						sqlTableTemp["sqlTable"]["link"] = [];
+						sqlTableTemp["sqlTable"]["order"] = {"orders":"", "groupBy": []};
+					}
+					
+					var tempSubSelect = [];
+					tempSubSelect.push(path["path"][p]);
+					
+					
+					sqlTableTemp["sqlTable"]["link"].push(tempSubSelect);
+					if(p==0){
+						sqlTableTemp["sqlTable"]["linkType"] = subclazz["linkType"];
+						sqlTableTemp["sqlTable"]["isSubQuery"] = subclazz["isSubQuery"];
+						sqlTableTemp["sqlTable"]["isGlobalSubQuery"] = subclazz["isGlobalSubQuery"];
+						sqlTableTemp["sqlTable"]["order"] = temp["sqlTable"]["order"];
+					}else{
+						sqlTableTemp["sqlTable"]["linkType"] = subclazz["linkType"];
+						sqlTableTemp["sqlTable"]["isSubQuery"] = false;
+						sqlTableTemp["sqlTable"]["isGlobalSubQuery"] = false;
+					}
+					
+					if(p==0)sqlTable["subClasses"].push(sqlTableTemp["sqlTable"]);
+					else prewClass["subClasses"].push(sqlTableTemp["sqlTable"]);
+					
+					prewClass = sqlTableTemp["sqlTable"];
+					prewClass["subClasses"] = [];
+				} 
+			}
+			// if(subclazz["linkType"] != "OPTIONAL" || path["path"].length==1){
+			else{
+				
+				for (var p in path["path"]){
+					var tempSubSelect = [];
+					tempSubSelect.push(path["path"][p]);
+					temp["sqlTable"]["link"].push(tempSubSelect);
+					temp["sqlTable"]["linkType"] = subclazz["linkType"];
+					
+				}
+				sqlTable["subClasses"].push(temp["sqlTable"]);
+			}
+			
+		}
+		/*var count1 = counter;
 		counter++;
 		var count2 = counter;
 		counter++;
@@ -704,6 +768,8 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 				
 			}
 		}
+		*/
+		//console.log("tempSubSelect", tempSubSelect);
 		
 		if(subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true){
 
@@ -718,15 +784,15 @@ function forAbstractQueryTableSQl(clazz, parentClass, rootClassId, idTable, vari
 		
 		//tempSubSelect.push({"JoinClasses":JoinClasses});
 		// temp["sqlTable"]["from"].unshift(tempSubSelect);
-		temp["sqlTable"]["link"] = [];
-		temp["sqlTable"]["link"].push(tempSubSelect);
-		temp["sqlTable"]["linkType"] = subclazz["linkType"];
+		// temp["sqlTable"]["link"] = [];
+		// temp["sqlTable"]["link"].push(tempSubSelect);
+		//temp["sqlTable"]["linkType"] = subclazz["linkType"];
 		
-		if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
-			var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
-		}
+		// if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+			// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+		// }
 		
-		sqlTable["subClasses"].push(temp["sqlTable"]);
+		//sqlTable["subClasses"].push(temp["sqlTable"]);
 		
 	})
 
@@ -1041,7 +1107,11 @@ function generateSELECTSQL(sqlTable){
 	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "OPTIONAL" && sqlTable["isInverse"] == true) linkType = "\nRIGHT OUTER JOIN\n";
 	else if(typeof sqlTable["linkType"] === 'string' && sqlTable["linkType"] == "NOT") linkType = "NOT EXISTS";
 	
-
+	var joinOnPrewLinkName;
+	var joinOnPrewLink = parentClassJoinOn;
+	if(parentClassJoinOn != null) joinOnPrewLinkName = parentClassJoinOn["name"];
+	else joinOnPrewLinkName = sqlTable["class"];
+	
 	// link from part 
 	for (var expression in sqlTable["link"]){
 		if(typeof sqlTable["link"][expression] === 'object'){
@@ -1051,11 +1121,33 @@ function generateSELECTSQL(sqlTable){
 			var joinPart = generateJoinPart(sqlTable["link"][expression]);
 			linkJoin = {"name": "select_"+counter, "joinWith": joinOn};
 			if(joinOn.length > 0 && joinPart != ""){
-				whereInfo.push({
+				
+				var one = {
 					"name": "select_"+counter,
 					"select":joinPart,
 					"joinOn":joinOn,
 					"joinWith":parentClassJoinOn,
+					"linkType":linkType
+				};
+				var two = {
+					"name": "select_"+counter,
+					"select":joinPart,
+					"joinOn":joinOn,
+					"joinWith":{"name": joinOnPrewLinkName, "joinWith": joinOnPrewLink},
+					"linkType":linkType
+				};
+				var joinWith = getJoinWith(one, two, parentClassJoinOn, {"name": joinOnPrewLinkName, "joinWith": joinOnPrewLink});
+				
+				//console.log("joinWith", joinWith);
+				
+				joinOnPrewLink = joinOn;
+				joinOnPrewLinkName = "select_"+counter;
+				
+				whereInfo.push({
+					"name": "select_"+counter,
+					"select":joinPart,
+					"joinOn":joinOn,
+					"joinWith":joinWith,
 					"linkType":linkType
 				}) 
 				counter++;
@@ -1081,21 +1173,52 @@ function generateSELECTSQL(sqlTable){
 			}
 		} 
 	}
-	
+	var joinOnPrew = joinOn;
+	var joinOnPrewName = sqlTable["class"];
 	// simpleTriples
 	for (var expression in sqlTable["from"]){
 		if(typeof sqlTable["from"][expression] === 'object'){
+			
 			var joinPart = generateJoinPart(sqlTable["from"][expression]);
 			var joinOnCondition = getJoinOn(sqlTable["from"][expression]);
-			if(joinOnCondition.length > 0 && joinPart != ""){
-				whereInfo.push({
+
+			// console.log("expression", sqlTable["from"][expression]);
+			// console.log("joinOn", joinOn);
+			// console.log("joinOnPrew", joinOnPrew);
+			// console.log("joinOnCondition", joinOnCondition);
+		
+			var one = {
 					"name": "select_"+counter,
 					"select":joinPart,
 					"joinOn":joinOnCondition,
 					"joinWith":{"name": sqlTable["class"], "joinWith": joinOn}
+				};
+			var two = {
+					"name": "select_"+counter,
+					"select":joinPart,
+					"joinOn":joinOnCondition,
+					"joinWith":{"name": sqlTable["class"], "joinWith": joinOnPrew}
+				};
+			// console.log("UUUUUUUUUUUUUUUUU", findJoinOnConditions({"name": sqlTable["class"], "joinWith": joinOn}, one));
+			// console.log("EEEEEEEEEEEEEEEEE", findJoinOnConditions({"name": sqlTable["class"], "joinWith": joinOnPrew}, two));
+			
+			var joinWith = getJoinWith(one, two, {"name": sqlTable["class"], "joinWith": joinOn}, {"name": joinOnPrewName, "joinWith": joinOnPrew});
+			
+			if(joinOnCondition.length > 0 && joinPart != ""){
+				
+				joinOnPrew = joinOnCondition;
+				joinOnPrewName = "select_"+counter;
+				
+				whereInfo.push({
+					"name": "select_"+counter,
+					"select":joinPart,
+					"joinOn":joinOnCondition,
+					"joinWith":joinWith
 				}) 
 				counter++;
 			}
+			
+			//console.log("IIIIIIIIIIIIIII", sqlTable["from"][expression], joinOn, joinOnCondition);
 		} 
 	}
 
@@ -1213,7 +1336,9 @@ function generateSELECTSQL(sqlTable){
 				if(sqlTable["subClasses"][subclass]["isUnion"] == true) {}// TO DO whereInfo.push(getUNIONClasses(sqlTable["subClasses"][subclass], sqlTable["class"], sqlTable["classTriple"], false, referenceTable));
 				//else if(sqlTable["subClasses"][subclass]["isSubQuery"] != true && sqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 				else{	
-				    var temp = generateSQLWHEREInfo(sqlTable["subClasses"][subclass], whereInfo, filters, counter, {"name": sqlTable["class"], "joinWith": joinOn});
+					var parentClassJoinOnTemp = {"name": sqlTable["class"], "joinWith": joinOn};
+					if(sqlTable["class"].startsWith("expr_")) parentClassJoinOnTemp = {"name": joinOnPrewLinkName, "joinWith": joinOn};
+				    var temp = generateSQLWHEREInfo(sqlTable["subClasses"][subclass], whereInfo, filters, counter, parentClassJoinOnTemp);
 					filters = filters.concat(temp["filters"]);
 					whereInfo = whereInfo.concat(temp["whereInfo"]);
 					counter = temp["counter"];
@@ -1303,6 +1428,11 @@ generateFromPart = function (whereInfo){
 			
 			queryFrom = queryFrom + joinType + whereInfo[i]["select"] + " " + whereInfo[i]["name"];
 			
+			// console.log("--------------------------");
+			// console.log("select1", select1);
+			// console.log("select2", whereInfo[i]);
+			// console.log("--------------------------");
+			
 			queryFrom = queryFrom + "\n ON " + findJoinOnConditions(select1, whereInfo[i]);
 			if(typeof whereInfo[i]["conditions"] !== "undefined" && whereInfo[i]["conditions"].length > 0) {
 				var conditions = [];
@@ -1353,6 +1483,11 @@ generateFromPart = function (whereInfo){
 		//console.log(queryFrom);
 		return queryFrom;
 	}*/
+}
+
+function getJoinWith(oneSelect, twoSelect, oneJoinWith, twoJoinWith){
+	if(findJoinOnConditions({}, oneSelect) != "1=1") return oneJoinWith;
+	else return twoJoinWith;
 }
 
 function findJoinOnConditions(select1, select2){
