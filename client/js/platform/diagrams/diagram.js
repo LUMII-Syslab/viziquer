@@ -157,22 +157,31 @@ Template.diagramTemplate.helpers({
 
 var sparql_form_events = {
 
-	"blur #generated-sparql": function(e) {
+/*"blur #generated-sparql3": function(e) {
 		var val = $(e.target).val();
 		Session.set("generatedSparql", val);
+		yasqe.setValue(val);
 	},
+	"blur #generated-sparql3": function(e) {
+		var val = $(e.target).val();
+		Session.set("generatedSparql", val);
+		yasqe3.setValue(val);
+	}, */
 
 	"click #reset-sparql": function(e) {
 		e.preventDefault();
 		Session.set("generatedSparql", undefined);
 		Session.set("executedSparql", {limit_set:false, number_of_rows:0});
+		yasqe.setValue("");
+		yasqe3.setValue("");
 	},
 
 	"click #execute-sparql": function(e) {
 		e.preventDefault();
 
 		//var resp = {status: 200,
-	 var	query = $("#generated-sparql").val();
+	 //var	query = $("#generated-sparql").val();
+    var query = yasqe.getValue();
 			//		error: "Error in execute SPARQL",
 			//	};
 
@@ -183,7 +192,8 @@ var sparql_form_events = {
 		e.preventDefault();
 
 		//var resp = {status: 200,
-	 var	query = $("#generated-sparql").val();
+	 //var	query = $("#generated-sparql").val();
+	   var query = yasqe.getValue();
 			//		error: "Error in execute SPARQL",
 			//	};
     var obj = Session.get("executedSparql");
@@ -195,7 +205,8 @@ var sparql_form_events = {
 		e.preventDefault();
 
 		//var resp = {status: 200,
-	 var	query = $("#generated-sparql").val();
+	 //var	query = $("#generated-sparql").val();
+       var query = yasqe.getValue();
 			//		error: "Error in execute SPARQL",
 			//	};
     var obj = Session.get("executedSparql");
@@ -208,15 +219,43 @@ var sparql_form_events = {
 
 Template.sparqlForm.events(sparql_form_events);
 
-Template.sparqlForm_see_results.onRendered(function() {
+yasqe3 = null;
 
-	var yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), {
+Template.sparqlForm.onRendered(function() {
+
+	yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
 		sparql: {
 			showQueryButton: false,
 		},
+		//autoRefresh: true,
 	});
 
-	yasqe.setValue("");
+	yasqe3.on("blur", function(editor){
+		var val = editor.getValue();
+	 Session.set("generatedSparql", val);
+	 yasqe.setValue(val);
+	// yasqe.refresh();
+	});
+	//yasqe3.setValue("3");
+});
+
+yasqe = null;
+
+Template.sparqlForm_see_results.onRendered(function() {
+
+	yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), {
+		sparql: {
+			showQueryButton: false,
+		},
+		//autoRefresh: true,
+	});
+	yasqe.on("blur", function(editor){
+		var val = editor.getValue();
+	 Session.set("generatedSparql", val);
+	 yasqe3.setValue(val);
+	 //yasqe3.refresh();
+	});
+	//yasqe.setValue("A");
 });
 
 
