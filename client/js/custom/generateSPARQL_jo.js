@@ -27,7 +27,7 @@ Interpreter.customMethods({
 		 console.log(result["SPARQL_text"]);
 		 Session.set("generatedSparql", result["SPARQL_text"]);
      setText_In_SPARQL_Editor(result["SPARQL_text"]);
-
+	 
      if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
     })
   },
@@ -321,6 +321,7 @@ function generateIds(rootClass){
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") rootClassId = rootClass["identification"]["localName"];
+	else rootClassId = rootClassId.replace(/ /g, '_');
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
 	if(rootClass["isVariable"] == true && (rootClass["instanceAlias"] == null || rootClass["instanceAlias"].replace(" ", "") =="")) rootClassId = "_" + rootClass["variableName"];
@@ -350,7 +351,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 	var referenceTable = [];
 
 	// if instance if defined, use it
-	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"];
+	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"].replace(/ /g, '_');
 	else if(clazz["isVariable"] == true) idTable[clazz["identification"]["_id"]] = "_" + clazz["variableName"];
 	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
 		idTable[clazz["identification"]["_id"]] = "expr_"+counter;
@@ -602,6 +603,16 @@ function getPrefix(emptyPrefix, givenPrefix){
 function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable){
 	var messages = [];
 	
+
+	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") != "" && clazz["instanceAlias"].indexOf(" ") >= 0) {
+		messages.push({
+			"type" : "Error",
+			"message" : "Whitespace characters not allowed in instance alias " + clazz["instanceAlias"],
+			"listOfElementId" : [clazz["identification"]["_id"]],
+			"isBlocking" : false
+		});
+	}
+	
 	var variableNamesClass = [];
 	var prefixTable = [];
 
@@ -647,8 +658,11 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(underNotLink != true)sparqlTable["variableName"] = "?" + clazz["variableName"];
 	}
 	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
-		var instAlias = clazz["instanceAlias"];
+		var instAlias = clazz["instanceAlias"]
 		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
+		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
+		
+		
 		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable);
 		counter = resultClass["counter"]
 		var temp = [];
@@ -677,6 +691,16 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
 			sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?"+field["exp"], "value" : "?"+field["exp"]});
 		} else {
+			if(field["alias"] != null && field["alias"].replace(" ", "") !="" && field["alias"].indexOf(" ") >= 0) {
+				messages.push({
+					"type" : "Error",
+					"message" : "Whitespace characters not allowed in property alias " + field["alias"],
+					"listOfElementId" : [clazz["identification"]["_id"]],
+					"isBlocking" : false
+				});
+				field["alias"] = field["alias"].replace(/ /g, '_');
+			}
+			
 			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable);
 			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
@@ -799,64 +823,74 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 	//aggregations
 	_.each(clazz["aggregations"],function(field) {
-
-		var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, "aggregation");
-		messages = messages.concat(result["messages"]);
-		//console.log("RRRRRRRRRRRR", result);
-		counter = result["counter"];
-		for (var attrname in result["variableNamesClass"]) {
-			if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
-		}
-		for (var prefix in result["prefixTable"]) {
-			if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
-		}
-		var alias = field["alias"];
-		if(alias == null || alias == "") {
-			if(result["isExpression"] == false && result["isFunction"] == false) {
-
-				var indexCole = result["exp"].indexOf(";");
-				var endIndex = result["exp"].indexOf(")");
-				if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
-
-				var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
-				if(typeof variableNamesAll[tempAlias] !== 'undefined') {
-					var count = variableNamesAll[tempAlias]["counter"] + 1;
-					variableNamesAll[tempAlias]["counter"]  = count;
-					alias = tempAlias + "_" + count;
-				}
-				else {
-					alias = tempAlias;
-					variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false};
-				}
-				
-			} else {
-				alias = "expr_" + counter;
-				counter++;
+		if(field["exp"] != ""){
+			if(field["alias"] != null && field["alias"].replace(" ", "") !="" && field["alias"].indexOf(" ") >= 0) {
+				messages.push({
+					"type" : "Error",
+					"message" : "Whitespace characters not allowed in aggregation alias " + field["alias"],
+					"listOfElementId" : [clazz["identification"]["_id"]],
+					"isBlocking" : false
+				});
+				field["alias"] = field["alias"].replace(/ /g, '_');
 			}
-		}
-		if(typeof fieldNames[alias] === 'undefined') fieldNames[alias] = [];
-		fieldNames[alias][clazz["identification"]["_id"]] = alias;
-
-		//aggregateTriples only in main class or subselect main class
-		if(rootClassId == idTable[clazz["identification"]["_id"]] || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) {
-			sparqlTable["agregationInside"] = true;
-			sparqlTable["aggregateTriples"].push(getTriple(result, alias, field["requireValues"], false));
-			//MAIN SELECT agregate variables
-			if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
 			
-			for (var variable in result["variables"]){
-				if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
+			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, "aggregation");
+			messages = messages.concat(result["messages"]);
+			//console.log("RRRRRRRRRRRR", result);
+			counter = result["counter"];
+			for (var attrname in result["variableNamesClass"]) {
+				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 			}
-		} else {
-			//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
-			messages.push({
-				"type" : "Error",
-				"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.",
-				"listOfElementId" : [clazz["identification"]["_id"]],
-				"isBlocking" : false
-			});
-		}
+			for (var prefix in result["prefixTable"]) {
+				if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
+			}
+			var alias = field["alias"];
+			if(alias == null || alias == "") {
+				if(result["isExpression"] == false && result["isFunction"] == false) {
 
+					var indexCole = result["exp"].indexOf(";");
+					var endIndex = result["exp"].indexOf(")");
+					if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
+
+					var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+					if(typeof variableNamesAll[tempAlias] !== 'undefined') {
+						var count = variableNamesAll[tempAlias]["counter"] + 1;
+						variableNamesAll[tempAlias]["counter"]  = count;
+						alias = tempAlias + "_" + count;
+					}
+					else {
+						alias = tempAlias;
+						variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false};
+					}
+					
+				} else {
+					alias = "expr_" + counter;
+					counter++;
+				}
+			}
+			if(typeof fieldNames[alias] === 'undefined') fieldNames[alias] = [];
+			fieldNames[alias][clazz["identification"]["_id"]] = alias;
+
+			//aggregateTriples only in main class or subselect main class
+			if(rootClassId == idTable[clazz["identification"]["_id"]] || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) {
+				sparqlTable["agregationInside"] = true;
+				sparqlTable["aggregateTriples"].push(getTriple(result, alias, field["requireValues"], false));
+				//MAIN SELECT agregate variables
+				if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
+				
+				for (var variable in result["variables"]){
+					if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
+				}
+			} else {
+				//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
+				messages.push({
+					"type" : "Error",
+					"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.",
+					"listOfElementId" : [clazz["identification"]["_id"]],
+					"isBlocking" : false
+				});
+			}
+		}
 	})
 
 
@@ -982,7 +1016,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 							"isBlocking" : true
 						});
 					}
-					else if(subject == null) {
+					else if(subject == null && clazz["isUnion"] != true) {
 						//Interpreter.showErrorMsg("Unknown subject class '" + subclazz["identification"]["localName"] + "'", -3);
 						messages.push({
 							"type" : "Error",
@@ -1062,38 +1096,40 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	var orderTable = [];
 	var orderTripleTable = [];
 	_.each(orderings,function(order) {
-		var descendingStart = "";
-		var descendingEnd = "";
-		if(order["isDescending"] == true) {
-			descendingStart = "DESC("
-			descendingEnd = ")"
-		}
-		var orderName = order["exp"];
-		if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
-		if(typeof fieldNames[orderName] !== 'undefined'){
-			var result = fieldNames[orderName][rootClass_id];
-			if(typeof result === 'undefined'){
-				for (var ordr in fieldNames[orderName]) {
-					result = fieldNames[orderName][ordr];
-					break;
-				}
+		if(order["exp"] != null && order["exp"].replace(" ", "") !=""){
+			var descendingStart = "";
+			var descendingEnd = "";
+			if(order["isDescending"] == true) {
+				descendingStart = "DESC("
+				descendingEnd = ")"
 			}
-			orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
-		} else {		
-			var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
-			 messages = messages.concat(result["messages"]);
-			 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
-				 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
-				 orderTripleTable.push(result["triples"]);
-			 } else {
-				 messages.push({
-					"type" : "Warning",
-					"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
-					"listOfElementId":[rootClass_id],
-					"isBlocking" : false
-				 });
-			 }
-		 }
+			var orderName = order["exp"];
+			if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
+			if(typeof fieldNames[orderName] !== 'undefined'){
+				var result = fieldNames[orderName][rootClass_id];
+				if(typeof result === 'undefined'){
+					for (var ordr in fieldNames[orderName]) {
+						result = fieldNames[orderName][ordr];
+						break;
+					}
+				}
+				orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
+			} else {		
+				var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
+				 messages = messages.concat(result["messages"]);
+				 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
+					 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
+					 orderTripleTable.push(result["triples"]);
+				 } else {
+					 messages.push({
+						"type" : "Warning",
+						"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
+						"listOfElementId":[rootClass_id],
+						"isBlocking" : false
+					 });
+				 }
+			}
+		}
 	})
 
 	//if(messages.length > 0) Interpreter.showErrorMsg(messages.join("\n"), -3);

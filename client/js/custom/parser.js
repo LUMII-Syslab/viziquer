@@ -1311,7 +1311,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					"type" : "Error",
 					"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
 					"listOfElementId" : [clId],
-					"isBlocking" : false
+					"isBlocking" : true
 				});
 				//Interpreter.showErrorMsg("Unrecognized variable '" + varName + "'. Please specify variable.");
 			}
