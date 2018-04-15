@@ -8,7 +8,6 @@ Interpreter.customMethods({
 Template.AddLink.helpers({
 
 	associations: function() {
-
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: start_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -54,24 +53,18 @@ Template.AddLink.helpers({
       		//asc.push({name: "++", class: "", type: "=>", attributes: "(-)"});
 
 			return asoc;
-/*      asc.push({name: "++", class: "", type: "=>"});
 
-			return asc;
-
-			/*var cls_value = [{name: act_comp["input"], type: "direct"}];
-
+			/*
+			var cls_value = [{name: act_comp["input"], type: "direct"}];
 			//Read all asociations' name, from&to elements
 			var cls = Associations.find();
-
 			if (cls){
-
 				asc_all = cls.map(function (use) {
 				      return [{assoc: use.name, start: use.ClassPairs["0"].SourceClass["localName"], end: use.ClassPairs["0"].TargetClass["localName"]}];
 				})
 			} else {
 				return [{name: "empty", class: "-"}];
 			}
-
 			//List of all the classes, that could leave association direct (original class) and through sub_super class relation
 			var cls_list = Classes.findOne({name: cls_value["0"]["name"]});
 			if (cls_list) {
@@ -79,51 +72,40 @@ Template.AddLink.helpers({
 				_.each(cls_list.AllSuperClasses, function(supC){
 					cls_value.push({name: supC["localName"], type: "super"});
 				})
-
 				//Classes from Sub Class
 				_.each(cls_list.AllSubClasses, function(supC){
 					cls_value.push({name: supC["localName"], type: "sub"})
 				})
 			}
-
 			//Create list of unique associations
 			var exists = false;
 			_.each(asc_all, function(a){
 				_.each(cls_value, function(c){
 					// if direct association
 					exists = false;
-
 					if(c["name"] == a["0"]["start"]){
-
 						_.each(asc, function(e){
 							if (e["name"] == a["0"]["assoc"]) {exists = true;}
 						})
-
 						if (!exists) {
 							asc.push({name: a["0"]["assoc"], class: a["0"]["end"], type: "=>"});
 						}
 					}
-
 					//if inverse association
 					exists = false;
-
 					if(c["name"] == a["0"]["end"]){
-
 						_.each(asc, function(e){
 							if (e["name"] == a["0"]["assoc"]) {exists = true;}
 						})
-
 						if (!exists) {
 							asc.push({name: a["0"]["assoc"], class: a["0"]["start"], type: "<="});
 						}
 					}
 				})
 			})
-
 			if (asc.length == 0) {
 				return [{name: "empty", class: "-", type: "-"}];
 			}
-
 			return asc; */
 		}
 	},
@@ -135,83 +117,110 @@ Template.AddLink.helpers({
 Template.AddLink.events({
 
 	"click #ok-add-link": function(e) {
-
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
+		//console.log("obj = ", obj);
 
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
+		/*var attributeList = obj.attr("attributes");
+		var attributeChecked = $('input[name=stack-checkbox]:checked').closest(".attribute");
+		console.log("on ok", attributeList, " VS", attributeChecked.attr("attribut"));
+		$('input[name=stack-checkbox]:checked').each(function(){
+			console.log(this);
+		})
+		var attributeArray = [];
+		attributeChecked.each(function(a){
+			console.log(a, attributeChecked[a]);
+			//var name = a["attributes"];
+			if(attributeList.includes(a.)) {
+				attributeArray.push(a.attr("attributes"));
+			}
+		});
+		console.log(attributeArray);
+		$('input[name=stack-checkbox]:checked').each(function(){
+			var attrName = this.attr("attributes");
+			console.log(this, "=>", attrName);
+		})*/
 
 
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
 		var elem_start = Elements.findOne({_id: start_elem_id});
+		if (!elem_start){
+			console.log("Error - no element with ID exists");
+			return;
+		}
 
 		//Initial coordinate values original box and new box
-		var d = 30;
-		var schema = new VQ_Element(start_elem_id);		
-		var boxGeometry = schema.getCoordinateY(d);	
-		var finished = schema.drawLinkedClass(class_name, boxGeometry, name, line_direct);
-		/*var x0 = elem_start["location"]["x"];
-		var y0 = elem_start["location"]["y"];
-		var x1 = x0;
-		var y1 = y0 + elem_start["location"]["height"]+d;
-		var w = elem_start["location"]["width"];
-		var h = elem_start["location"]["height"];
+		// var d = 30;
+		//var x0 = elem_start["location"]["x"];
+		//var y0 = elem_start["location"]["y"];		
+		//var w = elem_start["location"]["width"];
+		//var h = elem_start["location"]["height"];
 
+		//var schemaTest = new VQ_Element(start_elem_id);
+		//console.log(schemaTest.drawAddLink());
 
-		//If diagram is populated - search for overlap
-		//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
+	//If diagram is populated - search for overlap
+	//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
+		var startElement = new VQ_Element(start_elem_id);
+		// var x1 = elem_start["location"]["x"];
+		// var boxGeometry = startElement.getCoordinateY(d);
+		// var y1 = boxGeometry["y"];		
+		//console.log("Coordinates from", boxGeometry, " are ", x1, y1);
 
-			var elem_list = [];
-			var elem_over = []; //Potentionally - for more complex search for a better place
-			var max_y;
+		var end_elem_id = startElement.drawLinkedClass(class_name, name, line_direct);
 
-			Elements.find({type: "Box"}).forEach(function(el) {
-				elem_list.push(el);
-			})
+		/*var elem_list = [];
+		var elem_over = []; //Potentionally - for more complex search for a better place
+		var max_y;
 
-			do{
-				elem_over.length = 0;
+		Elements.find({type: "Box"}).forEach(function(el) {
+			elem_list.push(el);
+		})
 
-				_.each(elem_list, function(el) {
-					//Check, if start point of existing element could lead to overlap withexisting elements
-					if (el["location"]["x"] < (x1+w)){
-						if (el["location"]["y"] < (y1+h)){
-							//Check, if end point of existing element could lead to overlap
-							if((el["location"]["x"]+el["location"]["width"]) > x1){
-								if((el["location"]["y"])+el["location"]["height"] > y1){
-									elem_over.push({
-										_id: el["_id"],
-										x: el["location"]["x"],
-										y: el["location"]["y"],
-										w: el["location"]["width"],
-										h: el["location"]["height"]
-									});
-								}
+		do{
+			elem_over.length = 0;
+
+			_.each(elem_list, function(el) {
+				//Check, if start point of existing element could lead to overlap withexisting elements
+				if (el["location"]["x"] < (x1+w)){
+					if (el["location"]["y"] < (y1+h)){
+						//Check, if end point of existing element could lead to overlap
+						if((el["location"]["x"]+el["location"]["width"]) > x1){
+							if((el["location"]["y"])+el["location"]["height"] > y1){
+								elem_over.push({
+									_id: el["_id"],
+									x: el["location"]["x"],
+									y: el["location"]["y"],
+									w: el["location"]["width"],
+									h: el["location"]["height"]
+								});
 							}
 						}
 					}
+				}
+			})
+
+			if (elem_over.length > 0){
+				max_y = 0;
+
+				_.each(elem_over, function(el){
+					if (max_y < (el["y"]+el["h"])) {
+						max_y = el["y"]+el["h"];
+					}
 				})
 
-				if (elem_over.length > 0){
-					max_y = 0;
-
-					_.each(elem_over, function(el){
-						if (max_y < (el["y"]+el["h"])) {
-							max_y = el["y"]+el["h"];
-						}
-					})
-
-					y1 = max_y + d;
-				}
-			} while (elem_over.length > 0);
+				y1 = max_y + d;
+			}
+		} while (elem_over.length > 0);*/
 
 
 		//New elements
 		//Create Box; original constructor is used
-		var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
+		/*var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
 		var elem_style = _.find(elem_type.styles, function(style) {
 								return style.name === "ConditionClass";
 							});
@@ -285,8 +294,10 @@ Template.AddLink.events({
 					}
 
 				}
-
-
+				
+				// schema.sleep(1000);				
+				//var lineDone = schema.drawAssocLine(name, y1, end_elem_id, line_direct);
+				
 				//New line
 				var line_type = ElementTypes.findOne({name: "Link"});
 
@@ -303,26 +314,26 @@ Template.AddLink.events({
 
 				if (line_direct == "=>") {
 
-						var new_line = {
-								projectId: Session.get("activeProject"),
-								versionId: Session.get("versionId"),
+					var new_line = {
+							projectId: Session.get("activeProject"),
+							versionId: Session.get("versionId"),
 
-								diagramId: Session.get("activeDiagram"),
-								diagramTypeId: line_type["diagramTypeId"],
-								elementTypeId: line_type["_id"],
+							diagramId: Session.get("activeDiagram"),
+							diagramTypeId: line_type["diagramTypeId"],
+							elementTypeId: line_type["_id"],
 
-								style: {startShapeStyle: line_style["startShapeStyle"],
-										endShapeStyle: line_style["endShapeStyle"],
-										elementStyle: line_style["elementStyle"],
-										lineType: line_type["lineType"],
-									},
+							style: {startShapeStyle: line_style["startShapeStyle"],
+									endShapeStyle: line_style["endShapeStyle"],
+									elementStyle: line_style["elementStyle"],
+									lineType: line_type["lineType"],
+								},
 
-								styleId: line_style["id"],
-								type: "Line",
-								points: [ix, a, ix, b],
-								startElement: start_elem_id,
-								endElement: end_elem_id,
-							};
+							styleId: line_style["id"],
+							type: "Line",
+							points: [ix, a, ix, b],
+							startElement: start_elem_id,
+							endElement: end_elem_id,
+						};
 
 				} else {
 
@@ -391,12 +402,13 @@ Template.AddLink.events({
 
 			}
 
-		});
+		});*/
 
 
 
-		return;*/
+		return;
 
 	},
+
 
 });

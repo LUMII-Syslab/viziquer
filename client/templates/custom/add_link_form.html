@@ -3,11 +3,12 @@
     <style>
         ul {
             list-style-type: circle;    
-            padding-left: 20px;
+            padding-left: 40px;
+            display: none;
         }
-    </style>
+    </style>    
 
-	<!-- Modal for new document -->
+    <!-- Modal for new document -->
     <div id="add-link-form" class="modal fade">
         
         <div class="modal-dialog">
@@ -17,21 +18,23 @@
                     <h4 class="modal-title">Add Link</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
+                    <form id="radioList" class="form-horizontal" role="form">
                         
                         <div class="form-group">
                    
                             {{#each associations}}
-                                <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
+                                <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}" attributes="{{attributes}}">
                                     <label class="label-radio">
-                                        <input type="radio" name="stack-radio">
+                                        <input type="radio" name="stack-radio" value="{{name}}">
                                         <span class="custom-radio"></span>
-                                        {{name}} {{type}} {{class}}
-                                        <br> Class describing attributes: 
-                                        <ul>
-                                        {{#each attributes}}                                        
-                                            <li> {{this}} </li>                                           
-                                        {{/each}}</ul>
+                                        {{name}} {{type}} {{class}} 
+                                        
+                                        <ul id = "{{name}}">
+                                            {{#each attributes}}                                        
+                                                <li> {{this}} </li>                                           
+                                            {{/each}}
+                                        </ul>
+
                                     </label>
                                 </div>
                             {{/each}}
@@ -40,7 +43,7 @@
 
                         <!-- <div class="form-group">
                             <div class="col-sm-10">
-        						<input id="fileList" type='file' multiple/>
+                                <input id="fileList" type='file' multiple/>
                             </div>
                         </div> -->
                     </form> 
@@ -54,5 +57,23 @@
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
+    
+    <script>
+            //Show attributes for class if option is checked
+            var radioListener = document.getElementById("radioList"); //.elements["stack-radio"];
+            radioListener.addEventListener("click", showAttributes)
 
+            function showAttributes(){                
+                var ulElements = document.getElementsByTagName("ul");
+                _.each(ulElements, function(e){
+                    e.style.display = 'none';
+                })
+
+                var checkedName = $('input[name=stack-radio]').filter(':checked').val();
+                ulElements = document.getElementById(checkedName);               
+                if (ulElements) {
+                    ulElements.style.display = 'block';
+                }
+            }
+    </script>
 </template>

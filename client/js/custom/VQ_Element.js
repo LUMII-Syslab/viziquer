@@ -1521,12 +1521,19 @@ VQ_Element.prototype = {
 		});				
 	},
 
-	drawAssocLine: function(name, y1, end_elem_id, line_direct){
+	drawAssocLine: function(name, end_elem_id, line_direct){
+		//Start element's geometry
 		var x0 = this.obj["location"]["x"];
-		var y0 = this.obj["location"]["y"];		
-		var w = this.obj["location"]["width"];
-		var h = this.obj["location"]["height"];
+		var y0 = this.obj["location"]["y"];				
+		var w0 = this.obj["location"]["width"];		
+		var h0 = this.obj["location"]["height"];
 		var start_elem_id = this.obj["_id"];
+		//End element's geometry
+		var endElem = new VQ_Element(end_elem_id);
+		var x1 = endElem.obj["location"]["x"];
+		var y1 = endElem.obj["location"]["y"];
+		var w1 = endElem.obj["location"]["width"];
+		var h1 = endElem.obj["location"]["height"];
 		var line_type = ElementTypes.findOne({name: "Link"});
 
 		var line_style = line_type["styles"][0];
@@ -1534,59 +1541,127 @@ VQ_Element.prototype = {
 			show_error_msg("Internal error: No element style");
 			return;
 		}
+		
+		//Determine line startind and end point coordinates	
+		var ix;
+		var iy;
+		var ix1;
+		var iy1;
+		var anglePoint = false; // if line needs to bend to avoid diagonal lines
+		
+		if ((x1 >= x0 && x1 <= (x0+w0))|| ((x1+w1) >= x0 && (x1+w1) <= (x0+w0)) ){ // partielly above or below
+			ix =  Math.round((Math.max(x0, x1) + Math.min((x1+w1),(x0+w0)))/2);
+			ix1 = ix;
+			if (y0 >= (y1+h1)) { //Start above end
+				iy = y0;
+				iy1 = y1+h1;
+			} else if ( y1 >= (y0+h0)){//Start below end
+				iy = y0+h0;
+				iy1 = y1;
+			} else {
+				console.log("Overlaping elements - no line possible");
+				return;
+			}						
+		} else if ( ((y1+h1) >= y0 && (y1+h1) <= (y0+h0)) || (y1 >= y0 && y1 <= (y0+h0)) ) { // partially right/left
+			if (x0>=(x1+w1)) {
+				ix = x0;
+				ix1 = x1+w1;
+			} else if (x1 >= (x0+w0)){
+				ix = x0+w0;
+				ix1 = x1;
+			} else {
+				console.log("Overlaping elements - no line possible");
+				return;
+			}						
+			iy = Math.round((Math.max(y0, y1) + Math.min((y1+h1),(y0+h0)))/2);
+			iy1 = iy;
+		} else if (x1 > (x0+w0)){//end element to the right
+			ix = x0+w0;
+			iy = y0 + Math.round(h0/2);
+			ix1 = x1 + Math.round(h1/2);						
+			if (y0 > (y1+h1)) { // second element above					
+				iy1 = y1+h1;
+			} else if (y1 > (y0+h0)) { // secod element below
+				iy1 = y1;				
+			}
+			anglePoint = true;		
+		} else if ((x1+w1) < x0){ // end element to the left			
+			ix = x0;
+			ix1 = x1 + Math.round(w1/2);
+			iy = y0 + Math.round(h0/2);
+			if (y0 > (y1+h1)) { // second element above					
+				iy1 = y1+h1;
+			} else if (y1 > (y0+h0)) { // secod element below
+				iy1 = y1;				
+			} 
+			anglePoint = true;
+		}
 
-//coordinates for 2 boxes one below other
-		var ix = x0+Math.round(w/2);
-		var a = y0+h;
-		var b = y1;
+		// console.log(x0, w0, y0, h0);
+		// console.log(x1, w1, y1, h1);
+		var linePoints = [];		
 
 		if (line_direct == "=>") {
+			if (anglePoint){
+				linePoints = [ix, iy, ix1, iy, ix1, iy1];
+			} else {
+				linePoints = [ix, iy, ix1, iy1]
+			}
 
-				var new_line = {
-						projectId: Session.get("activeProject"),
-						versionId: Session.get("versionId"),
+			var new_line = {
+					projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
 
-						diagramId: Session.get("activeDiagram"),
-						diagramTypeId: line_type["diagramTypeId"],
-						elementTypeId: line_type["_id"],
+					diagramId: Session.get("activeDiagram"),
+					diagramTypeId: line_type["diagramTypeId"],
+					elementTypeId: line_type["_id"],
 
-						style: {startShapeStyle: line_style["startShapeStyle"],
-								endShapeStyle: line_style["endShapeStyle"],
-								elementStyle: line_style["elementStyle"],
-								lineType: line_type["lineType"],
-							},
+					style: {startShapeStyle: line_style["startShapeStyle"],
+							endShapeStyle: line_style["endShapeStyle"],
+							elementStyle: line_style["elementStyle"],
+							lineType: line_type["lineType"],
+						},
 
-						styleId: line_style["id"],
-						type: "Line",
-						points: [ix, a, ix, b],
-						startElement: start_elem_id,
-						endElement: end_elem_id,
-					};
+					styleId: line_style["id"],
+					type: "Line",
+					points: linePoints,
+					startElement: start_elem_id,
+					endElement: end_elem_id,
+				};
 
+		} else if (line_direct == "<="){
+			if (anglePoint){
+				linePoints = [ix1, iy1, ix1, iy, ix, iy];
+			} else {
+				linePoints = [ix1, iy1, ix, iy]
+			}
+
+			var new_line = {
+					projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+
+					diagramId: Session.get("activeDiagram"),
+					diagramTypeId: line_type["diagramTypeId"],
+					elementTypeId: line_type["_id"],
+
+					style: {startShapeStyle: line_style["startShapeStyle"],
+							endShapeStyle: line_style["endShapeStyle"],
+							elementStyle: line_style["elementStyle"],
+							lineType: line_type["lineType"],
+						},
+
+					styleId: line_style["id"],
+					type: "Line",
+					points: linePoints,
+					startElement: end_elem_id,
+					endElement: start_elem_id,
+
+				};
 		} else {
-
-				var new_line = {
-						projectId: Session.get("activeProject"),
-						versionId: Session.get("versionId"),
-
-						diagramId: Session.get("activeDiagram"),
-						diagramTypeId: line_type["diagramTypeId"],
-						elementTypeId: line_type["_id"],
-
-						style: {startShapeStyle: line_style["startShapeStyle"],
-								endShapeStyle: line_style["endShapeStyle"],
-								elementStyle: line_style["elementStyle"],
-								lineType: line_type["lineType"],
-							},
-
-						styleId: line_style["id"],
-						type: "Line",
-						points: [ix, b, ix, a],
-						startElement: end_elem_id,
-						endElement: start_elem_id,
-
-					};
+			// console.log("Error - no direction is given");
+			return;
 		}
+		// console.log(linePoints);
 
 		Utilities.callMeteorMethod("insertElement", new_line, function(new_line_id) {
 
