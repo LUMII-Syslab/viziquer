@@ -83,7 +83,6 @@ Template.ConnectClasses.events({
 			}
 		})
 		
-		linkRezult = []; //Clear global variable for further use
 		return;
 	},
 });
@@ -98,6 +97,7 @@ Template.ConnectClasses.events({
 function GetChain(ids, maxLength){
 	var schema = new VQ_Schema();
 	var link_chain = [];
+	linkRezult = [];
 	elemInfo = [];	
 	_.each(ids, function(id){
 		elem = new VQ_Element(id["text"])
