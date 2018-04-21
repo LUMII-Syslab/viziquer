@@ -1406,7 +1406,7 @@ VQ_Element.prototype = {
 					}
 				}
 			})
-
+			// If any disturbing element exist, find the lowest one (max y) and try new space that is lower by d
 			if (elem_over.length > 0){
 				max_y = 0;
 
@@ -1420,46 +1420,42 @@ VQ_Element.prototype = {
 			}
 		} while (elem_over.length > 0);
 
-		return {x: x, y: y1, height: h, width: w};
+		return y1;
 	},
 
-	drawLinkedClass: function(class_name, boxGeometry, asoc_name, line_direct){
-		var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
-		var elem_style = _.find(elem_type.styles, function(style) {
+	drawLinkedClass: function(class_name, asoc_name, line_direct){		
+		var thisObject = this;
+		var elem_type2 = ElementTypes.findOne({_id: thisObject.obj["elementTypeId"]});
+		var elem_style2 = _.find(elem_type2.styles, function(style) {
 								return style.name === "ConditionClass";
 							});
 
-		if (!elem_style) {
+		if (!elem_style2) {
 			show_error_msg("Internal error: No element style");
 			return;
 		}
 
-		if (!boxGeometry) {
-			console.log("No box parameters are given!");
+		var returnElement;
+		var d = 30;
+		var x1 = thisObject.obj["location"]["x"];;
+		var h = thisObject.obj["location"]["height"];;
+		var w = thisObject.obj["location"]["width"];
+		var y1 = thisObject.getCoordinateY(d);
+
+		if(!x1 || !h || !w || !y1){
+			console.log("Some geometry is not given.");
 			return 0;
 		}
-		//x, h, w are from obj, y should be different not to draw box above existing one
-		if (boxGeometry["y"]){
-			var y1 = boxGeometry["y"];
-		} else {
-			console.log("Y coordinate is not given.");
-			return 0;
-		}
-
-		var thisObject = this;
-		var x1 = boxGeometry["x"] || this.obj["location"]["x"];;
-		var h = boxGeometry["height"] || this.obj["location"]["height"];;
-		var w = boxGeometry["width"] || this.obj["location"]["width"];;
-
+		
 		var new_box = {
 						projectId: Session.get("activeProject"),
 						versionId: Session.get("versionId"),
 
 						diagramId: Session.get("activeDiagram"),
-						diagramTypeId: elem_type["diagramTypeId"],
-						elementTypeId: elem_type["_id"],
-						style: {elementStyle: elem_style["elementStyle"]},
-						styleId: elem_style["id"],
+						diagramTypeId: elem_type2["diagramTypeId"],
+						elementTypeId: elem_type2["_id"],
+						style: {elementStyle: elem_style2["elementStyle"]},
+						styleId: elem_style2["id"],
 						type: "Box",
 						location:  {x: x1, y: y1, width: w, height: h}
 					};
@@ -1515,18 +1511,20 @@ VQ_Element.prototype = {
 					}
 
 				}
-				
-				thisObject.drawAssocLine(asoc_name, y1, end_elem_id, line_direct);
+				console.log("1514 ", asoc_name, end_elem_id, line_direct);
+				thisObject.drawAssocLine(asoc_name, end_elem_id, line_direct);
+				return returnElement;
 			}		
 		});				
 	},
 
 	drawAssocLine: function(name, end_elem_id, line_direct){
 		//Start element's geometry
-		var x0 = this.obj["location"]["x"];
-		var y0 = this.obj["location"]["y"];				
-		var w0 = this.obj["location"]["width"];		
-		var h0 = this.obj["location"]["height"];
+		var startElem = this;
+		var x0 = startElem.obj["location"]["x"];
+		var y0 = startElem.obj["location"]["y"];				
+		var w0 = startElem.obj["location"]["width"];		
+		var h0 = startElem.obj["location"]["height"];
 		var start_elem_id = this.obj["_id"];
 		//End element's geometry
 		var endElem = new VQ_Element(end_elem_id);
@@ -1534,13 +1532,16 @@ VQ_Element.prototype = {
 		var y1 = endElem.obj["location"]["y"];
 		var w1 = endElem.obj["location"]["width"];
 		var h1 = endElem.obj["location"]["height"];
+		
 		var line_type = ElementTypes.findOne({name: "Link"});
-
 		var line_style = line_type["styles"][0];
 		if (!line_style) {
 			show_error_msg("Internal error: No element style");
 			return;
 		}
+
+		console.log(x0,w0,y0,h0);
+		console.log(x1,w1,y1,h1);
 		
 		//Determine line startind and end point coordinates	
 		var ix;
@@ -1549,7 +1550,8 @@ VQ_Element.prototype = {
 		var iy1;
 		var anglePoint = false; // if line needs to bend to avoid diagonal lines
 		
-		if ((x1 >= x0 && x1 <= (x0+w0))|| ((x1+w1) >= x0 && (x1+w1) <= (x0+w0)) ){ // partielly above or below
+		if ((x1 >= x0 && x1 <= (x0+w0))|| ((x1+w1) >= x0 && (x1+w1) <= (x0+w0)) ||
+		   (x1 <= x0 && (x1+w1) >= (x0+w0)) || (x0 <= x1 && (x0+w0) >= (x1+w1))){ // partially above or below
 			ix =  Math.round((Math.max(x0, x1) + Math.min((x1+w1),(x0+w0)))/2);
 			ix1 = ix;
 			if (y0 >= (y1+h1)) { //Start above end
@@ -1562,7 +1564,8 @@ VQ_Element.prototype = {
 				console.log("Overlaping elements - no line possible");
 				return;
 			}						
-		} else if ( ((y1+h1) >= y0 && (y1+h1) <= (y0+h0)) || (y1 >= y0 && y1 <= (y0+h0)) ) { // partially right/left
+		} else if ( ((y1+h1) >= y0 && (y1+h1) <= (y0+h0)) || (y1 >= y0 && y1 <= (y0+h0)) ||
+		             (y1 <= y0 && (y1+h1) >= (y0+h0)) || (y0 <= y1 && (y0+h0) >= (y1+h1)) ) { // partially right/left
 			if (x0>=(x1+w1)) {
 				ix = x0;
 				ix1 = x1+w1;
@@ -1575,38 +1578,38 @@ VQ_Element.prototype = {
 			}						
 			iy = Math.round((Math.max(y0, y1) + Math.min((y1+h1),(y0+h0)))/2);
 			iy1 = iy;
-		} else if (x1 > (x0+w0)){//end element to the right
+		} else if (x1 >= (x0+w0)){//end element to the right
 			ix = x0+w0;
 			iy = y0 + Math.round(h0/2);
-			ix1 = x1 + Math.round(h1/2);						
-			if (y0 > (y1+h1)) { // second element above					
+			ix1 = x1 + Math.round(w1/2);						
+			if (y0 >= (y1+h1)) { // second element above					
 				iy1 = y1+h1;
-			} else if (y1 > (y0+h0)) { // secod element below
+			} else if (y1 >= (y0+h0)) { // secod element below
 				iy1 = y1;				
 			}
 			anglePoint = true;		
-		} else if ((x1+w1) < x0){ // end element to the left			
+		} else if ((x1+w1) <= x0){ // end element to the left			
 			ix = x0;
 			ix1 = x1 + Math.round(w1/2);
 			iy = y0 + Math.round(h0/2);
-			if (y0 > (y1+h1)) { // second element above					
+			if (y0 >= (y1+h1)) { // second element above					
 				iy1 = y1+h1;
-			} else if (y1 > (y0+h0)) { // secod element below
+			} else if (y1 >= (y0+h0)) { // secod element below
 				iy1 = y1;				
 			} 
 			anglePoint = true;
 		}
 
-		// console.log(x0, w0, y0, h0);
-		// console.log(x1, w1, y1, h1);
-		var linePoints = [];		
+		var linePoints = [];
+		// console.log(ix, iy, ix1, iy1);
 
 		if (line_direct == "=>") {
 			if (anglePoint){
 				linePoints = [ix, iy, ix1, iy, ix1, iy1];
 			} else {
 				linePoints = [ix, iy, ix1, iy1]
-			}
+			}		
+
 
 			var new_line = {
 					projectId: Session.get("activeProject"),
@@ -1635,6 +1638,8 @@ VQ_Element.prototype = {
 			} else {
 				linePoints = [ix1, iy1, ix, iy]
 			}
+			console.log(linePoints);		
+
 
 			var new_line = {
 					projectId: Session.get("activeProject"),

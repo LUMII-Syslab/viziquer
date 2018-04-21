@@ -1,12 +1,15 @@
 <template name="ConnectLength">
 <style>
-    input:invalid+span:after {
+    label {
+        padding-right: 5px;
+    }
+    input:invalid+span.validity:after {
       content: 'X';
       padding-left: 5px;
       color: red;
     }
 
-    input:valid+span:after {
+    input:valid+span.validity:after {
       content: 'V';
       padding-left: 5px;
       color: green;
@@ -40,15 +43,28 @@
 
 <template name="ConnectClasses">
 <style>
-    ul {
-            list-style-type: circle;    
-            padding-left: 40px;
-            display: none;
-        }
-    input:valid+span:after {
-      content: '';
-      padding-left: 5px;
-      color: green;
+    .form-group { 
+        padding-left: 10px;
+        font-size: 12;
+    }
+
+    .custom-radio{
+        transform: scale(0.75);
+    }
+
+    .label-radio:hover input ~ .custom-radio{
+        background-color: lightgrey;
+    }
+   
+    p{
+        margin: 0px 10px;       
+    }
+
+    div.modal-bodyCC {
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 50vh;
+        font-size: 12;
     }
 </style>
 	<!-- Modal for new document -->
@@ -60,24 +76,24 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Connect Classes</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-bodyCC">
                     <form id="radioList" class="form-horizontal" role="form">
-                        <div class="form-group">
-                            Please choose the chain:
-                            {{#each connections}}
-                                <div class="col-lg-10 connections" name="chain">
-                                        <label class="label-radio">                                            
-                                            <input type="radio" name="stack-radio" value="{{number}}">
-                                            <span class="custom-radio"></span>
-                                            {{text}}
-                                        </label>
+                        <div class="form-group">                
+                            <p style="font-size:16px">Please choose the chain:</p>
+                            {{#each connections}}                                
+                                <div class="col-lg-10 connections" name="chain">                                
+                                    <label class="label-radio">                                            
+                                        <input type="radio" name="stack-radio" value="{{number}}" style="font-size:14px">
+                                        <span class="custom-radio"></span>
+                                        {{text}}
+                                    </label>
                                 </div>
-                            {{/each}}
+                            {{/each}} 
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">                    
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="cancel-connect-classes" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect-classes" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->

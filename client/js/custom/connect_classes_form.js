@@ -159,7 +159,7 @@ function GetChain(ids, maxLength){
 	_.each(linkRezult, function(e){		
 		resultString = elemInfo[0]["class"];
 		_.each(e, function(ee){								
-			resultString = resultString.concat(" ", ee["name"]," ", ee["type"]," ", ee["class"], " ");
+			resultString = resultString.concat(" ", ee["name"]," ", ee["class"]);
 		})		
 		resultStringArray.push({text: resultString, number: i});
 		i++;
