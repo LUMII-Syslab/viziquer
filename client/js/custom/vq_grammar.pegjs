@@ -180,9 +180,9 @@
 			AVG = "AVG"i {return "AVG"}
 			SAMPLE = "SAMPLE"i {return "SAMPLE"}
 			GROUP_CONCAT = "GROUP_CONCAT"i {return "GROUP_CONCAT"}
-			SEPARATOR = "SEPARATOR"i {return "SEPARATOR"}
+			SEPARATORTer = "SEPARATOR"i {return "SEPARATOR"}
 			
-			SEPARATOR = (";" space SEPARATOR space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
+			SEPARATOR = (";" space SEPARATORTer space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
 			
 			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction) {return {FunctionExpression:FunctionExpression}}
 
@@ -198,7 +198,6 @@
 			STRLEN = "STRLEN"i {return "STRLEN"}
 			UCASE = "UCASE"i {return "UCASE"}
 			LCASE = "LCASE"i {return "LCASE"}
-			STRLEN = "STRLEN"i {return "STRLEN"}
 			ENCODE_FOR_URI = "ENCODE_FOR_URI"i {return "ENCODE_FOR_URI"}
 			YEAR = "YEAR"i {return "YEAR"}
 			MONTH = "MONTH"i {return "MONTH"}
