@@ -1365,6 +1365,8 @@ VQ_Element.prototype = {
 // Julija H
 //========================
 
+	//Find free space below element for an element with the same size
+	//d - space between elements
 	getCoordinateY: function(d) {
 	//If diagram is populated - search for overlap
 	//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
@@ -1373,7 +1375,7 @@ VQ_Element.prototype = {
 		var y = this.obj["location"]["y"];		
 		var w = this.obj["location"]["width"];
 		var h = this.obj["location"]["height"];
-		var x1 = x;
+		//y1 - coordinate for a new element; 1st itteration
 		var y1 = y + h + d;
 
 		var elem_list = [];
@@ -1388,11 +1390,11 @@ VQ_Element.prototype = {
 			elem_over.length = 0;
 
 			_.each(elem_list, function(el) {
-				//Check, if start point of existing element could lead to overlap withexisting elements
-				if (el["location"]["x"] < (x1+w)){
+				//Check, if start point of new element could lead to overlap with existing elements
+				if (el["location"]["x"] < (x+w)){
 					if (el["location"]["y"] < (y1+h)){
 						//Check, if end point of existing element could lead to overlap
-						if((el["location"]["x"]+el["location"]["width"]) > x1){
+						if((el["location"]["x"]+el["location"]["width"]) > x){
 							if((el["location"]["y"])+el["location"]["height"] > y1){
 								elem_over.push({
 									_id: el["_id"],
@@ -1422,10 +1424,10 @@ VQ_Element.prototype = {
 
 		return y1;
 	},
-
+//Draw class element and connect it with assocciation arrow (line)
 	drawLinkedClass: function(class_name, asoc_name, line_direct){		
 		var thisObject = this;
-		var elem_type2 = ElementTypes.findOne({_id: thisObject.obj["elementTypeId"]});
+		var elem_type2 = ElementTypes.findOne({_id: thisObject["obj"]["elementTypeId"]});
 		var elem_style2 = _.find(elem_type2.styles, function(style) {
 								return style.name === "ConditionClass";
 							});
@@ -1511,13 +1513,12 @@ VQ_Element.prototype = {
 					}
 
 				}
-				console.log("1514 ", asoc_name, end_elem_id, line_direct);
 				thisObject.drawAssocLine(asoc_name, end_elem_id, line_direct);
 				return returnElement;
 			}		
 		});				
 	},
-
+//Draw association arrow between element and element with known ID
 	drawAssocLine: function(name, end_elem_id, line_direct){
 		//Start element's geometry
 		var startElem = this;
@@ -1540,8 +1541,8 @@ VQ_Element.prototype = {
 			return;
 		}
 
-		console.log(x0,w0,y0,h0);
-		console.log(x1,w1,y1,h1);
+		// console.log(x0,w0,y0,h0);
+		// console.log(x1,w1,y1,h1);
 		
 		//Determine line startind and end point coordinates	
 		var ix;
@@ -1638,7 +1639,7 @@ VQ_Element.prototype = {
 			} else {
 				linePoints = [ix1, iy1, ix, iy]
 			}
-			console.log(linePoints);		
+			// console.log(linePoints);		
 
 
 			var new_line = {
@@ -1708,5 +1709,79 @@ VQ_Element.prototype = {
 
 		return 1;
 	},
+
+	//Set style for Query, ConditionClass, SubQueryClass
+	//Entry data: query, condition, subquery
+	setClassStyle: function(style) {  
+	  
+	  var thisObject = this;
+	  // console.log("setClassStyle object: ", thisObject);
+	  var elem_type = ElementTypes.findOne({_id: thisObject.obj.elementTypeId});
+	  if (!elem_type){
+	  	console.log("setClassStyle: no elem_type");
+	  	return;
+	  }
+
+	  console.log(elem_type.styles);
+	  // console.log("setClassStyle object before: ", thisObject.obj.styleId, thisObject.obj.style);
+	  var elemData = [];
+	  var elem_style = [];
+
+
+	  if (style == "query"){
+	  	
+	  	console.log("setClassStyle: query");
+	  	elem_style = _.find(elem_type.styles, function(style) {
+								return style.name === "Default";
+							});		
+
+	  } else if (style == "condition"){
+	  	
+	  	console.log("setClassStyle: condition");
+	  	elem_style = _.find(elem_type.styles, function(style) {
+								return style.name === "ConditionClass";
+							});
+
+	  } else if(style == "subquery"){
+	  	
+	  	console.log("setClassStyle: subquery");
+	  	elem_style = _.find(elem_type.styles, function(style) {
+								return style.name === "SubQueryClass";
+							});
+		
+	  }else{
+	  	console.log("setClassStyle: unknown style");
+	  	return;
+	  }
+
+	  console.log(elem_style.id);
+
+	  elemData = [{attrName:"elementStyle.fill",attrValue:elem_style.elementStyle.fill},
+	  				{attrName:"elementStyle.shape",attrValue:elem_style.elementStyle.shape},
+	  				{attrName:"elementStyle.stroke",attrValue:elem_style.elementStyle.stroke}];
+	  thisObject.setCustomStyle(elemData);
+	  thisObject.obj.styleId = style.id;
+	  thisObject.setCompartmentValue("ClassType", style, style);
+	  return;
+
+	},
+
+	// setClassToStyle: function(style_attr_list, styleId) {
+	//   // console.log(style_attr_list);
+ //     var element_id = this._id();
+	// 	 var diagram_id = this.getDiagram_id();
+	// 	 _.forEach(style_attr_list, function(a) {
+	// 		 a["elementId"] = element_id
+	// 		 a["diagramId"] = diagram_id
+	// 		 a["projectId"] = Session.get("activeProject");
+	// 		 a["versionId"] = Session.get("versionId");
+	// 		 a["styleId"] = styleId;
+
+	// 		 Utilities.callMeteorMethod("updateElementStyle", a);
+	// 	 })
+
+	// },	
+
+	
 
 }

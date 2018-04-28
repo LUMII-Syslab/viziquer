@@ -561,7 +561,61 @@ Interpreter.customMethods({
 							];
 
 		return menu;
-	}
+	},
 
+//========================
+// Julija H
+//========================
+	VQsetAsMainClass: function(){
+		//Based on "generate SPARQL from component" realisation
+		var newMainElementID = Session.get("activeElement");		
+		var selected_elem = new VQ_Element(newMainElementID);
+		//If chosen element isn't root (query-type) - make it root
+		//Get ID of all elements in query
+	    var visited_elems = {};
 
+	    function GetComponentIds(vq_elem) {
+	        visited_elems[vq_elem._id()]=true;
+	        _.each(vq_elem.getLinks(),function(link) {
+	        	if (!visited_elems[link.link._id()]) {
+	        		visited_elems[link.link._id()]=true;
+	        		var next_el = null;
+	        		if (link.start) {
+	                	next_el=link.link.getStartElement();
+	                } else {
+	                 	next_el=link.link.getEndElement();
+	                };
+	                if (!visited_elems[next_el._id()]) {
+	                	GetComponentIds(next_el);
+	                };
+	               };
+	           });
+	       };
+
+	    GetComponentIds(selected_elem);
+	    var elem_ids = _.keys(visited_elems);
+	    var class_ids = [];
+	    // console.log(elem_ids);
+	    //Get ID from selection of classes, that are roots
+	    _.each(elem_ids, function(e){
+	    	var VQElem = new VQ_Element(e);	    	
+	    	if (VQElem.isClass() && VQElem.isRoot() && e != newMainElementID){
+	    		class_ids.push(e);
+	    	}
+	    })
+
+	    // console.log(class_ids);
+	    // selected_elem.setCompartmentValue("ClassType", "query", "query");
+	    // console.log("610: ", selected_elem);
+	    selected_elem.setClassStyle("query");
+	    // console.log("610: ", selected_elem);
+
+	    _.each(class_ids, function(e){
+	    	var VQElem = new VQ_Element(e);
+	    	// VQElem.setCompartmentValue("ClassType", "condition", "condition");
+	    	VQElem.setClassStyle("condition");
+	    })
+	},
+
+	 
 });
