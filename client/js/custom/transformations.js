@@ -561,6 +561,24 @@ Interpreter.customMethods({
 							];
 
 		return menu;
+	},
+
+	createNewVQ_Element: function()  {
+		var loc = {x:400,y:400,width:88,height:66};
+		Create_VQ_Element(function(boo) {
+			 boo.setName("Boo");
+			 var loc2 = {x:400,y:600,width:88,height:66};
+			 Create_VQ_Element(function(voo) {
+				 voo.setName("Voo");
+				 voo.setClassType("condition");
+				 var points = [444, 600, 444, 466];
+				 Create_VQ_Element(function(coo) {
+					 coo.setName("Coo");
+				 }, points, true, voo, boo);
+			 }, loc2);
+		}, loc);
+		//boo.setName("Boo");
+
 	}
 
 

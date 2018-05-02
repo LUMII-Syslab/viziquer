@@ -677,34 +677,75 @@ VQ_SchemaRole.prototype.maxCardinality = null;
 // all properties (except obj) are functions and they are evaluated upon request
 
 
-//  Create a new VQ_Element (class). Parameter is function to process the newly created
-// element.
-//    funtion(VQ_Element), {x:, y:, width:, height:}  -->
-Create_VQ_Element = function(func, location) {
+//  Create a new VQ_Element (class). Parameters are: //
+//  - function to process the newly created element.
+//  - location of the object:
+//       -- the left upper corner + dimensions for class:{x:, y:, width:, height:}
+//       -- an array of points for link: [x1, y1, x2, y2, ..., xn, yn] // WARNING: use just two points
+//  - type of the object falsy - class, true - link
+//  - source Class (for Link)
+//  - target Class (for Link)
+//    funtion(VQ_Element), location, bool, VQ_Element, VQ_Element  -->
+Create_VQ_Element = function(func, location, isLink, source, target) {
   var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
-  var elem_type = ElementTypes.findOne({name:"Class", diagramTypeId:active_diagram_type_id});
-  var elem_style = _.find(elem_type.styles, function(style) {
-              return style.name === "Default";
-  });
 
-  var new_box = {
-          projectId: Session.get("activeProject"),
-          versionId: Session.get("versionId"),
+  if (isLink) {
+    var elem_type = ElementTypes.findOne({name:"Link", diagramTypeId:active_diagram_type_id});
+    var elem_style = _.find(elem_type.styles, function(style) {
+                return style.name === "Default";
+    });
 
-          diagramId: Session.get("activeDiagram"),
-          diagramTypeId: elem_type["diagramTypeId"],
-          elementTypeId: elem_type["_id"],
-          style: {elementStyle: elem_style["elementStyle"]},
-          styleId: elem_style["id"],
-          type: "Box",
-          location:  location
-  };
+    var new_line = {
+        projectId: Session.get("activeProject"),
+        versionId: Session.get("versionId"),
 
-  Utilities.callMeteorMethod("insertElement", new_box, function(elem_id) {
-        var elem = Elements.findOne({_id: elem_id});
-        var vq_obj = new VQ_Element(elem_id);
-        if (func) { func(vq_obj) };
-  });
+        diagramId: Session.get("activeDiagram"),
+        diagramTypeId: elem_type["diagramTypeId"],
+        elementTypeId: elem_type["_id"],
+
+        style: {startShapeStyle: elem_style["startShapeStyle"],
+            endShapeStyle: elem_style["endShapeStyle"],
+            elementStyle: elem_style["elementStyle"],
+            lineType: elem_type["lineType"],
+          },
+
+        styleId: elem_style["id"],
+        type: "Line",
+        points: location,
+        startElement: source._id(),
+        endElement: target._id(),
+      };
+
+      Utilities.callMeteorMethod("insertElement", new_line, function(elem_id) {
+            var vq_obj = new VQ_Element(elem_id);
+            if (func) { func(vq_obj) };
+      });
+
+  } else {
+    var elem_type = ElementTypes.findOne({name:"Class", diagramTypeId:active_diagram_type_id});
+    var elem_style = _.find(elem_type.styles, function(style) {
+                return style.name === "Default";
+    });
+
+    var new_box = {
+            projectId: Session.get("activeProject"),
+            versionId: Session.get("versionId"),
+
+            diagramId: Session.get("activeDiagram"),
+            diagramTypeId: elem_type["diagramTypeId"],
+            elementTypeId: elem_type["_id"],
+            style: {elementStyle: elem_style["elementStyle"]},
+            styleId: elem_style["id"],
+            type: "Box",
+            location:  location
+    };
+
+    Utilities.callMeteorMethod("insertElement", new_box, function(elem_id) {
+          var vq_obj = new VQ_Element(elem_id);
+          if (func) { func(vq_obj) };
+    });
+  }
+
 };
 // ajoo element id --> VQ_Element
 
@@ -722,7 +763,7 @@ VQ_Element = function(id) {
     };
 
     this.obj = elem;
-  
+
 };
 
 
@@ -1183,6 +1224,12 @@ VQ_Element.prototype = {
 	setName: function(name) {
 		   this.setCompartmentValue("Name",name,name);
 	},
+
+  // sets type of the class: query, condition
+  // string -->
+  setClassType: function(type) {
+      this.setCompartmentValue("ClassType", type, type)
+  },
 
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
 	setLinkType: function(value) {
