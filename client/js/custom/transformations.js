@@ -564,16 +564,30 @@ Interpreter.customMethods({
 	},
 
 	createNewVQ_Element: function()  {
-		var loc = {x:400,y:400,width:88,height:66};
+		var loc = {x:400,y:400,width:250,height:250};
 		Create_VQ_Element(function(boo) {
 			 boo.setName("Boo");
-			 var loc2 = {x:400,y:600,width:88,height:66};
+			 boo.addCondition("boo > voo");
+			 boo.addCondition("zoo is not here");
+			 boo.addField("kvak","a",true,true,true);
+			 boo.addField("mooh","b",true,false,true);
+			 boo.setDistinct(true);
+			 boo.setOffset("333");
+			 boo.setLimit("777");
+			 boo.setFullSPARQL("Full SPARQL");
+			 var loc2 = {x:400,y:800,width:200,height:200};
 			 Create_VQ_Element(function(voo) {
 				 voo.setName("Voo");
 				 voo.setClassType("condition");
-				 var points = [444, 600, 444, 466];
+				 voo.addAggregateField("count(.)","zumzum");
+				 voo.addAggregateField("sum(fum)","foo");
+				 voo.addOrdering("cockoo",true);
+				 voo.addOrdering("sparrow",false);
+				 var points = [444, 800, 444, 650];
 				 Create_VQ_Element(function(coo) {
 					 coo.setName("Coo");
+					 coo.setLinkType("REQUIRED");
+					 coo.setLinkQueryType("SUBQUERY");
 				 }, points, true, voo, boo);
 			 }, loc2);
 		}, loc);

@@ -907,10 +907,15 @@ VQ_Element.prototype = {
   getInstanceAlias: function() {
     return this.getCompartmentValue("Instance");
   },
+  // string -->
+  setInstanceAlias: function(instanceAlias) {
+    this.setCompartmentValue("Instance",instanceAlias, instanceAlias);
+  },
   // --> string
   getStereotype: function() {
     return this.getCompartmentValue("Stereotype");
   },
+
   // --> string
   // Can be [if Class]: query, condition, subquery, null
   // Can be [if Link]: NOT, OPTIONAL, REQUIRED, null
@@ -971,22 +976,43 @@ VQ_Element.prototype = {
   isDistinct: function() {
     return this.getCompartmentValue("Distinct")=="true";
   },
+  // bool  ->
+  setDistinct: function(distinct) {
+    var distinctS = this.boolToString(distinct)
+    this.setCompartmentValueAuto("Distinct",distinctS)
+  },
 	// --> string
 	getFullSPARQL : function() {
     return this.getCompartmentValue("FullSPARQL");
 	},
+  // string -->
+  setFullSPARQL: function(sparql) {
+    this.setCompartmentValueAuto("FullSPARQL",sparql)
+  },
   // --> string
   getLimit: function() {
     return this.getCompartmentValue("Show rows");
+  },
+  // string -->
+  setLimit: function(limit) {
+    this.setCompartmentValueAuto("Show rows",limit)
   },
   // --> string
   getOffset: function() {
     return this.getCompartmentValue("Skip rows");
   },
+  // string -->
+  setOffset: function(offset) {
+    this.setCompartmentValueAuto("Skip rows", offset)
+  },
   // --> [{exp:string}]
   // returns an array of conditions' expressions
   getConditions: function() {
     return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
+  },
+  // string -->// it does not work - there are still subcompartments
+  addCondition: function(condition) {
+    this.addCompartmentSubCompartments("Conditions",[{name:"Expression", value:condition}])
   },
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
@@ -998,12 +1024,29 @@ VQ_Element.prototype = {
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
   },
+  // string,string,bool,bool,bool -->
+  addField: function(exp,alias,requireValues,groupValues,isInternal) {
+    this.addCompartmentSubCompartments("Attributes",[
+      {name:"Expression",value:exp},
+      {name:"Field Name",value:alias},
+      {name:"Require Values",value:this.boolToString(requireValues)},
+      {name:"GroupValues",value:this.boolToString(groupValues)},
+      {name:"IsInternal",value:this.boolToString(isInternal)}
+    ])
+  },
 	// --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of aggregate attributes: expression, stereotype, alias, etc. ...
   getAggregateFields: function() {
     return this.getMultiCompartmentSubCompartmentValues("Aggregates",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"}]);
+  },
+  // string, string -->
+  addAggregateField: function(exp,alias) {
+    this.addCompartmentSubCompartments("Aggregates",[
+      {name:"Expression",value:exp},
+      {name:"Field Name",value:alias},
+    ])
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
   // returns an array of orderings - expression and whether is descending
@@ -1014,6 +1057,13 @@ VQ_Element.prototype = {
       {title:"isDescending", name:"Desc", transformer:function(v) {return v=="true"}}
     ])
     //return this.getMultiCompartmentValues("OrderBy");
+  },
+  // string, bool -->
+  addOrdering: function(exp,isDescending) {
+    this.addCompartmentSubCompartments("OrderBy",[
+      {name:"Name",value:exp},
+      {name:"Desc",value:this.boolToString(isDescending)},
+    ])
   },
   // --> [{exp:string}]
   // returns an array of having's expressions
@@ -1446,13 +1496,14 @@ VQ_Element.prototype = {
 	setIsInverseLink: function(value) {
 		 this.setCompartmentValue("Inverse Link",value,"");
 	},
-	// updates compartments value (if that compartment exists)
-	// string, string, string -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
-	setCompartmentValue: function(comp_name, input, value) {
+	//sets compartment value (input and value)
+	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
+  // If insert mode is true then new compartment is inserted regardless of existence
+	setCompartmentValue: function(comp_name, input, value, insertMode) {
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
 			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
-			if (c) {
+			if (c && !insertMode) {
 					Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
           return 1;
 			} else {
@@ -1484,6 +1535,92 @@ VQ_Element.prototype = {
 		};
 		return 0;
 	},
+  // Sets compartment value - value automatically computed depending on input
+  // string, string, bool? -->
+  setCompartmentValueAuto: function(comp_name, input, insertMode) {
+    var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
+		if (ct) {
+        var value = "";
+        var mapped_value = undefined;
+        if (ct["inputType"]["type"] == "checkbox") {
+            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input == s["input"]})["value"];
+        };
+        value = Dialog.buildCompartmentValue(ct,  input, mapped_value);
+        this.setCompartmentValue(comp_name, input, value, insertMode);
+    }
+  },
+  // adds comparment with subcompartments
+  // string, [{name: string, value:string, transformer: function}]
+  addCompartmentSubCompartments: function(compartment_name, subcompartment_value_list) {
+    var ct = CompartmentTypes.findOne({name: compartment_name, elementTypeId: this.obj["elementTypeId"]});
+		if (ct) {
+      var c_to_create = {
+                compartment: {
+                  projectId: Session.get("activeProject"),
+                  versionId: Session.get("versionId"),
+
+                  diagramId: this.getDiagram_id(),
+                  diagramTypeId: ct["diagramTypeId"],
+                  elementTypeId: ct["elementTypeId"],
+
+                  compartmentTypeId: ct._id,
+                  elementId: this._id(),
+
+                  index: ct.index,
+                //???  input: input,
+                //???  value: value,
+                  subCompartments: {},
+                  isObjectRepresentation: false,
+
+                  style: ct.styles[0]["style"],
+                  styleId: ct.styles[0]["id"],
+                },
+              };
+      c_to_create["compartment"]["subCompartments"][compartment_name] = {};
+      c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
+
+
+      var sorted_sub_compart_types = _.sortBy(ct["subCompartmentTypes"][0]["subCompartmentTypes"], function(sct) {return sct.index} );
+      var value_array = [];
+
+      _.each(sorted_sub_compart_types, function(sub_c) {
+         c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name] = {};
+        var sc_value = "";
+        var sc = _.find(subcompartment_value_list, function(s) {return s.name == sub_c.name});
+        if (sc) {
+
+          if (sc.name && sc.value) {
+             var transformer = (sc.transformer) ? sc.transformer : function(v)  {return v};
+
+            var mapped_value = undefined;
+            if (sub_c["inputType"]["type"] == "checkbox") {
+                mapped_value = _.find(sub_c["inputType"]["values"], function(s) { return transformer(sc.value) == s["input"]})["value"];
+            };
+             sc_value = Dialog.buildCompartmentValue(sub_c,  transformer(sc.value), mapped_value);
+
+             c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["input"] = transformer(sc.value);
+             c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["value"] = sc_value;
+            //
+          }
+        } else {
+          // THIS probably doesn't work
+          sc_value = Dialog.buildCompartmentValue(sub_c);
+          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name]["input"] = sc_value;
+          c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sub_c.name]["value"] = sc_value;
+        };
+
+        if (sc_value) {
+          value_array.push(sc_value);
+          value_array.push(ct["concatStyle"])
+        };
+      });
+      value_array.pop();
+      c_to_create["compartment"]["value"] = value_array.join("");
+      c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
+      console.log(c_to_create);
+      Utilities.callMeteorMethod("insertCompartment", c_to_create);
+    };
+  },
 
 	// sets style
 	// Style_attr is an object, e.g., {attrName:"startShapeStyle.shape",attrValue:"Circle"}
