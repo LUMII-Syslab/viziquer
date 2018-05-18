@@ -1,6 +1,6 @@
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
-
+  
   ExecuteSPARQL_from_diagram: function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
@@ -26,7 +26,7 @@ Interpreter.customMethods({
 		 var result = generateSPARQLtext(abstractQueryTable);
 		 console.log(result["SPARQL_text"]);
 		 Session.set("generatedSparql", result["SPARQL_text"]);
-     setText_In_SPARQL_Editor(result["SPARQL_text"]);
+     setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 	 
      if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
     })
@@ -50,7 +50,7 @@ Interpreter.customMethods({
      var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
 		 var rootClass = abstractQueryTable["root"];
 		 var result = generateSPARQLtext(abstractQueryTable);
-		 console.log(result["SPARQL_text"]);
+		 console.log(result["SPARQL_text"], result);
 		 Session.set("generatedSparql", result["SPARQL_text"]);
      setText_In_SPARQL_Editor(result["SPARQL_text"]);
 
@@ -106,7 +106,7 @@ Interpreter.customMethods({
    		 console.log(result["SPARQL_text"]);
 
        Session.set("generatedSparql", result["SPARQL_text"]);
-       setText_In_SPARQL_Editor(result["SPARQL_text"]);
+       setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
        if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
        })
@@ -521,7 +521,11 @@ function generateSPARQLtext(abstractQueryTable){
 			 SPARQL_text = SPARQL_text + temp.join("\n")  + "}";
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
-			 var groupBy = selectResult["groupBy"].join(" ");
+			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
+			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
+				return arr.indexOf(el) === i;
+			});
+			 var groupBy = groupByTemp.join(" ");
 			 if(groupBy != "") groupBy = "\nGROUP BY " + groupBy;
 
 			 if(rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + groupBy;
@@ -661,7 +665,6 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		var instAlias = clazz["instanceAlias"]
 		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
-		
 		
 		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable);
 		counter = resultClass["counter"]
@@ -887,7 +890,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					"type" : "Error",
 					"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.",
 					"listOfElementId" : [clazz["identification"]["_id"]],
-					"isBlocking" : false
+					"isBlocking" : true
 				});
 			}
 		}
@@ -1005,7 +1008,19 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				}
 				// if is global subQuery then no need in link between classes
 				if(subclazz["linkIdentification"]["localName"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
-					temp["sparqlTable"]["linkTriple"] = "?" + subject +  preditate + " ?" + object + ".";
+					var subjectName = subject;
+					if(subjectName.indexOf("://") != -1) subjectName = "<" + subjectName + ">";
+					else if(subjectName.indexOf(":") != -1){
+						//TODO add prefix
+					} else subjectName = "?" + subjectName;
+					
+					var objectName = object;
+					if(objectName.indexOf("://") != -1) objectName = "<" + objectName + ">";
+					else if(objectName.indexOf(":") != -1){
+						//TODO add prefix
+					} else objectName = "?" + objectName;
+					
+					temp["sparqlTable"]["linkTriple"] = subjectName +  preditate + " " + objectName + ".";
 				} else{
 					if(preditate == null || preditate.replace(" ", "") =="") {
 						//Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["localName"] + "'", -3);
@@ -1095,6 +1110,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	var messages = [];
 	var orderTable = [];
 	var orderTripleTable = [];
+	var orderGroupBy = [];
 	_.each(orderings,function(order) {
 		if(order["exp"] != null && order["exp"].replace(" ", "") !=""){
 			var descendingStart = "";
@@ -1114,11 +1130,13 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 					}
 				}
 				orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
+				orderGroupBy.push("?" + result);
 			} else {		
 				var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
 				 messages = messages.concat(result["messages"]);
 				 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 					 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
+					 orderGroupBy.push(result["exp"]);
 					 orderTripleTable.push(result["triples"]);
 				 } else {
 					 messages.push({
@@ -1137,7 +1155,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	orderTable = orderTable.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
-	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages};
+	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
 // generete HAVING info
@@ -1376,6 +1394,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 
 
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
+							selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 
 							selectResult["groupBy"] = selectResult["groupBy"].filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;

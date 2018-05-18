@@ -192,8 +192,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
          // if expression is just the property name, then resolve its type.
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
-         console.log(p);
-         console.log(f.alias);
+         // console.log(p);
+         // console.log(f.alias);
          if (f.alias && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
