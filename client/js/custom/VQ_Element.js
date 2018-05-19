@@ -1714,16 +1714,13 @@ VQ_Element.prototype = {
 	//Entry data: query, condition, subquery
 	setClassStyle: function(style) {  
 	  
-	  var thisObject = this;
-	  // console.log("setClassStyle object: ", thisObject);
-	  var elem_type = ElementTypes.findOne({_id: thisObject.obj.elementTypeId});
+	  var elem_type = ElementTypes.findOne({_id: this.obj.elementTypeId});
 	  if (!elem_type){
 	  	console.log("setClassStyle: no elem_type");
 	  	return;
 	  }
 
-	  console.log(elem_type.styles);
-	  // console.log("setClassStyle object before: ", thisObject.obj.styleId, thisObject.obj.style);
+	  // console.log(elem_type.styles);	  
 	  var elemData = [];
 	  var elem_style = [];
 
@@ -1731,22 +1728,22 @@ VQ_Element.prototype = {
 	  if (style == "query"){
 	  	
 	  	console.log("setClassStyle: query");
-	  	elem_style = _.find(elem_type.styles, function(style) {
-								return style.name === "Default";
+	  	elem_style = _.find(elem_type.styles, function(stl) {
+								return stl.name === "Default";
 							});		
 
 	  } else if (style == "condition"){
 	  	
 	  	console.log("setClassStyle: condition");
-	  	elem_style = _.find(elem_type.styles, function(style) {
-								return style.name === "ConditionClass";
+	  	elem_style = _.find(elem_type.styles, function(stl) {
+								return stl.name === "ConditionClass";
 							});
 
 	  } else if(style == "subquery"){
 	  	
 	  	console.log("setClassStyle: subquery");
-	  	elem_style = _.find(elem_type.styles, function(style) {
-								return style.name === "SubQueryClass";
+	  	elem_style = _.find(elem_type.styles, function(stl) {
+								return stl.name === "SubQueryClass";
 							});
 		
 	  }else{
@@ -1754,34 +1751,19 @@ VQ_Element.prototype = {
 	  	return;
 	  }
 
-	  console.log(elem_style.id);
+	  // console.log("1757", elem_style.id);
+	  // console.log("1763", this.obj.styleId);
 
 	  elemData = [{attrName:"elementStyle.fill",attrValue:elem_style.elementStyle.fill},
 	  				{attrName:"elementStyle.shape",attrValue:elem_style.elementStyle.shape},
 	  				{attrName:"elementStyle.stroke",attrValue:elem_style.elementStyle.stroke}];
-	  thisObject.setCustomStyle(elemData);
-	  thisObject.obj.styleId = style.id;
-	  thisObject.setCompartmentValue("ClassType", style, style);
-	  return;
+	  this.setCustomStyle(elemData);
+	  this.setCompartmentValue("ClassType", style, style);
+	  this.obj.styleId = elem_style.id; 
+	  // console.log("1766", this.obj.styleId);	 	  
+	  return elem_style.id;
 
 	},
-
-	// setClassToStyle: function(style_attr_list, styleId) {
-	//   // console.log(style_attr_list);
- //     var element_id = this._id();
-	// 	 var diagram_id = this.getDiagram_id();
-	// 	 _.forEach(style_attr_list, function(a) {
-	// 		 a["elementId"] = element_id
-	// 		 a["diagramId"] = diagram_id
-	// 		 a["projectId"] = Session.get("activeProject");
-	// 		 a["versionId"] = Session.get("versionId");
-	// 		 a["styleId"] = styleId;
-
-	// 		 Utilities.callMeteorMethod("updateElementStyle", a);
-	// 	 })
-
-	// },	
-
-	
-
 }
+
+				

@@ -566,11 +566,16 @@ Interpreter.customMethods({
 //========================
 // Julija H
 //========================
-	VQsetAsMainClass: function(){
+	//Make chosen element root (query-type)
+	VQsetAsMainClass: function(){		
 		//Based on "generate SPARQL from component" realisation
 		var newMainElementID = Session.get("activeElement");		
 		var selected_elem = new VQ_Element(newMainElementID);
-		//If chosen element isn't root (query-type) - make it root
+		if(!selected_elem.isClass()){
+			console.log("Selected element is not class");
+			return;
+		}
+		
 		//Get ID of all elements in query
 	    var visited_elems = {};
 
@@ -604,16 +609,16 @@ Interpreter.customMethods({
 	    	}
 	    })
 
-	    // console.log(class_ids);
-	    // selected_elem.setCompartmentValue("ClassType", "query", "query");
-	    // console.log("610: ", selected_elem);
 	    selected_elem.setClassStyle("query");
-	    // console.log("610: ", selected_elem);
+	    // var elemStyleId = selected_elem.setClassStyle("query");
+	    // selected_elem.obj.styleId = elemStyleId;
 
 	    _.each(class_ids, function(e){
 	    	var VQElem = new VQ_Element(e);
 	    	// VQElem.setCompartmentValue("ClassType", "condition", "condition");
 	    	VQElem.setClassStyle("condition");
+	    	// elemStyleId = VQElem.setClassStyle("condition");
+	    	// VQElem.obj.styleId = elemStyleId;
 	    })
 	},
 
