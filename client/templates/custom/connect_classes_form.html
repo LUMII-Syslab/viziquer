@@ -40,6 +40,43 @@
     </div><!-- /.modal -->
 </template>
 
+<template name="FirstConnect">
+    <!-- Modal for new document -->
+    <div id="connect-first-form" class="modal fade">
+        
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Connect Classes</h4>
+                </div>
+                <div class="modal-bodyFC">
+                      <form id="radioList" class="form-horizontal" role="form">
+                        <div class="form-group">                
+                            <p style="font-size:16px">Please choose the starting class:</p>
+                            {{#each elements}}                                
+                                <div class="col-lg-10 elements" name="chain">                                
+                                    <label class="label-radio">                                            
+                                        <input type="radio" id="fc-radio" value="{{id}}" style="font-size:14px">
+                                        <span class="custom-radio"></span>
+                                        {{name}}
+                                    </label>
+                                </div>
+                            {{/each}} 
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">                    
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-first-length" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+</template>
+
 
 <template name="ConnectClasses">
 <style>

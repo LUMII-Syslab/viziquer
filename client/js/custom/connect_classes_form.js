@@ -7,12 +7,24 @@ Interpreter.customMethods({
 
 var linkRezult = [];
 var elemInfo = [];
+var maxLength;
+var ids=[];
 
 Template.ConnectLength.events({
 	"click #ok-connect-length": function(){
-		//Get length and elements
-		var ids=[];
-		var maxLength = document.getElementById('max_length').value;
+		//Get length and elements		
+		ids=[];
+		maxLength = document.getElementById('max_length').value;
+		if (isNaN(maxLength)){
+			console.log("Length should be number");
+			return;
+		}
+
+		if( (maxLength - Math.round(maxLength)) != 0 ) {
+			console.log("Length should be integer");
+			return;
+		}
+
 		var editor = Interpreter.editor;
 		if (editor){
 			var elem_ids = _.keys(editor.getSelectedElements());			
@@ -35,17 +47,62 @@ Template.ConnectLength.events({
 					return;
 				}
 
-				//Create possible linking chains
-				var resultStringArray = GetChain(ids, maxLength);				
-				// console.log("resultStringArray: ", resultStringArray);											
-				Template.ConnectClasses.connections.set(resultStringArray);				
+				var usedClasses = [];
+				_.each(ids, function(id){
+					elem = new VQ_Element(id.text);
+					usedClasses.push({name: elem.getName(), id: id.text});
+				})
+				Template.FirstConnect.elements.set(usedClasses);
+
+				// //Create possible linking chains
+				// var resultStringArray = GetChain(ids, maxLength);				
+				// // console.log("resultStringArray: ", resultStringArray);											
+				// Template.ConnectClasses.connections.set(resultStringArray);				
 			}
-		}		
-		$("#connect-classes-form").modal("show");
+		}
+		$("#connect-first-form").modal("show");
+		// console.log(Template.FirstConnect.elements);
+
 	},
 });
 
 Template.ConnectClasses.connections = new ReactiveVar([{text: "No selected elements to proceed"}]);
+
+Template.FirstConnect.events({
+	"click #ok-first-length": function(){
+		//Get length and elements
+		// console.log(Template.FirstConnect.elements);
+		var first = "";
+		first = $('input[id=fc-radio]:checked').val();
+		console.log(first);
+		// console.log(ids);
+
+		var newIds = [];
+		_.each(ids, function(e){
+			if (e.text == first){
+				newIds[0] = e;
+			} else {
+				newIds[1] = e;
+			}
+		})
+		// console.log(newIds);
+		ids = newIds;
+
+		// Create possible linking chains
+		var resultStringArray = GetChain(ids, maxLength);				
+		console.log("resultStringArray: ", resultStringArray);											
+		Template.ConnectClasses.connections.set(resultStringArray);
+		$('input[id=fc-radio]:checked').attr('checked', false);
+		$("#connect-classes-form").modal("show");
+	},
+});
+Template.FirstConnect.elements = new ReactiveVar([{name: "No class", id: 0}]);
+
+Template.FirstConnect.helpers({
+	elements: function(){
+		return Template.FirstConnect.elements.get();
+	}
+});
 
 Template.ConnectClasses.helpers({
 	connections: function(){
@@ -56,10 +113,11 @@ Template.ConnectClasses.helpers({
 Template.ConnectClasses.events({
 	"click #ok-connect-classes": function(e) {
 		//console.log("connection on ok", Template.ConnectClasses.connections.get());		
+		//Get selected chain's index in linkRezult array
 		var number = $('input[name=stack-radio]:checked').val();
-		//console.log(number);
+		console.log(number);
 		if (number < 0 || !number) {
-			console.log("No chain exists"); 
+			console.log("No chain selected"); 
 			return;
 		}
 		console.log("connection on ok elemInfo", elemInfo);
@@ -82,7 +140,7 @@ Template.ConnectClasses.events({
 				elemList = GetAllClassesID();	
 			}
 		})
-		
+		$('input[name=stack-radio]:checked').attr('checked', false);
 		return;
 	},
 });
@@ -103,6 +161,8 @@ function GetChain(ids, maxLength){
 		elem = new VQ_Element(id["text"])
 		elemInfo.push({id: id["text"], class: elem.getName()});
 	})
+
+	console.log(ids, maxLength, elemInfo);
 
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {					
 		if(CompareClasses(e["class"], elemInfo[1]["class"])){
@@ -202,17 +262,19 @@ function CompareClasses(n1, n2){
 	return n1==n2;
 }
 
+//Get ID of all classes in the diagram
 function GetAllClassesID(){
 	var elemList = [];
 	Elements.find({type: "Box"}).forEach(function(el) {
 			var elem = new VQ_Element(el["_id"]);
-			if (elem.isClass) {
+			if (elem.isClass()) {
 				elemList.push(el["_id"]);
 			}
 	})
 	return elemList;
 }
 
+//Get ID of a class not in elem_list array
 function GetNewClassID(elem_list){
 	if (!elem_list){ //no list - create one
 		console.log("No new class")
