@@ -80,11 +80,16 @@ Template.AddLink.events({
 			return;
 		}
 
-		
+		obj = $('input[name=link-type-radio]:checked').val();		
+		if (!obj) {
+			obj = "REQUIRED";
+		}
+		// console.log("obj = ", obj);
+
 	//If diagram is populated - search for overlap
 	//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
 		var startElement = new VQ_Element(start_elem_id);		
-		var end_elem_id = startElement.drawLinkedClass(class_name, name, line_direct);
+		var end_elem_id = startElement.drawLinkedClass(class_name, name, line_direct, obj);		
 
 		return;
 

@@ -1425,7 +1425,8 @@ VQ_Element.prototype = {
 		return y1;
 	},
 //Draw class element and connect it with assocciation arrow (line)
-	drawLinkedClass: function(class_name, asoc_name, line_direct){		
+	drawLinkedClass: function(class_name, asoc_name, line_direct, style){
+		style = style || "REQUIRED";		
 		var thisObject = this;
 		var elem_type2 = ElementTypes.findOne({_id: thisObject["obj"]["elementTypeId"]});
 		var elem_style2 = _.find(elem_type2.styles, function(style) {
@@ -1437,7 +1438,6 @@ VQ_Element.prototype = {
 			return;
 		}
 
-		var returnElement;
 		var d = 30;
 		var x1 = thisObject.obj["location"]["x"];;
 		var h = thisObject.obj["location"]["height"];;
@@ -1513,13 +1513,13 @@ VQ_Element.prototype = {
 					}
 
 				}
-				thisObject.drawAssocLine(asoc_name, end_elem_id, line_direct);
-				return returnElement;
+				thisObject.drawAssocLine(asoc_name, end_elem_id, line_direct, style);
+				return 1;
 			}		
 		});				
 	},
 //Draw association arrow between element and element with known ID
-	drawAssocLine: function(name, end_elem_id, line_direct){
+	drawAssocLine: function(name, end_elem_id, line_direct, style){
 		//Start element's geometry
 		var startElem = this;
 		var x0 = startElem.obj["location"]["x"];
@@ -1674,7 +1674,7 @@ VQ_Element.prototype = {
 			var line_id = new_line_id;
 			var line_elem = Elements.findOne({_id: line_id});
 			var vq_line = new VQ_Element(line_id);
-			vq_line.setLinkType("REQUIRED");
+			vq_line.setLinkType(style);
 			//vq_line.setName(name);
 			var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 			if (line_compart_type) {

@@ -17,10 +17,10 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Add Link</h4>
                 </div>
-                <div class="modal-body">
-                    <form id="radioList" class="form-horizontal" role="form">
+                <div class="modal-body" style="width: 100%; overflow: hidden;">
+                    <form id="radioList" class="form-horizontal" role="form" >
                         
-                        <div class="form-group">
+                        <div style="width: 70%; float: left;" class="form-group">
                    
                             {{#each associations}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}" attributes="{{attributes}}">
@@ -30,6 +30,7 @@
                                         {{name}} {{type}} {{class}} 
                                         
                                         <ul id = "{{name}}">
+                                            Class attributes:<br>
                                             {{#each attributes}}                                        
                                                 <li> {{this}} </li>                                           
                                             {{/each}}
@@ -40,13 +41,36 @@
                             {{/each}}
 
                         </div>
-
-                        <!-- <div class="form-group">
-                            <div class="col-sm-10">
-                                <input id="fileList" type='file' multiple/>
-                            </div>
+                         <!-- <div class="form-group">
+                        <div class="col-sm-10">
+                        <input id="fileList" type='file' multiple/>
+                        </div>
                         </div> -->
                     </form> 
+
+                        <div style="width: 30%; float: right;" class="form-group">
+                            <details>
+                                <summary>Advanced Link Settings</summary>
+                                <form id="radioListLink" class="form-horizontal" role="form">
+                                            Please choose link type:<br>
+                                            <input type="radio" name="link-type-radio" value="REQUIRED">
+                                            <span class="custom-radio"></span>
+                                            Requered link<br>
+
+                                            <input type="radio" name="link-type-radio" value="NOT">
+                                            <span class="custom-radio"></span>
+                                            Negation link<br>
+
+                                            <input type="radio" name="link-type-radio" value="OPTIONAL">
+                                            <span class="custom-radio"></span>
+                                            Optional link<br>
+
+
+                                </form>
+                            </details>
+                        </div>
+
+
                 </div>
 
                 <div class="modal-footer">
