@@ -593,6 +593,11 @@ Interpreter.customMethods({
 		}, loc);
 		//boo.setName("Boo");
 
+	},
+
+	visualizeSPARQL: function() {
+		var query_text = yasqe3.getValue();
+		Interpreter.customExtensionPoints.generateVisualQuery(query_text)
 	}
 
 
