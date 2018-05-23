@@ -11,7 +11,10 @@ Interpreter.customMethods({
 		
 		//console.log("tttttttttttttt", parsedQuery);
 		console.log(JSON.stringify(parsedQuery, 0, 2));
-		var abstractTable = generateAbstractTable(parsedQuery, []);
+		var schema = new VQ_Schema();
+		var variableList = getAllVariablesInQuery(parsedQuery, schema);
+
+		var abstractTable = generateAbstractTable(parsedQuery, [], variableList);
 		//console.log(abstractTable);
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
 		var classesTable = abstractTable["classesTable"];
@@ -33,7 +36,7 @@ Interpreter.customMethods({
 });
 
 
-function generateAbstractTable(parsedQuery, allClasses){
+function generateAbstractTable(parsedQuery, allClasses, variableList){
 	x = 10;
 	y = 10;
 	var schema = new VQ_Schema();
@@ -51,7 +54,7 @@ function generateAbstractTable(parsedQuery, allClasses){
 	//where
 	var where = parsedQuery["where"];
 	for(var key in where){
-		var wherePartTemp = parseSPARQLjsStructureWhere(where[key], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses);
+		var wherePartTemp = parseSPARQLjsStructureWhere(where[key], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList);
 		classesTable = wherePartTemp["classesTable"];
 		attributeTable = wherePartTemp["attributeTable"];
 		linkTable = wherePartTemp["linkTable"];
@@ -63,7 +66,9 @@ function generateAbstractTable(parsedQuery, allClasses){
 		var exp = vq_visual_grammar.parse(order[key]["expression"])["value"];
 		var isDescending = false;
 		if(typeof order[key]["descending"] !== 'undefined') isDescending = order[key]["descending"];
-		if(typeof attributeTable[exp] !== 'undefined') attributeTable[exp]["seen"] = true;
+		if(typeof attributeTable[exp] !== 'undefined' && (attributeTable[exp]["alias"] == "" || (attributeTable[exp]["identification"] != null && attributeTable[exp]["identification"]["localName"] == attributeTable[exp]["alias"]))) {
+			attributeTable[exp]["seen"] = true;
+		}
 		orderTable.push({
 			"exp":exp,
 			"isDescending":isDescending
@@ -102,8 +107,27 @@ function generateAbstractTable(parsedQuery, allClasses){
 				classesTable[attributeTable[parsedAttribute]["class"]] = addAttributeToClass(classesTable[attributeTable[parsedAttribute]["class"]], attributeInfo);
 				attributeTable[parsedAttribute]["seen"] = true;
 			}
+			//reference
+			else if(typeof variableList[variables[key]] !== 'undefined'){
+				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];
+				var attributeInfo = {
+					"alias":"",
+					"identification":null,
+					"requireValues":false,
+					"isInternal":false,
+					"groupValues":false,
+					"exp":parsedAttribute
+				}
+				
+				for (var clazz in classesTable){
+					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+					break;
+				}
+				
+				//attributeTable[parsedAttribute]["seen"] = true;
+			}
 		} else if(typeof variables[key] === 'object'){
-			//console.log("PPPPPPPPPP", variables[key]);
+
 			var alias = vq_visual_grammar.parse(variables[key]["variable"])["value"];
 			var expression = variables[key]["expression"];
 			//aggregation
@@ -128,7 +152,7 @@ function generateAbstractTable(parsedQuery, allClasses){
 						"alias":alias
 					}
 					classesTable[attributeTable[aggregateExpression]["class"]] = addAggrigateToClass(classesTable[attributeTable[aggregateExpression]["class"]], aggregateInfo);
-					attributeTable[aggregateExpression]["seen"] = true;
+					if((attributeTable[aggregateExpression]["identification"]!= null && attributeTable[aggregateExpression]["alias"] == attributeTable[aggregateExpression]["identification"]["localName"]) || attributeTable[aggregateExpression]["alias"] == "")attributeTable[aggregateExpression]["seen"] = true;
 				}
 			}
 			//operation
@@ -158,7 +182,7 @@ function generateAbstractTable(parsedQuery, allClasses){
 	return {classesTable:classesTable, filterTable:filterTable, attributeTable:attributeTable, linkTable:linkTable, orderTable:orderTable};
 }
 
-function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses){
+function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList){
 	var viziQuerExpr = {
 		"exprString" : "",
 		"exprVariables" : []
@@ -190,7 +214,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 		}
 
 		for(var pattern in patterns){
-			var temp = parseSPARQLjsStructureWhere(patterns[pattern], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses);
+			var temp = parseSPARQLjsStructureWhere(patterns[pattern], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList);
 			classesTable = temp["classesTable"];
 			attributeTable = temp["attributeTable"];
 			//linkTable = temp["linkTable"];
@@ -202,7 +226,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 			// viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 		}
 		//find optional link
-		for(link in linkTableAdded){
+		for(var link in linkTableAdded){
 			if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
 				linkTableAdded[link]["linkType"] = "OPTIONAL";
 			}
@@ -214,7 +238,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 	//type=filter
 	if(where["type"] == "filter"){
 		// var temp2 = generateTypeFilter(where["expression"]);
-		var temp = parseSPARQLjsStructureWhere(where["expression"], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses);
+		var temp = parseSPARQLjsStructureWhere(where["expression"], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList);
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
 		attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
@@ -225,17 +249,20 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 		filterTable.push({filterString:viziQuerExpr["exprString"], filterVariables:viziQuerExpr["exprVariables"]});
 
 		for(var fil in viziQuerExpr["exprVariables"]){
-			var className = attributeTable[viziQuerExpr["exprVariables"][fil]]["class"];
+			var className;
+			if(typeof  attributeTable[viziQuerExpr["exprVariables"][fil]] != 'undefined') className = attributeTable[viziQuerExpr["exprVariables"][fil]]["class"];
+			else{
+				for(var clazz in classesTable){
+					className = clazz;
+					break;
+				}
+			}
 			if(typeof classesTable[className]["conditions"] === 'undefined') classesTable[className]["conditions"] = [];
 			classesTable[className]["conditions"].push(viziQuerExpr["exprString"]);
 		}
-
-		// for(var fil in temp["filterVariables"]){
-			 // var className = attributeTable[temp["filterVariables"][fil]]["class"];
-			 // if(typeof classesTable[className]["conditions"] === 'undefined') classesTable[className]["conditions"] = [];
-			// classesTable[className]["conditions"].push(temp["filterString"]);
-		// }
-		// filterTable.push(temp2);
+		classesTable[className]["conditions"] = classesTable[className]["conditions"].filter(function (el, i, arr) {
+			return arr.indexOf(el) === i;
+		});
 	}
 
 	if(where["type"] == "operation"){
@@ -247,7 +274,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + arg1["value"];
 			}
 			else if(typeof where["args"][0] == 'object'){
-				var temp = parseSPARQLjsStructureWhere(where["args"][0], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses);
+				var temp = parseSPARQLjsStructureWhere(where["args"][0], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList);
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			}
@@ -260,7 +287,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + arg2["value"];
 			}
 			else if(typeof where["args"][1] == 'object'){
-				var temp = parseSPARQLjsStructureWhere(where["args"][1], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses);
+				var temp = parseSPARQLjsStructureWhere(where["args"][1], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList);
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			}
@@ -275,7 +302,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + arg1["value"];
 			}
 			else if(typeof where["args"][0] == 'object'){
-				var temp = parseSPARQLjsStructureWhere(where["args"][0], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses);
+				var temp = parseSPARQLjsStructureWhere(where["args"][0], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList);
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			}
@@ -284,51 +311,60 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 		}
 		//not exists
 		else if(where["operator"] == "notexists"){
-			var arg = where["args"][0];
-			if(arg["type"] == 'group'){
+			for(var arg in where["args"]){
+				if(where["args"][arg]["type"] == 'group'){
+					var patterns =  where["args"][arg]["patterns"];
+					for(var pattern in patterns){
+						var temp = parseSPARQLjsStructureWhere(patterns[pattern], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList);
+						classesTable = temp["classesTable"];
+						attributeTable = temp["attributeTable"];
+						//linkTable = temp["linkTable"];
+						filterTable = temp["filterTable"];
+						linkTableAdded = linkTableAdded.concat(temp["linkTableAdded"]);
+						classTableAdded = classTableAdded.concat(temp["classTableAdded"]);
+						attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
 
-				var patterns =  arg["patterns"];
-				for(var pattern in patterns){
-					var temp = parseSPARQLjsStructureWhere(patterns[pattern], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses);
+						// viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
+						// viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
+					}
+				 } else{
+					var temp = parseSPARQLjsStructureWhere(where["args"][arg], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList);
 					classesTable = temp["classesTable"];
 					attributeTable = temp["attributeTable"];
-					//linkTable = temp["linkTable"];
 					filterTable = temp["filterTable"];
 					linkTableAdded = linkTableAdded.concat(temp["linkTableAdded"]);
 					classTableAdded = classTableAdded.concat(temp["classTableAdded"]);
 					attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
-
-					// viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
-					// viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
-				}
-
-				//find negation link
-				for(link in linkTableAdded){
-					if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
-						linkTableAdded[link]["linkType"] = "NOT";
-						for(attr in attributeTableAdded){
-							var attributeInfoTemp = attributeTable[attributeTableAdded[attr]];
-							var attributeInfo = {
-								"alias":attributeInfoTemp["alias"],
-								"identification":attributeInfoTemp["identification"],
-								"requireValues":attributeInfoTemp["requireValues"],
-								"isInternal":false,
-								"groupValues":false,
-								"exp":attributeInfoTemp["identification"]["localName"]
-							}
-							classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
-
-							attributeTable[attributeTableAdded[attr]]["seen"] = true;
+				 }
+			}
+			
+			for(link in linkTableAdded){
+				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
+					linkTableAdded[link]["linkType"] = "NOT";
+					for(attr in attributeTableAdded){
+						var attributeInfoTemp = attributeTable[attributeTableAdded[attr]];
+						var attributeInfo = {
+							"alias":attributeInfoTemp["alias"],
+							"identification":attributeInfoTemp["identification"],
+							"requireValues":attributeInfoTemp["requireValues"],
+							"isInternal":false,
+							"groupValues":false,
+							"exp":attributeInfoTemp["identification"]["localName"]
 						}
+						classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
+						attributeTable[attributeTableAdded[attr]]["seen"] = true;
 					}
 				}
-				linkTable = linkTable.concat(linkTableAdded);
 			}
+			linkTable = linkTable.concat(linkTableAdded);
 		}
 	}
 	if(where["type"] == "group"){
 
-		var abstractTable = generateAbstractTable(where["patterns"][0], classesTable);
+		var abstractTable = generateAbstractTable(where["patterns"][0], classesTable, variableList);
+		
+		console.log("abstractTable", abstractTable);
+		
 		//find links outside subquery
 		for(subLink in abstractTable["linkTable"]){
 			if(typeof classesTable[abstractTable["linkTable"][subLink]["subject"]] !== 'undefined' || typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined'){
@@ -437,24 +473,6 @@ function generateTypebgp(triples, classesTable, attributeTable, linkTable, bgpty
 					classTableAdded.push(triples[triple]["object"]);
 				}
 			}
-
-
-			/*if(typeof classesTable[triples[triple]["subject"]] === 'undefined' && typeof allClasses[triples[triple]["subject"]] === 'undefined'){
-
-				//var classNameParsed = vq_visual_grammar.parse(triples[triple]["subject"]);
-				//var classResolved = schema.resolveClassByName(classNameParsed["value"]);
-
-				console.log("UUUUUUUUUUUUUUUUUUUUUU", triples[triple]["subject"], classNameParsed, classResolved);
-				classesTable[triples[triple]["subject"]] = {
-					"localName":triples[triple]["subject"],
-					"identification":null,
-					"instanceAlias":vq_visual_grammar.parse(triples[triple]["subject"])["value"],
-					"isVariable":false,
-					"isUnit":false,
-					"isUnion":false
-				};
-				classTableAdded.push(triples[triple]["subject"]);
-			}*/
 		}
 	}
 
@@ -601,7 +619,28 @@ function getStartClass(classesTable) {
   }
 }
 
-
+function getAllVariablesInQuery(expression, schema){
+	var variableTable = [];
+	for(var key in expression){
+		if(typeof expression[key] === 'object'){
+			if(key == 'variables'){
+				var variables = expression[key];
+				for(var variable in variables){
+					if(typeof variables[variable] === 'string' && schema.resolveClassByName(vq_visual_grammar.parse(variables[variable])["value"]) == null){
+						variableTable[variables[variable]] = true;
+					} else if(typeof variables[variable] === 'object'){
+						variableTable[variables[variable]["variable"]] = true;
+					}
+				}
+			}
+			var temp = getAllVariablesInQuery(expression[key], schema);
+			for(var t in temp){
+				variableTable[t] = true;
+			}
+		}
+	}
+	return variableTable;
+}
 
 function visualizeQuery(clazz, parentClass){
 
@@ -647,7 +686,7 @@ function visualizeQuery(clazz, parentClass){
 			var alias = field["alias"];
 			var expression = field["exp"];
 			var requireValues = field["requireValues"];
-			var isInternal = field["isInternal"]; // false
+			var isInternal = field["isInternal"];
 			var groupValues = field["groupValues"]; // false
 
 			//add attribute to class

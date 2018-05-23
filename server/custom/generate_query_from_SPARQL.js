@@ -5,7 +5,7 @@ Meteor.methods({
 		var SparqlParser = Npm.require('sparqljs').Parser;
 		var parser = new SparqlParser();
 
-		var fs = Npm.require('fs');
+		//var fs = Npm.require('fs');
 		//var text = fs.readFileSync('C:/Users/Julija/Desktop/ViziQuer/ViziQuerWeb/SPARQL_ViziQuer/SPARQL_text.txt','utf8')
 		//var text = fs.readFileSync('E:/ViziQuer/ViziQuer_web/SPARQL_to_ViziQuer/SPARQL_text.txt','utf8')
 		var parsedQuery = parser.parse(text);
