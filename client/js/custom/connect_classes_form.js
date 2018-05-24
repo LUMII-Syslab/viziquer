@@ -60,9 +60,15 @@ Template.ConnectLength.events({
 				// Template.ConnectClasses.connections.set(resultStringArray);				
 			}
 		}
-		$("#connect-first-form").modal("show");
+
+		document.getElementById('max_length').value = 1;
+		$("#connect-first-form").modal("show");		
 		// console.log(Template.FirstConnect.elements);
 
+	},
+
+	"click #cancel-connect-length": function(){
+		document.getElementById('max_length').value = 1;
 	},
 });
 
@@ -94,6 +100,10 @@ Template.FirstConnect.events({
 		Template.ConnectClasses.connections.set(resultStringArray);
 		$('input[id=fc-radio]:checked').attr('checked', false);
 		$("#connect-classes-form").modal("show");
+	},
+
+	"click #cancel-first-length": function(){
+		$('input[id=fc-radio]:checked').attr('checked', false);
 	},
 });
 Template.FirstConnect.elements = new ReactiveVar([{name: "No class", id: 0}]);
@@ -142,6 +152,10 @@ Template.ConnectClasses.events({
 		})
 		$('input[name=stack-radio]:checked').attr('checked', false);
 		return;
+	},
+
+	"click #cancel-connect-classes": function(e) {
+		$('input[name=stack-radio]:checked').attr('checked', false);
 	},
 });
 
