@@ -89,10 +89,30 @@ Template.AddLink.events({
 	//If diagram is populated - search for overlap
 	//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
 		var startElement = new VQ_Element(start_elem_id);		
-		var end_elem_id = startElement.drawLinkedClass(class_name, name, line_direct, obj);		
+		var end_elem_id = startElement.drawLinkedClass(class_name, name, line_direct, obj);
+
+		//Remove any changes to start-state
+		$('input[name=stack-radio]:checked').attr('checked', false);
+		$('input[name=link-type-radio]:checked').attr('checked', false);
+		var ulElements = document.getElementsByTagName("ul");
+                _.each(ulElements, function(e){
+                    e.style.display = 'none';
+                })
+		$('details').removeAttr("open");		
 
 		return;
 
+	},
+
+	"click #cancel-add-link": function(e) {
+		//Remove any changes to start-state
+		$('input[name=stack-radio]:checked').attr('checked', false);
+		$('input[name=link-type-radio]:checked').attr('checked', false);
+		var ulElements = document.getElementsByTagName("ul");
+                _.each(ulElements, function(e){
+                    e.style.display = 'none';
+                })
+		$('details').removeAttr("open");
 	},
 
 
