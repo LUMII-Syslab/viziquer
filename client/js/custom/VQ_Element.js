@@ -1065,6 +1065,20 @@ VQ_Element.prototype = {
       {name:"Desc",value:this.boolToString(isDescending)},
     ])
   },
+  // --> [{fulltext:string, exp:string},...]
+  // returns an array of orderings - expression and whether is descending
+  getGroupings: function() {
+    return this.getMultiCompartmentSubCompartmentValues("GroupBy",
+    [
+      {title:"exp",name:"Name"}
+    ])
+  },
+  // string -->
+  addGrouping: function(exp) {
+    this.addCompartmentSubCompartments("GroupBy",[
+      {name:"Name",value:exp}
+    ])
+  },
   // --> [{exp:string}]
   // returns an array of having's expressions
   getHavings: function() {

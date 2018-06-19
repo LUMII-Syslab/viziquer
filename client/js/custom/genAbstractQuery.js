@@ -217,6 +217,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
     });
 
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
+    if (obj_class.groupings) { obj_class.groupings.forEach(parseExpObject) };
     if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
 
     obj_class.children.forEach(resolveClassExpressions);
@@ -351,6 +352,7 @@ genAbstractQueryForElementList = function (element_id_list) {
                   });
                 if (elem.isGlobalSubQueryRoot()) {
                   _.extend(linkedElem_obj,{  orderings: elem.getOrderings(),
+                                             groupings: elem.getGroupings(),
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset()  });
@@ -391,6 +393,7 @@ genAbstractQueryForElementList = function (element_id_list) {
       aggregations: e.getAggregateFields(),
       conditions: e.getConditions(),
       orderings: e.getOrderings(),
+      groupings: e.getGroupings(),
       distinct:e.isDistinct(),
       limit:e.getLimit(),
       offset:e.getOffset(),
