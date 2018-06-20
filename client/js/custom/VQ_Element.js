@@ -412,6 +412,14 @@ VQ_Schema.prototype = {
 	else
 		return null;
   },
+  getPrefixes: function() {
+    prefixes = [] 
+	_.each(this.Ontologies, function (o){
+	
+		prefixes = _.union( prefixes, [[o.prefix, o.namespace]]);
+	})
+	return prefixes;	
+  },
 }
 
 function findName(name, element) {
@@ -428,18 +436,27 @@ function findPrefix(arr, pos) {
 VQ_ontology = function (schema, URI, prefix) {
   this.namespace = URI;
   this.count = 1;
+  p = "";
   this.namesAreUnique = true;
+  if (prefix) p = prefix;
+  else {
+	var arr = URI.split("/");
+	p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
+  }  
   if (schema.namespace == URI) {
    this.isDefault = true;
    this.prefix = "";
+   this.dprefix = p;
   }
   else {
     this.isDefault = false;
-	if (prefix) this.prefix = prefix;
-	else {
-		var arr = URI.split("/");
-		this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
-	}
+	this.prefix = p;
+	this.dprefix = p;
+	//if (prefix) this.prefix = prefix;
+	//else {
+	//	var arr = URI.split("/");
+	//	this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
+	//}
   }
 };
 
@@ -447,6 +464,7 @@ VQ_ontology.prototype = {
   constructor:VQ_ontology,
   namespace: null,
   prefix: null,
+  dprefix: null,
   count: null,
   isDefault: null,
   namesAreUnique:null
