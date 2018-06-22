@@ -79,7 +79,7 @@ Template.FirstConnect.events({
 		//Get length and elements
 		// console.log(Template.FirstConnect.elements);
 		var first = "";
-		first = $('input[id=fc-radio]:checked').val();
+		first = $('input[name=fc-radio]:checked').val();
 		console.log(first);
 		// console.log(ids);
 
@@ -96,14 +96,14 @@ Template.FirstConnect.events({
 
 		// Create possible linking chains
 		var resultStringArray = GetChain(ids, maxLength);				
-		console.log("resultStringArray: ", resultStringArray);											
+		// console.log("resultStringArray: ", resultStringArray);											
 		Template.ConnectClasses.connections.set(resultStringArray);
-		$('input[id=fc-radio]:checked').attr('checked', false);
+		$('input[name=fc-radio]:checked').attr('checked', false);
 		$("#connect-classes-form").modal("show");
 	},
 
 	"click #cancel-first-length": function(){
-		$('input[id=fc-radio]:checked').attr('checked', false);
+		$('input[name=fc-radio]:checked').attr('checked', false);
 	},
 });
 Template.FirstConnect.elements = new ReactiveVar([{name: "No class", id: 0}]);
@@ -125,13 +125,13 @@ Template.ConnectClasses.events({
 		//console.log("connection on ok", Template.ConnectClasses.connections.get());		
 		//Get selected chain's index in linkRezult array
 		var number = $('input[name=stack-radio]:checked').val();
-		console.log(number);
+		// console.log(number);
 		if (number < 0 || !number) {
 			console.log("No chain selected"); 
 			return;
 		}
-		console.log("connection on ok elemInfo", elemInfo);
-		console.log("On ok: ", linkRezult[number]);
+		// console.log("connection on ok elemInfo", elemInfo);
+		// console.log("On ok: ", linkRezult[number]);
 		var elemList = GetAllClassesID();
 
 		//Draw chain elements
@@ -140,7 +140,7 @@ Template.ConnectClasses.events({
 
 		_.each(linkRezult[number], function(c){
 			startElement = new VQ_Element(start_elem_id);
-			console.log("start ID: ", startElement);
+			// console.log("start ID: ", startElement);
 			if (c["class"] == elemInfo[1]["class"])	{
 				//drawAssocLine: function(name, end_elem_id, line_direct)
 				startElement.drawAssocLine(c["name"], elemInfo[1]["id"], c["type"])
@@ -176,7 +176,7 @@ function GetChain(ids, maxLength){
 		elemInfo.push({id: id["text"], class: elem.getName()});
 	})
 
-	console.log(ids, maxLength, elemInfo);
+	// console.log(ids, maxLength, elemInfo);
 
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {					
 		if(CompareClasses(e["class"], elemInfo[1]["class"])){
@@ -227,22 +227,28 @@ function GetChain(ids, maxLength){
 	actChain = [];								
 
 	//Update information on chains
-	var resultString = "";
+	// var resultString = "";
+	var resultChain = [];
 	var resultStringArray=[]
 	var i = 0;
 	_.each(linkRezult, function(e){		
-		resultString = elemInfo[0]["class"];
+		// resultString = elemInfo[0]["class"];
+		resultChain = [{link: "", class: elemInfo[0]["class"]}];
 		_.each(e, function(ee){								
-			resultString = resultString.concat(" ", ee["name"]," ", ee["class"]);
+			// resultString = resultString.concat(" ", ee["name"]," ", ee["class"]);
+			resultChain.push({link: ee["name"], class: ee["class"]});
+
 		})		
-		resultStringArray.push({text: resultString, number: i});
+		// resultStringArray.push({text: resultString, number: i, array:resultChain});
+		resultStringArray.push({number: i, array:resultChain});
 		i++;
 	})
-	// console.log(resultStringArray);
-	if(resultStringArray.length == 0) {
-		resultStringArray.push({text: "No connection of given length is found", number: -1})
-	};	
 
+	
+	if(resultStringArray.length == 0) {
+		resultStringArray.push({text: "No connection of given length is found", number: -1});
+	};	
+	console.log("261", resultChain);
 	return resultStringArray;
 }
 
