@@ -514,14 +514,23 @@ function generateSPARQLtext(abstractQueryTable){
 			 messages = messages.concat(whereInfo["messages"]);
 
 			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable);
+			 var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable);
+			 
 			 messages = messages.concat(orderBy["messages"]);
+			 messages = messages.concat(groupByFromFields["messages"]);
 			 //add triples from order by
 			 temp = temp.concat(orderBy["triples"]);
+			 if(rootClass["aggregations"].length > 0) temp = temp.concat(groupByFromFields["triples"]);
 
+			 var temp = temp.filter(function (el, i, arr) {
+				return arr.indexOf(el) === i;
+			});
+			 
 			 SPARQL_text = SPARQL_text + temp.join("\n")  + "}";
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
+			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
 			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			});
@@ -1065,7 +1074,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 				//ORDER BY
 				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable);
+				
+				//GROUP BY
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable);
+
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
+				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
 
 				//OFFSET
 				temp["sparqlTable"]["offset"] = subclazz["offset"];
@@ -1156,6 +1170,55 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 		return arr.indexOf(el) === i;
 	});
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
+}
+
+function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable){
+	var messages = [];
+	//var orderTable = [];
+	var groupTripleTable = [];
+	var orderGroupBy = [];
+	_.each(groupings,function(group) {
+		if(group["exp"] != null && group["exp"].replace(" ", "") !=""){
+			var groupName = group["exp"];
+			if(groupName.search(":") != -1) groupName = groupName.substring(groupName.search(":")+1);
+			if(typeof fieldNames[groupName] !== 'undefined'){
+				var result = fieldNames[groupName][rootClass_id];
+				if(typeof result === 'undefined'){
+					for (var ordr in fieldNames[groupName]) {
+						result = fieldNames[groupName][ordr];
+						break;
+					}
+				}
+				//orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
+				orderGroupBy.push("?" + result);
+			} else if(typeof symbolTable[groupName] !== 'undefined'){
+				var result =  groupName;
+				orderGroupBy.push("?" + result);
+			} else {		
+				var result = parse_attrib(group["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable);
+				 messages = messages.concat(result["messages"]);
+				 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
+					 //orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
+					 orderGroupBy.push(result["exp"]);
+					 groupTripleTable = groupTripleTable.concat(result["triples"]);
+				 } else {
+					 messages.push({
+						"type" : "Warning",
+						"message" : "GROUP BY allowed only over explicit selection fields, " + group["exp"] + " is not a selection field",
+						"listOfElementId":[rootClass_id],
+						"isBlocking" : false
+					 });
+				 }
+			}
+		}
+	})
+
+	//if(messages.length > 0) Interpreter.showErrorMsg(messages.join("\n"), -3);
+
+	orderGroupBy = orderGroupBy.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
+	return {"triples":groupTripleTable, "messages":messages, "groupings":orderGroupBy};
 }
 
 // generete HAVING info
@@ -1382,11 +1445,19 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 								// temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
 								temp.unshift(sparqlTable["classTriple"]);
 							}
-
+							
+							//ORDER BY
 							var orderBy = sparqlTable["subClasses"][subclass]["order"];
-							//ad tripoles from order by
+							//ad triples from order by
 							temp = temp.concat(orderBy["triples"])
 
+							//GROUP BY
+							var groupByFromFields = sparqlTable["subClasses"][subclass]["groupBy"];
+							//ad triples from group by
+							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) {
+								temp = temp.concat(groupByFromFields["triples"])
+							}
+							
 							var temp = temp.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});
@@ -1395,6 +1466,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
 							selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
+							selectResult["groupBy"] = selectResult["groupBy"].concat(groupByFromFields["groupings"]);
 
 							selectResult["groupBy"] = selectResult["groupBy"].filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
