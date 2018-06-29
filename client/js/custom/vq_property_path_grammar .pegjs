@@ -39,7 +39,7 @@
 			};
 		}
 
-			Main = (space PrimaryExpression:(iri / PPE / VAR ) space) {return {PrimaryExpression:PrimaryExpression}}
+			Main = (space PrimaryExpression:(iri / PPE / VAR / "??" ) space) {return {PrimaryExpression:PrimaryExpression}}
 			
 			iri = iri:PrefixedName {return {iri:iri}}
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
@@ -48,7 +48,7 @@
 			PN_PREFIX = Chars_String_prefix
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
 
-			VAR = Var:("?" VARNAME){return {VariableName:makeVar(Var)}}
+			VAR = Var:(("??" / "?") VARNAME){return {VariableName:makeVar(Var)}}
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			
 			PPE = (Path:path+ ) {return {Path:Path}}

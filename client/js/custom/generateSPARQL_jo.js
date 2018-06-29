@@ -984,8 +984,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){
 				var subject, preditate, object;
 				if(subclazz["linkIdentification"]["localName"].startsWith('?')) {
-					preditate = " " + subclazz["linkIdentification"]["localName"];
-					if(subclazz["linkType"] != 'NOT') temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
+					if(subclazz["linkIdentification"]["localName"].startsWith('??') == true) {
+						if(subclazz["linkIdentification"]["localName"] == "??") preditate = " ?property"
+						else preditate = " " + subclazz["linkIdentification"]["localName"].substring(1);
+					}
+					else preditate = " " + subclazz["linkIdentification"]["localName"];
+					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["localName"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
 				} else {
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
 

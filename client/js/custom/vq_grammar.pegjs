@@ -358,9 +358,10 @@
 			INTEGER_NEGATIVE = Number:("-" INTEGER){return {Number:Number.join("")}}
 			DECIMAL_NEGATIVE = Number:("-" DECIMAL){return {Number:Number.join("")}}
 			DOUBLE_NEGATIVE = Number:("-" DOUBLE){return {Number:Number.join("")}}
-			Var = Var:(VAR1 / VAR2) {return {VariableName:makeVar(Var)}}
-			VAR1 = "?" VARNAME
-			VAR2 = "$" VARNAME
+			Var = Var:(VAR1 /VAR2 / VAR3) {return {VariableName:makeVar(Var)}}
+			VAR1 = "??" VARNAME
+			VAR2 = "?" VARNAME
+			VAR3 = "$" VARNAME
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			StringQuotes = STRING_LITERAL1  / STRING_LITERAL2
 			STRING_LITERAL1 = "'" string "'"
