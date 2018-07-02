@@ -36,6 +36,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // Adding default namespace
   if (schema && query && query.root) {
      query.root.defaultNamespace = schema.URI;
+     query.prefixes = schema.getPrefixes();
+     console.log(schema.getPrefixes());
   };
   // string -->[IdObject]
   function resolveClassByName(className) {
@@ -227,7 +229,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   resolveClassExpressions(query.root);
 
   //console.log(query.root);
-  return {root:query.root, symbolTable:symbol_table, params:query.params}
+  return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes}
 };
 
 // [string]--> JSON
