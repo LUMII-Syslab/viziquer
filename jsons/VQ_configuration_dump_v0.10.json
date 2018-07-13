@@ -906,8 +906,12 @@
             "readModeKeyStrokes": [],
             "contextMenu": [
               {
-                "item": "AddLink",
+                "item": "Add Link ...",
                 "procedure": "AddLink"
+              },
+              {
+                "item": "Add Attributes ...",
+                "procedure": "AddAttribute"
               },
               {
                 "item": "Cut",

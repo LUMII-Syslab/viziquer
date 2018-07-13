@@ -1,0 +1,55 @@
+
+<template name="AddAttribute">
+<style>
+    div.modal-body {
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+</style>
+
+	<!-- Modal for new document -->
+    <div id="add-attribute-form" class="modal fade">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Add Attributes</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+
+                            {{#each attributes}}
+
+                                {{#if separator}}
+                                  <div class="col-lg-10 attribute">
+                                      <hr>
+                                  </div>
+                                {{else}}
+                                <div class="col-lg-10 attribute" name="{{name}}" >
+                                    <label class="label-checkbox">
+                                        <input type="checkbox" name="stack-checkbox" disabled="{{disabled}}">
+                                        <span class="custom-checkbox"></span>
+                                        {{name}}
+                                    </label>
+                                </div>
+                                {{/if}}
+
+                            {{/each}}
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-add-attribute" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+
+</template>
