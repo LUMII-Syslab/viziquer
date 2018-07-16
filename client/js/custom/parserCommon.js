@@ -17,7 +17,7 @@ makeString = function (o){
 	return str;
 }
 
-checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation){
+checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter){
 	
 	for(var key in expressionTable){
 		
@@ -25,13 +25,22 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
 			isSimpleVariable = false;
 		}
+		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || key == "Aggregate" ||
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime" 
+		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr" 
+		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr" 
+		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName" ){
+			isSimpleFilter = false;
+		}
 		
-		if(isSimpleVariable == true && typeof expressionTable[key] == 'object'){
-			var temp = checkIfIsSimpleVariable(expressionTable[key], isSimpleVariable, isUnderInRelation);
-			if(temp==false) isSimpleVariable = false;
+		//if(isSimpleVariable == true && typeof expressionTable[key] == 'object'){
+		if(typeof expressionTable[key] == 'object'){
+			var temp = checkIfIsSimpleVariable(expressionTable[key], isSimpleVariable, isUnderInRelation, isSimpleFilter);
+			if(temp["isSimpleVariable"]==false) isSimpleVariable = false;
+			if(temp["isSimpleFilter"]==false) isSimpleFilter = false;
 		}
 	}
-	return isSimpleVariable;
+	return {isSimpleVariable:isSimpleVariable, isSimpleFilter:isSimpleFilter};
 }
 
 checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableForNameDef){

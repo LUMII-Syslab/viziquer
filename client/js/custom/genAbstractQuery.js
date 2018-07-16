@@ -37,7 +37,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   if (schema && query && query.root) {
      query.root.defaultNamespace = schema.URI;
      query.prefixes = schema.getPrefixes();
-     console.log(schema.getPrefixes());
+     //console.log(schema.getPrefixes());
   };
   // string -->[IdObject]
   function resolveClassByName(className) {
@@ -176,7 +176,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)
-      if (f.exp=="(.)") {
+      if (f.exp=="(.)" || f.exp=="(select this)") {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
         } else{
