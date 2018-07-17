@@ -168,6 +168,14 @@ var sparql_form_events = {
 		yasqe3.setValue(val);
 	}, */
 
+	"focus .yasqe": function() {
+		Session.set("isYasqeActive", true)
+	},
+
+	"blur .yasqe": function() {
+		Session.set("isYasqeActive", reset_variable())
+	},
+
 	"click #reset-sparql": function(e) {
 		e.preventDefault();
 		Session.set("generatedSparql", undefined);
@@ -877,7 +885,10 @@ Template.diagramEditor.onDestroyed(function() {
 	Session.set("targetDiagramType", reset_variable());
 	Session.set("toolVersionId", reset_variable());
 	Session.set("generatedSparql", undefined);
-	Session.set("executedSparql", {limit_set:false, number_of_rows:0});
+	Session.set("executedSparql", {limit_set: false, number_of_rows: 0});
+
+	Session.set("isYasqeActive", reset_variable())
+
 });
 
 // End of diagram editor
