@@ -178,40 +178,26 @@ var sparql_form_events = {
 
 	"click #execute-sparql": function(e) {
 		e.preventDefault();
-
-		//var resp = {status: 200,
-	 //var	query = $("#generated-sparql").val();
-    var query = yasqe.getValue();
-			//		error: "Error in execute SPARQL",
-			//	};
+	    var query = yasqe.getValue();
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
 	},
 
 	"click #next-sparql": function(e) {
 		e.preventDefault();
-
-		//var resp = {status: 200,
-	 //var	query = $("#generated-sparql").val();
-	   var query = yasqe.getValue();
-			//		error: "Error in execute SPARQL",
-			//	};
-    var obj = Session.get("executedSparql");
+	   	var query = yasqe.getValue();
+    	var obj = Session.get("executedSparql");
 		var paging_info = {offset:obj.offset, limit:obj.limit, number_of_rows:obj.number_of_rows};
-		//console.log(paging_info);
+		
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
 	},
+
 	"click #prev-sparql": function(e) {
 		e.preventDefault();
-
-		//var resp = {status: 200,
-	 //var	query = $("#generated-sparql").val();
-       var query = yasqe.getValue();
-			//		error: "Error in execute SPARQL",
-			//	};
-    var obj = Session.get("executedSparql");
+       	var query = yasqe.getValue();
+    	var obj = Session.get("executedSparql");
 		var paging_info = {offset:obj.offset - 100, limit:obj.limit, number_of_rows:obj.number_of_rows};
-		//console.log(paging_info);
+
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
 	}
 
@@ -293,9 +279,16 @@ yasqe = null;
 Template.sparqlForm_see_results.onRendered(function() {
 
 	var yasqe_config = {sparql: {
-																showQueryButton: false,
-										          },
-										  };
+							showQueryButton: false,
+			          	},
+
+			          	extraKeys: {
+			          			Esc: function() {
+			          				console.log("esc pressed");
+			          			},
+			          	},
+
+			  		};
   // var proj = Projects.findOne({_id: Session.get("activeProject")});
 	//
   // if (proj && proj.uri && proj.endpoint) {
@@ -303,14 +296,13 @@ Template.sparqlForm_see_results.onRendered(function() {
 	// 	yasqe_config.sparql.namedGraphs = [proj.uri];
   // };
 
-
-
 	yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), yasqe_config);
-	yasqe.on("blur", function(editor){
+	yasqe.on("blur", function(editor) {
 		var val = editor.getValue();
-	 Session.set("generatedSparql", val);
-	 yasqe3.setValue(val);
-	 //yasqe3.refresh();
+	
+		Session.set("generatedSparql", val);
+		yasqe3.setValue(val);
+		//yasqe3.refresh();
 	});
 	//yasqe.setValue("A");
 });
