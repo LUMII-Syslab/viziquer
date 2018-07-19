@@ -91,7 +91,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
               attr_list.forEach(function(attr) {
                 var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
-                obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:false,groupValues:!attr_is_simple, isInternal:false});
+                obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               });
            };
         } else if (f.alias) {
@@ -176,7 +176,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)
-      if (f.exp=="(.)") {
+      if (f.exp=="(.)" || f.exp=="(select this)") {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
         } else{
