@@ -5,8 +5,11 @@
 		//and those which are specified in the configurator
 		processKeyDown: function(e) {
 
+			console.log("in process key down")
+
+
 			//if Ctrl pressed or editing the dialog
-			if (e.keyCode == 17 || Session.get("editingDialog") || $(".modal.in").length > 0) {
+			if (e.keyCode == 17 || Session.get("editingDialog") || $(".modal.in").length > 0 || Session.get("isYasqeActive")) {
 				return false;
 			}
 

@@ -37,7 +37,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   if (schema && query && query.root) {
      query.root.defaultNamespace = schema.URI;
      query.prefixes = schema.getPrefixes();
-     console.log(schema.getPrefixes());
+     //console.log(schema.getPrefixes());
   };
   // string -->[IdObject]
   function resolveClassByName(className) {

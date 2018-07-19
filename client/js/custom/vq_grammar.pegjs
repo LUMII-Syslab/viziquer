@@ -69,7 +69,7 @@
 			
 			// ExpressionA = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
 			
-			classExpr = ("." / "(.)") {return {classExpr: "true"}}
+			classExpr = ("." / "(.)" / "(select this)") {return {classExpr: "true"}}
 
 			// OrExpression = (ANDExpression ( space OR space ANDExpression )*)
 
@@ -359,7 +359,7 @@
 			DECIMAL_NEGATIVE = Number:("-" DECIMAL){return {Number:Number.join("")}}
 			DOUBLE_NEGATIVE = Number:("-" DOUBLE){return {Number:Number.join("")}}
 			Var = Var:(VAR1 /VAR2 / VAR3) {return {VariableName:makeVar(Var)}}
-			VAR1 = "??" VARNAME
+			VAR1 = "??" VARNAME?
 			VAR2 = "?" VARNAME
 			VAR3 = "$" VARNAME
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
