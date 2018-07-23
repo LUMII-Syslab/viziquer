@@ -1481,12 +1481,14 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					
 					if(visited != 1){
 						SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation); 
-						
 						if (typeof expressionTable[key]['Relation'] !== 'undefined'){
 							isExpression = true;
 							if (expressionTable[key]["Relation"] == "<>") SPARQLstring = SPARQLstring  + " != ";
 							else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
 							else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
+							
+							console.log("EEEEE", SPARQLstring);
+							
 							if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
 								var Var = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "var");
 								
@@ -1497,8 +1499,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							}
 							if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 							if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
-								if(alias!=null)SPARQLstring = SPARQLstring  + "?" +alias;
-								else SPARQLstring = SPARQLstring  + "?" +className;
+								if(alias!=null)SPARQLstring =  "?" +alias + SPARQLstring;
+								else SPARQLstring =  "?" +className + SPARQLstring;
 							}
 						}
 						visited = 1
