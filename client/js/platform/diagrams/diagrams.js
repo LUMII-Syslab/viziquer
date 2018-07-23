@@ -61,14 +61,10 @@ Template.diagramsRibbon.events({
 		Utilities.callMeteorMethod("getProjectJson", list, function(resp) {
 
 			if (resp.diagrams) {
-
 			    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
-
-				var src = $("#download-hack");
-			    src.attr("href", "data:" + data);
-			    src.attr("download", "data.json");
-
-			    src[0].click();
+				var link = $('<a href="data:' + data + '" download="data.json">download JSON</a>');
+				link.appendTo('#download-hack')
+				link[0].click();
 			}
 
 		});
