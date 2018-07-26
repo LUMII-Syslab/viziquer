@@ -63,13 +63,13 @@
 
 			Main = (space Expression space)
 			// Expression = classExpr / ExpressionA
-			Expression = "[ ]" / "[ + ]" / "(no_class)" / classExpr / ValueScope / ConditionalOrExpressionA
+			Expression = "[ ]" / "[ + ]" / "(no_class)"  / ValueScope / ConditionalOrExpressionA / classExpr
 			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
 			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
 			
 			// ExpressionA = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
 			
-			classExpr = ("." / "(.)" / "(select this)") {return {classExpr: "true"}}
+			classExpr = ("." / "(.)" / "(select this)" / "(this)") {return {classExpr: "true"}}
 
 			// OrExpression = (ANDExpression ( space OR space ANDExpression )*)
 
@@ -312,7 +312,7 @@
 
 			iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 
-			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])* ">") {return {IRIREF:IRIREF}}
+			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / [0-9])* ">") {return {IRIREF:makeVar(IRIREF)}}
 
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 
