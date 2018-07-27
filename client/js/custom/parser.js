@@ -1068,7 +1068,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if (key == "BrackettedExpression") {
-			SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+			if(typeof expressionTable[key]["classExpr"] !== 'undefined') SPARQLstring = SPARQLstring +  generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+			else SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			visited = 1;
 		}
 		
@@ -1218,22 +1219,22 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if (key == "RelationalExpression") {
-			if(typeof expressionTable[key]["Relation"]!== 'undefined' && parseType != "condition"){
-				 var clId;
-				 for(var k in idTable){
-					if (idTable[k] == className) {
-						clId = k;
-						break;
-					}
-				 }
-				messages.push({
-					"type" : "Error",
-					"message" : "Incorrect use of relation " + expressionTable[key]["Relation"] + ", it cannot be used in " + parseType,
-					"listOfElementId" : [clId],
-					"isBlocking" : true
-				});
-				visited = 1
-			} else {
+			// if(typeof expressionTable[key]["Relation"]!== 'undefined' && parseType != "condition"){
+				 // var clId;
+				 // for(var k in idTable){
+					// if (idTable[k] == className) {
+						// clId = k;
+						// break;
+					// }
+				 // }
+				// messages.push({
+					// "type" : "Error",
+					// "message" : "Incorrect use of relation " + expressionTable[key]["Relation"] + ", it cannot be used in " + parseType,
+					// "listOfElementId" : [clId],
+					// "isBlocking" : true
+				// });
+				// visited = 1
+			// } else {
 				if(typeof expressionTable[key]["Relation"]!== 'undefined') {
 					var VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
@@ -1487,8 +1488,6 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
 							else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
 							
-							console.log("EEEEE", SPARQLstring);
-							
 							if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
 								var Var = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "var");
 								
@@ -1506,7 +1505,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						visited = 1
 					}
 				}
-			}
+			//}
 		}
 		if (key == "NumericLiteral") {
 			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  '"' + expressionTable[key]['Number'] + '"';
@@ -1682,7 +1681,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			if (typeof expressionTable[key]["Expression3"]!== 'undefined') {
 				expTable.push(generateExpression({Expression : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
 			}
-			if(expTable.length > 0) SPARQLstring = SPARQLstring  + " (" + expTable.join(", ") +")";
+			if(expTable.length > 0) SPARQLstring = SPARQLstring  + "(" + expTable.join(", ") +")";
 			if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			}
