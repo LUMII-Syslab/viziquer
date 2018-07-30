@@ -48,7 +48,8 @@ checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableFo
 	for(var key in expressionTable){
 		
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || 
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
+		//key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "FunctionTime"){
 			isSimpleVariableForNameDef = false;
 		}
 		

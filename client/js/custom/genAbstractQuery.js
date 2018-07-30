@@ -153,9 +153,17 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
   function parseExpObject(exp_obj) {
-
+	var parse_obj = exp_obj.exp;
+   try {
+      parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
+	 // console.log("parse_obj", parse_obj);
+    } catch (e) {
+      // TODO: error handling
+      console.log(e)
+    }
+  
     try {
-      var parsed_exp = vq_grammar.parse(exp_obj.exp, {schema:schema, symbol_table:symbol_table});
+      var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
       exp_obj.parsed_exp = parsed_exp;
     } catch (e) {
       // TODO: error handling

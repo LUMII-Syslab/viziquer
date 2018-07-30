@@ -125,7 +125,8 @@ Interpreter.customMethods({
   },
 
   GenerateSPARQL_from_component: function() {
-    var editor = Interpreter.editor;
+
+	var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
 
     // now we should find the connected classes ...
@@ -161,7 +162,8 @@ Interpreter.customMethods({
 
   },
   GenerateSPARQL_from_diagram: function() {
-    // get _id of the active ajoo diagram
+    
+	// get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
@@ -192,14 +194,146 @@ Interpreter.customMethods({
     var str = "2+3*div";
 	var completions = [];
 	try {
-		var parsed_exp = vq_arithmetic.parse(str, {completions});
-		console.log("parsed_exp", parsed_exp);
+		// var parsed_exp = vq_arithmetic.parse(str, {completions});
+		var parsed_exp = vq_arithmetic2.parse(str, {completions});
+		var obj = JSON.parse(parsed_exp);
+		console.log("parsed_exp", parsed_exp, obj);
     } catch (e) {
       // TODO: error handling
-      console.log(e)
+      console.log(e["message"], JSON.parse(e["message"]))
+    }
+  },
+  
+  testAutoCompletionSPARQL: function(text) {
+	try {
+		// var parsed_exp = vq_arithmetic.parse(str, {completions});
+		var schema = new VQ_Schema();
+		var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:{}});
+		var obj = JSON.parse(parsed_exp);
+		console.log("parsed_exp", parsed_exp, obj);
+    } catch (e) {
+      // TODO: error handling
+      //console.log(e["message"], JSON.parse(e["message"]));
+      // console.log(e);
+	  var c = getContinuations(text, text.length, JSON.parse(e["message"]));
+	  console.log(JSON.stringify(c, 0, 2));
     }
   },
 });
+
+
+
+
+
+		function printContinuations(place, text) {
+			
+			var cont = getContinuations(text, place)
+			
+			var text = "";
+			
+			//document.write(" <br />");
+			
+			for (var key in cont) {
+				text = text + cont[key]  + " <br />";
+				//document.write(cont[key]  + " <br />");
+			}
+			
+			//document.write(" <br />");
+			return text
+		}
+		
+		function getCompletionTable(continuations_to_report) {
+
+			var sortable = [];
+			for (var  key in continuations_to_report) {
+				// sortable.push([key, continuations_to_report[key]]);
+				sortable.push({key:key, preor:continuations_to_report[key]});
+			}
+
+			sortable.sort(function(a, b) {
+				return  b.preor-a.preor;
+			});
+			
+			var uniqueMessages = []
+			
+			for (var key in sortable) {
+				//remove empty continuations
+				if (sortable[key]["key"] != "") {
+					uniqueMessages.push(sortable[key]["key"]);
+				}
+			}
+			
+			return uniqueMessages
+		}
+		
+		//text - input string
+		//length - input string length
+		function getContinuations(text, length, continuations) {
+			var farthest_pos = -1 //farthest position in continuation table
+			var farthest_pos_prev = -1 // previous farthest position (is used only some nonterminal symbol is started)
+			var continuations_to_report;
+			
+			//find farthest position in continuation table
+			//find  previous farthest position
+			for (var pos in continuations) {
+				if (farthest_pos != -1) {
+					farthest_pos_prev = farthest_pos
+				}
+				if (parseInt(pos) > farthest_pos) {
+					farthest_pos = parseInt(pos)
+					continuations_to_report = continuations[pos]
+				}
+			}
+
+			
+			if (farthest_pos_prev != -1) {
+				for (i = farthest_pos; i >=0; i--) {	
+					if (continuations[i] != null) {
+						for (var pos in continuations[i]) {	
+							//ja sakumi sakrit un nesarkit viss vards
+							var varrible = text.substring(i, farthest_pos)
+							if (pos.substring(0, varrible.length) == varrible && varrible != pos) {
+								continuations_to_report[pos] = continuations[i][pos];
+							}
+						}
+					}
+				}
+			}
+			
+			var TermMessages=[];
+			
+			if (length>=farthest_pos) { 
+				//nemam mainigo no kludas vietas lidz beigam
+				var er = text.substring(farthest_pos, length)
+				var er_lenght = er.length
+	
+				//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
+				for (var pos in continuations_to_report) {
+					if (pos.substring(0, er_lenght) == er) {
+						TermMessages[pos]=continuations_to_report[pos]; 
+					}
+				}
+				TermMessages = getCompletionTable(TermMessages) 
+				if (TermMessages[0] != null) {
+					return TermMessages
+					//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
+				} else {
+					var uniqueMessages = getCompletionTable(continuations_to_report)
+					var messages = [];
+					
+					messages.push("ERROR: in a possotion " + farthest_pos + ", possible follows are:");
+					
+					for (var pos in uniqueMessages) {
+						messages.push( "     " + uniqueMessages[pos]);
+					}
+					return messages
+				}
+			}
+			
+			var uniqueMessages = getCompletionTable(continuations_to_report)
+			return uniqueMessages
+		}
+
 
 
 // generate SPARQL for given id-s
@@ -322,12 +456,12 @@ function generateIds(rootClass){
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") rootClassId = rootClass["identification"]["localName"];
 	else rootClassId = rootClassId.replace(/ /g, '_');
+	
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
+	rootClassId = rootClassId.replace(/-/g, '_');
 	if(rootClass["isVariable"] == true && (rootClass["instanceAlias"] == null || rootClass["instanceAlias"].replace(" ", "") =="")) {
-		
-		
-		
+	
 		var varName = rootClass["variableName"];
 		if(varName == "?") varName = "?class";
 		if(varName.startsWith("?"))rootClassId = "_" + varName.substr(1);
@@ -394,12 +528,12 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 			// if given class name is in the table, add counter to the class name
 			if(idTable[key] == clazz["identification"]["localName"]){
 				foundInIdTable = true;
-				idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"] + "_"+ counter;
+				idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_') + "_"+ counter;
 				counter++;
 			}
 		}
 		// if given class name is not in the table, use it
-		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"];
+		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_');
 	}
 	var className = idTable[clazz["identification"]["_id"]];
 	var linkType = "palin";
@@ -743,8 +877,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					"isBlocking" : false
 				});
 				field["alias"] = field["alias"].replace(/ /g, '_');
-			}
-			
+			} 
+			//console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
 			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable);
 			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
@@ -1458,6 +1592,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable)
 					whereInfo.push(unionResult["result"]);
 					messages = messages.concat(unionResult["messages"]);
+					//console.log("FFFFFFFFFFFFFFFFFFf", unionResult);
 				}
 				else if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable);
