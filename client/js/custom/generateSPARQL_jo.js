@@ -501,7 +501,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length == 0) SPARQL_text = SPARQL_text + "DISTINCT ";
 
 			 // console.log("sparqlTable", sparqlTable);
-			 var selectResult = generateSELECT(sparqlTable);
+			 var selectResult = generateSELECT(sparqlTable, false);
 			 // console.log("selectResult", selectResult);
 			 var tempSelect = selectResult["select"];
 			 tempSelect = tempSelect.concat(selectResult["aggregate"]);
@@ -1467,7 +1467,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					messages = messages.concat(temp["messages"]);
 				}else {
 					//sub selects
-					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
+					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
 
 					//reference candidates
 					var refTable = [];
@@ -1697,10 +1697,13 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	var messages = [];
 	
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
+		var unionSELECT = generateSELECT(sparqlTable, true);
+		// console.log("unionSELECT", unionSELECT);
+		// var unionWheresubInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
-				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
-
+				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
+				//console.log("QQQQQQQQQQQQQQQ", selectResult, parentClassInstance);
 				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable);
 				var temp = wheresubInfo["triples"];
 				temp = temp.concat(wheresubInfo["links"]);
@@ -1709,6 +1712,8 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 				var tempSelect = selectResult["select"];
 				tempSelect= tempSelect.concat(selectResult["aggregate"]);
+				tempSelect= tempSelect.concat(unionSELECT["select"]);
+				tempSelect= tempSelect.concat(unionSELECT["aggregate"]);
 
 
 				if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
@@ -1731,7 +1736,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 						//DISTINCT
 						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
-
+						
 						if(parentClassInstance != null){
 							subQuery = subQuery + parentClassInstance + " ";
 						}
@@ -1805,6 +1810,9 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	if(generateUpperSelect == true) returnValue = "SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}";
 	else if(sparqlTable["isSubQuery"] == true || sparqlTable["isGlobalSubQuery"] == true){
 		if(unionsubSELECTstaterents.length > 0) {
+			if(parentClassInstance != null){
+				unionsubSELECTstaterents.push(parentClassInstance);
+			}
 			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}}";
 			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
 		}
@@ -1814,7 +1822,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	return {"result":returnValue, "messages":messages};
 }
 
-function generateSELECT(sparqlTable){
+function generateSELECT(sparqlTable, forSingleClass){
 	selectInfo = [];
 	variableReferenceInfo = [];
 	aggregateSelectInfo = [];
@@ -1922,10 +1930,10 @@ function generateSELECT(sparqlTable){
 		return arr.indexOf(el) === i;
 	});
 
-	if(typeof sparqlTable["subClasses"] !=='undefined'){
+	if(typeof sparqlTable["subClasses"] !=='undefined' && forSingleClass == false){
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object' && sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true) {
-				var temp = generateSELECT(sparqlTable["subClasses"][subclass]);
+				var temp = generateSELECT(sparqlTable["subClasses"][subclass], forSingleClass);
 				selectInfo = selectInfo.concat(temp["select"]);
 				variableReferenceCandidate = variableReferenceCandidate.concat(temp["variableReferenceCandidate"]);
 				variableReferenceInfo = variableReferenceInfo.concat(temp["variableReference"]);
@@ -1938,4 +1946,10 @@ function generateSELECT(sparqlTable){
 	}
 
 	return {"select":selectInfo, "innerDistinct":innerDistinctInfo, "aggregate":aggregateSelectInfo, "groupBy":groupBy, "variableReference":variableReferenceInfo, "variableReferenceCandidate":variableReferenceCandidate};
+}
+
+function checkIfIsURI(text){
+	if(text.indexOf("://") != -1) return "full_form";
+	else if(text.indexOf(":") != -1) return "prefix_form";
+	return "not_uri";
 }
