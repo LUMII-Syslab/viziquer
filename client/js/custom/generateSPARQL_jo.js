@@ -125,7 +125,8 @@ Interpreter.customMethods({
   },
 
   GenerateSPARQL_from_component: function() {
-    var editor = Interpreter.editor;
+
+	var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
 
     // now we should find the connected classes ...
@@ -161,7 +162,8 @@ Interpreter.customMethods({
 
   },
   GenerateSPARQL_from_diagram: function() {
-    // get _id of the active ajoo diagram
+    
+	// get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
     // get an array of ajoo Elements whithin the active diagram
@@ -192,15 +194,16 @@ Interpreter.customMethods({
     var str = "2+3*div";
 	var completions = [];
 	try {
-		var parsed_exp = vq_arithmetic.parse(str, {completions});
-		console.log("parsed_exp", parsed_exp);
+		// var parsed_exp = vq_arithmetic.parse(str, {completions});
+		var parsed_exp = vq_arithmetic2.parse(str, {completions});
+		var obj = JSON.parse(parsed_exp);
+		console.log("parsed_exp", parsed_exp, obj);
     } catch (e) {
       // TODO: error handling
-      console.log(e)
+      console.log(e["message"], JSON.parse(e["message"]))
     }
   },
 });
-
 
 // generate SPARQL for given id-s
 function GenerateSPARQL_for_ids(list_of_ids) {
@@ -322,12 +325,12 @@ function generateIds(rootClass){
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") rootClassId = rootClass["identification"]["localName"];
 	else rootClassId = rootClassId.replace(/ /g, '_');
+	
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
+	if (checkIfIsURI(rootClassId) == "not_uri") rootClassId = rootClassId.replace(/-/g, '_');
 	if(rootClass["isVariable"] == true && (rootClass["instanceAlias"] == null || rootClass["instanceAlias"].replace(" ", "") =="")) {
-		
-		
-		
+	
 		var varName = rootClass["variableName"];
 		if(varName == "?") varName = "?class";
 		if(varName.startsWith("?"))rootClassId = "_" + varName.substr(1);
@@ -358,7 +361,7 @@ function generateIds(rootClass){
 function generateClassIds(clazz, idTable, counter, parentClassId){
 	var referenceTable = [];
 
-	// if instance if defined, use it
+	// if instance is defined, use it
 	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"].replace(/ /g, '_');
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
@@ -394,12 +397,12 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 			// if given class name is in the table, add counter to the class name
 			if(idTable[key] == clazz["identification"]["localName"]){
 				foundInIdTable = true;
-				idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"] + "_"+ counter;
+				idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_') + "_"+ counter;
 				counter++;
 			}
 		}
 		// if given class name is not in the table, use it
-		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"];
+		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_');
 	}
 	var className = idTable[clazz["identification"]["_id"]];
 	var linkType = "palin";
@@ -501,7 +504,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length == 0) SPARQL_text = SPARQL_text + "DISTINCT ";
 
 			 // console.log("sparqlTable", sparqlTable);
-			 var selectResult = generateSELECT(sparqlTable);
+			 var selectResult = generateSELECT(sparqlTable, false);
 			 // console.log("selectResult", selectResult);
 			 var tempSelect = selectResult["select"];
 			 tempSelect = tempSelect.concat(selectResult["aggregate"]);
@@ -743,8 +746,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					"isBlocking" : false
 				});
 				field["alias"] = field["alias"].replace(/ /g, '_');
-			}
-			
+			} 
+			//console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
 			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable);
 			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
@@ -1458,6 +1461,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable)
 					whereInfo.push(unionResult["result"]);
 					messages = messages.concat(unionResult["messages"]);
+					//console.log("FFFFFFFFFFFFFFFFFFf", unionResult);
 				}
 				else if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable);
@@ -1467,7 +1471,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					messages = messages.concat(temp["messages"]);
 				}else {
 					//sub selects
-					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
+					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
 
 					//reference candidates
 					var refTable = [];
@@ -1697,10 +1701,13 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	var messages = [];
 	
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
+		var unionSELECT = generateSELECT(sparqlTable, true);
+		// console.log("unionSELECT", unionSELECT);
+		// var unionWheresubInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
-				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass]);
-
+				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
+				//console.log("QQQQQQQQQQQQQQQ", selectResult, parentClassInstance);
 				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable);
 				var temp = wheresubInfo["triples"];
 				temp = temp.concat(wheresubInfo["links"]);
@@ -1709,6 +1716,8 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 				var tempSelect = selectResult["select"];
 				tempSelect= tempSelect.concat(selectResult["aggregate"]);
+				tempSelect= tempSelect.concat(unionSELECT["select"]);
+				tempSelect= tempSelect.concat(unionSELECT["aggregate"]);
 
 
 				if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
@@ -1731,7 +1740,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 						//DISTINCT
 						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
-
+						
 						if(parentClassInstance != null){
 							subQuery = subQuery + parentClassInstance + " ";
 						}
@@ -1805,6 +1814,9 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	if(generateUpperSelect == true) returnValue = "SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}";
 	else if(sparqlTable["isSubQuery"] == true || sparqlTable["isGlobalSubQuery"] == true){
 		if(unionsubSELECTstaterents.length > 0) {
+			if(parentClassInstance != null){
+				unionsubSELECTstaterents.push(parentClassInstance);
+			}
 			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}}";
 			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
 		}
@@ -1814,7 +1826,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	return {"result":returnValue, "messages":messages};
 }
 
-function generateSELECT(sparqlTable){
+function generateSELECT(sparqlTable, forSingleClass){
 	selectInfo = [];
 	variableReferenceInfo = [];
 	aggregateSelectInfo = [];
@@ -1922,10 +1934,10 @@ function generateSELECT(sparqlTable){
 		return arr.indexOf(el) === i;
 	});
 
-	if(typeof sparqlTable["subClasses"] !=='undefined'){
+	if(typeof sparqlTable["subClasses"] !=='undefined' && forSingleClass == false){
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object' && sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true) {
-				var temp = generateSELECT(sparqlTable["subClasses"][subclass]);
+				var temp = generateSELECT(sparqlTable["subClasses"][subclass], forSingleClass);
 				selectInfo = selectInfo.concat(temp["select"]);
 				variableReferenceCandidate = variableReferenceCandidate.concat(temp["variableReferenceCandidate"]);
 				variableReferenceInfo = variableReferenceInfo.concat(temp["variableReference"]);
@@ -1938,4 +1950,10 @@ function generateSELECT(sparqlTable){
 	}
 
 	return {"select":selectInfo, "innerDistinct":innerDistinctInfo, "aggregate":aggregateSelectInfo, "groupBy":groupBy, "variableReference":variableReferenceInfo, "variableReferenceCandidate":variableReferenceCandidate};
+}
+
+function checkIfIsURI(text){
+	if(text.indexOf("://") != -1) return "full_form";
+	else if(text.indexOf(":") != -1) return "prefix_form";
+	return "not_uri";
 }

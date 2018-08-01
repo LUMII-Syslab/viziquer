@@ -80,7 +80,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	});
 	
 	// if in filter expression is used variable name, then put filter inside EXISTS
-	//console.log("applyExistsToFilter", applyExistsToFilter);
+	//console.log("applyExistsToFilter", applyExistsToFilter, tripleTable);
 	if(applyExistsToFilter != null && applyExistsToFilter == true){
 		var uniqueTriplesFilter = createTriples(tripleTable, "filter").filter(function (el, i, arr) {
 			return arr.indexOf(el) === i;
@@ -96,6 +96,8 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 }
 
 parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, parType) {
+	
+	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
 	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable);
@@ -117,6 +119,8 @@ parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, i
 	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 
 }
+
+
 
 function createTriples(tripleTable, tripleType){
 	var triples = []
@@ -152,6 +156,8 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	// console.log("rrrrrrrrr", variableNamesClass[varName]);
 	// console.log("----------------------------------------");
 	// console.log("     ");
+	//varName = 
+	var varNameRep = varName.replace(/-/g, '_');
 	if(alias != null) {
 		//console.log("1111", varName, alias);
 		var aliasSet = false;
@@ -179,20 +185,20 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName]=== 'undefined'){
 					if(typeof variableNamesAll[varName]=== 'undefined'){
-						expressionLevelNames[varName] = varName;
-						variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-						variableNamesAll[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+						expressionLevelNames[varName] = varNameRep;
+						variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+						variableNamesAll[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
 					} else {
 						var count = variableNamesAll[varName]["counter"] + 1;
-						expressionLevelNames[varName] = varName + "_" +count;
+						expressionLevelNames[varName] = varNameRep + "_" +count;
 						variableNamesAll[varName]["counter"] = count;
-						variableNamesClass[varName] = {"alias" : varName + "_" +count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[varName]["isVar"]};
+						variableNamesClass[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[varName]["isVar"]};
 					}
 				} else {
 					var count = variableNamesClass[varName]["counter"] + 1;
-					expressionLevelNames[varName] = varName + "_" +count;
+					expressionLevelNames[varName] = varNameRep + "_" +count;
 					variableNamesClass[varName]["counter"] = count;
-					variableNamesAll[varName] = {"alias" : varName + "_" +count, "nameIsTaken" : variableNamesClass[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[varName]["isVar"]};
+					variableNamesAll[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesClass[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[varName]["isVar"]};
 					//console.log(count, varName + "_" +count, variableNamesClass[varName]["counter"], variableNamesAll[varName]["counter"])
 				}
 			}else{
@@ -289,9 +295,9 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						if(isSimpleVariableForNameDef == true){
 							var tempIsVar = false;
 							if(parseType == "attribute" || parseType == "class") tempIsVar = true;
-							variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : 0, "isVar" : tempIsVar};
+							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : tempIsVar};
 						} else {
-							variableNamesClass[varName] = {"alias" : varName+"_1", "nameIsTaken" : false, "counter" : 1, "isVar" : false};
+							variableNamesClass[varName] = {"alias" : varNameRep+"_1", "nameIsTaken" : false, "counter" : 1, "isVar" : false};
 						}
 						// console.log("variableNamesClass[varName]", variableNamesClass[varName]);
 						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
@@ -306,17 +312,17 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							
 							//name is not taken
 							if(variableNamesAll[varName]["nameIsTaken"] != true){
-								variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : variableNamesAll[varName]["counter"], "isVar" : tempIsVar};
+								variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : variableNamesAll[varName]["counter"], "isVar" : tempIsVar};
 							//name is taken
 							} else {
 								var count = variableNamesAll[varName]["counter"] + 1;
-								variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
-								variableNamesAll[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar}; //????? vai vajag
+								variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
+								variableNamesAll[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar}; //????? vai vajag
 							}
 						//is expression
 						} else {
 							var count = variableNamesAll[varName]["counter"] + 1;
-							variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : false};
+							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : false};
 						}
 						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
 					}
@@ -332,14 +338,14 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						
 						//name is not taken
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
-							variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : variableNamesClass[varName]["counter"], "isVar" : tempIsVar};
+							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : variableNamesClass[varName]["counter"], "isVar" : tempIsVar};
 						//name is taken
 						} else {
 							//if name is not defined as variable
 							if(variableNamesClass[varName]["isVar"] != true) {
 								
 								var count = variableNamesClass[varName]["counter"] + 1;
-								variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
+								variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 							}
 						}
 						// console.log("variableNamesClass[varName]", variableNamesClass[varName]);
@@ -349,7 +355,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						//name is not taken
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
 							var count = variableNamesClass[varName]["counter"] + 1;
-							variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : false, "counter" : count, "isVar" : false};
+							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : false, "counter" : count, "isVar" : false};
 						//name is taken
 						} //else {
 						//	var count = variableNamesClass[varName]["counter"] + 1;
@@ -1068,7 +1074,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if (key == "BrackettedExpression") {
-			SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+			if(typeof expressionTable[key]["classExpr"] !== 'undefined') SPARQLstring = SPARQLstring +  generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+			else SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			visited = 1;
 		}
 		
@@ -1218,22 +1225,22 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 		
 		if (key == "RelationalExpression") {
-			if(typeof expressionTable[key]["Relation"]!== 'undefined' && parseType != "condition"){
-				 var clId;
-				 for(var k in idTable){
-					if (idTable[k] == className) {
-						clId = k;
-						break;
-					}
-				 }
-				messages.push({
-					"type" : "Error",
-					"message" : "Incorrect use of relation " + expressionTable[key]["Relation"] + ", it cannot be used in " + parseType,
-					"listOfElementId" : [clId],
-					"isBlocking" : true
-				});
-				visited = 1
-			} else {
+			// if(typeof expressionTable[key]["Relation"]!== 'undefined' && parseType != "condition"){
+				 // var clId;
+				 // for(var k in idTable){
+					// if (idTable[k] == className) {
+						// clId = k;
+						// break;
+					// }
+				 // }
+				// messages.push({
+					// "type" : "Error",
+					// "message" : "Incorrect use of relation " + expressionTable[key]["Relation"] + ", it cannot be used in " + parseType,
+					// "listOfElementId" : [clId],
+					// "isBlocking" : true
+				// });
+				// visited = 1
+			// } else {
 				if(typeof expressionTable[key]["Relation"]!== 'undefined') {
 					var VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
@@ -1487,8 +1494,6 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
 							else SPARQLstring = SPARQLstring  + " " + expressionTable[key]["Relation"] + " ";
 							
-							console.log("EEEEE", SPARQLstring);
-							
 							if (expressionTable[key]["Relation"] == "IN" || expressionTable[key]["Relation"] == "NOTIN") {
 								var Var = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "var");
 								
@@ -1506,7 +1511,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						visited = 1
 					}
 				}
-			}
+			//}
 		}
 		if (key == "NumericLiteral") {
 			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  '"' + expressionTable[key]['Number'] + '"';
@@ -1682,7 +1687,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			if (typeof expressionTable[key]["Expression3"]!== 'undefined') {
 				expTable.push(generateExpression({Expression : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
 			}
-			if(expTable.length > 0) SPARQLstring = SPARQLstring  + " (" + expTable.join(", ") +")";
+			if(expTable.length > 0) SPARQLstring = SPARQLstring  + "(" + expTable.join(", ") +")";
 			if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			}
