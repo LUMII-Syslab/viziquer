@@ -328,7 +328,7 @@ function generateIds(rootClass){
 	
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
-	rootClassId = rootClassId.replace(/-/g, '_');
+	if (checkIfIsURI(rootClassId) == "not_uri") rootClassId = rootClassId.replace(/-/g, '_');
 	if(rootClass["isVariable"] == true && (rootClass["instanceAlias"] == null || rootClass["instanceAlias"].replace(" ", "") =="")) {
 	
 		var varName = rootClass["variableName"];
@@ -361,7 +361,7 @@ function generateIds(rootClass){
 function generateClassIds(clazz, idTable, counter, parentClassId){
 	var referenceTable = [];
 
-	// if instance if defined, use it
+	// if instance is defined, use it
 	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"].replace(/ /g, '_');
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
