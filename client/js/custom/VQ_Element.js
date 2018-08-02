@@ -205,11 +205,21 @@ VQ_Schema = function () {
 
    var schema = this;
    if (data.namespace) this.namespace = data.namespace;
+   if (data.Namespace) this.namespace = data.Namespace;
    if (data.URI) this.namespace = data.URI;
-
+   
    if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
      this.namespace = this.namespace + "#";
 
+   if (this.namespace)
+	  schema.addOntology(new VQ_ontology(schema, this.namespace));
+
+	
+	_.each(data.Prefixes, function(ont){
+	  if (!schema.ontologyExist(ont.namespace))
+	    schema.addOntology(new VQ_ontology(schema, ont.namespace, ont.prefix));		
+	})	
+	
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
@@ -481,8 +491,9 @@ VQ_Elem = function (elemInfo, schema, elemType){
 	var uri = null;
 
 	if (elemInfo.namespace) uri = elemInfo.namespace;
+	else if (elemInfo.fullName) uri = elemInfo.fullName.substring(0, elemInfo.fullName.length- elemInfo.localName.length);
 	else uri = schema.namespace;
-
+	
 	var ontology = schema.ontologyExist(uri);
 	if (ontology) { this.ontology = ontology }
 	else {
