@@ -3,9 +3,10 @@
 	  {
 			// parse can have multiple arguments
 			// parse(string, options) where options is an object
-			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
+			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object, exprType:String}
+			// exprType: CLASS_NAME or null if other - at the moment it determines the precedence of resolving - class or property first in case of name clash
       options = arguments[1];
-			//console.log(options);
+			console.log(options);
 
 			function makeVar(o) {return makeString(o);};
 
@@ -24,17 +25,43 @@
 			// string -> idObject
 			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
 			// then in schema. Null if does not exist
-			function resolveType(id) {var t=resolveTypeFromSymbolTable(id); if (!t) {t=resolveTypeFromSchemaForClass(id); if (!t) {t=resolveTypeFromSchemaForAttributeAndLink(id)}} return t;};
+			function resolveType(id) {
+			  var t=resolveTypeFromSymbolTable(id);
+				if (!t) {
+          if (options.exprType) {
+					  t=resolveTypeFromSchemaForClass(id);
+					  if (!t) {
+						  t=resolveTypeFromSchemaForAttributeAndLink(id)
+					  }
+					} else {
+					  t=resolveTypeFromSchemaForAttributeAndLink(id);
+					  if (!t) {
+						  t=resolveTypeFromSchemaForClass(id)
+					  }
+					}
+
+				}
+				return t;
+			};
       //string -> string
 			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
  	    function resolveKind(id) {
 				    var k=resolveKindFromSymbolTable(id);
 						if (!k) {
-							if (resolveTypeFromSchemaForClass(id)) {
-							    k="CLASS_NAME";
-						  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
-								  k="PROPERTY_NAME";
+						  if (options.exprType) {
+							  if (resolveTypeFromSchemaForClass(id)) {
+									 k="CLASS_NAME";
+							  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
+									 k="PROPERTY_NAME";
+							  }
+							} else {
+							  if (resolveTypeFromSchemaForAttributeAndLink(id)) {
+									k="PROPERTY_NAME";
+							  } else if (resolveTypeFromSchemaForClass(id)) {
+									k="CLASS_NAME";
+							 }
 							}
+
 					  }
 						return k;
 		  };
@@ -49,7 +76,7 @@
 				}
 				return o;
 			};
-			
+
 			function checkIfVariable(Variable) {
 				// console.log("Variable", makeVar(Variable));
 				// if(makeVar(Variable) != "student-Number") return;
@@ -62,7 +89,7 @@
 				for (var i = s; i <= e; i++) {
 					expressionList.push({"NumericLiteral": {"Number": i}});
 					if(i!=e) expressionList.push({"Comma": ","});
-				} 
+				}
 				return expressionList;
 			}
 		}
@@ -72,9 +99,9 @@
 			Expression = "[ ]" / "[ + ]" / "(no_class)"  / ValueScope / ConditionalOrExpressionA / classExpr
 			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
 			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
-			
+
 			// ExpressionA = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
-			
+
 			classExpr = ("(.)" / "."/ "(select this)" / "(this)") {return {classExpr: "true"}}
 
 			// OrExpression = (ANDExpression ( space OR space ANDExpression )*)
@@ -106,7 +133,7 @@
 			RelationalExpressionA = (NumericExpressionL:NumericExpression {return {NumericExpressionL:NumericExpressionL}})
 
 			RelationalExpressionB = (NumericExpressionL:NumericExpression (space Relation:Relation space NumericExpressionR:NumericExpression)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, NumericExpressionR:NumericExpressionR}}
-			
+
 			RelationalExpressionB1 = (classExpr:classExpr (space Relation:Relation space NumericExpressionR:NumericExpression)) {return {classExpr:"true", Relation:Relation, NumericExpressionR:NumericExpressionR}}
 			RelationalExpressionB2 = (NumericExpressionL:NumericExpression (space Relation:Relation space classExpr:classExpr)) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, classExpr:"true"}}
 
@@ -114,9 +141,9 @@
 			RelationalExpressionC1 = (NumericExpressionL:NumericExpression (space Relation:(IN / NOTIN) space ExpressionList:(ExpressionList3/ ExpressionList4))) {return {NumericExpressionL:NumericExpressionL, Relation:Relation, ExpressionList:ExpressionList}}
 
 			IN = "IN"i {return "IN"};
-			
+
 			NOT = "NOT"i {return "NOT"}
-			
+
 			NOTIN = Not:(NOT space IN) {return Not.join("")}
 
 			NumericExpression = AdditiveExpression: AdditiveExpression {return {AdditiveExpression:AdditiveExpression}}
@@ -148,7 +175,7 @@
 			PrimaryExpression2 = BooleanLiteral / BuiltInCall / RDFLiteral / BrackettedExpression / iriOrFunction  / NumericLiteral /  Var / LName2
 
 			BooleanLiteral = BooleanLiteral:(TRUE/ FALSE) {return {BooleanLiteral:BooleanLiteral}}
-			
+
 			TRUE = "true"i {return "true"}
 			FALSE = "false"i {return "false"}
 
@@ -187,9 +214,9 @@
 			SAMPLE = "SAMPLE"i {return "SAMPLE"}
 			GROUP_CONCAT = "GROUP_CONCAT"i {return "GROUP_CONCAT"}
 			SEPARATORTer = "SEPARATOR"i {return "SEPARATOR"}
-			
+
 			SEPARATOR = (";" space SEPARATORTer space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
-			
+
 			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction) {return {FunctionExpression:FunctionExpression}}
 
 			STR = "STR"i {return "STR"}
@@ -250,7 +277,7 @@
 			FunctionExpressionC = FunctionTime: (days / years / months / hours / minutes / seconds ) "(" space PrimaryExpressionL: PrimaryExpression space "-" space PrimaryExpressionR: PrimaryExpression space ")" {return {FunctionTime:FunctionTime, PrimaryExpressionL:PrimaryExpressionL, PrimaryExpressionR:PrimaryExpressionR}}
 
 			IFFunction = Function: IF "(" space Expression1:Expression space "," space Expression2:Expression space "," space Expression3:Expression space")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
-			
+
 			HASMAX = (HASMAX:'HASMAX' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASMAX, SpecialExpression:SpecialExpression}}
 			HASRANK = (HASRANK:'HASRANK' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASRANK, SpecialExpression:SpecialExpression}}
 
@@ -269,7 +296,7 @@
 			bifSUBSTR = "bif:SUBSTR"i {return "bif:SUBSTR"}
 			REPLACE = "REPLACE"i {return "REPLACE"}
 			EXISTS = "EXISTS"i {return "EXISTS"}
-			
+
 			SubstringExpression = SubstringExpression:(SubstringExpressionA/SubstringExpressionB) {return {SubstringExpression:SubstringExpression}}
 
 			SubstringExpressionA = ((SUBSTRING / SUBSTR ) "(" space Expression1:Expression space  "," space Expression2:Expression  "," space Expression3:Expression  space ")") {return {Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
@@ -309,7 +336,7 @@
 			ExpressionList2 = (NIL / "(" space Expression space  ( Comma space Expression )* space ")" )
 			ExpressionList3 = ("{" space Expression space  ( Comma space Expression )* space "}" )
 			ExpressionList4 = ("{" space IntStart:INTEGER space ".." space IntEnd:INTEGER space "}" ) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
-			
+
 			Comma = Comma:"," {return {Comma:Comma}}
 
 			LANGTAG = "@" string
@@ -390,7 +417,7 @@
 			LNameINV2 = ("^" LNameSimple )
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring){return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
-																		
+
 			//-----ReferenceToClass----- LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LNameINV = (INV: "INV" "(" LName:LNameSimple ")" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LName2 = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring) {return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}

@@ -29,10 +29,10 @@
 			function resolveKind(id) {
 				    var k=resolveKindFromSymbolTable(id);
 						if (!k) {
-							if (resolveTypeFromSchemaForClass(id)) {
-							    k="CLASS_NAME";
-						  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
-								  k="PROPERTY_NAME";
+							if (resolveTypeFromSchemaForAttributeAndLink(id)) {
+							    k="PROPERTY_NAME";
+						  } else if (resolveTypeFromSchemaForClass(id)) {
+								  k="CLASS_NAME";
 							}
 					  }
 						return k;
@@ -40,7 +40,7 @@
 		}
 
 			Main = (space PrimaryExpression:(iri / PPE / VAR / "??" ) space) {return {PrimaryExpression:PrimaryExpression}}
-			
+
 			iri = iri:PrefixedName {return {iri:iri}}
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 			PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
@@ -50,13 +50,13 @@
 
 			VAR = Var:(("??" / "?") VARNAME){return {VariableName:makeVar(Var)}}
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
-			
+
 			PPE = (Path:path+ ) {return {Path:Path}}
 			path =(path2:path2 "."?) {return {path:path2}}
 			path2 =(invPath1 / (invPath2) / (invPath3))
 			invPath1 = ("INV(" Chars_String:Chars_String ")") {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
 			invPath2 = ("^" Chars_String:Chars_String) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
 			invPath3 = (Chars_String:Chars_String) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
-			
+
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_"/ "-" / "+" / "=") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-"/ "+" / "="/ [0-9])*)
 			space = ((" ")*) {return }
