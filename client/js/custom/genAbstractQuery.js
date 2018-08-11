@@ -189,9 +189,15 @@ resolveTypesAndBuildSymbolTable = function (query) {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
         } else{
-		  f.exp=obj_class.instanceAlias;
-		};
-        //f.exp=obj_class.instanceAlias;
+          var instanceAliasIsURI = isURI(obj_class.instanceAlias);
+          if (instanceAliasIsURI) {
+            var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
+            obj_class.conditions.push({exp:"(this) = " + strURI});
+            obj_class.instanceAlias = null;
+          } else {
+             f.exp=obj_class.instanceAlias;
+          }
+		    };
       };
 
       if (f.groupValues) {
@@ -426,4 +432,15 @@ genAbstractQueryForElementList = function (element_id_list) {
     addConditionLinks(query_in_abstract_syntax["root"]);
     return query_in_abstract_syntax;
   });
+};
+
+// string -> int
+// function checks if the text is uri
+// 0 - not URI, 3 - full form, 4 - short form
+function isURI(text) {
+  if(text.indexOf("://") != -1)
+    return 3;
+  else
+    if(text.indexOf(":") != -1) return 4;
+  return 0;
 };
