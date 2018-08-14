@@ -207,19 +207,19 @@ VQ_Schema = function () {
    if (data.namespace) this.namespace = data.namespace;
    if (data.Namespace) this.namespace = data.Namespace;
    if (data.URI) this.namespace = data.URI;
-   
+
    if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
      this.namespace = this.namespace + "#";
 
    if (this.namespace)
 	  schema.addOntology(new VQ_ontology(schema, this.namespace));
 
-	
+
 	_.each(data.Prefixes, function(ont){
 	  if (!schema.ontologyExist(ont.namespace))
-	    schema.addOntology(new VQ_ontology(schema, ont.namespace, ont.prefix));		
-	})	
-	
+	    schema.addOntology(new VQ_ontology(schema, ont.namespace, ont.prefix));
+	})
+
 	_.each(data.Classes, function(cl){
 		schema.addClass( new VQ_Class(cl, schema));
 	})
@@ -423,12 +423,12 @@ VQ_Schema.prototype = {
 		return null;
   },
   getPrefixes: function() {
-    prefixes = [] 
+    prefixes = []
 	_.each(this.Ontologies, function (o){
-	
+
 		prefixes = _.union( prefixes, [[o.prefix, o.namespace]]);
 	})
-	return prefixes;	
+	return prefixes;
   },
 }
 
@@ -452,7 +452,7 @@ VQ_ontology = function (schema, URI, prefix) {
   else {
 	var arr = URI.split("/");
 	p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
-  }  
+  }
   if (schema.namespace == URI) {
    this.isDefault = true;
    this.prefix = "";
@@ -493,7 +493,7 @@ VQ_Elem = function (elemInfo, schema, elemType){
 	if (elemInfo.namespace) uri = elemInfo.namespace;
 	else if (elemInfo.fullName) uri = elemInfo.fullName.substring(0, elemInfo.fullName.length- elemInfo.localName.length);
 	else uri = schema.namespace;
-	
+
 	var ontology = schema.ontologyExist(uri);
 	if (ontology) { this.ontology = ontology }
 	else {
@@ -776,22 +776,33 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
   }
 
 };
+
+var VQ_Element_cache = {};
+
 // ajoo element id --> VQ_Element
 
 VQ_Element = function(id) {
   // obj contains correspondind ajoo Element object
+ // look in the cache
+ //console.log(VQ_Element_cache);
+ if (VQ_Element_cache[id]) {
+   this.obj = VQ_Element_cache[id].obj;
+   this.isVirtualRoot = VQ_Element_cache[id].isVirtualRoot;
+ } else {
+   var elem = Elements.findOne({_id: id});
+   if (!elem) {
+      elem = Elements.findOne({_id: Session.get("activeElement")});
+   }
 
-    var elem = Elements.findOne({_id: id});
-    if (!elem) {
-  	   elem = Elements.findOne({_id: Session.get("activeElement")});
-    }
+   if (!elem) {
+      console.error("No active element");
+      return;
+   };
 
-    if (!elem) {
-  	   console.error("No active element");
-  	   return;
-    };
+   this.obj = elem;
+   VQ_Element_cache[id] = this;
+ }
 
-    this.obj = elem;
 
 };
 
@@ -905,7 +916,7 @@ VQ_Element.prototype = {
 	},
   // Determines whether the VQ_Element is the root class of the query
   isRoot: function() {
-    return this.getType()=="query";
+    return this.getType()=="query" || this.isVirtualRoot;
   },
 	// Determines whether the VQ_Element is the subquery root
 	isSubQueryRoot: function() {
@@ -1685,5 +1696,9 @@ VQ_Element.prototype = {
 	},
 
 	boolToString: function(bool) {if (bool) {return "true"} else {return "false"}},
+
+  isVirtualRoot: false,
+
+  setVirtualRoot: function(isRoot) { this.isVirtualRoot = isRoot; VQ_Element_cache[this._id()].isVirtualRoot = isRoot},
 
 }

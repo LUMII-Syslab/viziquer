@@ -250,10 +250,13 @@ resolveTypesAndBuildSymbolTable = function (query) {
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
-genAbstractQueryForElementList = function (element_id_list) {
+genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list) {
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
   // determine which elements are root elements
+  _.each(element_list, function(e) {
+    e.setVirtualRoot(_.any(virtual_root_id_list, function(id) { return id == e._id() }));
+  });
   var root_elements = _.filter(element_list, function(e) {return e.isRoot();});
 
   // map each root element to AST
@@ -430,6 +433,9 @@ genAbstractQueryForElementList = function (element_id_list) {
     };
 
     addConditionLinks(query_in_abstract_syntax["root"]);
+    _.each(element_list, function(e) {
+      e.setVirtualRoot(false)
+    });
     return query_in_abstract_syntax;
   });
 };
