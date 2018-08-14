@@ -215,7 +215,7 @@
             "procedure": "Paste"
           },
           {
-            "item": "ExecuteSPARQL",
+            "item": "Execute SPARQL",
             "procedure": "ExecuteSPARQL_from_diagram"
           }
         ],
@@ -247,22 +247,22 @@
             "procedure": "align_selected_boxes"
           },
           {
-            "item": "Generate SPARQL from selection",
-            "procedure": "GenerateSPARQL_from_selection"
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_from_selection"
           },
           {
-            "item": "Execute SPARQL from selection",
-            "procedure": "ExecuteSPARQL_from_selection"
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenerateSPARQL_from_selection"
           }
         ],
         "readModeCollectionContextMenu": [
           {
-            "item": "Generate SPARQL from selection",
-            "procedure": "GenerateSPARQL_from_selection"
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_from_selection"
           },
           {
-            "item": "Execute SPARQL from selection",
-            "procedure": "ExecuteSPARQL_from_selection"
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenerateSPARQL_from_selection"
           }
         ],
         "selectionStyle": {
@@ -926,38 +926,79 @@
                 "procedure": "Delete"
               },
               {
-                "item": "Generate SPARQL from single class",
-                "procedure": "GenerateSPARQL_from_selection"
+                "item": "Execute query",
+                "procedure": "ExecuteSPARQL_from_component"
               },
               {
-                "item": "Execute SPARQL from single class",
-                "procedure": "ExecuteSPARQL_from_selection"
-              },
-              {
-                "item": "Generate SPARQL from component",
+                "item": "Generate query SPARQL",
                 "procedure": "GenerateSPARQL_from_component"
               },
               {
-                "item": "Execute SPARQL from component",
-                "procedure": "ExecuteSPARQL_from_component"
+                "item":"Query part",
+                "procedure":"Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_query_part"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_query_part"
+                  }
+                ]
+              },
+              {
+                "item":"Single node (class)",
+                "procedure":"Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_selection"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_selection"
+                  }
+                ]
               }
+
             ],
             "readModeContextMenu": [
               {
-                "item": "Generate SPARQL from single class",
-                "procedure": "GenerateSPARQL_from_selection"
+                "item": "Execute query",
+                "procedure": "ExecuteSPARQL_from_component"
               },
               {
-                "item": "Execute SPARQL from single class",
-                "procedure": "ExecuteSPARQL_from_selection"
-              },
-              {
-                "item": "Generate SPARQL from component",
+                "item": "Generate query SPARQL",
                 "procedure": "GenerateSPARQL_from_component"
               },
               {
-                "item": "Execute SPARQL from component",
-                "procedure": "ExecuteSPARQL_from_component"
+                "item":"Query part",
+                "procedure":"Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_query_part"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_query_part"
+                  }
+                ]
+              },
+              {
+                "item":"Single node (class)",
+                "procedure":"Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_selection"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_selection"
+                  }
+                ]
               }
             ],
             "styles": [
