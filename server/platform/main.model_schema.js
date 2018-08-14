@@ -2109,6 +2109,22 @@ Schemas.ElementTypes = new SimpleSchema({
         optional: true,
     },
 
+		"contextMenu.$.subMenu": {
+				type: [Object],
+				label: "ElementTypes.contextMenu.$.subMenu",
+				optional: true,
+		},
+
+		"contextMenu.$.subMenu.$.item": {
+        type: String,
+        label: "ElementTypes.contextMenu.$.subMenu.$.item",
+    },
+
+    "contextMenu.$.subMenu.$.procedure": {
+        type: String,
+        label: "ElementTypes.contextMenu.$.subMenu.$.procedure",
+    },
+
     readModeContextMenu: {
         type: [Object],
         label: "ElementTypes.readModeContextMenu",
@@ -2127,6 +2143,12 @@ Schemas.ElementTypes = new SimpleSchema({
     "readModeContextMenu.$.template": {
         type: String,
         label: "ElementTypes.readModeContextMenu.$.template",
+        optional: true,
+    },
+
+		"readModeContextMenu.$.subMenu": {
+        type: [Object],
+        label: "ElementTypes.readModeContextMenu.$.subMenu",
         optional: true,
     },
 
