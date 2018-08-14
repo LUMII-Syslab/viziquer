@@ -2151,6 +2151,15 @@ Schemas.ElementTypes = new SimpleSchema({
         label: "ElementTypes.readModeContextMenu.$.subMenu",
         optional: true,
     },
+		"readModeContextMenu.$.subMenu.$.item": {
+        type: String,
+        label: "ElementTypes.readModeContextMenu.$.subMenu.$.item",
+    },
+
+    "readModeContextMenu.$.subMenu.$.procedure": {
+        type: String,
+        label: "ElementTypes.readModeContextMenu.$.subMenu.$.procedure",
+    },
 
     keyStrokes: {
         type: [Object],
