@@ -192,7 +192,9 @@ resolveTypesAndBuildSymbolTable = function (query) {
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
-            obj_class.conditions.push({exp:"(this) = " + strURI});
+            var condition = {exp:"(this) = " + strURI};
+			parseExpObject(condition);
+			obj_class.conditions.push(condition);
             obj_class.instanceAlias = null;
           } else {
              f.exp=obj_class.instanceAlias;
