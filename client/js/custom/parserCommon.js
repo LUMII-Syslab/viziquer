@@ -84,17 +84,19 @@ transformSubstring = function(expressionTable){
 		if(typeof expressionTable[key] == 'object'){
 			transformSubstring(expressionTable[key]);
 		}
-
-		
+	
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["var"]!== 'undefined' && typeof expressionTable[key]["Substring"] !== 'undefined' && expressionTable[key]["Substring"]!="" ){
-			
-			var t = expressionTable[key];
-			//console.log(JSON.stringify(t,null,2));
+				
+			//var t = expressionTable[key];
+			var t = JSON.parse(JSON.stringify(expressionTable[key]));
+			//console.log(JSON.stringify(t,null,2), t["Substring"]);
 			var substringValues = expressionTable[key]["Substring"];
 			var substrStart, substrEnd = null;
 			substrStart = substringValues.substring(1,2);
 			if(substringValues.search(",") != -1) substrEnd = substringValues.substring(substringValues.search(",")+1,substringValues.search(",")+2);
 			else substrEnd = substrStart;
+		
+			t["Substring"] = "";
 		
 			expressionTable["PrimaryExpression"] = {"SubstringExpression" : { 
 				"Expression1":{
