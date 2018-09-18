@@ -418,8 +418,13 @@ function executeSparqlString(sparql, paging_info) {
                var obj = {};
                if (result_item_attr) {
                  if (result_item_attr.literal) {
+                   if (result_item_attr.literal[0]._) {
+                      obj[field] = result_item_attr.literal[0]._;
+                   } else {
+                      obj[field] = result_item_attr.literal[0];
+                   };
                    // data_item.literal[0]._
-                   obj[field] = result_item_attr.literal[0];
+
                  } else {
                    if (result_item_attr.uri) {
                      obj[field] = result_item_attr.uri[0];
