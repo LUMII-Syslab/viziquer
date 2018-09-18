@@ -23,6 +23,29 @@ var parameterTable = [];
 var idTable = [];
 var messages = [];
 var classTable = [];
+var knownNamespaces = {
+	"foaf:":"http://xmlns.com/foaf/0.1/",
+       "owl:":"http://www.w3.org/2002/07/owl#",
+       "rdf:":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+       "rdfs:":"http://www.w3.org/2000/01/rdf-schema#",
+       "dbp:":"http://dbpedia.org/property/",
+       "skos:":"http://www.w3.org/2004/02/skos/core#",
+       "xsd:":"http://www.w3.org/2001/XMLSchema#",
+       "geo:":"http://www.w3.org/2003/01/geo/wgs84_pos#",
+       "sioc:":"http://rdfs.org/sioc/ns#",
+       "d2rq:":"http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#",
+       "rss:":"http://purl.org/rss/1.0/",
+       "test2:":"http://this.invalid/test2#",
+       "swrc:":"http://swrc.ontoware.org/ontology#",
+       "dbpedia:":"http://dbpedia.org/resource/",
+       "content:":"http://purl.org/rss/1.0/modules/content/",
+       "nie:":"http://www.semanticdesktop.org/ontologies/2007/01/19/nie#",
+       "gen:":"http://www.w3.org/2006/gen/ont#",
+       "dbo:":"http://dbpedia.org/ontology/",
+       "xhtml:":"http://www.w3.org/1999/xhtml/vocab#",
+       "dbpprop:":"http://dbpedia.org/property/",
+       "dcterms:":"http://purl.org/dc/terms/"
+}
 
 
 function getPrefix(givenPrefix){
@@ -382,12 +405,13 @@ function setVariableName(varName, alias, variableData, generateNewName){
 // generate prefixedName path from path experession
 // expressionTable - parsed expression table part with path definicion
 getPath = function(expressionTable){
-
+	
 	var prTable = [];
 	var path = "";
 	for(var key in expressionTable){
 		if(typeof expressionTable[key]["path"]!== 'undefined' && typeof expressionTable[key]["path"]["type"]!== 'undefined' &&  expressionTable[key]["path"]["type"] != null){
 			var pathPart =  getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":" + expressionTable[key]["path"]["name"];
+			if(typeof expressionTable[key]["path"]["PathMod"] !== 'undefined' &&  expressionTable[key]["path"]["PathMod"] != null) pathPart = pathPart + expressionTable[key]["path"]["PathMod"];
 			var namespace = expressionTable[key]["path"]["type"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 			// prefixTable[getPrefix(expressionTable[key]["path"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
@@ -403,12 +427,88 @@ getPath = function(expressionTable){
 				"type" : "Error",
 				"message" : "Unrecognized link property or property path. Please specify link property or property path from ontology.",
 				//"listOfElementId" : [clId],
-				"isBlocking" : true
+				"isBlocking" : true 
 			 }};
 		}
 		
 	}
 	return {path:path, prefixTable:prTable};
+}
+
+getPathFullGrammar = function(expressionTable){
+	var prTable = [];
+	var path = "";
+	var variable;
+	
+	for(var key in expressionTable){
+		var visited = 0;
+		
+		//PathPrimary
+		//iriOra
+		if((key == "PathPrimary" || key == "iriOra") && typeof expressionTable[key]["var"] !== 'undefined'){
+
+			if(typeof expressionTable[key]["var"]["type"] !== 'undefined' && expressionTable[key]["var"]["type"] != null){	
+				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["var"]["name"];
+				path = path + pathPart;
+				
+				var namespace = expressionTable[key]["var"]["type"]["Namespace"]
+				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+
+				prTable[getPrefix(expressionTable[key]["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+				
+				variable = expressionTable[key];
+			
+				visited = 1;
+			}
+		}
+		//IRIREF
+		if(key == "IRIREF"){
+			path = path + expressionTable[key];
+		}
+		//PrefixedName
+		if(key == "PrefixedName"){
+			if(typeof expressionTable[key]["var"]["type"] !== 'undefined' && expressionTable[key]["var"]["type"] != null){	
+				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["var"]["name"];
+				path = path + pathPart;
+				
+				var namespace = expressionTable[key]["var"]["type"]["Namespace"]
+				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+				
+				prTable[getPrefix(expressionTable[key]["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+				variable = expressionTable[key];
+				visited = 1;
+			} else {
+				if(typeof expressionTable[key]["Prefix"] !== 'undefined'){
+					path = path + expressionTable[key]["Prefix"] + expressionTable[key]["var"]["name"];
+					
+					if(knownNamespaces[expressionTable[key]["Prefix"]] != null){prTable[expressionTable[key]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["Prefix"]]+">";}
+					visited = 1;
+				}
+			}
+			
+		}
+		//Alternative
+		//PATH_SYMBOL
+		//PathMod
+		//inv
+		if(key == "Alternative" || key == "PathSymbol" || key == "PathMod" || key == "inv"){
+			if( expressionTable[key] != null)path = path + expressionTable[key];
+		}
+		
+		if(expressionTable[key] == ")" || expressionTable[key] == "(" || expressionTable[key] == "!" || expressionTable[key] == "a") path = path + expressionTable[key];          
+		
+		
+		if(visited == 0 && typeof expressionTable[key] == 'object'){
+			var temp = getPathFullGrammar(expressionTable[key]);
+			for(var prefix in temp["prefixTable"]){
+				prTable[prefix] = temp["prefixTable"][prefix];
+			}
+			path = path + temp["path"];
+			if(typeof temp["variable"] !== 'undefined') variable = temp["variable"];
+		}
+	}
+
+	return {path:path, prefixTable:prTable, variable:variable};
 }
 
 
@@ -479,8 +579,25 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				variable = setVariableName(pe["PrimaryExpression"]["var"]["name"], alias, pe["PrimaryExpression"]["var"]);
 				expressionLevelNames[pe["PrimaryExpression"]["var"]["name"]] = variable;
 				
-			}
-			else if(typeof pe["var"] !== 'undefined') {
+			}else if(typeof pe["PathProperty"] !== 'undefined'){
+				var path = getPathFullGrammar(pe["PathProperty"]);
+				
+				if(typeof path["messages"] !== 'undefined' ) {
+					prefixedName = null;
+					messages = messages.concat(path["messages"]);
+				}
+				else{
+					for (var prefix in path["prefixTable"]) { 
+						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+					}
+					prefixedName = path["path"];
+				}
+				variableNamesClass[path["variable"]["var"]["name"]] = {"alias" : path["variable"]["var"]["name"] + "_" + counter, "isvar" : false};
+				variableNamesAll[path["variable"]["var"]["name"]+ "_" + counter] = path["variable"]["var"]["name"];
+				variable = setVariableName(path["variable"]["var"]["name"], alias, path["variable"]["var"]);
+				expressionLevelNames[path["variable"]["name"]] = variable;
+				
+			}else if(typeof pe["var"] !== 'undefined') {
 				//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
 				//variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
 				//variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
@@ -498,6 +615,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 	if(typeof expressionTable[count]["RelationalExpression"]["Relation"] !== 'undefined'){
 		// var tempAliasOrAttribute = "Attribute";
 		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
+			
 		if(tempAliasOrAttribute == "PROPERTY_ALIAS" || tempAliasOrAttribute == "CLASS_ALIAS"){
 			referenceCandidateTable.push(findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["name"]);
 			expressionTable[count][prefix + "Bound"] = {"var":findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")}
@@ -505,6 +623,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 		} else {
 			var tripleTable = [];
 			var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
+			
 			if(typeof pe["FunctionExpression"] !== 'undefined') {
 				if(typeof pe["FunctionExpression"]["FunctionTime"] !== 'undefined'){
 					
@@ -528,6 +647,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 
 			// var variable, prefixedName
 			var tempVarPRN = generatePrefixedNameVariable(prefix, existsExpr, alias, pe);
+
 			var variable = tempVarPRN["variable"];
 			var prefixedName =  tempVarPRN["prefixedName"];
 			var clName = className;
@@ -965,9 +1085,128 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			}
 		}
 		
+		//PathFull
+		if(key  == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"] !== 'undefined'){
+			var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
+			
+			if(typeof path["messages"] !== 'undefined') {
+				prefixName = null;
+				messages = messages.concat(path["messages"]);
+			}
+			else{
+				for (var prefix in path["prefixTable"]) { 
+					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				}
+				var prefixName = path["path"];
+			}
+			var variableStructure = path["variable"];
+			// console.log("variableStructure", variableStructure)
+			// console.log("path", path)
+			if(typeof variableStructure["SubstringExpression"] !== 'undefined'){
+				var substringvar = variableStructure["var"];
+				
+				if(substringvar["type"] == null){
+					var clId;
+					for(var k in idTable){
+						if (idTable[k] == className) {
+							clId = k;
+							break;
+						}
+					}
+					messages.push({
+						"type" : "Error",
+						"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+						"listOfElementId" : [clId],
+						"isBlocking" : true
+					});
+				}
+				else{
+				
+					var variable = setVariableName(substringvar["name"], alias, substringvar);
+					variableTable.push("?" + variable);
+					if(generateTriples == true && substringvar['type'] != null && path != null) {
+						var inFilter = false;
+						// if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && (variableNamesClass[substringvar["name"]]["isVar"] != true 
+						// || substringvar["type"] != null && (typeof substringvar["type"]["maxCardinality"] === 'undefined' || substringvar["type"]["maxCardinality"] > 1 || substringvar["type"]["maxCardinality"] == -1))) inFilter = true;
+						if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && (variableNamesClass[substringvar["name"]]["isVar"] != true 
+						|| substringvar["type"] != null && false)) inFilter = true;
+						var inv = "";
+						
+						if(typeof substringvar["INV"] !== 'undefined') inv = "^";
+						tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(substringvar["type"]["Prefix"]) + ":" + substringvar["name"], "object":className, "inFilter":inFilter});
+						var namespace = substringvar["type"]["Namespace"];
+						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+						prefixTable[getPrefix(substringvar["type"]["Prefix"]) + ":"] = "<"+namespace+">";
+						generateTriples = false;
+						SPARQLstring = SPARQLstring + generateExpression(variableStructure, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+						generateTriples = true;
+					}
+				}
+			}else {
+				// if(typeof expressionTable[key]["PrimaryExpression"]["iri"] !== 'undefined'){
+
+					// if (typeof expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]!== 'undefined'){
+						// var valueString = expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']['name'];
+						// if(expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']['type'] !== null){
+							// valueString = generateExpression({"var" : expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+						// } else {
+							// if(knownNamespaces[expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]] != null){prefixTable[expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[ expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]]+">";}
+						// }
+						// var name = alias;
+						
+						// if(name == null || name == "") name = expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Name"];
+						// tripleTable.push({"var":"?"+name, "prefixedName":prefixName+ "/" +valueString, "object":className, "inFilter":inFilter});
+						// variableTable.push("?" + variable);
+						// SPARQLstring = SPARQLstring  + "?" + name;
+					// }
+					
+				// } else {
+					if(variableStructure["var"]["type"] == null){
+						var clId;
+						for(var k in idTable){
+							if (idTable[k] == className) {
+								clId = k;
+								break;
+							}
+						}
+						messages.push({
+							"type" : "Error",
+							"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
+							"listOfElementId" : [clId],
+							"isBlocking" : true
+						});
+					}
+					else{
+						var variable = setVariableName(variableStructure["var"]["name"], alias, variableStructure["var"])
+											
+						variableTable.push("?" + variable);
+						if(generateTriples == true && variableStructure["var"]['type'] != null && path != null) {
+							var inFilter = false;
+							var variableData = variableStructure["var"];
+							// if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
+							// || variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
+							if(typeof variableNamesClass[variableStructure["var"]["name"]] !== 'undefined' && (variableNamesClass[variableStructure["var"]["name"]]["isVar"] != true
+							|| variableData["type"] != null && false)) inFilter = true;
+							var inv = "";
+							if(typeof variableStructure["var"]["INV"] !== 'undefined') inv = "^";
+							// tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className, "inFilter":inFilter});
+							tripleTable.push({"var":"?"+variable, "prefixedName":prefixName, "object":className, "inFilter":inFilter});
+							// var namespace = expressionTable[key]["PrimaryExpression"]["var"]["type"]["Namespace"];
+							// if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+							// prefixTable[getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
+						}
+						SPARQLstring = SPARQLstring + "?" + variable;
+					}
+				// }
+			}
+			visited = 1;
+		}
+		
 		//PATH
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Path"] !== 'undefined'){
+			//console.log(expressionTable[key], alias);
 			var path = getPath(expressionTable[key]["Path"]);
+			//console.log("path", path)
 			if(typeof path["messages"] !== 'undefined') {
 				prefixName = null;
 				messages = messages.concat(path["messages"]);
@@ -1020,40 +1259,59 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					}
 				}
 			} else {
-				if(expressionTable[key]["PrimaryExpression"]["var"]["type"] == null){
-					var clId;
-					for(var k in idTable){
-						if (idTable[k] == className) {
-							clId = k;
-							break;
+				if(typeof expressionTable[key]["PrimaryExpression"]["iri"] !== 'undefined'){
+
+					if (typeof expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]!== 'undefined'){
+						var valueString = expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']['name'];
+						if(expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']['type'] !== null){
+							valueString = generateExpression({"var" : expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+						} else {
+							if(knownNamespaces[expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]] != null){prefixTable[expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[ expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Prefix"]]+">";}
 						}
+						var name = alias;
+						
+						if(name == null || name == "") name = expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Name"];
+						tripleTable.push({"var":"?"+name, "prefixedName":prefixName+ "/" +valueString, "object":className, "inFilter":inFilter});
+						variableTable.push("?" + variable);
+						SPARQLstring = SPARQLstring  + "?" + name;
 					}
-					messages.push({
-						"type" : "Error",
-						"message" : "Unrecognized variable '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "'. Please specify variable.",
-						"listOfElementId" : [clId],
-						"isBlocking" : true
-					});
-				}
-				else{
-					var variable = setVariableName(expressionTable[key]["PrimaryExpression"]["var"]["name"], alias, expressionTable[key]["PrimaryExpression"]["var"])
-										
-					variableTable.push("?" + variable);
-					if(generateTriples == true && expressionTable[key]["PrimaryExpression"]["var"]['type'] != null && path != null) {
-						var inFilter = false;
-						var variableData = expressionTable[key]["PrimaryExpression"]["var"];
-						// if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
-						// || variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-						if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
-						|| variableData["type"] != null && false)) inFilter = true;
-						var inv = "";
-						if(typeof expressionTable[key]["PrimaryExpression"]["var"]["INV"] !== 'undefined') inv = "^";
-						tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className, "inFilter":inFilter});
-						var namespace = expressionTable[key]["PrimaryExpression"]["var"]["type"]["Namespace"];
-						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-						prefixTable[getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
+					
+				} else {
+					if(expressionTable[key]["PrimaryExpression"]["var"]["type"] == null){
+						var clId;
+						for(var k in idTable){
+							if (idTable[k] == className) {
+								clId = k;
+								break;
+							}
+						}
+						messages.push({
+							"type" : "Error",
+							"message" : "Unrecognized variable '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "'. Please specify variable.",
+							"listOfElementId" : [clId],
+							"isBlocking" : true
+						});
 					}
-					SPARQLstring = SPARQLstring + "?" + variable;
+					else{
+						var variable = setVariableName(expressionTable[key]["PrimaryExpression"]["var"]["name"], alias, expressionTable[key]["PrimaryExpression"]["var"])
+											
+						variableTable.push("?" + variable);
+						if(generateTriples == true && expressionTable[key]["PrimaryExpression"]["var"]['type'] != null && path != null) {
+							var inFilter = false;
+							var variableData = expressionTable[key]["PrimaryExpression"]["var"];
+							// if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
+							// || variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
+							if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
+							|| variableData["type"] != null && false)) inFilter = true;
+							var inv = "";
+							if(typeof expressionTable[key]["PrimaryExpression"]["var"]["INV"] !== 'undefined') inv = "^";
+							tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className, "inFilter":inFilter});
+							var namespace = expressionTable[key]["PrimaryExpression"]["var"]["type"]["Namespace"];
+							if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+							prefixTable[getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
+						}
+						SPARQLstring = SPARQLstring + "?" + variable;
+					}
 				}
 			}
 			
@@ -1145,14 +1403,15 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			}
 			visited = 1;
 		}
-		
-		if(key == "var") {
+		 
+		if(key == "var") {			
 			var varName
 			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]["kind"] != "PROPERTY_ALIAS") varName = expressionTable[key]['type']['localName'];
 			// if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' ) varName = expressionTable[key]['type']['localName'];
 			else varName = expressionTable[key]["name"];
 			if(expressionTable[key]['kind'] !== null){
-
+				var pathMod = "";
+				if(typeof expressionTable[key]['PathMod'] !== 'undefined' && expressionTable[key]['PathMod'] != null) pathMod = expressionTable[key]['PathMod'];
 				var variable = setVariableName(varName, alias, expressionTable[key])
 	
 				SPARQLstring = SPARQLstring + "?" + variable;
@@ -1181,7 +1440,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						|| variableData["type"] != null && false)) inFilter = true;
 						var inv = "";
 						if(typeof expressionTable[key]["INV"] !== 'undefined') inv = "^";
-						tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "object":className, "inFilter":inFilter});
+						tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
 						var namespace = expressionTable[key]["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 						prefixTable[getPrefix(expressionTable[key]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
@@ -1215,6 +1474,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			visited = 1;
 		}
 		if (key == "RDFLiteral") {
+			
 			SPARQLstring = SPARQLstring + expressionTable[key]['String'];
 			if (typeof expressionTable[key]['LANGTAG'] !== 'undefined'){
 				SPARQLstring = SPARQLstring + expressionTable[key]['LANGTAG'];
@@ -1228,7 +1488,17 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					SPARQLstring = SPARQLstring + expressionTable[key]['iri']['IRIREF'];
 				}
 			}
+					
+			if(parseType == "attribute" && isFunction != true && isExpression != true && isAggregate != true){
+				if(alias == null || alias == ""){
+					alias = "expr_"+counter;
+					counter++;
+				}
+				tripleTable.push({"BIND":"BIND(" + SPARQLstring + " AS ?" + alias + ")"});
+				SPARQLstring = "?" + alias;
+			}
 			visited = 1;
+			
 		}
 		
 		if (key == "Aggregate") {
@@ -1401,6 +1671,60 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							SPARQLstring = SPARQLstring  + "STR(" + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)+")";
 							visited = 1
 						}
+						
+						
+						if ( visited != 1 && typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]=== 'undefined'
+						&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false
+						){
+							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+							if(typeof path["variable"] !== 'undefined' &&
+							typeof path["variable"]["var"] !== 'undefined' &&
+							typeof path["variable"]["var"]["type"] !== 'undefined' &&
+							path["variable"]["var"]["type"] != null &&
+							typeof path["variable"]["var"]["type"]["type"] !== 'undefined' &&
+							(path["variable"]["var"]["type"]["type"] == "xsd:string" || path["variable"]["var"]["type"]["type"] == "XSD_STRING" )){
+								SPARQLstring = SPARQLstring  + "STR(" + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ") " + relation +" ";
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)	
+								visited = 1
+							}
+						}
+						
+						if ( visited != 1 && typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]=== 'undefined'
+						&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false
+						){
+							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+							if(typeof path["variable"] !== 'undefined' &&
+							typeof path["variable"]["var"] !== 'undefined' &&
+							typeof path["variable"]["var"]["type"] !== 'undefined' &&
+							path["variable"]["var"]["type"] != null &&
+							typeof path["variable"]["var"]["type"]["type"] !== 'undefined' &&
+							(path["variable"]["var"]["type"]["type"] == "xsd:string" || path["variable"]["var"]["type"]["type"] == "XSD_STRING" )){
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)+ " " + relation + " ";
+								SPARQLstring = SPARQLstring  + "STR(" + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)+")";
+								visited = 1
+							}
+						}
+						
 					}
 					
 					if(Usestringliteralconversion == "TYPED" && typeof expressionTable[key]["Relation"]!== 'undefined' && (expressionTable[key]["Relation"] == "=" || expressionTable[key]["Relation"] == "!=" || expressionTable[key]["Relation"] == "<>")) {
@@ -1462,6 +1786,62 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 							prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 							visited = 1
+						}
+						
+						if (visited != 1 && typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]!== 'undefined'
+
+						&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]==='undefined'
+						&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false)
+						{
+							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+							if(typeof path["variable"] !== 'undefined' &&
+							typeof path["variable"]["var"] !== 'undefined' &&
+							typeof path["variable"]["var"]["type"] !== 'undefined' &&
+							path["variable"]["var"]["type"] != null &&
+							typeof path["variable"]["var"]["type"]["type"] !== 'undefined' &&
+							(path["variable"]["var"]["type"]["type"] == "xsd:string" || path["variable"]["var"]["type"]["type"] == "XSD_STRING" )){
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " ";
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "^^xsd:string";
+								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+								visited = 1
+							}
+						}
+						
+						if (visited != 1 && typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]!== 'undefined'
+						
+						&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]!== 'undefined'
+						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["RDFLiteral"]["iri"]==='undefined'
+						&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false)
+						{
+							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+							if(typeof path["variable"] !== 'undefined' &&
+							typeof path["variable"]["var"] !== 'undefined' &&
+							typeof path["variable"]["var"]["type"] !== 'undefined' &&
+							path["variable"]["var"]["type"] != null &&
+							typeof path["variable"]["var"]["type"]["type"] !== 'undefined' &&
+							(path["variable"]["var"]["type"]["type"] == "xsd:string" || path["variable"]["var"]["type"]["type"] == "XSD_STRING" )){
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)+"^^xsd:string " + relation + " ";
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+								visited = 1
+							}
 						}
 					}
 					
@@ -1718,6 +2098,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				}
 				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
 			}
+			if (typeof expressionTable[key]["PrimaryExpression"]!== 'undefined') {
+				SPARQLstring = SPARQLstring  + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+			}
+			if (typeof expressionTable[key]["NIL"]!== 'undefined') {
+				SPARQLstring = SPARQLstring  + "()";
+			}
 			if (typeof expressionTable[key]["Expression"]!== 'undefined') {
 				SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			}
@@ -1878,9 +2264,9 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			visited = 1
 		}
 		if (key == "RegexExpression") {
+			isFunction = true;
 			SPARQLstring = SPARQLstring + "REGEX(" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			visited = 1
-			isFunction = true;
 		}
 		
 		if (key == "SubstringBifExpression") {
@@ -1910,6 +2296,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			if(tempAlias == null) tempAlias = "expr";
 			SPARQLstring = SPARQLstring  + "?" + tempAlias;
 			tripleTable.push({"VALUES":"VALUES ?" + tempAlias + " {" + generateExpression(expressionTable[key], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}"});
+			visited = 1
+		}
+		if (key == "NIL"){
+			SPARQLstring = SPARQLstring  + "()";
 			visited = 1
 		}
 		

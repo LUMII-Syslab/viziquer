@@ -138,9 +138,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // String --> JSON
   // Parses the text and returns object with property "parsed_exp"
   function parsePathExpression(str_expr) {
-    try {
+	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  // var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  //console.log(JSON.stringify(parsed_exp2,null,2));
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
     } catch (e) {
@@ -154,14 +156,19 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
   function parseExpObject(exp_obj) {
-	var parse_obj = exp_obj.exp;
+   var parse_obj = exp_obj.exp;
    try {
       parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
 	 // console.log("parse_obj", parse_obj);
     } catch (e) {
       // TODO: error handling
-      console.log(e)
+     // console.log(e)
     }
+	
+	if(parse_obj.startsWith("[") == false && parse_obj.endsWith("]") == false){
+		parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
+		parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
+	 }
 
     try {
       var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
@@ -452,3 +459,14 @@ function isURI(text) {
     if(text.indexOf(":") != -1) return 4;
   return 0;
 };
+
+function replaceArithmetics(parse_obj_table, sign){
+	var parse_obj = "";
+	_.each(parse_obj_table, function(obj) {
+        if(parse_obj == "") parse_obj = obj;
+		else if(obj.startsWith(".") == false && obj != "") parse_obj =  parse_obj + " " + sign + " " +obj;
+		else if(obj == "") parse_obj = parse_obj  + sign;
+		else parse_obj = parse_obj  + sign + obj;
+    });
+	return parse_obj
+}

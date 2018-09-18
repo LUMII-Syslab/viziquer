@@ -42,5 +42,5 @@
 			Variable = Variable:(Chars_String_variables / Chars_String_prefix) {return makeVar(Variable)}
 			Chars_String_variables = ("[" Chars_String_variables:Chars_String_prefix "]") {return Chars_String_variables}
 			PN_PREFIX = Chars_String_prefix
-			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "/") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-"/ "/" / [0-9])*)
+			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-"/ [0-9])*)
 			

@@ -39,7 +39,7 @@
 			};
 		}
 
-			Main = (space PrimaryExpression:(iri / PPE / VAR / "??" ) space) {return {PrimaryExpression:PrimaryExpression}}
+			Main = (space PrimaryExpression:(PPE / VAR / "??" ) space) {return {PrimaryExpression:PrimaryExpression}}
 
 			iri = iri:PrefixedName {return {iri:iri}}
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
@@ -52,11 +52,13 @@
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
 
 			PPE = (Path:path+ ) {return {Path:Path}}
-			path =(path2:path2 "."?) {return {path:path2}}
-			path2 =(invPath1 / (invPath2) / (invPath3))
-			invPath1 = ("INV(" Chars_String:Chars_String ")") {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
-			invPath2 = ("^" Chars_String:Chars_String) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
-			invPath3 = (Chars_String:Chars_String) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String))}}
+			path =(path2:path2 ("." / "/")?) {return {path:path2}}
+			path2 =(iri / invPath1 / (invPath2) / (invPath3))
+			invPath1 = ("INV(" Chars_String:Chars_String ")" PathMod:PathMod?) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)),PathMod:PathMod}}
+			invPath2 = ("^" Chars_String:Chars_String PathMod:PathMod?) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)),PathMod:PathMod}}
+			invPath3 = (Chars_String:Chars_String PathMod:PathMod?) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)),PathMod:PathMod}}
 
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_"/ "-" / "+" / "=") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-"/ "+" / "="/ [0-9])*)
 			space = ((" ")*) {return }
+			
+			PathMod = PathMod:("?" / "*" / "+")

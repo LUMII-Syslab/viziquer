@@ -1198,9 +1198,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["localName"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
 				} else {
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
-
-					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
-						var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+					
+					// if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PathProperty"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+						// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
+						var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
+						
 						if(typeof path["messages"] !== 'undefined'){
 							messages = messages.concat(path["messages"]);
 						} else {
@@ -1212,7 +1215,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					}
 					var namespace = subclazz["linkIdentification"]["Namespace"];
 					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-					if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
+					// if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 				}
 				if(subclazz["isInverse"] == true) {
 					if(clazz["isUnion"] != true) object = instance;
@@ -1274,7 +1277,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			}
 
 			temp["sparqlTable"]["linkType"] = subclazz["linkType"];
-			if(subclazz["identification"]["localName"] == "(no_class)" || subclazz["identification"]["localName"] == "" || subclazz["identification"]["localName"] == null) temp["sparqlTable"]["linkType"] = "REQUIRED";
+			if(subclazz["identification"]["localName"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["localName"] == "" || subclazz["identification"]["localName"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
 			temp["sparqlTable"]["isSubQuery"] = subclazz["isSubQuery"];
 			temp["sparqlTable"]["isGlobalSubQuery"] = subclazz["isGlobalSubQuery"];
 
@@ -1590,9 +1593,13 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable)
+					
+					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
+						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
+						if(sparqlTable["subClasses"][subclass]["linkType"] == "NOT") unionResult["result"] = "FILTER NOT EXISTS{\n" + unionResult["result"] + "\n}";
+					}
 					whereInfo.push(unionResult["result"]);
 					messages = messages.concat(unionResult["messages"]);
-					//console.log("FFFFFFFFFFFFFFFFFFf", unionResult);
 				}
 				else if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable);

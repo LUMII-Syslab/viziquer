@@ -22,11 +22,11 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 	for(var key in expressionTable){
 		
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || key == "Aggregate" ||
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"){
 			isSimpleVariable = false;
 		}
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || key == "Aggregate" ||
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime" 
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime" 
 		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr" 
 		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr" 
 		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName" ){
