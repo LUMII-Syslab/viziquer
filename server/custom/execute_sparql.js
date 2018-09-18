@@ -51,9 +51,15 @@ Meteor.methods({
 			}
 
 			else {
-				options.params.params.query = buildEnhancedQuery(options.params.params.query, "SELECT", "SELECT * WHERE {", "} OFFSET "+options.paging_info.offset+" LIMIT "+options.paging_info.limit);
-				limit_set = true;
-				number_of_rows = options.paging_info.number_of_rows;
+				if (!options.paging_info.download) {
+					options.params.params.query = buildEnhancedQuery(options.params.params.query, "SELECT", "SELECT * WHERE {", "} OFFSET "+options.paging_info.offset+" LIMIT "+options.paging_info.limit);
+					limit_set = true;
+					number_of_rows = options.paging_info.number_of_rows;
+				} else {
+					// Do not change query
+				  // Since no refresh is intended = no additional parameters required	
+				}
+
 			}
 
       _.extend(sparql_log_entry, {number_of_rows:number_of_rows});
@@ -85,7 +91,7 @@ Meteor.methods({
 									}
 								}
 
-	                    		_.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
+	              _.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
 								future.return({status: 200, result: json_res});
 							}
 						});

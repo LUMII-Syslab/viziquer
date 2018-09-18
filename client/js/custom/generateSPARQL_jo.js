@@ -398,9 +398,55 @@ function executeSparqlString(sparql, paging_info) {
   Utilities.callMeteorMethod("executeSparql", list, function(res) {
     if (res.status == 200) {
       //console.log(res.result);
-      Session.set("executedSparql", res.result);
-      Interpreter.destroyErrorMsg();
-      $('#vq-tab a[href="#executed"]').tab('show');
+      if (!paging_info || (paging_info && !paging_info.download)) {
+        Session.set("executedSparql", res.result);
+        Interpreter.destroyErrorMsg();
+        $('#vq-tab a[href="#executed"]').tab('show');
+      } else {
+        //console.log(paging_info);
+        if (paging_info && paging_info.download && res.result.sparql) {
+          //console.log(paging_info);
+          // here - parse res.result
+          var fields = _.map(res.result.sparql.head[0].variable, function(v) {
+            return v["$"].name;
+          });
+
+          var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
+             var csv_row = {};
+             _.forEach(fields, function(field) {
+               var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
+               var obj = {};
+               if (result_item_attr) {
+                 if (result_item_attr.literal) {
+                   // data_item.literal[0]._
+                   obj[field] = result_item_attr.literal[0];
+                 } else {
+                   if (result_item_attr.uri) {
+                     obj[field] = result_item_attr.uri[0];
+                   } else {
+                     obj[field] = null;
+                   };
+                 };
+               } else {
+                 obj[field] = undefined;
+               };
+               _.extend(csv_row,obj);
+             });
+            return csv_row;
+          });
+          var list = {fields:fields, json:csv_table};
+          Utilities.callMeteorMethod("json2csv", list, function(csv) {
+            //console.log(csv);
+            var csv_data = "text/csv;charset=utf-8," + encodeURIComponent(csv);
+            var link = $('<a href="data:' + csv_data + '" download="result.csv">download Results</a>');
+            link.appendTo('#download-hack');
+            link[0].click();
+          });
+
+        }
+      }
+
+
     } else {
       Session.set("executedSparql", {limit_set:false, number_of_rows:0});
       //console.error(res);
@@ -1198,12 +1244,12 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["localName"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
 				} else {
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
-					
+
 					// if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PathProperty"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 						// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 						var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
-						
+
 						if(typeof path["messages"] !== 'undefined'){
 							messages = messages.concat(path["messages"]);
 						} else {
@@ -1593,7 +1639,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable)
-					
+
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "NOT") unionResult["result"] = "FILTER NOT EXISTS{\n" + unionResult["result"] + "\n}";
