@@ -597,8 +597,8 @@ Interpreter.customMethods({
 
 	visualizeSPARQL: function() {
 		var query_text = yasqe3.getValue();
-		Interpreter.customExtensionPoints.generateVisualQuery(query_text)
+		// Interpreter.customExtensionPoints.generateVisualQuery(query_text)
+		Interpreter.customExtensionPoints.testAutoCompletionSPARQL(query_text)
 	}
-
 
 });

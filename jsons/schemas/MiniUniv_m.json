@@ -82,6 +82,7 @@
       "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
       "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#courseCredits",
       "type" : "xsd:integer",
+	  "maxCardinality" : "-1",
       "SourceClasses" : [ "http://lumii.lv/ontologies/UnivExample.owl#Course" ]
     }, {
       "localName" : "hasMark",
@@ -104,8 +105,14 @@
       "SourceClasses" : [ "http://lumii.lv/ontologies/UnivExample.owl#Course" ]
     }, {
       "localName" : "studentNumber",
-      "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
-      "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#studentNumber",
+      "namespace" : "http://lumii.lv/ontologies/Univ#",
+      "fullName" : "http://lumii.lv/ontologies/Univ#studentNumber",
+      "type" : "xsd:string",
+      "SourceClasses" : [ "http://lumii.lv/ontologies/UnivExample.owl#Student" ]
+    },{
+      "localName" : "student-Number",
+      "namespace" : "http://lumii.lv/ontologies/Univ#",
+      "fullName" : "http://lumii.lv/ontologies/Univ#student-Number",
       "type" : "xsd:string",
       "SourceClasses" : [ "http://lumii.lv/ontologies/UnivExample.owl#Student" ]
     }, {
