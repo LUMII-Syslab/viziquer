@@ -35,6 +35,11 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", true);
 	},
 
+	'keydown .dialog-input': function(e) {
+		e.stopPropagation();
+		Interpreter.execute("handleKeyStroke", [e]);
+	},
+
 	'change .dialog-selection' : function(e) {
 
 		e.stopPropagation();

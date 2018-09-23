@@ -51,7 +51,16 @@ Meteor.methods({
 	removeTool: function(list) {
 		var user_id = Meteor.userId();
 		if (is_system_admin(user_id) && list) {
+
+			// checking if atleast one project exitst, then no delete
+			var project = Projects.findOne({toolId: list.toolId,});
+			if (project) {
+				return 0;
+			}
+
 			Tools.remove({_id: list["toolId"]});
+
+			return 1;
 		}
 	},
 

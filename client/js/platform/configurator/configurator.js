@@ -2,14 +2,22 @@
 Interpreter.methods({
 
 	delete_tool: function() {
+		var list = {toolId: Session.get("toolId"),};
+		Meteor.call("removeTool", list, function(err, resp) {
+			if (err) {
+				console.error("Error in removeTool callback", err);
+			}
+			else {
 
-		var list = {toolId: Session.get("toolId")};
-		Meteor.call("removeTool", list, function(err){
-			if (err)
-				console.log("Error in removeTool callback", err);
+				if (resp == 1) {
+					Router.go("configurator");
+				}
+
+				else {
+					console.log("There are projects attached to the tool");
+				}
+			}
 		});
-
-		Router.go("configurator");
 	},
 
 });

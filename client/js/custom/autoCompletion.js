@@ -1,4 +1,20 @@
 
+Interpreter.customMethods({
+
+	handleKeyStroke: function(e) {
+		console.log("event", e)
+
+		if (e.ctrlKey && e.keyCode == 32) {
+			console.log("ctrlKey + space pressed")
+			console.log("active element id", Session.get("activeElement"))
+		}
+
+	},
+
+});
+
+
+
 runCompletion = function (text){
 	try {
 		// var parsed_exp = vq_arithmetic.parse(str, {completions});
