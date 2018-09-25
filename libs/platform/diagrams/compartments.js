@@ -40,11 +40,23 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 
 		var compart_in = list.compartment;
+
+
+		console.log("asdfa ", list)
+
+
+
 		if (is_project_version_admin(user_id, compart_in)) {
 
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
+
+
+				console.log("compart_in ", compart_in)
+
+
+
 				Compartments.insert(compart_in, {trimStrings: false});
 
 				if (list["elementStyleUpdate"]) {
@@ -109,6 +121,17 @@ Meteor.methods({
 								versionId: list["versionId"],
 							});
 
+		}
+	},
+
+	swapCompartments: function(list) {
+		var user_id = Meteor.userId();
+		if (is_project_version_admin(user_id, list)) {
+			var prev_compart = list.prevCompartment;
+			var current_compart = list.currentCompartment;
+
+			Compartments.update({_id: prev_compart.id}, {$set: {index: current_compart.index}});
+			Compartments.update({_id: current_compart.id}, {$set: {index: prev_compart.index}});
 		}
 	},
 

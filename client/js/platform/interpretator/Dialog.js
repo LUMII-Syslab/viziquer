@@ -112,7 +112,7 @@ Dialog = {
 
 	buildCompartmentList: function(compart_type, input, value) {
 
-		return {
+		var compart = {
 				projectId: Session.get("activeProject"),
 				elementId: Session.get("activeElement"),
 				diagramId: Session.get("activeDiagram"),
@@ -126,6 +126,14 @@ Dialog = {
 				index: compart_type["index"],
 				isObjectRepresentation: compart_type["isObjectRepresentation"],
 			};
+
+		// if multifield
+		if (compart_type.inputType.type == "custom" && compart_type.inputType.templateName == "multiField") {
+			var comparts_count = Compartments.find({compartmentTypeId: compart_type._id,}).count();
+			compart.index += comparts_count + 1;
+		}
+
+		return compart;
 	},
 
 	buildCompartmentValue: function(compart_type, input, mapped_value, elemStyleId, compartStyleId) {

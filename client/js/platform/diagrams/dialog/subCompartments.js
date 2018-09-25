@@ -5,12 +5,13 @@ Template.multiField.helpers({
 	multi_fields_obj: function() {
 
 		var data_in = Template.currentData();
-		if (!data_in)
+		if (!data_in) {
 			return;
+		}
 
 		var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
 		var compartments = Compartments.find({compartmentTypeId: data_in["_id"],
-												elementId: Session.get("activeElement")});
+												elementId: Session.get("activeElement")}, {sort: {index: 1}});
 
 		res["values"] = compartments.fetch();
 
@@ -22,6 +23,53 @@ Template.multiField.helpers({
 });
 
 Template.multiField.events({
+
+	'click .down-multi-field': function(e, templ) {
+		e.preventDefault();
+
+		var data = getCurrentCompartment(e);
+
+		var compartments = data.compartments;
+		var index = data.index;
+		var current_compart = data.currentCompartment;
+
+		var next_index = index + 1;
+		if (next_index < compartments.length) {
+			var next_compart = compartments[next_index];
+			var list = {projectId: Session.get("activeProject"),
+						elementId: Session.get("activeElement"),
+						prevCompartment: {id: current_compart._id, index: current_compart.index,},
+						currentCompartment: {id: next_compart._id, index: next_compart.index,},
+					};
+
+			Utilities.callMeteorMethod("swapCompartments", list);			
+		}
+	},
+
+
+	'click .up-multi-field': function(e, templ) {
+		e.preventDefault();
+
+		var data = getCurrentCompartment(e);
+
+		var compartments = data.compartments;
+		var index = data.index;
+		var current_compart = data.currentCompartment;
+
+		var prev_index = index - 1;
+		if (prev_index >= 0) {
+			var prev_compart = compartments[prev_index];
+			var list = {projectId: Session.get("activeProject"),
+						elementId: Session.get("activeElement"),
+						prevCompartment: {id: prev_compart._id, index: prev_compart.index,},
+						currentCompartment: {id: current_compart._id, index: current_compart.index,},
+					};
+
+			Utilities.callMeteorMethod("swapCompartments", list);			
+		}
+
+	},
+
 
 	'click .add-multi-field': function(e, templ) {
 
@@ -206,4 +254,29 @@ function process_sub_compart_types(subCompartmentTypes, fields, sub_compartments
 		}
 
 	});
+}
+
+
+function getCurrentCompartment(e) {
+
+	var src = $(e.target);
+	var multi_field = $(src).closest(".multi-field");
+	var compart_type_id = multi_field.attr("id");
+
+	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+	var compart_id = $(src).closest(".multi-field-row").attr("id");
+
+	var index = -1;
+	var current_compart = {};
+
+	for (var i=0;i<compartments.length;i++) {
+		var compart = compartments[i];
+		if (compart._id == compart_id) {
+			current_compart = compart;
+			index = i;
+			break;
+		}
+	}
+
+	return {compartments: compartments, index: index, currentCompartment: current_compart,};
 }
