@@ -1141,6 +1141,14 @@ VQ_Element.prototype = {
       })), function(linkobj) { return linkobj.link.isLink()}
     );
   },
+  // --> {link:VQ_Element, start:bool}
+  // returns a link leading to the root (UP direction) or undefined if not exist
+  getLinkToRoot: function() {
+    return _.find(this.getLinks(), function(l) {
+      var root_direction = l.link.getRootDirection();
+      return (root_direction == "start" && l.start || root_direction == "end" && !l.start)
+    });
+  },
   // --> {start:VQ_Element, end:VQ_element}
   // Returns link's start and end VQ_Elements
   getElements: function() {

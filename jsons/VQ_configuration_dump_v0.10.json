@@ -906,6 +906,10 @@
             "readModeKeyStrokes": [],
             "contextMenu": [
               {
+                "item": "Aggregate ...",
+                "procedure": "AddAggregate"
+              },
+              {
                 "item": "Add Link ...",
                 "procedure": "AddLink"
               },
