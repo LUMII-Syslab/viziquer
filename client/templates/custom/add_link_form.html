@@ -5,6 +5,50 @@
         overflow-y: auto;
         max-height: 60vh;      
     }
+
+    hr {
+        margin-bottom: 0.1em;
+    }
+
+    .help-tip{
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        text-align: center;
+        background-color: #66B2FF;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        line-height: 26px;
+        cursor: help;
+    }
+
+    .help-tip:before{
+        content:'?';
+        font-weight: bold;
+        color:#fff;
+    }
+
+    .help-tip:hover p{
+        display:block;
+    }
+
+    .help-tip p{
+        display: none;
+        text-align: left;
+        color: white;
+        background-color: #1B0963;        
+        padding: 10px;
+        width: 250px;
+        position: absolute;
+        right: 0px;
+    }
+
+    mark {
+        color: yellow;
+        background-color: #1B0963;        
+    }
 </style>
 
 	<!-- Modal for new document -->
@@ -17,10 +61,28 @@
                     <h4 class="modal-title">Add Link</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
-                        
-                        <div class="form-group">
-                   
+                    <form id="radioList" class="form-horizontal" role="form">
+                        <div class="form-group">                            
+                            <div class="col-lg-10 connections" name="chain">                       
+                                <label class="label-radio" style="right:0px;">                                 
+                                    <input type="radio" name="type-radio" value="JOIN" checked="checked">
+                                    <span class="custom-radio"></span>
+                                    Join Link &emsp;
+
+                                    <input type="radio" name="type-radio" value="NESTED">
+                                    <span class="custom-radio"></span>
+                                    Nested Query Link 
+                                    <div class="help-tip">
+                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
+                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p></div>
+                                    <hr>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form class="form-horizontal" role="form">                        
+                        <div class="form-group">                   
                             {{#each associations}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
@@ -42,7 +104,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="cancel-add-link" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-link" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->

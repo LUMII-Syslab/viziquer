@@ -120,6 +120,7 @@ Template.AddLink.events({
 
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
+		var linkType = $('input[name=type-radio]:checked').val();		
 
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
@@ -334,6 +335,7 @@ Template.AddLink.events({
 					var line_elem = Elements.findOne({_id: line_id});
 					var vq_line = new VQ_Element(line_id);
 					vq_line.setLinkType("REQUIRED");
+					if(linkType == "NESTED") vq_line.setLinkQueryType("SUBQUERY")
 					//vq_line.setName(name);
 					var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 					if (line_compart_type) {
@@ -370,12 +372,27 @@ Template.AddLink.events({
 
 			}
 
+		});		
+
+
+		$('input[name=stack-radio]:checked').attr('checked', false);
+		var defaultRadio = document.getElementsByName("type-radio");
+		_.each(defaultRadio, function(e){
+			if (e.value == "JOIN") e.checked = true;
+			else e.checked = false;
 		});
-
-
 
 		return;
 
+	},
+
+	"click #cancel-add-link": function(e) {
+		$('input[name=stack-radio]:checked').attr('checked', false);
+		var defaultRadio = document.getElementsByName("type-radio");
+		_.each(defaultRadio, function(e){
+			if (e.value == "JOIN") e.checked = true;
+			else e.checked = false;
+		});
 	},
 
 });
