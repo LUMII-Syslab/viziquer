@@ -10,7 +10,9 @@ Meteor.methods({
 				                                             useStringLiteralConversion: list.useStringLiteralConversion,
                                                      queryEngineType: list.queryEngineType,
 																										 useDefaultGroupingSeparator: list.useDefaultGroupingSeparator,
-																										 defaultGroupingSeparator: list.defaultGroupingSeparator
+																										 defaultGroupingSeparator: list.defaultGroupingSeparator,
+																										 directClassMembershipRole: list.directClassMembershipRole,
+																										 indirectClassMembershipRole: list.indirectClassMembershipRole,
 										 }});
 		}
 	},

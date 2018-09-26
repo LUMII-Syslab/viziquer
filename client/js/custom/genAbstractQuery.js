@@ -164,7 +164,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
       // TODO: error handling
      // console.log(e)
     }
-	
+
 	if(parse_obj.startsWith("[") == false && parse_obj.endsWith("]") == false){
 		parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
 		parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
@@ -406,6 +406,12 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
           };
           if (proj.useDefaultGroupingSeparator=="true") {
             proj_params.defaultGroupingSeparator = proj.defaultGroupingSeparator;
+          };
+          if (proj.directClassMembershipRole) {
+            proj_params.directClassMembershipRole = proj.directClassMembershipRole;
+          };
+          if (proj.indirectClassMembershipRole) {
+            proj_params.indirectClassMembershipRole = proj.indirectClassMembershipRole;
           };
           return proj_params;
      }
