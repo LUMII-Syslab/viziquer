@@ -1476,6 +1476,7 @@
                   {
                     "_id": "304eddff333de333378baa82",
                     "name": "Aggregates",
+                    "label": "Aggregate",
                     "extensionPoints": [
                       {
                         "extensionPoint": "procDecompose",
@@ -1490,7 +1491,7 @@
                         "_id": "479fc64e382dc2d31bdd0855",
                         "index": 7,
                         "name": "Field Name",
-                        "label":"Alias",
+                        "label":"Result name (alias)",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": "<-",
