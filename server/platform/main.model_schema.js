@@ -220,6 +220,18 @@ Schemas.Projects = new SimpleSchema({
 			  optional: true,
 		},
 
+		directClassMembershipRole: {
+			  type: String,
+			  label: "Projects.directClassMembershipRole",
+			  optional: true,
+		},
+
+		indirectClassMembershipRole: {
+			  type: String,
+			  label: "Projects.indirectClassMembershipRole",
+			  optional: true,
+		},
+
     category: {
         type: String,
         label: "Projects.category",

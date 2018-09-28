@@ -128,7 +128,7 @@ Template.diagramsRibbon.helpers({
 		if (!tool) {
 			console.error("No tool", project.toolId);
 			return;
-		}		
+		}
 
 		return tool.name;
 	}
@@ -514,7 +514,7 @@ Template.importOntology.events({
 		var fileList = $("#fileList")[0].files;
 	    _.each(fileList, function(file) {
 
-		
+
 
 	        var reader = new FileReader();
 
@@ -523,7 +523,7 @@ Template.importOntology.events({
 			//console.log(reader.result);
 			//var x=require('n3').Parser().parse(require('fs').readFileSync('UnivExample_hasMarkS2.n3').toString())
 			//Utilities.callMeteorMethod("loadTriplesMaps", reader.result);
-			
+
 				var data = JSON.parse(reader.result)
 
 				if (data)
@@ -533,16 +533,16 @@ Template.importOntology.events({
 									versionId: Session.get("versionId"),
 									data: data,
 								};
-						  Utilities.callMeteorMethod("loadMOntology", list); 					
+						  Utilities.callMeteorMethod("loadMOntology", list);
 					}
 					else {
 						var list = {projectId: Session.get("activeProject"),
 									versionId: Session.get("versionId"),
 									data: { Data: data },
-								};					
-						Utilities.callMeteorMethod("loadTriplesMaps", list ); 					
+								};
+						Utilities.callMeteorMethod("loadTriplesMaps", list );
 					}
-					
+
 
 					//if ( data.Schema ) {
 					//	Utilities.callMeteorMethod("loadMOntology", list); }
@@ -557,11 +557,11 @@ Template.importOntology.events({
 	        }
 	        reader.readAsText(file);
 	    });
-		
 
 
 
-		
+
+
 
 	},
 
@@ -633,6 +633,8 @@ Template.ontologySettings.events({
           queryEngineType: $("#query-engine-type").val(),
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
 					defaultGroupingSeparator: $("#default-grouping-separator").val(),
+					directClassMembershipRole: $("#direct-class-membership-role").val(),
+					indirectClassMembershipRole: $("#indirect-class-membership-role").val()
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -653,6 +655,8 @@ Template.ontologySettings.events({
 		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
 		 $("#default-grouping-separator").prop('disabled', proj.useDefaultGroupingSeparator=="false");
 		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
+		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
+		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 	 }
 
 	},
@@ -738,7 +742,19 @@ Template.ontologySettings.helpers({
 		if (proj) {
 			return (proj.useDefaultGroupingSeparator=="true");
 		}
-	}
+	},
+	directClassMembershipRole: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.directClassMembershipRole;
+		}
+	},
+	indirectClassMembershipRole: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.indirectClassMembershipRole;
+		}
+	},
 });
 
 
@@ -937,7 +953,7 @@ Template.migrateForm.helpers({
 Template.migrateForm.events({
 
 	'click #migrate-to': function(e, templ) {
-		
+
 		$('#migrate-form').modal("hide");
 		var tool_name = $("#migrate-tools").find(":selected").attr("value");
 		Meteor.call("migrate", {projectId: Session.get("activeProject"), toolName: tool_name,})

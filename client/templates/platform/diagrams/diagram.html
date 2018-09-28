@@ -61,6 +61,7 @@
 
       {{> AddLink}}
       {{> AddAttribute}}
+      {{> AddAggregate}}
       {{> SPARQL}}
 
 </template>
@@ -126,7 +127,7 @@
                               {{#if showNext offset number_of_rows}}<button id="next-sparql" class="btn btn-success btn-sm">Next 50</button>{{/if}}
                               <button id="download-results" class="btn btn-danger btn-sm">Download All</button>
                             {{else}}
-                              <button id="download-results" class="btn btn-warning btn-sm">Download</button>  
+                              <button id="download-results" class="btn btn-warning btn-sm">Download</button>
                             {{/if}}
 
                         </div>
