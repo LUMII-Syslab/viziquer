@@ -2,18 +2,33 @@
 <template name="AddLink">
 <style>
     div.modal-body {
+        margin-top: 0px;
+        padding-top: 0px;
         overflow-y: auto;
         max-height: 60vh;      
     }
 
+    div.link-type-part {
+        background-color: white;
+        margin-top: 5px;
+        margin-left: 30px;
+    }
+
     hr {
-        margin-bottom: 0.1em;
+        margin-top: 20px;
+        margin-bottom: 0px;
+        margin-left: -5px;
+        border: 0;
+        border-top: 1px solid #c9c7c7;
+        width:95%
     }
 
     .help-tip{
-        position: absolute;
-        top: 0px;
-        right: 0px;
+        position: relative;
+        float: right;
+        margin-left: 25px;
+        margin-top: 0px;
+        margin-right: 25px;
         text-align: center;
         background-color: #66B2FF;
         border-radius: 50%;
@@ -27,22 +42,24 @@
     .help-tip:before{
         content:'?';
         font-weight: bold;
-        color:#fff;
+        color:#fff;       
     }
 
     .help-tip:hover p{
-        display:block;
+        display: block;
     }
 
     .help-tip p{
         display: none;
         text-align: left;
         color: white;
+        border: 1px solid #7F7F7F;
         background-color: #1B0963;        
         padding: 10px;
-        width: 250px;
+        width: 300px;
         position: absolute;
-        right: 0px;
+        right: 10px;
+        z-index: 1000;
     }
 
     mark {
@@ -60,27 +77,39 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Add Link</h4>
                 </div>
-                <div class="modal-body">
-                    <form id="radioList" class="form-horizontal" role="form">
+                
+                <div class="link-type-part">
+                    <form id="type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
-                            <div class="col-lg-10 connections" name="chain">                       
-                                <label class="label-radio" style="right:0px;">                                 
+                            <div name="chain">                       
+                                <label class="label-radio">                                 
+                                    <div class="help-tip">
+                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
+                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
+                                    </div>
+
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
                                     Join Link &emsp;
 
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
-                                    Nested Query Link 
-                                    <div class="help-tip">
-                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
-                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p></div>
+                                    Nested Query Link &emsp; <br>
+
+                                    <div style="margin-top: 5px; margin-left: 8em;">
+                                        <input type="checkbox" id="goto-wizard" value="DISPLAY">
+                                        <span class="custom-checkbox"></span>
+                                        Use Aggregate (e.g. count, etc.) wizard (nested query only)
+                                    </div>                                
+                                    
                                     <hr>
                                 </label>
                             </div>
-                        </div>
-                    </form>
-
+                        </div>                        
+                    </form>                    
+                </div>
+               
+                <div class="modal-body">
                     <form class="form-horizontal" role="form">                        
                         <div class="form-group">                   
                             {{#each associations}}
@@ -112,4 +141,17 @@
 
     </div><!-- /.modal -->
 
+    <script>
+        //Show additional choices
+        var radioListener = document.getElementById("type-choice"); 
+        radioListener.addEventListener("click", checkboxStatus);
+        
+        function checkboxStatus(){
+            var checkedName = $('input[name=type-radio]').filter(':checked').val();
+            console.log(checkedName);
+            if (checkedName == 'JOIN') {
+                $('input[id=goto-wizard]:checked').attr('checked', false);
+            }
+        }
+    </script>
 </template>
