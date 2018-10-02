@@ -29,7 +29,33 @@ Template.toolDiagrams.events({
 		return;
 	},
 
+	'click #migrate-project': function(e, templ) {
+		$('#migrate-project-form').modal("show");
+	},
+
 });
+
+
+Template.migrateProjectForm.helpers({
+
+	tools: function() {
+		return Tools.find({isDeprecated: {$ne: true},});
+	},
+
+});
+
+
+Template.migrateProjectForm.events({
+
+	'click #ok-migrate-project-form': function(e, templ) {
+		$('#migrate-form').modal("hide");
+		var target_tool_id = $("#migrate-tools").find(":selected").attr("value");
+
+		Meteor.call("migrateProject", {toolId: Session.get("toolId"), targetToolId: target_tool_id,});
+	},
+
+});
+
 
 
 Template.importConfigurationForm.events({

@@ -118,8 +118,8 @@ ImportAjooConfiguration.prototype = {
 	},
 
 	importLineTypes: function(line_types) {
-
 		var self = this;
+
 		_.each(line_types, function(line_type) {
 
 			var object = line_type.object;
@@ -147,8 +147,8 @@ ImportAjooConfiguration.prototype = {
 	},
 
 	importCompartmentTypes: function(compart_types) {
-
 		var self = this;
+
 		_.each(compart_types, function(compart_type) {
 
 			var object = compart_type.object;
@@ -180,8 +180,8 @@ ImportAjooConfiguration.prototype = {
 
 
 	importDiagramTypeCompartmentTypes: function(compart_types) {
-
 		var self = this;
+		
 		_.each(compart_types, function(compart_type) {
 
 			var object = compart_type.object;
@@ -208,7 +208,6 @@ ImportAjooConfiguration.prototype = {
 
 
 	recomputeSubCompartmentTypeLabels: function(sub_compart_types) {
-
 		var self = this;
 
 		return _.map(sub_compart_types, function(sub_compart_type) {
@@ -248,7 +247,6 @@ ImportAjooConfiguration.prototype = {
 
 
 	importDiagramTypeDialogTypes: function(diagram_type) {
-
 		var self = this;
 
 		_.each(diagram_type.dialog, function(dialog) {
@@ -268,7 +266,6 @@ ImportAjooConfiguration.prototype = {
 
 
 	importDialogTypes: function(box_type) {
-
 		var self = this;
 
 		_.each(box_type.dialog, function(dialog) {
@@ -288,8 +285,8 @@ ImportAjooConfiguration.prototype = {
 	},
 
 	importSuperTypes: function(elem_type) {
-
 		var self = this;
+
 		var super_types = _.map(elem_type.superTypeIds, function(super_type_id) {
 								return self.obj_type_map[super_type_id];
 							});
@@ -303,7 +300,6 @@ ImportAjooConfiguration.prototype = {
 	},
 
 	importDiagrams: function(diagrams) {
-
 		var self = this;
 
 		_.each(diagrams, function(diagram) {
@@ -326,7 +322,6 @@ ImportAjooConfiguration.prototype = {
 	},
 
 	importBoxes: function(boxes) {
-
 		var self = this;
 
 		var box_type = ElementTypes.findOne({type: "Box", diagramTypeId: self.diagram_type._id});
@@ -386,13 +381,12 @@ ImportAjooConfiguration.prototype = {
 			self.obj_type_map[line_id] = new_line_id;
 
 			self.importComparmtents(line.compartments);
-
 		});
 	},
 
 	importComparmtents: function(comparts) {
-
 		var self = this;
+
 		_.each(comparts, function(compart) {
 
 			var object = compart.object;
@@ -403,7 +397,6 @@ ImportAjooConfiguration.prototype = {
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
-
 								diagramTypeId: self.diagram_type._id,
 							});
 
