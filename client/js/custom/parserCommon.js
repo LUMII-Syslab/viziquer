@@ -84,98 +84,105 @@ transformSubstring = function(expressionTable){
 		if(typeof expressionTable[key] == 'object'){
 			transformSubstring(expressionTable[key]);
 		}
-	
+		var substringValues = null;
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["var"]!== 'undefined' && typeof expressionTable[key]["Substring"] !== 'undefined' && expressionTable[key]["Substring"]!="" ){
-				
-			//var t = expressionTable[key];
+			substringValues = expressionTable[key]["Substring"];
+		//} else if(key == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"]!== 'undefined'){
+		} else if(key == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"]!== 'undefined' && typeof expressionTable[key]["Substring"] !== 'undefined' && expressionTable[key]["Substring"]!="" ){
+			//var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
+			//if(typeof path["variable"]!== 'undefined' && typeof path["variable"]["Substring"] !== 'undefined' && path["variable"]["Substring"]!=""){
+			//	substringValues = path["variable"]["Substring"];
+			//}
+			substringValues = expressionTable[key]["Substring"];
+		}
+		if(substringValues != null){
 			var t = JSON.parse(JSON.stringify(expressionTable[key]));
 			//console.log(JSON.stringify(t,null,2), t["Substring"]);
-			var substringValues = expressionTable[key]["Substring"];
 			var substrStart, substrEnd = null;
 			substrStart = substringValues.substring(1,2);
 			if(substringValues.search(",") != -1) substrEnd = substringValues.substring(substringValues.search(",")+1,substringValues.search(",")+2);
 			else substrEnd = substrStart;
 		
 			t["Substring"] = "";
-		
+			
 			expressionTable["PrimaryExpression"] = {"SubstringExpression" : { 
 				"Expression1":{
-                  "OrExpression" : [ {
-                      "ANDExpression" : [ {
-                          "ConditionalOrExpression" : [ {
-                              "ConditionalAndExpression" : [ {
-                                  "RelationalExpression" : {
-                                    "NumericExpressionL" : {
-                                      "AdditiveExpression" : {
-                                        "MultiplicativeExpression" : {
-                                          "UnaryExpression" : {
-                                            "PrimaryExpression" : t
-                                          },
-                                          "UnaryExpressionList" :[]
-                                        },
-                                        "MultiplicativeExpressionList" : []
-                                      }
-                                    }
-                                  }
-                                } ]
-                            } ]
-                        } ]
-                    } ]
-                }, 
+					"OrExpression" : [ {
+					    "ANDExpression" : [ {
+ 						   "ConditionalOrExpression" : [ {
+							  "ConditionalAndExpression" : [ {
+							  "RelationalExpression" : {
+									"NumericExpressionL" : {
+									  "AdditiveExpression" : {
+										"MultiplicativeExpression" : {
+										  "UnaryExpression" : {
+											"PrimaryExpression" : t
+										  },
+										  "UnaryExpressionList" :[]
+										},
+										"MultiplicativeExpressionList" : []
+									  }
+									}
+								  }
+								} ]
+							} ]
+						} ]
+					} ]
+				}, 
 				"Expression2":{
-                  "OrExpression" : [ {
-                      "ANDExpression" : [ {
-                          "ConditionalOrExpression" : [ {
-                              "ConditionalAndExpression" : [ {
-                                  "RelationalExpression" : {
-                                    "NumericExpressionL" : {
-                                      "AdditiveExpression" : {
-                                        "MultiplicativeExpression" : {
-                                          "UnaryExpression" : {
-                                            "PrimaryExpression" :{
-                                              "NumericLiteral" : {
-                                                  "Number": substrStart
-                                              }
-                                            }
-                                          },
-                                          "UnaryExpressionList" :[]
-                                        },
-                                        "MultiplicativeExpressionList" : []
-                                      }
-                                    }
-                                  }
-                                } ]
-                            } ]
-                        } ]
-                    } ]
-                }, 
+				  "OrExpression" : [ {
+					  "ANDExpression" : [ {
+						  "ConditionalOrExpression" : [ {
+							  "ConditionalAndExpression" : [ {
+								  "RelationalExpression" : {
+									"NumericExpressionL" : {
+									  "AdditiveExpression" : {
+										"MultiplicativeExpression" : {
+										  "UnaryExpression" : {
+											"PrimaryExpression" :{
+											  "NumericLiteral" : {
+												  "Number": substrStart
+											  }
+											}
+										  },
+										  "UnaryExpressionList" :[]
+										},
+										"MultiplicativeExpressionList" : []
+									  }
+									}
+								  }
+								} ]
+							} ]
+						} ]
+					} ]
+				}, 
 				"Expression3":{
-                  "OrExpression" : [ {
-                      "ANDExpression" : [ {
-                          "ConditionalOrExpression" : [ {
-                              "ConditionalAndExpression" : [ {
-                                  "RelationalExpression" : {
-                                    "NumericExpressionL" : {
-                                      "AdditiveExpression" : {
-                                        "MultiplicativeExpression" : {
-                                          "UnaryExpression" : {
-                                            "PrimaryExpression" :{
-                                              "NumericLiteral" : {
-                                                  "Number": substrEnd
-                                              }
-                                            }
-                                          },
-                                          "UnaryExpressionList" :[]
-                                        },
-                                        "MultiplicativeExpressionList" : []
-                                      }
-                                    }
-                                  }
-                                } ]
-                            } ]
-                        } ]
-                    } ]
-                } }}
+				  "OrExpression" : [ {
+					  "ANDExpression" : [ {
+						  "ConditionalOrExpression" : [ {
+							  "ConditionalAndExpression" : [ {
+								  "RelationalExpression" : {
+									"NumericExpressionL" : {
+									  "AdditiveExpression" : {
+										"MultiplicativeExpression" : {
+										  "UnaryExpression" : {
+											"PrimaryExpression" :{
+											  "NumericLiteral" : {
+												  "Number": substrEnd
+											  }
+											}
+										  },
+										  "UnaryExpressionList" :[]
+										},
+										"MultiplicativeExpressionList" : []
+									  }
+									}
+								  }
+								} ]
+							} ]
+						} ]
+					} ]
+				} }}
 		}
 	}
 	//console.log(JSON.stringify(expressionTable,null,2));
