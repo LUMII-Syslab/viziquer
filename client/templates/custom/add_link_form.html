@@ -155,3 +155,126 @@
         }
     </script>
 </template>
+
+<template name="AggregateWizard">
+    <style>
+        div.wizard-list {
+            margin-top: 5px;
+            margin-left: 20px;
+        }
+    </style>
+    <!-- Modal for new document -->
+    <div id="aggregate-wizard-form" class="modal fade">
+        
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Connect Classes</h4>
+                </div>
+                <div class="modal-bodyFC">                
+                    <div class="wizard-list">                       
+                        <label class="function-radio-list">
+                            Functions: &emsp;
+                            <select name="function-list">
+                                <option value="count" selected="selected">count</option>
+                                <option value="count_distinct">count_distinct</option>
+                                <option value="sum">sum</option>
+                                <option value="avg">avg</option>
+                                <option value="max">max</option>
+                                <option value="min">min</option>
+                                <option value="sample">sample</option>
+                                <option value="concat">concat</option>
+                            </select>
+                            <br>
+                            <input type="radio" name="function-radio" value="COUNT" checked="checked">
+                            <span class="custom-radio"></span>
+                            count &emsp;
+
+                            <input type="radio" name="function-radio" value="COUNT-DISTINCT">
+                            <span class="custom-radio"></span>
+                            count_distinct &emsp;
+                            
+                            <input type="radio" name="function-radio" value="SUM">
+                            <span class="custom-radio"></span>
+                            sum &emsp;
+                            
+                            <input type="radio" name="function-radio" value="AVG">
+                            <span class="custom-radio"></span>
+                            avg &emsp;
+
+                            <input type="radio" name="function-radio" value="MAX">
+                            <span class="custom-radio"></span>
+                            max &emsp;
+                            
+                            <input type="radio" name="function-radio" value="MIN">
+                            <span class="custom-radio"></span>
+                            min &emsp;
+                            
+                            <input type="radio" name="function-radio" value="SAMPLE">
+                            <span class="custom-radio"></span>
+                            sample &emsp;
+                            
+                            <input type="radio" name="function-radio" value="CONCAT">
+                            <span class="custom-radio"></span>
+                            concat &emsp; <br>                            
+                        </label>
+                    </div>
+
+                    <div class="wizard-list">
+                        <form>
+                            <br>Field &emsp;
+                            <select name="field-list">
+                                <option value="todo">TODO</option>
+                                <option value="fill-list">fill list</option>
+                                <option value="code">code</option>
+                            </select>
+                        </form>
+
+                         <form>
+                            <br>Result name: &emsp;
+                            <input type="text" id="field-name"><br>
+                        </form>
+                        <hr>
+
+                        <div style="padding-top: 5px;">
+                            <input type="checkbox" id="display-results" value="DISPLAY">
+                            <span class="custom-checkbox"></span>
+                            Display result <br>
+                        </div><br>
+
+                        <div>
+                            <label>Result at least (&gt;=): </label>
+                            <input id="results_least" type="number" pattern="[0-9]" value="0" required>
+                            <span class="validity"></span>  
+                        </div><br>
+
+                        <div>
+                            <label>Result at most (&lt;=): </label>
+                            <input id="results-most" type="number" pattern="[0-9]" value="1" required>
+                            <span class="validity"></span>  
+                        </div><br>
+                        <p style="color: green;">
+                        <b>Description from file:<br></b>
+                        Function: <br>
+                        &emsp; count count_distinct sum max min avg sample concat<br>
+                        Field: (drop-down)<br>
+                        Result name (alias): <br>
+                        --------------------------------------------------<br>
+                        Display result [ ]<br>
+                        Result at least (&gt;=): <br>
+                        Result at most (&lt;=):<br>
+
+                        Function ir horizontāla rinda ar radio pogām.<br>
+                        Field saturu nosaka agregātfunkcija; ja ir sum/avg, tad paliek tikai skaitliski atribūti.</p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">                    
+                    <button id="cancel-aggregate-wizard" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-aggregate-wizard" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -382,6 +382,8 @@ Template.AddLink.events({
 			else e.checked = false;
 		});
 
+		$("#aggregate-wizard-form").modal("show");
+
 		return;
 
 	},
