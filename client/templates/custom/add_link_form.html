@@ -65,7 +65,7 @@
     mark {
         color: yellow;
         background-color: #1B0963;        
-    }
+    }    
 </style>
 
 	<!-- Modal for new document -->
@@ -90,16 +90,16 @@
 
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
-                                    Join Link &emsp;
+                                    Join Link <br style="line-height: 200%;">
 
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
-                                    Nested Query Link &emsp; <br>
+                                    Nested Query Link &emsp; 
 
-                                    <div style="margin-top: 5px; margin-left: 8em;">
+                                    <div style="display:inline;">
                                         <input type="checkbox" id="goto-wizard" value="DISPLAY">
                                         <span class="custom-checkbox"></span>
-                                        Use Aggregate (e.g. count, etc.) wizard (nested query only)
+                                        Use Aggregate (e.g. count, etc.) wizard
                                     </div>                                
                                     
                                     <hr>
@@ -148,7 +148,7 @@
         
         function checkboxStatus(){
             var checkedName = $('input[name=type-radio]').filter(':checked').val();
-            console.log(checkedName);
+            // console.log(checkedName);
             if (checkedName == 'JOIN') {
                 $('input[id=goto-wizard]:checked').attr('checked', false);
             }
@@ -160,7 +160,31 @@
     <style>
         div.wizard-list {
             margin-top: 5px;
-            margin-left: 20px;
+            margin-left: 20px;                        
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: bold;
+            padding-top: 5px;
+            padding-bottom: : 0px;
+            margin-bottom: 0px;
+        }
+
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: -5px;
+            border: 0;
+            border-top: 1px solid #c9c7c7;
+            width:95%
+        }
+
+        .wizard-list select, #field-name {
+            position: relative;             
+            width:90%;
+            border-radius:5px;
+            font-size: 13px;
         }
     </style>
     <!-- Modal for new document -->
@@ -170,13 +194,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Connect Classes</h4>
+                    <h4 class="modal-title">Aggregate wizard</h4>
                 </div>
                 <div class="modal-bodyFC">                
                     <div class="wizard-list">                       
-                        <label class="function-radio-list">
-                            Functions: &emsp;
-                            <select name="function-list">
+                        <form class="function-radio-list">
+                            <p>Functions: </p>
+                            <select name="function-list" >
                                 <option value="count" selected="selected">count</option>
                                 <option value="count_distinct">count_distinct</option>
                                 <option value="sum">sum</option>
@@ -185,88 +209,41 @@
                                 <option value="min">min</option>
                                 <option value="sample">sample</option>
                                 <option value="concat">concat</option>
-                            </select>
-                            <br>
-                            <input type="radio" name="function-radio" value="COUNT" checked="checked">
-                            <span class="custom-radio"></span>
-                            count &emsp;
-
-                            <input type="radio" name="function-radio" value="COUNT-DISTINCT">
-                            <span class="custom-radio"></span>
-                            count_distinct &emsp;
-                            
-                            <input type="radio" name="function-radio" value="SUM">
-                            <span class="custom-radio"></span>
-                            sum &emsp;
-                            
-                            <input type="radio" name="function-radio" value="AVG">
-                            <span class="custom-radio"></span>
-                            avg &emsp;
-
-                            <input type="radio" name="function-radio" value="MAX">
-                            <span class="custom-radio"></span>
-                            max &emsp;
-                            
-                            <input type="radio" name="function-radio" value="MIN">
-                            <span class="custom-radio"></span>
-                            min &emsp;
-                            
-                            <input type="radio" name="function-radio" value="SAMPLE">
-                            <span class="custom-radio"></span>
-                            sample &emsp;
-                            
-                            <input type="radio" name="function-radio" value="CONCAT">
-                            <span class="custom-radio"></span>
-                            concat &emsp; <br>                            
-                        </label>
-                    </div>
-
-                    <div class="wizard-list">
+                            </select>                                                        
+                        </form>                    
                         <form>
-                            <br>Field &emsp;
+                            <p>Field </p>
                             <select name="field-list">
-                                <option value="todo">TODO</option>
+                                <option value="todo">todo</option>
                                 <option value="fill-list">fill list</option>
                                 <option value="code">code</option>
                             </select>
                         </form>
 
                          <form>
-                            <br>Result name: &emsp;
+                             <p>Result name: </p>
                             <input type="text" id="field-name"><br>
                         </form>
+                        
                         <hr>
 
-                        <div style="padding-top: 5px;">
+                        <form style="color: lightgrey !important;">
                             <input type="checkbox" id="display-results" value="DISPLAY">
                             <span class="custom-checkbox"></span>
-                            Display result <br>
-                        </div><br>
+                            <p style="display:inline;">Display result </p>
+                        </form>
 
-                        <div>
-                            <label>Result at least (&gt;=): </label>
-                            <input id="results_least" type="number" pattern="[0-9]" value="0" required>
+                        <form style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;">
+                            <label><p>Result at least (&gt;=): &emsp;</p> </label>
+                            <input id="results_least" type="number" pattern="[0-9]" step="any" value="0" required>
                             <span class="validity"></span>  
-                        </div><br>
+                        </form>
 
-                        <div>
-                            <label>Result at most (&lt;=): </label>
-                            <input id="results-most" type="number" pattern="[0-9]" value="1" required>
+                        <form style="color: lightgrey !important;">
+                            <label><p>Result at most (&lt;=):&emsp;</p> </label>
+                            <input id="results-most" type="number" pattern="[0-9]" step="any" value="1" required>
                             <span class="validity"></span>  
-                        </div><br>
-                        <p style="color: green;">
-                        <b>Description from file:<br></b>
-                        Function: <br>
-                        &emsp; count count_distinct sum max min avg sample concat<br>
-                        Field: (drop-down)<br>
-                        Result name (alias): <br>
-                        --------------------------------------------------<br>
-                        Display result [ ]<br>
-                        Result at least (&gt;=): <br>
-                        Result at most (&lt;=):<br>
-
-                        Function ir horizontāla rinda ar radio pogām.<br>
-                        Field saturu nosaka agregātfunkcija; ja ir sum/avg, tad paliek tikai skaitliski atribūti.</p>
+                        </form>                        
                     </div>
                 </div>
 

@@ -382,7 +382,11 @@ Template.AddLink.events({
 			else e.checked = false;
 		});
 
-		$("#aggregate-wizard-form").modal("show");
+		if (document.getElementById("goto-wizard").checked == true ){			
+			$("#aggregate-wizard-form").modal("show");
+		}
+		
+		$('input[id=goto-wizard]').attr('checked', false);		
 
 		return;
 
@@ -395,6 +399,7 @@ Template.AddLink.events({
 			if (e.value == "JOIN") e.checked = true;
 			else e.checked = false;
 		});
+		$('input[id=goto-wizard]').attr('checked', false);
 	},
 
 });
