@@ -215,9 +215,9 @@
                             <p>Field </p>
                             <select name="field-list">
                                 <option name="field-name" value="" selected></option>
-                                <option name="field-name" value="todo">todo</option>
-                                <option name="field-name" value="fill-list">fill list</option>
-                                <option name="field-name" value="code">code</option>
+                                {{#each attList}}
+                                    <option name="field-name" value="{{attribute}}">{{attribute}}</option>
+                                {{/each}}
                             </select>
                         </form>
 

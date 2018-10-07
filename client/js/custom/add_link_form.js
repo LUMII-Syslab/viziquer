@@ -377,12 +377,30 @@ Template.AddLink.events({
 		});	
 
 		if (document.getElementById("goto-wizard").checked == true ){
+			//Alias name
 			if (class_name) {
 				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
 			} else {
 				alert("No class selected - wizard may work unproperly");
 				Template.AggregateWizard.defaultAlias.set("N_count");
 			}
+
+			//Fields						
+			var attr_list = [];
+			var schema = new VQ_Schema();
+
+			if (schema.classExist(class_name)) {
+				var klass = schema.findClassByName(class_name);
+
+				_.each(klass.getAllAttributes(), function(att){
+					attr_list.push({attribute: att["name"]});
+				})
+				attr_list = _.sortBy(attr_list, "attribute");
+			};
+			console.log(attr_list);
+			Template.AggregateWizard.attList.set(attr_list);
+
+			//Show window
 			$("#aggregate-wizard-form").modal("show");
 		}
 
@@ -398,18 +416,30 @@ Template.AddLink.events({
 });
 
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
+Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_class"}]);
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
 		//console.log("AggregateWizard.helpers");
 		return Template.AggregateWizard.defaultAlias.get();
-	}
+	},
+
+	attList: function(){		
+		return Template.AggregateWizard.attList.get();
+	},
 });
 
 Template.AggregateWizard.events({
 
 	"click #ok-aggregate-wizard": function() {
-		// console.log("427: from " + start_elem_id + " to " + created_element);		
+		// console.log("427: from " + start_elem_id + " to " + created_element);
+		var vq_obj = new VQ_Element(created_element);
+		var alias = $('input[id=field-name]').val();
+		var expr = $('option[name=function-name]:selected').val()
+		expr = expr.concat("(", $('option[name=field-name]:selected').val(), ")");
+		//console.log(alias + " " + expr);
+		vq_obj.addAggregateField(expr,alias);
+
 		clearAggregateInput();
 	},
 
@@ -418,7 +448,9 @@ Template.AggregateWizard.events({
 	},
 });
 
+//++++++++++++
 //Functions
+//++++++++++++
 
 function clearAddLinkInput(){
 	$('input[name=stack-radio]:checked').attr('checked', false);
