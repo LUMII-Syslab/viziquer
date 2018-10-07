@@ -188,7 +188,7 @@
         }
     </style>
     <!-- Modal for new document -->
-    <div id="aggregate-wizard-form" class="modal fade">
+    <div id="aggregate-wizard-form" class="modal fade" onload="getDefaultName()">
         
         <div class="modal-dialog">
             <div class="modal-content">
@@ -201,28 +201,29 @@
                         <form class="function-radio-list">
                             <p>Functions: </p>
                             <select name="function-list" >
-                                <option value="count" selected="selected">count</option>
-                                <option value="count_distinct">count_distinct</option>
-                                <option value="sum">sum</option>
-                                <option value="avg">avg</option>
-                                <option value="max">max</option>
-                                <option value="min">min</option>
-                                <option value="sample">sample</option>
-                                <option value="concat">concat</option>
+                                <option name="function-name" value="count" selected>count</option>
+                                <option name="function-name" value="count_distinct">count_distinct</option>
+                                <option name="function-name" value="sum">sum</option>
+                                <option name="function-name" value="avg">avg</option>
+                                <option name="function-name" value="max">max</option>
+                                <option name="function-name" value="min">min</option>
+                                <option name="function-name" value="sample">sample</option>
+                                <option name="function-name" value="concat">concat</option>
                             </select>                                                        
                         </form>                    
                         <form>
                             <p>Field </p>
                             <select name="field-list">
-                                <option value="todo">todo</option>
-                                <option value="fill-list">fill list</option>
-                                <option value="code">code</option>
+                                <option name="field-name" value="" selected></option>
+                                <option name="field-name" value="todo">todo</option>
+                                <option name="field-name" value="fill-list">fill list</option>
+                                <option name="field-name" value="code">code</option>
                             </select>
                         </form>
 
                          <form>
-                             <p>Result name: </p>
-                            <input type="text" id="field-name"><br>
+                            <p>Result name: </p>
+                            <input type="text" id="field-name" value="{{defaultAlias}}"><br>
                         </form>
                         
                         <hr>
@@ -254,4 +255,11 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function getDefaultName() {
+            // document.getElementById("field-name").value = "default";
+            console.log("getDefaultName executed");
+        }
+    </script>
 </template>
