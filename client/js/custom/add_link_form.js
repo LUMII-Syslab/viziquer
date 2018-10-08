@@ -113,22 +113,23 @@ Template.AddLink.helpers({
 
 });
 
+var start_elem_id;
+var created_element;
 
 Template.AddLink.events({
 
-	"click #ok-add-link": function(e) {
+	"click #ok-add-link": function() {
 
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();		
 
-		var name = obj.attr("name");
+		var name = obj.attr("name");		
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
-
 		//start_elem
-		var start_elem_id = Session.get("activeElement");
+		start_elem_id = Session.get("activeElement");
 		var elem_start = Elements.findOne({_id: start_elem_id});
 
 		//Initial coordinate values original box and new box
@@ -220,6 +221,7 @@ Template.AddLink.events({
 			if (elem_id) {
 
 				var end_elem_id = elem_id;
+				created_element = elem_id;
 
 				//New element: Name compartment
 				var end_elem = Elements.findOne({_id: end_elem_id});
@@ -372,27 +374,111 @@ Template.AddLink.events({
 
 			}
 
-		});		
+		});	
 
+		if (document.getElementById("goto-wizard").checked == true ){
+			//Alias name
+			if (class_name) {
+				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+			} else {
+				alert("No class selected - wizard may work unproperly");
+				Template.AggregateWizard.defaultAlias.set("N_count");
+			}
 
-		$('input[name=stack-radio]:checked').attr('checked', false);
-		var defaultRadio = document.getElementsByName("type-radio");
-		_.each(defaultRadio, function(e){
-			if (e.value == "JOIN") e.checked = true;
-			else e.checked = false;
-		});
+			//Fields						
+			var attr_list = [];
+			var schema = new VQ_Schema();
 
+			if (schema.classExist(class_name)) {
+				var klass = schema.findClassByName(class_name);
+
+				_.each(klass.getAllAttributes(), function(att){
+					attr_list.push({attribute: att["name"]});
+				})
+				attr_list = _.sortBy(attr_list, "attribute");
+			};
+			console.log(attr_list);
+			Template.AggregateWizard.attList.set(attr_list);
+
+			//Show window
+			$("#aggregate-wizard-form").modal("show");
+		}
+
+		clearAddLinkInput();
 		return;
 
 	},
 
-	"click #cancel-add-link": function(e) {
-		$('input[name=stack-radio]:checked').attr('checked', false);
-		var defaultRadio = document.getElementsByName("type-radio");
-		_.each(defaultRadio, function(e){
-			if (e.value == "JOIN") e.checked = true;
-			else e.checked = false;
-		});
+	"click #cancel-add-link": function() {
+		clearAddLinkInput();
 	},
 
 });
+
+Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
+Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_class"}]);
+
+Template.AggregateWizard.helpers({
+	defaultAlias: function(){
+		//console.log("AggregateWizard.helpers");
+		return Template.AggregateWizard.defaultAlias.get();
+	},
+
+	attList: function(){		
+		return Template.AggregateWizard.attList.get();
+	},
+});
+
+Template.AggregateWizard.events({
+
+	"click #ok-aggregate-wizard": function() {
+		// console.log("427: from " + start_elem_id + " to " + created_element);
+		var vq_obj = new VQ_Element(created_element);
+		var alias = $('input[id=field-name]').val();
+		var expr = $('option[name=function-name]:selected').val()
+		expr = expr.concat("(", $('option[name=field-name]:selected').val(), ")");
+		//console.log(alias + " " + expr);
+		vq_obj.addAggregateField(expr,alias);
+
+		clearAggregateInput();
+	},
+
+	"click #cancel-aggregate-wizard": function() {
+		clearAggregateInput();
+	},
+});
+
+//++++++++++++
+//Functions
+//++++++++++++
+
+function clearAddLinkInput(){
+	$('input[name=stack-radio]:checked').attr('checked', false);
+	var defaultRadio = document.getElementsByName("type-radio");
+	_.each(defaultRadio, function(e){
+		if (e.value == "JOIN") e.checked = true;
+		else e.checked = false;
+	});
+	
+	$('input[id=goto-wizard]').attr('checked', false);
+}
+
+function clearAggregateInput(){
+	var defaultFunctions = document.getElementsByName("function-name");
+	_.each(defaultFunctions, function(e){
+		if (e.value == "count") e.selected = true;
+		else e.selected = false;
+	});
+
+	var defaultFunctions = document.getElementsByName("field-name");
+	_.each(defaultFunctions, function(e){
+		if (e.value == "") e.selected = true;
+		else e.selected = false;
+	});
+
+	Template.AggregateWizard.defaultAlias.set("N_count");				
+	$('input[id=display-results]:checked').attr('checked', false);
+	document.getElementById("results_least").value = "0";
+	document.getElementById("results-most").value = "1";
+}
+

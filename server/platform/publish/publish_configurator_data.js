@@ -58,10 +58,14 @@ Meteor.publish("ToolVersions_Diagrams_DiagramTypes", function(list) {
 				version_id = version["_id"];
 		}
 
+		var tools_query = {_id: {$ne: get_configurator_tool_id()}};
+
 		//var diagram_type_query1 = {toolId: list["toolId"], versionId: version_id};
 		var diagram_type_query2 = {toolId: get_configurator_tool_id()};
 
-		return [Tools.find({_id: list["toolId"]}),
+		return [
+				// Tools.find({_id: list["toolId"]}),
+				Tools.find(tools_query, {sort: {name: 1},}),
 				
 				ToolVersions.find({toolId: list["toolId"]},
 												{fields: {toolId: 0, createdBy: 0}}),

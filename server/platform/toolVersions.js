@@ -36,10 +36,6 @@ ToolVersions.after.insert(function (user_id, doc) {
 	var last_version_id = last_version["_id"];
 
 	//copies of diagram things
-
-
-	console.log("abc1")
-
 	var diagrams = Diagrams.find({toolId: tool_id, versionId: last_version_id});
 	var elements = Elements.find({toolId: tool_id, versionId: last_version_id});
 	var compartments = Compartments.find({toolId: tool_id, versionId: last_version_id});
@@ -49,8 +45,6 @@ ToolVersions.after.insert(function (user_id, doc) {
 	var compartment_types = CompartmentTypes.find({toolId: tool_id, versionId: last_version_id});
 	var palette_buttons = PaletteButtons.find({toolId: tool_id, versionId: last_version_id});
 	var dialog_tabs = DialogTabs.find({toolId: tool_id, versionId: last_version_id});
-
-	console.log("abc2")
 
 //diagram things
 	//presentation things

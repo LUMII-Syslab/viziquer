@@ -2,18 +2,33 @@
 <template name="AddLink">
 <style>
     div.modal-body {
+        margin-top: 0px;
+        padding-top: 0px;
         overflow-y: auto;
         max-height: 60vh;      
     }
 
+    div.link-type-part {
+        background-color: white;
+        margin-top: 5px;
+        margin-left: 30px;
+    }
+
     hr {
-        margin-bottom: 0.1em;
+        margin-top: 20px;
+        margin-bottom: 0px;
+        margin-left: -5px;
+        border: 0;
+        border-top: 1px solid #c9c7c7;
+        width:95%
     }
 
     .help-tip{
-        position: absolute;
-        top: 0px;
-        right: 0px;
+        position: relative;
+        float: right;
+        margin-left: 25px;
+        margin-top: 0px;
+        margin-right: 25px;
         text-align: center;
         background-color: #66B2FF;
         border-radius: 50%;
@@ -27,28 +42,30 @@
     .help-tip:before{
         content:'?';
         font-weight: bold;
-        color:#fff;
+        color:#fff;       
     }
 
     .help-tip:hover p{
-        display:block;
+        display: block;
     }
 
     .help-tip p{
         display: none;
         text-align: left;
         color: white;
+        border: 1px solid #7F7F7F;
         background-color: #1B0963;        
         padding: 10px;
-        width: 250px;
+        width: 300px;
         position: absolute;
-        right: 0px;
+        right: 10px;
+        z-index: 1000;
     }
 
     mark {
         color: yellow;
         background-color: #1B0963;        
-    }
+    }    
 </style>
 
 	<!-- Modal for new document -->
@@ -60,27 +77,39 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Add Link</h4>
                 </div>
-                <div class="modal-body">
-                    <form id="radioList" class="form-horizontal" role="form">
+                
+                <div class="link-type-part">
+                    <form id="type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
-                            <div class="col-lg-10 connections" name="chain">                       
-                                <label class="label-radio" style="right:0px;">                                 
+                            <div name="chain">                       
+                                <label class="label-radio">                                 
+                                    <div class="help-tip">
+                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
+                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
+                                    </div>
+
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
-                                    Join Link &emsp;
+                                    Join Link <br style="line-height: 200%;">
 
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
-                                    Nested Query Link 
-                                    <div class="help-tip">
-                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
-                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p></div>
+                                    Nested Query Link &emsp; 
+
+                                    <div style="display:inline;">
+                                        <input type="checkbox" id="goto-wizard" value="DISPLAY">
+                                        <span class="custom-checkbox"></span>
+                                        Use Aggregate (e.g. count, etc.) wizard
+                                    </div>                                
+                                    
                                     <hr>
                                 </label>
                             </div>
-                        </div>
-                    </form>
-
+                        </div>                        
+                    </form>                    
+                </div>
+               
+                <div class="modal-body">
                     <form class="form-horizontal" role="form">                        
                         <div class="form-group">                   
                             {{#each associations}}
@@ -112,4 +141,125 @@
 
     </div><!-- /.modal -->
 
+    <script>
+        //Show additional choices
+        var radioListener = document.getElementById("type-choice"); 
+        radioListener.addEventListener("click", checkboxStatus);
+        
+        function checkboxStatus(){
+            var checkedName = $('input[name=type-radio]').filter(':checked').val();
+            // console.log(checkedName);
+            if (checkedName == 'JOIN') {
+                $('input[id=goto-wizard]:checked').attr('checked', false);
+            }
+        }
+    </script>
+</template>
+
+<template name="AggregateWizard">
+    <style>
+        div.wizard-list {
+            margin-top: 5px;
+            margin-left: 20px;                        
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: bold;
+            padding-top: 5px;
+            padding-bottom: : 0px;
+            margin-bottom: 0px;
+        }
+
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: -5px;
+            border: 0;
+            border-top: 1px solid #c9c7c7;
+            width:95%
+        }
+
+        .wizard-list select, #field-name {
+            position: relative;             
+            width:90%;
+            border-radius:5px;
+            font-size: 13px;
+        }
+    </style>
+    <!-- Modal for new document -->
+    <div id="aggregate-wizard-form" class="modal fade" onload="getDefaultName()">
+        
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Aggregate wizard</h4>
+                </div>
+                <div class="modal-bodyFC">                
+                    <div class="wizard-list">                       
+                        <form class="function-radio-list">
+                            <p>Functions: </p>
+                            <select name="function-list" >
+                                <option name="function-name" value="count" selected>count</option>
+                                <option name="function-name" value="count_distinct">count_distinct</option>
+                                <option name="function-name" value="sum">sum</option>
+                                <option name="function-name" value="avg">avg</option>
+                                <option name="function-name" value="max">max</option>
+                                <option name="function-name" value="min">min</option>
+                                <option name="function-name" value="sample">sample</option>
+                                <option name="function-name" value="concat">concat</option>
+                            </select>                                                        
+                        </form>                    
+                        <form>
+                            <p>Field </p>
+                            <select name="field-list">
+                                <option name="field-name" value="" selected></option>
+                                {{#each attList}}
+                                    <option name="field-name" value="{{attribute}}">{{attribute}}</option>
+                                {{/each}}
+                            </select>
+                        </form>
+
+                         <form>
+                            <p>Result name: </p>
+                            <input type="text" id="field-name" value="{{defaultAlias}}"><br>
+                        </form>
+                        
+                        <hr>
+
+                        <form style="color: lightgrey !important;">
+                            <input type="checkbox" id="display-results" value="DISPLAY">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Display result </p>
+                        </form>
+
+                        <form style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;">
+                            <label><p>Result at least (&gt;=): &emsp;</p> </label>
+                            <input id="results_least" type="number" pattern="[0-9]" step="any" value="0" required>
+                            <span class="validity"></span>  
+                        </form>
+
+                        <form style="color: lightgrey !important;">
+                            <label><p>Result at most (&lt;=):&emsp;</p> </label>
+                            <input id="results-most" type="number" pattern="[0-9]" step="any" value="1" required>
+                            <span class="validity"></span>  
+                        </form>                        
+                    </div>
+                </div>
+
+                <div class="modal-footer">                    
+                    <button id="cancel-aggregate-wizard" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-aggregate-wizard" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getDefaultName() {
+            // document.getElementById("field-name").value = "default";
+            console.log("getDefaultName executed");
+        }
+    </script>
 </template>

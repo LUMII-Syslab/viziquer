@@ -7,6 +7,7 @@
         <a class="btn btn-success btn-sm" id="add"><i class="fa fa-plus"></i> Add</a>
         <a class="btn btn-primary btn-sm" id="import-diagram"><i class="fa fa-upload"></i> Import</a>
         <a class="btn btn-primary btn-sm" id="download-diagram" href="{{pathFor 'dump' tool_id=tool_id}}" target="_blank"><i class="fa fa-download"></i> Dump</a>
+        <a class="btn btn-info btn-sm" id="migrate-project"><i class="fa fa-wrench"></i> Migrate</a>
     </div>
 
     <div>
@@ -29,6 +30,8 @@
             </div>
         {{/each}}
     </div>
+
+    {{> migrateProjectForm}}
 
 </template>
 
@@ -106,3 +109,39 @@
 
 </template>
 
+
+<template name="migrateProjectForm">
+
+    <!-- Modal for new document -->
+    <div id="migrate-project-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Migrate</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="diagramType" class="control-label col-sm-2">Migrate To</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="migrate-tools">
+                                    {{#each tools}}
+                                        <option id="{{_id}}" value={{_id}}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="ok-migrate-project-form" type="button" class="btn btn-primary" data-dismiss="modal">{{_ "ok"}}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>

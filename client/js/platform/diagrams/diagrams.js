@@ -61,10 +61,23 @@ Template.diagramsRibbon.events({
 		Utilities.callMeteorMethod("getProjectJson", list, function(resp) {
 
 			if (resp.diagrams) {
-			    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
-				var link = $('<a href="data:' + data + '" download="data.json">download JSON</a>');
-				link.appendTo('#download-hack')
-				link[0].click();
+			 //    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resp, 0, 4));
+				// var link = $('<a href="data:' + data + '" download="data.json">download JSON</a>');
+				// link.appendTo('#download-hack')
+				// link[0].click();
+			
+
+				// let csvContent = "";
+				// res.forEach(function(rowArray) {
+				// 	let row = rowArray.join(",");
+				// 	csvContent += row + "\r\n";
+				// }); 
+
+				var link = document.createElement("a");
+				link.setAttribute("download", "data.json");
+				link.href = URL.createObjectURL(new Blob([JSON.stringify(resp, 0, 4)], {type: "application/json;charset=utf-8;"}));
+				document.body.appendChild(link);
+				link.click();
 			}
 
 		});

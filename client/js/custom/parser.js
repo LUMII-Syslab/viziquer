@@ -865,18 +865,26 @@ function transformBetweenLike(expressionTable){
 		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined' &&
 		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionBETWEEN"]!== 'undefined' &&
 		expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionBETWEEN"]!= null 
-		){
+		){	
 			var temp = expressionTable[key][0];
 			var pe;
-			if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"] === 'undefined'){
+			if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"] === 'undefined'
+			&& typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"] === 'undefined'){
 				pe = {
-                            	"var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
-								"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
-					            "ReferenceToClass": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ReferenceToClass"],
-					            "ValueScope": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ValueScope"],
-					            "FunctionBETWEEN": null,
-					            "FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
-                            }
+                        "var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
+						"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
+					    "ReferenceToClass": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ReferenceToClass"],
+					    "ValueScope": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["ValueScope"],
+					    "FunctionBETWEEN": null,
+					    "FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
+                     }
+			} else if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"] !== 'undefined'){
+				pe = {
+					"PathProperty" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"],
+					"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
+					"FunctionBETWEEN": null,
+					"FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
+               }
 			} else {
 				pe = {
 					"Path" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"],
@@ -2308,4 +2316,62 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		}
 	}
 	return SPARQLstring
+}
+
+
+countCardinality = function(str_expr){	 
+	var schema = new VQ_Schema();
+
+	try {
+      if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
+		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}});
+		  var cardinality = countMaxExpressionCardinality(parsed_exp, -1);
+		  
+		  if(cardinality["isAggregation"] == true) return 1;
+		  if(cardinality["isMultiple"] == true) return -1;
+		  if(cardinality["isMultiple"] == false && cardinality["isAggregation"] == false) return 1;
+		  
+	  } else return -1
+    } catch (e) {
+      console.log(e)
+    } 
+	
+	return -1;
+}
+
+function countMaxExpressionCardinality(expressionTable){
+	var isMultiple = false;
+	var isAggregation = false;
+	
+	for(var key in expressionTable){
+		if(key == "var") {	
+			//if type information is known
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
+				//if maxCardinality is known
+				if(typeof expressionTable[key]['type']['maxCardinality'] !== 'undefined' && expressionTable[key]['type']['maxCardinality'] != null){
+					if(expressionTable[key]['type']['maxCardinality'] == -1 || expressionTable[key]['type']['maxCardinality'] > 1) {
+						isMultiple = true;
+					}
+				//if maxCardinality not known
+				} else {
+					isMultiple = true;
+				}
+			// if type information not known
+			} else if(typeof expressionTable[key]['type'] === 'undefined' || expressionTable[key]['type'] == null )  {
+				isMultiple = true;
+			}
+		}
+	
+		if (key == "Aggregate") {
+			isAggregation = true;
+		}
+		
+		if(isAggregation == false && typeof expressionTable[key] == 'object'){
+			var temp = countMaxExpressionCardinality(expressionTable[key]);
+			if(isAggregation == false) isAggregation = temp["isAggregation"];
+			if(isMultiple == false) isMultiple = temp["isMultiple"];	
+		}
+	}
+	
+	return {isMultiple:isMultiple, isAggregation:isAggregation};
 }
