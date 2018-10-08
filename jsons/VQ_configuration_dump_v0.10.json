@@ -1880,6 +1880,86 @@
             },
             {
               "object": {
+                "_id": "F0WQfhjT0ioKWTkHN",
+                "elementTypeId": "HpJjjgtduvnwPooTv",
+                "diagramTypeId": "oQ4WPmhWQdAmHL68y",
+                "diagramId": "qTzHgycYWdnesdApY",
+                "elementId": "DwwZuE6PfzSguAxaj",
+                "tabIndex": 65,
+                "index": 22,
+                "toolId": "wbFgEL7fKn29fAGxJ",
+                "versionId": "KjAwfkjNrxF6zi5w7",
+                "name": "indirectClassMembership",
+                "label": "Indirect Class Membership",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "true",
+                      "value": "indirect"
+                    },
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "false",
+                      "value": " "
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "828245acc4242ea17517a71b",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetClassNameValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": "VQsetIndirectClassMembershipDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "qLXdQwp9n85FYrAEx"
+              }
+            },
+            {
+              "object": {
                 "_id": "F9WQfgjT9ioKWTkHN",
                 "elementTypeId": "HpJjjgtduvnwPooTv",
                 "diagramTypeId": "oQ4WPmhWQdAmHL68y",

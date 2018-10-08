@@ -58,15 +58,17 @@ Template.schemaTree.events({
 		y_relative_top: ajoo_scene_attrs.container.getBoundingClientRect().top,
 		y_relative_bottom: ajoo_scene_attrs.container.getBoundingClientRect().bottom,
 	};
-	console.log(attrs);
+	//console.log(attrs);
     //// Place in bottom right corner of visible area
 		var loc = {x: attrs.visible_w + attrs.scroll_w - DEFAULT_OFFSET- DEFAULT_BOX_WIDTH,
 			 				 y: attrs.scroll_h + attrs.visible_h-DEFAULT_OFFSET-DEFAULT_BOX_HEIGHT,
 							 width: DEFAULT_BOX_WIDTH,
 							 height: DEFAULT_BOX_HEIGHT};
-  console.log(loc);
+  //console.log(loc);
 		Create_VQ_Element(function(boo) {
-			boo.setName(class_name)
+			boo.setName(class_name);
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 		}, loc);
 
 	},

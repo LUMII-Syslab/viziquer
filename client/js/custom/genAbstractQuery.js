@@ -371,6 +371,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                     isUnion:elem.isUnion(),
                     isUnit:elem.isUnit(),
                     variableName:elem.getVariableName(),
+                    indirectClassMembership: elem.isIndirectClassMembership(),
                     // should not add the link which was used to get to the elem
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                     fields: elem.getFields(),
@@ -429,6 +430,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
       conditions: e.getConditions(),
       orderings: e.getOrderings(),
       groupings: e.getGroupings(),
+      indirectClassMembership: e.isIndirectClassMembership(),
       distinct:e.isDistinct(),
       limit:e.getLimit(),
       offset:e.getOffset(),

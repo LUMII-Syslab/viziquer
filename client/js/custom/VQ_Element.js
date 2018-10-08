@@ -1012,6 +1012,20 @@ VQ_Element.prototype = {
   isRequired: function() {
     return this.getType()=="REQUIRED"
   },
+  // determines whether the indirect class membership should be used (if configured) by translator
+  isIndirectClassMembership: function() {
+    return this.getCompartmentValue("indirectClassMembership")=="true";
+  },
+  // bool ->
+  setIndirectClassMembership: function(indirect) {
+    if (indirect) {
+      this.setNameValue(".. "+this.getName());
+    } else {
+      this.setNameValue(this.getName());
+    };
+    var indirectS = this.boolToString(indirect)
+    this.setCompartmentValueAuto("indirectClassMembership",indirectS)
+  },
   // determines whether the class has distinct property
   isDistinct: function() {
     return this.getCompartmentValue("Distinct")=="true";
@@ -1334,9 +1348,18 @@ VQ_Element.prototype = {
   // sets name
 	// string -->
 	setName: function(name) {
-		   this.setCompartmentValue("Name",name,name);
-	},
+    if (this.isIndirectClassMembership()) {
+      this.setCompartmentValue("Name",name,".. "+name);
+    } else {
+      this.setCompartmentValue("Name",name,name);
+    };
 
+	},
+  // sets name's visual appeareance
+  // string -->
+  setNameValue: function(value) {
+       this.setCompartmentValue("Name",this.getName(),value);
+  },
   // sets type of the class: query, condition
   // string -->
   setClassType: function(type) {
