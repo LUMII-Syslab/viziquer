@@ -1023,11 +1023,10 @@ function transformBetweenLike(expressionTable){
 
 
 function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
-
 	for(var ref in refTable){
 		if(typeof refTable[ref] === 'object'){
 			if(typeof refTable[ref]["optionaPlain"] !== 'undefined' && refTable[ref]["optionaPlain"] == true) isOptionalPlain = true;
-
+			
 			if(reference == ref){
 				if(isOptionalPlain == true) return true;
 			}else {
@@ -1045,13 +1044,37 @@ function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
 	return false;
 }
 
+function checkIfUnderUnion(reference, refTable, isUnderUnion){
+	for(var ref in refTable){
+		if(typeof refTable[ref] === 'object'){
+			if(typeof refTable[ref]["underUnion"] !== 'undefined' && refTable[ref]["underUnion"] == true) isUnderUnion = true;
+
+			if(reference == ref){
+				if(isUnderUnion == true) return true;
+			}else {
+				var result  = false;
+				for(var r in refTable[ref]["classes"]){
+					if(typeof refTable[ref]["classes"][r] === 'object'){
+						var tempResult = checkIfUnderUnion(reference, refTable[ref]["classes"][r], isUnderUnion);
+						if(tempResult == true) result = true;
+					}
+				}
+				if(result == true) return true;
+			}
+		}
+	}
+	return false;
+}
+
 function generateExpression(expressionTable, SPARQLstring, className, alias, generateTriples, isSimpleVariable, isUnderInRelation){
 	for(var key in expressionTable){
 		var visited = 0;
 		
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-			if(checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false) == false){
+			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
+			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
+			if(underOptionalPlain == false && underUnion == false){
 
 				var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
 				if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
@@ -1082,9 +1105,13 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					}
 				}
 				
+				var messageText;
+				if(underOptionalPlain == true) messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'";
+				else messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Union-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.'";
+				
 				messages.push({
 					"type" : "Error",
-					"message" : "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'",
+					"message" : messageText,
 					// "listOfElementId" : [clId],
 					"isBlocking" : true
 				});
