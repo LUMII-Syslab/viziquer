@@ -701,7 +701,7 @@ VQ_SchemaRole.prototype.maxCardinality = null;
 
 
 // VQ_Element class describes the main objects within ViziQuer diagram - Classes and links
-// It is used to traverse objects and retrieve information about them. It does not modify them!
+// It is used to traverse objects and retrieve information about them. Also modify!
 // It hides the ajoo platform specific details allowing to work in ViziQuer abstraction layer
 // all properties (except obj) are functions and they are evaluated upon request
 

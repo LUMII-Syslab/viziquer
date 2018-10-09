@@ -13,6 +13,7 @@ Meteor.methods({
 																										 defaultGroupingSeparator: list.defaultGroupingSeparator,
 																										 directClassMembershipRole: list.directClassMembershipRole,
 																										 indirectClassMembershipRole: list.indirectClassMembershipRole,
+																										 showCardinalities: list.showCardinalities,
 										 }});
 		}
 	},
