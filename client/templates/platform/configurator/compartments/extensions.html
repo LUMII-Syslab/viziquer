@@ -71,6 +71,8 @@
 	        </div>
 		</div>
 
+
+
 		{{#if isDropDown}}
 			<hr>
 			<div class="row">
@@ -85,7 +87,30 @@
 		        </div>
 			</div>
 		{{/if}}
-	{{/with}}
 
+		<hr>
+
+		<div class="row">
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">
+					<div class="form-group">
+						<label for="isVisible">isVisible</label>
+						<input type="text" class="form-control dialog-input" id="isVisible" value="{{isVisible}}">
+						<!-- <span class="help-block">params: (value)<br>return: String</span> -->
+					</div>
+	            </form>
+	        </div>
+			<div class="col-sm-12 col-md-6 col-lg-6">	
+				<form role="form">       
+			        <div class="form-group">
+						<label for="processKeyStroke">processKeyStroke</label>
+						<input type="text" class="form-control dialog-input" id="processKeyStroke" value="{{processKeyStroke}}">
+						<!-- <span class="help-block">params: (value)<br>return: String</span> -->
+					</div>
+				</form>
+			</div>
+		</div>
+		
+	{{/with}}
 </template>
 <!-- End of compartment extensions -->

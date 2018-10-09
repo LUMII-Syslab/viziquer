@@ -2604,7 +2604,7 @@ Schemas.CompartmentTypes = new SimpleSchema({
 
     "extensionPoints.$.extensionPoint": {
         type: String,
-        allowedValues: ["beforeUpdate", "update", "afterUpdate", "dynamicPrefix",
+        allowedValues: ["beforeUpdate", "update", "afterUpdate", "dynamicPrefix", "isVisible", "processKeyStroke",
                         "dynamicDefaultValue", "dynamicSuffix", "dynamicDropDown"],
         label: "CompartmentTypes.extensionPoints.$.extensionPoint",
     },

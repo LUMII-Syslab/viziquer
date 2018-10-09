@@ -39,7 +39,8 @@ function update_comparment_type_extension_point(e) {
 				projectId: Session.get("activeProject"),
 				toolId: Session.get("toolId"),
 				compartmentTypeId: Session.get("compartmentTargetTypeId"),
-				update: update};
+				update: update,
+			};
 
 	Utilities.callMeteorMethod("updateConfiguratorExtension", list);
 }

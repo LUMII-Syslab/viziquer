@@ -1,16 +1,12 @@
 
 Interpreter.customMethods({
 
-	handleKeyStroke: function(e) {
+	handleKeyStroke: function(e, compart) {
 		// console.log("event", e);
 		// console.log("value",elem.value);
 
 		if (e.ctrlKey && e.keyCode == 32) {
 			var elem = document.activeElement;
-			var act_elem = Session.get("activeElement");
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			var text = e.originalEvent.target.value;
 			var continuations = runCompletion(text, Session.get("activeElement"));		
 			
@@ -20,6 +16,33 @@ Interpreter.customMethods({
 			autocomplete(elem, continuations);
 		}
 	},
+
+
+	// handleKeyStroke: function(e) {
+	// 	console.log("event", e);
+	// 	// console.log("value",elem.value);
+
+	// 	if (e.ctrlKey && e.keyCode == 32) {
+	// 		var elem = document.activeElement;
+	// 		var act_elem = Session.get("activeElement");
+	// 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+	// 		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+	// 		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+
+
+	// 		// Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
+
+
+
+	// 		var text = e.originalEvent.target.value;
+	// 		var continuations = runCompletion(text, Session.get("activeElement"));		
+			
+	// 		elem.addEventListener("keyup", ketUpHandler);
+	// 		elem.addEventListener("click", clickHandler);
+			
+	// 		autocomplete(elem, continuations);
+	// 	}
+	// },
 
 });
 
