@@ -37,7 +37,14 @@ Template.dialogTabContent.events({
 
 	'keydown .dialog-input': function(e) {
 		e.stopPropagation();
-		Interpreter.execute("handleKeyStroke", [e]);
+		var compart_id = $(e.target).attr("id");
+		var compart = Compartments.findOne({_id: compart_id});
+		if (!compart) {
+			return;
+		}
+
+		var compart_type = CompartmentTypes.findOne({_id: compart.compartmentTypeId,});
+		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e, compart]);
 	},
 
 	'change .dialog-selection' : function(e) {
@@ -320,10 +327,14 @@ function add_template_helpers(id) {
 
 			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
 				function(compart_type) {
+
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"],
 						 									elementId: Session.get("activeElement")});
 
-					return render_dialog_fields(compart_type, compartment);
+					var is_visible = check_compartment_visibility(compart_type, compartment);
+					if (is_visible) {
+						return render_dialog_fields(compart_type, compartment);
+					}
 			});
 		},
 
@@ -714,12 +725,35 @@ function add_template_helpers(id) {
 			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
-					return Dialog.renderDialogFields(compart_type, compartment);
+
+					var is_visible = check_compartment_visibility(compart_type, compartment);
+					if (is_visible) {
+						return Dialog.renderDialogFields(compart_type, compartment);
+					}
 			});
 		},
 
 	});
 }
+
+
+
+function check_compartment_visibility(compart_type, compartment) {
+	var is_visible = true;
+	var extension_point_name = "isVisible";
+
+	var is_visible_extension_point = _.find(compart_type.extensionPoints, function(extension_point) {
+										return extension_point.extensionPoint == extension_point_name;
+									});
+
+	if (is_visible_extension_point) {
+		is_visible = Interpreter.executeExtensionPoint(compart_type, extension_point_name, [compartment]);
+	}
+
+	return is_visible;
+}
+
+
 
 function update_compartment_from_sub_fields(parent) {
 

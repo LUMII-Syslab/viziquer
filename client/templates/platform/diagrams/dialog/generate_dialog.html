@@ -103,6 +103,9 @@
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 				placeholder="{{_placeholder}}" >
 			</div>
+			{{#if description}}
+				<span class="help-block">{{description}}</span>
+			{{/if}}
 		{{/if}}
 
 		{{#if textarea}}
@@ -112,10 +115,11 @@
 				style="overflow:auto;resize:none;" id="{{compartmentId}}"
 				rows="{{_rows}}" disabled="{{disabled}}" placeholder="{{_placeholder}}"
 				value="{{field_value}}"></textarea>
-					{{#if description}}
-						<span class="help-block">{{description}}</span>
-					{{/if}}
 			</div>
+			{{#if description}}
+				<span class="help-block">{{description}}</span>
+			{{/if}}
+
 		{{/if}}
 
 		{{#if selection}}
@@ -130,11 +134,11 @@
 						elementStyleId="{{elementStyle}}"
 						compartmentStyleId="{{compartmentStyle}}">{{input}}</option>
 					{{/each}}
-
-					{{#if description}}
-						<span class="help-block">{{description}}</span>
-					{{/if}}
 				</select>
+
+				{{#if description}}
+					<span class="help-block">{{description}}</span>
+				{{/if}}
 			</div>
 		{{/if}}
 

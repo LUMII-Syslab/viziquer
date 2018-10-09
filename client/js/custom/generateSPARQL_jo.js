@@ -526,7 +526,7 @@ function generateIds(rootClass){
 
 	//go through all root class children classes
 	_.each(rootClass["children"],function(subclazz) {
-		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"]);
+		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"]);
 		idTable.concat(temp["idTable"]);
 		referenceTable[rootClassId]["classes"].push(temp["referenceTable"]);
 	})
@@ -540,7 +540,7 @@ function generateIds(rootClass){
 // idTable - table with unique class names, generated so far
 // counter - counter for classes with equals names
 // parentClassId - parent class identificator
-function generateClassIds(clazz, idTable, counter, parentClassId){
+function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion){
 	var referenceTable = [];
 
 	// if instance is defined, use it
@@ -592,13 +592,16 @@ function generateClassIds(clazz, idTable, counter, parentClassId){
 
 	referenceTable[className] = [];
 	referenceTable[className]["type"] = linkType;
+	referenceTable[className]["underUnion"] = parentClassIsUnion;
 
 	if(clazz["linkType"] == "OPTIONAL" && clazz["isSubQuery"] != true && clazz["isGlobalSubQuery"] != true) referenceTable[className]["optionaPlain"] = true;
 	else referenceTable[className]["optionaPlain"] = false;
 
 	referenceTable[className]["classes"] = [];
 	_.each(clazz["children"],function(subclazz) {
-		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"]);
+		var parentClassIsUnionTemp = clazz["isUnion"];
+		if(parentClassIsUnion == true) parentClassIsUnionTemp = true;
+		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp);
 		idTable.concat(temp["idTable"]);
 		referenceTable[className]["classes"].push(temp["referenceTable"]);
 	})
@@ -893,6 +896,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
 
 		var resultClass = parse_attrib(clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, "class");
+		
+		
 		counter = resultClass["counter"]
 		var temp = [];
 		messages = messages.concat(resultClass["messages"]);
@@ -931,6 +936,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			}
 			//console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
 			var result = parse_attrib(field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable);
+			
 			messages = messages.concat(result["messages"]);
 			//console.log("ATTRIBUTE", result);
 			sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
@@ -1203,7 +1209,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				});
 			}
 
-			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){
+			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){	
 				var subject, preditate, object;
 				if(subclazz["linkIdentification"]["localName"].startsWith('?')) {
 					if(subclazz["linkIdentification"]["localName"].startsWith('??') == true) {
