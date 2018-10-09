@@ -504,6 +504,30 @@ Interpreter.customMethods({
 		}
 	},
 
+	VQsetClassNameValue: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			      var elem = new VQ_Element(c["elementId"]);
+            if (elem.isIndirectClassMembership()) {
+							elem.setNameValue(".. "+elem.getName());
+						} else {
+							elem.setNameValue(elem.getName());
+						};
+		};
+	},
+
+	VQsetIndirectClassMembershipDefaultValue: function(params) {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		console.log("A1");
+		if (proj && proj.indirectClassMembershipRole) {
+       console.log("A2");  
+			 return "true";
+		} else {
+       console.log("A3");
+			 return "false";
+		 };
+	},
+
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
