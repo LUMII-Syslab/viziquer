@@ -918,6 +918,10 @@
                 "procedure": "AddAttribute"
               },
               {
+                "item": "Add Condition ...",
+                "procedure": "AddCondition"
+              },
+              {
                 "item": "Cut",
                 "procedure": "Cut"
               },

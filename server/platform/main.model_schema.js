@@ -232,6 +232,12 @@ Schemas.Projects = new SimpleSchema({
 			  optional: true,
 		},
 
+		showCardinalities: {
+ 			 type: String,
+ 			 label: "Projects.showCardinalities",
+ 			 optional: true,
+ 	  },
+
     category: {
         type: String,
         label: "Projects.category",
