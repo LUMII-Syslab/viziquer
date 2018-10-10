@@ -23,6 +23,7 @@ var parameterTable = [];
 var idTable = [];
 var messages = [];
 var classTable = [];
+var classMembership = "xsd:type";
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
        "owl:":"http://www.w3.org/2002/07/owl#",
@@ -53,7 +54,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -76,10 +77,11 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct){
 	idTable = idT;
 	messages = [];
 	classTable = ct;
+	classMembership = memS;
 }
 
-parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable);
+parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -118,13 +120,13 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, parType) {
+parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType) {
 	
 	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS);
 	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -1458,8 +1460,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isVar"] != true) inFilter = true;
 						
 						if(isSimpleVariable == true) {
-							if(parseType == "class")tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":className, "inFilter":inFilter});
-						}else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":variable, "inFilter":inFilter});
+							if(parseType == "class")tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : classMembership, "object":className, "inFilter":inFilter});
+						}else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : classMembership, "object":variable, "inFilter":inFilter});
 	
 					}
 					else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && isSimpleVariable == true && variable != varName){
@@ -1938,7 +1940,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							var varTemp;
 							if(tripleTable[k]["var"] == VarL)varTemp = VarR;
 							else varTemp = VarL;
-							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp });
+							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " " });
 						}
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
