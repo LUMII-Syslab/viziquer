@@ -65,13 +65,13 @@ Template.diagramsRibbon.events({
 				// var link = $('<a href="data:' + data + '" download="data.json">download JSON</a>');
 				// link.appendTo('#download-hack')
 				// link[0].click();
-			
+
 
 				// let csvContent = "";
 				// res.forEach(function(rowArray) {
 				// 	let row = rowArray.join(",");
 				// 	csvContent += row + "\r\n";
-				// }); 
+				// });
 
 				var link = document.createElement("a");
 				link.setAttribute("download", "data.json");
@@ -647,7 +647,8 @@ Template.ontologySettings.events({
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
 					defaultGroupingSeparator: $("#default-grouping-separator").val(),
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
-					indirectClassMembershipRole: $("#indirect-class-membership-role").val()
+					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
+					showCardinalities: $("#show-cardinalities").is(":checked")
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -670,6 +671,7 @@ Template.ontologySettings.events({
 		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
+		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
 	 }
 
 	},
@@ -766,6 +768,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return proj.indirectClassMembershipRole;
+		}
+	},
+	showCardinalities: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.showCardinalities=="true");
 		}
 	},
 });

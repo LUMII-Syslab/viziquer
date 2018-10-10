@@ -23,6 +23,7 @@ var parameterTable = [];
 var idTable = [];
 var messages = [];
 var classTable = [];
+var classMembership = "xsd:type";
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
        "owl:":"http://www.w3.org/2002/07/owl#",
@@ -53,7 +54,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -76,10 +77,11 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct){
 	idTable = idT;
 	messages = [];
 	classTable = ct;
+	classMembership = memS;
 }
 
-parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable);
+parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -118,13 +120,13 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, parType) {
+parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType) {
 	
 	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS);
 	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -1023,11 +1025,10 @@ function transformBetweenLike(expressionTable){
 
 
 function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
-
 	for(var ref in refTable){
 		if(typeof refTable[ref] === 'object'){
 			if(typeof refTable[ref]["optionaPlain"] !== 'undefined' && refTable[ref]["optionaPlain"] == true) isOptionalPlain = true;
-
+			
 			if(reference == ref){
 				if(isOptionalPlain == true) return true;
 			}else {
@@ -1045,13 +1046,37 @@ function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
 	return false;
 }
 
+function checkIfUnderUnion(reference, refTable, isUnderUnion){
+	for(var ref in refTable){
+		if(typeof refTable[ref] === 'object'){
+			if(typeof refTable[ref]["underUnion"] !== 'undefined' && refTable[ref]["underUnion"] == true) isUnderUnion = true;
+
+			if(reference == ref){
+				if(isUnderUnion == true) return true;
+			}else {
+				var result  = false;
+				for(var r in refTable[ref]["classes"]){
+					if(typeof refTable[ref]["classes"][r] === 'object'){
+						var tempResult = checkIfUnderUnion(reference, refTable[ref]["classes"][r], isUnderUnion);
+						if(tempResult == true) result = true;
+					}
+				}
+				if(result == true) return true;
+			}
+		}
+	}
+	return false;
+}
+
 function generateExpression(expressionTable, SPARQLstring, className, alias, generateTriples, isSimpleVariable, isUnderInRelation){
 	for(var key in expressionTable){
 		var visited = 0;
 		
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
-			if(checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false) == false){
+			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
+			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
+			if(underOptionalPlain == false && underUnion == false){
 
 				var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
 				if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
@@ -1082,9 +1107,13 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					}
 				}
 				
+				var messageText;
+				if(underOptionalPlain == true) messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'";
+				else messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Union-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.'";
+				
 				messages.push({
 					"type" : "Error",
-					"message" : "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'",
+					"message" : messageText,
 					// "listOfElementId" : [clId],
 					"isBlocking" : true
 				});
@@ -1431,8 +1460,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isVar"] != true) inFilter = true;
 						
 						if(isSimpleVariable == true) {
-							if(parseType == "class")tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":className, "inFilter":inFilter});
-						}else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : "a", "object":variable, "inFilter":inFilter});
+							if(parseType == "class")tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : classMembership, "object":className, "inFilter":inFilter});
+						}else tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName, "prefixedName" : classMembership, "object":variable, "inFilter":inFilter});
 	
 					}
 					else if(expressionTable[key]['kind'] == "CLASS_ALIAS" && isSimpleVariable == true && variable != varName){
@@ -1911,7 +1940,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							var varTemp;
 							if(tripleTable[k]["var"] == VarL)varTemp = VarR;
 							else varTemp = VarL;
-							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp });
+							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " " });
 						}
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
