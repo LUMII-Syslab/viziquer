@@ -199,6 +199,12 @@ Template.show_multi_field_form.events({
 		Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 	},
 
+
+	"click .yellow-button": function(e) {
+		console.log("click in yellow button", e)
+
+	},
+
 });
 
 Template.value_from_subcompartments.helpers({
