@@ -25,12 +25,11 @@
 
     .help-tip{
         position: relative;
-        float: right;
-        margin-left: 25px;
-        margin-top: 0px;
-        margin-right: 25px;
+        display:inline;
+        padding-right: 3px;
+        padding-left: 5px;
         text-align: center;
-        background-color: #66B2FF;
+        background-color: silver;
         border-radius: 50%;
         width: 24px;
         height: 24px;
@@ -54,17 +53,13 @@
         text-align: left;
         color: white;
         border: 1px solid #7F7F7F;
-        background-color: #1B0963;        
+        background-color: slategrey; 
+        border-radius: 5px;       
         padding: 10px;
         width: 300px;
         position: absolute;
-        right: 10px;
+        left: 10px;
         z-index: 1000;
-    }
-
-    mark {
-        color: yellow;
-        background-color: #1B0963;        
     }    
 </style>
 
@@ -82,19 +77,20 @@
                     <form id="type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
                             <div name="chain">                       
-                                <label class="label-radio">                                 
-                                    <div class="help-tip">
-                                        <p><mark>Join Link</mark> – Use to join linked instances of both classes. <br>
-                                        <mark>Nested Query Link</mark> – Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
-                                    </div>
-
+                                <label class="label-radio">
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
-                                    Join Link <br style="line-height: 200%;">
+                                    Join Link &ensp;
+                                    <div class="help-tip">
+                                        <p>Use to join linked instances of both classes.</p>
+                                    </div><br style="line-height: 200%;">
 
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
-                                    Nested Query Link &emsp; 
+                                    Nested Query Link &ensp;
+                                    <div class="help-tip">
+                                        <p>Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
+                                    </div>  &emsp; &emsp;
 
                                     <div style="display:inline;">
                                         <input type="checkbox" id="goto-wizard" value="DISPLAY">
