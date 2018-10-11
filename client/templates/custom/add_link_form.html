@@ -196,7 +196,7 @@
                     <div class="wizard-list">                       
                         <form class="function-radio-list">
                             <p>Functions: </p>
-                            <select name="function-list" >
+                            <select name="function-list" id="function-list">
                                 <option name="function-name" value="count" selected>count</option>
                                 <option name="function-name" value="count_distinct">count_distinct</option>
                                 <option name="function-name" value="sum">sum</option>
@@ -232,13 +232,13 @@
 
                         <form style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;">
                             <label><p>Result at least (&gt;=): &emsp;</p> </label>
-                            <input id="results_least" type="number" pattern="[0-9]" step="any" value="0" required>
+                            <input id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>
 
                         <form style="color: lightgrey !important;">
                             <label><p>Result at most (&lt;=):&emsp;</p> </label>
-                            <input id="results-most" type="number" pattern="[0-9]" step="any" value="1" required>
+                            <input id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>                        
                     </div>
