@@ -724,6 +724,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 // if(having != "") SPARQL_text = SPARQL_text + having + "\n";
 
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
+		
 			 var temp = whereInfo["triples"];
 			 temp = temp.concat(whereInfo["links"]);
 			 temp = temp.concat(whereInfo["filters"]);
@@ -1598,8 +1599,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	var links = [];
 	var bind = [];
 	var messages = [];
+	var attributesAggerations = [];
+	
 
 	// whereInfo.push(sparqlTable["classTriple"]);
+	
+	//full SPARQL starts with SELECT
+	if(sparqlTable["fullSPARQL"]!= null){
+		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") == true) attributesAggerations.unshift("{" + sparqlTable["fullSPARQL"] + "}");
+	}
 
 	// simpleTriples
 	for (var expression in sparqlTable["simpleTriples"]){
@@ -1617,15 +1625,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 			}
 			if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bind"]);
 			if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bound"]);
-			whereInfo.push("OPTIONAL{" + sparqlTable["classTriple"] + "\n" + timeExpression.join("\n") + "}");
+			attributesAggerations.push("OPTIONAL{" + sparqlTable["classTriple"] + "\n" + timeExpression.join("\n") + "}");
 		}
 		else {
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
-						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ?')) whereInfo.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
-						else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) whereInfo.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
-						else whereInfo.push("OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}");
+						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ?')) attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
+						else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
+						else attributesAggerations.push("OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}");
 					}
 				}
 			}
@@ -1635,33 +1643,12 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		//if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') whereInfo.push(sparqlTable["simpleTriples"][expression]["bound"]);
 
 	}
-	// expressionTriples
-	/*for (var expression in sparqlTable["expressionTriples"]){
-		if(typeof sparqlTable["expressionTriples"][expression] === 'object'){
-			for (var triple in sparqlTable["expressionTriples"][expression]["triple"]){
-				if(typeof sparqlTable["expressionTriples"][expression]["triple"][triple] === 'string') whereInfo.push("OPTIONAL{" + sparqlTable["expressionTriples"][expression]["triple"][triple] + "}");
-			}
-		}
-		if(typeof sparqlTable["expressionTriples"][expression]["bind"]  === 'string') whereInfo.push(sparqlTable["expressionTriples"][expression]["bind"]);
-		if(typeof sparqlTable["expressionTriples"][expression]["bound"]  === 'string') whereInfo.push(sparqlTable["expressionTriples"][expression]["bound"]);
-	}
-
-	// functionTriples
-	for (var expression in sparqlTable["functionTriples"]){
-		if(typeof sparqlTable["functionTriples"][expression] === 'object'){
-			for (var triple in sparqlTable["functionTriples"][expression]["triple"]){
-				if(typeof sparqlTable["functionTriples"][expression]["triple"][triple] === 'string') whereInfo.push("OPTIONAL{" + sparqlTable["functionTriples"][expression]["triple"][triple] + "}");
-			}
-		}
-		if(typeof sparqlTable["functionTriples"][expression]["bind"]  === 'string') whereInfo.push(sparqlTable["functionTriples"][expression]["bind"]);
-		if(typeof sparqlTable["functionTriples"][expression]["bound"]  === 'string') whereInfo.push(sparqlTable["functionTriples"][expression]["bound"]);
-	}*/
-
+	
 	// aggregateTriples
 	for (var expression in sparqlTable["aggregateTriples"]){
 		if(typeof sparqlTable["aggregateTriples"][expression] === 'object'){
 			for (var triple in sparqlTable["aggregateTriples"][expression]["triple"]){
-				if(typeof sparqlTable["aggregateTriples"][expression]["triple"][triple] === 'string') whereInfo.push("OPTIONAL{" + sparqlTable["aggregateTriples"][expression]["triple"][triple] + "}");
+				if(typeof sparqlTable["aggregateTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push("OPTIONAL{" + sparqlTable["aggregateTriples"][expression]["triple"][triple] + "}");
 			}
 		}
 		// if(typeof sparqlTable["aggregateTriples"][expression]["bind"]  === 'string') whereInfo.push(sparqlTable["aggregateTriples"][expression]["bind"]);
@@ -1671,7 +1658,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	// localAggregateSubQueries
 	for (var expression in sparqlTable["localAggregateSubQueries"]){
 		if(typeof sparqlTable["localAggregateSubQueries"][expression] === 'string'){
-			whereInfo.push(sparqlTable["localAggregateSubQueries"][expression]);
+			attributesAggerations.push(sparqlTable["localAggregateSubQueries"][expression]);
 		}
 	}
 
@@ -1680,7 +1667,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		if(typeof sparqlTable["filterTriples"][expression] === 'object'){
 			for (var triple in sparqlTable["filterTriples"][expression]["triple"]){
 				 //if(typeof sparqlTable["filterTriples"][expression]["triple"][triple] === 'string') whereInfo.push("OPTIONAL{" + sparqlTable["filterTriples"][expression]["triple"][triple] + "}");
-				if(typeof sparqlTable["filterTriples"][expression]["triple"][triple] === 'string') whereInfo.push(sparqlTable["filterTriples"][expression]["triple"][triple]);
+				if(typeof sparqlTable["filterTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push(sparqlTable["filterTriples"][expression]["triple"][triple]);
 			}
 		}
 		if(typeof sparqlTable["filterTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bind"]);
@@ -1688,7 +1675,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		//if(typeof sparqlTable["filterTriples"][expression]["bound"]  === 'string') whereInfo.push(sparqlTable["filterTriples"][expression]["bound"]);
 	}
 
-	whereInfo = whereInfo.concat(bind);
+	attributesAggerations = attributesAggerations.concat(bind);
 
 	//filters
 	for (var expression in sparqlTable["filters"]){
@@ -1709,9 +1696,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		}
 	}
 
-	if(sparqlTable["fullSPARQL"]!= null){
-		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") == true) whereInfo.unshift("{" + sparqlTable["fullSPARQL"] + "}");
-	}
+	
 
 	if(typeof sparqlTable["subClasses"] !=='undefined'){
 		for (var subclass in sparqlTable["subClasses"]){
@@ -1869,6 +1854,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	}
 
 	if(typeof sparqlTable["classTriple"] !== 'undefined')whereInfo.unshift(sparqlTable["classTriple"]);
+	
+	whereInfo = whereInfo.concat(attributesAggerations);
 
 	// remove duplicates
 	var whereInfo = whereInfo.filter(function (el, i, arr) {

@@ -240,7 +240,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
              symbol_table[f.alias].type = var_obj["type"];
            }
          }
-		if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+		if (f.requireValues && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
@@ -255,9 +255,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
-           var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-          
-		   if ((var_obj["kind"]=="PROPERTY_ALIAS" || var_obj["kind"]=="CLASS_ALIAS") && obj_class.instanceAlias != f.exp) {
+            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+		    if ((var_obj["kind"]=="PROPERTY_ALIAS" || var_obj["kind"]=="CLASS_ALIAS") && obj_class.instanceAlias != f.exp) {
             var expression = f.exp;
 			if (f.alias) expression = f.alias;
 			var condition = {exp:"EXISTS(" + expression + ")"};
