@@ -450,36 +450,82 @@ Template.AggregateWizard.events({
 
 	"click #ok-aggregate-wizard": function() {
 		// console.log("427: from " + start_elem_id + " to " + created_element);
-		var vq_obj = new VQ_Element(created_element);
-		var alias = $('input[id=field-name]').val();
+		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
 		expr = expr.concat("(", $('option[name=field-name]:selected').val(), ")");
 		//console.log(alias + " " + expr);
-		vq_obj.addAggregateField(expr,alias);
+		vq_end_obj.addAggregateField(expr,alias);
+
+		var displayCase = document.getElementById("display-results").checked;
+		var minValue = $('input[id=results_least]').val();
+		var maxValue = $('input[id=results-most]').val();
+		console.log(displayCase, minValue, maxValue);
+		if (displayCase || (minValue != "") || (maxValue != "")) {
+			console.log("display or min/max");
+			var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
+			if (alias == null || alias == "") {
+				var cName = Template.AggregateWizard.startClassName.curValue;
+				var newFunction = $('option[name=function-name]:selected').val();
+				alias = cName.charAt(0) + "_" + newFunction;
+			}
+			//addField: function(exp,alias,requireValues,groupValues,isInternal)
+			if (displayCase) vq_start_obj.addField(alias,);
+			if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
+			if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
+		} else {console.log("no dismlay or min/max");}
 
 		clearAggregateInput();
+		return;
 	},
 
 	"click #cancel-aggregate-wizard": function() {
 		clearAggregateInput();
+		return;
 	},
 
 	"change #function-list": function() {
-		// start_elem_id
-		// created_element
 		console.log("changed");
 		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
-		var alias = $('input[id=field-name]').val();
-		var newFunction = $('option[name=function-name]:selected').val()
+		var alias = $('input[id=alias-name]').val();
+		var newFunction = $('option[name=function-name]:selected').val();
+		var fieldName = $('option[name=field-name]:selected').val();
 		var cName = Template.AggregateWizard.startClassName.curValue;
-		console.log(cName.charAt(0));
+		console.log(cName.charAt(0), fieldName.length);
 		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
 		_.each(functionArray, function(f) {
-			var fName = cName.charAt(0) + "_" + f;
-			if (alias == fName) {				
+			var defaultName = cName.charAt(0) + "_" + f;
+			var defaultFieldName = f + "_" + fieldName;
+			if (alias == defaultName) {				
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+			} else if (alias == defaultFieldName) {
+				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
 			}
 		})
+		return;
+	},
+
+	"change #field-list": function() {
+		console.log("changed field");
+		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+		var alias = $('input[id=alias-name]').val();
+		var newFunction = $('option[name=function-name]:selected').val();
+		var fieldName = $('option[name=field-name]:selected').val();
+		var cName = Template.AggregateWizard.startClassName.curValue;
+		console.log(cName.charAt(0), fieldName.length);
+		var functionArray = Template.AggregateWizard.attList.curValue;
+		console.log(functionArray);		
+		_.each(functionArray, function(f) {
+			var defaultName = cName.charAt(0) + "_" + newFunction;
+			var defaultFieldName = newFunction + "_" + f.attribute;
+			console.log(alias, defaultName, defaultFieldName, fieldName.length);
+			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {				
+				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+			} else if ((alias == defaultName || alias == defaultFieldName) && fieldName.length != 0) {
+				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
+			}
+		})
+		return;
 	},
 });
 
@@ -513,7 +559,7 @@ function clearAggregateInput(){
 
 	Template.AggregateWizard.defaultAlias.set("N_count");				
 	$('input[id=display-results]:checked').attr('checked', false);
-	document.getElementById("results_least").value = "0";
-	document.getElementById("results-most").value = "1";
+	document.getElementById("results_least").value = "";
+	document.getElementById("results-most").value = "";
 }
 
