@@ -35,7 +35,7 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", true);
 	},
 
-	'keydown .dialog-input': function(e) {
+	'keypress .dialog-input': function(e) {
 		e.stopPropagation();
 		var compart_id = $(e.target).attr("id");
 		var compart = Compartments.findOne({_id: compart_id});
