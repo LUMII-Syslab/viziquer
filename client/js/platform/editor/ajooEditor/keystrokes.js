@@ -71,7 +71,7 @@
 
 				//if procedure was executed, then stops default browser behaviour
 				if (is_procedure_executed) {
-					// e.preventDefault();
+					e.preventDefault();
 					return false;
 				}
 			}
@@ -110,29 +110,29 @@ function processKeyPress(e, key_strokes) {
 //encods the keystrokes specified in the configurator.
 //They are specified as strings in the form - "key1 key2 key3" and returns key codes
 function encode_keystrokes(key_strokes) {
+	var encoded_keystrokes = [];
 
 	//each keystroke string is splited and each key is stored in the array
-	return _.map(key_strokes, function(key_stroke) {
-				var item = {};
-				item["procedure"] = key_stroke["procedure"];
+	$.each(key_strokes, function(index, key_stroke) {
+		var item = {};
+		item["procedure"]= key_stroke["procedure"];
 
-				//the specified key stroke combination has to be in the form - "key1 key2 key3"
-				var keys = key_stroke["keyStroke"].split(" ");
-				if (keys[0] == 'Ctrl') {
-					item["keys"] = {ctrl: true, keyCode: keys[1].charCodeAt(0)};
-				}
-				else {
-					//delete has a special key code
-					if (keys[0] == 'Delete') {
-						item["keys"] = {ctrl: false, keyCode: 46};
-					}
-					
-					//"standart" key stroke
-					else {
-						item["keys"] = {ctrl: false, keyCode: keys[0].charCodeAt(0)};
-					}
-				}
+		//the specified key stroke combination has to be in the form - "key1 key2 key3"
+		var keys = key_stroke["keyStroke"].split(" ");
 
-				return item;
-			});
+		if (keys[0] == 'Ctrl')
+			item["keys"] = {ctrl: true, keyCode: keys[1].charCodeAt(0)};
+		else
+			//delete has a special key code
+			if (keys[0] == 'Delete')
+				item["keys"] = {ctrl: false, keyCode: 46};
+			
+			//"standart" key stroke
+			else
+				item["keys"] = {ctrl: false, keyCode: keys[0].charCodeAt(0)};
+
+		encoded_keystrokes.push(item);
+	});
+	
+	return encoded_keystrokes;
 }
