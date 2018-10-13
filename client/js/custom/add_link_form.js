@@ -130,6 +130,7 @@ Template.AddLink.events({
 
 		//start_elem
 		start_elem_id = Session.get("activeElement");
+		Template.AggregateWizard.startClassId.set(start_elem_id);
 		var elem_start = Elements.findOne({_id: start_elem_id});
 
 		//Initial coordinate values original box and new box
@@ -222,6 +223,7 @@ Template.AddLink.events({
 
 				var end_elem_id = elem_id;
 				created_element = elem_id;
+				Template.AggregateWizard.endClassId.set(elem_id);
 
 				//New element: Name compartment
 				var end_elem = Elements.findOne({_id: end_elem_id});
@@ -376,20 +378,15 @@ Template.AddLink.events({
 
 		});	
 
-		if (document.getElementById("goto-wizard").checked == true ){
-			//Alias name
-			if (class_name) {
-				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
-			} else {
-				alert("No class selected - wizard may work unproperly");
-				Template.AggregateWizard.defaultAlias.set("N_count");
-			}
+		if (document.getElementById("goto-wizard").checked == true ){			
 
 			//Fields						
 			var attr_list = [];
 			var schema = new VQ_Schema();
 
 			if (schema.classExist(class_name)) {
+				Template.AggregateWizard.startClassName.set(class_name);
+
 				var klass = schema.findClassByName(class_name);
 
 				_.each(klass.getAllAttributes(), function(att){
@@ -397,12 +394,17 @@ Template.AddLink.events({
 				})
 				attr_list = _.sortBy(attr_list, "attribute");
 			};
-			console.log(attr_list);
+			console.log(attr_list);			
 			Template.AggregateWizard.attList.set(attr_list);
 
-			//Show window
-			$("#aggregate-wizard-form").modal("show");
-		}
+			//Alias name
+			if (class_name) {
+				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+				$("#aggregate-wizard-form").modal("show");
+			} else {
+				alert("No class selected - wizard may work unproperly");
+			}								
+		}		
 
 		clearAddLinkInput();
 		return;
@@ -416,7 +418,10 @@ Template.AddLink.events({
 });
 
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
-Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_class"}]);
+Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
+Template.AggregateWizard.startClassName = new ReactiveVar("No start name");
+Template.AggregateWizard.endClassId = new ReactiveVar("No end");
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
@@ -426,6 +431,18 @@ Template.AggregateWizard.helpers({
 
 	attList: function(){		
 		return Template.AggregateWizard.attList.get();
+	},
+
+	startClassId: function(){		
+		return Template.AggregateWizard.startClassId.get();
+	},
+
+	startClassName: function(){		
+		return Template.AggregateWizard.startClassId.get();
+	},
+
+	endClassId: function(){		
+		return Template.AggregateWizard.endClassId.get();
 	},
 });
 
@@ -445,6 +462,24 @@ Template.AggregateWizard.events({
 
 	"click #cancel-aggregate-wizard": function() {
 		clearAggregateInput();
+	},
+
+	"change #function-list": function() {
+		// start_elem_id
+		// created_element
+		console.log("changed");
+		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+		var alias = $('input[id=field-name]').val();
+		var newFunction = $('option[name=function-name]:selected').val()
+		var cName = Template.AggregateWizard.startClassName.curValue;
+		console.log(cName.charAt(0));
+		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
+		_.each(functionArray, function(f) {
+			var fName = cName.charAt(0) + "_" + f;
+			if (alias == fName) {				
+				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
+			}
+		})
 	},
 });
 

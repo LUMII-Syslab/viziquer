@@ -1404,10 +1404,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				variableNamesAll[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : variableNamesClass[varName.substr(1)]["nameIsTaken"], "counter" : 0, "isVar" : variableNamesClass[varName.substr(1)]["isVar"]};
 					
 			}
-			
-			
-			
-			
+
 			visited = 1;
 		}
 		
