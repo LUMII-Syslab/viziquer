@@ -37,14 +37,11 @@ Template.dialogTabContent.events({
 
 	'keypress .dialog-input': function(e) {
 		e.stopPropagation();
-		var compart_id = $(e.target).attr("id");
-		var compart = Compartments.findOne({_id: compart_id});
-		if (!compart) {
-			return;
-		}
+		
+		var compart_type_id = $(e.target).closest(".compart-type").attr("id");
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 
-		var compart_type = CompartmentTypes.findOne({_id: compart.compartmentTypeId,});
-		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e, compart]);
+		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
 	},
 
 	'change .dialog-selection' : function(e) {
