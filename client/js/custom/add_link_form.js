@@ -449,7 +449,7 @@ Template.AggregateWizard.helpers({
 Template.AggregateWizard.events({
 
 	"click #ok-aggregate-wizard": function() {
-		// console.log("427: from " + start_elem_id + " to " + created_element);
+		// console.log("427: from " + start_elem_id + " to " + created_element);		
 		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
@@ -489,9 +489,34 @@ Template.AggregateWizard.events({
 		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var newFunction = $('option[name=function-name]:selected').val();
-		var fieldName = $('option[name=field-name]:selected').val();
+		var fieldName = $('option[name=field-name]:selected').val();		
 		var cName = Template.AggregateWizard.startClassName.curValue;
 		console.log(cName.charAt(0), fieldName.length);
+
+		//Select suitable atribtes		
+		var schema = new VQ_Schema();
+		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
+		var attrArray = Template.AggregateWizard.attList.curValue;
+		var newAttrList = [];
+		if (schema.classExist(cName)) {
+			var klass = schema.findClassByName(cName);
+			_.each(klass.getAllAttributes(), function(att){
+				var attrType = schema.resolveAttributeByName(cName, att["name"]).type;
+				if (newFunction == "sum" || newFunction == "avg") {
+					if ((attrType == "xsd:integer" || attrType == "xsd:decimal")) {
+						newAttrList.push({attribute: att["name"]})
+					}
+				} else {
+					newAttrList.push({attribute: att["name"]});
+				}
+			})	
+
+			newAttrList = _.sortBy(newAttrList, "attribute");
+			//console.log(attr_list);			
+			Template.AggregateWizard.attList.set(newAttrList);				
+		};		
+
+		//Set default alias
 		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + f;
@@ -499,9 +524,13 @@ Template.AggregateWizard.events({
 			if (alias == defaultName) {				
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 			} else if (alias == defaultFieldName) {
-				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
+				if (newAttrList.indexOf(fieldName) > -1) {
+					Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
+				} else {
+					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);					
+				}
 			}
-		})
+		})		
 		return;
 	},
 
