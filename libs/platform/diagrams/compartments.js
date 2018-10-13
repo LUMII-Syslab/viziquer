@@ -36,27 +36,14 @@ Compartments.after.insert(function (user_id, doc) {
 Meteor.methods({
 
 	insertCompartment: function(list) {
-
 		var user_id = Meteor.userId();
 
 		var compart_in = list.compartment;
-
-
-		console.log("asdfa ", list)
-
-
-
 		if (is_project_version_admin(user_id, compart_in)) {
 
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 				
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
-
-
-				console.log("compart_in ", compart_in)
-
-
-
 				Compartments.insert(compart_in, {trimStrings: false});
 
 				if (list["elementStyleUpdate"]) {

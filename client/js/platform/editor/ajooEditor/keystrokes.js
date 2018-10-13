@@ -88,8 +88,6 @@ function processKeyPress(e, key_strokes) {
 	//encodes key stoke table
 	var encoded_key_strokes = encode_keystrokes(key_strokes);
 
-	console.log("encoded_key_strokes ", encoded_key_strokes)
-
 	//collects pressed keys
 	var ctrl_key = e.ctrlKey;
 	var key_code = e.keyCode;
