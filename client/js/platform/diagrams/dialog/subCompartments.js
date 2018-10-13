@@ -154,11 +154,26 @@ Template.show_multi_field_form.helpers({
 		//if (compart_type["subCompartmentTypes"] && compart_type["subCompartmentTypes"].length > 0)
 		process_sub_compart_types(compart_type["subCompartmentTypes"], fields, sub_compartment);
 
+		var extra_button = {};
+		if (_.size(compart_type.subCompartmentTypes) > 0) {
+			extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
+
+			var is_available = true;
+
+			var is_available_func = extra_button.isAvailable;
+			if (is_available_func) {
+				is_available = Interpreter.execute(is_available_func, [compart_type]);
+			}
+
+			_.extend(extra_button, {isAvailable: is_available,});
+		}
+
 		var field_obj = {_id: compart_type["_id"],
 						compartmentId: compart_id,
 						name: compart_type["name"],
 						label: compart_type["label"],
 						fields: fields,
+						extraButton: extra_button,
 					};
 
 		return field_obj;
@@ -203,6 +218,14 @@ Template.show_multi_field_form.events({
 	"click .yellow-button": function(e) {
 		console.log("click in yellow button", e)
 
+		var compart_type_id = $(e.target).closest(".row-form").attr("id");
+
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+		if (compart_type && _.size(compart_type.subCompartmentTypes) > 0) {
+			var extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
+			var button_handle_func = extra_button.processButtonClick;
+			Interpreter.execute(button_handle_func, [e]);
+		}
 	},
 
 });
