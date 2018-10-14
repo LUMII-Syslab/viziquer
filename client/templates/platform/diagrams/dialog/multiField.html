@@ -63,9 +63,14 @@
 
 	                <div class="modal-footer">
 	                	<div class="row">
-	                		<div class="col-md-2 pull-left">
-		                		<button type="button" class="btn btn-warning yellow-button">ABC</button>
-		                	</div>
+	                		
+	                		{{#with extraButton}}
+	                			{{#if isAvailable}}
+			                		<div class="col-md-2 pull-left">
+				                		<button type="button" class="btn btn-warning yellow-button">{{caption}}</button>
+				                	</div>
+				                {{/if}}
+							{{/with}}
 
 		                	<div class="col-md-10 pull-right" >
 			                    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
