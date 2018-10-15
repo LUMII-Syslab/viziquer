@@ -2,8 +2,8 @@
 Interpreter.customMethods({
 
 	handleKeyStroke: function(e, compart) {
-		// console.log("event", e);
-		// console.log("value",elem.value);
+		 console.log("event", e);
+		 console.log("value",elem.value);
 
 		if (e.ctrlKey && e.keyCode == 32) {
 			var elem = document.activeElement;
@@ -16,6 +16,19 @@ Interpreter.customMethods({
 			autocomplete(elem, continuations);
 		}
 	},
+	 conditionAutoCompletion: function(e, compart) {
+		console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
+		if (e.ctrlKey && e.keyCode == 32) {
+			var elem = document.activeElement;
+			var text = e.originalEvent.target.value;
+			var continuations = runCompletion(text, Session.get("activeElement"));		
+			
+			elem.addEventListener("keyup", ketUpHandler);
+			elem.addEventListener("click", clickHandler);
+			
+			autocomplete(elem, continuations);
+		}
+	 },
 
 
 	// handleKeyStroke: function(e) {
