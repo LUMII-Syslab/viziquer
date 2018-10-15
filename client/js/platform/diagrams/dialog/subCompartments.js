@@ -218,6 +218,14 @@ Template.show_multi_field_form.events({
 	"click .yellow-button": function(e) {
 		console.log("click in yellow button", e)
 
+		var compart_type_id = $(e.target).closest(".row-form").attr("id");
+
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+		if (compart_type && _.size(compart_type.subCompartmentTypes) > 0) {
+			var extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
+			var button_handle_func = extra_button.processButtonClick;
+			Interpreter.execute(button_handle_func, [e]);
+		}
 	},
 
 });
