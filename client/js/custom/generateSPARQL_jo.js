@@ -726,8 +726,8 @@ function generateSPARQLtext(abstractQueryTable){
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
 		
 			 var temp = whereInfo["triples"];
-			 temp = temp.concat(whereInfo["links"]);
 			 temp = temp.concat(whereInfo["filters"]);
+			 temp = temp.concat(whereInfo["links"]);
 			 messages = messages.concat(whereInfo["messages"]); 
 			 
 			 var classMembership;
@@ -1662,6 +1662,12 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		}
 	}
 
+	attributesAggerations = attributesAggerations.concat(bind);
+	
+	if(sparqlTable["fullSPARQL"]!= null){
+		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") != true) attributesAggerations.push(sparqlTable["fullSPARQL"]);
+	}
+	
 	// filterTriples
 	for (var expression in sparqlTable["filterTriples"]){
 		if(typeof sparqlTable["filterTriples"][expression] === 'object'){
@@ -1674,8 +1680,6 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		if(typeof sparqlTable["filterTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bound"]);
 		//if(typeof sparqlTable["filterTriples"][expression]["bound"]  === 'string') whereInfo.push(sparqlTable["filterTriples"][expression]["bound"]);
 	}
-
-	attributesAggerations = attributesAggerations.concat(bind);
 
 	//filters
 	for (var expression in sparqlTable["filters"]){
@@ -1732,8 +1736,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 					var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable);
 
 					var temp = wheresubInfo["triples"];
-					temp = temp.concat(wheresubInfo["links"]);
 					temp = temp.concat(wheresubInfo["filters"]);
+					temp = temp.concat(wheresubInfo["links"]);
 					messages = messages.concat(wheresubInfo["messages"]);
 
 					var tempSelect = refTable;
@@ -1870,9 +1874,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 		return arr.indexOf(el) === i;
 	});
 
-	if(sparqlTable["fullSPARQL"]!= null){
-		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") != true) whereInfo.push(sparqlTable["fullSPARQL"]);
-	}
+	
 
 	//link type
 	if(typeof sparqlTable["linkType"] === 'string' && sparqlTable["linkType"] == "OPTIONAL"){
@@ -1960,8 +1962,8 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 				//console.log("QQQQQQQQQQQQQQQ", selectResult, parentClassInstance);
 				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable);
 				var temp = wheresubInfo["triples"];
-				temp = temp.concat(wheresubInfo["links"]);
 				temp = temp.concat(wheresubInfo["filters"]);
+				temp = temp.concat(wheresubInfo["links"]);
 				messages = messages.concat(wheresubInfo["messages"]);
 
 				var tempSelect = selectResult["select"];
