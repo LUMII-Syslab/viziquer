@@ -816,15 +816,19 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 }
 
 function find_compart_type_object(sub_compart_types, compart_type_id) {
-	return _.find(sub_compart_types, function(sub_compart_type) {
-			if (sub_compart_type._id == compart_type_id) {
-				return true;
-			}
 
-			if (_.size(sub_compart_type.subCompartmentTypes) > 0) {
-				return find_compart_type_object(sub_compart_type.subCompartmentTypes, compart_type_id);
-			}
-		});
+	for (var i=0;i<sub_compart_types.length;i++) {
+
+		var sub_compart_type = sub_compart_types[i];
+		if (sub_compart_type._id == compart_type_id) {
+			return sub_compart_type;
+		}
+
+		if (_.size(sub_compart_type.subCompartmentTypes) > 0) {
+			return find_compart_type_object(sub_compart_type.subCompartmentTypes, compart_type_id)
+		}
+	}
+
 }
 
 
