@@ -41,6 +41,15 @@ Template.dialogTabContent.events({
 		var compart_type_id = $(e.target).closest(".compart-type").attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 
+		if (!compart_type) {
+			var parent_id = $(e.target).closest(".multi-field-parent").attr("id");
+			var parent_compart_type = CompartmentTypes.findOne({_id: parent_id,});
+			if (parent_compart_type) {
+				compart_type = find_compart_type_object(parent_compart_type.subCompartmentTypes, compart_type_id);
+			}
+		}
+		console.log("compart_type ", compart_type)
+
 		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
 	},
 
@@ -724,6 +733,9 @@ function add_template_helpers(id) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
 
 					var is_visible = check_compartment_visibility(compart_type, compartment);
+
+					// console.log("compaart type ", compart_type, is_visible)
+
 					if (is_visible) {
 						return Dialog.renderDialogFields(compart_type, compartment);
 					}
@@ -802,4 +814,17 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 
 	$(e.target).val();
 }
+
+function find_compart_type_object(sub_compart_types, compart_type_id) {
+	return _.find(sub_compart_types, function(sub_compart_type) {
+			if (sub_compart_type._id == compart_type_id) {
+				return true;
+			}
+
+			if (_.size(sub_compart_type.subCompartmentTypes) > 0) {
+				return find_compart_type_object(sub_compart_type.subCompartmentTypes, compart_type_id);
+			}
+		});
+}
+
 

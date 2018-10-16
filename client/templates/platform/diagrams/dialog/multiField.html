@@ -2,7 +2,7 @@
 <template name="multiField">
 
 	{{#with multi_fields_obj}}
-		<div id="{{_id}}" class="multi-field">
+		<div id="{{_id}}" class="multi-field multi-field-parent">
 			<table class="table table-striped " style="margin-bottom:0px;">
 				<thead>
 					<tr>
@@ -41,7 +41,7 @@
     {{#with field_obj}}
 
 		<!-- Modal for new document -->
-	    <div id="{{_id}}" class="modal fade row-form" compartmentId="{{compartmentId}}">
+	    <div id="{{_id}}" class="modal fade row-form compart-type" compartmentId="{{compartmentId}}">
 	        <div class="modal-dialog">
 
 	            <div class="modal-content">

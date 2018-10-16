@@ -85,6 +85,23 @@ Template.multiField.events({
 		var form = multi_field.find(".row-form");
 		form.modal("show");
 
+		var extra_button = {};
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+		if (_.size(compart_type.subCompartmentTypes) > 0) {
+			extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
+
+			var is_available = false;
+
+			var is_available_func = extra_button.isAvailable;
+			if (is_available_func && extra_button.processButtonClick) {
+				is_available = Interpreter.execute(is_available_func, [compart_type]);
+			}
+
+			_.extend(extra_button, {isAvailable: is_available,});
+		}
+
+		Session.set("extraButton", extra_button);
+
 		return;
 	},
 
@@ -154,29 +171,20 @@ Template.show_multi_field_form.helpers({
 		//if (compart_type["subCompartmentTypes"] && compart_type["subCompartmentTypes"].length > 0)
 		process_sub_compart_types(compart_type["subCompartmentTypes"], fields, sub_compartment);
 
-		var extra_button = {};
-		if (_.size(compart_type.subCompartmentTypes) > 0) {
-			extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
-
-			var is_available = true;
-
-			var is_available_func = extra_button.isAvailable;
-			if (is_available_func) {
-				is_available = Interpreter.execute(is_available_func, [compart_type]);
-			}
-
-			_.extend(extra_button, {isAvailable: is_available,});
-		}
-
 		var field_obj = {_id: compart_type["_id"],
 						compartmentId: compart_id,
 						name: compart_type["name"],
 						label: compart_type["label"],
 						fields: fields,
-						extraButton: extra_button,
+						// extraButton: extra_button,
 					};
 
 		return field_obj;
+	},
+
+
+	extraButton: function(e) {
+		return Session.get("extraButton");
 	},
 
 });
@@ -221,14 +229,27 @@ Template.show_multi_field_form.events({
 		var compart_type_id = $(e.target).closest(".row-form").attr("id");
 
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+
+
+		console.log("compart_type ", compart_type)
+
 		if (compart_type && _.size(compart_type.subCompartmentTypes) > 0) {
 			var extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
 			var button_handle_func = extra_button.processButtonClick;
+
+			console.log("button_handle_func ", button_handle_func)
+
 			Interpreter.execute(button_handle_func, [e]);
 		}
 	},
 
 });
+
+
+Template.show_multi_field_form.onDestroyed(function() {
+	Session.set("extraButton", undefined);
+});
+
 
 Template.value_from_subcompartments.helpers({
 
