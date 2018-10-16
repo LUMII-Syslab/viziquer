@@ -381,20 +381,20 @@ Template.AddLink.events({
 		if (document.getElementById("goto-wizard").checked == true ){			
 
 			//Fields						
-			var attr_list = [];
+			var attr_list = [{attribute: ""}];
 			var schema = new VQ_Schema();
 
 			if (schema.classExist(class_name)) {
 				Template.AggregateWizard.startClassName.set(class_name);
 
-				var klass = schema.findClassByName(class_name);
+			// 	var klass = schema.findClassByName(class_name);
 
-				_.each(klass.getAllAttributes(), function(att){
-					attr_list.push({attribute: att["name"]});
-				})
-				attr_list = _.sortBy(attr_list, "attribute");
-			};
-			console.log(attr_list);			
+			// 	_.each(klass.getAllAttributes(), function(att){
+			// 		attr_list.push({attribute: att["name"]});
+			// 	})
+			// 	attr_list = _.sortBy(attr_list, "attribute");
+			}
+			// console.log(attr_list);			
 			Template.AggregateWizard.attList.set(attr_list);
 
 			//Alias name
@@ -453,7 +453,12 @@ Template.AggregateWizard.events({
 		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
-		expr = expr.concat("(", $('option[name=field-name]:selected').val(), ")");
+		var fld = $('option[name=field-name]:selected').val();
+		if (expr == "count") {
+			expr = "count(.)";
+		} else {
+			expr = expr.concat("(", fld, ")");
+		}
 		//console.log(alias + " " + expr);
 		vq_end_obj.addAggregateField(expr,alias);
 
@@ -497,8 +502,8 @@ Template.AggregateWizard.events({
 		var schema = new VQ_Schema();
 		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
 		var attrArray = Template.AggregateWizard.attList.curValue;
-		var newAttrList = [];
-		if (schema.classExist(cName)) {
+		var newAttrList = [{attribute: ""}];
+		if (schema.classExist(cName) && newFunction != "count"){
 			var klass = schema.findClassByName(cName);
 			_.each(klass.getAllAttributes(), function(att){
 				var attrType = schema.resolveAttributeByName(cName, att["name"]).type;
@@ -511,10 +516,10 @@ Template.AggregateWizard.events({
 				}
 			})	
 
-			newAttrList = _.sortBy(newAttrList, "attribute");
-			//console.log(attr_list);			
-			Template.AggregateWizard.attList.set(newAttrList);				
-		};		
+			newAttrList = _.sortBy(newAttrList, "attribute");					
+		}	
+		//console.log(attr_list);			
+		Template.AggregateWizard.attList.set(newAttrList);			
 
 		//Set default alias
 		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
