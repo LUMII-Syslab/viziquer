@@ -622,7 +622,43 @@ Interpreter.customMethods({
 	visualizeSPARQL: function() {
 		var query_text = yasqe3.getValue();
 		Interpreter.customExtensionPoints.generateVisualQuery(query_text)
-	}
+	},
 
+	setIsVisibleFalse: function() {
+		return false;
+	},
+	
+	isAggregateWizardAvailable: function() {
+		console.log("isAggregateWizardAvailable");
+		return true;
+	},
+	
+	isMergeValuesWizardAvailable: function() {
+		return true;
+	},
+	
+	openAggregateWizard: function() {
+		console.log("openAggregateWizard");
+	},
+	
+	openMergeValuesWizard: function() {
+		console.log("openMergeValuesWizard");
+	},
+	
+	setIsVisibleForIndirectClassMembership: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			  var directClassMembershipRole;
+			  var indirectClassMembershipRole;
+			  if (proj.directClassMembershipRole) directClassMembershipRole = proj.directClassMembershipRole;
+			  else directClassMembershipRole = "";
+			  if (proj.indirectClassMembershipRole)indirectClassMembershipRole =  proj.indirectClassMembershipRole;
+			  else indirectClassMembershipRole = "";
+			  
+			  if(directClassMembershipRole == indirectClassMembershipRole) return false;
+			  return true;
+		}
+		return false;
+	},
 
 });
