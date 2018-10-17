@@ -637,13 +637,6 @@ Interpreter.customMethods({
 		return true;
 	},
 	
-	openAggregateWizard: function() {
-		console.log("openAggregateWizard");
-	},
-	
-	openMergeValuesWizard: function() {
-		console.log("openMergeValuesWizard");
-	},
 	
 	setIsVisibleForIndirectClassMembership: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});

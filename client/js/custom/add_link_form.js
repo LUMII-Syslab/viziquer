@@ -1,6 +1,9 @@
 Interpreter.customMethods({
 	AddLink: function () {
 		$("#add-link-form").modal("show");
+	},
+	AggregateWizard: function () {
+		
 	}
 })
 

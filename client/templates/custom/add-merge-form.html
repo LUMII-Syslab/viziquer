@@ -1,0 +1,105 @@
+<template name="AddMergeValues">
+    <style>
+        div.merge-values-list {
+            margin-top: 5px;
+            margin-left: 20px;                        
+        }
+
+		div.merge-type-part {
+			background-color: white;
+			margin-top: 5px;
+			margin-left: 30px;
+		}
+		div.move-type-part {
+			background-color: white;
+			margin-top: 5px;
+			margin-left: 30px;
+		}
+
+        p {
+            font-size: 14px;
+            font-weight: bold;
+            padding-top: 5px;
+            padding-bottom: : 0px;
+            margin-bottom: 0px;
+        }
+
+        .merge-values-list select {
+            position: relative;             
+            width:90%;
+            border-radius:5px;
+            font-size: 13px;
+        }
+		
+    </style>
+    <!-- Modal for new document -->
+    <div id="merge-values-form" class="modal fade">
+        
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Merge values</h4>
+                </div>
+                <div class="modal-bodyFC">                
+					{{#if isMultiple}}                   
+					   <div class="merge-type-part">
+							<form id="type-choice" class="form-horizontal" role="form">
+								<div class="form-group">                            
+									<div name="chain">                       
+										<label class="label-radio">
+											<input type="radio" name="type-radio" value="SINGLE" checked="checked">
+											<span class="custom-radio"></span>
+											Merge for single Hospital Episode &ensp;
+											<br/>
+											<input type="radio" name="type-radio" value="MULTIPLE">
+											<span class="custom-radio"></span>
+											Merge over multiple Hospital Episodes (move to Aggregates) &ensp;
+										</label>
+									</div>
+								</div>                        
+							</form>                    
+						</div>
+					{{else}}
+						<div class="move-type-part">
+							<form id="type-choice" class="form-horizontal" role="form">
+								<div class="form-group">                            
+									<div name="chain">                       
+										<label class="label-radio">
+											Move ({{expression}}) to Aggregates block to aggregate (sum, count, etc.) over multiple ({{className}}) &ensp;
+										</label>
+									</div>
+								</div>                        
+							</form>                    
+						</div>
+				    {{/if}}
+					
+					<div class="merge-values-list">                       
+                        <form class="function-radio-list">
+                            <p>Functions: </p>
+                            <select name="function-list" id="function-list">
+                                <option name="function-name" value="count" selected>count</option>
+                                <option name="function-name" value="count_distinct">count_distinct</option>
+                                <option name="function-name" value="sum">sum</option>
+                                <option name="function-name" value="avg">avg</option>
+                                <option name="function-name" value="max">max</option>
+                                <option name="function-name" value="min">min</option>
+                                <option name="function-name" value="sample">sample</option>
+                                <option name="function-name" value="concat">concat</option>
+                            </select>                                                        
+                        </form>                                          
+                    </div>
+                </div>
+
+                <div class="modal-footer">                    
+                    <button id="cancel-merge-values" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-merge-values" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+    </script>
+</template>

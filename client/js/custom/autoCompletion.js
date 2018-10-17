@@ -17,8 +17,8 @@ Interpreter.customMethods({
 		}
 	},
 	 conditionAutoCompletion: function(e, compart) {
-		console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
-		if (e.ctrlKey && e.keyCode == 32) {
+		// console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
+		if (e.ctrlKey && (e.keyCode == 32 || e.keyCode == 0)) {
 			var elem = document.activeElement;
 			var text = e.originalEvent.target.value;
 			var continuations = runCompletion(text, Session.get("activeElement"));		
