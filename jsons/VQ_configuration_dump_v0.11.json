@@ -1288,13 +1288,13 @@
                     "prefix": null,
                     "suffix": null,
                     "defaultValue": null,
-					
+
 					"extraButton": {
                         "caption": "Merge values",
 						 "isAvailable": "isMergeValuesWizardAvailable",
 						 "processButtonClick": "AddMergeValues"
                     },
-					
+
                     "subCompartmentTypes": [
                       {
                         "_id": "479fc64e382dc2d31bcc0755",
@@ -1502,13 +1502,13 @@
                     "prefix": null,
                     "suffix": null,
                     "defaultValue": null,
-					
+
 					"extraButton": {
                         "caption": "Aggregate wizard",
 						 "isAvailable": "isAggregateWizardAvailable",
 						 "processButtonClick": "AggregateWizard"
                     },
-					
+
                     "subCompartmentTypes": [
                       {
                         "_id": "479fc64e382dc2d31bdd0855",
@@ -1914,7 +1914,7 @@
                 "diagramTypeId": "oQ4WPmhWQdAmHL68y",
                 "diagramId": "qTzHgycYWdnesdApY",
                 "elementId": "DwwZuE6PfzSguAxaj",
-                "tabIndex": 65,
+                "tabIndex": 23,
                 "index": 22,
                 "toolId": "wbFgEL7fKn29fAGxJ",
                 "versionId": "KjAwfkjNrxF6zi5w7",
@@ -1988,7 +1988,7 @@
                     "procedure": "setIsVisibleForIndirectClassMembership"
                   }
                 ],
-                "dialogTabId": "qLXdQwp9n85FYrAEx"
+                "dialogTabId": "3E6iCpgqtdbB5YjDo"
               }
             },
             {
