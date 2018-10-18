@@ -29,5 +29,10 @@ Template.AddCondition.events({
 		return;
 
 	},
+	
+	"keydown #condition-expression": function(e) {
+		autoCompletion(e);
+		return;
+	},
 
 });

@@ -628,6 +628,10 @@ Interpreter.customMethods({
 		return false;
 	},
 	
+	setIsVisibleTrue: function() {
+		return true;
+	},
+	
 	isAggregateWizardAvailable: function() {
 		console.log("isAggregateWizardAvailable");
 		return true;
