@@ -113,9 +113,6 @@ Template.AddLink.helpers({
 
 });
 
-var start_elem_id;
-var created_element;
-
 Template.AddLink.events({
 
 	"click #ok-add-link": function() {
@@ -129,7 +126,7 @@ Template.AddLink.events({
 		var class_name = obj.attr("className");
 
 		//start_elem
-		start_elem_id = Session.get("activeElement");
+		var start_elem_id = Session.get("activeElement");
 		Template.AggregateWizard.startClassId.set(start_elem_id);
 		var elem_start = Elements.findOne({_id: start_elem_id});
 
@@ -222,7 +219,6 @@ Template.AddLink.events({
 			if (elem_id) {
 
 				var end_elem_id = elem_id;
-				created_element = elem_id;
 				Template.AggregateWizard.endClassId.set(elem_id);
 
 				//New element: Name compartment
@@ -398,16 +394,12 @@ Template.AddLink.events({
 
 			//Alias name
 			if (class_name) {
+				Interpreter.destroyErrorMsg();
 				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
 				$("#aggregate-wizard-form").modal("show");
 			} else {
-				alert("No class selected - wizard may work unproperly");
-				// messages.push({
-				// 		"type" : "Warning",
-				// 		"message" : "LIMIT should contain only numeric values",
-				// 		"listOfElementId" : [rootClass["identification"]["_id"]],
-				// 		"isBlocking" : false
-				// 	});
+				//alert("No class selected - wizard may work unproperly");
+				Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);				
 			}								
 		}		
 
@@ -447,8 +439,7 @@ Template.AggregateWizard.helpers({
 });
 
 Template.AggregateWizard.events({
-	"click #ok-aggregate-wizard": function() {
-		// console.log("427: from " + start_elem_id + " to " + created_element);		
+	"click #ok-aggregate-wizard": function() {	
 		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
