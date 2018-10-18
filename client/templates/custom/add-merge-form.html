@@ -48,13 +48,13 @@
 								<div class="form-group">                            
 									<div name="chain">                       
 										<label class="label-radio">
-											<input type="radio" name="type-radio" value="SINGLE" checked="checked">
+											<input type="radio" name="type-radio-merge" value="SINGLE" checked="checked">
 											<span class="custom-radio"></span>
-											Merge for single Hospital Episode &ensp;
+											Merge for single {{className}} &ensp;
 											<br/>
-											<input type="radio" name="type-radio" value="MULTIPLE">
+											<input type="radio" name="type-radio-merge" value="MULTIPLE">
 											<span class="custom-radio"></span>
-											Merge over multiple Hospital Episodes (move to Aggregates) &ensp;
+											Merge over multiple {{className}} (move to Aggregates) &ensp;
 										</label>
 									</div>
 								</div>                        
@@ -78,14 +78,14 @@
                         <form class="function-radio-list">
                             <p>Functions: </p>
                             <select name="function-list" id="function-list">
-                                <option name="function-name" value="count" selected>count</option>
-                                <option name="function-name" value="count_distinct">count_distinct</option>
-                                <option name="function-name" value="sum">sum</option>
-                                <option name="function-name" value="avg">avg</option>
-                                <option name="function-name" value="max">max</option>
-                                <option name="function-name" value="min">min</option>
-                                <option name="function-name" value="sample">sample</option>
-                                <option name="function-name" value="concat">concat</option>
+                                <option name="function-name-merge" value="count" selected>count</option>
+                                <option name="function-name-merge" value="count_distinct">count_distinct</option>
+                                <option name="function-name-merge" value="sum">sum</option>
+                                <option name="function-name-merge" value="avg">avg</option>
+                                <option name="function-name-merge" value="max">max</option>
+                                <option name="function-name-merge" value="min">min</option>
+                                <option name="function-name-merge" value="sample">sample</option>
+                                <option name="function-name-merge" value="concat">concat</option>
                             </select>                                                        
                         </form>                                          
                     </div>
