@@ -1,5 +1,6 @@
 Interpreter.customMethods({
 	AddLink: function () {
+		Interpreter.destroyErrorMsg();
 		$("#add-link-form").modal("show");
 	},
 })
@@ -121,7 +122,7 @@ Template.AddLink.events({
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();		
 
-		var name = obj.attr("name");		
+		var name = obj.attr("name"); 	
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
@@ -444,10 +445,8 @@ Template.AggregateWizard.events({
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
 		var fld = $('option[name=field-name]:selected').val();
-		if (expr == "count") {
-			expr = "count(.)";
-		} if (expr == "count_distinct") {
-			expr = "count_distinct(.)";
+		if (fld == "") {
+			expr = expr.concat("(.)");
 		} else {
 			expr = expr.concat("(", fld, ")");
 		}
@@ -457,7 +456,7 @@ Template.AggregateWizard.events({
 		var displayCase = document.getElementById("display-results").checked;
 		var minValue = $('input[id=results_least]').val();
 		var maxValue = $('input[id=results-most]').val();
-		console.log(displayCase, minValue, maxValue);
+		//console.log(displayCase, minValue, maxValue);
 		if (displayCase || (minValue != "") || (maxValue != "")) {
 			console.log("display or min/max");
 			var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
@@ -470,7 +469,9 @@ Template.AggregateWizard.events({
 			if (displayCase) vq_start_obj.addField(alias,);
 			if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
 			if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
-		} else {console.log("no dismlay or min/max");}
+		} else {
+			console.log("no display or min/max");
+		}
 
 		clearAggregateInput();
 		return;
@@ -488,13 +489,17 @@ Template.AggregateWizard.events({
 		var newFunction = $('option[name=function-name]:selected').val();
 		var fieldName = $('option[name=field-name]:selected').val();		
 		var cName = vq_obj.getName();
-		console.log(cName.charAt(0), fieldName.length);
+		//console.log(cName.charAt(0), fieldName.length);
 
-		//Select suitable atribtes		
+		//Select suitable atributes for Field form
+		defaultFieldList();		
 		var schema = new VQ_Schema();
 		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
 		var attrArray = Template.AggregateWizard.attList.curValue;
-		var newAttrList = [{attribute: ""}];
+		var newAttrList = [];
+		if (newFunction == "count" || newFunction == "count_distinct" || newFunction == "sample") {
+			newAttrList.push({attribute: ""});
+		}
 		if (schema.classExist(cName)){
 			var klass = schema.findClassByName(cName);
 			_.each(klass.getAllAttributes(), function(att){
@@ -548,7 +553,7 @@ Template.AggregateWizard.events({
 		var newFunction = $('option[name=function-name]:selected').val();
 		var fieldName = $('option[name=field-name]:selected').val();
 		var cName = vq_start_obj.getName(); 
-		console.log(cName.charAt(0), fieldName.length);
+		//console.log(cName.charAt(0), fieldName.length);
 		var functionArray = Template.AggregateWizard.attList.curValue;	
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + newFunction;
@@ -568,12 +573,12 @@ Template.AggregateWizard.events({
 //++++++++++++
 
 function clearAddLinkInput(){
-	//$('input[name=stack-radio]:checked').attr('checked', false);
-	var defaultList = document.getElementsByName("stack-radio");
-	_.each(defaultList, function(e){
-		if (e.value == "++") e.checked = true;
-		else e.checked = false;
-	});
+	$('input[name=stack-radio]:checked').attr('checked', false);
+	// var defaultList = document.getElementsByName("stack-radio");
+	// _.each(defaultList, function(e){
+	// 	if (e.value == "++") e.checked = true;
+	// 	else e.checked = false;
+	// });
 	var defaultRadio = document.getElementsByName("type-radio");
 	_.each(defaultRadio, function(e){
 		if (e.value == "JOIN") e.checked = true;
@@ -590,11 +595,7 @@ function clearAggregateInput(){
 		else e.selected = false;
 	});
 
-	var defaultFunctions = document.getElementsByName("field-name");
-	_.each(defaultFunctions, function(e){
-		if (e.value == "") e.selected = true;
-		else e.selected = false;
-	});
+	defaultFieldList();
 
 	Template.AggregateWizard.defaultAlias.set("N_count");				
 	$('input[id=display-results]:checked').attr('checked', false);
@@ -602,3 +603,10 @@ function clearAggregateInput(){
 	document.getElementById("results-most").value = "";
 }
 
+function defaultFieldList(){
+	var defaultFunctions = document.getElementsByName("field-name");
+	_.each(defaultFunctions, function(e){
+		if (e.value == "") e.selected = true;
+		else e.selected = false;
+	});
+}
