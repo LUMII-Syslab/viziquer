@@ -397,6 +397,7 @@ Template.AddLink.events({
 			if (class_name) {
 				Interpreter.destroyErrorMsg();
 				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+				Template.AggregateWizard.showDisplay.set("block");
 				$("#aggregate-wizard-form").modal("show");
 			} else {
 				//alert("No class selected - wizard may work unproperly");
@@ -419,6 +420,7 @@ Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
@@ -436,6 +438,10 @@ Template.AggregateWizard.helpers({
 
 	endClassId: function(){		
 		return Template.AggregateWizard.endClassId.get();
+	},
+
+	showDisplay: function(){
+		return Template.AggregateWizard.showDisplay.get();
 	},
 });
 
@@ -470,7 +476,7 @@ Template.AggregateWizard.events({
 			if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
 			if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
 		} else {
-			console.log("no display or min/max");
+			//console.log("no display or min/max");
 		}
 
 		clearAggregateInput();

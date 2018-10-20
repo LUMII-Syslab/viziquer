@@ -229,19 +229,19 @@
                         
                         <hr>
 
-                        <form> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Display result </p>
                         </form>
 
-                        <form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
                             <label><p>Result at least (&gt;=): &emsp;</p> </label>
                             <input id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>
 
-                        <form> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <label><p>Result at most (&lt;=):&emsp;</p> </label>
                             <input id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
