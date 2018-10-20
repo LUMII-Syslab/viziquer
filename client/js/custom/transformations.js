@@ -636,6 +636,41 @@ Interpreter.customMethods({
 		console.log("isAggregateWizardAvailable");
 		return true;
 	},
+
+	AggregateWizard: function() {
+// Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
+// Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+// Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+
+		console.log("AggregateWizard");
+		var attr_list = [{attribute: ""}];
+        var schema = new VQ_Schema();
+        var classId = Session.get("activeElement");
+        Template.AggregateWizard.endClassId.set(classId);
+
+        if (classId) {
+            var classObj = new VQ_Element(classId);
+            if (classObj && classObj.isClass()) {
+                var class_name = classObj.getName();
+                if (schema.classExist(class_name)) {
+                    var klass = schema.findClassByName(class_name);
+
+                    _.each(klass.getAllAttributes(), function(att){
+                        attr_list.push({attribute: att["name"]});
+                    })
+                    attr_list = _.sortBy(attr_list, "attribute");
+                }
+                // console.log(attr_list);          
+                Template.AggregateWizard.attList.set(attr_list);
+
+                //Alias name
+                if (class_name) {
+                    Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                    $("#aggregate-wizard-form").modal("show");
+                }
+            }
+        }
+	},
 	
 	isMergeValuesWizardAvailable: function() {
 		return true;
