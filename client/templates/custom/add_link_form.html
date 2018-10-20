@@ -12,21 +12,19 @@
         position: relative;
         float: right;
         background-color: white;
-        margin-top: 5px;
         margin-left: 10px;
         margin-right: 10px;
         max-width: 50%;
     }
 
-    hr {
-        margin-top: 20px;
-        margin-bottom: 0px;
+/*    hr {
+        margin-top: 20px;        
         margin-left: -5px;
         border: 0;
         border-top: 1px solid #c9c7c7;
         width:95%
     }
-
+*/
     .help-tip{
         position: relative;
         display:inline;
@@ -81,29 +79,32 @@
                     <form id="type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
                             <div name="chain">                       
-                                <label class="label-radio">
+                                <label class="label-radio">                                    
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
                                     Join Link &ensp;
                                     <div class="help-tip">
                                         <p>Use to join linked instances of both classes.</p>
-                                    </div><br style="line-height: 200%;">
-
+                                    </div>
+                                </label>
+                                <!-- <br style="line-height: 200%;"> -->
+                                <label class="label-radio">
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
                                     Nested Query Link &ensp;
                                     <div class="help-tip">
                                         <p>Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
-                                    </div>  &emsp; &emsp;
+                                    </div>
+                                </label>
 
-                                    <div style="margin-left:15px; margin-right: 20px;"> <!-- "display:inline;" -->
-                                        <input type="checkbox" id="goto-wizard" value="DISPLAY">
-                                        <span class="custom-checkbox"></span>
-                                        Use Aggregate (e.g. count, etc.) wizard
-                                    </div>                                
+                                <div style="margin-left:15px; margin-right: 20px;"> <!-- "display:inline;" -->
+                                    <input type="checkbox" id="goto-wizard" value="DISPLAY" disabled>
+                                    <span class="custom-checkbox"></span>
+                                    Use Aggregate wizard
+                                </div>                                
                                     
                                     <!-- <hr> -->
-                                </label>
+                                
                             </div>
                         </div>                        
                     </form>                    
@@ -141,16 +142,18 @@
 
     <script>
         //Show additional choices
-        var radioListener = document.getElementById("type-choice"); 
-        radioListener.addEventListener("click", checkboxStatus);
-        
-        function checkboxStatus(){
-            var checkedName = $('input[name=type-radio]').filter(':checked').val();
-            // console.log(checkedName);
-            if (checkedName == 'JOIN') {
-                $('input[id=goto-wizard]:checked').attr('checked', false);
-            }
-        }        
+        $(function () {
+            $('input[name=type-radio]').change(function(){
+                var checkedName = $('input[name=type-radio]').filter(':checked').val();
+                // console.log(checkedName);
+                if (checkedName === 'JOIN') {
+                    $('input[id=goto-wizard]:checked').attr('checked', false);
+                    $('input[id=goto-wizard]').attr("disabled","disabled");;
+                } else {
+                    $('input[id=goto-wizard]').removeAttr('disabled');
+                }            
+            })
+        })
     </script>
 </template>
 
@@ -255,9 +258,6 @@
     </div>
 
     <script>
-        function getDefaultName() {
-            // document.getElementById("field-name").value = "default";
-            console.log("getDefaultName executed");
-        }
+        function getDefaultName() {}
     </script>
 </template>
