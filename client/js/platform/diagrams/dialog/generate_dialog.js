@@ -731,10 +731,7 @@ function add_template_helpers(id) {
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
 
-					var is_visible = check_compartment_visibility(compart_type, compartment);
-
-					// console.log("compaart type ", compart_type, is_visible)
-
+					var is_visible = Dialog.checkCompartmentVisibility(compart_type, compartment);
 					if (is_visible) {
 						return Dialog.renderDialogFields(compart_type, compartment);
 					}
@@ -743,24 +740,6 @@ function add_template_helpers(id) {
 
 	});
 }
-
-
-
-function check_compartment_visibility(compart_type, compartment) {
-	var is_visible = true;
-	var extension_point_name = "isVisible";
-
-	var is_visible_extension_point = _.find(compart_type.extensionPoints, function(extension_point) {
-										return extension_point.extensionPoint == extension_point_name;
-									});
-
-	if (is_visible_extension_point) {
-		is_visible = Interpreter.executeExtensionPoint(compart_type, extension_point_name, [compartment]);
-	}
-
-	return is_visible;
-}
-
 
 
 function update_compartment_from_sub_fields(parent) {

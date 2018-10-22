@@ -533,6 +533,22 @@ Dialog = {
 	    $(e.target).tooltip('destroy');
 	},
 
+
+	checkCompartmentVisibility: function(compart_type, compartment) {
+		var is_visible = true;
+		var extension_point_name = "isVisible";
+
+		var is_visible_extension_point = _.find(compart_type.extensionPoints, function(extension_point) {
+											return extension_point.extensionPoint == extension_point_name;
+										});
+
+		if (is_visible_extension_point) {
+			is_visible = Interpreter.executeExtensionPoint(compart_type, extension_point_name, [compartment]);
+		}
+
+		return is_visible;
+	},
+
 };
 
 function get_style_by_id(styles, id) {

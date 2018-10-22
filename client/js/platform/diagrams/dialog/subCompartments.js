@@ -268,6 +268,10 @@ Template.value_from_subcompartments.helpers({
 function process_sub_compart_types(subCompartmentTypes, fields, sub_compartments) {
 
 	_.each(subCompartmentTypes, function(sub_compart_type) {
+		var is_visible = Dialog.checkCompartmentVisibility(sub_compart_type);
+		if (!is_visible) {
+			return;
+		}
 
 		var sub_sub_compartments;
 		if (sub_compartments) {
