@@ -190,7 +190,8 @@
 		{{/if}}
 
 		{{#if radio}}
-			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}} input-sm" compartmentId="{{compartmentId}}" style="margin-bottom:10px;">
+			<div id="{{_id}}" class="form-group compart-type {{subCompartmentTypeId}}" compartmentId="{{compartmentId}}" style="margin-bottom:10px;">
+			
 				{{#each values}}
 					<label for="{{compartmentId}}" class="label-radio">{{name}}
 
@@ -210,7 +211,8 @@
 						<span class="help-block">{{description}}</span>
 					{{/if}}
 
-				{{/each}} 
+				{{/each}}
+
 			</div>
 		{{/if}}
 
