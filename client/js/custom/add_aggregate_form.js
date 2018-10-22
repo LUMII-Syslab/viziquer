@@ -67,7 +67,7 @@ Template.AddAggregate.events({
 			if (!vq_obj.isRoot()) {
 				var vq_link = vq_obj.getLinkToRoot();
 				if (vq_link && !vq_link.link.isSubQuery() && !vq_link.link.isGlobalSubQuery()) {
-					vq_link.link.setLinkQueryType("SUBQUERY");
+					vq_link.link.setNestingType("SUBQUERY");
 				}
 			}
 	  };

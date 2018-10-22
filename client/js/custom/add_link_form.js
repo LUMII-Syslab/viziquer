@@ -120,9 +120,9 @@ Template.AddLink.events({
 
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
-		var linkType = $('input[name=type-radio]:checked').val();		
+		var linkType = $('input[name=type-radio]:checked').val();
 
-		var name = obj.attr("name"); 	
+		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
@@ -336,7 +336,7 @@ Template.AddLink.events({
 					var line_elem = Elements.findOne({_id: line_id});
 					var vq_line = new VQ_Element(line_id);
 					vq_line.setLinkType("REQUIRED");
-					if(linkType == "NESTED") vq_line.setLinkQueryType("SUBQUERY")
+					if(linkType == "NESTED") vq_line.setNestingType("SUBQUERY")
 					//vq_line.setName(name);
 					var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 					if (line_compart_type) {
@@ -373,11 +373,11 @@ Template.AddLink.events({
 
 			}
 
-		});	
+		});
 
-		if (document.getElementById("goto-wizard").checked == true ){			
+		if (document.getElementById("goto-wizard").checked == true ){
 
-			//Fields						
+			//Fields
 			var attr_list = [{attribute: ""}];
 			var schema = new VQ_Schema();
 
@@ -390,7 +390,7 @@ Template.AddLink.events({
 				})
 				attr_list = _.sortBy(attr_list, "attribute");
 			}
-			// console.log(attr_list);			
+			// console.log(attr_list);
 			Template.AggregateWizard.attList.set(attr_list);
 
 			//Alias name
@@ -401,9 +401,9 @@ Template.AddLink.events({
 				$("#aggregate-wizard-form").modal("show");
 			} else {
 				//alert("No class selected - wizard may work unproperly");
-				Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);				
-			}								
-		}		
+				Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+			}
+		}
 
 		clearAddLinkInput();
 		return;
@@ -428,15 +428,15 @@ Template.AggregateWizard.helpers({
 		return Template.AggregateWizard.defaultAlias.get();
 	},
 
-	attList: function(){		
+	attList: function(){
 		return Template.AggregateWizard.attList.get();
 	},
 
-	startClassId: function(){		
+	startClassId: function(){
 		return Template.AggregateWizard.startClassId.get();
-	},	
+	},
 
-	endClassId: function(){		
+	endClassId: function(){
 		return Template.AggregateWizard.endClassId.get();
 	},
 
@@ -446,7 +446,7 @@ Template.AggregateWizard.helpers({
 });
 
 Template.AggregateWizard.events({
-	"click #ok-aggregate-wizard": function() {	
+	"click #ok-aggregate-wizard": function() {
 		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
@@ -490,15 +490,15 @@ Template.AggregateWizard.events({
 
 	"change #function-list": function() {
 		// console.log("changed");
-		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);		
+		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var newFunction = $('option[name=function-name]:selected').val();
-		var fieldName = $('option[name=field-name]:selected').val();		
+		var fieldName = $('option[name=field-name]:selected').val();
 		var cName = vq_obj.getName();
 		//console.log(cName.charAt(0), fieldName.length);
 
 		//Select suitable atributes for Field form
-		defaultFieldList();		
+		defaultFieldList();
 		var schema = new VQ_Schema();
 		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
 		var attrArray = Template.AggregateWizard.attList.curValue;
@@ -517,25 +517,25 @@ Template.AggregateWizard.events({
 				} else {
 					newAttrList.push({attribute: att["name"]});
 				}
-			})	
+			})
 
-			newAttrList = _.sortBy(newAttrList, "attribute");					
-		}	
-		//console.log(attr_list);			
-		Template.AggregateWizard.attList.set(newAttrList);			
+			newAttrList = _.sortBy(newAttrList, "attribute");
+		}
+		//console.log(attr_list);
+		Template.AggregateWizard.attList.set(newAttrList);
 
 		//Set default alias
-		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
+		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + f;
-			var defaultFieldName = f + "_" + fieldName;			
-			if (alias == defaultName) {				
+			var defaultFieldName = f + "_" + fieldName;
+			if (alias == defaultName) {
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 			} else if (alias == defaultFieldName) {
 				if (newAttrList.indexOf(fieldName) > -1) {
 					Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
 				} else {
-					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);					
+					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 				}
 			}
 		})
@@ -547,7 +547,7 @@ Template.AggregateWizard.events({
 		} else {
 			$('input[id=results_least]').attr('disabled', true);
 			$('input[id=results-most]').attr('disabled', true);
-		}		
+		}
 		return;
 	},
 
@@ -558,13 +558,13 @@ Template.AggregateWizard.events({
 		var alias = $('input[id=alias-name]').val();
 		var newFunction = $('option[name=function-name]:selected').val();
 		var fieldName = $('option[name=field-name]:selected').val();
-		var cName = vq_start_obj.getName(); 
+		var cName = vq_start_obj.getName();
 		//console.log(cName.charAt(0), fieldName.length);
-		var functionArray = Template.AggregateWizard.attList.curValue;	
+		var functionArray = Template.AggregateWizard.attList.curValue;
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + newFunction;
-			var defaultFieldName = newFunction + "_" + f.attribute;			
-			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {				
+			var defaultFieldName = newFunction + "_" + f.attribute;
+			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 			} else if ((alias == defaultName || alias == defaultFieldName) && fieldName.length != 0) {
 				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
@@ -590,7 +590,7 @@ function clearAddLinkInput(){
 		if (e.value == "JOIN") e.checked = true;
 		else e.checked = false;
 	});
-	
+
 	$('input[id=goto-wizard]').attr('checked', false);
 }
 
@@ -603,7 +603,7 @@ function clearAggregateInput(){
 
 	defaultFieldList();
 
-	Template.AggregateWizard.defaultAlias.set("N_count");				
+	Template.AggregateWizard.defaultAlias.set("N_count");
 	$('input[id=display-results]:checked').attr('checked', false);
 	document.getElementById("results_least").value = "";
 	document.getElementById("results-most").value = "";

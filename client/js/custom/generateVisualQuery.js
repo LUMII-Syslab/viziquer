@@ -8,7 +8,7 @@ Interpreter.customMethods({
 
   generateVisualQuery: function(text){
 	  Utilities.callMeteorMethod("parseSPARQLText", text, function(parsedQuery) {
-		
+
 		//console.log("tttttttttttttt", parsedQuery);
 		console.log(JSON.stringify(parsedQuery, 0, 2));
 		var schema = new VQ_Schema();
@@ -30,7 +30,7 @@ Interpreter.customMethods({
 
 		// visualizeQuery(abstractTable["classesTable"]["root"], null);
 		visualizeQuery(classesTable, null);
-	
+
 	  });
   },
 });
@@ -118,12 +118,12 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 					"groupValues":false,
 					"exp":parsedAttribute
 				}
-				
+
 				for (var clazz in classesTable){
 					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
 					break;
 				}
-				
+
 				//attributeTable[parsedAttribute]["seen"] = true;
 			}
 		} else if(typeof variables[key] === 'object'){
@@ -337,7 +337,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 					attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
 				 }
 			}
-			
+
 			for(link in linkTableAdded){
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
 					linkTableAdded[link]["linkType"] = "NOT";
@@ -362,9 +362,9 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 	if(where["type"] == "group"){
 
 		var abstractTable = generateAbstractTable(where["patterns"][0], classesTable, variableList);
-		
+
 		console.log("abstractTable", abstractTable);
-		
+
 		//find links outside subquery
 		for(subLink in abstractTable["linkTable"]){
 			if(typeof classesTable[abstractTable["linkTable"][subLink]["subject"]] !== 'undefined' || typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined'){
@@ -789,13 +789,13 @@ function visualizeQuery(clazz, parentClass){
 				Create_VQ_Element(function(linkLine) {
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
-					linkLine.setLinkQueryType(linkQueryType);
+					linkLine.setNestingType(linkQueryType);
 				}, points, true, parentClass, classBox);
 			} else {
 				Create_VQ_Element(function(linkLine) {
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
-					linkLine.setLinkQueryType(linkQueryType);
+					linkLine.setNestingType(linkQueryType);
 				}, points, true, classBox, parentClass);
 			}
 		}

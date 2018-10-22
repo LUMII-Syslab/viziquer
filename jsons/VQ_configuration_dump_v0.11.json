@@ -1983,7 +1983,7 @@
                   {
                     "extensionPoint": "dynamicDropDown"
                   },
-				  {
+				          {
                     "extensionPoint": "isVisible",
                     "procedure": "setIsVisibleForIndirectClassMembership"
                   }
@@ -3263,10 +3263,107 @@
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
                   }
                 ],
                 "dialogTabId": "Joi9mPQiMNuGa6Lgc",
                 "defaultValue": "false"
+              }
+            },
+            {
+              "object": {
+                "_id": "RrFrGcJCw87TGRGvY",
+                "elementTypeId": "Csq5MHwQMwTMMghX9",
+                "diagramTypeId": "oQ4WPmhWQdAmHL68y",
+                "diagramId": "qTzHgycYWdnesdApY",
+                "elementId": "fXSBiEzTmHZQnkWsj",
+                "tabIndex": 70,
+                "index": 0,
+                "toolId": "wbFgEL7fKn29fAGxJ",
+                "versionId": "KjAwfkjNrxF6zi5w7",
+                "name": "NestingType",
+                "label": "Nesting Type",
+                "isObjectRepresentation": false,
+                "noRepresentation": true,
+                "inputType": {
+                  "type": "radio",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Join",
+                      "value": "PLAIN"
+
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Nested Query",
+                      "value": "SUBQUERY"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Global Nested Query",
+                      "value": "GLOBAL_SUBQUERY"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Extra",
+                      "value": "CONDITION"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "7445e511c6847fac836b5869",
+                    "style": {
+                      "align": "left",
+                      "fill": "#ffffff",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 15,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetNestingType"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Joi9mPQiMNuGa6Lgc",
+                "defaultValue": "Join"
               }
             },
             {
@@ -3340,6 +3437,10 @@
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
                   }
                 ],
                 "dialogTabId": "Joi9mPQiMNuGa6Lgc",
@@ -3418,6 +3519,10 @@
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
                   }
                 ],
                 "defaultValue": "false"

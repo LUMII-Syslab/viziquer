@@ -819,7 +819,7 @@ VQ_Element.prototype = {
   // --> string (ajoo diagram id)
   getDiagram_id: function() {return this.obj["diagramId"]},
   // string --> string
-  // Returns the value of the given compartment by name or null if such compartment does not exist
+  // Returns the value (INPUT) of the given compartment by name or null if such compartment does not exist
   getCompartmentValue: function(compartment_name) {
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
@@ -828,6 +828,20 @@ VQ_Element.prototype = {
       var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
       if (comp) {
           return comp["input"];
+      };
+    };
+    return null;
+  },
+  // string --> string
+  // Returns the value (VALUE) of the given compartment by name or null if such compartment does not exist
+  getCompartmentValueValue: function(compartment_name) {
+    var elem_type_id = this.obj["elementTypeId"];
+    var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
+    if (comp_type) {
+      var comp_type_id = comp_type["_id"];
+      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
+      if (comp) {
+          return comp["value"];
       };
     };
     return null;
@@ -1011,6 +1025,16 @@ VQ_Element.prototype = {
   // detemines whether the link is REQUIRED
   isRequired: function() {
     return this.getType()=="REQUIRED"
+  },
+  // Gets link's nesting (query) type: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
+  getNestingType: function() {
+    return this.getCompartmentValueValue("NestingType");
+  },
+  // string  -->
+  setNestingType: function(type) {
+    var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Nested Query","GLOBAL_SUBQUERY":"Global Nested Query", "CONDITION":"Extra"};
+    this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
+    this.setLinkQueryType(type);
   },
   // determines whether the indirect class membership should be used (if configured) by translator
   isIndirectClassMembership: function() {
@@ -1417,7 +1441,8 @@ VQ_Element.prototype = {
 																	{attrName:"endShapeStyle.stroke", attrValue:"#18b6d1"},
 																]);
 						if (this.isConditional()) {
-							 this.setLinkQueryType("PLAIN");
+               this.setNestingType("PLAIN");
+
 						} else if (this.isSubQuery() ) {
 						//	 this.setLinkQueryType("PLAIN");
 						   var root_dir =this.getRootDirection();
@@ -1578,6 +1603,7 @@ VQ_Element.prototype = {
 		 }
 	},
 
+
 	setIsInverseLink: function(value) {
 		 this.setCompartmentValue("Inverse Link",value,"");
 	},
@@ -1628,6 +1654,9 @@ VQ_Element.prototype = {
         var value = "";
         var mapped_value = undefined;
         if (ct["inputType"]["type"] == "checkbox") {
+            mapped_value = _.find(ct["inputType"]["values"], function(s) { return input == s["input"]})["value"];
+        };
+        if (ct["inputType"]["type"] == "radio") {
             mapped_value = _.find(ct["inputType"]["values"], function(s) { return input == s["input"]})["value"];
         };
         value = Dialog.buildCompartmentValue(ct,  input, mapped_value);
