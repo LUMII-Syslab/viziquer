@@ -378,7 +378,7 @@ Interpreter.customMethods({
 			 var lt ="PLAIN";
 			 if (input=="true") { lt="CONDITION"};
 			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkQueryType(lt);
+			 elem.setNestingType(lt);
 		}
 	},
 
@@ -389,7 +389,7 @@ Interpreter.customMethods({
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="SUBQUERY"};
 			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkQueryType(lt);
+			 elem.setNestingType(lt);
 		}
 	},
 
@@ -400,7 +400,7 @@ Interpreter.customMethods({
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="GLOBAL_SUBQUERY"};
 			 var elem = new VQ_Element(c["elementId"]);
-			 elem.setLinkQueryType(lt);
+			 elem.setNestingType(lt);
 		}
 	},
 
@@ -424,6 +424,15 @@ Interpreter.customMethods({
 			 if (input=="true") { lt="NOT"};
 			 var elem = new VQ_Element(c["elementId"]);
 			 elem.setLinkType(lt);
+		}
+	},
+
+	VQsetNestingType: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var nestingType = params["value"];
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setNestingType(nestingType);
 		}
 	},
 
@@ -520,7 +529,7 @@ Interpreter.customMethods({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		console.log("A1");
 		if (proj && proj.indirectClassMembershipRole) {
-       console.log("A2");  
+       console.log("A2");
 			 return "true";
 		} else {
        console.log("A3");
@@ -611,7 +620,7 @@ Interpreter.customMethods({
 				 Create_VQ_Element(function(coo) {
 					 coo.setName("Coo");
 					 coo.setLinkType("REQUIRED");
-					 coo.setLinkQueryType("SUBQUERY");
+					 coo.setNestingType("SUBQUERY");
 				 }, points, true, voo, boo);
 			 }, loc2);
 		}, loc);
@@ -627,24 +636,56 @@ Interpreter.customMethods({
 	setIsVisibleFalse: function() {
 		return false;
 	},
-	
+
+	setIsVisibleTrue: function() {
+		return true;
+	},
+
 	isAggregateWizardAvailable: function() {
 		console.log("isAggregateWizardAvailable");
 		return true;
 	},
-	
+
+	AggregateWizard: function() {
+// Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
+// Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+// Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+
+		console.log("AggregateWizard");
+		var attr_list = [{attribute: ""}];
+        var schema = new VQ_Schema();
+        var classId = Session.get("activeElement");
+        Template.AggregateWizard.endClassId.set(classId);
+
+        if (classId) {
+            var classObj = new VQ_Element(classId);
+            if (classObj && classObj.isClass()) {
+                var class_name = classObj.getName();
+                if (schema.classExist(class_name)) {
+                    var klass = schema.findClassByName(class_name);
+
+                    _.each(klass.getAllAttributes(), function(att){
+                        attr_list.push({attribute: att["name"]});
+                    })
+                    attr_list = _.sortBy(attr_list, "attribute");
+                }
+                // console.log(attr_list);
+                Template.AggregateWizard.attList.set(attr_list);
+
+                //Alias name
+                if (class_name) {
+                    Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                    $("#aggregate-wizard-form").modal("show");
+                }
+            }
+        }
+	},
+
 	isMergeValuesWizardAvailable: function() {
 		return true;
 	},
-	
-	openAggregateWizard: function() {
-		console.log("openAggregateWizard");
-	},
-	
-	openMergeValuesWizard: function() {
-		console.log("openMergeValuesWizard");
-	},
-	
+
+
 	setIsVisibleForIndirectClassMembership: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
@@ -654,7 +695,7 @@ Interpreter.customMethods({
 			  else directClassMembershipRole = "";
 			  if (proj.indirectClassMembershipRole)indirectClassMembershipRole =  proj.indirectClassMembershipRole;
 			  else indirectClassMembershipRole = "";
-			  
+
 			  if(directClassMembershipRole == indirectClassMembershipRole) return false;
 			  return true;
 		}

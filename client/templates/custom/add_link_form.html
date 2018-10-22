@@ -9,20 +9,22 @@
     }
 
     div.link-type-part {
+        position: relative;
+        float: right;
         background-color: white;
-        margin-top: 5px;
-        margin-left: 30px;
+        margin-left: 10px;
+        margin-right: 10px;
+        max-width: 50%;
     }
 
-    hr {
-        margin-top: 20px;
-        margin-bottom: 0px;
+/*    hr {
+        margin-top: 20px;        
         margin-left: -5px;
         border: 0;
         border-top: 1px solid #c9c7c7;
         width:95%
     }
-
+*/
     .help-tip{
         position: relative;
         display:inline;
@@ -56,9 +58,9 @@
         background-color: slategrey; 
         border-radius: 5px;       
         padding: 10px;
-        width: 300px;
+        width: 200px;
         position: absolute;
-        left: 10px;
+        right: 105%; 
         z-index: 1000;
     }    
 </style>
@@ -77,29 +79,32 @@
                     <form id="type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
                             <div name="chain">                       
-                                <label class="label-radio">
+                                <label class="label-radio">                                    
                                     <input type="radio" name="type-radio" value="JOIN" checked="checked">
                                     <span class="custom-radio"></span>
                                     Join Link &ensp;
                                     <div class="help-tip">
                                         <p>Use to join linked instances of both classes.</p>
-                                    </div><br style="line-height: 200%;">
-
+                                    </div>
+                                </label>
+                                <!-- <br style="line-height: 200%;"> -->
+                                <label class="label-radio">
                                     <input type="radio" name="type-radio" value="NESTED">
                                     <span class="custom-radio"></span>
                                     Nested Query Link &ensp;
                                     <div class="help-tip">
                                         <p>Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
-                                    </div>  &emsp; &emsp;
-
-                                    <div style="display:inline;">
-                                        <input type="checkbox" id="goto-wizard" value="DISPLAY">
-                                        <span class="custom-checkbox"></span>
-                                        Use Aggregate (e.g. count, etc.) wizard
-                                    </div>                                
-                                    
-                                    <hr>
+                                    </div>
                                 </label>
+
+                                <div style="margin-left:15px; margin-right: 20px;"> <!-- "display:inline;" -->
+                                    <input type="checkbox" id="goto-wizard" value="DISPLAY" disabled>
+                                    <span class="custom-checkbox"></span>
+                                    Use Aggregate wizard
+                                </div>                                
+                                    
+                                    <!-- <hr> -->
+                                
                             </div>
                         </div>                        
                     </form>                    
@@ -111,15 +116,13 @@
                             {{#each associations}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
-                                        <input type="radio" name="stack-radio">
+                                        <input type="radio" name="stack-radio" value="{{name}}">
                                         <span class="custom-radio"></span>
                                         {{name}} {{type}} {{class}}
                                     </label>
                                 </div>
                             {{/each}}
-
                         </div>
-
                         <!-- <div class="form-group">
                             <div class="col-sm-10">
         						<input id="fileList" type='file' multiple/>
@@ -139,16 +142,18 @@
 
     <script>
         //Show additional choices
-        var radioListener = document.getElementById("type-choice"); 
-        radioListener.addEventListener("click", checkboxStatus);
-        
-        function checkboxStatus(){
-            var checkedName = $('input[name=type-radio]').filter(':checked').val();
-            // console.log(checkedName);
-            if (checkedName == 'JOIN') {
-                $('input[id=goto-wizard]:checked').attr('checked', false);
-            }
-        }
+        $(function () {
+            $('input[name=type-radio]').change(function(){
+                var checkedName = $('input[name=type-radio]').filter(':checked').val();
+                // console.log(checkedName);
+                if (checkedName === 'JOIN') {
+                    $('input[id=goto-wizard]:checked').attr('checked', false);
+                    $('input[id=goto-wizard]').attr("disabled","disabled");;
+                } else {
+                    $('input[id=goto-wizard]').removeAttr('disabled');
+                }            
+            })
+        })
     </script>
 </template>
 
@@ -208,9 +213,9 @@
                             </select>                                                        
                         </form>                    
                         <form>
-                            <p>Field </p>
+                            <p>Field (if applicable)</p>
                             <select name="field-list" id="field-list">
-                                <option name="field-name" value="" selected></option>
+                                <!-- <option name="field-name" value="" selected></option> -->
                                 {{#each attList}}
                                     <option name="field-name" value="{{attribute}}">{{attribute}}</option>
                                 {{/each}}
@@ -224,19 +229,19 @@
                         
                         <hr>
 
-                        <form> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Display result </p>
                         </form>
 
-                        <form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
                             <label><p>Result at least (&gt;=): &emsp;</p> </label>
                             <input id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>
 
-                        <form> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <label><p>Result at most (&lt;=):&emsp;</p> </label>
                             <input id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
@@ -253,9 +258,6 @@
     </div>
 
     <script>
-        function getDefaultName() {
-            // document.getElementById("field-name").value = "default";
-            console.log("getDefaultName executed");
-        }
+        function getDefaultName() {}
     </script>
 </template>

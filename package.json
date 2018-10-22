@@ -1,0 +1,15 @@
+{
+  "name": "wwsna",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "bcrypt": "^0.8.7",
+    "json2csv": "^4.2.1",
+    "meteor-node-stubs": "~0.2.0",
+    "sparqljs": "^2.0.3",
+    "yasgui-yasqe": "^2.11.18"
+  }
+}

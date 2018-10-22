@@ -1,7 +1,8 @@
 Interpreter.customMethods({
 	AddLink: function () {
+		Interpreter.destroyErrorMsg();
 		$("#add-link-form").modal("show");
-	}
+	},
 })
 
 
@@ -113,23 +114,20 @@ Template.AddLink.helpers({
 
 });
 
-var start_elem_id;
-var created_element;
-
 Template.AddLink.events({
 
 	"click #ok-add-link": function() {
 
 		//Read user's choise
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
-		var linkType = $('input[name=type-radio]:checked').val();		
+		var linkType = $('input[name=type-radio]:checked').val();
 
-		var name = obj.attr("name");		
+		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
 		//start_elem
-		start_elem_id = Session.get("activeElement");
+		var start_elem_id = Session.get("activeElement");
 		Template.AggregateWizard.startClassId.set(start_elem_id);
 		var elem_start = Elements.findOne({_id: start_elem_id});
 
@@ -222,7 +220,6 @@ Template.AddLink.events({
 			if (elem_id) {
 
 				var end_elem_id = elem_id;
-				created_element = elem_id;
 				Template.AggregateWizard.endClassId.set(elem_id);
 
 				//New element: Name compartment
@@ -339,7 +336,7 @@ Template.AddLink.events({
 					var line_elem = Elements.findOne({_id: line_id});
 					var vq_line = new VQ_Element(line_id);
 					vq_line.setLinkType("REQUIRED");
-					if(linkType == "NESTED") vq_line.setLinkQueryType("SUBQUERY")
+					if(linkType == "NESTED") vq_line.setNestingType("SUBQUERY")
 					//vq_line.setName(name);
 					var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 					if (line_compart_type) {
@@ -376,16 +373,15 @@ Template.AddLink.events({
 
 			}
 
-		});	
+		});
 
-		if (document.getElementById("goto-wizard").checked == true ){			
+		if (document.getElementById("goto-wizard").checked == true ){
 
-			//Fields						
-			var attr_list = [];
+			//Fields
+			var attr_list = [{attribute: ""}];
 			var schema = new VQ_Schema();
 
 			if (schema.classExist(class_name)) {
-				Template.AggregateWizard.startClassName.set(class_name);
 
 				var klass = schema.findClassByName(class_name);
 
@@ -393,18 +389,21 @@ Template.AddLink.events({
 					attr_list.push({attribute: att["name"]});
 				})
 				attr_list = _.sortBy(attr_list, "attribute");
-			};
-			console.log(attr_list);			
+			}
+			// console.log(attr_list);
 			Template.AggregateWizard.attList.set(attr_list);
 
 			//Alias name
 			if (class_name) {
+				Interpreter.destroyErrorMsg();
 				Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+				Template.AggregateWizard.showDisplay.set("block");
 				$("#aggregate-wizard-form").modal("show");
 			} else {
-				alert("No class selected - wizard may work unproperly");
-			}								
-		}		
+				//alert("No class selected - wizard may work unproperly");
+				Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+			}
+		}
 
 		clearAddLinkInput();
 		return;
@@ -420,8 +419,8 @@ Template.AddLink.events({
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
-Template.AggregateWizard.startClassName = new ReactiveVar("No start name");
 Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
@@ -429,43 +428,46 @@ Template.AggregateWizard.helpers({
 		return Template.AggregateWizard.defaultAlias.get();
 	},
 
-	attList: function(){		
+	attList: function(){
 		return Template.AggregateWizard.attList.get();
 	},
 
-	startClassId: function(){		
+	startClassId: function(){
 		return Template.AggregateWizard.startClassId.get();
 	},
 
-	startClassName: function(){		
-		return Template.AggregateWizard.startClassId.get();
-	},
-
-	endClassId: function(){		
+	endClassId: function(){
 		return Template.AggregateWizard.endClassId.get();
+	},
+
+	showDisplay: function(){
+		return Template.AggregateWizard.showDisplay.get();
 	},
 });
 
 Template.AggregateWizard.events({
-
 	"click #ok-aggregate-wizard": function() {
-		// console.log("427: from " + start_elem_id + " to " + created_element);		
 		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var expr = $('option[name=function-name]:selected').val()
-		expr = expr.concat("(", $('option[name=field-name]:selected').val(), ")");
+		var fld = $('option[name=field-name]:selected').val();
+		if (fld == "") {
+			expr = expr.concat("(.)");
+		} else {
+			expr = expr.concat("(", fld, ")");
+		}
 		//console.log(alias + " " + expr);
 		vq_end_obj.addAggregateField(expr,alias);
 
 		var displayCase = document.getElementById("display-results").checked;
 		var minValue = $('input[id=results_least]').val();
 		var maxValue = $('input[id=results-most]').val();
-		console.log(displayCase, minValue, maxValue);
+		//console.log(displayCase, minValue, maxValue);
 		if (displayCase || (minValue != "") || (maxValue != "")) {
 			console.log("display or min/max");
 			var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
 			if (alias == null || alias == "") {
-				var cName = Template.AggregateWizard.startClassName.curValue;
+				var cName = vq_start_obj.getName();
 				var newFunction = $('option[name=function-name]:selected').val();
 				alias = cName.charAt(0) + "_" + newFunction;
 			}
@@ -473,7 +475,9 @@ Template.AggregateWizard.events({
 			if (displayCase) vq_start_obj.addField(alias,);
 			if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
 			if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
-		} else {console.log("no dismlay or min/max");}
+		} else {
+			//console.log("no display or min/max");
+		}
 
 		clearAggregateInput();
 		return;
@@ -485,20 +489,24 @@ Template.AggregateWizard.events({
 	},
 
 	"change #function-list": function() {
-		console.log("changed");
+		// console.log("changed");
 		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var newFunction = $('option[name=function-name]:selected').val();
-		var fieldName = $('option[name=field-name]:selected').val();		
-		var cName = Template.AggregateWizard.startClassName.curValue;
-		console.log(cName.charAt(0), fieldName.length);
+		var fieldName = $('option[name=field-name]:selected').val();
+		var cName = vq_obj.getName();
+		//console.log(cName.charAt(0), fieldName.length);
 
-		//Select suitable atribtes		
+		//Select suitable atributes for Field form
+		defaultFieldList();
 		var schema = new VQ_Schema();
 		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
 		var attrArray = Template.AggregateWizard.attList.curValue;
 		var newAttrList = [];
-		if (schema.classExist(cName)) {
+		if (newFunction == "count" || newFunction == "count_distinct" || newFunction == "sample") {
+			newAttrList.push({attribute: ""});
+		}
+		if (schema.classExist(cName)){
 			var klass = schema.findClassByName(cName);
 			_.each(klass.getAllAttributes(), function(att){
 				var attrType = schema.resolveAttributeByName(cName, att["name"]).type;
@@ -509,46 +517,54 @@ Template.AggregateWizard.events({
 				} else {
 					newAttrList.push({attribute: att["name"]});
 				}
-			})	
+			})
 
 			newAttrList = _.sortBy(newAttrList, "attribute");
-			//console.log(attr_list);			
-			Template.AggregateWizard.attList.set(newAttrList);				
-		};		
+		}
+		//console.log(attr_list);
+		Template.AggregateWizard.attList.set(newAttrList);
 
 		//Set default alias
-		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];		
+		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + f;
 			var defaultFieldName = f + "_" + fieldName;
-			if (alias == defaultName) {				
+			if (alias == defaultName) {
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 			} else if (alias == defaultFieldName) {
 				if (newAttrList.indexOf(fieldName) > -1) {
 					Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
 				} else {
-					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);					
+					Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 				}
 			}
-		})		
+		})
+
+		//Set at least/at most
+		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){
+			$('input[id=results_least]').attr('disabled', false);
+			$('input[id=results-most]').attr('disabled', false);
+		} else {
+			$('input[id=results_least]').attr('disabled', true);
+			$('input[id=results-most]').attr('disabled', true);
+		}
 		return;
 	},
 
 	"change #field-list": function() {
-		console.log("changed field");
+		// console.log("changed field");
 		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+		var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
 		var alias = $('input[id=alias-name]').val();
 		var newFunction = $('option[name=function-name]:selected').val();
 		var fieldName = $('option[name=field-name]:selected').val();
-		var cName = Template.AggregateWizard.startClassName.curValue;
-		console.log(cName.charAt(0), fieldName.length);
+		var cName = vq_start_obj.getName();
+		//console.log(cName.charAt(0), fieldName.length);
 		var functionArray = Template.AggregateWizard.attList.curValue;
-		console.log(functionArray);		
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + newFunction;
 			var defaultFieldName = newFunction + "_" + f.attribute;
-			console.log(alias, defaultName, defaultFieldName, fieldName.length);
-			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {				
+			if ((alias == defaultName || alias == defaultFieldName) && fieldName.length == 0) {
 				Template.AggregateWizard.defaultAlias.set(cName.charAt(0) + "_" + newFunction);
 			} else if ((alias == defaultName || alias == defaultFieldName) && fieldName.length != 0) {
 				Template.AggregateWizard.defaultAlias.set(newFunction + "_" + fieldName);
@@ -564,12 +580,17 @@ Template.AggregateWizard.events({
 
 function clearAddLinkInput(){
 	$('input[name=stack-radio]:checked').attr('checked', false);
+	// var defaultList = document.getElementsByName("stack-radio");
+	// _.each(defaultList, function(e){
+	// 	if (e.value == "++") e.checked = true;
+	// 	else e.checked = false;
+	// });
 	var defaultRadio = document.getElementsByName("type-radio");
 	_.each(defaultRadio, function(e){
 		if (e.value == "JOIN") e.checked = true;
 		else e.checked = false;
 	});
-	
+
 	$('input[id=goto-wizard]').attr('checked', false);
 }
 
@@ -580,15 +601,18 @@ function clearAggregateInput(){
 		else e.selected = false;
 	});
 
-	var defaultFunctions = document.getElementsByName("field-name");
-	_.each(defaultFunctions, function(e){
-		if (e.value == "") e.selected = true;
-		else e.selected = false;
-	});
+	defaultFieldList();
 
-	Template.AggregateWizard.defaultAlias.set("N_count");				
+	Template.AggregateWizard.defaultAlias.set("N_count");
 	$('input[id=display-results]:checked').attr('checked', false);
 	document.getElementById("results_least").value = "";
 	document.getElementById("results-most").value = "";
 }
 
+function defaultFieldList(){
+	var defaultFunctions = document.getElementsByName("field-name");
+	_.each(defaultFunctions, function(e){
+		if (e.value == "") e.selected = true;
+		else e.selected = false;
+	});
+}
