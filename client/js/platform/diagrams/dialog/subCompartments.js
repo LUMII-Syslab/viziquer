@@ -67,15 +67,16 @@ Template.multiField.events({
 
 			Utilities.callMeteorMethod("swapCompartments", list);			
 		}
-
 	},
 
 
 	'click .add-multi-field': function(e, templ) {
-
 		e.preventDefault();
 
 		var src = $(e.target);
+
+		console.log("$(src) ", $(src))
+
 		var multi_field = $(src).closest(".multi-field");
 		var compart_type_id = multi_field.attr("id");
 
@@ -85,22 +86,7 @@ Template.multiField.events({
 		var form = multi_field.find(".row-form");
 		form.modal("show");
 
-		var extra_button = {};
-		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
-		if (_.size(compart_type.subCompartmentTypes) > 0) {
-			extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
-
-			var is_available = false;
-
-			var is_available_func = extra_button.isAvailable;
-			if (is_available_func && extra_button.processButtonClick) {
-				is_available = Interpreter.execute(is_available_func, [compart_type]);
-			}
-
-			_.extend(extra_button, {isAvailable: is_available,});
-		}
-
-		Session.set("extraButton", extra_button);
+		execute_extension_point(compart_type_id);
 
 		return;
 	},
@@ -120,6 +106,8 @@ Template.multiField.events({
 
 		var form = multi_field.find(".row-form");
 		form.modal("show");
+
+		execute_extension_point(compart_type_id);
 
 		return;
 	},
@@ -329,4 +317,24 @@ function getCurrentCompartment(e) {
 	}
 
 	return {compartments: compartments, index: index, currentCompartment: current_compart,};
+}
+
+
+function execute_extension_point(compart_type_id) {
+	var extra_button = {};
+	var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+	if (_.size(compart_type.subCompartmentTypes) > 0) {
+		extra_button = compart_type.subCompartmentTypes[0].extraButton || {};
+
+		var is_available = false;
+
+		var is_available_func = extra_button.isAvailable;
+		if (is_available_func && extra_button.processButtonClick) {
+			is_available = Interpreter.execute(is_available_func, [compart_type]);
+		}
+
+		_.extend(extra_button, {isAvailable: is_available,});
+	}
+
+	Session.set("extraButton", extra_button);
 }

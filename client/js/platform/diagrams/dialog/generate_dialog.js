@@ -49,7 +49,6 @@ Template.dialogTabContent.events({
 			}
 		}
 		console.log("compart_type ", compart_type)
-
 		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
 	},
 
