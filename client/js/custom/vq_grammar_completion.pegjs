@@ -35,7 +35,7 @@
 					addContinuation(place, prop[key]["name"], 100);
 				}
 				getAssociations(place, 95);
-				getClasses(place, 94);
+				//getClasses(place, 94);
 			}
 			function getAssociations(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAssociations()
@@ -642,8 +642,8 @@
 			less = "" {addContinuation(location(), "<", 90);}
 			persent = "" {addContinuation(location(), "%", 90);}
 			between_c = "" {addContinuation(location(), "BETWEEN", 90);}
-			int_c = "" {addContinuation(location(), "NUMBER", 1);}
-			string_c = "" {addContinuation(location(), "STRING", 1);}
+			int_c = "" {addContinuation(location(), "", 1);}
+			string_c = "" {addContinuation(location(), "", 1);}
 			colon_c = "" {addContinuation(location(), ":", 90);}
 			vertical_c = "" {addContinuation(location(), "|", 90);}
 			space_c = "" {addContinuation(location(), " ", 10);}

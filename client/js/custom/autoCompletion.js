@@ -7,24 +7,36 @@ Interpreter.customMethods({
 });
 
 autoCompletion = function(e) {
+		removeMessage();
 		// console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
 		if (e.ctrlKey && (e.keyCode == 32 || e.keyCode == 0)) {
 			var elem = document.activeElement;
 			var text = e.originalEvent.target.value;
+			text = text.substring(0, elem.selectionStart);
+				
 			var continuations = runCompletion(text, Session.get("activeElement"));		
-			
-			elem.addEventListener("keyup", ketUpHandler);
-			elem.addEventListener("click", clickHandler);
-			
-			autocomplete(elem, continuations);
+			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
+				errorMessage(continuations, elem);
+			}else{
+				elem.addEventListener("keyup", ketUpHandler);
+				elem.addEventListener("click", clickHandler);
+				
+				autocomplete(elem, continuations);
+			}
 		}
 	 }
 
 function ketUpHandler(e){
 	if(document.getElementsByClassName("autocomplete-items").length > 0){
+		removeMessage();
 		var text = e.target.value;
 		var continuations = runCompletion(text, Session.get("activeElement"));
-		autocomplete(document.activeElement, continuations);
+		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
+			errorMessage(continuations,  document.activeElement);
+			closeAllLists();
+		}else{
+			autocomplete(document.activeElement, continuations);
+		}
 	}
 }
 
@@ -35,6 +47,10 @@ function clickHandler(e){
 }
 
 function autocomplete(inp, arr) {
+	
+	removeMessage();
+	
+	var cursorPosition = inp.selectionStart;
 	var currentFocus;
     var a, b, i, val = inp.value;
     /*close any already open lists of autocompleted values*/
@@ -45,7 +61,7 @@ function autocomplete(inp, arr) {
 	 
    	a.style.display = 'block';
 	a.style.position = 'auto';
-	a.style.width = '120px';
+	a.style.width = '250px';
 	a.style.maxHeight = '200px';
 	a.style.overflow = 'hidden';
 	a.style.overflowY = 'auto';
@@ -70,7 +86,7 @@ function autocomplete(inp, arr) {
         /*execute a function when someone clicks on the item value (DIV element):*/
         b.addEventListener("click", function(e) {
 			/*insert the value for the autocomplete text field:*/
-			var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value);
+			var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value, cursorPosition);
 			inp.value = inputValue;
 			/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
 			closeAllLists();
@@ -137,12 +153,16 @@ function closeAllLists(elmnt) {
 	}
 }
 
-function generateInputValue(fi, con){
+
+ 
+function generateInputValue(fi, con, cursorPosition){
 
 	var fullInput = fi.toLowerCase();
 	var continuation = con.toLowerCase();
+	
+	var fiTillCursor = fi.substring(0, cursorPosition);
 
-	var inputValue = fi + con;
+	var inputValue = fiTillCursor + con;
 	var inputSet = false;
 	var counter = 1;
 	while(inputSet == false){
@@ -151,13 +171,14 @@ function generateInputValue(fi, con){
 		else {
 			if(continuation.startsWith(fullInput.substring(subSt)) == true){
 				inputSet = true;
-				inputValue = fi.substring(0, subSt) + con;
+				inputValue = fiTillCursor.substring(0, subSt) + con;
 			} else {
 				counter++;
 			}
 		}
 	}
 
+	inputValue = inputValue + fi.substring(cursorPosition);
 	return inputValue;
 }
 
@@ -176,6 +197,7 @@ runCompletion = function (text, act_elem){
 		// console.log(com["message"], JSON.parse(com["message"]));
 		console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
+		
 		console.log(JSON.stringify(c, 0, 2));
 		// var elem = document.activeElement;
 		// autocomplete(elem, c);
@@ -268,10 +290,10 @@ function getContinuations(text, length, continuations) {
 			var uniqueMessages = getCompletionTable(continuations_to_report)
 			var messages = [];
 					
-			messages.push("ERROR: in a possotion " + farthest_pos + ", possible follows are:");
+			var messages = "ERROR: in a possotion " + farthest_pos + ", possible follows are:";
 					
 			for (var pos in uniqueMessages) {
-				messages.push( "     " + uniqueMessages[pos]);
+				messages = messages+ "\n" + uniqueMessages[pos] + ",";
 			}
 			return messages
 		}
@@ -280,3 +302,30 @@ function getContinuations(text, length, continuations) {
 	var uniqueMessages = getCompletionTable(continuations_to_report)
 	return uniqueMessages
 }
+
+function errorMessage(message, elem){
+	m = document.createElement("DIV");
+	 
+	m.style.color = '#691715';
+    m.style.background= '#feded9';
+    m.style.border= '1px solid #fc8675';
+   	m.style.display = 'block';
+	m.style.position = 'auto';
+	
+	  
+    m.setAttribute("id", "message");
+    m.setAttribute("class", "message");
+    m.innerHTML += "<label>" + message + "</label>";
+    elem.parentNode.insertBefore(m, elem);
+	
+}
+
+function removeMessage(){
+	var m = document.getElementById("message");
+	if(m != null) m.parentNode.removeChild(m);
+}
+
+
+
+
+

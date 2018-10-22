@@ -4,6 +4,11 @@
             margin-top: 5px;
             margin-left: 20px;                        
         }
+		div.merge-values-expression {
+            margin-top: 5px;
+            margin-left: 20px;                        
+            margin-right: 60px;                        
+        }
 
 		div.merge-type-part {
 			background-color: white;
@@ -30,6 +35,9 @@
             border-radius:5px;
             font-size: 13px;
         }
+		input {
+			width: 100%;
+		}
 		
     </style>
     <!-- Modal for new document -->
@@ -42,6 +50,7 @@
                     <h4 class="modal-title">Merge values</h4>
                 </div>
                 <div class="modal-bodyFC">                
+					
 					{{#if isMultiple}}                   
 					   <div class="merge-type-part">
 							<form id="type-choice" class="form-horizontal" role="form">
@@ -73,19 +82,22 @@
 							</form>                    
 						</div>
 				    {{/if}}
-					
+					<div class="merge-values-expression">
+						<p>Expression: </p>
+						<input type="text" name="expression-merge" value="{{expression}}">
+					</div>
 					<div class="merge-values-list">                       
                         <form class="function-radio-list">
                             <p>Functions: </p>
                             <select name="function-list" id="function-list">
-                                <option name="function-name-merge" value="count" selected>count</option>
-                                <option name="function-name-merge" value="count_distinct">count_distinct</option>
-                                <option name="function-name-merge" value="sum">sum</option>
-                                <option name="function-name-merge" value="avg">avg</option>
-                                <option name="function-name-merge" value="max">max</option>
-                                <option name="function-name-merge" value="min">min</option>
-                                <option name="function-name-merge" value="sample">sample</option>
-                                <option name="function-name-merge" value="concat">concat</option>
+                                <option name="function-name-merge" value="count" {{selectedCount}}>count</option>
+                                <option name="function-name-merge" value="count_distinct" {{selectedDistinct}}>count_distinct</option>
+                                <option name="function-name-merge" value="sum" {{selectedSum}}>sum</option>
+                                <option name="function-name-merge" value="avg" {{selectedAvg}}>avg</option>
+                                <option name="function-name-merge" value="max" {{selectedMax}}>max</option>
+                                <option name="function-name-merge" value="min"  {{selectedMin}}>min</option>
+                                <option name="function-name-merge" value="sample" {{selectedSample}}>sample</option>
+                                <option name="function-name-merge" value="concat" {{selectedConcat}}>concat</option>
                             </select>                                                        
                         </form>                                          
                     </div>
