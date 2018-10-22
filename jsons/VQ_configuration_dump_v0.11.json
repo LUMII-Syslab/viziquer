@@ -1290,7 +1290,7 @@
                     "defaultValue": null,
 
 					"extraButton": {
-                        "caption": "Merge values",
+                        "caption": "Merge values ..",
 						 "isAvailable": "isMergeValuesWizardAvailable",
 						 "processButtonClick": "AddMergeValues"
                     },
