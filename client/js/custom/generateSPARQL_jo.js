@@ -738,8 +738,8 @@ function generateSPARQLtext(abstractQueryTable){
 				classMembership =  parameterTable["directClassMembershipRole"];
 				//todo prefix
 			} else {
-				classMembership = "rdf:type";
-				prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
+				classMembership = "a";
+				// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 			}
 			 
 			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership);
@@ -897,8 +897,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 			if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
 		}
 	} else {
-		classMembership = "rdf:type";
-		prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
+		classMembership = "a";
+		// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 	}
 	
 	
