@@ -86,7 +86,7 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	variableNamesClass = vnc;
 	
 	var parsed_exp1 = transformBetweenLike(parsed_exp);
-	//console.log(JSON.stringify(parsed_exp1,null,2));
+	// console.log(JSON.stringify(parsed_exp1,null,2));
 	var parsed_exp2 = transformSubstring(parsed_exp1);
 	
 	var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
@@ -871,7 +871,8 @@ function transformBetweenLike(expressionTable){
 			var temp = expressionTable[key][0];
 			var pe;
 			if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Path"] === 'undefined'
-			&& typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"] === 'undefined'){
+			&& typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"] === 'undefined'
+			&& typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Reference"] === 'undefined'){
 				pe = {
                         "var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
 						"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
@@ -883,6 +884,15 @@ function transformBetweenLike(expressionTable){
 			} else if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"] !== 'undefined'){
 				pe = {
 					"PathProperty" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"],
+					"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
+					"FunctionBETWEEN": null,
+					"FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
+               }
+			} else if(typeof temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Reference"] !== 'undefined'){
+				// console.log("uUUUUUUUUUUUUUUUUUUUUUUUUUU");
+				pe = {
+					"var" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"],
+					"Reference" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Reference"],
 					"Substring": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["Substring"],
 					"FunctionBETWEEN": null,
 					"FunctionLike": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["FunctionLike"]
