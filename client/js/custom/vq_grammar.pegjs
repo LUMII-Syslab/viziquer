@@ -369,13 +369,13 @@
 
 			NotExistsFunc = NotExistsFunc:(NotExistsFuncA / NotExistsFuncB1 /NotExistsFuncB / NotExistsFuncC1/ NotExistsFuncC) {return {NotExistsFunc:NotExistsFunc}}
 
-			NotExistsFuncA = NOT space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
+			NotExistsFuncA = NOT spaceOb  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
 
-			NotExistsFuncB = NOT space EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncB1 = NOT  space  EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncB = NOT spaceOb EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncB1 = NOT  spaceOb  EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
-			NotExistsFuncC = NOT  space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncC1 = NOT  space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncC = NOT  spaceOb Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncC1 = NOT  spaceOb "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
 			ExpressionList2 = (NIL / "(" space Expression space  ( Comma space Expression )* space ")" )
 			ExpressionList3 = ("{" space Expression space  ( Comma space Expression )* space "}" )
@@ -531,6 +531,7 @@
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
+			spaceOb = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
