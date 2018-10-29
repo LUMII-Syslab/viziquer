@@ -58,7 +58,33 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
    //JSON -->
   // function recursively modifies query by adding identification info
-  function resolveClass(obj_class) {
+  function resolveClass(obj_class, parents_scope_table) {
+
+    var my_scope_table = {CLASS_ALIAS:[],PROPERTY_ALIAS:[], PROPERTY_NAME:[], BIND_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[]};
+
+    // Copy everything relevant from parent to this
+     parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
+
+    /*if (obj_class.linkIdentification) {
+       if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery)) {
+
+       };
+
+       if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
+           parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
+       };
+
+       if (obj_class.linkType == "NOT" || obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+          parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
+       };
+    } */
+
+    if (obj_class.instanceAlias) {
+      my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName)});
+
+      // TODO: Remove after compatibility issues resolved
+      symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName), kind:"CLASS_ALIAS"};
+    };
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
     _.extend(obj_class.identification, parseExpression(obj_class.identification.localName, "CLASS_NAME"));
@@ -73,13 +99,6 @@ resolveTypesAndBuildSymbolTable = function (query) {
       _.extend(cl.identification, parsePathExpression(cl.identification.localName))
     });
 
-    if (obj_class.instanceAlias) {
-      if(symbol_table[obj_class.instanceAlias]) {
-        console.log("Duplicate instanceAlias name " + obj_class.instanceAlias +" in " + obj_class.identification.localName)
-      } else {
-        symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName), kind:"CLASS_ALIAS"};
-    }};
-
     obj_class.fields.forEach(function(f) {
         // CAUTION .............
         // HACK: * and ** fields
@@ -92,30 +111,88 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
+                // ???? TODO: my_scope_table.PROPERTY_NAME.push({id:attr["name"], type:attr_info});
               });
            };
         } else if (f.alias) {
-          if (symbol_table[f.alias]) {
-             console.log("Duplicate attribute alias name " + f.alias + " in " + obj_class.identification.localName)
-          } else {
+              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null});
+
+              // TODO: Remove after compatibility issues resolved
              symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
-        }};
-    });
-    obj_class.aggregations.forEach(function(f) {
-        if (f.alias) {
-          if (symbol_table[f.alias]) {
-             console.log("Duplicate aggregation alias name " + f.alias + " in " + obj_class.identification.localName)
-          } else {
-             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
-        }};
+        };
     });
 
-    obj_class.children.forEach(resolveClass);
+    obj_class.aggregations.forEach(function(f) {
+        if (f.alias) {
+          if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
+             // TODO: longer path!
+             // TODO: resolve type
+             parents_scope_table.AGGREGATE_ALIAS.push({id:obj_class.instanceAlias, type:null});
+          };
+             // TODO: Remove after compatibility issues resolved
+             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
+        };
+    });
+
+    obj_class.children.forEach(function(ch) {
+      resolveClass(ch, my_scope_table);
+
+    });
+
+    // we should copy to parent
+    if (obj_class.linkIdentification) {
+       if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
+            my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+              if (!_.any(parents_scope_table.CLASS_ALIAS, function(cap) {
+                cap.id == ca.id;
+              })) {
+                parents_scope_table.CLASS_ALIAS.push(ca)
+              }
+
+            });
+       };
+
+       if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
+         my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+           if (!_.any(parents_scope_table.CLASS_ALIAS, function(cap) {
+             cap.id == ca.id;
+           })) {
+             parents_scope_table.CLASS_ALIAS.push(ca)
+           }
+
+         });
+       };
+
+       /*if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
+
+       };*/
+
+       if (obj_class.linkType !== "NOT") {
+         my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) { parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(ca)});
+         my_scope_table.PROPERTY_ALIAS.forEach(function(ca) { parents_scope_table.PROPERTY_ALIAS.push(ca)});
+         my_scope_table.PROPERTY_NAME.forEach(function(ca) { parents_scope_table.PROPERTY_NAME.push(ca)});
+         my_scope_table.BIND_ALIAS.forEach(function(ca) { parents_scope_table.BIND_ALIAS.push(ca)});
+       };
+    }
+
+
+    // we should build symbol table entry for this Class.
+    symbol_table[obj_class.identification._id] = {};
+    _.each(my_scope_table, function(value, key) {
+       _.each(value, function(entry) {
+         if (!symbol_table[obj_class.identification._id][entry.id]) {
+           symbol_table[obj_class.identification._id][entry.id] = [];
+         };
+         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type});
+       })
+    })
+
 
     return;
   };
 
-  resolveClass(query.root);
+  var empty_scope_table = {CLASS_ALIAS:[],PROPERTY_ALIAS:[], PROPERTY_NAME:[], BIND_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[]};
+  resolveClass(query.root, empty_scope_table);
 
   // String, String --> JSON
   // Parses the text and returns object with property "parsed_exp"
@@ -200,8 +277,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
             var condition = {exp:"(this) = " + strURI};
-			parseExpObject(condition);
-			obj_class.conditions.push(condition);
+			      parseExpObject(condition);
+			      obj_class.conditions.push(condition);
             obj_class.instanceAlias = null;
           } else {
              f.exp=obj_class.instanceAlias;
@@ -240,7 +317,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
              symbol_table[f.alias].type = var_obj["type"];
            }
          }
-		if (f.requireValues && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+		     if (f.requireValues && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
@@ -256,19 +333,20 @@ resolveTypesAndBuildSymbolTable = function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
             var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-		    if ((var_obj["kind"]=="PROPERTY_ALIAS" || var_obj["kind"]=="CLASS_ALIAS") && obj_class.instanceAlias != f.exp) {
-            var expression = f.exp;
-			if (f.alias) expression = f.alias;
-			var condition = {exp:"EXISTS(" + expression + ")"};
-			parseExpObject(condition);
-			obj_class.conditions.push(condition);
-           }
+		        if ((var_obj["kind"]=="PROPERTY_ALIAS" || var_obj["kind"]=="CLASS_ALIAS") && obj_class.instanceAlias != f.exp) {
+              var expression = f.exp;
+			        if (f.alias) expression = f.alias;
+			        var condition = {exp:"EXISTS(" + expression + ")"};
+			        parseExpObject(condition);
+			        obj_class.conditions.push(condition);
+            }
          }
     });
 
     if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
     if (obj_class.groupings) { obj_class.groupings.forEach(parseExpObject) };
     if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
+
 
     obj_class.children.forEach(resolveClassExpressions);
     return;

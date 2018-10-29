@@ -1088,7 +1088,7 @@ VQ_Element.prototype = {
   getConditions: function() {
     return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
   },
-  // string -->// it does not work - there are still subcompartments
+  // string -->
   addCondition: function(condition) {
     this.addCompartmentSubCompartments("Conditions",[{name:"Expression", value:condition}])
   },
@@ -1731,7 +1731,7 @@ VQ_Element.prototype = {
       value_array.pop();
       c_to_create["compartment"]["value"] = value_array.join("");
       c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
-      console.log(c_to_create);
+      //console.log(c_to_create);
       Utilities.callMeteorMethod("insertCompartment", c_to_create);
     };
   },
