@@ -420,6 +420,7 @@ Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+Template.AggregateWizard.linkId = new ReactiveVar("No link");
 Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 Template.AggregateWizard.helpers({
@@ -440,6 +441,10 @@ Template.AggregateWizard.helpers({
 		return Template.AggregateWizard.endClassId.get();
 	},
 
+	linkId: function(){
+		return Template.AggregateWizard.linkId.get();
+	},
+
 	showDisplay: function(){
 		return Template.AggregateWizard.showDisplay.get();
 	},
@@ -458,6 +463,13 @@ Template.AggregateWizard.events({
 		}
 		//console.log(alias + " " + expr);
 		vq_end_obj.addAggregateField(expr,alias);
+
+		if (Template.AggregateWizard.linkId.curValue != "No link") {
+			var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
+			if (vq_link_obj.isLink()) {
+				vq_link_obj.setNestingType("SUBQUERY");
+			}
+		}
 
 		var displayCase = document.getElementById("display-results").checked;
 		var minValue = $('input[id=results_least]').val();
@@ -594,6 +606,12 @@ function clearAddLinkInput(){
 	$('input[id=goto-wizard]').attr('checked', false);
 }
 
+// Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
+// Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+// Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
+// Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+//Template.AggregateWizard.linkId = new ReactiveVar("No link");
+// Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 function clearAggregateInput(){
 	var defaultFunctions = document.getElementsByName("function-name");
 	_.each(defaultFunctions, function(e){
@@ -602,8 +620,12 @@ function clearAggregateInput(){
 	});
 
 	defaultFieldList();
-
+	Template.AggregateWizard.showDisplay.set("none");
 	Template.AggregateWizard.defaultAlias.set("N_count");
+	Template.AggregateWizard.attList.set([{attribute: "No_attribute"}]);
+	Template.AggregateWizard.startClassId.set("No start id");
+	Template.AggregateWizard.endClassId.set("No end id");
+	Template.AggregateWizard.linkId.set("No link");
 	$('input[id=display-results]:checked').attr('checked', false);
 	document.getElementById("results_least").value = "";
 	document.getElementById("results-most").value = "";

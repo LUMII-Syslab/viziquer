@@ -181,7 +181,7 @@
             width:95%
         }
 
-        .wizard-list select, #field-name {
+        .wizard-list form, #field-name, #function-list, #field-list {
             position: relative;             
             width:90%;
             border-radius:5px;
@@ -201,7 +201,7 @@
                     <div class="wizard-list">                       
                         <form class="function-radio-list">
                             <p>Functions: </p>
-                            <select name="function-list" id="function-list">
+                            <select name="function-list" id="function-list" style="width:100%">
                                 <option name="function-name" value="count" selected>count</option>
                                 <option name="function-name" value="count_distinct">count_distinct</option>
                                 <option name="function-name" value="sum">sum</option>
@@ -214,7 +214,7 @@
                         </form>                    
                         <form>
                             <p>Field (if applicable)</p>
-                            <select name="field-list" id="field-list">
+                            <select name="field-list" id="field-list" style="width:100%">
                                 <!-- <option name="field-name" value="" selected></option> -->
                                 {{#each attList}}
                                     <option name="field-name" value="{{attribute}}">{{attribute}}</option>
@@ -241,7 +241,7 @@
                             <span class="validity"></span>  
                         </form>
 
-                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
                             <label><p>Result at most (&lt;=):&emsp;</p> </label>
                             <input id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
