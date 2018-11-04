@@ -542,7 +542,7 @@ Interpreter.customMethods({
 		var act_elem = Session.get("activeElement");
 		var name_list = [{value: " ", input: " ", }];
 		if (act_elem) {
-			var vq_link = new VQ_Element(act_elem["_id"]);
+			var vq_link = new VQ_Element(act_elem);
 			if (vq_link.isLink()) {
   			var myschema = new VQ_Schema();
 				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
