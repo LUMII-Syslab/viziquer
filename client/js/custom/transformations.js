@@ -649,7 +649,10 @@ Interpreter.customMethods({
 	AggregateWizard: function() {
 // Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 // Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+// Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 // Template.AggregateWizard.endClassId = new ReactiveVar("No end");
+// Template.AggregateWizard.linkId = new ReactiveVar("No link");
+// Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 		console.log("AggregateWizard");
 		var attr_list = [{attribute: ""}];
@@ -660,6 +663,16 @@ Interpreter.customMethods({
         if (classId) {
             var classObj = new VQ_Element(classId);
             if (classObj && classObj.isClass()) {
+            	//Display/at least/at most visibility
+            	if(classObj.isRoot()) {
+            		Template.AggregateWizard.showDisplay.set("none");
+            	}else {
+            		Template.AggregateWizard.showDisplay.set("block");
+            		Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
+            		//console.log("root id = ", getRootId(classObj.obj._id));
+            		Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+            	}
+                //Attribute generation
                 var class_name = classObj.getName();
                 if (schema.classExist(class_name)) {
                     var klass = schema.findClassByName(class_name);
@@ -678,6 +691,26 @@ Interpreter.customMethods({
                     $("#aggregate-wizard-form").modal("show");
                 }
             }
+        }
+
+        function getRootId (elId){
+        	var classObj = new VQ_Element(elId);
+        	if (!classObj.isClass()) {return 0;}
+        	if (classObj.isRoot()){
+        		return elId;
+        	} else {
+        		var link = new VQ_Element(classObj.getLinkToRoot().link.obj._id);
+        		if (link){
+        			var elements = link.getElements(); 
+        			//{ start: new VQ_Element(this.obj["startElement"]), end: new VQ_Element(this.obj["endElement"])}
+        			var direction = link.getRootDirection();
+        			if (direction == "start") {
+        				return getRootId(elements.start.obj._id);
+        			} else if (direction == "end"){
+        				return getRootId(elements.end.obj._id);
+        			}
+        		}
+        	}
         }
 	},
 
