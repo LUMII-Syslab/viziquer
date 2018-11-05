@@ -84,7 +84,8 @@ function autocomplete(inp, arr) {
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
         /*execute a function when someone clicks on the item value (DIV element):*/
-        b.addEventListener("click", function(e) {
+       
+		 b.addEventListener("click", function(e) {
 			/*insert the value for the autocomplete text field:*/
 			var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value, cursorPosition);
 			inp.value = inputValue;
@@ -157,21 +158,22 @@ function closeAllLists(elmnt) {
  
 function generateInputValue(fi, con, cursorPosition){
 
-	var fullInput = fi.toLowerCase();
+	var fullInput = fi.substring(0, cursorPosition).toLowerCase();
 	var continuation = con.toLowerCase();
 	
-	var fiTillCursor = fi.substring(0, cursorPosition);
+	var fullTillCursor = fi.substring(0, cursorPosition);
 
-	var inputValue = fiTillCursor + con;
+	var inputValue = fullTillCursor + con;
 	var inputSet = false;
 	var counter = 1;
-	while(inputSet == false){
+
+	while(inputSet == false && continuation.length > counter){
 		var subSt = fullInput.lastIndexOf(continuation.substring(0, counter));
 		if(subSt == -1) inputSet = true;
 		else {
 			if(continuation.startsWith(fullInput.substring(subSt)) == true){
 				inputSet = true;
-				inputValue = fiTillCursor.substring(0, subSt) + con;
+				inputValue = fullTillCursor.substring(0, subSt) + con;
 			} else {
 				counter++;
 			}
@@ -179,6 +181,7 @@ function generateInputValue(fi, con, cursorPosition){
 	}
 
 	inputValue = inputValue + fi.substring(cursorPosition);
+
 	return inputValue;
 }
 
@@ -195,10 +198,10 @@ runCompletion = function (text, act_elem){
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
 		// console.log(com["message"], JSON.parse(com["message"]));
-		console.log(com);
+		// console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
 		
-		console.log(JSON.stringify(c, 0, 2));
+		// console.log(JSON.stringify(c, 0, 2));
 		// var elem = document.activeElement;
 		// autocomplete(elem, c);
 		return c;
