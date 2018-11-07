@@ -31,6 +31,28 @@ Interpreter.customMethods({
 		//console.log(schema.resolveLinkByName("teaches"));
 		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
 	},
+	VQsetGroupBy: function() {
+		 var act_elem = Session.get("activeElement");
+		 var elem = new VQ_Element(act_elem);
+		 comp_val_inst = elem.getCompartmentValue("Instance");
+		 comp_val_group = elem.getCompartmentValue("Group by this");
+
+		 if (comp_val_group == "true")
+		 {
+		   if (comp_val_inst == null )
+		     elem.setCompartmentValue("Instance", "", "Group by this");
+		   else
+		     elem.setCompartmentValue("Instance", comp_val_inst, "Group by {" + comp_val_inst + "}" , false);
+		 }
+		 else
+		 {
+		   if (typeof comp_val_inst == "undefined")
+		     elem.setCompartmentValue("Instance", "", "", false);
+		   else if ( comp_val_inst != null)
+		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
+		 }
+
+	},
 
 	VQsetClassTypeValue: function(list) {
 		//class->element->extensions->after create elements
