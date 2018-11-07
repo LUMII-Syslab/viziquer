@@ -155,13 +155,13 @@
 
 			ConditionalOrExpressionA = (ConditionalOrExpression)
 
-			ConditionalOrExpression = (ConditionalAndExpression  ( space OROriginal space_obl ConditionalAndExpression )*)
+			ConditionalOrExpression = (ConditionalAndExpression  ( space OROriginal spaceObl ConditionalAndExpression )*)
 
 			OROriginal = or ("||" / "OR"i)
 
 			ConditionalAndExpression = (ValueLogicalA)
 
-			ValueLogicalA = (ValueLogical (space ANDOriginal space_obl ValueLogical )*)
+			ValueLogicalA = (ValueLogical (space ANDOriginal spaceObl ValueLogical )*)
 
 			ANDOriginal = and ("&&" / "AND"i) 
 
@@ -229,15 +229,15 @@
 			Aggregate = (AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) 
 
 			AggregateAO =  COUNT_DISTINCT br_open"(" space Expression: Expression space br_close ")" 
-			AggregateA =  (COUNT / SUM / MIN / MAX / AVG / SAMPLE) br_open"(" DISTINCT space_obl Expression space br_close")" 
+			AggregateA =  (COUNT / SUM / MIN / MAX / AVG / SAMPLE) br_open"(" DISTINCT spaceObl Expression space br_close")" 
 
 			AggregateB = (COUNT / SUM / MIN / MAX / AVG / SAMPLE) br_open"(" space Expression space br_close")" 
 
-			AggregateC = (GROUP_CONCAT) br_open"(" DISTINCT space_obl Expression space SEPARATOR br_close")" 
+			AggregateC = (GROUP_CONCAT) br_open"(" DISTINCT spaceObl Expression space SEPARATOR br_close")" 
 
 			AggregateD = (GROUP_CONCAT) br_open"(" space Expression space SEPARATOR:SEPARATOR br_close")" 
 
-			AggregateE = Aggregate: (GROUP_CONCAT) br_open"(" DISTINCT space_obl  Expression space br_close")" 
+			AggregateE = Aggregate: (GROUP_CONCAT) br_open"(" DISTINCT spaceObl  Expression space br_close")" 
 
 			AggregateF = Aggregate: (GROUP_CONCAT) br_open"(" space  Expression space br_close")" 
 
@@ -371,7 +371,7 @@
 
 			ExistsFunc = (ExistsFuncA1 / ExistsFuncA /ExistsFuncB) 
 			ExistsFuncA1 = EXISTS space br_open "(" space GroupGraphPattern br_close")" 
-			ExistsFuncA = EXISTS  space_obl GroupGraphPattern 
+			ExistsFuncA = EXISTS  spaceObl GroupGraphPattern 
 
 			ExistsFuncB = curv_br_open "{" space GroupGraphPattern space curv_br_close "}"
 			GroupGraphPattern = (Expression)
@@ -380,10 +380,10 @@
 
 			NotExistsFuncA = NOT space  curv_br_open "{" space GroupGraphPattern space curv_br_close "}" 
 
-			NotExistsFuncB = NOT space_obl EXISTS  space GroupGraphPattern 
-			NotExistsFuncB1 = NOT  space_obl  EXISTS space br_open"(" space GroupGraphPattern br_close")" 
+			NotExistsFuncB = NOT spaceObl EXISTS  spaceObl GroupGraphPattern 
+			NotExistsFuncB1 = NOT  spaceObl  EXISTS space br_open"(" space GroupGraphPattern br_close")" 
 
-			NotExistsFuncC = NOT  space_obl GroupGraphPattern 
+			NotExistsFuncC = NOT  spaceObl GroupGraphPattern 
 			NotExistsFuncC1 = NOT  space br_open"(" space GroupGraphPattern br_close")" 
 
 			ExpressionList2 = (NIL / br_open "(" space Expression space  ( Comma space Expression )* space br_close ")" )
@@ -420,7 +420,7 @@
 
 			ArgList = ArgListA / ArgListB / NIL
 
-			ArgListA = (br_open"(" space DISTINCT space_obl  ArgListExpression space br_close")" ) 
+			ArgListA = (br_open"(" space DISTINCT spaceObl  ArgListExpression space br_close")" ) 
 
 			ArgListB = (br_open"(" space  ArgListExpression space br_close")") 
 			NIL = br_open"(" space  br_close")" 
@@ -513,7 +513,7 @@
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
 			space = ((" ")*) 
-			space_obl = space_c (" ")+
+			spaceObl = space_c (" ")+
 			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) 
 
 			LikeExpression = (space like_c 'LIKE'i space (likeString1 / likeString2)) 

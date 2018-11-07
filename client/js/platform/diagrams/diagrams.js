@@ -649,7 +649,8 @@ Template.ontologySettings.events({
 					defaultGroupingSeparator: $("#default-grouping-separator").val(),
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
-					showCardinalities: $("#show-cardinalities").is(":checked")
+					showCardinalities: $("#show-cardinalities").is(":checked"),
+					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked")
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -657,6 +658,16 @@ Template.ontologySettings.events({
 
 	'click #use-default-grouping-separator' : function(e, templ) {
 						$("#default-grouping-separator").prop('disabled', !$("#use-default-grouping-separator").is(":checked"))
+
+	},
+	'click #auto-hide-default-property-name' : function(e, templ) {
+		// var parent_query = {"parentDiagrams.0": {$exists: false}};
+
+		// Diagrams.find(parent_query, {$sort: 1}).map(
+			// function(diagram) {
+				// console.log("rrrrrrr", diagram);
+				// autoHideDefaultPropertyNameForDiagrams(diagram, 1);
+		// });
 
 	},
 
@@ -673,6 +684,7 @@ Template.ontologySettings.events({
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
+		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
 	 }
 
 	},
@@ -775,6 +787,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.showCardinalities=="true");
+		}
+	},
+	autoHideDefaultPropertyName: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.autoHideDefaultPropertyName=="true");
 		}
 	},
 });
@@ -961,6 +979,17 @@ function build_diagram_tree(diagram, proj_id, version_id, is_edit_mode, query, s
 	}
 
 	return diagram;
+}
+
+function autoHideDefaultPropertyNameForDiagrams(diagram, sort_by){
+	var id = diagram["_id"];
+
+	//selecting child diagrams
+	Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
+		function(child_diagram) {
+			console.log("gggggggggggg");
+			autoHideDefaultPropertyNameForDiagrams(child_diagram, sort_by);
+	});
 }
 
 Template.migrateForm.helpers({

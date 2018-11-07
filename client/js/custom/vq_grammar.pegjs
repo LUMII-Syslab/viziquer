@@ -171,7 +171,7 @@
 
 			NOT = "NOT"i {return "NOT"}
 
-			NOTIN = Not:(NOT space IN) {return Not.join("")}
+			NOTIN = Not:(NOT spaceObl IN) {return Not.join("")}
 
 			NumericExpression = AdditiveExpression: AdditiveExpression {return {AdditiveExpression:AdditiveExpression}}
 
@@ -219,15 +219,15 @@
 			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
 			AggregateAO = Aggregate: COUNT_DISTINCT "(" space Expression: Expression space ")" {return {Aggregate:"COUNT", DISTINCT:"DISTINCT", Expression:Expression}}
-			AggregateA = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" DISTINCT:(DISTINCT) space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateA = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" DISTINCT:(DISTINCT) spaceObl Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
 			AggregateB = Aggregate: (COUNT / SUM / MIN / MAX / AVG / SAMPLE) "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
-			AggregateC = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
+			AggregateC = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT spaceObl Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression, SEPARATOR:SEPARATOR}}
 
 			AggregateD = Aggregate: (GROUP_CONCAT) "(" space Expression: Expression space SEPARATOR:SEPARATOR")" {return {Aggregate:Aggregate, Expression:Expression, SEPARATOR:SEPARATOR}}
 
-			AggregateE = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT space Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
+			AggregateE = Aggregate: (GROUP_CONCAT) "(" DISTINCT:DISTINCT spaceObl Expression: Expression space ")" {return {Aggregate:Aggregate, DISTINCT:DISTINCT, Expression:Expression}}
 
 			AggregateF = Aggregate: (GROUP_CONCAT) "(" space Expression: Expression space ")" {return {Aggregate:Aggregate, Expression:Expression}}
 
@@ -362,7 +362,7 @@
 			ExistsFunc = ExistsFunc:(ExistsFuncA1 / ExistsFuncA /ExistsFuncB)  {return {ExistsFunc:ExistsFunc}}
 
 			ExistsFuncA1 = EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
-			ExistsFuncA = EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
+			ExistsFuncA = EXISTS  spaceObl Expression:GroupGraphPattern {return{Expression:Expression}}
 
 			ExistsFuncB = "{" space Expression:GroupGraphPattern space "}"{return{Expression:Expression}}
 			GroupGraphPattern = (Expression)
@@ -371,10 +371,10 @@
 
 			NotExistsFuncA = NOT space  "{" space Expression:GroupGraphPattern space "}" {return{Expression:Expression}}
 
-			NotExistsFuncB = NOT space EXISTS  space Expression:GroupGraphPattern {return{Expression:Expression}}
-			NotExistsFuncB1 = NOT  space  EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
+			NotExistsFuncB = NOT spaceObl EXISTS spaceObl Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncB1 = NOT  spaceObl  EXISTS space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
-			NotExistsFuncC = NOT  space Expression:GroupGraphPattern {return{Expression:Expression}}
+			NotExistsFuncC = NOT  spaceObl Expression:GroupGraphPattern {return{Expression:Expression}}
 			NotExistsFuncC1 = NOT  space "(" space Expression:GroupGraphPattern ")" {return{Expression:Expression}}
 
 			ExpressionList2 = (NIL / "(" space Expression space  ( Comma space Expression )* space ")" )
@@ -414,7 +414,7 @@
 
 			ArgList = ArgListA / ArgListB / NIL
 
-			ArgListA = ("(" space DISTINCT: DISTINCT space ArgListExpression: ArgListExpression space ")" ) {return {DISTINCT:DISTINCT, ArgListExpression:ArgListExpression}}
+			ArgListA = ("(" space DISTINCT: DISTINCT spaceObl ArgListExpression: ArgListExpression space ")" ) {return {DISTINCT:DISTINCT, ArgListExpression:ArgListExpression}}
 
 			ArgListB = ("(" space ArgListExpression: ArgListExpression space ")" {return {ArgListExpression:ArgListExpression}})
 			NIL = "(" space ")" {return "NIL"}
@@ -531,6 +531,7 @@
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
+			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}

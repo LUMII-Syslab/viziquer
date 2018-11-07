@@ -172,6 +172,63 @@ function createLink(s_class, t_class, s_role, t_role){
 	t_class[t_role] = s_class;
 	//t_class[t_role][s_class.getID()] = s_class;
 }
+function findPrefixFromList(uri)
+{
+  PrefixList =
+  { 
+   "http://www.loc.gov/mads/rdf/v1#": "madsrdf",
+    "http://id.loc.gov/ontologies/bflc/": "bflc",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+    "http://xmlns.com/foaf/0.1/": "foaf",
+    "http://yago-knowledge.org/resource/": "yago",
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs",
+    "http://dbpedia.org/ontology/": "dbo",
+    "http://dbpedia.org/property/": "dbp",
+    "http://purl.org/dc/elements/1.1/": "dc",
+    "http://purl.org/goodrelations/v1#": "gr",
+    "http://www.w3.org/2002/07/owl#": "owl",
+    "http://data.ordnancesurvey.co.uk/ontology/spatialrelations/": "spacerel",
+    "http://www.w3.org/2004/02/skos/core#": "skos",
+    "http://www.opengis.net/ont/geosparql#": "geo",
+    "http://www.w3.org/ns/dcat#": "dcat",
+    "http://www.w3.org/2001/XMLSchema#": "xsd",
+    "http://purl.org/linked-data/cube#": "qb",
+    "http://purl.org/net/ns/ontology-annot#": "ont",
+    "http://rdfs.org/sioc/ns#": "sioc",
+    "http://www.w3.org/ns/sparql-service-description#": "sd",
+    "http://www.w3.org/ns/org#": "org",
+    "http://www.w3.org/ns/prov#": "prov",
+    "http://purl.org/dc/terms/": "dcterms",
+    "http://www.ontotext.com/": "onto",
+    "http://rdfs.org/ns/void#": "void",
+    "http://www.w3.org/ns/people#": "person",
+    "http://purl.org/rss/1.0/": "rss",
+    "http://purl.org/ontology/bibo/": "bibo",
+    "http://www.wikidata.org/entity/": "wd",
+    "http://purl.org/NET/c4dm/event.owl#": "event",
+    "http://www.geonames.org/ontology#": "geonames",
+    "http://rdf.freebase.com/ns/": "fb",
+    "http://www.w3.org/2006/vcard/ns#": "vcard",
+    "http://creativecommons.org/ns#": "cc",
+    "http://www.w3.org/ns/r2rml#": "rr",
+    "http://schema.org/": "schema",
+    "http://usefulinc.com/ns/doap#": "doap",
+    "http://purl.org/vocab/vann/": "vann",
+    "http://dbpedia.org/resource/": "dbr",
+    "http://example.org/": "ex",
+    "http://www.w3.org/2003/06/sw-vocab-status/ns#": "vs",
+    "http://xmlns.com/wot/0.1/": "wot",
+    "http://www.w3.org/ns/auth/cert#": "cert",
+    "http://www.w3.org/2003/01/geo/wgs84_pos#": "geo",
+    "http://www.w3.org/ns/oa#": "oa",
+    "http://www.w3.org/ns/adms#": "adms",
+    "http://purl.org/linked-data/sdmx#": "sdmx",
+    "http://rdfs.org/sioc/types#": "sioct",
+    "http://www.europeana.eu/schemas/edm/": "edm" 
+  }
+  if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
+  else { return null; }
+}
 function findCardinality(card, type)
 {
 	if (type == "MIN")
@@ -450,8 +507,12 @@ VQ_ontology = function (schema, URI, prefix) {
   this.namesAreUnique = true;
   if (prefix) p = prefix;
   else {
-	var arr = URI.split("/");
-	p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
+    p = findPrefixFromList(URI)
+    if ( p == null )
+	{
+	  var arr = URI.split("/");
+	  p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));	
+	}
   }
   if (schema.namespace == URI) {
    this.isDefault = true;
@@ -1606,6 +1667,10 @@ VQ_Element.prototype = {
 
 	setIsInverseLink: function(value) {
 		 this.setCompartmentValue("Inverse Link",value,"");
+	},
+	
+	setHideDefaultLinkName: function(value) {
+		 this.setCompartmentValue("Hide default link name",value,value);
 	},
 	//sets compartment value (input and value)
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
