@@ -1,9 +1,5 @@
 Interpreter.customMethods({
 
-	abcd: function(list) {
-		return "abcd";
-	},
-
 	setParameters: function(list) {
 
 		console.log("SetParametrs called, not implemented");
@@ -34,28 +30,6 @@ Interpreter.customMethods({
 		//console.log(schema.resolveClassByName("Teacher3"));
 		//console.log(schema.resolveLinkByName("teaches"));
 		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
-	},
-	VQsetGroupBy: function() {
-		 var act_elem = Session.get("activeElement");
-		 var elem = new VQ_Element(act_elem);
-		 comp_val_inst = elem.getCompartmentValue("Instance");
-		 comp_val_group = elem.getCompartmentValue("Group by this");
-
-		 if (comp_val_group == "true")
-		 {
-		   if (comp_val_inst == null )
-		     elem.setCompartmentValue("Instance", "", "Group by this");
-		   else
-		     elem.setCompartmentValue("Instance", comp_val_inst, "Group by {" + comp_val_inst + "}" , false);
-		 }
-		 else
-		 {
-		   if (typeof comp_val_inst == "undefined")
-		     elem.setCompartmentValue("Instance", "", "", false);
-		   else if ( comp_val_inst != null)
-		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
-		 }
-
 	},
 
 	VQsetClassTypeValue: function(list) {
@@ -568,7 +542,7 @@ Interpreter.customMethods({
 		var act_elem = Session.get("activeElement");
 		var name_list = [{value: " ", input: " ", }];
 		if (act_elem) {
-			var vq_link = new VQ_Element(act_elem);
+			var vq_link = new VQ_Element(act_elem["_id"]);
 			if (vq_link.isLink()) {
   			var myschema = new VQ_Schema();
 				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
@@ -672,33 +646,47 @@ Interpreter.customMethods({
 		return true;
 	},
 
-	AggregateWizard: function() {
+	AggregateWizard: function(e) {
 // Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 // Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
-// Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 // Template.AggregateWizard.endClassId = new ReactiveVar("No end");
-// Template.AggregateWizard.linkId = new ReactiveVar("No link");
-// Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
-		console.log("AggregateWizard");
+		console.log("AggregateWizard", e);
+
+		var parent = $(e.target).closest(".compart-type");
+		console.log("parent ", parent)
+
+		var parent_id = parent.attr("id");
+		console.log("parent_id ", parent_id)
+
+		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+		console.log("compart_type", compart_type)
+
+		// more elegant selection for subCompartmentTypes needed
+		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+											return sub_compart_type.name == "Expression";
+										});
+
+
+		var exression_id = expression_compart_type._id
+		console.log("exression_id ", exression_id)
+
+		var expression_value = parent.find("." + exression_id).val();
+		console.log("expression_value", expression_value)
+
+
 		var attr_list = [{attribute: ""}];
         var schema = new VQ_Schema();
         var classId = Session.get("activeElement");
         Template.AggregateWizard.endClassId.set(classId);
 
+
+        console.log("classId ", classId)
+
+
         if (classId) {
             var classObj = new VQ_Element(classId);
             if (classObj && classObj.isClass()) {
-            	//Display/at least/at most visibility
-            	if(classObj.isRoot()) {
-            		Template.AggregateWizard.showDisplay.set("none");
-            	}else {
-            		Template.AggregateWizard.showDisplay.set("block");
-            		Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
-            		//console.log("root id = ", getRootId(classObj.obj._id));
-            		Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
-            	}
-                //Attribute generation
                 var class_name = classObj.getName();
                 if (schema.classExist(class_name)) {
                     var klass = schema.findClassByName(class_name);
@@ -717,26 +705,6 @@ Interpreter.customMethods({
                     $("#aggregate-wizard-form").modal("show");
                 }
             }
-        }
-
-        function getRootId (elId){
-        	var classObj = new VQ_Element(elId);
-        	if (!classObj.isClass()) {return 0;}
-        	if (classObj.isRoot()){
-        		return elId;
-        	} else {
-        		var link = new VQ_Element(classObj.getLinkToRoot().link.obj._id);
-        		if (link){
-        			var elements = link.getElements(); 
-        			//{ start: new VQ_Element(this.obj["startElement"]), end: new VQ_Element(this.obj["endElement"])}
-        			var direction = link.getRootDirection();
-        			if (direction == "start") {
-        				return getRootId(elements.start.obj._id);
-        			} else if (direction == "end"){
-        				return getRootId(elements.end.obj._id);
-        			}
-        		}
-        	}
         }
 	},
 

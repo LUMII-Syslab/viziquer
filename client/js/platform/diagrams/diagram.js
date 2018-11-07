@@ -348,15 +348,11 @@ var sparql_form_helpers = {
 		  return number + 1;
 	},
 	plusOneOffset: function(number, offset) {
-    //console.log(offset);
-		///var result = Session.get("executedSparql");
-
 		if (offset) {
 			return number + offset - 50 + 1}
 		else {
 		  return number + 1;
 		}
-
 	},
 	augmentedResult: function() {
         var self = Session.get("executedSparql");
@@ -371,7 +367,7 @@ var sparql_form_helpers = {
 
         _.each(self.sparql.results[0].result, function(res) {
 
-					var new_bindings = _.map(binding_map, function(map_item) {
+			 var new_bindings = _.map(binding_map, function(map_item) {
              var  existing_binding = _.find(res.binding, function(binding) {return binding["$"].name==map_item});
 						 if (existing_binding) {
 							 return existing_binding;

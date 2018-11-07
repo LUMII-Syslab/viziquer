@@ -401,8 +401,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    			}
 
    			if (fields["index"]) {
-   				if (compartments.removeAllRespresentations)
+   				if (compartments.removeAllRespresentations) {
    					compartments.removeAllRespresentations();
+   				}
 
    				var comparts_in = Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetch();
    				compartments.create(comparts_in);

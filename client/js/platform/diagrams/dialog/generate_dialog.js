@@ -48,6 +48,7 @@ Template.dialogTabContent.events({
 				compart_type = find_compart_type_object(parent_compart_type.subCompartmentTypes, compart_type_id);
 			}
 		}
+		
 		console.log("compart_type ", compart_type)
 		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
 	},

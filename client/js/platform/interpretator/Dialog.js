@@ -141,7 +141,6 @@ Dialog = {
 		//if there is no mapped values, then value <== input
 		var value;
 		if (mapped_value || mapped_value == "") {
-			console.log("in if")
 			value = mapped_value;
 		}
 
@@ -155,7 +154,7 @@ Dialog = {
 				value = default_value;
 			}
 		}
-		
+
 		var prefix = get_prefix(compart_type, value);
 		var suffix = get_suffix(compart_type, value);
 
