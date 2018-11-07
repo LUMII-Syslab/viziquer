@@ -363,12 +363,20 @@ Template.AddLink.events({
 											},
 											elementStyleUpdate: undefined,
 										};
-
+						
 						Utilities.callMeteorMethod("insertCompartment", name_compartment);
 
 
 					}
-
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					if (proj) {
+						  console.log(Session.get("activeProject"), proj, proj.autoHideDefaultPropertyName);
+						  if (proj.autoHideDefaultPropertyName=="true") {
+							vq_line.hideDefaultLinkName(true);
+							vq_line.setHideDefaultLinkName("true");
+						  };
+					}
+					
 				});
 
 			}

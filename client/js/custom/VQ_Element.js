@@ -1607,6 +1607,10 @@ VQ_Element.prototype = {
 	setIsInverseLink: function(value) {
 		 this.setCompartmentValue("Inverse Link",value,"");
 	},
+	
+	setHideDefaultLinkName: function(value) {
+		 this.setCompartmentValue("Hide default link name",value,value);
+	},
 	//sets compartment value (input and value)
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
   // If insert mode is true then new compartment is inserted regardless of existence

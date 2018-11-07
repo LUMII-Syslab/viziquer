@@ -236,7 +236,13 @@ Schemas.Projects = new SimpleSchema({
  			 type: String,
  			 label: "Projects.showCardinalities",
  			 optional: true,
- 	  },
+ 	    },
+		
+	    autoHideDefaultPropertyName: {
+ 			 type: String,
+ 			 label: "Projects.autoHideDefaultPropertyName",
+ 			 optional: true,
+ 	    },
 
     category: {
         type: String,
