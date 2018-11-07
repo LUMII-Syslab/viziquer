@@ -152,6 +152,11 @@ function new_element(konva_obj_id, elem_type, points, start_elem, end_elem) {
 				list["style"]["lineType"] = elem_type["lineType"];
 			}
 
+			var compartments = Dialog.buildCopartmentDefaultValue(list);
+			if (_.size(compartments) > 0) {
+				list.initialCompartments = compartments;
+			}
+
 			//adds some properties to the list
 			Interpreter.executeExtensionPoint(elem_type, "createElement", list);
 
@@ -183,14 +188,6 @@ function new_element(konva_obj_id, elem_type, points, start_elem, end_elem) {
 							editor.selectElements([new_elem]);
 						}
             
-					}
-
-					else if (is_zoom_chart_editor(editor_type)) {
-						
-						//var chart = get_editor();
-						//add_zoomchart_nodes(chart, list);
-
-						//set_active_element_variables(elem_id);
 					}
 
 					//renders elements compartments

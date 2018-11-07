@@ -141,20 +141,21 @@ Dialog = {
 		//if there is no mapped values, then value <== input
 		var value;
 		if (mapped_value || mapped_value == "") {
+			console.log("in if")
 			value = mapped_value;
 		}
 
 		else {
-
 			if (input || input === "") {
 				value = input;
 			}
 			else {
-				var default_value = compart_type["defaultValue"];
+				// var default_value = compart_type["defaultValue"];
+				var default_value = get_default_value(compart_type, value);
 				value = default_value;
 			}
 		}
-
+		
 		var prefix = get_prefix(compart_type, value);
 		var suffix = get_suffix(compart_type, value);
 
@@ -549,6 +550,36 @@ Dialog = {
 		return is_visible;
 	},
 
+	buildCopartmentDefaultValue(list) {
+		var compartments = [];
+		CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
+			function(compart_type) {
+
+				if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
+					return;
+				}
+				else {
+					var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", compart_type);
+					if (proc_name && proc_name != "") {
+						compartments.push({input: Interpreter.execute(proc_name, [""]),
+											value: Interpreter.execute(proc_name, [""]),
+											compartmentTypeId: compart_type._id,
+										});
+					}
+					else {
+						if (compart_type["defaultValue"]) {
+							compartments.push({input: (compart_type["defaultValue"] || ""),
+												value: (compart_type["defaultValue"] || ""),
+												compartmentTypeId: compart_type._id,
+											});
+						}
+					}
+				}
+			});
+
+		return compartments;
+	},
+
 };
 
 function get_style_by_id(styles, id) {
@@ -627,6 +658,11 @@ function get_prefix(compart_type, value) {
 function get_suffix(compart_type, value) {
 	return get_object_type_property(compart_type, "suffix", "dynamicSuffix", value);
 }
+
+function get_default_value(compart_type, value) {
+	return get_object_type_property(compart_type, "defaultValue", "dynamicDefaultValue", value);
+}
+
 
 function get_object_type_property(compart_type, property, proc_name, value) {
 	var dynamic_suffix = Interpreter.getExtensionPointProcedure(proc_name, compart_type);

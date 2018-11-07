@@ -134,12 +134,24 @@ function update_compartment(user_id, doc) {
 	}
 }
 
+add_compartments_by_values = function(list, compartments) {
+
+	var compart_ids = _.map(compartments, function(item) {
+							return item.compartmentTypeId;
+						});
+
+	CompartmentTypes.find({_id: {$in: compart_ids,},}, {$sort: {index: 1}}).forEach(function(compart_type, i) {
+		add_compartment(compart_type, list, compartments[i]);
+	});
+
+}
+
+
 //adding compartments in the DB
 add_compartments = function(list) {
 
 	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
 		function(compart_type) {
-
 			if (compart_type["inputType"] && compart_type["inputType"]["templateName"] == "multiField") {
 				return;
 			}
@@ -149,24 +161,30 @@ add_compartments = function(list) {
 		});
 }
 
-add_compartment = function(compart_type, list) {
-	var compart = build_compartment(compart_type, list);
+add_compartment = function(compart_type, list, compart_in) {
+	var compart = build_compartment(compart_type, list, compart_in);
 	Compartments.insert(compart);
 }
 
-build_compartment = function(compart_type, list) {
+build_compartment = function(compart_type, list, compart_in) {
 
 	if (compart_type["styles"] && compart_type["styles"][0]) {
 
-		var default_value = get_default_value(compart_type);
-		var prefix = get_prefix(compart_type, default_value);
-		var suffix = get_suffix(compart_type, default_value);
+		var input = "";
+		var value = "";
+		if (compart_in) {
+			input = compart_in.input;
+			value = compart_in.value;
+		}
+		else {
+			default_value = get_default_value(compart_type);
+			var prefix = get_prefix(compart_type, default_value);
+			var suffix = get_suffix(compart_type, default_value);
 
-		var input = default_value;
-
-		var value;
-		if (default_value && default_value != "")
-			value = prefix + default_value + suffix;
+			if (default_value && default_value != "") {
+				value = prefix + default_value + suffix;
+			}
+		}
 
 		var style_obj = compart_type["styles"][0];
 		var style = style_obj["style"];
@@ -193,10 +211,12 @@ build_compartment = function(compart_type, list) {
 			compart["valueLC"] = value.toLowerCase();
 		}
 
-		if (list["projectId"])
+		if (list["projectId"]) {
 			compart["projectId"] = list["projectId"];
-		else if (list["toolId"])
+		}
+		else if (list["toolId"]) {
 			compart["toolId"] = list["toolId"];
+		}
 
 		return compart;
 	}

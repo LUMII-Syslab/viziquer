@@ -75,12 +75,12 @@ minifier-css@1.4.0
 minifier-js@2.4.0
 minimongo@1.4.5
 mizzao:timesync@0.5.0
-mizzao:user-status@0.6.7
+mizzao:user-status@0.6.8
 mobile-experience@1.0.5
 mobile-status-bar@1.0.14
 modern-browsers@0.1.2
 modules@0.13.0
-modules-runtime@0.10.2
+modules-runtime@0.10.3
 mongo@1.6.0
 mongo-decimal@0.1.0
 mongo-dev-server@1.1.0

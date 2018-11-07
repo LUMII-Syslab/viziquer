@@ -514,6 +514,7 @@ Template.addDiagram.events({
 
 		}
 	},
+
 });
 
 

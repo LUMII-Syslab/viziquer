@@ -1,5 +1,9 @@
 Interpreter.customMethods({
 
+	abcd: function(list) {
+		return "abcd";
+	},
+
 	setParameters: function(list) {
 
 		console.log("SetParametrs called, not implemented");

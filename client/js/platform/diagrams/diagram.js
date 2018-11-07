@@ -230,7 +230,7 @@ var customClassCompleter = function(yasqe_doc) {
 		 var returnObj = {
 			 isValidCompletionPosition: function(){return YASQE.Autocompleters.classes.isValidCompletionPosition(yasqe_doc)},
  		 	 preProcessToken: function(token) {return token},
-       postProcessToken: function(token, suggestedString)  {return suggestedString},
+       		 postProcessToken: function(token, suggestedString)  {return suggestedString},
 			 bulk: true,
 			 async: false,
 			 autoShow: false,

@@ -51,13 +51,13 @@ Meteor.methods({
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
+			var compartments = list.initialCompartments;
 
 			var id = Elements.insert(list);
-
 			var domain = list["data"];
 
 			list["id"] = id;
-			add_compartments(list);
+			add_compartments_by_values(list, compartments);
 
 			//inserting element target type, if neccesary
 			if (domain) {
