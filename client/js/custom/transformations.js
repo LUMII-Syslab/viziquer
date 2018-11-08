@@ -1,5 +1,5 @@
 Interpreter.customMethods({
-
+	
 	setParameters: function(list) {
 
 		console.log("SetParametrs called, not implemented");
@@ -245,7 +245,12 @@ Interpreter.customMethods({
 	 		return item["input"];
 	 	});
 
-		atr_names.push({input:"(.)",value:"(.)"});
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			var vq_obj = new VQ_Element(selected_elem_id);
+			if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) atr_names.push({input:"(select this)",value:"(select this)"});;
+		} else {atr_names.push({input:"(select this)",value:"(select this)"});}
+				
 		atr_names.push({input:"*",value:"*"});
 		atr_names.push({input:"**",value:"**"});
 
