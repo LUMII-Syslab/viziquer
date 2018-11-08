@@ -540,11 +540,13 @@ Interpreter.customMethods({
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
-		var name_list = [{value: " ", input: " ", }];
+		// var name_list = {value: " ", input: " ", };
+
+		var value = " ";
 		if (act_elem) {
 			var vq_link = new VQ_Element(act_elem["_id"]);
 			if (vq_link.isLink()) {
-  			var myschema = new VQ_Schema();
+  				var myschema = new VQ_Schema();
 				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
 				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
 				if (start_class && end_class) {
@@ -554,18 +556,23 @@ Interpreter.customMethods({
 					 	return _.find(all_sub_super_of_end, function(c) {
 							 	return c.localName == a.class
 					 	})
-			  	});
-					name_list = _.union(name_list, _.map(possible_assoc_list, function(assoc) {
+			  		});
+
+					var res =_.map(possible_assoc_list, function(assoc) {
 						var assoc_name = assoc["name"];
 						if (assoc["type"] == "<=") {
 							assoc_name = "inv("+assoc_name+")";
 						};
-						return {value:assoc_name, input:assoc_name};
-					}))
+
+						return assoc_name;
+					});
+
+					value = res.concat("");
 				};
 			};
 		};
-		return name_list;
+
+		return value;
 	},
 
 	VQsetSubQueryNameSuffix: function(val) {
