@@ -16,10 +16,11 @@ Template.AddAttribute.helpers({
 
 			var attr_list = [];
 			attr_list.push({name:"*"});
-			attr_list.push({name:"(select this)"});
-			attr_list.push({separator:"line"});
-
+			
 			var vq_obj = new VQ_Element(selected_elem_id);
+			if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) attr_list.push({name:"(select this)"});
+			
+			attr_list.push({separator:"line"});
 
 			var class_name = vq_obj.getName();
 			var schema = new VQ_Schema();
