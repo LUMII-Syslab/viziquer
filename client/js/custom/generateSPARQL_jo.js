@@ -1255,11 +1255,14 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		//link triple
 		//if(typeof subclazz["linkIdentification"]["localName"] !== 'undefined'){
 
-			if((subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") && subclazz["identification"]["localName"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["localName"] != "[ + ]") {
+			// if((subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") && subclazz["identification"]["localName"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["localName"] != "[ + ]") {
+			if(subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") {
+
 				//Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
 				messages.push({
 					"type" : "Error",
-					"message" : "Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.",
+					// "message" : "Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.",
+					"message" : "Empty link between nodes ("+ clazz["identification"]["localName"] +") and ("+  subclazz["identification"]["localName"] +"). Please specify the link property or ++ for the link without property.",
 					"listOfElementId" : [subclazz["linkIdentification"]["_id"]],
 					"isBlocking" : false
 				});
