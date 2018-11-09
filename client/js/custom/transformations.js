@@ -5,6 +5,27 @@ Interpreter.customMethods({
 		console.log("SetParametrs called, not implemented");
 	},
 
+	VQsetGroupBy: function() {
+		 var act_elem = Session.get("activeElement");
+		 var elem = new VQ_Element(act_elem);
+		 comp_val_inst = elem.getCompartmentValue("Instance");
+		 comp_val_group = elem.getCompartmentValue("Group by this");
+ 		 if (comp_val_group == "true")
+		 {
+		   if (comp_val_inst == null )
+		     elem.setCompartmentValue("Instance", "", "Group by this");
+		   else
+		     elem.setCompartmentValue("Instance", comp_val_inst, "Group by {" + comp_val_inst + "}" , false);
+		 }
+		 else
+		 {
+		   if (typeof comp_val_inst == "undefined")
+		     elem.setCompartmentValue("Instance", "", "", false);
+		   else if ( comp_val_inst != null)
+		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
+		 }
+ 	},
+
 	TogglePlainMode: function() {
 
 		var plain = Session.get("plain");
@@ -699,6 +720,17 @@ Interpreter.customMethods({
         if (classId) {
             var classObj = new VQ_Element(classId);
             if (classObj && classObj.isClass()) {
+            	//Display/at least/at most visibility
+            	if(classObj.isRoot()) {
+            		Template.AggregateWizard.showDisplay.set("none");
+            	}else {
+            		Template.AggregateWizard.showDisplay.set("block");
+            		Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
+            		//console.log("root id = ", getRootId(classObj.obj._id));
+            		Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+            	}
+
+                //Attribute generation
                 var class_name = classObj.getName();
                 if (schema.classExist(class_name)) {
                     var klass = schema.findClassByName(class_name);
@@ -718,6 +750,27 @@ Interpreter.customMethods({
                 }
             }
         }
+
+        function getRootId (elId){
+        	var classObj = new VQ_Element(elId);
+        	if (!classObj.isClass()) {return 0;}
+        	if (classObj.isRoot()){
+        		return elId;
+        	} else {
+        		var link = new VQ_Element(classObj.getLinkToRoot().link.obj._id);
+        		if (link){
+        			var elements = link.getElements(); 
+        			//{ start: new VQ_Element(this.obj["startElement"]), end: new VQ_Element(this.obj["endElement"])}
+        			var direction = link.getRootDirection();
+        			if (direction == "start") {
+        				return getRootId(elements.start.obj._id);
+        			} else if (direction == "end"){
+        				return getRootId(elements.end.obj._id);
+        			}
+        		}
+        	}
+        }
+
 	},
 
 	isMergeValuesWizardAvailable: function() {
