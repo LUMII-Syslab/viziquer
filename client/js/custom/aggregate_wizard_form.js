@@ -105,7 +105,9 @@ Template.AggregateWizard.events({
 			_.each(klass.getAllAttributes(), function(att){
 				var attrType = schema.resolveAttributeByName(cName, att["name"]).type;
 				if (newFunction == "sum" || newFunction == "avg") {
-					if ((attrType == "xsd:integer" || attrType == "xsd:decimal")) {
+					if (attrType == "xsd:integer" || attrType == "xsd:decimal" || attrType == "xsd:double"
+						|| attrType == "xsd:float" || attrType == "xsd:int" || attrType == "xsd:long"
+						|| attrType == "xsd:short") {
 						newAttrList.push({attribute: att["name"]})
 					}
 				} else {
