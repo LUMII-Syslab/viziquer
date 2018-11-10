@@ -1169,7 +1169,7 @@
                 "diagramTypeId": "WPP377T3MvPXpHNXR",
                 "diagramId": "avKf3WQhFpEni5Ykk",
                 "elementId": "Xr7cyWHjs9Ky5JThP",
-                "tabIndex": 100,
+                "tabIndex": 460,
                 "index": 41,
                 "toolId": "QjkWr7eLjHsmq7erW",
                 "versionId": "Ye9csBvcqkfYcRkvx",
@@ -1225,7 +1225,7 @@
                     "extensionPoint": "dynamicDropDown"
                   }
                 ],
-                "dialogTabId": "cA4n8d8xufwq6aNWY"
+                "dialogTabId": "Yya6BCy4H2md7wE38"
               }
             },
             {
@@ -1571,7 +1571,7 @@
                 "diagramTypeId": "WPP377T3MvPXpHNXR",
                 "diagramId": "avKf3WQhFpEni5Ykk",
                 "elementId": "Xr7cyWHjs9Ky5JThP",
-                "tabIndex": 90,
+                "tabIndex": 430,
                 "index": 40,
                 "toolId": "QjkWr7eLjHsmq7erW",
                 "versionId": "Ye9csBvcqkfYcRkvx",
@@ -1627,7 +1627,7 @@
                     "extensionPoint": "dynamicDropDown"
                   }
                 ],
-                "dialogTabId": "cA4n8d8xufwq6aNWY"
+                "dialogTabId": "Yya6BCy4H2md7wE38"
               }
             },
             {
@@ -1702,7 +1702,7 @@
                 "diagramTypeId": "WPP377T3MvPXpHNXR",
                 "diagramId": "avKf3WQhFpEni5Ykk",
                 "elementId": "Xr7cyWHjs9Ky5JThP",
-                "tabIndex": 151,
+                "tabIndex": 100,
                 "index": 33,
                 "toolId": "QjkWr7eLjHsmq7erW",
                 "versionId": "Ye9csBvcqkfYcRkvx",
@@ -1758,7 +1758,7 @@
                     "extensionPoint": "dynamicDropDown"
                   }
                 ],
-                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "dialogTabId": "cA4n8d8xufwq6aNWY",
                 "label": "Comment"
               }
             },
@@ -2019,7 +2019,7 @@
                 "diagramTypeId": "WPP377T3MvPXpHNXR",
                 "diagramId": "avKf3WQhFpEni5Ykk",
                 "elementId": "Xr7cyWHjs9Ky5JThP",
-                "tabIndex": 70,
+                "tabIndex": 113,
                 "index": 38,
                 "toolId": "QjkWr7eLjHsmq7erW",
                 "versionId": "Ye9csBvcqkfYcRkvx",
@@ -2086,7 +2086,7 @@
                     "extensionPoint": "dynamicDropDown"
                   }
                 ],
-                "dialogTabId": "cA4n8d8xufwq6aNWY",
+                "dialogTabId": "Yya6BCy4H2md7wE38",
                 "label": "Distinct"
               }
             },
