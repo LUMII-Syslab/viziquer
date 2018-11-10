@@ -3067,8 +3067,7 @@
                     "procedure": "VQsetSubQueryNameSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue",
-                    "procedure": "VQgetAssociationNames"
+                    "extensionPoint": "dynamicDefaultValue"
                   },
                   {
                     "extensionPoint": "dynamicDropDown",
