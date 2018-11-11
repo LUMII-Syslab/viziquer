@@ -19,8 +19,15 @@ Template.AddLink.helpers({
 			var className = startElement.getName();
 			var schema = new VQ_Schema();
 
-			if (schema.classExist(className)) {
-				asc = schema.findClassByName(className).getAllAssociations();
+			if (schema.classExist(className)) {				
+				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
+					asc.push(e);
+					if (e.class == className)
+						if (e.type == "=>")
+							asc.push({name: e.name, class: e.class, type: "<="});
+						else
+							asc.push({name: e.name, class: e.class, type: "=>"});
+				});
 			}
 			
       		asc.push({name: "++", class: "", type: "=>"}); //default value for any case
