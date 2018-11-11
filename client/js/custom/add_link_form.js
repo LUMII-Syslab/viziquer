@@ -9,105 +9,23 @@ Interpreter.customMethods({
 Template.AddLink.helpers({
 
 	associations: function() {
-
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
-		if (Elements.findOne({_id: start_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-
+		var startElement = new VQ_Element(start_elem_id);
+		if (startElement && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
-			var asc_all = [];
 			var asc = [];
-			//Class Name - direct
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
-			if (!compart_type) {
-				return [{name: "++", class: "", type: "=>"}];
-			}
-
-			var act_comp = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start_elem_id});
-			if (!act_comp) {
-				return [{name: "++", class: "", type: "=>"}];
-			}
-
-			var className = act_comp["input"];
+			
+			var className = startElement.getName();
 			var schema = new VQ_Schema();
 
-			if (!schema.classExist(className)) {
-				return [{name: "++", class: "", type: "=>"}];
+			if (schema.classExist(className)) {
+				asc = schema.findClassByName(className).getAllAssociations();
 			}
+			
+      		asc.push({name: "++", class: "", type: "=>"}); //default value for any case
 
-			asc = schema.findClassByName(className).getAllAssociations();
-      asc.push({name: "++", class: "", type: "=>"});
-
-			return asc;
-
-			/*
-			var cls_value = [{name: act_comp["input"], type: "direct"}];
-
-			//Read all asociations' name, from&to elements
-			var cls = Associations.find();
-
-			if (cls){
-
-				asc_all = cls.map(function (use) {
-				      return [{assoc: use.name, start: use.ClassPairs["0"].SourceClass["localName"], end: use.ClassPairs["0"].TargetClass["localName"]}];
-				})
-			} else {
-				return [{name: "empty", class: "-"}];
-			}
-
-			//List of all the classes, that could leave association direct (original class) and through sub_super class relation
-			var cls_list = Classes.findOne({name: cls_value["0"]["name"]});
-			if (cls_list) {
-				//Classes from Super Class
-				_.each(cls_list.AllSuperClasses, function(supC){
-					cls_value.push({name: supC["localName"], type: "super"});
-				})
-
-				//Classes from Sub Class
-				_.each(cls_list.AllSubClasses, function(supC){
-					cls_value.push({name: supC["localName"], type: "sub"})
-				})
-			}
-
-			//Create list of unique associations
-			var exists = false;
-			_.each(asc_all, function(a){
-				_.each(cls_value, function(c){
-					// if direct association
-					exists = false;
-
-					if(c["name"] == a["0"]["start"]){
-
-						_.each(asc, function(e){
-							if (e["name"] == a["0"]["assoc"]) {exists = true;}
-						})
-
-						if (!exists) {
-							asc.push({name: a["0"]["assoc"], class: a["0"]["end"], type: "=>"});
-						}
-					}
-
-					//if inverse association
-					exists = false;
-
-					if(c["name"] == a["0"]["end"]){
-
-						_.each(asc, function(e){
-							if (e["name"] == a["0"]["assoc"]) {exists = true;}
-						})
-
-						if (!exists) {
-							asc.push({name: a["0"]["assoc"], class: a["0"]["start"], type: "<="});
-						}
-					}
-				})
-			})
-
-			if (asc.length == 0) {
-				return [{name: "empty", class: "-", type: "-"}];
-			}
-
-			return asc; */
+			return asc;			
 		}
 	},
 
@@ -141,7 +59,7 @@ Template.AddLink.events({
 			var x0 = elem_start["location"]["x"];
 			var y0 = elem_start["location"]["y"];
 			var x1 = x0;
-			var y1 = y0 + elem_start["location"]["height"]+d;
+			var y1 = y0 + elem_start["location"]["height"] + d;
 			var w = elem_start["location"]["width"];
 			var h = elem_start["location"]["height"];
 
@@ -149,49 +67,49 @@ Template.AddLink.events({
 			//If diagram is populated - search for overlap
 			//Temporal solution: Put new element as low as possible, no packaging algorithm && elem_list["location"]
 
-				var elem_list = [];
-				var elem_over = []; //Potentionally - for more complex search for a better place
-				var max_y;
+			var elem_list = [];
+			var elem_over = []; //Potentionally - for more complex search for a better place
+			var max_y;
 
-				Elements.find({type: "Box"}).forEach(function(el) {
-					elem_list.push(el);
-				})
+			Elements.find({type: "Box"}).forEach(function(el) {
+				elem_list.push(el);
+			})
 
-				do{
-					elem_over.length = 0;
+			do{
+				elem_over.length = 0;
 
-					_.each(elem_list, function(el) {
-						//Check, if start point of existing element could lead to overlap withexisting elements
-						if (el["location"]["x"] < (x1+w)){
-							if (el["location"]["y"] < (y1+h)){
-								//Check, if end point of existing element could lead to overlap
-								if((el["location"]["x"]+el["location"]["width"]) > x1){
-									if((el["location"]["y"])+el["location"]["height"] > y1){
-										elem_over.push({
-											_id: el["_id"],
-											x: el["location"]["x"],
-											y: el["location"]["y"],
-											w: el["location"]["width"],
-											h: el["location"]["height"]
-										});
-									}
+				_.each(elem_list, function(el) {
+					//Check, if start point of existing element could lead to overlap withexisting elements
+					if (el["location"]["x"] < (x1+w)){
+						if (el["location"]["y"] < (y1+h)){
+							//Check, if end point of existing element could lead to overlap
+							if((el["location"]["x"]+el["location"]["width"]) > x1){
+								if((el["location"]["y"])+el["location"]["height"] > y1){
+									elem_over.push({
+										_id: el["_id"],
+										x: el["location"]["x"],
+										y: el["location"]["y"],
+										w: el["location"]["width"],
+										h: el["location"]["height"]
+									});
 								}
 							}
 						}
+					}
+				})
+
+				if (elem_over.length > 0){
+					max_y = 0;
+
+					_.each(elem_over, function(el){
+						if (max_y < (el["y"]+el["h"])) {
+							max_y = el["y"]+el["h"];
+						}
 					})
 
-					if (elem_over.length > 0){
-						max_y = 0;
-
-						_.each(elem_over, function(el){
-							if (max_y < (el["y"]+el["h"])) {
-								max_y = el["y"]+el["h"];
-							}
-						})
-
-						y1 = max_y + d;
-					}
-				} while (elem_over.length > 0);
+					y1 = max_y + d;
+				}
+			} while (elem_over.length > 0);
 
 
 			//New elements
