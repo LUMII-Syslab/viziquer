@@ -175,7 +175,7 @@ function createLink(s_class, t_class, s_role, t_role){
 function findPrefixFromList(uri)
 {
   PrefixList =
-  { 
+  {
    "http://www.loc.gov/mads/rdf/v1#": "madsrdf",
     "http://id.loc.gov/ontologies/bflc/": "bflc",
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
@@ -224,7 +224,7 @@ function findPrefixFromList(uri)
     "http://www.w3.org/ns/adms#": "adms",
     "http://purl.org/linked-data/sdmx#": "sdmx",
     "http://rdfs.org/sioc/types#": "sioct",
-    "http://www.europeana.eu/schemas/edm/": "edm" 
+    "http://www.europeana.eu/schemas/edm/": "edm"
   }
   if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
   else { return null; }
@@ -511,7 +511,7 @@ VQ_ontology = function (schema, URI, prefix) {
     if ( p == null )
 	{
 	  var arr = URI.split("/");
-	  p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));	
+	  p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
 	}
   }
   if (schema.namespace == URI) {
@@ -830,6 +830,12 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
             location:  location
     };
 
+    var compartments = Dialog.buildCopartmentDefaultValue(new_box);
+
+    if (_.size(compartments) > 0) {
+      new_box.initialCompartments = compartments;
+    }
+
     Utilities.callMeteorMethod("insertElement", new_box, function(elem_id) {
           var vq_obj = new VQ_Element(elem_id);
           if (func) { func(vq_obj) };
@@ -1035,6 +1041,7 @@ VQ_Element.prototype = {
   // Can be [if Class]: query, condition, subquery, null
   // Can be [if Link]: NOT, OPTIONAL, REQUIRED, null
   getType: function() {
+
     if (this.isClass()) {
        return this.getCompartmentValue("ClassType");
     } else if (this.isLink()) {
@@ -1668,7 +1675,7 @@ VQ_Element.prototype = {
 	setIsInverseLink: function(value) {
 		 this.setCompartmentValue("Inverse Link",value,"");
 	},
-	
+
 	setHideDefaultLinkName: function(value) {
 		 this.setCompartmentValue("Hide default link name",value,value);
 	},
@@ -1796,7 +1803,6 @@ VQ_Element.prototype = {
       value_array.pop();
       c_to_create["compartment"]["value"] = value_array.join("");
       c_to_create["compartment"]["input"] = c_to_create["compartment"]["value"];
-      console.log(c_to_create);
       Utilities.callMeteorMethod("insertCompartment", c_to_create);
     };
   },
