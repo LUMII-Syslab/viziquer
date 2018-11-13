@@ -4,7 +4,7 @@ Interpreter.customMethods({
 
 		console.log("SetParametrs called, not implemented");
 	},
-
+	
 	VQsetGroupBy: function() {
 		 var act_elem = Session.get("activeElement");
 		 var elem = new VQ_Element(act_elem);
@@ -563,6 +563,50 @@ Interpreter.customMethods({
 		 };
 	},
 
+	VQSetHideDefaultLinkValue: function(a,b,c){
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj && proj.autoHideDefaultPropertyName) {
+			 return "true";
+		} else {
+			 return "false";
+		};
+	},
+	
+	VQsetAssociationName: function() {
+		
+		var name_list = [];
+		var act_elem = Session.get("activeElement");
+		if (act_elem) {
+			var vq_link = new VQ_Element(act_elem);
+			if (vq_link.isLink()) {
+  				var myschema = new VQ_Schema();
+				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
+				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
+				if (start_class && end_class) {
+					var all_assoc_from_start = start_class.getAllAssociations();
+					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+					var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+					 	return _.find(all_sub_super_of_end, function(c) {
+							 	return c.localName == a.class
+					 	})
+			  		});
+
+					name_list = _.map(possible_assoc_list, function(assoc) {
+							var assoc_name = assoc["name"];
+							if (assoc["type"] == "<=") {
+								assoc_name = "inv("+assoc_name+")";
+							};
+							return assoc_name;
+						});
+				};
+			};
+		};
+		
+		if(name_list.length == 1) return name_list[0];
+		
+		return ""
+	},
+	
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
 		var act_elem = Session.get("activeElement");
@@ -596,7 +640,7 @@ Interpreter.customMethods({
 
 		return name_list;
 	},
-
+	
 	VQsetSubQueryNameSuffix: function(val) {
 		//arrow ->compartments->extensions->dynamicSuffix
 		//params: (value), return: String

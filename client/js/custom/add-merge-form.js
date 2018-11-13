@@ -2,16 +2,19 @@ Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.alias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
 Template.AddMergeValues.aggregation = new ReactiveVar("count");
+Template.AddMergeValues.expressionField = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
-		
-		var parsedExpression = parsedExpressionField(getExpression(e));
+		var expressionField = getExpression(e);
+		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
 		var aggregation = parsedExpression["aggregation"];
 		Template.AddMergeValues.expression.set(expr);
+		Template.AddMergeValues.alias.set(getAlais(e));
 		Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.cardinality.set(countCardinality(expr));
+		Template.AddMergeValues.expressionField.set(expressionField);
 		
 		if(expr != null && expr != "")$("#merge-values-form").modal("show");
 		else Interpreter.showErrorMsg("Please specify expression", -3);				
@@ -82,8 +85,6 @@ Template.AddMergeValues.helpers({
 		if(Template.AddMergeValues.aggregation.get() == "concat") return "selected";
 		return "";
 	},
-
-
 });
 
 
@@ -93,24 +94,23 @@ Template.AddMergeValues.events({
 
 		var mergeType = $('input[name=type-radio-merge]:checked').val();	
 
-		var alias = "";//$('#aggregate-alias').val();
+		var alias = Template.AddMergeValues.alias.get();
 		var expr = $('input[name=expression-merge]').val();
 		var aggregation = $('option[name=function-name-merge]:selected').val();
 		expr = aggregation + "(" + expr + ")";
 
 		if((typeof mergeType !== 'undefined' && mergeType == "MULTIPLE") || typeof mergeType === 'undefined'){
 			var selected_elem_id = Session.get("activeElement");
-			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			if (Elements.findOne({_id: selected_elem_id})){
 				var vq_obj = new VQ_Element(selected_elem_id);
-				
-			    vq_obj.addAggregateField(expr,alias);
+				vq_obj.addAggregateField(expr,alias);
 				/*TODO close Attributes form, remove attribute if existed*/
 			};
 		} else {
-			// TODO set expression field value
+			Template.AddMergeValues.expressionField.get().val(expr);  
 		}
 		clearMergeValuesInput();
-		return;
+		return;     
 
 	},
 	
@@ -145,9 +145,27 @@ function clearMergeValuesInput(){
 } 
 
 function getExpression(e){
-	var compart_type_id = $(e.target).closest(".row-form").attr("id");
-	var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
-	var expressionDivID = compart_type.subCompartmentTypes[0].subCompartmentTypes[1]._id;
+	return getField(e, "Expression");
+}
 
-	return document.getElementsByClassName("form-control dialog-combobox "+expressionDivID+" input-sm")[2].value;
+function getAlais(e){
+	return getField(e, "Field Name");
+}
+
+function getField(e, fieldName){
+
+		var parent = $(e.target).closest(".compart-type");
+		var parent_id = parent.attr("id");
+		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+
+		// more elegant selection for subCompartmentTypes needed
+		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+											return sub_compart_type.name == fieldName;
+										});
+
+		var exression_id = expression_compart_type._id
+
+		var expression_value = parent.find("." + exression_id).val();
+
+		return parent.find("." + exression_id);
 }
