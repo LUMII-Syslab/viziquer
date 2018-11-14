@@ -11,13 +11,13 @@ Interpreter.customMethods({
 		var expr = parsedExpression["expression"];
 		var aggregation = parsedExpression["aggregation"];
 		Template.AddMergeValues.expression.set(expr);
-		Template.AddMergeValues.alias.set(getAlais(e));
+		Template.AddMergeValues.alias.set(getAlais(e).val());
 		Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.cardinality.set(countCardinality(expr));
 		Template.AddMergeValues.expressionField.set(expressionField);
-		
+
 		if(expr != null && expr != "")$("#merge-values-form").modal("show");
-		else Interpreter.showErrorMsg("Please specify expression", -3);				
+		else Interpreter.showErrorMsg("Please specify expression", -3);
 	}
 })
 
@@ -36,16 +36,16 @@ Template.AddMergeValues.helpers({
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 		if(typeof act_el !== 'undefined'){
 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});	
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			if(typeof compart !== 'undefined') return compart["input"];
 		}
 		return "";
 	},
-	
+
 	expression: function() {
 		return Template.AddMergeValues.expression.get();
 	},
-	
+
 	selectedCount: function() {
 		if(Template.AddMergeValues.aggregation.get() == "count") return "selected";
 		return "";
@@ -70,7 +70,7 @@ Template.AddMergeValues.helpers({
 		if(Template.AddMergeValues.aggregation.get() == "max") return "selected";
 		return "";
 	},
-	
+
 	selectedMin: function() {
 		if(Template.AddMergeValues.aggregation.get() == "min") return "selected";
 		return "";
@@ -89,10 +89,10 @@ Template.AddMergeValues.helpers({
 
 
 Template.AddMergeValues.events({
-	
+
 	"click #ok-merge-values": function(e) {
 
-		var mergeType = $('input[name=type-radio-merge]:checked').val();	
+		var mergeType = $('input[name=type-radio-merge]:checked').val();
 
 		var alias = Template.AddMergeValues.alias.get();
 		var expr = $('input[name=expression-merge]').val();
@@ -107,13 +107,13 @@ Template.AddMergeValues.events({
 				/*TODO close Attributes form, remove attribute if existed*/
 			};
 		} else {
-			Template.AddMergeValues.expressionField.get().val(expr);  
+			Template.AddMergeValues.expressionField.get().val(expr);
 		}
 		clearMergeValuesInput();
-		return;     
+		return;
 
 	},
-	
+
 	"click #cancel-add-link": function() {
 		clearMergeValuesInput();
 	},
@@ -142,7 +142,7 @@ function clearMergeValuesInput(){
 		else e.checked = false;
 	});
 
-} 
+}
 
 function getExpression(e){
 	return getField(e, "Expression");
