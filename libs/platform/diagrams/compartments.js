@@ -1,6 +1,6 @@
 
 Compartments.after.update(function (user_id, doc, fields, modifier, options) {
-	
+
 	if (!doc)
 		return;
 
@@ -42,7 +42,7 @@ Meteor.methods({
 		if (is_project_version_admin(user_id, compart_in)) {
 
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
-				
+
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 				Compartments.insert(compart_in, {trimStrings: false});
 
@@ -75,7 +75,7 @@ Meteor.methods({
 				update["valueLC"] = list["value"].toLowerCase();
 
 				if (list["value"] == "" && list["input"] == "") {
-					Compartments.remove({_id: list["id"], projectId: list["projectId"], 
+					Compartments.remove({_id: list["id"], projectId: list["projectId"],
 															versionId: list["versionId"]});
 				}
 
@@ -139,9 +139,9 @@ add_compartments_by_values = function(list, compartments) {
 	var compart_ids = _.map(compartments, function(item) {
 							return item.compartmentTypeId;
 						});
-
-	CompartmentTypes.find({_id: {$in: compart_ids,},}, {$sort: {index: 1}}).forEach(function(compart_type, i) {
-		add_compartment(compart_type, list, compartments[i]);
+		
+	CompartmentTypes.find({_id: {$in: compart_ids,}}, {$sort: {index: 1}}).forEach(function(compart_type, i) {
+		add_compartment(compart_type, list,  _.find(compartments, function(c) { return c.compartmentTypeId == compart_type._id }));
 	});
 
 }
@@ -196,7 +196,7 @@ build_compartment = function(compart_type, list, compart_in) {
 			elementTypeId: list["elementTypeId"],
 			versionId: list["versionId"],
 			compartmentTypeId: compart_type["_id"],
-			
+
 			input: input,
 			index: compart_type["index"],
 
@@ -206,11 +206,10 @@ build_compartment = function(compart_type, list, compart_in) {
 			isObjectRepresentation: compart_type["isObjectRepresentation"],
 		};
 
-		if (value) {
+		if (value || value == "") {
 			compart["value"] = value;
 			compart["valueLC"] = value.toLowerCase();
 		}
-
 		if (list["projectId"]) {
 			compart["projectId"] = list["projectId"];
 		}
