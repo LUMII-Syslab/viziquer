@@ -281,6 +281,9 @@ Template.sparqlForm.onRendered(function() {
 		},
 		//autoRefresh: true,
 	});
+	$(document).on('shown.bs.tab', '#vq-tab a[href="#sparql"]', function() {
+    this.refresh();
+  }.bind(yasqe3));
 
 	yasqe3.on("blur", function(editor){
 		var val = editor.getValue();
