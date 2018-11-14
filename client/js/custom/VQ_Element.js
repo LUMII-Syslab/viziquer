@@ -806,6 +806,12 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
         endElement: target._id(),
       };
 
+      var compartments = Dialog.buildCopartmentDefaultValue(new_line);
+
+      if (_.size(compartments) > 0) {
+        new_line.initialCompartments = compartments;
+      }
+
       Utilities.callMeteorMethod("insertElement", new_line, function(elem_id) {
             var vq_obj = new VQ_Element(elem_id);
             if (func) { func(vq_obj) };
@@ -853,17 +859,15 @@ VQ_Element = function(id) {
  // look in the cache
  //console.log(VQ_Element_cache);
  if (VQ_Element_cache[id]) {
+   // TODO: after delete - clear cache!!!!!!!!
    this.obj = VQ_Element_cache[id].obj;
    this.isVirtualRoot = VQ_Element_cache[id].isVirtualRoot;
  } else {
    var elem = Elements.findOne({_id: id});
-   if (!elem) {
-      elem = Elements.findOne({_id: Session.get("activeElement")});
-   }
 
    if (!elem) {
-      console.error("No active element");
-      return;
+      //console.error("VQ element not created");
+      return null;
    };
 
    this.obj = elem;

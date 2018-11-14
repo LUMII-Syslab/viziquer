@@ -12,14 +12,14 @@ Template.AddLink.helpers({
 		//start_elem
 		var start_elem_id = Session.get("activeElement");
 		var startElement = new VQ_Element(start_elem_id);
-		if (startElement && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
+		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
 			var asc = [];
-			
+
 			var className = startElement.getName();
 			var schema = new VQ_Schema();
 
-			if (schema.classExist(className)) {				
+			if (schema.classExist(className)) {
 				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
 					asc.push(e);
 					if (e.class == className)
@@ -29,10 +29,10 @@ Template.AddLink.helpers({
 							asc.push({name: e.name, class: e.class, type: "=>"});
 				});
 			}
-			
+
       		asc.push({name: "++", class: "", type: "=>"}); //default value for any case
 
-			return asc;			
+			return asc;
 		}
 	},
 
@@ -51,10 +51,10 @@ Template.AddLink.events({
 		var class_name = obj.attr("className");
 
 		$("div[id=errorField]").remove();
-          
+
         if (!name || name == "") {
-            console.log("Choose valid link");           
-            $(".modal-body").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");				            
+            console.log("Choose valid link");
+            $(".modal-body").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");
         } else {
 			//start_elem
 			var start_elem_id = Session.get("activeElement");
@@ -293,7 +293,7 @@ Template.AddLink.events({
 												},
 												elementStyleUpdate: undefined,
 											};
-							
+
 							Utilities.callMeteorMethod("insertCompartment", name_compartment);
 
 
@@ -306,7 +306,7 @@ Template.AddLink.events({
 								vq_line.setHideDefaultLinkName("true");
 							  };
 						}
-						
+
 					});
 
 				}
@@ -344,14 +344,14 @@ Template.AddLink.events({
 			}
 
 			clearAddLinkInput();
-			$("#add-link-form").modal("hide");			
+			$("#add-link-form").modal("hide");
 			return;
 		}
 
 	},
 
 	"click #cancel-add-link": function() {
-		clearAddLinkInput();		
+		clearAddLinkInput();
 	},
 
 });
