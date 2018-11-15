@@ -266,7 +266,8 @@ Template.AddLink.events({
 						var line_elem = Elements.findOne({_id: line_id});
 						var vq_line = new VQ_Element(line_id);
 						vq_line.setLinkType("REQUIRED");
-						if(linkType == "NESTED") vq_line.setNestingType("SUBQUERY")
+						if (linkType == "JOIN") vq_line.setNestingType("PLAIN");
+						else if (linkType == "NESTED") vq_line.setNestingType("SUBQUERY");
 						//vq_line.setName(name);
 						var line_compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: line_elem["elementTypeId"]})
 						if (line_compart_type) {
