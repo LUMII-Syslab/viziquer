@@ -5,6 +5,7 @@ Interpreter.customMethods({
 		console.log("SetParametrs called, not implemented");
 	},
 	
+
 	VQsetGroupBy: function() {
 		 var act_elem = Session.get("activeElement");
 		 var elem = new VQ_Element(act_elem);

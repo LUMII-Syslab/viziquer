@@ -17,7 +17,7 @@ makeString = function (o){
 	return str;
 }
 
-checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter){
+checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf){
 	
 	for(var key in expressionTable){
 		
@@ -32,15 +32,19 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName" ){
 			isSimpleFilter = false;
 		}
+		if(key == "OROriginal") isUnderOr = true;
+		if(key == "Function" && expressionTable[key] == "IF") isUnderIf = true;
 		
 		//if(isSimpleVariable == true && typeof expressionTable[key] == 'object'){
 		if(typeof expressionTable[key] == 'object'){
-			var temp = checkIfIsSimpleVariable(expressionTable[key], isSimpleVariable, isUnderInRelation, isSimpleFilter);
+			var temp = checkIfIsSimpleVariable(expressionTable[key], isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf);
 			if(temp["isSimpleVariable"]==false) isSimpleVariable = false;
 			if(temp["isSimpleFilter"]==false) isSimpleFilter = false;
+			if(temp["isUnderOr"]==true) isUnderOr = true;
+			if(temp["isUnderIf"]==true) isUnderIf = true;
 		}
 	}
-	return {isSimpleVariable:isSimpleVariable, isSimpleFilter:isSimpleFilter};
+	return {isSimpleVariable:isSimpleVariable, isSimpleFilter:isSimpleFilter, isUnderOr:isUnderOr, isUnderIf:isUnderIf};
 }
 
 checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableForNameDef){

@@ -504,7 +504,8 @@ function generateIds(rootClass){
 		if(varName.startsWith("?"))rootClassId = "_" + varName.substr(1);
 		else rootClassId = "_" + varName;
 	}
-	idTable[rootClass["identification"]["_id"]] = rootClassId;
+	// idTable[rootClass["identification"]["_id"]] = rootClassId;
+	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
 
 
 	referenceTable[rootClassId] = [];
@@ -512,11 +513,19 @@ function generateIds(rootClass){
 
 	//go through all root class children classes
 	_.each(rootClass["children"],function(subclazz) {
-		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"]);
+		var unionClass = null;
+		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
+		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass);
 		idTable.concat(temp["idTable"]);
 		referenceTable[rootClassId]["classes"].push(temp["referenceTable"]);
 	})
-	return {idTable:idTable, referenceTable:referenceTable};
+	
+	var idTableTemp = [];
+	for(var key in idTable) {
+		idTableTemp[key] = idTable[key]["name"];
+	}
+
+	return {idTable:idTableTemp, referenceTable:referenceTable};
 }
 
 
@@ -526,11 +535,11 @@ function generateIds(rootClass){
 // idTable - table with unique class names, generated so far
 // counter - counter for classes with equals names
 // parentClassId - parent class identificator
-function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion){
+function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass){
 	var referenceTable = [];
 
 	// if instance is defined, use it
-	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = clazz["instanceAlias"].replace(/ /g, '_');
+	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
 		if(varName == "?") {
@@ -538,22 +547,22 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			var foundInIdTable = false;
 			for(var key in idTable) {
 				// if given class name is in the table, add counter to the class name
-				if(idTable[key] == "_" + varName){
+				if(idTable[key]["name"] == "_" + varName){
 					foundInIdTable = true;
-					idTable[clazz["identification"]["_id"]] = "_" + varName + "_"+ counter;
+					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName + "_"+ counter, unionId:unionClass};
 					counter++;
 				}
 			}
 			// if given class name is not in the table, use it
-			if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = "_" + varName;
+			if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName, unionId:unionClass};
 		} else{
 			if(varName.startsWith("?"))varName = varName.substr(1);
-			idTable[clazz["identification"]["_id"]] = "_" + varName;
+			idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName, unionId:unionClass};
 		}
 
 	}
 	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
-		idTable[clazz["identification"]["_id"]] = "expr_"+counter;
+		idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"expr_"+counter, unionId:unionClass};
 		counter++;
 	} else if(clazz["linkIdentification"]["localName"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
 		idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
@@ -561,18 +570,29 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	else{
 		//TODO container name
 		var foundInIdTable = false;
-		for(var key in idTable) {
-			// if given class name is in the table, add counter to the class name
-			if(idTable[key] == clazz["identification"]["localName"]){
-				foundInIdTable = true;
-				idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_') + "_"+ counter;
-				counter++;
+		if(parentClassIsUnion == true){
+			for(var key in idTable) {
+				// if given class name is in the table, add counter to the class name
+				if(idTable[key]["localName"] == clazz["identification"]["localName"] && idTable[key]["unionId"] == unionClass){
+					foundInIdTable = true;
+					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:idTable[key]["name"], unionId:unionClass};
+				}
+			}
+		}
+		if(foundInIdTable == false){
+			for(var key in idTable) {
+				// if given class name is in the table, add counter to the class name
+				if(idTable[key]["name"] == clazz["identification"]["localName"]){
+					foundInIdTable = true;
+					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["identification"]["localName"].replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
+					counter++;
+				}
 			}
 		}
 		// if given class name is not in the table, use it
-		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = clazz["identification"]["localName"].replace(/-/g, '_');
+		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["identification"]["localName"].replace(/-/g, '_'), unionId:unionClass};
 	}
-	var className = idTable[clazz["identification"]["_id"]];
+	var className = idTable[clazz["identification"]["_id"]]["name"];
 	var linkType = "palin";
 	if(clazz["linkType"] != "REQUIRED" || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) linkType = "notPlain";
 
@@ -587,11 +607,16 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	_.each(clazz["children"],function(subclazz) {
 		var parentClassIsUnionTemp = clazz["isUnion"];
 		if(parentClassIsUnion == true) parentClassIsUnionTemp = true;
-		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp);
+		if(parentClassIsUnionTemp == true){
+			if(unionClass == null) unionClass = clazz["identification"]["_id"];
+		} else unionClass = null;
+		
+		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass);
 		idTable.concat(temp["idTable"]);
 		referenceTable[className]["classes"].push(temp["referenceTable"]);
+		counter = temp["counter"];
 	})
-	return {idTable: idTable, referenceTable: referenceTable};
+	return {idTable: idTable, referenceTable: referenceTable, counter:counter};
 }
 
 // find all prefixes used it a SPARQL query
@@ -1257,7 +1282,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 			// if((subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") && subclazz["identification"]["localName"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["localName"] != "[ + ]") {
 			if(subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") {
-
+				//console.log(subclazz, clazz);
+				// clazz["identification"]["_id"]
 				//Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
 				messages.push({
 					"type" : "Error",
@@ -1835,8 +1861,20 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 
 							whereInfo.unshift(subQuery);
 						} else {
-							var subQuery = "FILTER(EXISTS{" + temp.join("\n") + "})"
-							whereInfo.unshift(subQuery);
+							var isMessage = false;
+							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL"){
+								isMessage = true;
+								messages.push({
+									"type" : "Warning",
+									"message" : "Nested query can be optional only if it returns a value (Nested queries without return values are filters. Filters can not be optional).",
+									//"listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+									"isBlocking" : true
+								});
+							}
+							if(isMessage == false){
+								var subQuery = "FILTER(EXISTS{" + temp.join("\n") + "})"
+								whereInfo.unshift(subQuery);
+							}
 						}
 
 					} else {
@@ -1863,8 +1901,6 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 	var links = links.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
-
-	
 
 	//link type
 	if(typeof sparqlTable["linkType"] === 'string' && sparqlTable["linkType"] == "OPTIONAL"){

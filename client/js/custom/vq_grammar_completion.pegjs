@@ -404,13 +404,13 @@
 
 			PNAME_NS = (PN_PREFIX? collon ":") 
 
-			PNAME_LN = ((PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
+			PNAME_LN = ((PropertyReference? PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
 
 			PN_PREFIX = string_c Chars_String_prefix
 
 			PN_LOCAL = variables_c Var:Chars_String 
 
-
+			PropertyReference = PropertyReference_c "`"
 
 			iriOrFunction = iriOrFunctionA / iriOrFunctionB
 
@@ -504,11 +504,11 @@
 			
 			LNameSimple = (Chars_String_variables / (variables_c Chars_String_prefix))
 
-			LNameINV = (INV: inv_c "INV"i br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			LNameINV2 = (INV: check "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (PropertyReference? INV: inv_c "INV"i br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV2 = (PropertyReference? INV: check "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			Substring = (squere_br_open "[" (INTEGER (comma_c "," space INTEGER)?) squere_br_close "]")?
-			LName = (Chars_String_variables / (variables_c Chars_String_prefix)) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
+			LName = PropertyReference? (Chars_String_variables / (variables_c Chars_String_prefix)) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
 			
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
@@ -647,6 +647,7 @@
 			colon_c = "" {addContinuation(location(), ":", 90);}
 			vertical_c = "" {addContinuation(location(), "|", 90);}
 			space_c = "" {addContinuation(location(), " ", 10);}
+			PropertyReference_c = "" {addContinuation(location(), "`", 10);}
 			variables_c = "" {getProperties(location(), 91);}
 			references_c = "" {getReferences(location(), 91);}
 			associations_c = "" {getAssociations(location(), 91);}
