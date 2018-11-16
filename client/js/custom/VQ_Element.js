@@ -1769,6 +1769,15 @@ VQ_Element.prototype = {
       c_to_create["compartment"]["subCompartments"][compartment_name] = {};
       c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name] = {};
 
+      if (ct.inputType.type == "custom" && ct.inputType.templateName == "multiField") {
+           var ct_comparts_indexes = Compartments.find({compartmentTypeId: ct._id, elementId: this._id()}, {sort: {index: 1}})
+                                    .map(function(c) {return c.index; });
+          // search for hole in the array of indexes
+           for (var idx of ct_comparts_indexes) {
+             if (idx > c_to_create.compartment.index) { break; };
+             c_to_create.compartment.index += 1;
+           }
+		  }
 
       var sorted_sub_compart_types = _.sortBy(ct["subCompartmentTypes"][0]["subCompartmentTypes"], function(sct) {return sct.index} );
       var value_array = [];

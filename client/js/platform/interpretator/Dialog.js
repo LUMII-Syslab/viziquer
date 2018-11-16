@@ -129,8 +129,13 @@ Dialog = {
 
 		// if multifield
 		if (compart_type.inputType.type == "custom" && compart_type.inputType.templateName == "multiField") {
-			var comparts_count = Compartments.find({compartmentTypeId: compart_type._id,}).count();
-			compart.index += comparts_count + 1;
+			var ct_comparts_indexes = Compartments.find({compartmentTypeId: compart_type._id, elementId: compart.elementId }, {sort: {index: 1}})
+														.map(function(c) {return c.index; });
+			// search for hole in the array of indexes
+		 for (var idx of ct_comparts_indexes) {
+					if (idx > compart.index) { break; };
+				  compart.index += 1;
+		 }
 		}
 
 		return compart;
