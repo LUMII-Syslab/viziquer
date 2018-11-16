@@ -3067,7 +3067,8 @@
                     "procedure": "VQsetSubQueryNameSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue"
+                    "extensionPoint": "dynamicDefaultValue",
+					"procedure": "VQsetAssociationName"
                   },
                   {
                     "extensionPoint": "dynamicDropDown",
@@ -3706,7 +3707,8 @@
                     "extensionPoint": "dynamicSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue"
+                    "extensionPoint": "dynamicDefaultValue",
+					"procedure": "VQSetHideDefaultLinkValue"
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
