@@ -5,7 +5,7 @@
         margin-top: 0px;
         padding-top: 0px;
         overflow-y: auto;
-        max-height: 60vh;      
+        max-height: 60vh;             
     }
 
     div.link-type-part {
@@ -14,7 +14,7 @@
         background-color: white;
         margin-left: 10px;
         margin-right: 10px;
-        max-width: 50%;
+        width: 30%;
     }
 
 /*    hr {
@@ -111,14 +111,14 @@
                 </div>
                
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">                        
+                    <form id="link-list-form" class="form-horizontal" role="form">                        
                         <div class="form-group">                   
                             {{#each associations}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
-                                        <input type="radio" name="stack-radio" value="{{name}}">
+                                        <input type="radio" name="stack-radio" value="{{name}}" card={{card}}>
                                         <span class="custom-radio"></span>
-                                        {{name}} {{type}} {{class}}
+                                        {{name}} {{type}} <span style="color: purple">{{card}}</span> {{class}}
                                     </label>
                                 </div>
                             {{/each}}
@@ -142,17 +142,29 @@
 
     <script>
         //Show additional choices
-        $(function () {
-            $('input[name=type-radio]').change(function(){
-                var checkedName = $('input[name=type-radio]').filter(':checked').val();
-                // console.log(checkedName);
+        $(document).ready(function(){                   
+            $('#type-choice').change(function(){
+                var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
                 if (checkedName === 'JOIN') {
                     $('input[id=goto-wizard]:checked').attr('checked', false);
-                    $('input[id=goto-wizard]').attr("disabled","disabled");
+                    $('input[id=goto-wizard]').attr('disabled',"disabled");
                 } else {
                     $('input[id=goto-wizard]').removeAttr('disabled');
                 }            
-            })
+            });
+
+            $('#link-list-form').change(function(){
+                var checkedName = $('input[name=stack-radio]').filter(':checked').attr("card"); //console.log(checkedName);
+                if (checkedName.indexOf("1]") != -1){//max cardinality equals 1 == [0-1] or [1]
+                    $('input[value=JOIN]').prop('checked', true);
+                    $('input[value=NESTED]').prop('checked', false);
+                    $('input[value=NESTED]').attr('disabled',"disabled");
+                    $('input[id=goto-wizard]:checked').attr('checked', false);
+                    $('input[id=goto-wizard]').attr('disabled',"disabled");
+                } else {
+                    $('input[value=NESTED]').removeAttr('disabled');
+                }                
+            });
         })
     </script>
 </template>
