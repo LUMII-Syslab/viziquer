@@ -2600,6 +2600,10 @@
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
+                  },
+				  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
                   }
                 ],
                 "label": "Group by this"
