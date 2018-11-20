@@ -354,13 +354,14 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 // Executes the given Sparql end shows result in the GUI
 function executeSparqlString(sparql, paging_info) {
   // Default Data Set Name (Graph IRI) and SPARQL endpoint url
-  var graph_iri = "MiniBkusEN";
+  var graph_iri = "";
   var endpoint = "http://185.23.162.167:8833/sparql";
 
   var proj = Projects.findOne({_id: Session.get("activeProject")});
 
-  if (proj && proj.uri && proj.endpoint) {
-    graph_iri = proj.uri;
+  if (proj && proj.endpoint) {
+  //if (proj && proj.uri && proj.endpoint) {
+    if (proj.uri) {graph_iri = proj.uri;}
     endpoint = proj.endpoint;
   } else {
     Interpreter.showErrorMsg("Project endpoint not properly configured", -3);
