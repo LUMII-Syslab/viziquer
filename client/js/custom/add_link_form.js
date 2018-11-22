@@ -15,55 +15,60 @@ Template.AddLink.helpers({
 		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
 			var asc = [];
-			var ascDetails = getDetailedAttributes(); console.log(ascDetails);
+			var ascDetails = getDetailedAttributes();
+			//check if max cardinality exists 
+			var hasCardinalities = false;
+			_.each(ascDetails, function(e){
+				if (e.max) hasCardinalities = true;
+			})
 
 			var className = startElement.getName();
 			var schema = new VQ_Schema();
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
 
 			if (schema.classExist(className)) {
 				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
 					var cardinality = "";
-					_.each(ascDetails, function(d){
-						if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || 
-												 (d.from == e.class && d.to == className && e.type == "<="))) { 
-							if (d.max == -1) {
-								cardinality = cardinality.concat("[", d.min, " - *]");
-							} else if (d.min == d.max) {
-								cardinality = cardinality.concat("[",d.min,"]",);
+					var colorLetters = "";					
+					if (proj) {					
+						if (proj.showCardinalities=="true"){
+							if (!hasCardinalities) {
+								cardinality = cardinality.concat("[*]");
+								colorLetters = colorLetters.concat("color: purple");
 							} else {
-								cardinality = cardinality.concat("[",d.min, "-", d.max,"]",);
+								_.each(ascDetails, function(d){
+									if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || 
+															 (d.from == e.class && d.to == className && e.type == "<="))) { 
+										if (d.max == -1) {
+											cardinality = cardinality.concat("[*]");
+											colorLetters = colorLetters.concat("color: purple");
+										}
+									}
+								});	
 							}
 						}
-					});
+					}				
 
-					asc.push({name: e.name, class: e.class, type: e.type, card: cardinality});
+					asc.push({name: e.name, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
 					if (e.class == className)
 						if (e.type == "=>")
-							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality});
+							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
 						else
-							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality});
+							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
 
 
 				});
 			}
 
-      		asc.push({name: "++", class: "", type: "=>", card: "[*]"}); //default value for any case
+			//default value for any case
+			if (proj){
+      			if (proj.showCardinalities=="true")
+      				asc.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
+      		} else {
+      			asc.push({name: "++", class: "", type: "=>", card: "", clr: ""});
+      		}
 
 			return asc;
-		}
-
-		function getDetailedAttributes() {
-			var schema = new VQ_Schema();
-			var detailedList = [];
-
-			_.each(schema.Associations, function(e) {
-				_.each(e.schemaRole, function(r){
-					if (e.localName && e.localName != " ")
-						detailedList.push({name: e.localName, min: r.minCardinality, max: r.maxCardinality, 
-											from: r.sourceClass.localName, to: r.targetClass.localName});
-				})				
-			})
-			return detailedList;
 		}
 	},
 
@@ -408,5 +413,19 @@ function clearAddLinkInput(){
 	$('input[id=goto-wizard]').attr("disabled","disabled");
 
 	$("div[id=errorField]").remove();
+}
+
+function getDetailedAttributes() {
+	var schema = new VQ_Schema();
+	var detailedList = [];
+
+	_.each(schema.Associations, function(e) {
+		_.each(e.schemaRole, function(r){
+			if (e.localName && e.localName != " ")
+				detailedList.push({name: e.localName, min: r.minCardinality, max: r.maxCardinality, 
+									from: r.sourceClass.localName, to: r.targetClass.localName});
+		})				
+	})
+	return detailedList;
 }
 
