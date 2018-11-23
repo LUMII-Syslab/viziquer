@@ -4,7 +4,27 @@ Interpreter.customMethods({
 
 		console.log("SetParametrs called, not implemented");
 	},
-	
+
+	Test: function() {
+		//Utilities.callMeteorMethod("migrateIndexes",Session.get("activeProject"));
+        var proj_id = Session.get("activeProject");
+		var act_elem_id = Session.get("activeElement"); 
+		console.log(proj_id);
+		var elem = Elements.findOne({_id: act_elem_id,})
+		var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
+		CompartmentTypes.find({elementTypeId:elem_type._id}).forEach(function(compType){
+			compartments = Compartments.find({projectId:proj_id, elementId:act_elem_id, compartmentTypeId:compType._id });
+				comp_ind = compartments.map(function (c) {
+				   return {_id:c._id, index:c.index, input:c.input};
+				});
+				if (compartments.count() > 0 )
+				{
+				  console.log(compType.name);
+				  console.log(compType.index);
+				  console.log(comp_ind);
+				}
+		});
+	},
 
 	VQsetGroupBy: function() {
 		 var act_elem = Session.get("activeElement");
@@ -14,9 +34,9 @@ Interpreter.customMethods({
  		 if (comp_val_group == "true")
 		 {
 		   if (comp_val_inst == null )
-		     elem.setCompartmentValue("Instance", "", "Group by this");
+		     elem.setCompartmentValue("Instance", "", "{group}");
 		   else
-		     elem.setCompartmentValue("Instance", comp_val_inst, "Group by {" + comp_val_inst + "}" , false);
+		     elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
 		 }
 		 else
 		 {

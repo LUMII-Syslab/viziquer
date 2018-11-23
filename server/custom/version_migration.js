@@ -25,7 +25,43 @@ Meteor.methods({
 			});
 		}
 	},
+	
+	migrateIndexes: function(projectId) {
 
+		Diagrams.find({projectId: projectId}).forEach(function(diagram) {
+
+			var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
+
+			Elements.find({diagramId: diagram._id, diagramTypeId: diagram_type._id}).forEach(function(elem) {
+
+				var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
+				CompartmentTypes.find({elementTypeId:elem_type._id}).forEach(function(compType){
+					compartments = Compartments.find({projectId:projectId, elementId:elem._id, compartmentTypeId:compType._id });
+					if (compartments.count() == 1 ){
+					    compartments.forEach(function(c){
+							Compartments.update({_id: c._id, projectId:projectId,},{$set: { index: compType.index,}});
+						})  
+					}
+					if (compartments.count() > 1 ){
+						comp_ind = compartments.map(function (c) {
+							return {_id:c._id, index:c.index, input:c.input};
+						});
+						comp_ind.sort(function(a, b) { return a.index - b.index; })
+						var i = 0; 
+						comp_ind.forEach(function(c)
+						{
+							Compartments.update({_id: c._id, projectId: projectId,},{$set: { index: compType.index+i,}});					   
+							i = i + 1
+						})		   
+					}
+				});
+				
+						
+
+			});
+		});
+		console.log("Done");
+	}, 
 });
 
 
