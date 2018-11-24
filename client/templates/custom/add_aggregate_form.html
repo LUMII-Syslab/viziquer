@@ -38,6 +38,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-warning yellow-button" style="position:relative;float:left;" 
+                            onclick="startAggegateWizard()" data-dismiss="modal">Aggregate wizard</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-aggregate" type="button" class="btn btn-primary" data-dismiss="modal">Aggregate</button>
                 </div>
@@ -45,5 +47,84 @@
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
+    <script>
+      function startAggegateWizard(){
+        Interpreter.destroyErrorMsg();        
+        var attr_list = [{attribute: ""}];
+        var schema = new VQ_Schema();
+        var classId = Session.get("activeElement");
+        Template.AggregateWizard.endClassId.set(classId);
+
+
+        console.log("classId ", classId)
+
+
+        if (classId) {
+            var classObj = new VQ_Element(classId);
+            if (classObj && classObj.isClass()) {
+              //Display/at least/at most visibility
+              if(classObj.isRoot()) {
+                Template.AggregateWizard.showDisplay.set("none");
+                Template.AggregateWizard.startClassId.set(classId);
+              }else {
+                Template.AggregateWizard.showDisplay.set("block");
+                Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
+                //console.log("root id = ", getRootId(classObj.obj._id));
+                Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+              }
+
+                //Attribute generation
+                var class_name = classObj.getName();
+                if (schema.classExist(class_name)) {
+                    var klass = schema.findClassByName(class_name);
+
+                    _.each(klass.getAllAttributes(), function(att){
+                        attr_list.push({attribute: att["name"]});
+                    })
+                    attr_list = _.sortBy(attr_list, "attribute");
+                } else {
+                  Interpreter.showErrorMsg("No such class", -3);
+                  return;
+                }
+                // console.log(attr_list);
+                Template.AggregateWizard.attList.set(attr_list);
+
+                //Alias name
+                if (class_name) {
+                  var userAlias = $('#aggregate-alias').val();
+                  if (userAlias !="") {
+                    Template.AggregateWizard.defaultAlias.set(userAlias);                    
+                  } else {
+                    Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                  }
+                  $("#aggregate-wizard-form").modal("show");
+                } else {
+                  Interpreter.showErrorMsg("No class name is given", -3);
+                  return;
+                }
+            } else {
+              Interpreter.showErrorMsg("Class doesn't exist", -3);
+              return;
+            }
+        }
+
+        function getRootId (elId){
+          var classObj = new VQ_Element(elId); console.log(classObj);
+          if (!classObj.isClass()) {return 0;}
+          if (classObj.isRoot()){
+            return elId;
+          } else {
+            if (classObj.getLinkToRoot()){
+              var elements = classObj.getLinkToRoot().link.getElements(); 
+              if (classObj.getLinkToRoot().start) {
+                return getRootId(elements.start.obj._id);
+              } else {
+                return getRootId(elements.end.obj._id);
+              }
+            }
+          }
+        }
+      }
+    </script>
 
 </template>

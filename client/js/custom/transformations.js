@@ -769,6 +769,7 @@ Interpreter.customMethods({
 		console.log("expression_value", expression_value)
 
 
+		Interpreter.destroyErrorMsg();
 		var attr_list = [{attribute: ""}];
         var schema = new VQ_Schema();
         var classId = Session.get("activeElement");
@@ -784,6 +785,7 @@ Interpreter.customMethods({
             	//Display/at least/at most visibility
             	if(classObj.isRoot()) {
             		Template.AggregateWizard.showDisplay.set("none");
+            		Template.AggregateWizard.startClassId.set(classId);
             	}else {
             		Template.AggregateWizard.showDisplay.set("block");
             		Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
@@ -808,31 +810,30 @@ Interpreter.customMethods({
                 if (class_name) {
                     Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
                     $("#aggregate-wizard-form").modal("show");
+                } else {
+                	Interpreter.showErrorMsg("No class name is given", -3);
+                	return;
                 }
             }
         }
 
         function getRootId (elId){
-        	var classObj = new VQ_Element(elId);
+        	var classObj = new VQ_Element(elId); console.log(classObj);
         	if (!classObj.isClass()) {return 0;}
         	if (classObj.isRoot()){
         		return elId;
         	} else {
-        		var link = new VQ_Element(classObj.getLinkToRoot().link.obj._id);
-        		if (link){
-        			var elements = link.getElements(); 
-        			//{ start: new VQ_Element(this.obj["startElement"]), end: new VQ_Element(this.obj["endElement"])}
-        			var direction = link.getRootDirection();
-        			if (direction == "start") {
+        		if (classObj.getLinkToRoot()){
+        			var elements = classObj.getLinkToRoot().link.getElements();
+        			if (classObj.getLinkToRoot().start) {
         				return getRootId(elements.start.obj._id);
-        			} else if (direction == "end"){
+        			} else {
         				return getRootId(elements.end.obj._id);
         			}
         		}
         	}
         }
-
-	},
+    },
 
 	isMergeValuesWizardAvailable: function() {
 		return true;
