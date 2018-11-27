@@ -39,9 +39,14 @@
 			}
 			function getAssociations(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAssociations()
-				
+
 				for(var key in prop){
-					addContinuation(place, prop[key]["name"], priority);
+					var association = prop[key]["name"];
+					if(prop[key]["type"] == "<=") {
+						addContinuation(place, "^" + prop[key]["name"], priority)
+						addContinuation(place, "INV(" + prop[key]["name"] + ")", priority)
+					}
+					else addContinuation(place, prop[key]["name"], priority);
 				}
 			}
 			function addContinuation(place, continuation, priority, start_end){
