@@ -159,9 +159,9 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
        if (obj_class.linkType !== "NOT") {
          my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) { parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(ca)});
-         my_scope_table.PROPERTY_ALIAS.forEach(function(ca) { parents_scope_table.PROPERTY_ALIAS.push(ca)});
-         my_scope_table.PROPERTY_NAME.forEach(function(ca) { parents_scope_table.PROPERTY_NAME.push(ca)});
-         my_scope_table.BIND_ALIAS.forEach(function(ca) { parents_scope_table.BIND_ALIAS.push(ca)});
+         //my_scope_table.PROPERTY_ALIAS.forEach(function(ca) { parents_scope_table.PROPERTY_ALIAS.push(ca)});
+         //my_scope_table.PROPERTY_NAME.forEach(function(ca) { parents_scope_table.PROPERTY_NAME.push(ca)});
+         //my_scope_table.BIND_ALIAS.forEach(function(ca) { parents_scope_table.BIND_ALIAS.push(ca)});
        };
     }
 
@@ -248,22 +248,43 @@ resolveTypesAndBuildSymbolTable = function (query) {
     };
   };
 
+  // String, ObjectId, String, IdObject -->
+  //update all entries of identifier name from context = sets kind and type (optional)
+  function updateSymbolTable(name, context, kind, type) {
+      _.each(symbol_table, function(name_list, current_context) {
+          if (name_list[name]) {
+            name_in_context = _.find(name_list[name], function(n) {return n.context == context} );
+            if (name_in_context) {
+              if (kind) {
+                name_in_context["kind"] = kind;
+              };
+              if (type) {
+                name_in_context["type"] = type;
+              };
+            }
+          }
+      })
+  };
+
   // JSON -->
   // Parses all expressions in the object and recursively in all children
   function resolveClassExpressions(obj_class, parent_class) {
 
-    if (parent_class) {
-      // copy class_aliases
+  if (parent_class) {
       var pc_st = symbol_table[parent_class.identification._id];
       var oc_st = symbol_table[obj_class.identification._id];
 
-      console.log(pc_st);
-
+      // copy from parent
       _.each(pc_st, function(entry_list, id) {
-        console.log(id)
-        console.log(entry_list)
-         if (!oc_st[id]) { oc_st[id] = []; };
-         oc_st[id] = _.union(oc_st[id],_.filter(entry_list, function(entry) { return entry.kind == "CLASS_ALIAS"}))
+        _.each(entry_list, function(entry) {
+          if ((((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) || (entry.kind == "CLASS_ALIAS"))&&(entry.kind != "AGGREGATE_ALIAS")) {
+            if (!oc_st[id]) { oc_st[id] = []; };
+            if (!_.any(oc_st[id], function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
+                oc_st[id].push(entry);
+            };
+          };
+
+        })
       })
 
     }
@@ -319,10 +340,44 @@ resolveTypesAndBuildSymbolTable = function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-           if (var_obj["kind"]=="PROPERTY_NAME") {
-             symbol_table[f.alias].type = var_obj["type"];
+           switch (var_obj["kind"]) {
+             case "PROPERTY_NAME":
+                // search for id: f.alias and context: obj_class.identification._id
+                // replace kind: PROPERTY_ALIAS
+                // replace type: var_obj["type"]
+                console.log(var_obj);
+                updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+
+                // TODO: remove when compatibility issues resolved
+                symbol_table[f.alias].type = var_obj["type"];
+                break;
+             case "PROPERTY_ALIAS":
+                // search for id: f.alias and context: obj_class.identification._id
+                // replace kind: BIND_ALIAS ??
+                // replace type: null
+                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+
+                break;
+             case "CLASS_ALIAS":
+                // search for id: f.alias and context: obj_class.identification._id
+                // replace kind: BIND_ALIAS
+                // replace type: var_obj["type"]
+                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", var_obj["type"]);
+                break;
+             default:
+                 //  - so what is it???? It is ERROR ...
+
+           };
+         } else {
+           if (f.alias) {
+             // it has alias, but is not variable (name)
+             //it is something more complex - should be BIND_ALIAS
+             updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+           } else {
+             // no alias
            }
          }
+
 		     if (f.requireValues && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
