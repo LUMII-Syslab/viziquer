@@ -60,7 +60,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class, parents_scope_table) {
 
-    var my_scope_table = {CLASS_ALIAS:[],PROPERTY_ALIAS:[], PROPERTY_NAME:[], BIND_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[]};
+    var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
     // Copy everything relevant from parent to this
      //parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
@@ -119,6 +119,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
               // TODO: Remove after compatibility issues resolved
              symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
+        } else {
+          // field without alias? We should somehow identify it
+          // obj_id + exp ?
+          my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
         };
     });
 
@@ -159,9 +163,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
        if (obj_class.linkType !== "NOT") {
          my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) { parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(ca)});
-         //my_scope_table.PROPERTY_ALIAS.forEach(function(ca) { parents_scope_table.PROPERTY_ALIAS.push(ca)});
-         //my_scope_table.PROPERTY_NAME.forEach(function(ca) { parents_scope_table.PROPERTY_NAME.push(ca)});
-         //my_scope_table.BIND_ALIAS.forEach(function(ca) { parents_scope_table.BIND_ALIAS.push(ca)});
+         my_scope_table.UNRESOLVED_NAME.forEach(function(ca) { parents_scope_table.UNRESOLVED_NAME.push(ca)});
        };
     }
 
@@ -181,7 +183,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
     return;
   };
 
-  var empty_scope_table = {CLASS_ALIAS:[],PROPERTY_ALIAS:[], PROPERTY_NAME:[], BIND_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[]};
+  var empty_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
   resolveClass(query.root, empty_scope_table);
 
   // String, String --> JSON
@@ -266,6 +268,38 @@ resolveTypesAndBuildSymbolTable = function (query) {
       })
   };
 
+  // String, ObjectId, String -->
+  // rename the entry
+  function renameNameInSymbolTable(name, new_name) {
+      _.each(symbol_table, function(name_list, current_context) {
+          if (name_list[name]) {
+            if (!symbol_table[current_context][new_name]) {
+              symbol_table[current_context][new_name] = name_list[name];
+            } else {
+              symbol_table[current_context][new_name] = symbol_table[current_context][new_name].concat(symbol_table[current_context][name]);
+            };
+            delete symbol_table[current_context][name];
+          }
+      })
+  };
+
+  // -->
+  //remove all UNRESOLVED_NAME and UNRESOLVED_FIELD_ALIAS entries
+  function cleanSymbolTable() {
+      _.each(symbol_table, function(name_list, current_context) {
+          // TODOL Because old TABLE should remain intact for now
+          if (!current_context["kind"]) {
+            _.each(name_list, function(entry_list, name) {
+                symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS") } );
+                if (_.isEmpty(symbol_table[current_context][name])) {
+                  delete symbol_table[current_context][name];
+                };
+            })
+          }
+
+      })
+  };
+
   // JSON -->
   // Parses all expressions in the object and recursively in all children
   function resolveClassExpressions(obj_class, parent_class) {
@@ -319,12 +353,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
          parseExpObject(f)
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
-         // if expression is just the property name, then resolve its type.
+         // if expression is just single name, then resolve its type.
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
-         // console.log(p);
-         // console.log(f.alias);
-         if (f.alias && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+         if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
@@ -342,26 +374,22 @@ resolveTypesAndBuildSymbolTable = function (query) {
            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
            switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
-                // search for id: f.alias and context: obj_class.identification._id
-                // replace kind: PROPERTY_ALIAS
-                // replace type: var_obj["type"]
-                console.log(var_obj);
-                updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+                if (f.alias) {
+                  updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
 
-                // TODO: remove when compatibility issues resolved
-                symbol_table[f.alias].type = var_obj["type"];
+                  // TODO: remove when compatibility issues resolved
+                  symbol_table[f.alias].type = var_obj["type"];
+                } else {
+                  updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"]);
+                  renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+                }
+
                 break;
              case "PROPERTY_ALIAS":
-                // search for id: f.alias and context: obj_class.identification._id
-                // replace kind: BIND_ALIAS ??
-                // replace type: null
                 updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
 
                 break;
              case "CLASS_ALIAS":
-                // search for id: f.alias and context: obj_class.identification._id
-                // replace kind: BIND_ALIAS
-                // replace type: var_obj["type"]
                 updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", var_obj["type"]);
                 break;
              default:
@@ -370,11 +398,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
            };
          } else {
            if (f.alias) {
-             // it has alias, but is not variable (name)
-             //it is something more complex - should be BIND_ALIAS
              updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
            } else {
              // no alias
+             // remove from symbol table ...
+
            }
          }
 
@@ -414,6 +442,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   };
 
   resolveClassExpressions(query.root);
+  cleanSymbolTable();
 
   //console.log(query.root);
   return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes}
