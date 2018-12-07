@@ -323,14 +323,16 @@ resolveTypesAndBuildSymbolTable = function (query) {
       var pc_st = symbol_table[parent_class.identification._id];
       var oc_st = symbol_table[obj_class.identification._id];
 
-      // copy from parent
+      // copy from parent, DOWN
       _.each(pc_st, function(entry_list, id) {
         _.each(entry_list, function(entry) {
           if (((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) ||
               (entry.kind == "CLASS_ALIAS" && !((obj_class.linkType=="OPTIONAL") && entry.upByOptional))) {
             if (!oc_st[id]) { oc_st[id] = []; };
             if (!_.any(oc_st[id], function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
+                // Note that _.clone does SHALLOW copy. Thus type is not copied, but referenced.
                 entry_clone = _.clone(entry);
+                if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) { entry_clone["downBySubquery"] = true; };
                 oc_st[id].push(entry_clone);
             };
           };
