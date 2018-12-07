@@ -1160,7 +1160,7 @@ VQ_Element.prototype = {
   getConditions: function() {
     return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
   },
-  // string -->// it does not work - there are still subcompartments
+  // string -->
   addCondition: function(condition) {
     this.addCompartmentSubCompartments("Conditions",[{name:"Expression", value:condition}])
   },
