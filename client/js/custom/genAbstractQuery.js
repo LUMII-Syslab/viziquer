@@ -87,16 +87,16 @@ resolveTypesAndBuildSymbolTable = function (query) {
     };
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
-    _.extend(obj_class.identification, parseExpression(obj_class.identification.localName, "CLASS_NAME"));
+    _.extend(obj_class.identification, parseExpression(obj_class.identification.localName, "CLASS_NAME", obj_class.identification._id));
 
     if (obj_class.linkIdentification) {
         _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
-        _.extend(obj_class.linkIdentification, parsePathExpression(obj_class.linkIdentification.localName))
+        _.extend(obj_class.linkIdentification, parsePathExpression(obj_class.linkIdentification.localName, obj_class.identification._id))
     };
 
     obj_class.conditionLinks.forEach(function(cl) {
       _.extend(cl.identification,resolveLinkByName(cl.identification.localName));
-      _.extend(cl.identification, parsePathExpression(cl.identification.localName))
+      _.extend(cl.identification, parsePathExpression(cl.identification.localName, obj_class.identification._id))
     });
 
     obj_class.fields.forEach(function(f) {
@@ -201,13 +201,13 @@ resolveTypesAndBuildSymbolTable = function (query) {
   var empty_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
   resolveClass(query.root, empty_scope_table);
 
-  // String, String --> JSON
+  // String, String, ObjectId --> JSON
   // Parses the text and returns object with property "parsed_exp"
   // Used only when parsing class name
-  function parseExpression(str_expr, exprType) {
+  function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType});
+		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -221,11 +221,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   // String --> JSON
   // Parses the text and returns object with property "parsed_exp"
-  function parsePathExpression(str_expr) {
+  function parsePathExpression(str_expr, context) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  // var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table});
+		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context});
 		  //console.log(JSON.stringify(parsed_exp2,null,2));
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
@@ -239,10 +239,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
-  function parseExpObject(exp_obj) {
+  function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
    try {
-      parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
+      parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
 	 // console.log("parse_obj", parse_obj);
     } catch (e) {
       // TODO: error handling
@@ -255,7 +255,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 	 }
 
     try {
-      var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table});
+      var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
       exp_obj.parsed_exp = parsed_exp;
     } catch (e) {
       // TODO: error handling
@@ -342,8 +342,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     }
 
-    obj_class.conditions.forEach(parseExpObject);
-    obj_class.aggregations.forEach(parseExpObject);
+    obj_class.conditions.forEach(function(c) {parseExpObject(c,obj_class.identification._id);});
+    obj_class.aggregations.forEach(function(a) {parseExpObject(a,obj_class.identification._id);});
     // CAUTION!!!!! Hack for * and **
     obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
 
@@ -357,7 +357,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
             var condition = {exp:"(this) = " + strURI};
-			      parseExpObject(condition);
+			      parseExpObject(condition, obj_class.identification._id);
 			      obj_class.conditions.push(condition);
             obj_class.instanceAlias = null;
           } else {
@@ -370,7 +370,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
         f.exp="GROUP_CONCAT("+f.exp+")";
       };
 
-         parseExpObject(f)
+         parseExpObject(f, obj_class.identification._id);
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
          var p = f.parsed_exp;
@@ -445,15 +445,15 @@ resolveTypesAndBuildSymbolTable = function (query) {
               var expression = f.exp;
 			        if (f.alias) expression = f.alias;
 			        var condition = {exp:"EXISTS(" + expression + ")"};
-			        parseExpObject(condition);
+			        parseExpObject(condition, obj_class.identification._id);
 			        obj_class.conditions.push(condition);
             }
          }
     });
 
-    if (obj_class.orderings) { obj_class.orderings.forEach(parseExpObject) };
+    if (obj_class.orderings) { obj_class.orderings.forEach(function(c) {parseExpObject(c,obj_class.identification._id);}) };
     if (obj_class.groupings) { obj_class.groupings.forEach(parseExpObject) };
-    if (obj_class.havingConditions) { obj_class.havingConditions.forEach(parseExpObject) };
+    if (obj_class.havingConditions) { obj_class.havingConditions.forEach(function(c) {parseExpObject(c,obj_class.identification._id);}) };
 
 
     obj_class.children.forEach(function(ch) { resolveClassExpressions(ch,obj_class); });
