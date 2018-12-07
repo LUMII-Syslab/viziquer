@@ -147,23 +147,38 @@ resolveTypesAndBuildSymbolTable = function (query) {
     if (obj_class.linkIdentification) {
        if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
             my_scope_table.CLASS_ALIAS.forEach(function(ca) {
-                parents_scope_table.CLASS_ALIAS.push(ca)
+                parents_scope_table.CLASS_ALIAS.push(_.clone(ca))
+            });
+            my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
+                parents_scope_table.AGGREGATE_ALIAS.push(_.clone(ca))
             });
        };
 
        if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
          my_scope_table.CLASS_ALIAS.forEach(function(ca) {
-             parents_scope_table.CLASS_ALIAS.push(ca)
+             clone_ca = _.clone(ca);
+             clone_ca["upByOptional"] = true;
+             parents_scope_table.CLASS_ALIAS.push(clone_ca)
+         });
+         my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
+             clone_ca = _.clone(ca);
+             clone_ca["upByOptional"] = true;
+             parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
          });
        };
 
-       /*if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
-
-       };*/
 
        if (obj_class.linkType !== "NOT") {
-         my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) { parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(ca)});
-         my_scope_table.UNRESOLVED_NAME.forEach(function(ca) { parents_scope_table.UNRESOLVED_NAME.push(ca)});
+         my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
+           clone_ca = _.clone(ca);
+           if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
+           parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(clone_ca)
+         });
+         my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
+           clone_ca = _.clone(ca);
+           if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
+           parents_scope_table.UNRESOLVED_NAME.push(clone_ca)
+         });
        };
     }
 
@@ -175,7 +190,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
          if (!symbol_table[obj_class.identification._id][entry.id]) {
            symbol_table[obj_class.identification._id][entry.id] = [];
          };
-         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context});
+         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional});
        })
     })
 
@@ -268,7 +283,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
       })
   };
 
-  // String, ObjectId, String -->
+  // String, String -->
   // rename the entry
   function renameNameInSymbolTable(name, new_name) {
       _.each(symbol_table, function(name_list, current_context) {
@@ -311,10 +326,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
       // copy from parent
       _.each(pc_st, function(entry_list, id) {
         _.each(entry_list, function(entry) {
-          if ((((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) || (entry.kind == "CLASS_ALIAS"))&&(entry.kind != "AGGREGATE_ALIAS")) {
+          if (((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) ||
+              (entry.kind == "CLASS_ALIAS" && !((obj_class.linkType=="OPTIONAL") && entry.upByOptional))) {
             if (!oc_st[id]) { oc_st[id] = []; };
             if (!_.any(oc_st[id], function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
-                oc_st[id].push(entry);
+                entry_clone = _.clone(entry);
+                oc_st[id].push(entry_clone);
             };
           };
 
