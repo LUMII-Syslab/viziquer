@@ -808,7 +808,12 @@ Interpreter.customMethods({
 
                 //Alias name
                 if (class_name) {
-                    Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                	var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
+                  	if (userAlias !="") {
+                    	Template.AggregateWizard.defaultAlias.set(userAlias);                    
+                 	} else {                    
+                    	Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                    }
                     $("#aggregate-wizard-form").modal("show");
                 } else {
                 	Interpreter.showErrorMsg("No class name is given", -3);
