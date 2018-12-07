@@ -85,6 +85,8 @@ Template.dialogTabContent.events({
 	},
 
 	'input .dialog-combobox': function(e) {
+		console.log("combobox value entered ", e);
+
 		update_combobox(e);
 		Session.set("editingDialog", true);
 	},
