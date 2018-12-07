@@ -39,7 +39,7 @@ Meteor.methods({
 		var user_id = Meteor.userId();
 
 		var compart_in = list.compartment;
-		if (is_project_version_reader(user_id, compart_in)) {
+		if (is_project_member(user_id, compart_in)) {
 
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 
@@ -57,7 +57,7 @@ Meteor.methods({
 	updateCompartment: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_reader(user_id, list)) {
+		if (is_project_member(user_id, list)) {
 
 			if (list["value"] || list["value"] == "") {
 
@@ -98,7 +98,7 @@ Meteor.methods({
 	removeCompartment: function(list) {
 
 		var user_id = Meteor.userId();
-		if (is_project_version_reader(user_id, list)) {
+		if (is_project_member(user_id, list)) {
 
 			if (!list["compartmentId"])
 				return;
@@ -113,7 +113,7 @@ Meteor.methods({
 
 	swapCompartments: function(list) {
 		var user_id = Meteor.userId();
-		if (is_project_version_reader(user_id, list)) {
+		if (is_project_member(user_id, list)) {
 			var prev_compart = list.prevCompartment;
 			var current_compart = list.currentCompartment;
 
