@@ -64,9 +64,9 @@ Template.AddLink.helpers({
 			if (proj){
       			if (proj.showCardinalities=="true")
       				asc.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
-      		} else {
+				else {
       			asc.push({name: "++", class: "", type: "=>", card: "", clr: ""});
-      		}
+      		}}
 
 			return asc;
 		}
