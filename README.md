@@ -15,7 +15,8 @@ To setup ViziQuer
 1. To run Meteor, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
+1. The first user that signs up to the tool instance shall have administrator rights (the rights to manage tool configurations)
 1. To load ViziQuer configuration, go to Configurator (in panel on left) and create a tool, for example, VQ and then click button _Import_.
-   Then upload the VQ configuration file (e.g. `vq_configuration_dump_vnn.json`) from `./jsons` directory.
+   Then choose the VQ tool configuration file (e.g. `vq_configuration_dump_vnn.json`) to upload from `./jsons` directory.
 
 
