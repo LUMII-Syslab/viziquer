@@ -26,6 +26,19 @@ Template.AddLink.helpers({
 			var schema = new VQ_Schema();
 			var proj = Projects.findOne({_id: Session.get("activeProject")});
 
+			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
+				if (startElement.getLinkToRoot()){
+					var element = startElement.getLinkToRoot().link.getElements();
+					if (startElement.getLinkToRoot().start) {
+						var newStartClass = new VQ_Element(element.start.obj._id);						
+        				className = newStartClass.getName();
+        			} else {
+        				var newStartClass = new VQ_Element(element.end.obj._id);						
+        				className = newStartClass.getName();
+        			}						
+				}					
+			}
+
 			if (schema.classExist(className)) {
 				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
 					var cardinality = "";
@@ -65,8 +78,9 @@ Template.AddLink.helpers({
       			if (proj.showCardinalities=="true")
       				asc.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
 				else {
-      			asc.push({name: "++", class: "", type: "=>", card: "", clr: ""});
-      		}}
+      				asc.push({name: "++", class: "", type: "=>", card: "", clr: ""});
+      			}
+      		}
 
 			return asc;
 		}
@@ -94,7 +108,9 @@ Template.AddLink.events({
         } else {
 			//start_elem
 			var start_elem_id = Session.get("activeElement");
-			Template.AggregateWizard.startClassId.set(start_elem_id);
+			var classObj = new VQ_Element(start_elem_id);
+			Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+			//Template.AggregateWizard.startClassId.set(start_elem_id);
 			var elem_start = Elements.findOne({_id: start_elem_id});
 
 			//Initial coordinate values original box and new box
@@ -427,5 +443,22 @@ function getDetailedAttributes() {
 		})				
 	})
 	return detailedList;
+}
+
+function getRootId (elId){
+	var classObj = new VQ_Element(elId); console.log(classObj);
+	if (!classObj.isClass()) {return 0;}
+	if (classObj.isRoot()){
+		return elId;
+	} else {
+		if (classObj.getLinkToRoot()){
+			var elements = classObj.getLinkToRoot().link.getElements();
+			if (classObj.getLinkToRoot().start) {
+				return getRootId(elements.start.obj._id);
+			} else {
+				return getRootId(elements.end.obj._id);
+			}
+		}
+	}
 }
 
