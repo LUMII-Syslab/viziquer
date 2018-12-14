@@ -107,10 +107,8 @@ Template.AddLink.events({
             $(".modal-body").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");
         } else {
 			//start_elem
-			var start_elem_id = Session.get("activeElement");
-			var classObj = new VQ_Element(start_elem_id);
-			Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
-			//Template.AggregateWizard.startClassId.set(start_elem_id);
+			var start_elem_id = Session.get("activeElement");			
+			Template.AggregateWizard.startClassId.set(start_elem_id);
 			var elem_start = Elements.findOne({_id: start_elem_id});
 
 			//Initial coordinate values original box and new box
@@ -443,22 +441,5 @@ function getDetailedAttributes() {
 		})				
 	})
 	return detailedList;
-}
-
-function getRootId (elId){
-	var classObj = new VQ_Element(elId); console.log(classObj);
-	if (!classObj.isClass()) {return 0;}
-	if (classObj.isRoot()){
-		return elId;
-	} else {
-		if (classObj.getLinkToRoot()){
-			var elements = classObj.getLinkToRoot().link.getElements();
-			if (classObj.getLinkToRoot().start) {
-				return getRootId(elements.start.obj._id);
-			} else {
-				return getRootId(elements.end.obj._id);
-			}
-		}
-	}
 }
 
