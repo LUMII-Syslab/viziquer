@@ -787,10 +787,16 @@ Interpreter.customMethods({
             		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
+            		var classUp = classObj.getLinkToRoot();
             		Template.AggregateWizard.showDisplay.set("block");
-            		Template.AggregateWizard.linkId.set(classObj.getLinkToRoot().link.obj._id);
+            		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
             		//console.log("root id = ", getRootId(classObj.obj._id));
-            		Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+            		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+            		if (classUp.start) {
+        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
+        			} else {
+        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
+        			}            		
             	}
 
                 //Attribute generation
@@ -822,7 +828,7 @@ Interpreter.customMethods({
             }
         }
 
-        function getRootId (elId){
+        /*function getRootId (elId){
         	var classObj = new VQ_Element(elId); console.log(classObj);
         	if (!classObj.isClass()) {return 0;}
         	if (classObj.isRoot()){
@@ -837,7 +843,7 @@ Interpreter.customMethods({
         			}
         		}
         	}
-        }
+        }*/
     },
 
 	isMergeValuesWizardAvailable: function() {
