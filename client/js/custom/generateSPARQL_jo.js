@@ -914,6 +914,10 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 	}
 	
+	console.log("ccccccc", clazz, idTable)
+	
+	// if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
+				// if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"];
 	
 	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") != "" && clazz["instanceAlias"].indexOf(" ") >= 0) {
 		messages.push({
@@ -972,6 +976,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 		if(clazz["variableName"].startsWith("?")) varName = varName.substr(1);
 		sparqlTable["classTriple"] = "?" + instance + " " + classMembership + " ?" + varName+ ".";
 		if(underNotLink != true && clazz["variableName"].startsWith("?") == false)sparqlTable["variableName"] = "?" + varName;
+		
+		if(typeof fieldNames[attrname] === 'undefined') fieldNames[varName] = [];
+		fieldNames[varName][clazz["identification"]["_id"]] = idTable[clazz["identification"]["_id"]];	
 	}
 	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
 		var instAlias = clazz["instanceAlias"]
@@ -1477,6 +1484,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 }
 
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes){
+	console.log("gggggg",fieldNames, referenceTable)
+	
 	var messages = [];
 	var orderTable = [];
 	var orderTripleTable = [];
@@ -1499,7 +1508,8 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						break;
 					}
 				}
-				orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
+				if(!result.startsWith("?")) result = "?" + result;
+				orderTable.push(descendingStart +  result + descendingEnd + " ");
 				orderGroupBy.push("?" + result);
 			} else {
 				var result = parse_attrib(order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
