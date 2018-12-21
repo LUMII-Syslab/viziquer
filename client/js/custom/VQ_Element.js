@@ -1114,12 +1114,30 @@ VQ_Element.prototype = {
   },
   // bool ->
   setIndirectClassMembership: function(indirect) {
-    if (indirect) {
-      this.setNameValue(".. "+this.getName());
-    } else {
+    var indirectS = "false";
+	if (indirect) {
+		// if indirectClassMembership parameter is set, execute dynamicDefaultValue ExtensionPoint, to set default value
+		var ct = CompartmentTypes.findOne({name: "indirectClassMembership", elementTypeId: this.obj["elementTypeId"]});
+		var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", ct);
+		if (proc_name && proc_name != "") {
+			if(Interpreter.execute(proc_name, [""])) {
+				this.setNameValue(".. "+this.getName());
+				indirectS = "true";
+			}
+			else this.setNameValue(this.getName());
+		}
+		else {
+			this.setNameValue(this.getName());
+		}
+	} else {
       this.setNameValue(this.getName());
     };
-    var indirectS = this.boolToString(indirect)
+	// if (indirect) {
+      // this.setNameValue(".. "+this.getName());
+    // } else {
+      // this.setNameValue(this.getName());
+    // };
+    // var indirectS = this.boolToString(indirect)
     this.setCompartmentValueAuto("indirectClassMembership",indirectS)
   },
   // determines whether the class has distinct property
