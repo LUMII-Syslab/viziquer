@@ -193,10 +193,21 @@ transformSubstring = function(expressionTable){
 	return expressionTable
 }
 
+function isDateVarSymbolTable(symbolTable, expression, dateType){
+	var value = false;
+	for(var key in symbolTable){
+		if(typeof symbolTable[expression] !== 'undefined' && 
+			symbolTable[expression]["type"] != null
+			&& dateType.indexOf(symbolTable[expression]["type"]["type"]) > -1) value = true;
+		
+	}
+	return value;
+}
+
 // if add symbolTable
 isDateVar = function(v, dateType, symbolTable){
 	if(typeof v["var"] !== 'undefined'){
-		if((v["var"]["type"]!=null && dateType.indexOf(v["var"]["type"]["type"])> -1) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && dateType.indexOf(symbolTable[v["var"]["name"]]["type"]["type"]) > -1)) return true;
+		if((v["var"]["type"]!=null && dateType.indexOf(v["var"]["type"]["type"])> -1) || isDateVarSymbolTable(symbolTable, v["var"]["name"], dateType) == true) return true;
 		// if((v["var"]["type"]!=null && v["var"]["type"]["type"] == dateType) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && symbolTable[v["var"]["name"]]["type"]["type"] == dateType)) return true;
 		else return false;
 	}
@@ -211,7 +222,7 @@ isDateVar = function(v, dateType, symbolTable){
 		else return false;
 	}
 	if(typeof v["Path"] !== 'undefined'){
-		if((v["PrimaryExpression"]["var"]["type"]!=null && dateType.indexOf(v["PrimaryExpression"]["var"]["type"]["type"]) > -1) || (typeof symbolTable[v["PrimaryExpression"]["var"]["name"]] !== 'undefined' && symbolTable[v["PrimaryExpression"]["var"]["name"]]["type"] != null && dateType.indexOf(symbolTable[v["PrimaryExpression"]["var"]["name"]]["type"]["type"]) > -1)) return true;
+		if((v["PrimaryExpression"]["var"]["type"]!=null && dateType.indexOf(v["PrimaryExpression"]["var"]["type"]["type"]) > -1) || isDateVarSymbolTable(symbolTable, v["PrimaryExpression"]["var"]["name"], dateType) == true) return true;
 		else return false;
 	}
 	return false

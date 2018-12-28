@@ -6,7 +6,6 @@
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object, exprType:String}
 			// exprType: CLASS_NAME or null if other - at the moment it determines the precedence of resolving - class or property first in case of name clash
       options = arguments[1];
-			// console.log(options);
 
 			function makeVar(o) {return makeString(o);};
 

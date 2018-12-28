@@ -26,6 +26,7 @@ var idTable = [];
 var messages = [];
 var classTable = [];
 var classMembership = "a";
+var classID = null;
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
        "owl:":"http://www.w3.org/2002/07/owl#",
@@ -56,7 +57,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -80,6 +81,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	messages = [];
 	classTable = ct;
 	classMembership = memS;
+	classID = clID;
 	
 	for(var key in knPr){
 		if(knPr[key][0] == "")knownNamespaces[":"] = knPr[key][1];
@@ -88,8 +90,8 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	
 }
 
-parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr);
+parse_filter = function(clID, parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -130,13 +132,13 @@ parse_filter = function(parsed_exp, className, vnc, vna, count, ep, st, classTr,
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr) {
+parse_attrib = function(clID, parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr) {
 	
 	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr, clID);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr, clID);
 	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -1656,12 +1658,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]== 'XSD_STRING'
 						 || expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]== 'xsd:string'))
 							
-							|| (typeof symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
+							|| (typeof symbolTable[classID][expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
 							
-							&& (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]!== null &&
-							(symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
-							 || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string'))
-							
+							 && //(symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]!== null &&
+							// (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
+							 // || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string'))
+							 typeStringFromSymbolTable(symbolTable[classID], expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]) == true
 							))
 						) ||
 						(typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]!== 'undefined'
@@ -1672,8 +1674,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]== 'XSD_STRING'
 						 || expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["type"]["type"]== 'xsd:string')
 						
-						) || (typeof symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
-							&& symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'))
+						) || (typeof symbolTable[classID][expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
+							// && symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
+							&& typeStringFromSymbolTable(symbolTable[classID], expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PrimaryExpression"]["var"]["name"]) == true
+							))
 						) 
 						|| (typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]!== 'undefined'
 						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]!== 'undefined'
@@ -1683,10 +1687,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"] == 'XSD_STRING'
 						 || expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["type"]["type"] == 'xsd:string')) 
 						 
-							|| (typeof symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]] !== 'undefined'
+							|| (typeof symbolTable[classID][expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]] !== 'undefined'
 							
-							&& (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
-							 || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]]["type"]["type"]== 'xsd:string')))
+							// && (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
+							 // || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]]["type"]["type"]== 'xsd:string')
+							 && typeStringFromSymbolTable(symbolTable[classID], expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"][0]["var"]["name"]) == true
+							 ))
 						))
 						
 						&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
@@ -1803,9 +1809,11 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "XSD_STRING"
 						 || expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "xsd:string"))
 						 
-						|| (typeof symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
-							&& (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
-							 || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string')))
+						|| (typeof symbolTable[classID][expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
+							// && (symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
+							 // || symbolTable[expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string')
+							&& typeStringFromSymbolTable(symbolTable[classID], expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]) == true
+							))
 						
 						&& typeof expressionTable[key]["NumericExpressionR"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]!== 'undefined'
 						&& typeof expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
@@ -1832,9 +1840,11 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "XSD_STRING"
 						 || expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["type"]["type"] == "xsd:string"))
 						 
-						|| (typeof symbolTable[expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
-							&& (symbolTable[expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
-							 || symbolTable[expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string')))
+						|| (typeof symbolTable[classID][expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]] !== 'undefined'
+							// && (symbolTable[expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'XSD_STRING'
+							 // || symbolTable[expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]]["type"]["type"]== 'xsd:string')
+							&& typeStringFromSymbolTable(symbolTable[classID], expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["var"]["name"]) == true
+							 ))
 						
 						&& typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
 						&& typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined'
@@ -2346,20 +2356,20 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
 							var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
 							var dateTimeArray = ["xsd:dateTime", "XSD_DATE_TIME", "xsd_date"];
-							if(isDateVar(left, dateArray, symbolTable) == true && isDateVar(right, dateArray, symbolTable) == true){
+							if(isDateVar(left, dateArray, symbolTable[classID]) == true && isDateVar(right, dateArray, symbolTable[classID]) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
 								isFunction = true;
 								isTimeFunction = true;
-							} else if(isDateVar(left, dateTimeArray, symbolTable) == true && isDateVar(right, dateTimeArray, symbolTable) == true){
+							} else if(isDateVar(left, dateTimeArray, symbolTable[classID]) == true && isDateVar(right, dateTimeArray, symbolTable[classID]) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", ' + sr + ", " + sl + ")";
 								isFunction = true;
 								isTimeFunction = true;
-							} else if(isDateVar(left, dateTimeArray, symbolTable) == true && isValidForConvertation(right, symbolTable) == true ){
+							} else if(isDateVar(left, dateTimeArray, symbolTable[classID]) == true && isValidForConvertation(right, symbolTable[classID]) == true ){
 								prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 								SPARQLstring = SPARQLstring + 'bif:datediff("day", xsd:dateTime(' + sr + '),' + sl + ")";
 								isFunction = true;
 								isTimeFunction = true;
-							} else if(isDateVar(left, dateTimeArray, symbolTable) == true){
+							} else if(isDateVar(left, dateTimeArray, symbolTable[classID]) == true){
 								SPARQLstring = SPARQLstring + 'bif:datediff("day",  ' + sr + ', xsd:dateTime(' + sl + "))";
 								isFunction = true;
 								isTimeFunction = true;
@@ -2454,17 +2464,17 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					var sr = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 					var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
 					var dateTimeArray = ["xsd:dateTime", "XSD_DATE_TIME", "xsd_date"];
-					if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateArray, symbolTable) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateArray, symbolTable) == true){
+					if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateArray, symbolTable[classID]) == true){
 						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
 					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable) == true){
+					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
 						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
 					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable) == true && isValidForConvertation(expressionTable[key]["PrimaryExpressionR"], symbolTable) == true ){
+					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isValidForConvertation(expressionTable[key]["PrimaryExpressionR"], symbolTable[classID]) == true ){
 						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '",  xsd:dateTime(' + sr + "), " + sl + ")";
 						prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable) == true){
+					else if(isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
 						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", xsd:dateTime(" + sl + "))";
 						prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 					}
@@ -2635,12 +2645,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 }
 
 
-countCardinality = function(str_expr){	 
+countCardinality = function(str_expr, context){	 
 	var schema = new VQ_Schema();
 
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}});
+		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}, context:context});
 		  var cardinality = countMaxExpressionCardinality(parsed_exp, -1);
 		  
 		  if(cardinality["isAggregation"] == true) return 1;
@@ -2690,4 +2700,15 @@ function countMaxExpressionCardinality(expressionTable){
 	}
 	
 	return {isMultiple:isMultiple, isAggregation:isAggregation};
+}
+
+function typeStringFromSymbolTable(symbolTable, expression){
+	var value = false;
+	for(var key in symbolTable){
+		if(symbolTable[expression]["type"]!== null && typeof symbolTable[expression]["type"] !== 'undefined' &&
+			(symbolTable[expression]["type"]["type"]== 'XSD_STRING'
+			|| symbolTable[expression]["type"]["type"]== 'xsd:string')) value = true;
+		
+	}
+	return value;
 }

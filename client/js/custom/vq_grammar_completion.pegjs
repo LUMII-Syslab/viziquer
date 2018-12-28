@@ -5,8 +5,6 @@
 			// parse(string, options) where options is an object
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
       options = arguments[1];
-			//console.log(options);
-
 			//////////////////////////////////////////////
 			var continuations = {};
 			
@@ -24,10 +22,11 @@
 				}
 			}
 			function getReferences(place, priority){
-				//TO DO
-				//addContinuation(place, "AP", priority);
-				//addContinuation(place, "S", priority);
-				//addContinuation(place, "C", priority);
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority);
+					}
+				};
 			}
 			function getProperties(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAttributes()
@@ -36,7 +35,17 @@
 				}
 				getAssociations(place, 95);
 				//getClasses(place, 94);
+				getPropertyAlias(place, 93);
 			}
+			function getPropertyAlias(place, priority){
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						var kind = options["symbol_table"][key][k]["kind"];
+						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority);
+					}
+				};
+			}
+			
 			function getAssociations(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAssociations()
 
@@ -119,11 +128,12 @@
 			};
 			
 			function referenceNames(o) {
-				//TO DO
 				var classAliasTable = [];
-				//classAliasTable["AP"] = "AcademicProgram";
-				//classAliasTable["S"] = "Student";
-				//classAliasTable["C"] = "Course";
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["localName"]
+					}
+				};
 				
 				if(typeof classAliasTable[o] !== 'undefined')continuations[location()["end"]["offset"]] = {};
 			
