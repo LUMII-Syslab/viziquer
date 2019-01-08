@@ -1503,7 +1503,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				}
 				if(!result.startsWith("?")) result = "?" + result;
 				orderTable.push(descendingStart +  result + descendingEnd + " ");
-				orderGroupBy.push("?" + result);
+				orderGroupBy.push(result);
 			} else {
 				var result = parse_attrib(rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 				 messages = messages.concat(result["messages"]);

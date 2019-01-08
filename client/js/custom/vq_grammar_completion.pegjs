@@ -222,7 +222,7 @@
 
 			UnaryExpressionListA = (UnaryExpressionList*)
 
-			UnaryExpressionList = space ((mult "*") / (dev "/")) space UnaryExpression 
+			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
 			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
 
@@ -267,7 +267,7 @@
 			GROUP_CONCAT = group_concat_c "GROUP_CONCAT"i 
 			SEPARATORTer = separator_c "SEPARATOR"i 
 			
-			SEPARATOR = (semi_collon ";" space SEPARATORTer space equal "=" StringQuotes ) / (comma_c comma:"," space StringQuotes) 
+			SEPARATOR = (semi_colon ";" space SEPARATORTer space equal "=" StringQuotes ) / (comma_c comma:"," space StringQuotes) 
 			
 			FunctionExpression = (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / BOUNDFunction / NilFunction / BNODEFunction)
 
@@ -417,7 +417,7 @@
 
 			PrefixedName = (PNAME_LN) 
 
-			PNAME_NS = (PN_PREFIX? collon ":") 
+			PNAME_NS = (PN_PREFIX? colon ":") 
 
 			PNAME_LN = ((PropertyReference? PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
 
@@ -498,7 +498,7 @@
 			LNameP = (LName:(( Chars_String_prefix))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			
 			VERTICAL = vertical_c "|" {return {Alternative:"|"}}
-			PATH_SYMBOL = ((dot ".") / (dev "/")) {return {PathSymbol :"/"}} 
+			PATH_SYMBOL = ((dot ".") / (div "/")) {return {PathSymbol :"/"}} 
 			
 			PEPS = (PathEltOrInverse:PathEltOrInverse PATH_SYMBOL)  {return pathOrReference(PathEltOrInverse)}
 
@@ -532,8 +532,8 @@
 			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) 
 
 			LikeExpression = (space like_c 'LIKE'i space (likeString1 / likeString2)) 
-			likeString1 = (dubble_quote '"' persent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  persent"%"? dubble_quote '"') 
-			likeString2 = (quote "'" persent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  persent"%"? quote "'") 
+			likeString1 = (dubble_quote '"' percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? dubble_quote '"') 
+			likeString2 = (quote "'" percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? quote "'") 
 
 			BetweenExpression = (space between_c 'BETWEEN'i space br_open'(' space NumericExpression space Comma space NumericExpression br_close')') 
 
@@ -560,7 +560,7 @@
 			exclamation = "" {addContinuation(location(), "!", 90);}
 			a_c = "" {addContinuation(location(), "a", 90);}
 			mult = "" {addContinuation(location(), "*", 90);}
-			dev = "" {addContinuation(location(), "/", 90);}
+			div = "" {addContinuation(location(), "/", 90);}
 			true_c = "" {addContinuation(location(), "true", 90);}
 			false_c = "" {addContinuation(location(), "false", 90);}
 			double_check = "" {addContinuation(location(), "^^", 90);}
@@ -577,7 +577,7 @@
 			sample_c = "" {addContinuation(location(), "SAMPLE", 90);}
 			group_concat_c = "" {addContinuation(location(), "GROUP_CONCAT", 90);}
 			separator_c = "" {addContinuation(location(), "SEPARATOR", 90);}
-			semi_collon = "" {addContinuation(location(), ";", 90);}
+			semi_colon = "" {addContinuation(location(), ";", 90);}
 			equal = "" {addContinuation(location(), "=", 90);}
 			comma_c = "" {addContinuation(location(), ",", 90);}
 			str_c = "" {addContinuation(location(), "STR", 90);}
@@ -642,7 +642,7 @@
 			REPLACE_c  = "" {addContinuation(location(), "REPLACE", 90);}
 			EXISTS_c = "" {addContinuation(location(), "EXISTS", 90);}
 			at = "" {addContinuation(location(), "@", 90);}
-			collon = "" {addContinuation(location(), ":", 90);}
+			colon = "" {addContinuation(location(), ":", 90);}
 			question = "" {addContinuation(location(), "?", 90);}
 			dubble_question = "" {addContinuation(location(), "??", 90);}
 			dollar = "" {addContinuation(location(), "$", 90);}
@@ -655,7 +655,7 @@
 			like_c = "" {addContinuation(location(), "LIKE", 90);}
 			more = "" {addContinuation(location(), ">", 90);}
 			less = "" {addContinuation(location(), "<", 90);}
-			persent = "" {addContinuation(location(), "%", 90);}
+			percent = "" {addContinuation(location(), "%", 90);}
 			between_c = "" {addContinuation(location(), "BETWEEN", 90);}
 			int_c = "" {addContinuation(location(), "", 1);}
 			string_c = "" {addContinuation(location(), "", 1);}
