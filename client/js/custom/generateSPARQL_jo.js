@@ -1485,40 +1485,49 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	var orderGroupBy = [];
 	_.each(orderings,function(order) {
 		if(order["exp"] != null && order["exp"].replace(" ", "") !=""){
-			var descendingStart = "";
-			var descendingEnd = "";
-			if(order["isDescending"] == true) {
-				descendingStart = "DESC("
-				descendingEnd = ")"
-			}
-			var orderName = order["exp"];
-			if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
-			if(typeof fieldNames[orderName] !== 'undefined'){
-				var result = fieldNames[orderName][rootClass_id];
-				if(typeof result === 'undefined'){
-					for (var ordr in fieldNames[orderName]) {
-						result = fieldNames[orderName][ordr];
-						break;
-					}
-				}
-				if(!result.startsWith("?")) result = "?" + result;
-				orderTable.push(descendingStart +  result + descendingEnd + " ");
-				orderGroupBy.push(result);
+			if(order["exp"].startsWith("?")){
+				messages.push({
+					"type" : "Warning",
+					"message" : "Order by field can not contain new explicit variables (e.g. " + order["exp"] + "). Use the form without ? (e.g. " + order["exp"].substring(1) + ") to refer to variable introduced elsewhere.",
+					"listOfElementId":[rootClass_id],
+					"isBlocking" : false
+				});
 			} else {
-				var result = parse_attrib(rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-				 messages = messages.concat(result["messages"]);
-				 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
-					 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
-					 orderGroupBy.push(result["exp"]);
-					 orderTripleTable.push(result["triples"]);
-				 } else {
-					 messages.push({
-						"type" : "Warning",
-						"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
-						"listOfElementId":[rootClass_id],
-						"isBlocking" : false
-					 });
-				 }
+				var descendingStart = "";
+				var descendingEnd = "";
+				if(order["isDescending"] == true) {
+					descendingStart = "DESC("
+					descendingEnd = ")"
+				}
+				var orderName = order["exp"];
+				if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
+				if(typeof fieldNames[orderName] !== 'undefined'){
+					var result = fieldNames[orderName][rootClass_id];
+					if(typeof result === 'undefined'){
+						for (var ordr in fieldNames[orderName]) {
+							result = fieldNames[orderName][ordr];
+							break;
+						}
+					}
+					if(!result.startsWith("?")) result = "?" + result;
+					orderTable.push(descendingStart +  result + descendingEnd + " ");
+					orderGroupBy.push(result);
+				} else {
+					var result = parse_attrib(rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					 messages = messages.concat(result["messages"]);
+					 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
+						 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
+						 orderGroupBy.push(result["exp"]);
+						 orderTripleTable.push(result["triples"]);
+					 } else {
+						 messages.push({
+							"type" : "Warning",
+							"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
+							"listOfElementId":[rootClass_id],
+							"isBlocking" : false
+						 });
+					 }
+				}
 			}
 		}
 	})
