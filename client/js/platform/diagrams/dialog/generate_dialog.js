@@ -35,7 +35,7 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", true);
 	},
 
-	'keypress .dialog-input': function(e) {
+	'keypress .dialog-input, keypress .dialog-combobox': function(e) {
 		e.stopPropagation();
 		
 		var compart_type_id = $(e.target).closest(".compart-type").attr("id");
@@ -49,7 +49,6 @@ Template.dialogTabContent.events({
 			}
 		}
 		
-		console.log("compart_type ", compart_type)
 		Interpreter.executeExtensionPoint(compart_type, "processKeyStroke", [e]);
 	},
 
@@ -85,8 +84,6 @@ Template.dialogTabContent.events({
 	},
 
 	'input .dialog-combobox': function(e) {
-		console.log("combobox value entered ", e);
-
 		update_combobox(e);
 		Session.set("editingDialog", true);
 	},
