@@ -45,18 +45,18 @@ Template.AddLink.helpers({
 					var colorLetters = "";					
 					if (proj) {					
 						if (proj.showCardinalities=="true"){
-							if (!hasCardinalities) {
+							if (!hasCardinalities || e.type == "<=") {
 								cardinality = cardinality.concat("[*]");
 								colorLetters = colorLetters.concat("color: purple");
 							} else {
 								_.each(ascDetails, function(d){
-									if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || 
-															 (d.from == e.class && d.to == className && e.type == "<="))) { 
-										if (d.max == -1) {
-											cardinality = cardinality.concat("[*]");
-											colorLetters = colorLetters.concat("color: purple");
-										}
+									//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
+									if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
+										&& d.max == -1) {
+										cardinality = cardinality.concat("[*]");
+										colorLetters = colorLetters.concat("color: purple");
 									}
+									//}
 								});	
 							}
 						}
