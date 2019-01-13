@@ -15,16 +15,16 @@ Template.AddLink.helpers({
 		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
 			var asc = [];
-			var ascDetails = getDetailedAttributes();
-			//check if max cardinality exists 
-			var hasCardinalities = false;
-			_.each(ascDetails, function(e){
-				if (e.max) hasCardinalities = true;
-			})
+			// var ascDetails = getDetailedAttributes(); 
+			// //check if max cardinality exists 
+			// var hasCardinalities = false;
+			// _.each(ascDetails, function(e){
+			// 	if (e.max) hasCardinalities = true;
+			// })
 
-			var className = startElement.getName();
+			var className = startElement.getName(); 
 			var schema = new VQ_Schema();
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var proj = Projects.findOne({_id: Session.get("activeProject")}); 
 
 			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
 				if (startElement.getLinkToRoot()){
@@ -42,10 +42,20 @@ Template.AddLink.helpers({
 			if (schema.classExist(className)) {
 				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
 					var cardinality = "";
-					var colorLetters = "";					
+					var colorLetters = "";				
 					if (proj) {					
 						if (proj.showCardinalities=="true"){
-							if (!hasCardinalities || e.type == "<=") {
+							if (e.type == "<=") {
+								cardinality = cardinality.concat("[*]");
+								colorLetters = colorLetters.concat("color: purple");
+							} else {
+								var maxCard = schema.resolveLinkByName(e.name).maxCardinality;
+								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
+									cardinality = cardinality.concat("[*]");
+									colorLetters = colorLetters.concat("color: purple");
+								}
+							}
+							/*if (!hasCardinalities || e.type == "<=") { 
 								cardinality = cardinality.concat("[*]");
 								colorLetters = colorLetters.concat("color: purple");
 							} else {
@@ -57,18 +67,27 @@ Template.AddLink.helpers({
 										colorLetters = colorLetters.concat("color: purple");
 									}
 									//}
-								});	
-							}
+								});
+								
+							}*/
 						}
-					}				
+					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
 
 					asc.push({name: e.name, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
-					if (e.class == className)
+					if (e.class == className) //Link to itself
 						if (e.type == "=>")
-							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
-						else
+							asc.push({name: e.name, class: e.class, type: "<=", card: "[*]", clr: "color: purple"});
+						else {
+							var maxCard = schema.resolveLinkByName(e.name).maxCardinality;
+							if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
+								cardinality = cardinality.concat("[*]");
+								colorLetters = colorLetters.concat("color: purple");
+							} else {
+								cardinality = "";					
+								colorLetters = "";
+							}
 							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
-
+						}
 
 				});
 			}
@@ -429,17 +448,17 @@ function clearAddLinkInput(){
 	$("div[id=errorField]").remove();
 }
 
-function getDetailedAttributes() {
-	var schema = new VQ_Schema();
-	var detailedList = [];
+// function getDetailedAttributes() {
+// 	var schema = new VQ_Schema();
+// 	var detailedList = [];
 
-	_.each(schema.Associations, function(e) {
-		_.each(e.schemaRole, function(r){
-			if (e.localName && e.localName != " ")
-				detailedList.push({name: e.localName, min: r.minCardinality, max: r.maxCardinality, 
-									from: r.sourceClass.localName, to: r.targetClass.localName});
-		})				
-	})
-	return detailedList;
-}
+// 	_.each(schema.Associations, function(e) {
+// 		_.each(e.schemaRole, function(r){
+// 			if (e.localName && e.localName != " ")
+// 				detailedList.push({name: e.localName, min: r.minCardinality, max: r.maxCardinality, 
+// 									from: r.sourceClass.localName, to: r.targetClass.localName});
+// 		})				
+// 	})
+// 	return detailedList;
+// }
 
