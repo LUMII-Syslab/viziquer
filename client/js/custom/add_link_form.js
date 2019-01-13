@@ -76,19 +76,9 @@ Template.AddLink.helpers({
 					asc.push({name: e.name, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
-							asc.push({name: e.name, class: e.class, type: "<=", card: "[*]", clr: "color: purple"});
-						else {
-							var maxCard = schema.resolveLinkByName(e.name).maxCardinality;
-							if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
-								cardinality = cardinality.concat("[*]");
-								colorLetters = colorLetters.concat("color: purple");
-							} else {
-								cardinality = "";					
-								colorLetters = "";
-							}
+							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
+						else
 							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
-						}
-
 				});
 			}
 
