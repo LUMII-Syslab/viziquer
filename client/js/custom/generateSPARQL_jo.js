@@ -15,10 +15,10 @@ Interpreter.customMethods({
     var queries = genAbstractQueryForElementList(elems_in_diagram_ids);
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
-       Interpreter.showErrorMsg("No queries found.", -3);
+       Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
        return;
     } else if (queries.length>1) {
-       Interpreter.showErrorMsg("More than one query found.", -3);
+       Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
        return;
     };
     _.each(queries,function(q) {
@@ -42,10 +42,10 @@ Interpreter.customMethods({
 
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
-       Interpreter.showErrorMsg("No queries found.", -3);
+       Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
        return;
     } else if (queries.length>1) {
-       Interpreter.showErrorMsg("More than one query found.", -3);
+       Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
        return;
     };
     _.each(queries,function(q) {
@@ -95,10 +95,10 @@ Interpreter.customMethods({
        var queries = genAbstractQueryForElementList(elem_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
-          Interpreter.showErrorMsg("No queries found.", -3);
+          Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
           return;
        } else if (queries.length>1) {
-          Interpreter.showErrorMsg("More than one query found.", -3);
+          Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
           return;
        };
        _.each(queries,function(q) {
@@ -167,10 +167,10 @@ Interpreter.customMethods({
        var queries = genAbstractQueryForElementList(query_elements_ids, root_elements_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
-          Interpreter.showErrorMsg("No queries found.", -3);
+          Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
           return;
        } else if (queries.length>1) {
-          Interpreter.showErrorMsg("More than one query found.", -3);
+          Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
           return;
        };
        _.each(queries,function(q) {
@@ -327,10 +327,10 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
   var queries = genAbstractQueryForElementList(list_of_ids, root_elements_ids);
   // ErrorHandling - just one query at a moment allowed
   if (queries.length==0) {
-     Interpreter.showErrorMsg("No queries found.", -3);
+     Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
      return;
   } else if (queries.length>1) {
-     Interpreter.showErrorMsg("More than one query found.", -3);
+     Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
      return;
   };
   // goes through all queries found within the list of VQ element ids
@@ -1490,7 +1490,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 					"type" : "Warning",
 					"message" : "Order by field can not contain new explicit variables (e.g. " + order["exp"] + "). Use the form without ? (e.g. " + order["exp"].substring(1) + ") to refer to variable introduced elsewhere.",
 					"listOfElementId":[rootClass_id],
-					"isBlocking" : false
+					"isBlocking" : true
 				});
 			} else {
 				var descendingStart = "";
