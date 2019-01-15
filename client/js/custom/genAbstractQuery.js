@@ -582,6 +582,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                     isUnion:elem.isUnion(),
                     isUnit:elem.isUnit(),
                     variableName:elem.getVariableName(),
+                    groupByThis:elem.isGroupByThis(),
                     indirectClassMembership: elem.isIndirectClassMembership(),
                     // should not add the link which was used to get to the elem
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
@@ -643,6 +644,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
       groupings: e.getGroupings(),
       indirectClassMembership: e.isIndirectClassMembership(),
       distinct:e.isDistinct(),
+      groupByThis:e.isGroupByThis(),
       limit:e.getLimit(),
       offset:e.getOffset(),
       fullSPARQL:e.getFullSPARQL(),

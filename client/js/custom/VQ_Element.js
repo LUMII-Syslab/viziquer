@@ -1149,6 +1149,15 @@ VQ_Element.prototype = {
     var distinctS = this.boolToString(distinct)
     this.setCompartmentValueAuto("Distinct",distinctS)
   },
+  // determines whether the query should be grouped by this class
+  isGroupByThis: function() {
+    return this.getCompartmentValue("Group by this")=="true";
+  },
+  // bool  ->
+  setGroupByThis: function(group) {
+    var groupS = this.boolToString(group)
+    this.setCompartmentValueAuto("Group by this",groupS)
+  },
 	// --> string
 	getFullSPARQL : function() {
     return this.getCompartmentValue("FullSPARQL");
