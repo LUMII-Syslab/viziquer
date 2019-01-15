@@ -1067,7 +1067,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				var uniqueTriples = tempTripleTable.filter(function (el, i, arr) {
 					return arr.indexOf(el) === i;
 				});
-				var rootClass = "?" + rootClassId + " ";
+				var rootClass = "?" + idTable[clazz["identification"]["_id"]] + " ";
 				if(clazz["isUnion"] == true || clazz["isUnit"] == true) rootClass = "";
 				var localAggregation = "{SELECT " + rootClass + "(" + result["exp"] + " AS ?" + alias + ") WHERE{";
 
@@ -1077,7 +1077,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 				if(field["requireValues"] != true) localAggregation = localAggregation + "}";
 
-				localAggregation = localAggregation +"} GROUP BY ?" + rootClassId +"}";
+				localAggregation = localAggregation +"} GROUP BY ?" + idTable[clazz["identification"]["_id"]] +"}";
 				sparqlTable["localAggregateSubQueries"].push(localAggregation);
 				//requireValues
 			}
