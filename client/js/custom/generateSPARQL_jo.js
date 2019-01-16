@@ -755,8 +755,13 @@ function generateSPARQLtext(abstractQueryTable){
 				// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 			}
 			 
-			 var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes);
-			 var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes);
+			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes);
+			
+			var groupByThis = "";
+			
+			if(rootClass["groupByThis"] == true)groupByThis = "?" + idTable[rootClass["identification"]["_id"]];
+			
+			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, groupByThis);
 
 			 messages = messages.concat(orderBy["messages"]);
 			 messages = messages.concat(groupByFromFields["messages"]);
@@ -773,6 +778,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 //GROUP BY
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
+	
 			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			});
@@ -931,12 +937,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	var sparqlTable = {};
 	sparqlTable["class"] = "?" + instance; // unique class name
 	sparqlTable["isSimpleClassName"] = true; // if class name is simple name = true, if class name contains expression = false
-	//sparqlTable["stereotype"] = clazz["stereotype"];
 	sparqlTable["distinct"] = clazz["distinct"]; //value from class 'Distinct' field
 	sparqlTable["agregationInside"] = false; // if class contains agregations in 'Aggregates' field and class is main class or subquery main class = true
 	sparqlTable["simpleTriples"] = []; // triples for simple (field contains static attribute name) fields from 'Attributes'
-	//sparqlTable["expressionTriples"] = []; // triples for fields from 'Attributes' with expression inside, like 'a+1'
-	//sparqlTable["functionTriples"] = []; // triples for fields from 'Attributes' with function expression inside, like 'SUBSTR(a,1,1)'
 	sparqlTable["aggregateTriples"] = [];// triples for fields from 'Aggregates'
 	sparqlTable["localAggregateSubQueries"] = []; // triples for fields from 'Attributes' with aggregation expression inside, like 'SUM(courseCredits)'
 	sparqlTable["filterTriples"] = []; // triples for fields from 'Conditions'
@@ -944,14 +947,10 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	sparqlTable["conditionLinks"] = []; //links with condition label for given class
 	sparqlTable["selectMain"] = []; // select values from given class for upper SELECT level
 	sparqlTable["selectMain"]["simpleVariables"] = []; // select value for simple fields from 'Attributes'
-	//sparqlTable["selectMain"]["expressionVariables"] = []; // select value for fields from 'Attributes' with expression inside, like 'a+1'
-	//sparqlTable["selectMain"]["functionVariables"] = []; // select value for fields from 'Attributes' with function expression inside, like 'SUBSTR(a,1,1)'
 	sparqlTable["selectMain"]["aggregateVariables"] = []; // select value for fields from 'Aggregates'
 	sparqlTable["selectMain"]["referenceVariables"] = []; // list with candidates to reference
 	sparqlTable["innerDistinct"] = []; // select values from given class for upper DISTINCT level
 	sparqlTable["innerDistinct"]["simpleVariables"] = []; // select value for simple fields from 'Attributes'
-	//sparqlTable["innerDistinct"]["expressionVariables"] = []; // select value for fields from 'Attributes' with expression inside, like 'a+1'
-	//sparqlTable["innerDistinct"]["functionVariables"] = []; // select value for fields from 'Attributes' with function expression inside, like 'SUBSTR(a,1,1)'
 	sparqlTable["innerDistinct"]["aggregateVariables"] = []; // select value for fields from 'Aggregates'
 	sparqlTable["fullSPARQL"] = clazz["fullSPARQL"]; // SPARQL from 'FullSPARQL' field
 	sparqlTable["isUnion"] = clazz["isUnion"]; // label if class is union
@@ -1433,7 +1432,9 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes);
 
 				//GROUP BY
-				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes);
+				var groupByThis = "";
+				if(subclazz["groupByThis"] == true) groupByThis = "?" + idTable[subclazz["identification"]["_id"]];
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], groupByThis);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
@@ -1540,11 +1541,14 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
-function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership){
+function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, groupByThis){
 	var messages = [];
 	//var orderTable = [];
 	var groupTripleTable = [];
 	var orderGroupBy = [];
+	
+	if(groupByThis != "") orderGroupBy.push(groupByThis);
+	
 	_.each(groupings,function(group) {
 		if(group["exp"] != null && group["exp"].replace(" ", "") !=""){
 			var groupName = group["exp"];
