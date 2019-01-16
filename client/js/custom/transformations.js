@@ -586,7 +586,7 @@ Interpreter.customMethods({
 
 	VQSetHideDefaultLinkValue: function(a,b,c){
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj && proj.autoHideDefaultPropertyName) {
+		if (proj && proj.autoHideDefaultPropertyName == "true") {
 			 return "true";
 		} else {
 			 return "false";
@@ -597,6 +597,7 @@ Interpreter.customMethods({
 		
 		var name_list = [];
 		var act_elem = Session.get("activeElement");
+		console.log("AAAAAAAAAAAAAAA", act_elem)
 		if (act_elem) {
 			var vq_link = new VQ_Element(act_elem);
 			if (vq_link.isLink()) {
