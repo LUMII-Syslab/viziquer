@@ -87,7 +87,7 @@ Template.AddMergeValues.helpers({
 	},
 
 	selectedConcat: function() {
-		if(Template.AddMergeValues.aggregation.get() == "concat") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "group_concat") return "selected";
 		return "";
 	},
 });
