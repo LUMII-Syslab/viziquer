@@ -597,7 +597,6 @@ Interpreter.customMethods({
 		
 		var name_list = [];
 		var act_elem = Session.get("activeElement");
-		console.log("AAAAAAAAAAAAAAA", act_elem)
 		if (act_elem) {
 			var vq_link = new VQ_Element(act_elem);
 			if (vq_link.isLink()) {
@@ -677,6 +676,99 @@ Interpreter.customMethods({
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
    //console.log(val);
 		return [val.value]
+	},
+	
+	VQgetOrderByFields: function(val) {
+			
+		//atribute value for class
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var order_by_list = [];
+
+		var symbolTable = generateSymbolTable()
+		for (var  key in symbolTable) {
+			order_by_list.push({value: key, input: key});
+		}
+
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+
+		if (act_el) {
+		//check if Class name is defined for active element
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+
+			if (!compart_type) {
+				return order_by_list;
+			}
+
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			if (!compart) {
+				return order_by_list;
+			}
+
+			//Read attribute values from DB
+			var schema = new VQ_Schema();
+			if (schema.classExist(compart["input"])) {
+				var klass = schema.findClassByName(compart["input"]);
+
+				_.each(klass.getAllAttributes(), function(att){
+					var att_val = att["name"];
+					order_by_list.push({value: att_val, input: att_val});
+				})
+			}
+		}
+
+	 	order_by_list = _.uniq(order_by_list, false, function(item) {
+	 		return item["input"];
+	 	});
+		
+		return order_by_list;
+	},
+	
+	VQgetGroupByFields: function(val) {
+		//atribute value for class
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var group_by_list = [];
+
+		var symbolTable = generateSymbolTable();
+
+		for (var  key in symbolTable) {
+			for (var  k in symbolTable[key]) {
+				if(symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "CLASS_ALIAS" || symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") group_by_list.push({value: key, input: key});
+			}
+		}
+		
+		group_by_list = _.uniq(group_by_list, false, function(item) {
+	 		return item["input"];
+	 	});
+		
+		return group_by_list;
 	},
 
   // TODO: Dynamic Context Menus dont work
@@ -868,4 +960,49 @@ Interpreter.customMethods({
 		return false;
 	},
 
+	
 });
+
+
+generateSymbolTable = function() {
+
+	var editor = Interpreter.editor;
+	var elem = _.keys(editor.getSelectedElements());
+	var abstractQueryTable = {}
+		
+    // now we should find the connected classes ...
+    if (elem) {
+       var selected_elem = new VQ_Element(elem[0]);
+       var visited_elems = {};
+
+       function GetComponentIds(vq_elem) {
+           visited_elems[vq_elem._id()]=true;
+           _.each(vq_elem.getLinks(),function(link) {
+               if (!visited_elems[link.link._id()]) {
+                 visited_elems[link.link._id()]=true;
+                 var next_el = null;
+                 if (link.start) {
+                   next_el=link.link.getStartElement();
+                 } else {
+                   next_el=link.link.getEndElement();
+                 };
+                 if (!visited_elems[next_el._id()]) {
+                    GetComponentIds(next_el);
+                 };
+               };
+           });
+       };
+
+       GetComponentIds(selected_elem);
+
+       var elem_ids = _.keys(visited_elems);  
+       var queries = genAbstractQueryForElementList(elem_ids, null);   
+	    _.each(queries,function(q) {
+		abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+       })
+    } else {
+      // nothing selected
+    }
+	
+	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+  }
