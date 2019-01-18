@@ -121,7 +121,7 @@ Template.AggregateWizard.events({
 		Template.AggregateWizard.attList.set(newAttrList);
 
 		//Set default alias
-		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];
+		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
 		_.each(functionArray, function(f) {
 			var defaultName = cName.charAt(0) + "_" + f;
 			var defaultFieldName = f + "_" + fieldName;
@@ -177,7 +177,7 @@ Template.AggregateWizard.events({
 // Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 // Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 // Template.AggregateWizard.endClassId = new ReactiveVar("No end");
-//Template.AggregateWizard.linkId = new ReactiveVar("No link");
+// Template.AggregateWizard.linkId = new ReactiveVar("No link");
 // Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 function clearAggregateInput(){
