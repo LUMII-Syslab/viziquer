@@ -10,10 +10,51 @@
 			function makeVar(o) {return makeString(o);};
 			// string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
-			function resolveTypeFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.type } else { return null } };
+			// returns type of the identifier from symbol table. Null if does not exist.
+			function resolveTypeFromSymbolTable(id) {
+				var context = options.context;
+				
+				if(typeof options.symbol_table[context] === 'undefined') return null;
+				
+				var st_row = options.symbol_table[context][id]; 
+				if (st_row) { 
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].type 
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+						}
+					}
+					return st_row.type 
+				} else { 
+					return null 
+				} 
+			};
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
-			function resolveKindFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.kind } else { return null } };
+			function resolveKindFromSymbolTable(id) { 
+				var context = options.context;
+				
+				if(typeof options.symbol_table[context] === 'undefined') return null;
+				
+				var st_row = options.symbol_table[context][id]; 
+				if (st_row) { 
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].kind 
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+						}
+					}
+					return st_row.kind 
+				} else { 
+					return null 
+				} 
+			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };

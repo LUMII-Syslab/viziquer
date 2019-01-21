@@ -638,7 +638,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 		// var tempAliasOrAttribute = "Attribute";
 		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
 			
-		if(tempAliasOrAttribute == "PROPERTY_ALIAS" || tempAliasOrAttribute == "CLASS_ALIAS"){
+		if(tempAliasOrAttribute.indexOf("_ALIAS") !== -1){
 			referenceCandidateTable.push(findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["name"]);
 			expressionTable[count][prefix + "Bound"] = {"var":findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")}
 		// } else if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
@@ -692,7 +692,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 		
 		// var tempAliasOrAttribute = "Attribute";
 		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
-		if(tempAliasOrAttribute == "PROPERTY_ALIAS" || tempAliasOrAttribute == "CLASS_ALIAS"){
+		if(tempAliasOrAttribute.indexOf("_ALIAS") !== -1){
 			if(tempAliasOrAttribute == "CLASS_ALIAS") referenceCandidateTable.push(findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["name"]);
 			expressionTable[count][prefix + "Bound"] = {"var":findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")}
 			delete expressionTable[count]["RelationalExpression"];
@@ -1470,7 +1470,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		 
 		if(key == "var") {			
 			var varName
-			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]["kind"] != "PROPERTY_ALIAS") varName = expressionTable[key]['type']['localName'];
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['localName'];
 			// if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['localName'] !== null && typeof expressionTable[key]['type']['localName'] !== 'undefined' ) varName = expressionTable[key]['type']['localName'];
 			else varName = expressionTable[key]["name"];
 			if(expressionTable[key]['kind'] !== null){
@@ -2704,11 +2704,13 @@ function countMaxExpressionCardinality(expressionTable){
 
 function typeStringFromSymbolTable(symbolTable, expression){
 	var value = false;
-	for(var key in symbolTable){
-		if(symbolTable[expression]["type"]!== null && typeof symbolTable[expression]["type"] !== 'undefined' &&
-			(symbolTable[expression]["type"]["type"]== 'XSD_STRING'
-			|| symbolTable[expression]["type"]["type"]== 'xsd:string')) value = true;
+	for(var key in symbolTable[expression]){
+
+		if(symbolTable[expression][key]["type"]!== null && typeof symbolTable[expression][key]["type"] !== 'undefined' &&
+			(symbolTable[expression][key]["type"]["type"]== 'XSD_STRING'
+			|| symbolTable[expression][key]["type"]["type"]== 'xsd:string')) value = true;
 		
 	}
+	
 	return value;
 }
