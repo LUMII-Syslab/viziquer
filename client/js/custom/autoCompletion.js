@@ -1,11 +1,20 @@
 var symbolTable = {};
+var grammarType = "class";
+// var completionOn = false;
 
 Interpreter.customMethods({
 
-	 conditionAutoCompletion: function(e, compart) {
+	conditionAutoCompletion: function(e, compart) {
+ 
+		grammarType = "class"
 		symbolTable = generateSymbolTable();
+		autoCompletion(e);		
+		
+	},
+	linkAutoCompletion: function(e, compart) {
+		grammarType = "link"
 		autoCompletion(e);
-	 },
+	},
 });
 
 var currentFocus = 0;
@@ -56,9 +65,20 @@ generateSymbolTable = function() {
   }
 
 autoCompletion = function(e) {
+	
 	removeMessage();
-	// console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
+
 	if (e.ctrlKey && (e.keyCode == 32 || e.keyCode == 0)) {
+		// completionOn = true;
+	
+		// for (var  key in document.activeElement.parentElement.children) {
+			// var elem = document.activeElement.parentElement.children[key]
+			// if(elem.tagName == "DATALIST"){
+				// var dataList = $("#"+elem.id);
+				// dataList.empty();
+			// }
+		// }	
+		
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		text = text.substring(0, elem.selectionStart);
@@ -78,6 +98,7 @@ autoCompletion = function(e) {
 function keyUpHandler(e){
 	if(e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
+			
 			removeMessage();
 			var text = e.target.value;
 			var continuations = runCompletion(text, Session.get("activeElement"));
@@ -111,10 +132,26 @@ function keyDownHandler(e){
 }
 
 function clickHandler(e){
+	
+	// if(completionOn == true){
+		// for (var key in document.activeElement.parentElement.children) {
+			// var elem = document.activeElement.parentElement.children[key];
+			// if(elem.tagName == "DATALIST"){			
+				// var dataList = $("#"+elem.id);
+				// for (var  k in elem.options) {
+					// var value = elem.options[k].value;
+					// var opt = $('<option mappedvalue = "'+value+'" input = "'+value+'"></option>').attr("value", value);
+					// dataList.append(opt);
+				// }
+			// }
+		// }
+	// }
+	
 	closeAllLists();
 	var elem = document.activeElement;
 	elem.removeEventListener("keyup", keyUpHandler);
 	currentFocus = 0;
+	// completionOn = false;
 }
 
 function autocomplete(inp, arr) {
@@ -164,6 +201,23 @@ function autocomplete(inp, arr) {
 			/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
 			closeAllLists();
 			inp.focus();
+				
+			// if(completionOn == true){
+				// for (var key in document.activeElement.parentElement.children) {
+					// var elem = document.activeElement.parentElement.children[key];
+					// if(elem.tagName == "DATALIST"){			
+						// var dataList = $("#"+elem.id);
+						// for (var  k in elem.options) {
+							// var value = elem.options[k].value;
+							// var opt = $('<option mappedvalue = "'+value+'" input = "'+value+'"></option>').attr("value", value);
+							// dataList.append(opt);
+						// }
+					// }
+				// }
+			// }
+			
+			// completionOn = false;
+	
 		});
 		if(i == 0) b.style.backgroundColor = '#f8c26c';
         a.appendChild(b);
@@ -198,6 +252,7 @@ function closeAllLists(elmnt) {
         x[i].parentNode.removeChild(x[i]);
 	  }
 	}
+
 }
  
 function generateInputValue(fi, con, cursorPosition){
@@ -234,11 +289,24 @@ runCompletion = function (text, act_elem){
 	var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 	var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 	var className = compart["input"];
+	
 	try {
 		// var parsed_exp = vq_arithmetic.parse(str, {completions});
 		var schema = new VQ_Schema();
-		var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className});
-		var obj = JSON.parse(parsed_exp);
+		if(grammarType == "link"){
+			var name_list = [];
+			var act_elem = Session.get("activeElement");
+			if (act_elem) {
+				var vq_link = new VQ_Element(act_elem);
+				if (vq_link.isLink()) {
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, link:vq_link});
+				};
+			};
+		
+		} else {
+			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className});
+			// var obj = JSON.parse(parsed_exp);
+		}
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
 		// console.log(com["message"], JSON.parse(com["message"]));
@@ -371,8 +439,3 @@ function removeMessage(){
 	var m = document.getElementById("message");
 	if(m != null) m.parentNode.removeChild(m);
 }
-
-
-
-
-
