@@ -960,6 +960,99 @@ Interpreter.customMethods({
 		return false;
 	},
 
+	//Adds outer query as [ ] class with ++ link
+	addOuterQuery: function(){
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			Interpreter.destroyErrorMsg();
+
+			var currentElement = new VQ_Element(selected_elem_id);
+			if (currentElement.isClass() && currentElement.isRoot()) {
+				currentElement.setClassStyle("condition");
+				//coordinates to place new Box and create link
+				var locClass = currentElement.getNewLocation();
+				var coordX = locClass.x + Math.round(locClass.width/2);
+				var coordY = currentElement.obj["location"]["y"] + currentElement.obj["location"]["height"] 
+				var locLink = [coordX, coordY, coordX, locClass.y];
+				
+				Create_VQ_Element(function(cl){
+					cl.setName("[ ]");
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);					
+					Create_VQ_Element(function(lnk) {
+						lnk.setName("++");
+						lnk.setLinkType("REQUIRED");
+						lnk.setNestingType("SUBQUERY");
+				 	}, locLink, true, cl, currentElement);
+				}, locClass);											
+			} else {
+				Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+			}
+
+		} else {
+			Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+		}
+	},
+
+	//
+	setAsMainClass: function(){
+		Interpreter.destroyErrorMsg();
+		//Based on "generate SPARQL from component" realisation
+        var newMainElementID = Session.get("activeElement");        
+        var selected_elem = new VQ_Element(newMainElementID);
+        if(!selected_elem.isClass()){
+            console.log("Selected element is not class");
+            return;
+        }
+        
+        //Get ID of all elements in query
+        var visited_elems = {};
+        var isInsideNested = false;
+
+        function GetComponentIds(vq_elem) {
+            visited_elems[vq_elem._id()] = true;
+            _.each(vq_elem.getLinks(),function(link) {
+            	console.log("link: ", link.link.isSubQuery(), link.link.getStartElement()._id(), vq_elem._id());
+                if (!visited_elems[link.link._id()]) {
+                    visited_elems[link.link._id()]=true;
+                    var next_el = null;
+                    if (link.link.isSubQuery() && !(link.link.getStartElement()._id() == vq_elem._id())) {
+                    	isInsideNested = true;
+                    } else { 
+                    	if (link.start) {
+                        	next_el=link.link.getStartElement();
+	                    } else {
+	                        next_el=link.link.getEndElement();
+	                    };
+	                    
+	                    if (!visited_elems[next_el._id()]) {
+	                        GetComponentIds(next_el);
+	                    };
+                    }
+                };
+            });
+        };
+
+        GetComponentIds(selected_elem);
+        if (isInsideNested) {
+        	console.log();
+        	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
+        } else {
+	        var elem_ids = _.keys(visited_elems);
+	        var class_ids = [];
+
+	        //Get ID from selection of classes, that are query and set them as condition
+	        _.each(elem_ids, function(e){
+	            var VQElem = new VQ_Element(e);         
+	            if (VQElem.isClass() && VQElem.isRoot()){
+	            	VQElem.setClassStyle("condition");
+	            }
+	        })
+
+	        selected_elem.setClassStyle("query");
+	    }
+	},
+
 	
 });
 

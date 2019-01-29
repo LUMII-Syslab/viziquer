@@ -1872,4 +1872,123 @@ VQ_Element.prototype = {
 
   setVirtualRoot: function(isRoot) { this.isVirtualRoot = isRoot; VQ_Element_cache[this._id()].isVirtualRoot = isRoot},
 
+
+	// Temporal solution: Put new element below target element, as close as possible without overlapping
+	// d - step to move below after each try
+	// Returns {x: x, y: y1, width: w, height: h} (the left upper corner + dimensions)
+	getNewLocation: function (d = 30) {
+	    //console.log(this);
+	    var x = this.obj["location"]["x"];
+	    var y = this.obj["location"]["y"];      
+	    var w = this.obj["location"]["width"];
+	    var h = this.obj["location"]["height"];
+	    //y1 - coordinate for a new element; 1st itteration
+	    var y1 = y + h + d;
+
+	    var elem_list = [];
+	    var elem_over = []; //Potentionally - for more complex search for a better place
+	    var max_y;
+
+	    Elements.find({type: "Box"}).forEach(function(el) {
+	        elem_list.push(el);
+	    })
+
+	    do{
+	        elem_over.length = 0;
+
+	        _.each(elem_list, function(el) {
+	            //Check, if start point of new element could lead to overlap with existing elements
+	            if (el["location"]["x"] < (x+w)){
+	                if (el["location"]["y"] < (y1+h)){
+	                    //Check, if end point of existing element could lead to overlap
+	                    if((el["location"]["x"]+el["location"]["width"]) > x){
+	                        if((el["location"]["y"])+el["location"]["height"] > y1){
+	                            elem_over.push({
+	                                _id: el["_id"],
+	                                x: el["location"]["x"],
+	                                y: el["location"]["y"],
+	                                w: el["location"]["width"],
+	                                h: el["location"]["height"]
+	                            });
+	                        }
+	                    }
+	                }
+	            }
+	        })
+	        // If any disturbing element exist, find the lowest one (max y) and try new space that is lower by d
+	        if (elem_over.length > 0){
+	            max_y = 0;
+
+	            _.each(elem_over, function(el){
+	                if (max_y < (el["y"]+el["h"])) {
+	                    max_y = el["y"]+el["h"];
+	                }
+	            })
+
+	            y1 = max_y + d;
+	        }
+	    } while (elem_over.length > 0);
+
+	    return {x: x, y: y1, width: w, height: h};
+	},
+
+	//Set appearence for known class styles 
+    //Entry data: query, condition, subquery
+    setClassStyle: function(style) {  
+      
+	    var elem_type = ElementTypes.findOne({_id: this.obj.elementTypeId});
+	    if (!elem_type){
+	    	console.log("setClassStyle: no elem_type");
+	        return;
+	    }
+  
+	    var elemData = [];
+	    var elem_style = [];
+	    if (style == "query"){
+	    	//console.log("setClassStyle: query");
+	    	elem_style = _.find(elem_type.styles, function(stl) {
+	                                return stl.name === "Default";
+	                            });
+	    } else if (style == "condition"){
+	    	// console.log("setClassStyle: condition");
+	        elem_style = _.find(elem_type.styles, function(stl) {
+	                                return stl.name === "ConditionClass";
+	                            });
+	    } else if(style == "subquery"){
+	    	// console.log("setClassStyle: subquery");
+	        elem_style = _.find(elem_type.styles, function(stl) {
+	                                return stl.name === "SubQueryClass";
+	                            });	        
+	    }else{
+	        console.log("setClassStyle: unknown style");
+	        return;
+	    }
+
+	    if (!elem_style || !elem_style.elementStyle){
+	    	console.log("setClassStyle: no style found");
+	    	return;
+	    }
+
+	    elemData = [{attrName:"elementStyle.fill",attrValue:elem_style.elementStyle.fill},
+	                {attrName:"elementStyle.shape",attrValue:elem_style.elementStyle.shape},
+	                {attrName:"elementStyle.stroke",attrValue:elem_style.elementStyle.stroke}];
+
+	    var element_id = this._id();
+		var diagram_id = this.getDiagram_id();
+		_.each(elemData, function(a) {
+			 a["elementId"] = element_id
+			 a["diagramId"] = diagram_id
+			 a["projectId"] = Session.get("activeProject");
+			 a["versionId"] = Session.get("versionId");
+			 a["styleId"] = elem_style.id; console.log(elem_style.id);
+
+			 Utilities.callMeteorMethod("updateElementStyle", a);
+		})
+
+	    this.setCompartmentValue("ClassType", style, style);
+	    // this.obj.styleId = elem_style.id;      
+	    // return elem_style.id;
+	    return;
+    },
+
 }
