@@ -1,0 +1,4303 @@
+{
+  "types": [
+    {
+      "object": {
+        "_id": "WPP377T3MvPXpHNXR",
+        "extensionPoints": [
+          {
+            "extensionPoint": "beforeCreateDiagram"
+          },
+          {
+            "extensionPoint": "afterCreateDiagram"
+          },
+          {
+            "extensionPoint": "createDiagram",
+            "procedure": "CreateDiagram"
+          },
+          {
+            "extensionPoint": "beforeDeleteCollection"
+          },
+          {
+            "extensionPoint": "afterDeleteCollection"
+          },
+          {
+            "extensionPoint": "deleteCollection",
+            "procedure": "DeleteElementsCollection"
+          },
+          {
+            "extensionPoint": "beforeCopyCollection"
+          },
+          {
+            "extensionPoint": "afterCopyCollection"
+          },
+          {
+            "extensionPoint": "copyCollection",
+            "procedure": "CopyCollection"
+          },
+          {
+            "extensionPoint": "dynamicCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicReadModeCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicNoCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicReadModeNoCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "cutCollection",
+            "procedure": "CutCollection"
+          },
+          {
+            "extensionPoint": "pasteCollection",
+            "procedure": "PasteCollection"
+          },
+          {
+            "extensionPoint": "beforeDeleteDiagram"
+          },
+          {
+            "extensionPoint": "afterDeleteDiagram"
+          },
+          {
+            "extensionPoint": "deleteDiagram",
+            "procedure": "DeleteDiagramObject"
+          },
+          {
+            "extensionPoint": "updateDiagram",
+            "procedure": "UpdateDiagram"
+          },
+          {
+            "extensionPoint": "changeCollectionPosition",
+            "procedure": "ChangeCollectionPosition"
+          },
+          {
+            "extensionPoint": "canvasToImage",
+            "procedure": "CanvasToImage"
+          }
+        ],
+        "toolbar": [
+          {
+            "id": "0f4d1d9485fe8a5e62b57b54",
+            "name": "Toggle Grid",
+            "procedure": "ToggleGrid",
+            "icon": "fa-th"
+          },
+          {
+            "id": "6f9c79b713fb156121c2ad04",
+            "name": "Zoom out",
+            "procedure": "ZoomingOut",
+            "icon": "fa-minus"
+          },
+          {
+            "id": "286cb389b5de0a9ed1778cf3",
+            "name": "Zoom in",
+            "procedure": "ZoomingIn",
+            "icon": "fa-plus"
+          },
+          {
+            "id": "6eaadd8e3e40e6be4fa46bfc",
+            "name": "Action history",
+            "procedure": "ShowDiagramLog",
+            "icon": "fa-history"
+          },
+          {
+            "id": "47484c74b842f9aafc624bbd",
+            "name": "Diagram settings",
+            "procedure": "ShowDiagramSettings",
+            "icon": "fa-gear"
+          },
+          {
+            "id": "33de2d453d38e35d8be5200c",
+            "name": "Permissions",
+            "procedure": "Permissions",
+            "icon": "fa-lock"
+          },
+          {
+            "id": "49edcc5e3c6444227f9d913b",
+            "name": "Delete",
+            "procedure": "DeleteDiagram",
+            "icon": "fa-trash-o"
+          },
+          {
+            "id": "49edcc5e3c7444257f9d916b",
+            "name": "Toggle SPARQL only mode",
+            "procedure": "TogglePlainMode",
+            "icon": "fa-angle-double-down"
+          }
+        ],
+        "readModeToolbar": [
+          {
+            "id": "493fc5cc29d01b0d03cfdf51",
+            "name": "Zoom out",
+            "procedure": "ZoomingOut",
+            "icon": "fa-minus",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "4f59d96acca9d0d50c4a0c2d",
+            "name": "Zoom in",
+            "procedure": "ZoomingIn",
+            "icon": "fa-plus",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "21d8caa6bce56dfc8801e6fe",
+            "name": "Action history",
+            "procedure": "ShowDiagramLog",
+            "icon": "fa-history",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "220fedc94480964fa57acba5",
+            "name": "Diagram settings",
+            "procedure": "ShowDiagramSettings",
+            "icon": "fa-gear",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "28e897b6466af7d81ff1475f",
+            "name": "Permissions",
+            "procedure": "Permissions",
+            "icon": "fa-lock",
+            "isInEditableVersion": false,
+            "isForAdminOnly": true
+          },
+          {
+            "id": "49edcc5e3c7444257f9d916b",
+            "name": "Toggle SPARQL only mode",
+            "procedure": "TogglePlainMode",
+            "icon": "fa-angle-double-down",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          }
+        ],
+        "globalKeyStrokes": [
+          {
+            "keyStroke": "Ctrl A",
+            "procedure": "SelectAll"
+          }
+        ],
+        "noCollectionKeyStrokes": [
+          {
+            "keyStroke": "Ctrl V",
+            "procedure": "Paste"
+          }
+        ],
+        "readModeNoCollectionKeyStrokes": [],
+        "collectionKeyStrokes": [
+          {
+            "keyStroke": "Ctrl X",
+            "procedure": "Cut"
+          },
+          {
+            "keyStroke": "Ctrl C",
+            "procedure": "Copy"
+          },
+          {
+            "keyStroke": "Delete",
+            "procedure": "DeleteCollection"
+          }
+        ],
+        "readModeCollectionKeyStrokes": [],
+        "noCollectionContextMenu": [
+          {
+            "item": "Generate SPARQL",
+            "procedure": "GenerateSPARQL_from_diagram"
+          },
+          {
+            "item": "Paste (Ctrl-V) ",
+            "procedure": "Paste"
+          },
+          {
+            "item": "Execute SPARQL",
+            "procedure": "ExecuteSPARQL_from_diagram"
+          }
+        ],
+        "readModeNoCollectionContextMenu": [
+          {
+            "item": "Generate SPARQL",
+            "procedure": "GenerateSPARQL_from_diagram"
+          },
+          {
+            "item": "ExecuteSPARQL",
+            "procedure": "ExecuteSPARQL_from_diagram"
+          }
+        ],
+        "collectionContextMenu": [
+          {
+            "item": "Cut\tCtrl+X",
+            "procedure": "Cut"
+          },
+          {
+            "item": "Copy\tCtrl+C",
+            "procedure": "Copy"
+          },
+          {
+            "item": "Delete\tDelete",
+            "procedure": "Delete"
+          },
+          {
+            "item": "Align Selected Boxes",
+            "procedure": "align_selected_boxes"
+          },
+          {
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_from_selection"
+          },
+          {
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenerateSPARQL_from_selection"
+          }
+        ],
+        "readModeCollectionContextMenu": [
+          {
+            "item": "Execute selection",
+            "procedure": "ExecuteSPARQL_from_selection"
+          },
+          {
+            "item": "Generate SPARQL from selection",
+            "procedure": "GenerateSPARQL_from_selection"
+          }
+        ],
+        "selectionStyle": {
+          "fill": "grey",
+          "opacity": 0.4,
+          "stroke": "black",
+          "strokeWidth": 0.6
+        },
+        "size": {
+          "diagramSize": 8,
+          "dialogSize": 4
+        },
+        "createdAt": "2017-03-22T15:00:39.729Z",
+        "createdBy": "BzQP6kPWc4fyvwCb6",
+        "diagramId": "avKf3WQhFpEni5Ykk",
+        "name": "Query",
+        "editorType": "ajooEditor",
+        "style": {
+          "fillPriority": "color",
+          "fill": "#ffffff",
+          "fillLinearGradientStartPointX": 0.5,
+          "fillLinearGradientStartPointY": 0,
+          "fillLinearGradientEndPointX": 0.5,
+          "fillLinearGradientEndPointY": 1,
+          "fillLinearGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ],
+          "fillRadialGradientStartPointX": 0.5,
+          "fillRadialGradientStartPointY": 0.5,
+          "fillRadialGradientEndPointX": 0.5,
+          "fillRadialGradientEndPointY": 0.5,
+          "fillRadialGradientStartRadius": 0,
+          "fillRadialGradientEndRadius": 1,
+          "fillRadialGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ]
+        },
+        "toolId": "QjkWr7eLjHsmq7erW",
+        "versionId": "Ye9csBvcqkfYcRkvx"
+      },
+      "dialog": [
+        {
+          "_id": "CtqNnwRbPgtyEQdeh",
+          "diagramId": "avKf3WQhFpEni5Ykk",
+          "diagramTypeId": "WPP377T3MvPXpHNXR",
+          "name": "Schema Tree",
+          "index": 1,
+          "toolId": "QjkWr7eLjHsmq7erW",
+          "versionId": "Ye9csBvcqkfYcRkvx"
+        }
+      ],
+      "compartmentTypes": [
+        {
+          "object": {
+            "_id": "wduhdaTTH8njjqZFr",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "index": 0,
+            "noRepresentation": true,
+            "tabIndex": 1,
+            "name": "SchemaTree",
+            "isObjectRepresentation": false,
+            "inputType": {
+              "type": "custom",
+              "templateName": "schemaTree"
+            },
+            "extensionPoints": [
+              {
+                "extensionPoint": "beforeUpdate"
+              },
+              {
+                "extensionPoint": "update",
+                "procedure": "UpdateCompartment"
+              },
+              {
+                "extensionPoint": "afterUpdate"
+              },
+              {
+                "extensionPoint": "dynamicPrefix"
+              },
+              {
+                "extensionPoint": "dynamicSuffix"
+              },
+              {
+                "extensionPoint": "dynamicDefaultValue"
+              },
+              {
+                "extensionPoint": "dynamicDropDown"
+              }
+            ],
+            "label": "Schema Tree",
+            "dialogTabId": "CtqNnwRbPgtyEQdeh"
+          }
+        }
+      ],
+      "boxTypes": [
+        {
+          "object": {
+            "_id": "jZmQ3AiTrRqDQiPH5",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "elementId": "4ekkWXxKg8Pq42ck8",
+            "superTypeIds": [],
+            "type": "Box",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Ctrl C",
+                "procedure": "Copy"
+              },
+              {
+                "keyStroke": "Ctrl X",
+                "procedure": "Cut"
+              },
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Cut",
+                "procedure": "Cut"
+              },
+              {
+                "item": "Copy",
+                "procedure": "Copy"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "styles": [
+              {
+                "id": "5a959feb3f8d1ac200c79850",
+                "name": "Default",
+                "elementStyle": {
+                  "fill": "#ffffff",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ],
+                  "shape": "Note"
+                }
+              }
+            ],
+            "name": "Comment",
+            "isAbstract": false,
+            "targetDiagramTypeId": "WPP377T3MvPXpHNXR"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "xojBwxWNXL4o5h9Yw",
+                "elementTypeId": "jZmQ3AiTrRqDQiPH5",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "4ekkWXxKg8Pq42ck8",
+                "tabIndex": 1,
+                "index": 1,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Text",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 3
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "114350040f2dbb016a6c8ba8",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "RdD3W36DW4fLcTkKh",
+                "label": "Text"
+              }
+            },
+            {
+              "object": {
+                "_id": "srk3XQcC56MJf4Ymq",
+                "elementTypeId": "jZmQ3AiTrRqDQiPH5",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "4ekkWXxKg8Pq42ck8",
+                "tabIndex": 0,
+                "index": 0,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Title",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "e5cbbbcd27f01429af7f8b2e",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "bold",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "RdD3W36DW4fLcTkKh",
+                "label": "Title"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "RdD3W36DW4fLcTkKh",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "jZmQ3AiTrRqDQiPH5",
+              "name": "Main",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "Yfru2eJ8vc8nHadAd",
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "type": "elementStyleAccordion",
+              "name": "Style",
+              "elementTypeId": "jZmQ3AiTrRqDQiPH5",
+              "index": 1
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "5j8Kw8BmCEoJiTD4t",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "elementId": "qQQ7Z46kikDpZADC9",
+            "superTypeIds": [],
+            "type": "Box",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Ctrl C",
+                "procedure": "Copy"
+              },
+              {
+                "keyStroke": "Ctrl X",
+                "procedure": "Cut"
+              },
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Cut",
+                "procedure": "Cut"
+              },
+              {
+                "item": "Copy",
+                "procedure": "Copy"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "styles": [
+              {
+                "id": "f1c416c3fe0086bf3748e746",
+                "name": "Default",
+                "elementStyle": {
+                  "fill": "#ffffff",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#000000",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ],
+                  "shape": "RoundRectangle"
+                }
+              }
+            ],
+            "name": "NamedQuery",
+            "isAbstract": true,
+            "targetDiagramTypeId": "WPP377T3MvPXpHNXR"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "FhNeK9cKFZq7HiYFD",
+                "elementTypeId": "5j8Kw8BmCEoJiTD4t",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "qQQ7Z46kikDpZADC9",
+                "tabIndex": 1,
+                "index": 1,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Name",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "ff8ab5279213bd374acf1f9b",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "KiKXtWS24o3ntQmsK",
+                "label": "Name"
+              }
+            },
+            {
+              "object": {
+                "_id": "7Ge7vstX2MBvvhmFQ",
+                "elementTypeId": "5j8Kw8BmCEoJiTD4t",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "qQQ7Z46kikDpZADC9",
+                "tabIndex": 0,
+                "index": 0,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Stereotype",
+                "prefix": "<<",
+                "suffix": ">>",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "combobox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "count",
+                      "value": "count"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "count distinct",
+                      "value": "count distinct"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "50dd362d9b2ad3857e15b5eb",
+                    "style": {
+                      "align": "right",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 17,
+                      "fontStyle": "italic",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "KiKXtWS24o3ntQmsK",
+                "label": "Stereotype"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "KiKXtWS24o3ntQmsK",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "5j8Kw8BmCEoJiTD4t",
+              "name": "Main",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "9cWPv52k2GTnkdR2a",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "elementId": "Xr7cyWHjs9Ky5JThP",
+            "superTypeIds": [],
+            "type": "Box",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              },
+              {
+                "extensionPoint": "afterCreateElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Ctrl C",
+                "procedure": "Copy"
+              },
+              {
+                "keyStroke": "Ctrl X",
+                "procedure": "Cut"
+              },
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Aggregate ...",
+                "procedure": "AddAggregate"
+              },
+              {
+                "item": "Add Link ...",
+                "procedure": "AddLink"
+              },
+              {
+                "item": "Add Attributes ...",
+                "procedure": "AddAttribute"
+              },
+              {
+                "item": "Add Condition ...",
+                "procedure": "AddCondition"
+              },
+              {
+                "item": "Cut",
+                "procedure": "Cut"
+              },
+              {
+                "item": "Copy",
+                "procedure": "Copy"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              },
+              {
+                "item": "Execute query",
+                "procedure": "ExecuteSPARQL_from_component"
+              },
+              {
+                "item": "Generate query SPARQL",
+                "procedure": "GenerateSPARQL_from_component"
+              },
+              {
+                "item": "Query part",
+                "procedure": "Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_query_part"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_query_part"
+                  }
+                ]
+              },
+              {
+                "item": "Single node (class)",
+                "procedure": "Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_selection"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_selection"
+                  }
+                ]
+              }
+            ],
+            "readModeContextMenu": [
+              {
+                "item": "Execute query",
+                "procedure": "ExecuteSPARQL_from_component"
+              },
+              {
+                "item": "Generate query SPARQL",
+                "procedure": "GenerateSPARQL_from_component"
+              },
+              {
+                "item": "Query part",
+                "procedure": "Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_query_part"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_query_part"
+                  }
+                ]
+              },
+              {
+                "item": "Single node (class)",
+                "procedure": "Foo",
+                "subMenu": [
+                  {
+                    "item": "Execute",
+                    "procedure": "ExecuteSPARQL_from_selection"
+                  },
+                  {
+                    "item": "Generate SPARQL",
+                    "procedure": "GenerateSPARQL_from_selection"
+                  }
+                ]
+              }
+            ],
+            "styles": [
+              {
+                "id": "2e4f4fd706a34e6bc3d74dd7",
+                "name": "Default",
+                "elementStyle": {
+                  "fill": "#ee8109",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#b76d31",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ],
+                  "shape": "RoundRectangle"
+                }
+              },
+              {
+                "id": "71e0fff2b838e6c6b41c8d75",
+                "name": "ConditionClass",
+                "elementStyle": {
+                  "fill": "#ae9ec0 ",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#70579d",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ],
+                  "shape": "Rectangle"
+                }
+              },
+              {
+                "id": "9018be9b2a8cb2b35098d665",
+                "name": "SubQueryClass",
+                "elementStyle": {
+                  "fill": "#8064a2",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#5b4880",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ],
+                  "shape": "RoundRectangle"
+                }
+              }
+            ],
+            "name": "Class",
+            "isAbstract": false,
+            "targetDiagramTypeId": "WPP377T3MvPXpHNXR"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "D5rZSFyFGCrgN2rjb",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 460,
+                "index": 1441,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Skip rows",
+                "label": "Skip rows (OFFSET)",
+                "prefix": "after skipping ",
+                "suffix": " row(s)",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "ba7887d01ee5e5b02c4416ba",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38"
+              }
+            },
+            {
+              "object": {
+                "_id": "YFyehcbXiQaiJJti5",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 393,
+                "index": 735,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Attributes",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "9abefdd908a0ef955bd1d2a7",
+                    "style": {
+                      "align": "left",
+                      "fill": "#ffffff",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "subCompartmentTypes": [
+                  {
+                    "_id": "304eddff333de156378baa82",
+                    "name": "Attributes",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "extraButton": {
+                      "caption": "Merge values ..",
+                      "isAvailable": "isMergeValuesWizardAvailable",
+                      "processButtonClick": "AddMergeValues"
+                    },
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "479fc64e382dc2d31bcc0755",
+                        "index": 7,
+                        "name": "Field Name",
+                        "label": "Alias",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": "<-",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      },
+                      {
+                        "_id": "c93c1c24e95aac9deb851c91",
+                        "index": 8,
+                        "name": "Expression",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetAttributeNames"
+                          },
+						  {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "conditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Expression"
+                      },
+                      {
+                        "_id": "4727f620bbedd3f1f98bde47",
+                        "index": 4,
+                        "name": "Require Values",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "afterUpdate",
+                            "procedure": ""
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "{+} "
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Require Values"
+                      },
+                      {
+                        "_id": "d6e2cda95d0c78943ea28f0c",
+                        "index": 6,
+                        "name": "IsInternal",
+                        "label": "Hide",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "{hide} "
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+                      {
+                        "_id": "6acfdf47ee1fba6719148227",
+                        "index": 2,
+                        "name": "GroupValues",
+                        "label": "Merge",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "isVisible",
+                            "procedure": "setIsVisibleFalse"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "{merge} "
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ],
+                    "label": "Attributes"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "Attributes"
+              }
+            },
+            {
+              "object": {
+                "_id": "JNd26CimSt8Tjh5qf",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 10,
+                "index": 113,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Aggregates",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "9abefdd008b0ef055bd1d2a7",
+                    "style": {
+                      "align": "left",
+                      "fill": "#ffffff",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "subCompartmentTypes": [
+                  {
+                    "_id": "304eddff333de333378baa82",
+                    "name": "Aggregates",
+                    "label": "Aggregate",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "extraButton": {
+                      "caption": "Aggregate wizard",
+                      "isAvailable": "isAggregateWizardAvailable",
+                      "processButtonClick": "AggregateWizard"
+                    },
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "479fc64e382dc2d31bdd0855",
+                        "index": 7,
+                        "name": "Field Name",
+                        "label": "Result name (alias)",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": "<-",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      },
+                      {
+                        "_id": "c93c1c24e95bad9eeb851c91",
+                        "index": 8,
+                        "name": "Expression",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetAggregateNames"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Expression"
+                      }
+                    ]
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "Aggregates"
+              }
+            },
+            {
+              "object": {
+                "_id": "FmYqSzxvWG5Q2MD8a",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 430,
+                "index": 1340,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Show rows",
+                "label": "Show rows (LIMIT)",
+                "prefix": "show first ",
+                "suffix": " row(s)",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "5b1b143be71eebd6c1fa062a",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38"
+              }
+            },
+            {
+              "object": {
+                "_id": "zp3PbidY7iyqH4nLQ",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 110,
+                "index": 1542,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "FullSPARQL",
+                "label": "Direct SPARQL",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 3
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "5185d172874d87ec54e60dd6",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 11,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "cA4n8d8xufwq6aNWY"
+              }
+            },
+            {
+              "object": {
+                "_id": "uTYzyiLvTbpGC7Dgn",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 100,
+                "index": 533,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Comment",
+                "prefix": "\"",
+                "suffix": "\"",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "inputType": "text",
+                  "rows": 3
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "6eb08aa2ce28d2242696076f",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 11,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "cA4n8d8xufwq6aNWY",
+                "label": "Comment"
+              }
+            },
+            {
+              "object": {
+                "_id": "o8c2b5nmZqGWiHhJF",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 161,
+                "index": 634,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Conditions",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "91624fc523a1b786f82b8f10",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "subCompartmentTypes": [
+                  {
+                    "_id": "df9ba48f1ab1f830222cf2cc",
+                    "name": "Conditions",
+                    "extensionPoints": [],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "cd985918571a15d012ed7b3c",
+                        "name": "Expression",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "conditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "textarea",
+                          "rows": 3
+                        },
+                        "description": "Use Ctrl+Space for text auto-completion",
+                        "subCompartmentTypes": [],
+                        "label": "Expression"
+                      }
+                    ],
+                    "label": "Conditions"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "Conditions"
+              }
+            },
+            {
+              "object": {
+                "_id": "D2H78WDecnoftQG8p",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 7,
+                "index": 836,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Separator",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "value_from_subcompartments"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "2d49e3c41ce7379140a4e297",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "data": {
+                  "subCompartmentTypes": []
+                },
+                "subCompartmentTypes": [],
+                "label": "Separator"
+              }
+            },
+            {
+              "object": {
+                "_id": "Jt5D29qKuq8agAhWj",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 23,
+                "index": 938,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "indirectClassMembership",
+                "label": "Indirect Class Membership",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "true",
+                      "value": "indirect"
+                    },
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "false",
+                      "value": " "
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "828245acc4242ea17517a71b",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetClassNameValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleForIndirectClassMembership"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38"
+              }
+            },
+            {
+              "object": {
+                "_id": "APqFJihSSWZr34q4R",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 113,
+                "index": 1038,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Distinct",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "true",
+                      "value": "select distinct"
+                    },
+                    {
+                      "compartmentStyle": "828245acc3241ea17517a71b",
+                      "elementStyle": "NoStyle",
+                      "input": "false",
+                      "value": " "
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "828245acc3241ea17517a71b",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "Distinct"
+              }
+            },
+            {
+              "object": {
+                "_id": "H2AMBcsg35YAawWeN",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 413,
+                "index": 1139,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "OrderBy",
+                "prefix": "order by ",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "1ad164fa838409317ed7a987",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "concatStyle": ",",
+                "subCompartmentTypes": [
+                  {
+                    "_id": "45f81c874615780c01170a61",
+                    "name": "OrderBy",
+                    "extensionPoints": [],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "5970a91e72dc2c91470e781d",
+                        "name": "Name",
+                        "label": "Name (Alias or attribute)",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetOrderByFields"
+                          }
+                        ],
+                        "prefix": "order by ",
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": []
+                      },
+                      {
+                        "_id": "a6081bb010bdf1286683db9c",
+                        "name": "Desc",
+                        "extensionPoints": [],
+                        "prefix": " ",
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "DESC"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Desc"
+                      }
+                    ],
+                    "label": "OrderBy"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "OrderBy"
+              }
+            },
+            {
+              "object": {
+                "_id": "Zr3pDPojRtemwXLts",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 416,
+                "index": 1239,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "GroupBy",
+                "label": "Group By",
+                "prefix": "group by ",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "1ad164fa838409317ed7a987",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "concatStyle": ",",
+                "subCompartmentTypes": [
+                  {
+                    "_id": "45f81c874715790c01170a61",
+                    "name": "GroupBy",
+                    "extensionPoints": [],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "5970a91e82dc2d91470e781d",
+                        "name": "Name",
+                        "label": "Name (Alias or attribute)",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetGroupByFields"
+                          }
+                        ],
+                        "prefix": "group by ",
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ],
+                    "label": "GroupBy"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38"
+              }
+            },
+            {
+              "object": {
+                "_id": "EziydJA8djiW25X8c",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 0,
+                "index": 0,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "ClassType",
+                "label": "Node Type",
+                "isObjectRepresentation": false,
+                "noRepresentation": true,
+                "inputType": {
+                  "type": "selection",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "7445e511c6835fac735b5869",
+                      "elementStyle": "2e4f4fd706a34e6bc3d74dd7",
+                      "input": "query"
+                    },
+                    {
+                      "compartmentStyle": "7445e511c6835fac735b5869",
+                      "elementStyle": "71e0fff2b838e6c6b41c8d75",
+                      "input": "condition"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "7445e511c6835fac735b5869",
+                    "style": {
+                      "align": "left",
+                      "fill": "#ffffff",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 15,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "EmiNK2Afqz3A4Aj4S",
+                "defaultValue": "query"
+              }
+            },
+            {
+              "object": {
+                "_id": "24NiEHErsJELa2Fbh",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 20,
+                "index": 215,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Name",
+                "label": "Class",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "combobox",
+                  "inputType": "text",
+                  "values": []
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "3f966297c50c1b3266d24492",
+                    "style": {
+                      "align": "center",
+                      "fill": "#ffffff",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 24,
+                      "fontStyle": "bold",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetClassName"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": "VQgetClassNames"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38"
+              }
+            },
+            {
+              "object": {
+                "_id": "pBS4hKD2F79gTQgCN",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "tabIndex": 30,
+                "index": 316,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Instance",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "a162be4b933b2873cedd37a2",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "bold",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  },
+                  {
+                    "id": "22450f1de82e0b0de29b4c0b",
+                    "name": "InstanceNotVissible",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetGroupBy"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "label": "Instance"
+              }
+            },
+            {
+              "object": {
+                "_id": "rL5pgue7CTdZdka8k",
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementTypeId": "9cWPv52k2GTnkdR2a",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "index": 431,
+                "noRepresentation": false,
+                "tabIndex": 111,
+                "dialogTabId": "Yya6BCy4H2md7wE38",
+                "name": "Group by this",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "values": [
+                    {
+                      "value": "false",
+                      "input": "false",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    },
+                    {
+                      "value": "true",
+                      "input": "true",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "9d5d82ca3057de6fe9d7a869",
+                    "style": {
+                      "align": "center",
+                      "fill": "white",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": "false",
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetGroupBy"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "Group by this"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "Yya6BCy4H2md7wE38",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "9cWPv52k2GTnkdR2a",
+              "name": "Main",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "cA4n8d8xufwq6aNWY",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "9cWPv52k2GTnkdR2a",
+              "name": "Plus",
+              "index": 1,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "EmiNK2Afqz3A4Aj4S",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "9cWPv52k2GTnkdR2a",
+              "name": "Extra",
+              "index": 2,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "Hq9pH7GRubLEY74Dv",
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "type": "elementStyleAccordion",
+              "name": "Style",
+              "elementTypeId": "9cWPv52k2GTnkdR2a",
+              "index": 3
+            }
+          ]
+        }
+      ],
+      "lineTypes": [
+        {
+          "object": {
+            "_id": "BXWWXJotdGSzqan6Q",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "elementId": "SPeAiXqufJ7E2Grgu",
+            "superTypeIds": [],
+            "type": "Line",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "name": "CommentLink",
+            "startElementTypeId": "jZmQ3AiTrRqDQiPH5",
+            "endElementTypeId": "9cWPv52k2GTnkdR2a",
+            "styles": [
+              {
+                "id": "f4674136b34de9796382c3ea",
+                "name": "Default",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "5",
+                    "5"
+                  ]
+                },
+                "startShapeStyle": {
+                  "fill": "#f0f0f0",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#375d8a",
+                  "fillPriority": "color",
+                  "stroke": "#375d8a",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                }
+              }
+            ],
+            "direction": "BiDirectional",
+            "isAbstract": false,
+            "lineType": "Orthogonal"
+          },
+          "compartmentTypes": [],
+          "dialog": [
+            {
+              "_id": "QsBuRCu5XpnRCDz5b",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "BXWWXJotdGSzqan6Q",
+              "name": "Main",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "4JZSGm3hYvaZRxdmL",
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx",
+            "diagramTypeId": "WPP377T3MvPXpHNXR",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "elementId": "xrAXALTELFnb5x94t",
+            "superTypeIds": [],
+            "type": "Line",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              },
+              {
+                "extensionPoint": "afterCreateElement",
+                "procedure": "VQafterCreateLink"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "name": "Link",
+            "startElementTypeId": "9cWPv52k2GTnkdR2a",
+            "endElementTypeId": "9cWPv52k2GTnkdR2a",
+            "styles": [
+              {
+                "id": "0baf03c945731a650a863537",
+                "name": "Default",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": "3",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ]
+                },
+                "startShapeStyle": {
+                  "fill": "#f0f0f0",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#375d8a",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "Arrow"
+                }
+              },
+              {
+                "id": "0ac14dd5b386e6e27a7267bc",
+                "name": "Optional Link",
+                "elementStyle": {
+                  "stroke": "#18b6d1",
+                  "strokeWidth": "3",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "6",
+                    "5"
+                  ]
+                },
+                "startShapeStyle": {
+                  "fill": "#f0f0f0",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#375d8a",
+                  "fillPriority": "color",
+                  "stroke": "#18b6d1",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "Arrow"
+                }
+              },
+              {
+                "id": "8e68e4c97c060c9414a3bb99",
+                "name": "NegationLink",
+                "elementStyle": {
+                  "stroke": "#ff0000",
+                  "strokeWidth": "3",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ]
+                },
+                "startShapeStyle": {
+                  "fill": "#f0f0f0",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#375d8a",
+                  "fillPriority": "color",
+                  "stroke": "#ff0000",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "Arrow"
+                }
+              },
+              {
+                "id": "754ebb836aed33f0b0203cb8",
+                "name": "Conditional Link",
+                "elementStyle": {
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": []
+                },
+                "startShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 7,
+                  "shape": "Diamond"
+                },
+                "endShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 12,
+                  "shape": "Diamond"
+                }
+              }
+            ],
+            "direction": "Directional",
+            "isAbstract": false,
+            "lineType": "Orthogonal"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "6JXcdbH46vfPcT5mj",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 10,
+                "index": 0,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Name",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "combobox",
+                  "inputType": "text",
+                  "values": []
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "a1c61033a295ef5e1eb2329b",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-left",
+                      "visible": true,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetLinkName"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": "VQsetSubQueryNamePrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": "VQsetSubQueryNameSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+					"procedure": "VQsetAssociationName"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": "VQgetAssociationNames"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "label": "Name"
+              }
+            },
+            {
+              "object": {
+                "_id": "BjAqsfXJj82zDubBe",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 1,
+                "index": 1,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Inverse Link",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "no input"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "e38d21cc6b77ca38b824a1e9",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetSubQueryInverseLink"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": "VQgetAssociationIsInverse"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "label": "Inverse Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "u9r6h6hSzFZNJidwR",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 20,
+                "index": 2,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Negation Link",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false",
+                      "value": " "
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "a1111fbad4da3150f0d28907",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-left",
+                      "visible": true,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsNegation"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "defaultValue": "false",
+                "label": "Negation Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "5u6NfqAtBNuxttuX9",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 30,
+                "index": 3,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Optional Link",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "34f4b9e35136c3b1731909f1",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsOptional"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "defaultValue": "false",
+                "label": "Optional Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "T29bD8fTfnkEv4bYs",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 60,
+                "index": 8,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Condition Link",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "808781ed222c411dcda34774",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-left",
+                      "visible": false,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsCondition"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "defaultValue": "false",
+                "label": "Condition Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "Wqk9nqP5RpQSumNTL",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 70,
+                "index": 0,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "NestingType",
+                "label": "Nesting Type",
+                "isObjectRepresentation": false,
+                "noRepresentation": true,
+                "inputType": {
+                  "type": "radio",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Join",
+                      "value": "PLAIN"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Nested Query",
+                      "value": "SUBQUERY"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Global Nested Query",
+                      "value": "GLOBAL_SUBQUERY"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Extra",
+                      "value": "CONDITION"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "7445e511c6847fac836b5869",
+                    "style": {
+                      "align": "left",
+                      "fill": "#ffffff",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 15,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetNestingType"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "defaultValue": "Join"
+              }
+            },
+            {
+              "object": {
+                "_id": "bKMQPbDmcBnhkPMft",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementId": "xrAXALTELFnb5x94t",
+                "tabIndex": 40,
+                "index": 5,
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "name": "Subquery Link",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "4ae0e08e73cc3eb4a8ab1005",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-left",
+                      "visible": false,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsSubquery"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
+                  }
+                ],
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "defaultValue": "false",
+                "label": "Subquery Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "JC47guB8DFLWJNnnW",
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "elementId": "xrAXALTELFnb5x94t",
+                "index": 50,
+                "noRepresentation": false,
+                "tabIndex": 50,
+                "dialogTabId": "oY7Jk4u7sgcAFuAfJ",
+                "name": "Global Subquery Link",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "values": [
+                    {
+                      "value": "false",
+                      "input": "false",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    },
+                    {
+                      "value": "true",
+                      "input": "true",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "d98e6c75cd3511befe3e4e23",
+                    "style": {
+                      "align": "center",
+                      "fill": "rgb(65,113,156)",
+                      "padding": 0,
+                      "placement": "inside",
+                      "visible": false,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsGlobalSubquery"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleFalse"
+                  }
+                ],
+                "defaultValue": "false",
+                "label": "Global Subquery Link"
+              }
+            },
+            {
+              "object": {
+                "_id": "WhWoMe2HckRgSLKKT",
+                "toolId": "QjkWr7eLjHsmq7erW",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "diagramTypeId": "WPP377T3MvPXpHNXR",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "elementTypeId": "4JZSGm3hYvaZRxdmL",
+                "elementId": "xrAXALTELFnb5x94t",
+                "index": 7,
+                "noRepresentation": false,
+                "tabIndex": 9,
+                "dialogTabId": "qsuPWwsWEJYsSxdwy",
+                "name": "Hide default link name",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "values": [
+                    {
+                      "value": "false",
+                      "input": "false",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    },
+                    {
+                      "value": "true",
+                      "input": "true",
+                      "elementStyle": "NoStyle",
+                      "compartmentStyle": "NoStyle"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "a7569154d1af3509d7a76744",
+                    "style": {
+                      "align": "center",
+                      "fill": "rgb(65,113,156)",
+                      "padding": 0,
+                      "placement": "inside",
+                      "visible": false,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQSetHideDefaultLinkName"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+					"procedure": "VQSetHideDefaultLinkValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "defaultValue": "false",
+                "label": "Hide default link name"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "oY7Jk4u7sgcAFuAfJ",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "4JZSGm3hYvaZRxdmL",
+              "name": "Main",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "qsuPWwsWEJYsSxdwy",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "elementTypeId": "4JZSGm3hYvaZRxdmL",
+              "name": "Extra",
+              "index": 0,
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx"
+            },
+            {
+              "_id": "6EbnnputiiiJFSzSi",
+              "toolId": "QjkWr7eLjHsmq7erW",
+              "versionId": "Ye9csBvcqkfYcRkvx",
+              "diagramTypeId": "WPP377T3MvPXpHNXR",
+              "diagramId": "avKf3WQhFpEni5Ykk",
+              "type": "elementStyleAccordion",
+              "name": "Style",
+              "elementTypeId": "4JZSGm3hYvaZRxdmL",
+              "index": 1
+            }
+          ]
+        }
+      ],
+      "paletteButtons": [
+        {
+          "_id": "kbo8BEeTDN2FJFa7p",
+          "diagramTypeId": "WPP377T3MvPXpHNXR",
+          "diagramId": "iPEd3KtbG6komMGku",
+          "elementTypeIds": [
+            "9cWPv52k2GTnkdR2a"
+          ],
+          "name": "Class",
+          "type": "Box",
+          "index": 0,
+          "toolId": "QjkWr7eLjHsmq7erW",
+          "versionId": "Ye9csBvcqkfYcRkvx"
+        },
+        {
+          "_id": "Piqu9PXm9SynBpaSH",
+          "diagramTypeId": "WPP377T3MvPXpHNXR",
+          "diagramId": "iPEd3KtbG6komMGku",
+          "elementTypeIds": [
+            "4JZSGm3hYvaZRxdmL"
+          ],
+          "name": "Link",
+          "type": "Line",
+          "index": 1,
+          "toolId": "QjkWr7eLjHsmq7erW",
+          "versionId": "Ye9csBvcqkfYcRkvx"
+        },
+        {
+          "_id": "kWgcG7t53iamYapdi",
+          "diagramTypeId": "WPP377T3MvPXpHNXR",
+          "diagramId": "iPEd3KtbG6komMGku",
+          "elementTypeIds": [
+            "BXWWXJotdGSzqan6Q"
+          ],
+          "name": "CommentLink",
+          "type": "Line",
+          "index": 3,
+          "toolId": "QjkWr7eLjHsmq7erW",
+          "versionId": "Ye9csBvcqkfYcRkvx"
+        },
+        {
+          "_id": "DzZQW9A4r6Rqfwva5",
+          "diagramTypeId": "WPP377T3MvPXpHNXR",
+          "diagramId": "iPEd3KtbG6komMGku",
+          "elementTypeIds": [
+            "jZmQ3AiTrRqDQiPH5"
+          ],
+          "name": "Comment",
+          "type": "Box",
+          "index": 2,
+          "toolId": "QjkWr7eLjHsmq7erW",
+          "versionId": "Ye9csBvcqkfYcRkvx"
+        }
+      ]
+    }
+  ],
+  "presentations": [
+    {
+      "object": {
+        "_id": "avKf3WQhFpEni5Ykk",
+        "name": "Query",
+        "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+        "style": {
+          "fillPriority": "color",
+          "fill": "#ffffff",
+          "fillLinearGradientStartPointX": 0.5,
+          "fillLinearGradientStartPointY": 0,
+          "fillLinearGradientEndPointX": 0.5,
+          "fillLinearGradientEndPointY": 1,
+          "fillLinearGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ],
+          "fillRadialGradientStartPointX": 0.5,
+          "fillRadialGradientStartPointY": 0.5,
+          "fillRadialGradientEndPointX": 0.5,
+          "fillRadialGradientEndPointY": 0.5,
+          "fillRadialGradientStartRadius": 0,
+          "fillRadialGradientEndRadius": 1,
+          "fillRadialGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ]
+        },
+        "createdAt": "2017-03-22T15:00:39.729Z",
+        "createdBy": "BzQP6kPWc4fyvwCb6",
+        "editorType": "ajooEditor",
+        "imageUrl": "data:image/jpeg;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjKzixiPMxe8mOLWG9Hk7HjKzixiPMxe8mOLWG9Hk7AagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACUn5TKfQfXFVpSflMp9B9cQVYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM7KC3mu8Bv6EkIxnnoT8GEO/GObPCHnceRd5Tu8mrSEk0OHQl96nl+mWMP/wAzN1M3+Ss8MQmvsGvp8PrVIxjVhCGeWeMfpzAphKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgqxKaNyt1vQ2Zo3K3W9DZgq0jYVJcR90O7uKMeFRtLb3qM8O9GbPD5uuPmfs+BZSXkkaV3jkslOPzRhSkzRjD6W9g+E2uDWcLa0ljCWMeFNNNHPGeb64g7wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/Z",
+        "parentDiagrams": [],
+        "allowedGroups": [],
+        "seenCount": 35,
+        "toolId": "QjkWr7eLjHsmq7erW",
+        "versionId": "Ye9csBvcqkfYcRkvx"
+      },
+      "boxes": [
+        {
+          "object": {
+            "_id": "Xr7cyWHjs9Ky5JThP",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "type": "Box",
+            "location": {
+              "x": 169,
+              "y": 149,
+              "width": 170,
+              "height": 70
+            },
+            "styleId": "da853dccfbee5b9a6345ea3e",
+            "elementTypeId": "jMStBgQjCvdRa6LhJ",
+            "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+            "style": {
+              "id": "da853dccfbee5b9a6345ea3e",
+              "name": "Default",
+              "elementStyle": {
+                "fill": "#ee8109",
+                "fillPriority": "color",
+                "fillLinearGradientStartPointX": 0.5,
+                "fillLinearGradientStartPointY": 0,
+                "fillLinearGradientEndPointX": 0.5,
+                "fillLinearGradientEndPointY": 1,
+                "fillLinearGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "fillRadialGradientStartPointX": 0.5,
+                "fillRadialGradientStartPointY": 0.5,
+                "fillRadialGradientEndPointX": 0.5,
+                "fillRadialGradientEndPointY": 0.5,
+                "fillRadialGradientStartRadius": 0,
+                "fillRadialGradientEndRadius": 1,
+                "fillRadialGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "stroke": "#b76d31",
+                "strokeWidth": "2",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [
+                  "0",
+                  "0"
+                ],
+                "shape": "RoundRectangle"
+              }
+            },
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx"
+          },
+          "compartments": [
+            {
+              "object": {
+                "_id": "DZZTRNPZAxKTDxYET",
+                "elementId": "Xr7cyWHjs9Ky5JThP",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+                "elementTypeId": "CuBiDRf2BWjrdDncP",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "compartmentTypeId": "hYBLWGFQ7E3na8zkH",
+                "input": "Box",
+                "index": 1,
+                "styleId": "e4b5c659091dd1d76e823e06",
+                "style": {
+                  "align": "center",
+                  "fill": "white",
+                  "padding": 0,
+                  "placement": "start-left",
+                  "visible": true,
+                  "fontSize": 14,
+                  "fontStyle": "normal",
+                  "fontFamily": "Arial",
+                  "fontVariant": "normal"
+                },
+                "isObjectRepresentation": true,
+                "value": "Class",
+                "valueLC": "box",
+                "toolId": "QjkWr7eLjHsmq7erW"
+              }
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "4ekkWXxKg8Pq42ck8",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "type": "Box",
+            "location": {
+              "x": 418,
+              "y": 81,
+              "width": 165,
+              "height": 45
+            },
+            "styleId": "da853dccfbee5b9a6345ea3e",
+            "elementTypeId": "jMStBgQjCvdRa6LhJ",
+            "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+            "style": {
+              "id": "da853dccfbee5b9a6345ea3e",
+              "name": "Default",
+              "elementStyle": {
+                "fill": "#ffffff",
+                "fillPriority": "color",
+                "fillLinearGradientStartPointX": 0.5,
+                "fillLinearGradientStartPointY": 0,
+                "fillLinearGradientEndPointX": 0.5,
+                "fillLinearGradientEndPointY": 1,
+                "fillLinearGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "fillRadialGradientStartPointX": 0.5,
+                "fillRadialGradientStartPointY": 0.5,
+                "fillRadialGradientEndPointX": 0.5,
+                "fillRadialGradientEndPointY": 0.5,
+                "fillRadialGradientStartRadius": 0,
+                "fillRadialGradientEndRadius": 1,
+                "fillRadialGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "stroke": "#000000",
+                "strokeWidth": "1",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [
+                  "0",
+                  "0"
+                ],
+                "shape": "Note"
+              }
+            },
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx"
+          },
+          "compartments": [
+            {
+              "object": {
+                "_id": "mSataDBoLJjkFAh35",
+                "elementId": "4ekkWXxKg8Pq42ck8",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+                "elementTypeId": "CuBiDRf2BWjrdDncP",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "compartmentTypeId": "hYBLWGFQ7E3na8zkH",
+                "input": "Box",
+                "index": 1,
+                "styleId": "e4b5c659091dd1d76e823e06",
+                "style": {
+                  "align": "center",
+                  "fill": "white",
+                  "padding": 0,
+                  "placement": "start-left",
+                  "visible": true,
+                  "fontSize": 14,
+                  "fontStyle": "normal",
+                  "fontFamily": "Arial",
+                  "fontVariant": "normal"
+                },
+                "isObjectRepresentation": true,
+                "value": "Comment",
+                "valueLC": "box",
+                "toolId": "QjkWr7eLjHsmq7erW"
+              }
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "qQQ7Z46kikDpZADC9",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "type": "Box",
+            "location": {
+              "x": 480,
+              "y": 208,
+              "width": 400,
+              "height": 300
+            },
+            "styleId": "da853dccfbee5b9a6345ea3e",
+            "elementTypeId": "jMStBgQjCvdRa6LhJ",
+            "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+            "style": {
+              "id": "da853dccfbee5b9a6345ea3e",
+              "name": "Default",
+              "elementStyle": {
+                "fill": "#ffffff",
+                "fillPriority": "color",
+                "fillLinearGradientStartPointX": 0.5,
+                "fillLinearGradientStartPointY": 0,
+                "fillLinearGradientEndPointX": 0.5,
+                "fillLinearGradientEndPointY": 1,
+                "fillLinearGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "fillRadialGradientStartPointX": 0.5,
+                "fillRadialGradientStartPointY": 0.5,
+                "fillRadialGradientEndPointX": 0.5,
+                "fillRadialGradientEndPointY": 0.5,
+                "fillRadialGradientStartRadius": 0,
+                "fillRadialGradientEndRadius": 1,
+                "fillRadialGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "stroke": "#000000",
+                "strokeWidth": "2",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [
+                  "0",
+                  "0"
+                ],
+                "shape": "RoundRectangle"
+              }
+            },
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx"
+          },
+          "compartments": [
+            {
+              "object": {
+                "_id": "nabFbYpxhLqnFeDZP",
+                "elementId": "qQQ7Z46kikDpZADC9",
+                "diagramId": "avKf3WQhFpEni5Ykk",
+                "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+                "elementTypeId": "CuBiDRf2BWjrdDncP",
+                "versionId": "Ye9csBvcqkfYcRkvx",
+                "compartmentTypeId": "hYBLWGFQ7E3na8zkH",
+                "input": "Box",
+                "index": 1,
+                "styleId": "e4b5c659091dd1d76e823e06",
+                "style": {
+                  "align": "center",
+                  "fill": "white",
+                  "padding": 0,
+                  "placement": "start-left",
+                  "visible": true,
+                  "fontSize": 14,
+                  "fontStyle": "normal",
+                  "fontFamily": "Arial",
+                  "fontVariant": "normal"
+                },
+                "isObjectRepresentation": true,
+                "value": "NamedQuery",
+                "valueLC": "box",
+                "toolId": "QjkWr7eLjHsmq7erW"
+              }
+            }
+          ]
+        }
+      ],
+      "lines": [
+        {
+          "object": {
+            "_id": "xrAXALTELFnb5x94t",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "type": "Line",
+            "points": [
+              169,
+              199,
+              73,
+              199,
+              73,
+              39,
+              178,
+              39,
+              178,
+              149
+            ],
+            "startElement": "Xr7cyWHjs9Ky5JThP",
+            "endElement": "Xr7cyWHjs9Ky5JThP",
+            "styleId": "ff82b816d0500e6f44c2a718",
+            "elementTypeId": "aSKqLNdYk3hM7BL9R",
+            "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+            "style": {
+              "elementStyle": {
+                "stroke": "#000000",
+                "strokeWidth": "3",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [
+                  "0",
+                  "0"
+                ]
+              },
+              "startShapeStyle": {
+                "fill": "#f0f0f0",
+                "fillPriority": "color",
+                "stroke": "#000000",
+                "strokeWidth": "1",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 8,
+                "shape": "Diamond"
+              },
+              "endShapeStyle": {
+                "fill": "#375d8a",
+                "fillPriority": "color",
+                "stroke": "#000000",
+                "strokeWidth": "2",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 8,
+                "shape": "Diamond"
+              },
+              "lineType": "Orthogonal"
+            },
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx"
+          },
+          "compartments": []
+        },
+        {
+          "object": {
+            "_id": "SPeAiXqufJ7E2Grgu",
+            "diagramId": "avKf3WQhFpEni5Ykk",
+            "type": "Line",
+            "points": [
+              418,
+              103,
+              284,
+              103,
+              284,
+              149
+            ],
+            "startElement": "4ekkWXxKg8Pq42ck8",
+            "endElement": "Xr7cyWHjs9Ky5JThP",
+            "styleId": "ff82b816d0500e6f44c2a718",
+            "elementTypeId": "aSKqLNdYk3hM7BL9R",
+            "diagramTypeId": "MrgdJHSZGBsSqYA2p",
+            "style": {
+              "elementStyle": {
+                "stroke": "#000000",
+                "strokeWidth": "1",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [
+                  "5",
+                  "5"
+                ]
+              },
+              "startShapeStyle": {
+                "fill": "#f0f0f0",
+                "fillPriority": "color",
+                "stroke": "#000000",
+                "strokeWidth": "1",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 8,
+                "shape": "None"
+              },
+              "endShapeStyle": {
+                "fill": "#375d8a",
+                "fillPriority": "color",
+                "stroke": "#375d8a",
+                "strokeWidth": "1",
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 8,
+                "shape": "None"
+              },
+              "lineType": "Orthogonal"
+            },
+            "toolId": "QjkWr7eLjHsmq7erW",
+            "versionId": "Ye9csBvcqkfYcRkvx"
+          },
+          "compartments": []
+        }
+      ]
+    }
+  ]
+}

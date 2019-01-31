@@ -1,49 +1,157 @@
+var symbolTable = {};
+var grammarType = "class";
+// var completionOn = false;
 
 Interpreter.customMethods({
 
-	 conditionAutoCompletion: function(e, compart) {
+	conditionAutoCompletion: function(e, compart) {
+ 
+		grammarType = "class"
+		symbolTable = generateSymbolTable();
+		autoCompletion(e);		
+		
+	},
+	linkAutoCompletion: function(e, compart) {
+		grammarType = "link"
 		autoCompletion(e);
-	 },
+	},
 });
 
-autoCompletion = function(e) {
-		removeMessage();
-		// console.log("conditionAutoCompletion", e, compart, e.ctrlKey, e.keyCode)
-		if (e.ctrlKey && (e.keyCode == 32 || e.keyCode == 0)) {
-			var elem = document.activeElement;
-			var text = e.originalEvent.target.value;
-			text = text.substring(0, elem.selectionStart);
-				
-			var continuations = runCompletion(text, Session.get("activeElement"));		
-			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
-				errorMessage(continuations, elem);
-			}else{
-				elem.addEventListener("keyup", ketUpHandler);
-				elem.addEventListener("click", clickHandler);
-				
-				autocomplete(elem, continuations);
-			}
-		}
-	 }
+var currentFocus = 0;
 
-function ketUpHandler(e){
-	if(document.getElementsByClassName("autocomplete-items").length > 0){
-		removeMessage();
-		var text = e.target.value;
-		var continuations = runCompletion(text, Session.get("activeElement"));
+
+generateSymbolTable = function() {
+
+	var editor = Interpreter.editor;
+	var elem = _.keys(editor.getSelectedElements());
+	var abstractQueryTable = {}
+		
+		console.log("ddsdsdsds", elem)
+    // now we should find the connected classes ...
+    if (elem) {
+       var selected_elem = new VQ_Element(elem[0]);
+       var visited_elems = {};
+
+       function GetComponentIds(vq_elem) {
+           visited_elems[vq_elem._id()]=true;
+           _.each(vq_elem.getLinks(),function(link) {
+               if (!visited_elems[link.link._id()]) {
+                 visited_elems[link.link._id()]=true;
+                 var next_el = null;
+                 if (link.start) {
+                   next_el=link.link.getStartElement();
+                 } else {
+                   next_el=link.link.getEndElement();
+                 };
+                 if (!visited_elems[next_el._id()]) {
+                    GetComponentIds(next_el);
+                 };
+               };
+           });
+       };
+
+       GetComponentIds(selected_elem);
+
+       var elem_ids = _.keys(visited_elems);  
+       var queries = genAbstractQueryForElementList(elem_ids, null);   
+	    _.each(queries,function(q) {
+		abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+       })
+    } else {
+      // nothing selected
+    }
+	
+	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+  }
+
+autoCompletion = function(e) {
+	
+	removeMessage();
+
+	if (e.ctrlKey && (e.keyCode == 32 || e.keyCode == 0)) {
+		// completionOn = true;
+	
+		// for (var  key in document.activeElement.parentElement.children) {
+			// var elem = document.activeElement.parentElement.children[key]
+			// if(elem.tagName == "DATALIST"){
+				// var dataList = $("#"+elem.id);
+				// dataList.empty();
+			// }
+		// }	
+		
+		var elem = document.activeElement;
+		var text = e.originalEvent.target.value;
+		text = text.substring(0, elem.selectionStart);
+				
+		var continuations = runCompletion(text, Session.get("activeElement"));		
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
-			errorMessage(continuations,  document.activeElement);
-			closeAllLists();
+			errorMessage(continuations, elem);
 		}else{
-			autocomplete(document.activeElement, continuations);
+			elem.addEventListener("keyup", keyUpHandler);
+			elem.addEventListener("click", clickHandler);
+			currentFocus = 0;
+			autocomplete(elem, continuations);
 		}
 	}
 }
 
+function keyUpHandler(e){
+	if(e.keyCode != 40 && e.keyCode != 38 && e.keyCode != 13){
+		if(document.getElementsByClassName("autocomplete-items").length > 0){
+			
+			removeMessage();
+			var text = e.target.value;
+			var continuations = runCompletion(text, Session.get("activeElement"));
+			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
+				errorMessage(continuations,  document.activeElement);
+				closeAllLists();
+			}else{
+				currentFocus = 0;
+				autocomplete(document.activeElement, continuations);
+			}
+		}
+	}
+}
+
+function keyDownHandler(e){
+	var x = document.getElementById("autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+	  if (e.keyCode == 40) {//arrow down
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) { //arrow up
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {//ENTER
+		e.preventDefault();
+		if (currentFocus == -1) currentFocus = 0;
+        if (currentFocus > -1) {
+		  if (x) x[currentFocus].click();
+        }
+      }
+}
+
 function clickHandler(e){
+	
+	// if(completionOn == true){
+		// for (var key in document.activeElement.parentElement.children) {
+			// var elem = document.activeElement.parentElement.children[key];
+			// if(elem.tagName == "DATALIST"){			
+				// var dataList = $("#"+elem.id);
+				// for (var  k in elem.options) {
+					// var value = elem.options[k].value;
+					// var opt = $('<option mappedvalue = "'+value+'" input = "'+value+'"></option>').attr("value", value);
+					// dataList.append(opt);
+				// }
+			// }
+		// }
+	// }
+	
 	closeAllLists();
 	var elem = document.activeElement;
-	elem.removeEventListener("keyup", ketUpHandler);
+	elem.removeEventListener("keyup", keyUpHandler);
+	currentFocus = 0;
+	// completionOn = false;
 }
 
 function autocomplete(inp, arr) {
@@ -51,11 +159,11 @@ function autocomplete(inp, arr) {
 	removeMessage();
 	
 	var cursorPosition = inp.selectionStart;
-	var currentFocus;
+	//var currentFocus;
     var a, b, i, val = inp.value;
     /*close any already open lists of autocompleted values*/
     closeAllLists();
-    currentFocus = -1;
+   // currentFocus = 0;
     /*create a DIV element that will contain the items (values):*/
     a = document.createElement("DIV");
 	 
@@ -72,13 +180,14 @@ function autocomplete(inp, arr) {
 	a.style.backgroundColor = '#efefef';
 	a.style.boxShadow = '0px 0px 6px 1px rgba(128,128,128,0.3)';
 	  
-    a.setAttribute("id", inp.id + "autocomplete-list");
+    a.setAttribute("id", "autocomplete-list");
     a.setAttribute("class", "autocomplete-items");
     /*append the DIV element as a child of the autocomplete container:*/
     inp.parentNode.appendChild(a);
 
     for (i = 0; i < arr.length; i++) {
         /*create a DIV element for each matching element:*/
+		
 		b = document.createElement("DIV");
         b.innerHTML = arr[i];
         /*insert a input field that will hold the current array item's value:*/
@@ -92,56 +201,47 @@ function autocomplete(inp, arr) {
 			/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
 			closeAllLists();
 			inp.focus();
+				
+			// if(completionOn == true){
+				// for (var key in document.activeElement.parentElement.children) {
+					// var elem = document.activeElement.parentElement.children[key];
+					// if(elem.tagName == "DATALIST"){			
+						// var dataList = $("#"+elem.id);
+						// for (var  k in elem.options) {
+							// var value = elem.options[k].value;
+							// var opt = $('<option mappedvalue = "'+value+'" input = "'+value+'"></option>').attr("value", value);
+							// dataList.append(opt);
+						// }
+					// }
+				// }
+			// }
+			
+			// completionOn = false;
+	
 		});
+		if(i == 0) b.style.backgroundColor = '#f8c26c';
         a.appendChild(b);
 	}
-  //});
-  /*execute a function presses a key on the keyboard:*/
-  // inp.addEventListener("keydown", function(e) {
-      // var x = document.getElementById(this.id + "autocomplete-list");
-      // if (x) x = x.getElementsByTagName("div");
-      // if (e.keyCode == 40) {
-        // /*If the arrow DOWN key is pressed,
-        // increase the currentFocus variable:*/
-        // currentFocus++;
-        // /*and and make the current item more visible:*/
-        // addActive(x);
-      // } else if (e.keyCode == 38) { //up
-        // /*If the arrow UP key is pressed,
-        // decrease the currentFocus variable:*/
-        // currentFocus--;
-        // /*and and make the current item more visible:*/
-        // addActive(x);
-      // } else if (e.keyCode == 13) {
-        // /*If the ENTER key is pressed, prevent the form from being submitted,*/
-        // e.preventDefault();
-        // if (currentFocus > -1) {
-          // /*and simulate a click on the "active" item:*/
-          // if (x) x[currentFocus].click();
-        // }
-      // }
-  // });
-  //function addActive(x) {
-    /*a function to classify an item as "active":*/
-  //  if (!x) return false;
-    /*start by removing the "active" class on all items:*/
-  //  removeActive(x);
-  //  if (currentFocus >= x.length) currentFocus = 0;
-  // if (currentFocus < 0) currentFocus = (x.length - 1);
-    /*add class "autocomplete-active":*/
-  //  x[currentFocus].classList.add("autocomplete-active");
-  //}
-  //function removeActive(x) {
-    /*a function to remove the "active" class from all autocomplete items:*/
-  //  for (var i = 0; i < x.length; i++) {
-   //   x[i].classList.remove("autocomplete-active");
-   // }
-  //}
-  
-/*execute a function when someone clicks in the document:*/
-document.addEventListener("click", function (e) {
-    closeAllLists(e.target);
-});
+ 
+	inp.removeEventListener("keydown", keyDownHandler);
+	inp.addEventListener("keydown", keyDownHandler);
+
+}
+
+//function to classify an item as selected
+function addActive(x) {	
+	if (!x) return false;
+	removeActive(x);
+	if (currentFocus >= x.length) currentFocus = 0;
+	if (currentFocus < 0) currentFocus = (x.length - 1);
+	x[currentFocus].style.backgroundColor = '#f8c26c';
+}
+	
+//function to remove selected item
+function removeActive(x) {
+	for (var i = 0; i < x.length; i++) {
+		x[i].style.backgroundColor = '#efefef';
+	}
 }
 
 function closeAllLists(elmnt) {
@@ -152,9 +252,8 @@ function closeAllLists(elmnt) {
         x[i].parentNode.removeChild(x[i]);
 	  }
 	}
+
 }
-
-
  
 function generateInputValue(fi, con, cursorPosition){
 
@@ -190,11 +289,24 @@ runCompletion = function (text, act_elem){
 	var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 	var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 	var className = compart["input"];
+	
 	try {
 		// var parsed_exp = vq_arithmetic.parse(str, {completions});
 		var schema = new VQ_Schema();
-		var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:{}, className:className});
-		var obj = JSON.parse(parsed_exp);
+		if(grammarType == "link"){
+			var name_list = [];
+			var act_elem = Session.get("activeElement");
+			if (act_elem) {
+				var vq_link = new VQ_Element(act_elem);
+				if (vq_link.isLink()) {
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, link:vq_link});
+				};
+			};
+		
+		} else {
+			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className});
+			// var obj = JSON.parse(parsed_exp);
+		}
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
 		// console.log(com["message"], JSON.parse(com["message"]));
@@ -327,8 +439,3 @@ function removeMessage(){
 	var m = document.getElementById("message");
 	if(m != null) m.parentNode.removeChild(m);
 }
-
-
-
-
-

@@ -3,9 +3,13 @@ Template.AddMergeValues.alias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
 Template.AddMergeValues.aggregation = new ReactiveVar("count");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
+Template.AddMergeValues.e = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
+		// console.log("eeeee", e, e.target.parentElement.parentElement.parentElement.parentElement);
+		//console.log("eeeee", Session.get("activeElement"));
+		
 		var expressionField = getExpression(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
@@ -13,8 +17,9 @@ Interpreter.customMethods({
 		Template.AddMergeValues.expression.set(expr);
 		Template.AddMergeValues.alias.set(getAlais(e).val());
 		Template.AddMergeValues.aggregation.set(aggregation);
-		Template.AddMergeValues.cardinality.set(countCardinality(expr));
+		Template.AddMergeValues.cardinality.set(countCardinality(expr, Session.get("activeElement")));
 		Template.AddMergeValues.expressionField.set(expressionField);
+		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 
 		if(expr != null && expr != "")$("#merge-values-form").modal("show");
 		else Interpreter.showErrorMsg("Please specify expression", -3);
@@ -82,7 +87,7 @@ Template.AddMergeValues.helpers({
 	},
 
 	selectedConcat: function() {
-		if(Template.AddMergeValues.aggregation.get() == "concat") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "group_concat") return "selected";
 		return "";
 	},
 });
@@ -116,6 +121,7 @@ Template.AddMergeValues.events({
 
 	"click #cancel-add-link": function() {
 		clearMergeValuesInput();
+		$(Template.AddMergeValues.e.get()).modal('toggle');
 	},
 
 });

@@ -441,7 +441,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
             var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-		        if ((var_obj["kind"]=="PROPERTY_ALIAS" || var_obj["kind"]=="CLASS_ALIAS") && obj_class.instanceAlias != f.exp) {
+			if (var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
               var expression = f.exp;
 			        if (f.alias) expression = f.alias;
 			        var condition = {exp:"EXISTS(" + expression + ")"};
@@ -582,6 +582,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                     isUnion:elem.isUnion(),
                     isUnit:elem.isUnit(),
                     variableName:elem.getVariableName(),
+                    groupByThis:elem.isGroupByThis(),
                     indirectClassMembership: elem.isIndirectClassMembership(),
                     // should not add the link which was used to get to the elem
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
@@ -643,6 +644,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
       groupings: e.getGroupings(),
       indirectClassMembership: e.isIndirectClassMembership(),
       distinct:e.isDistinct(),
+      groupByThis:e.isGroupByThis(),
       limit:e.getLimit(),
       offset:e.getOffset(),
       fullSPARQL:e.getFullSPARQL(),

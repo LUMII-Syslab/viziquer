@@ -586,7 +586,7 @@ Interpreter.customMethods({
 
 	VQSetHideDefaultLinkValue: function(a,b,c){
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj && proj.autoHideDefaultPropertyName) {
+		if (proj && proj.autoHideDefaultPropertyName == "true") {
 			 return "true";
 		} else {
 			 return "false";
@@ -676,6 +676,99 @@ Interpreter.customMethods({
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
    //console.log(val);
 		return [val.value]
+	},
+	
+	VQgetOrderByFields: function(val) {
+			
+		//atribute value for class
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var order_by_list = [];
+
+		var symbolTable = generateSymbolTable()
+		for (var  key in symbolTable) {
+			order_by_list.push({value: key, input: key});
+		}
+
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+
+		if (act_el) {
+		//check if Class name is defined for active element
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+
+			if (!compart_type) {
+				return order_by_list;
+			}
+
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			if (!compart) {
+				return order_by_list;
+			}
+
+			//Read attribute values from DB
+			var schema = new VQ_Schema();
+			if (schema.classExist(compart["input"])) {
+				var klass = schema.findClassByName(compart["input"]);
+
+				_.each(klass.getAllAttributes(), function(att){
+					var att_val = att["name"];
+					order_by_list.push({value: att_val, input: att_val});
+				})
+			}
+		}
+
+	 	order_by_list = _.uniq(order_by_list, false, function(item) {
+	 		return item["input"];
+	 	});
+		
+		return order_by_list;
+	},
+	
+	VQgetGroupByFields: function(val) {
+		//atribute value for class
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var group_by_list = [];
+
+		var symbolTable = generateSymbolTable();
+
+		for (var  key in symbolTable) {
+			for (var  k in symbolTable[key]) {
+				if(symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "CLASS_ALIAS" || symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") group_by_list.push({value: key, input: key});
+			}
+		}
+		
+		group_by_list = _.uniq(group_by_list, false, function(item) {
+	 		return item["input"];
+	 	});
+		
+		return group_by_list;
 	},
 
   // TODO: Dynamic Context Menus dont work
@@ -867,4 +960,142 @@ Interpreter.customMethods({
 		return false;
 	},
 
+	//Adds outer query as [ ] class with ++ link
+	addOuterQuery: function(){
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			Interpreter.destroyErrorMsg();
+
+			var currentElement = new VQ_Element(selected_elem_id);
+			if (currentElement.isClass() && currentElement.isRoot()) {
+				currentElement.setClassStyle("condition");
+				//coordinates to place new Box and create link
+				var locClass = currentElement.getNewLocation();
+				var coordX = locClass.x + Math.round(locClass.width/2);
+				var coordY = currentElement.obj["location"]["y"] + currentElement.obj["location"]["height"] 
+				var locLink = [coordX, coordY, coordX, locClass.y];
+				
+				Create_VQ_Element(function(cl){
+					cl.setName("[ ]");
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);					
+					Create_VQ_Element(function(lnk) {
+						lnk.setName("++");
+						lnk.setLinkType("REQUIRED");
+						lnk.setNestingType("SUBQUERY");
+				 	}, locLink, true, cl, currentElement);
+				}, locClass);											
+			} else {
+				Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+			}
+
+		} else {
+			Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+		}
+	},
+
+	//
+	setAsMainClass: function(){
+		Interpreter.destroyErrorMsg();
+		//Based on "generate SPARQL from component" realisation
+        var newMainElementID = Session.get("activeElement");        
+        var selected_elem = new VQ_Element(newMainElementID);
+        if(!selected_elem.isClass()){
+            console.log("Selected element is not class");
+            return;
+        }
+        
+        //Get ID of all elements in query
+        var visited_elems = {};
+        var isInsideNested = false;
+
+        function GetComponentIds(vq_elem) {
+            visited_elems[vq_elem._id()] = true;
+            _.each(vq_elem.getLinks(),function(link) {
+            	console.log("link: ", link.link.isSubQuery(), link.link.getStartElement()._id(), vq_elem._id());
+                if (!visited_elems[link.link._id()]) {
+                    visited_elems[link.link._id()]=true;
+                    var next_el = null;
+                    if (link.link.isSubQuery() && !(link.link.getStartElement()._id() == vq_elem._id())) {
+                    	isInsideNested = true;
+                    } else { 
+                    	if (link.start) {
+                        	next_el=link.link.getStartElement();
+	                    } else {
+	                        next_el=link.link.getEndElement();
+	                    };
+	                    
+	                    if (!visited_elems[next_el._id()]) {
+	                        GetComponentIds(next_el);
+	                    };
+                    }
+                };
+            });
+        };
+
+        GetComponentIds(selected_elem);
+        if (isInsideNested) {
+        	console.log();
+        	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
+        } else {
+	        var elem_ids = _.keys(visited_elems);
+	        var class_ids = [];
+
+	        //Get ID from selection of classes, that are query and set them as condition
+	        _.each(elem_ids, function(e){
+	            var VQElem = new VQ_Element(e);         
+	            if (VQElem.isClass() && VQElem.isRoot()){
+	            	VQElem.setClassStyle("condition");
+	            }
+	        })
+
+	        selected_elem.setClassStyle("query");
+	    }
+	},
+
+	
 });
+
+
+generateSymbolTable = function() {
+
+	var editor = Interpreter.editor;
+	var elem = _.keys(editor.getSelectedElements());
+	var abstractQueryTable = {}
+		
+    // now we should find the connected classes ...
+    if (elem) {
+       var selected_elem = new VQ_Element(elem[0]);
+       var visited_elems = {};
+
+       function GetComponentIds(vq_elem) {
+           visited_elems[vq_elem._id()]=true;
+           _.each(vq_elem.getLinks(),function(link) {
+               if (!visited_elems[link.link._id()]) {
+                 visited_elems[link.link._id()]=true;
+                 var next_el = null;
+                 if (link.start) {
+                   next_el=link.link.getStartElement();
+                 } else {
+                   next_el=link.link.getEndElement();
+                 };
+                 if (!visited_elems[next_el._id()]) {
+                    GetComponentIds(next_el);
+                 };
+               };
+           });
+       };
+
+       GetComponentIds(selected_elem);
+
+       var elem_ids = _.keys(visited_elems);  
+       var queries = genAbstractQueryForElementList(elem_ids, null);   
+	    _.each(queries,function(q) {
+		abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+       })
+    } else {
+      // nothing selected
+    }
+	
+	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+  }

@@ -5,8 +5,6 @@
 			// parse(string, options) where options is an object
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
       options = arguments[1];
-			//console.log(options);
-
 			//////////////////////////////////////////////
 			var continuations = {};
 			
@@ -24,10 +22,11 @@
 				}
 			}
 			function getReferences(place, priority){
-				//TO DO
-				//addContinuation(place, "AP", priority);
-				//addContinuation(place, "S", priority);
-				//addContinuation(place, "C", priority);
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority);
+					}
+				};
 			}
 			function getProperties(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAttributes()
@@ -36,7 +35,17 @@
 				}
 				getAssociations(place, 95);
 				//getClasses(place, 94);
+				getPropertyAlias(place, 93);
 			}
+			function getPropertyAlias(place, priority){
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						var kind = options["symbol_table"][key][k]["kind"];
+						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority);
+					}
+				};
+			}
+			
 			function getAssociations(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAssociations()
 
@@ -63,10 +72,51 @@
 
 			// string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
-			function resolveTypeFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.type } else { return null } };
+			// returns type of the identifier from symbol table. Null if does not exist.
+			function resolveTypeFromSymbolTable(id) {
+				var context = options.context;
+				
+				if(typeof options.symbol_table[context] === 'undefined') return null;
+				
+				var st_row = options.symbol_table[context][id]; 
+				if (st_row) { 
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].type 
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+						}
+					}
+					return st_row.type 
+				} else { 
+					return null 
+				} 
+			};
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
-			function resolveKindFromSymbolTable(id) { var st_row = options.symbol_table[id]; if (st_row) { return st_row.kind } else { return null } };
+			function resolveKindFromSymbolTable(id) { 
+				var context = options.context;
+				
+				if(typeof options.symbol_table[context] === 'undefined') return null;
+				
+				var st_row = options.symbol_table[context][id]; 
+				if (st_row) { 
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].kind 
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+						}
+					}
+					return st_row.kind 
+				} else { 
+					return null 
+				} 
+			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
@@ -119,11 +169,12 @@
 			};
 			
 			function referenceNames(o) {
-				//TO DO
 				var classAliasTable = [];
-				//classAliasTable["AP"] = "AcademicProgram";
-				//classAliasTable["S"] = "Student";
-				//classAliasTable["C"] = "Course";
+				for(var key in options["symbol_table"]){
+					for(var k in options["symbol_table"][key]){
+						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["localName"]
+					}
+				};
 				
 				if(typeof classAliasTable[o] !== 'undefined')continuations[location()["end"]["offset"]] = {};
 			
@@ -212,7 +263,7 @@
 
 			UnaryExpressionListA = (UnaryExpressionList*)
 
-			UnaryExpressionList = space ((mult "*") / (dev "/")) space UnaryExpression 
+			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
 			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
 
@@ -257,7 +308,7 @@
 			GROUP_CONCAT = group_concat_c "GROUP_CONCAT"i 
 			SEPARATORTer = separator_c "SEPARATOR"i 
 			
-			SEPARATOR = (semi_collon ";" space SEPARATORTer space equal "=" StringQuotes ) / (comma_c comma:"," space StringQuotes) 
+			SEPARATOR = (semi_colon ";" space SEPARATORTer space equal "=" StringQuotes ) / (comma_c comma:"," space StringQuotes) 
 			
 			FunctionExpression = (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / BOUNDFunction / NilFunction / BNODEFunction)
 
@@ -407,7 +458,7 @@
 
 			PrefixedName = (PNAME_LN) 
 
-			PNAME_NS = (PN_PREFIX? collon ":") 
+			PNAME_NS = (PN_PREFIX? colon ":") 
 
 			PNAME_LN = ((PropertyReference? PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
 
@@ -488,7 +539,7 @@
 			LNameP = (LName:(( Chars_String_prefix))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			
 			VERTICAL = vertical_c "|" {return {Alternative:"|"}}
-			PATH_SYMBOL = ((dot ".") / (dev "/")) {return {PathSymbol :"/"}} 
+			PATH_SYMBOL = ((dot ".") / (div "/")) {return {PathSymbol :"/"}} 
 			
 			PEPS = (PathEltOrInverse:PathEltOrInverse PATH_SYMBOL)  {return pathOrReference(PathEltOrInverse)}
 
@@ -522,8 +573,8 @@
 			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) 
 
 			LikeExpression = (space like_c 'LIKE'i space (likeString1 / likeString2)) 
-			likeString1 = (dubble_quote '"' persent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  persent"%"? dubble_quote '"') 
-			likeString2 = (quote "'" persent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  persent"%"? quote "'") 
+			likeString1 = (dubble_quote '"' percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? dubble_quote '"') 
+			likeString2 = (quote "'" percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? quote "'") 
 
 			BetweenExpression = (space between_c 'BETWEEN'i space br_open'(' space NumericExpression space Comma space NumericExpression br_close')') 
 
@@ -550,7 +601,7 @@
 			exclamation = "" {addContinuation(location(), "!", 90);}
 			a_c = "" {addContinuation(location(), "a", 90);}
 			mult = "" {addContinuation(location(), "*", 90);}
-			dev = "" {addContinuation(location(), "/", 90);}
+			div = "" {addContinuation(location(), "/", 90);}
 			true_c = "" {addContinuation(location(), "true", 90);}
 			false_c = "" {addContinuation(location(), "false", 90);}
 			double_check = "" {addContinuation(location(), "^^", 90);}
@@ -567,7 +618,7 @@
 			sample_c = "" {addContinuation(location(), "SAMPLE", 90);}
 			group_concat_c = "" {addContinuation(location(), "GROUP_CONCAT", 90);}
 			separator_c = "" {addContinuation(location(), "SEPARATOR", 90);}
-			semi_collon = "" {addContinuation(location(), ";", 90);}
+			semi_colon = "" {addContinuation(location(), ";", 90);}
 			equal = "" {addContinuation(location(), "=", 90);}
 			comma_c = "" {addContinuation(location(), ",", 90);}
 			str_c = "" {addContinuation(location(), "STR", 90);}
@@ -632,7 +683,7 @@
 			REPLACE_c  = "" {addContinuation(location(), "REPLACE", 90);}
 			EXISTS_c = "" {addContinuation(location(), "EXISTS", 90);}
 			at = "" {addContinuation(location(), "@", 90);}
-			collon = "" {addContinuation(location(), ":", 90);}
+			colon = "" {addContinuation(location(), ":", 90);}
 			question = "" {addContinuation(location(), "?", 90);}
 			dubble_question = "" {addContinuation(location(), "??", 90);}
 			dollar = "" {addContinuation(location(), "$", 90);}
@@ -645,7 +696,7 @@
 			like_c = "" {addContinuation(location(), "LIKE", 90);}
 			more = "" {addContinuation(location(), ">", 90);}
 			less = "" {addContinuation(location(), "<", 90);}
-			persent = "" {addContinuation(location(), "%", 90);}
+			percent = "" {addContinuation(location(), "%", 90);}
 			between_c = "" {addContinuation(location(), "BETWEEN", 90);}
 			int_c = "" {addContinuation(location(), "", 1);}
 			string_c = "" {addContinuation(location(), "", 1);}
