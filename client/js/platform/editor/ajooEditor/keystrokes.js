@@ -5,8 +5,13 @@
 		//and those which are specified in the configurator
 		processKeyDown: function(e) {
 
-			console.log("in process key down")
+			var modal_path = ".modal.in";
 
+			// if modal is open, than closing it
+			if (e.keyCode == 13 && _.size($(modal_path)) > 0) {
+				$(modal_path).find(".btn.btn-primary").trigger("click");
+				return;
+			}
 
 			//if Ctrl pressed or editing the dialog
 			if (e.keyCode == 17 || Session.get("editingDialog") || $(".modal.in").length > 0 || Session.get("isYasqeActive")) {

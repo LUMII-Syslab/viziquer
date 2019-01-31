@@ -10,7 +10,6 @@ Template.dialogTabContent.helpers({
 Template.dialogTabContent.events({
 
 	'blur .dialog-input': function(e) {
-
 		e.stopPropagation();
 
 		var src = $(e.target);

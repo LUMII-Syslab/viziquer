@@ -1,4 +1,14 @@
 
+$(document).on('keypress', function (e) {
+
+	// if modal is open, than closing it
+	var modal_path = ".modal.in";
+	if (e.keyCode == 13 && _.size($(modal_path)) > 0) {
+		$(modal_path).find(".btn.btn-primary").trigger("click");
+	}
+});
+
+
 Interpreter = {
 
 	customExtensionPoints: {},

@@ -74,9 +74,6 @@ Template.multiField.events({
 		e.preventDefault();
 
 		var src = $(e.target);
-
-		console.log("$(src) ", $(src))
-
 		var multi_field = $(src).closest(".multi-field");
 		var compart_type_id = multi_field.attr("id");
 
@@ -181,7 +178,6 @@ Template.show_multi_field_form.helpers({
 Template.show_multi_field_form.events({
 
 	'click .new-multi-row': function(e, templ) {
-
 		var src = $(e.target);
 
 		var form = templ.$(".row-form");
