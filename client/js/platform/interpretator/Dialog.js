@@ -565,8 +565,11 @@ Dialog = {
 				else {
 					var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", compart_type);
 					if (proc_name && proc_name != "") {
-						compartments.push({input: Interpreter.execute(proc_name, [""]),
-											value: Interpreter.execute(proc_name, [""]),
+
+						var val = Interpreter.execute(proc_name, [list.startElement, list.endElement,]);
+
+						compartments.push({input: val,
+											value: val,
 											compartmentTypeId: compart_type._id,
 										});
 					}
