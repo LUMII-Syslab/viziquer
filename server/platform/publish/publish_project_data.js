@@ -350,7 +350,6 @@ Meteor.publish("Diagram_Locker", function(list) {
 	if (is_project_version_reader(this.userId, list)) {
 
 		var self = this;
-		var user;
 
 		var diagram = Diagrams.find({_id: list["diagramId"],
 									projectId: list["projectId"],
@@ -360,27 +359,30 @@ Meteor.publish("Diagram_Locker", function(list) {
 
 		//TODO: This is not reactive when user's name changes (need improvement)
 		var handle = diagram.observe({
+			
 			added: function (doc) {
-
-				user = Users.findOne({systemId: doc["editingUserId"]});
-				if (user)
+				var user = Users.findOne({systemId: doc["editingUserId"]});
+				if (user && doc["editingUserId"]) {
 					self.added("Users", doc["editingUserId"], user);
+				}
 			},
 
 			changed: function(new_doc, old_doc) {
-				user = Users.findOne({systemId: new_doc["editingUserId"]});
+				var user = Users.findOne({systemId: new_doc["editingUserId"]});
 
-				if (old_doc["editingUserId"])
+				if (old_doc["editingUserId"]) {
 					self.removed('Users', old_doc["editingUserId"]);
+				}
 
-				if (new_doc["editingUserId"] && user)
+				if (new_doc["editingUserId"] && user) {
 					self.added("Users", new_doc["editingUserId"], user);
+				}
 			},
 
 			removed: function (doc) {
-
-				if (doc["editingUserId"])
+				if (doc["editingUserId"]) {
 					self.removed('Users', doc["editingUserId"]);
+				}
 			}
 
 		});
