@@ -49,7 +49,8 @@ Template.AddLink.helpers({
 								cardinality = cardinality.concat("[*]");
 								colorLetters = colorLetters.concat("color: purple");
 							} else {
-								var maxCard = schema.resolveLinkByName(e.name).maxCardinality;
+								//var maxCard = schema.resolveLinkByName(e.name).maxCardinality; // Labota izsaucamā funkcija LL
+								var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality;
 								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
 									cardinality = cardinality.concat("[*]");
 									colorLetters = colorLetters.concat("color: purple");

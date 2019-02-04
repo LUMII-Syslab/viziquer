@@ -153,6 +153,7 @@ TriplesMap.prototype = {
 //-----------------------------------------------------------------------------
 function collectClasses(cl, all, first){
 	var superClasses = {};
+	cl.isVisited = true
 	if ( _.size(cl[all]) > 0){
 		_.each(cl[all], function(sc){
 			superClasses[sc.getID()] = sc;
@@ -161,8 +162,11 @@ function collectClasses(cl, all, first){
 	else {
 		_.each(cl[first], function(sc){
 			superClasses[sc.getID()] = sc;
-			var allSuperClasses = collectClasses(sc, all, first);
-			_.extend(superClasses, allSuperClasses);
+			if (sc.isVisited == false)
+			{
+				var allSuperClasses = collectClasses(sc, all, first);
+				_.extend(superClasses, allSuperClasses);
+			}
 			})
 	}
 	return superClasses;
@@ -306,7 +310,9 @@ VQ_Schema = function () {
 	})
 
 	_.each(this.Classes, function (cl){
+	    _.each(schema.Classes, function (c){ c.isVisited = false})
 	    cl.addAllSuperClasses();
+		_.each(schema.Classes, function (c){ c.isVisited = false})
 		cl.addAllSubClasses();
 		var allSuperSubClasses = {};
 		_.extend(allSuperSubClasses, cl.allSuperClasses);
@@ -472,6 +478,14 @@ VQ_Schema.prototype = {
 	else
 		return null;
   },
+  resolveSchemaRoleByName: function (linkName, sourceClass, targetClass) {
+    if (this.associationExist(linkName))
+	{    
+		return this.findSchemaRoleByName(linkName, sourceClass, targetClass).getSchemaRoleInfo();
+	}
+	else
+		return null;
+  },
   resolveAttributeByName: function (className, attributeName) {
     // Pagaidām klases vārds netiek ņemts vērā
 	if (this.attributeExist(attributeName))
@@ -597,6 +611,7 @@ VQ_Class = function (classInfo, schema){
 	this.outAssoc = {};
 	this.properties = {};
 	this.isUnique = true;
+	this.isVisited = false;
 	var e = schema.findClassByName(classInfo.localName);
 	if ( e && e.localName == classInfo.localName ){
 	  this.isUnique = false;
@@ -618,6 +633,7 @@ VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
 VQ_Class.prototype.isUnique = null;
+VQ_Class.prototype.isVisited = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
 				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
@@ -758,7 +774,15 @@ VQ_SchemaRole.prototype.inverseSchemaRole = null;
 VQ_SchemaRole.prototype.isSymmetric = null;
 VQ_SchemaRole.prototype.minCardinality = null;
 VQ_SchemaRole.prototype.maxCardinality = null;
-
+VQ_SchemaRole.prototype.getRoleInfo = function() {
+  if (this.maxCardinality)
+	return {minCardinality:this.minCardinality, maxCardinality:this.maxCardinality};
+  else
+    return {minCardinality:this.role.minCardinality, maxCardinality:this.role.maxCardinality}
+  };
+VQ_SchemaRole.prototype.getSchemaRoleInfo = function() {
+  return _.extend(this.getElemInfo(), this.getRoleInfo());
+  };
 
 
 // VQ_Element class describes the main objects within ViziQuer diagram - Classes and links
