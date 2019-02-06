@@ -1897,15 +1897,26 @@ VQ_Element.prototype = {
   setVirtualRoot: function(isRoot) { this.isVirtualRoot = isRoot; VQ_Element_cache[this._id()].isVirtualRoot = isRoot},
 
 
+  //Read coordinates and size of box
+  getCoordinates: function(){
+  	var element_id = this._id();
+  	var element = Elements.findOne({_id: element_id});
+	var x = element["location"]["x"];
+	var y = element["location"]["y"];
+	var w = element["location"]["width"];
+	var h = element["location"]["height"];
+  	return {x: x, y: y, width: w, height: h}
+  },
 	// Temporal solution: Put new element below target element, as close as possible without overlapping
 	// d - step to move below after each try
 	// Returns {x: x, y: y1, width: w, height: h} (the left upper corner + dimensions)
 	getNewLocation: function (d = 30) {
 	    //console.log(this);
-	    var x = this.obj["location"]["x"];
-	    var y = this.obj["location"]["y"];      
-	    var w = this.obj["location"]["width"];
-	    var h = this.obj["location"]["height"];
+	    var boxCoord = this.getCoordinates();
+	    var x = boxCoord["x"];
+	    var y = boxCoord["y"];     
+	    var w = boxCoord["width"];
+	    var h = boxCoord["height"];
 	    //y1 - coordinate for a new element; 1st itteration
 	    var y1 = y + h + d;
 

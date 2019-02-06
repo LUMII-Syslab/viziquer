@@ -554,7 +554,6 @@ Interpreter.customMethods({
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var elem = new VQ_Element(c["elementId"]);
-			 console.log(params, c, elem); 
        _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
 					link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
 			 });
@@ -594,37 +593,36 @@ Interpreter.customMethods({
 		};
 	},
 	
-	VQsetAssociationName: function(start, end) {
+	VQsetAssociationName: function() {
+		
 		var name_list = [];
-		var start_class = Elements.findOne({_id: start});
-		var end_class = Elements.findOne({_id: end});
+		var act_elem = Session.get("activeElement");
+		if (act_elem) {
+			var vq_link = new VQ_Element(act_elem);
+			if (vq_link.isLink()) {
+  				var myschema = new VQ_Schema();
+				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
+				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
+				if (start_class && end_class) {
+					var all_assoc_from_start = start_class.getAllAssociations();
+					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+					var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+					 	return _.find(all_sub_super_of_end, function(c) {
+							 	return c.localName == a.class
+					 	})
+			  		});
 
-		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
-		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
-		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
-		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
-		var schema = new VQ_Schema();
-		if (schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
-			var start_class = schema.findClassByName(compart["input"]);
-			var end_class = schema.findClassByName(compart_end["input"]);
-				
-			var all_assoc_from_start = start_class.getAllAssociations();
-			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-			var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-				return _.find(all_sub_super_of_end, function(c) {
-					return c.localName == a.class
-				})
-			});
-
-			name_list = _.map(possible_assoc_list, function(assoc) {
-				var assoc_name = assoc["name"];
-				if (assoc["type"] == "<=") {
-					assoc_name = "inv("+assoc_name+")";
+					name_list = _.map(possible_assoc_list, function(assoc) {
+							var assoc_name = assoc["name"];
+							if (assoc["type"] == "<=") {
+								assoc_name = "inv("+assoc_name+")";
+							};
+							return assoc_name;
+						});
 				};
-				return assoc_name;
-			});
-		}
-
+			};
+		};
+		
 		if(name_list.length == 1) return name_list[0];
 		
 		return ""
@@ -972,10 +970,11 @@ Interpreter.customMethods({
 			if (currentElement.isClass() && currentElement.isRoot()) {
 				currentElement.setClassStyle("condition");
 				//coordinates to place new Box and create link
-				var locClass = currentElement.getNewLocation();
+				var d = 60; //distance between boxes
+				var locClass = currentElement.getNewLocation(d); console.log(locClass);
 				var coordX = locClass.x + Math.round(locClass.width/2);
-				var coordY = currentElement.obj["location"]["y"] + currentElement.obj["location"]["height"] 
-				var locLink = [coordX, coordY, coordX, locClass.y];
+				var coordY = locClass["y"] - d; 
+				var locLink = [coordX, locClass.y, coordX, coordY];
 				
 				Create_VQ_Element(function(cl){
 					cl.setName("[ ]");
@@ -985,14 +984,19 @@ Interpreter.customMethods({
 						lnk.setName("++");
 						lnk.setLinkType("REQUIRED");
 						lnk.setNestingType("SUBQUERY");
+						// var proj = Projects.findOne({_id: Session.get("activeProject")});
+						// lnk.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				 	}, locLink, true, cl, currentElement);
+				 	
+				 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				}, locClass);											
 			} else {
-				Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+				Interpreter.showErrorMsg("Outer class can be added only to main query class (orange box).", -3);
 			}
 
 		} else {
-			Interpreter.showErrorMsg("Outer class addition can be invoked only at main query class (orange box by default).", -3);
+			Interpreter.showErrorMsg("Outer class can be added only to main query class (orange box).", -3);
 		}
 	},
 
@@ -1006,27 +1010,31 @@ Interpreter.customMethods({
             console.log("Selected element is not class");
             return;
         }
+
+        if (selected_elem.isRoot()){
+        	return;
+        }
         
         //Get ID of all elements in query
         var visited_elems = {};
-        var isInsideNested = false;
+        var hasNested = false;
 
         function GetComponentIds(vq_elem) {
             visited_elems[vq_elem._id()] = true;
             _.each(vq_elem.getLinks(),function(link) {
-            	console.log("link: ", link.link.isSubQuery(), link.link.getStartElement()._id(), vq_elem._id());
                 if (!visited_elems[link.link._id()]) {
                     visited_elems[link.link._id()]=true;
                     var next_el = null;
-                    if (link.link.isSubQuery() && !(link.link.getStartElement()._id() == vq_elem._id())) {
-                    	isInsideNested = true;
+                    var dir = link.link.getRootDirection();                                                       
+                    if (link.link.isSubQuery()) {
+                    	hasNested = true;
                     } else { 
                     	if (link.start) {
-                        	next_el=link.link.getStartElement();
+                        	next_el=link.link.getStartElement(); 
 	                    } else {
 	                        next_el=link.link.getEndElement();
 	                    };
-	                    
+
 	                    if (!visited_elems[next_el._id()]) {
 	                        GetComponentIds(next_el);
 	                    };
@@ -1036,7 +1044,7 @@ Interpreter.customMethods({
         };
 
         GetComponentIds(selected_elem);
-        if (isInsideNested) {
+        if (hasNested) {
         	console.log();
         	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
         } else {

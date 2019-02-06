@@ -937,6 +937,20 @@
                 "procedure": "AddCondition"
               },
               {
+                "item": "Re-shape Query",
+                "procedure": "Foo",
+                "subMenu": [
+                  {
+                   "item": "Add Outer Query",
+                    "procedure": "addOuterQuery"
+                  },
+                  {
+                    "item": "Set As Main Class",
+                    "procedure": "setAsMainClass"
+                  }
+                ]
+              },
+              {
                 "item": "Cut",
                 "procedure": "Cut"
               },
@@ -981,20 +995,6 @@
                   {
                     "item": "Generate SPARQL",
                     "procedure": "GenerateSPARQL_from_selection"
-                  }
-                ]
-              },
-              {
-                "item": "Re-shape Query",
-                "procedure": "Foo",
-                "subMenu": [
-                  {
-                   "item": "Add Outer Query",
-                    "procedure": "addOuterQuery"
-                  },
-                  {
-                    "item": "Set As Main Class",
-                    "procedure": "setAsMainClass"
                   }
                 ]
               }
