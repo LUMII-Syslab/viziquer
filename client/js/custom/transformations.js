@@ -1006,18 +1006,54 @@ Interpreter.customMethods({
 		//Based on "generate SPARQL from component" realisation
         var newMainElementID = Session.get("activeElement");        
         var selected_elem = new VQ_Element(newMainElementID);
+        //Check if any action is needed
         if(!selected_elem.isClass()){
             console.log("Selected element is not class");
             return;
         }
-
         if (selected_elem.isRoot()){
         	return;
         }
-        
+        if(InsideNested(newMainElementID)){
+        	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
+        	return;
+        }         
+                       
         //Get ID of all elements in query
         var visited_elems = {};
-        var hasNested = false;
+        GetComponentIds(selected_elem);       
+        var elem_ids = _.keys(visited_elems);
+        var class_ids = [];
+
+        //Get ID from selection of classes, that are query and set them as condition
+        _.each(elem_ids, function(e){
+            var VQElem = new VQ_Element(e);         
+            if (VQElem.isClass() && VQElem.isRoot()){
+            	VQElem.setClassStyle("condition");
+            }
+        })
+
+        selected_elem.setClassStyle("query");
+
+	    function InsideNested(id){
+        	var vq_elem = new VQ_Element(id);
+        	if (vq_elem.isRoot()){
+        		return false;
+        	} else {
+        		if (vq_elem.getLinkToRoot()){
+        			if (vq_elem.getLinkToRoot().link.isSubQuery()) {
+        				return true;
+        			}
+
+        			var elements = vq_elem.getLinkToRoot().link.getElements();
+        			if (vq_elem.getLinkToRoot().start) {
+        				return InsideNested(elements.start.obj._id);
+        			} else {
+        				return InsideNested(elements.end.obj._id);
+        			}
+        		}
+        	}
+        }
 
         function GetComponentIds(vq_elem) {
             visited_elems[vq_elem._id()] = true;
@@ -1025,42 +1061,18 @@ Interpreter.customMethods({
                 if (!visited_elems[link.link._id()]) {
                     visited_elems[link.link._id()]=true;
                     var next_el = null;
-                    var dir = link.link.getRootDirection();                                                       
-                    if (link.link.isSubQuery()) {
-                    	hasNested = true;
-                    } else { 
-                    	if (link.start) {
-                        	next_el=link.link.getStartElement(); 
-	                    } else {
-	                        next_el=link.link.getEndElement();
-	                    };
+                	if (link.start) {
+                    	next_el=link.link.getStartElement(); 
+                    } else {
+                        next_el=link.link.getEndElement();
+                    };
 
-	                    if (!visited_elems[next_el._id()]) {
-	                        GetComponentIds(next_el);
-	                    };
-                    }
+                    if (!visited_elems[next_el._id()]) {
+                        GetComponentIds(next_el);
+                    };
                 };
             });
         };
-
-        GetComponentIds(selected_elem);
-        if (hasNested) {
-        	console.log();
-        	Interpreter.showErrorMsg("Can't set class as Main inside Nested query.", -3);
-        } else {
-	        var elem_ids = _.keys(visited_elems);
-	        var class_ids = [];
-
-	        //Get ID from selection of classes, that are query and set them as condition
-	        _.each(elem_ids, function(e){
-	            var VQElem = new VQ_Element(e);         
-	            if (VQElem.isClass() && VQElem.isRoot()){
-	            	VQElem.setClassStyle("condition");
-	            }
-	        })
-
-	        selected_elem.setClassStyle("query");
-	    }
 	},
 
 	
