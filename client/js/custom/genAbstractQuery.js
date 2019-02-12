@@ -82,7 +82,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
     obj_class.fields.forEach(function(f) {
         // CAUTION .............
         // HACK: * and ** fields
-        if (f.exp=="*" || f.exp=="**") {
+        if (f.exp=="*") {
            var cl =schema.findClassByName(obj_class.identification.localName);
            if (cl) {
               var attr_list = cl.getAllAttributes();
@@ -92,6 +92,18 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               });
            };
+        } else if (f.exp=="(*attr)") {
+           var cl =schema.findClassByName(obj_class.identification.localName);
+           if (cl) {
+              var attr_list = cl.getAllAttributes()
+              attr_list.forEach(function(attr) {
+                var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
+                var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
+              });
+           };
+        } else if (f.exp=="(*sub)") {
+          //TODO
         } else if (f.alias) {
               my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
         } else {
@@ -314,7 +326,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
     obj_class.conditions.forEach(function(c) {parseExpObject(c,obj_class.identification._id);});
     obj_class.aggregations.forEach(function(a) {parseExpObject(a,obj_class.identification._id);});
     // CAUTION!!!!! Hack for * and **
-    obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
+    // obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
+    obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="(*attr)" || f.exp=="(*sub)")});
 
     obj_class.fields.forEach(function(f) {
       // CAUTION!!!!! Hack for (.)

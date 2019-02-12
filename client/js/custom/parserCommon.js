@@ -21,7 +21,7 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 	
 	for(var key in expressionTable){
 		
-		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || key == "Aggregate" ||
+		if(key == "Concat" || key == "Additive" || key == "Unary"  || (key == "Function" && expressionTable[key] != "langmatchesShort" && expressionTable[key] != "langmatchesShortMultiple") || key == "RegexExpression" || key == "Aggregate" ||
 		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"){
 			isSimpleVariable = false;
 		}

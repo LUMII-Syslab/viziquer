@@ -58,6 +58,27 @@
 					else addContinuation(place, prop[key]["name"], priority);
 				}
 			}
+			
+			function getAttrSub(place, priority){
+				if(options.type == "attribute"){
+					addContinuation(place, "(*attr)", priority);
+					addContinuation(place, "(*sub)", priority);
+				}
+			}
+			
+			function getAssociations(place, priority){
+				var prop = options.schema.findClassByName(options.className).getAllAssociations()
+
+				for(var key in prop){
+					var association = prop[key]["name"];
+					if(prop[key]["type"] == "<=") {
+						addContinuation(place, "^" + prop[key]["name"], priority)
+						addContinuation(place, "INV(" + prop[key]["name"] + ")", priority)
+					}
+					else addContinuation(place, prop[key]["name"], priority);
+				}
+			}
+			
 			function addContinuation(place, continuation, priority, start_end){
 				var position = "start";
 				if(start_end != null)position = start_end;
@@ -202,7 +223,7 @@
 			}
 		}
 
-			Main = (space Expression space)? end
+			Main = (space  ((attrSub_c ("(*attr)" / "(*sub)")) / Expression) space)? end
 			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr
 			ValueScope = (curv_br_open "{" (ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) curv_br_close "}")
 			ValueScopeA = (INTEGER two_dots ".." INTEGER)
@@ -310,7 +331,7 @@
 			
 			SEPARATOR = (semi_colon ";" space SEPARATORTer space equal "=" StringQuotes ) / (comma_c comma:"," space StringQuotes) 
 			
-			FunctionExpression = (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / BOUNDFunction / NilFunction / BNODEFunction)
+			FunctionExpression = (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / FunctionExpressionLANGMATCHES / FunctionCOALESCE / BOUNDFunction / NilFunction / BNODEFunction)
 
 			STR = str_c "STR"i 
 			LANG = lang_c "LANG"i 
@@ -379,6 +400,13 @@
 			FunctionExpressionC =  (days / years / months / hours / minutes / seconds ) br_open "(" space  PrimaryExpression space minus "-" space  PrimaryExpression space br_close")" 
 			
 			FunctionExpressionD = (COALESCE / CONCAT) ExpressionList2 
+			
+			FunctionCOALESCE = (QName / LN) space dubble_question "??" space (QName / LN) 
+			
+			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
+			FunctionExpressionLANGMATCHESA = (QName / LN) LANGTAG_MUL 
+			FunctionExpressionLANGMATCHESB = (QName / LN) LANGTAG 
+			
 			
 			BOUNDFunction =  BOUND br_open "(" space PrimaryExpression space br_open ")"
 			NilFunction = (RAND / NOW / UUID / STRUUID) NIL 
@@ -449,6 +477,8 @@
 			Comma = comma_c "," 
 
 			LANGTAG =  at "@" string
+			LANGTAG_MUL = at "@" br_open "(" (string2 (LANGTAG_LIST)*) br_close ")"
+			LANGTAG_LIST = (Comma space string2)
 
 			RDFLiteralC = StringQuotes 
 
@@ -570,7 +600,9 @@
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
 			space = ((" ")*) 
 			spaceObl = space_c (" ")+
-			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) 
+			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+)
+			string2 = space_c (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+)
+			
 
 			LikeExpression = (space like_c 'LIKE'i space (likeString1 / likeString2)) 
 			likeString1 = (dubble_quote '"' percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? dubble_quote '"') 
@@ -708,5 +740,6 @@
 			references_c = "" {getReferences(location(), 91);}
 			associations_c = "" {getAssociations(location(), 91);}
 			classes_c = "" {getClasses(location(), 91); getAssociations(location(), 91);}
+			attrSub_c = "" {getAttrSub(location(), 92)}
 			
 			end = "" {error(returnContinuation()); return;}

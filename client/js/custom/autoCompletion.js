@@ -11,6 +11,13 @@ Interpreter.customMethods({
 		autoCompletion(e);		
 		
 	},
+	attributeAutoCompletion: function(e, compart) {
+ 
+		grammarType = "attribute"
+		symbolTable = generateSymbolTable();
+		autoCompletion(e);		
+		
+	},
 	linkAutoCompletion: function(e, compart) {
 		grammarType = "link"
 		autoCompletion(e);
@@ -285,6 +292,7 @@ function generateInputValue(fi, con, cursorPosition){
 }
 
 runCompletion = function (text, act_elem){
+
 	var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 	var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 	var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
@@ -304,7 +312,7 @@ runCompletion = function (text, act_elem){
 			};
 		
 		} else {
-			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className});
+			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType});
 			// var obj = JSON.parse(parsed_exp);
 		}
 		//console.log("parsed_exp", parsed_exp, obj);

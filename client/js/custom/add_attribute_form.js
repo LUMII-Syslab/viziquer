@@ -15,10 +15,38 @@ Template.AddAttribute.helpers({
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
-			attr_list.push({name:"*"});
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
-			if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) attr_list.push({name:"(select this)"});
+			
+			// if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) attr_list.push({name:"(select this)"});
+			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
+			else attr_list.push({name:"(select this)"});
+			
+			attr_list.push({name:"*"});
+						
+			attr_list.push({separator:"line"});
+			
+		
+			var symbolTable = generateSymbolTable()
+			
+			for (var  key in symbolTable) {	
+				for (var symbol in symbolTable[key]) {
+					if(symbolTable[key][symbol]["context"] != selected_elem_id){
+						var vq_obj = new VQ_Element(symbolTable[key][symbol]["context"]);
+						var links = vq_obj.getLinks();
+						for (var assoc in links) {
+							if(links[assoc]["link"].isSubQuery() || links[assoc]["link"].isGlobalSubQuery()){
+								var association = links[assoc]["link"];
+								var isStart = links[assoc]["start"];
+								var clazz;
+								if(isStart == true) clazz = association.getStartElement();
+								else clazz = association.getEndElement();
+								if(clazz["obj"]["_id"] == selected_elem_id) attr_list.push({name: key});
+							}
+						}
+					}
+				}	
+			}
 			
 			attr_list.push({separator:"line"});
 

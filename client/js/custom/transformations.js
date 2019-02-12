@@ -279,22 +279,47 @@ Interpreter.customMethods({
 
 		}
 
-
+		
 	 	// return atr_names;
 		atr_names = _.sortBy(atr_names, "input");
+		
+		var selected_elem_id = Session.get("activeElement");
+		
+		var symbolTable = generateSymbolTable()
+		
+		for (var  key in symbolTable) {	
+			for (var symbol in symbolTable[key]) {
+				if(symbolTable[key][symbol]["context"] != selected_elem_id){
+					var vq_obj = new VQ_Element(symbolTable[key][symbol]["context"]);
+					var links = vq_obj.getLinks();
+					for (var assoc in links) {
+						if(links[assoc]["link"].isSubQuery() || links[assoc]["link"].isGlobalSubQuery()){
+							var association = links[assoc]["link"];
+							var isStart = links[assoc]["start"];
+							var clazz;
+							if(isStart == true) clazz = association.getStartElement();
+							else clazz = association.getEndElement();
+							if(clazz["obj"]["_id"] == selected_elem_id) atr_names.push({value: key, input: key});
+						}
+					}
+				}
+			}	
+		}
 
 	 	atr_names = _.uniq(atr_names, false, function(item) {
 	 		return item["input"];
 	 	});
 
-		var selected_elem_id = Session.get("activeElement");
+		
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			var vq_obj = new VQ_Element(selected_elem_id);
 			if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) atr_names.push({input:"(select this)",value:"(select this)"});;
 		} else {atr_names.push({input:"(select this)",value:"(select this)"});}
 				
 		atr_names.push({input:"*",value:"*"});
-		atr_names.push({input:"**",value:"**"});
+		atr_names.push({input:"(*attr)",value:"(*attr)"});
+		atr_names.push({input:"(*sub)",value:"(*sub)"});
+		// atr_names.push({input:"**",value:"**"});
 
 		return atr_names;
 
@@ -593,36 +618,37 @@ Interpreter.customMethods({
 		};
 	},
 	
-	VQsetAssociationName: function() {
-		
+	VQsetAssociationName: function(start, end) {
 		var name_list = [];
-		var act_elem = Session.get("activeElement");
-		if (act_elem) {
-			var vq_link = new VQ_Element(act_elem);
-			if (vq_link.isLink()) {
-  				var myschema = new VQ_Schema();
-				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
-				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
-				if (start_class && end_class) {
-					var all_assoc_from_start = start_class.getAllAssociations();
-					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-					var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-					 	return _.find(all_sub_super_of_end, function(c) {
-							 	return c.localName == a.class
-					 	})
-			  		});
+		var start_class = Elements.findOne({_id: start});
+		var end_class = Elements.findOne({_id: end});
 
-					name_list = _.map(possible_assoc_list, function(assoc) {
-							var assoc_name = assoc["name"];
-							if (assoc["type"] == "<=") {
-								assoc_name = "inv("+assoc_name+")";
-							};
-							return assoc_name;
-						});
+		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
+		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
+		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
+		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
+		var schema = new VQ_Schema();
+		if (schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
+			var start_class = schema.findClassByName(compart["input"]);
+			var end_class = schema.findClassByName(compart_end["input"]);
+				
+			var all_assoc_from_start = start_class.getAllAssociations();
+			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+			var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+				return _.find(all_sub_super_of_end, function(c) {
+					return c.localName == a.class
+				})
+			});
+
+			name_list = _.map(possible_assoc_list, function(assoc) {
+				var assoc_name = assoc["name"];
+				if (assoc["type"] == "<=") {
+					assoc_name = "inv("+assoc_name+")";
 				};
-			};
-		};
-		
+				return assoc_name;
+			});
+		}
+
 		if(name_list.length == 1) return name_list[0];
 		
 		return ""

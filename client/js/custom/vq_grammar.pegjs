@@ -283,7 +283,7 @@
 
 			SEPARATOR = (";" space SEPARATORTer space "=" SEPAR: (StringQuotes) ) / (comma:"," space SEPAR:(StringQuotes)) {return makeVar(SEPAR)}
 
-			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / BOUNDFunction / NilFunction / BNODEFunction) {return {FunctionExpression:FunctionExpression}}
+			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / FunctionExpressionLANGMATCHES / FunctionCOALESCE / BOUNDFunction / NilFunction / BNODEFunction) {return {FunctionExpression:FunctionExpression}}
 
 			STR = "STR"i {return "STR"}
 			LANG = "LANG"i {return "LANG"}
@@ -354,6 +354,12 @@
 			
 			FunctionExpressionD = Function:(COALESCE / CONCAT) ExpressionList:ExpressionList2 {return {Function:Function, ExpressionList:ExpressionList}}
 			
+			FunctionCOALESCE = PrimaryExpression1:(QName / LN) space "??" space PrimaryExpression2:(QName / LN) {return {Function:"coalesceShort", PrimaryExpression1:PrimaryExpression1, PrimaryExpression2:PrimaryExpression2}}
+			
+			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
+			FunctionExpressionLANGMATCHESA = PrimaryExpression:(QName / LN) LANGTAG_MUL:LANGTAG_MUL {return {Function:"langmatchesShortMultiple", PrimaryExpression:PrimaryExpression, LANGTAG_MUL:LANGTAG_MUL}}
+			FunctionExpressionLANGMATCHESB = PrimaryExpression:(QName / LN) LANGTAG:LANGTAG {return {Function:"langmatchesShort", PrimaryExpression:PrimaryExpression, LANGTAG:makeVar(LANGTAG)}}
+			
 			BOUNDFunction = Function: BOUND "(" space PrimaryExpression:PrimaryExpression space")" {return {Function:Function, PrimaryExpression:PrimaryExpression}}
 			NilFunction = Function: (RAND / NOW / UUID / STRUUID) NIL:NIL {return {Function:Function, NIL:NIL}}
 			BNODEFunction = BNODEFunctionA / BNODEFunctionB
@@ -423,6 +429,8 @@
 			Comma = Comma:"," {return {Comma:Comma}}
 
 			LANGTAG = "@" string
+			LANGTAG_MUL = "@" "(" LANGTAG_MUL:(string2 (LANGTAG_LIST)*) ")" {return LANGTAG_MUL}
+			LANGTAG_LIST = (Comma:Comma space string:string2) {return string}
 
 			RDFLiteralC = String:StringQuotes {return {String:makeVar(String)}}
 
@@ -572,6 +580,7 @@
 			space = ((" ")*) {return }
 			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
+			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
 			likeString1 = ('"' start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? '"') {return {string: makeVar(string), start:start, end:end}}

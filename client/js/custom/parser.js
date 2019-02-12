@@ -26,6 +26,7 @@ var idTable = [];
 var messages = [];
 var classTable = [];
 var classMembership = "a";
+var attributeFilter = "";
 var classID = null;
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
@@ -82,6 +83,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	classTable = ct;
 	classMembership = memS;
 	classID = clID;
+	attributeFilter = "";
 	
 	for(var key in knPr){
 		if(knPr[key][0] == "")knownNamespaces[":"] = knPr[key][1];
@@ -179,7 +181,14 @@ function createTriples(tripleTable, tripleType){
 				//TODO add prefix to table
 			} else objectName = "?"+objectName;
 			if(tripleType == "out"){
-				if(parseType == "attribute"|| parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + "." );
+				if(parseType == "attribute") {
+					var triple = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
+					if(attributeFilter != ""){
+						triple = triple+ "\n  FILTER("+attributeFilter+")\n";
+					}
+					triples.push(triple);
+				}
+				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + "." );
 			} else {
 				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + "." );
 			}
@@ -2421,75 +2430,108 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			visited = 1
 		}
 		if (key == "FunctionExpression") { 
-			isFunction = true
-			if(typeof expressionTable[key]["Function"]!== 'undefined' && (expressionTable[key]["Function"].toLowerCase() == 'month' || expressionTable[key]["Function"].toLowerCase() == 'day' || expressionTable[key]["Function"].toLowerCase() == 'year'
-				|| expressionTable[key]["Function"].toLowerCase() == 'timezone' || expressionTable[key]["Function"].toLowerCase() == 'tz')) isTimeFunction = true;
-			if (typeof expressionTable[key]["Function"]!== 'undefined') {
-				if(expressionTable[key]["Function"].toLowerCase() == 'date' || expressionTable[key]["Function"].toLowerCase() == 'datetime') {
-					SPARQLstring = SPARQLstring+ "xsd:";
-					prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
-					isTimeFunction = true;
+			
+			if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "langmatchesShort"){
+				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+				if(parseType == "attribute"){
+					SPARQLstring = pe
+					attributeFilter = "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"] + "')";
+				}					
+				SPARQLstring = SPARQLstring  + "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"] + "')";	
+			}else if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "langmatchesShortMultiple"){
+				attributeFilter = true;
+				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+				
+				var lang = "LANGMATCHES(LANG(" + pe + "), '";
+				
+				SPARQLstring = SPARQLstring  + lang + expressionTable[key]["LANGTAG_MUL"][0] + "')";
+				if(typeof expressionTable[key]["LANGTAG_MUL"][1] !== 'undefined'){
+					for(var langtag in expressionTable[key]["LANGTAG_MUL"][1]){
+						SPARQLstring = SPARQLstring  + " || " + lang + expressionTable[key]["LANGTAG_MUL"][1][langtag] + "')";
+					}
 				}
-				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
-			}
-			if (typeof expressionTable[key]["PrimaryExpression"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
-			}
-			if (typeof expressionTable[key]["NIL"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "()";
-			}
-			if (typeof expressionTable[key]["Expression"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
-			}
-			var expTable = [];
-			if (typeof expressionTable[key]["Expression1"]!== 'undefined') {
-				expTable.push(generateExpression({Expression : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
-			}
-			if (typeof expressionTable[key]["Expression2"]!== 'undefined') {
-				expTable.push(generateExpression({Expression : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
-			}
-			if (typeof expressionTable[key]["Expression3"]!== 'undefined') {
-				expTable.push(generateExpression({Expression : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
-			}
-			if(expTable.length > 0) SPARQLstring = SPARQLstring  + "(" + expTable.join(", ") +")";
-			if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
-				SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
-			}
-			if (typeof expressionTable[key]["FunctionTime"]!== 'undefined') {
-				isTimeFunction = true;
-				if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
-				// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
-					var fun = expressionTable[key]["FunctionTime"].toLowerCase();
-					var sl = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-					var sr = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-					var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
-					var dateTimeArray = ["xsd:dateTime", "XSD_DATE_TIME", "xsd_date"];
-					if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateArray, symbolTable[classID]) == true){
-						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
-					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
-						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
-					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isValidForConvertation(expressionTable[key]["PrimaryExpressionR"], symbolTable[classID]) == true ){
-						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '",  xsd:dateTime(' + sr + "), " + sl + ")";
+				if(parseType == "attribute"){
+					attributeFilter = SPARQLstring;
+					SPARQLstring = pe;
+				}
+			}else if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "coalesceShort"){
+				isFunction = true;
+				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression1"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+				var pe2 = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression2"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+				
+				SPARQLstring = SPARQLstring + "COALESCE(" + pe + ", " + pe2 + ")";
+				
+			} else{
+				isFunction = true;
+			
+				if(typeof expressionTable[key]["Function"]!== 'undefined' && (expressionTable[key]["Function"].toLowerCase() == 'month' || expressionTable[key]["Function"].toLowerCase() == 'day' || expressionTable[key]["Function"].toLowerCase() == 'year'
+					|| expressionTable[key]["Function"].toLowerCase() == 'timezone' || expressionTable[key]["Function"].toLowerCase() == 'tz')) isTimeFunction = true;
+				if (typeof expressionTable[key]["Function"]!== 'undefined') {
+					if(expressionTable[key]["Function"].toLowerCase() == 'date' || expressionTable[key]["Function"].toLowerCase() == 'datetime') {
+						SPARQLstring = SPARQLstring+ "xsd:";
 						prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+						isTimeFunction = true;
 					}
-					else if(isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
-						SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", xsd:dateTime(" + sl + "))";
-						prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
-					}
-					else{
+					SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
+				}
+				if (typeof expressionTable[key]["PrimaryExpression"]!== 'undefined') {
+					SPARQLstring = SPARQLstring  + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+				}
+				if (typeof expressionTable[key]["NIL"]!== 'undefined') {
+					SPARQLstring = SPARQLstring  + "()";
+				}
+				if (typeof expressionTable[key]["Expression"]!== 'undefined') {
+					SPARQLstring = SPARQLstring  + "(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+				}
+				var expTable = [];
+				if (typeof expressionTable[key]["Expression1"]!== 'undefined') {
+					expTable.push(generateExpression({Expression : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
+				}
+				if (typeof expressionTable[key]["Expression2"]!== 'undefined') {
+					expTable.push(generateExpression({Expression : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
+				}
+				if (typeof expressionTable[key]["Expression3"]!== 'undefined') {
+					expTable.push(generateExpression({Expression : expressionTable[key]["Expression3"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation));
+				}
+				if(expTable.length > 0) SPARQLstring = SPARQLstring  + "(" + expTable.join(", ") +")";
+				if (typeof expressionTable[key]["ExpressionList"]!== 'undefined') {
+					SPARQLstring = SPARQLstring  + "(" + generateExpression({ExpressionList : expressionTable[key]["ExpressionList"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+				}
+				if (typeof expressionTable[key]["FunctionTime"]!== 'undefined') {
+					isTimeFunction = true;
+					if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
+					// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
+						var fun = expressionTable[key]["FunctionTime"].toLowerCase();
+						var sl = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+						var sr = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+						var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
+						var dateTimeArray = ["xsd:dateTime", "XSD_DATE_TIME", "xsd_date"];
+						if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateArray, symbolTable[classID]) == true){
+							SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
+						}
+						else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
+							SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", " + sl + ")";
+						}
+						else if(isDateVar(expressionTable[key]["PrimaryExpressionL"], dateTimeArray, symbolTable[classID]) == true && isValidForConvertation(expressionTable[key]["PrimaryExpressionR"], symbolTable[classID]) == true ){
+							SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '",  xsd:dateTime(' + sr + "), " + sl + ")";
+							prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+						}
+						else if(isDateVar(expressionTable[key]["PrimaryExpressionR"], dateTimeArray, symbolTable[classID]) == true){
+							SPARQLstring = SPARQLstring + 'bif:datediff("' + fun.substring(0, fun.length-1) + '", ' + sr + ", xsd:dateTime(" + sl + "))";
+							prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+						}
+						else{
+							var s = expressionTable[key]["FunctionTime"] + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) +  "-" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")"
+							// if showIncorrectSyntaxForm == true then incorrectSyntaxForm(s, "Unsupported Syntax for General SPARQL option") end
+							SPARQLstring = SPARQLstring  + s
+						}
+					}else{
 						var s = expressionTable[key]["FunctionTime"] + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) +  "-" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")"
 						// if showIncorrectSyntaxForm == true then incorrectSyntaxForm(s, "Unsupported Syntax for General SPARQL option") end
 						SPARQLstring = SPARQLstring  + s
 					}
-				}else{
-					var s = expressionTable[key]["FunctionTime"] + "(" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) +  "-" + generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionR"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")"
-					// if showIncorrectSyntaxForm == true then incorrectSyntaxForm(s, "Unsupported Syntax for General SPARQL option") end
-					SPARQLstring = SPARQLstring  + s
 				}
 			}
-			
 			visited = 1;
 		}
 

@@ -757,11 +757,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 
 			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes);
 			
-			var groupByThis = "";
-			
-			if(rootClass["groupByThis"] == true)groupByThis = "?" + idTable[rootClass["identification"]["_id"]];
-			
-			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, groupByThis);
+			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership);
 
 			 messages = messages.concat(orderBy["messages"]);
 			 messages = messages.concat(groupByFromFields["messages"]);
@@ -957,6 +953,7 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 	sparqlTable["isUnit"] = clazz["isUnit"]; // label if class in unit
 	sparqlTable["variableReferenceCandidate"] = []; // list with candidates to reference
 	sparqlTable["classMembership"] = classMembership; // class Membership role
+	sparqlTable["groupByThis"] = clazz["groupByThis"]; // group By This class
 
 	var classSimpleTriples = [];
 	var classExpressionTriples = [];
@@ -1055,6 +1052,30 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 
 			//agregation in class
 			if(result["isAggregate"] == true) {
+				if(field["alias"] == null || field["alias"] == "") {
+					if(result["isExpression"] == false && result["isFunction"] == false) {
+
+						var indexCole = result["exp"].indexOf(";");
+						var endIndex = result["exp"].indexOf(")");
+						if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
+
+						var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+						if(typeof variableNamesAll[tempAlias] !== 'undefined') {
+							var count = variableNamesAll[tempAlias]["counter"] + 1;
+							variableNamesAll[tempAlias]["counter"]  = count;
+							alias = tempAlias + "_" + count;
+						}
+						else {
+							alias = tempAlias;
+							variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false};
+						}
+
+					} else {
+						alias = "expr_" + counter;
+						counter++;
+					}
+				}
+				
 				sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
 
 				//local Aggregation
@@ -1432,9 +1453,8 @@ function forAbstractQueryTable(clazz, parentClass, rootClassId, idTable, variabl
 				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes);
 
 				//GROUP BY
-				var groupByThis = "";
-				if(subclazz["groupByThis"] == true) groupByThis = "?" + idTable[subclazz["identification"]["_id"]];
-				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], groupByThis);
+				
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"]);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
@@ -1541,13 +1561,11 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
-function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, groupByThis){
+function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership){
 	var messages = [];
 	//var orderTable = [];
 	var groupTripleTable = [];
 	var orderGroupBy = [];
-	
-	if(groupByThis != "") orderGroupBy.push(groupByThis);
 	
 	_.each(groupings,function(group) {
 		if(group["exp"] != null && group["exp"].replace(" ", "") !=""){
@@ -2127,11 +2145,10 @@ function generateSELECT(sparqlTable, forSingleClass){
 	aggregateSelectInfo = [];
 	innerDistinctInfo = [];
 	variableReferenceCandidate = [];
-	// selectClasses = [];
 	groupBy = [];
 
+	if(sparqlTable["groupByThis"] == true) groupBy.push(sparqlTable["class"]);
 	// selectMAIN
-
 	// simpleVariables
 	for (var number in sparqlTable["selectMain"]["simpleVariables"]){
 		if(typeof sparqlTable["selectMain"]["simpleVariables"][number]["alias"] === 'string') {
@@ -2144,32 +2161,6 @@ function generateSELECT(sparqlTable, forSingleClass){
 			innerDistinctInfo.push(sparqlTable["innerDistinct"]["simpleVariables"][number]);
 		}
 	}
-
-	// expressionVariables
-	/*for (var number in sparqlTable["selectMain"]["expressionVariables"]){
-		if(typeof sparqlTable["selectMain"]["expressionVariables"][number]["alias"] === 'string') {
-			selectInfo.push(sparqlTable["selectMain"]["expressionVariables"][number]["alias"]);
-			groupBy.push(sparqlTable["selectMain"]["expressionVariables"][number]["alias"]);
-		}
-	}
-	for (var number in sparqlTable["innerDistinct"]["expressionVariables"]){
-		if(typeof sparqlTable["innerDistinct"]["expressionVariables"][number] === 'string') {
-			innerDistinctInfo.push(sparqlTable["innerDistinct"]["expressionVariables"][number]);
-		}
-	}*/
-
-	// functionVariables
-	/*for (var number in sparqlTable["selectMain"]["functionVariables"]){
-		if(typeof sparqlTable["selectMain"]["functionVariables"][number]["alias"] === 'string') {
-			selectInfo.push(sparqlTable["selectMain"]["functionVariables"][number]["alias"]);
-			groupBy.push(sparqlTable["selectMain"]["functionVariables"][number]["alias"]);
-		}
-	}
-	for (var number in sparqlTable["innerDistinct"]["functionVariables"]){
-		if(typeof sparqlTable["innerDistinct"]["functionVariables"][number] === 'string') {
-			innerDistinctInfo.push(sparqlTable["innerDistinct"]["functionVariables"][number]);
-		}
-	}*/
 
 	//variable names
 	if(typeof sparqlTable["variableName"] !== 'undefined') {

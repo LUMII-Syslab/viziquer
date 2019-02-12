@@ -1347,7 +1347,7 @@
                           },
                           {
                             "extensionPoint": "processKeyStroke",
-                            "procedure": "conditionAutoCompletion"
+                            "procedure": "attributeAutoCompletion"
                           }
                         ],
                         "prefix": null,
@@ -3100,6 +3100,10 @@
                   {
                     "extensionPoint": "dynamicDropDown",
                     "procedure": "VQgetAssociationNames"
+                  },
+				  {
+                    "extensionPoint": "processKeyStroke",
+                    "procedure": "linkAutoCompletion"
                   }
                 ],
                 "dialogTabId": "LH5gP2Peqhnu5rMeB",
