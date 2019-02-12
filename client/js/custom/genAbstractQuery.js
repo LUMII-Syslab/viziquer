@@ -106,7 +106,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
            var cl =schema.findClassByName(obj_class.identification.localName);
            if (cl) {
               var attr_list = {};
-              if (f.exp=="*") { attr_list = cl.getAttributes()} else { attr_list = cl.getAllAttributes()};
+              attr_list = cl.getAllAttributes();
               attr_list.forEach(function(attr) {
                 var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
