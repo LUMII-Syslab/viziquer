@@ -62,28 +62,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
-    // Copy everything relevant from parent to this
-     //parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
-
-    /*if (obj_class.linkIdentification) {
-       if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery)) {
-
-       };
-
-       if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
-           parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
-       };
-
-       if (obj_class.linkType == "NOT" || obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
-          parents_scope_table.CLASS_ALIAS.forEach(function(ca) { my_scope_table.CLASS_ALIAS.push(ca)});
-       };
-    } */
-
     if (obj_class.instanceAlias) {
       my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName), context:obj_class.identification._id});
-
-      // TODO: Remove after compatibility issues resolved
-      symbol_table[obj_class.instanceAlias]={type:resolveClassByName(obj_class.identification.localName), kind:"CLASS_ALIAS"};
     };
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
@@ -105,23 +85,18 @@ resolveTypesAndBuildSymbolTable = function (query) {
         if (f.exp=="*" || f.exp=="**") {
            var cl =schema.findClassByName(obj_class.identification.localName);
            if (cl) {
-              var attr_list = {};
-              attr_list = cl.getAllAttributes();
+              var attr_list = cl.getAllAttributes();
               attr_list.forEach(function(attr) {
                 var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
-                // ???? TODO: my_scope_table.PROPERTY_NAME.push({id:attr["name"], type:attr_info});
               });
            };
         } else if (f.alias) {
               my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
-
-              // TODO: Remove after compatibility issues resolved
-             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
         } else {
           // field without alias? We should somehow identify it
-          // obj_id + exp ?
+          // obj_id + exp
           my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
         };
     });
@@ -133,8 +108,6 @@ resolveTypesAndBuildSymbolTable = function (query) {
              // TODO: resolve type
              parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
           };
-             // TODO: Remove after compatibility issues resolved
-             symbol_table[f.alias]={type:null, kind:"PROPERTY_ALIAS"}
         };
     });
 
@@ -302,16 +275,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
   //remove all UNRESOLVED_NAME and UNRESOLVED_FIELD_ALIAS entries
   function cleanSymbolTable() {
       _.each(symbol_table, function(name_list, current_context) {
-          // TODOL Because old TABLE should remain intact for now
-          if (!current_context["kind"]) {
             _.each(name_list, function(entry_list, name) {
                 symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS") } );
                 if (_.isEmpty(symbol_table[current_context][name])) {
                   delete symbol_table[current_context][name];
                 };
-            })
-          }
-
+            })      
       })
   };
 
@@ -391,13 +360,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+           //console.log(var_obj);
            switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
                 if (f.alias) {
                   updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
-
-                  // TODO: remove when compatibility issues resolved
-                  symbol_table[f.alias].type = var_obj["type"];
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
@@ -463,7 +430,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   resolveClassExpressions(query.root);
   cleanSymbolTable();
 
-  //console.log(query.root);
+  //console.log(symbol_table);
   return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes}
 };
 
