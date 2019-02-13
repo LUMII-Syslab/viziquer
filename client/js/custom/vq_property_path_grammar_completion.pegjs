@@ -55,26 +55,45 @@
 			function getAssociations(place, priority){
 
 				var myschema = new VQ_Schema();
+				
+				//all
+				var getAllSchemaAssociations = myschema.getAllSchemaAssociations();
+				for (var role in getAllSchemaAssociations) {
+					var assoc_name = getAllSchemaAssociations[role]["name"];
+					addContinuation(place, assoc_name, 1);
+				}
+				
 				var start_class = myschema.findClassByName(options.link.getStartElement().getName());
 				var end_class = myschema.findClassByName(options.link.getEndElement().getName());
-				if (start_class && end_class) {
-						var all_assoc_from_start = start_class.getAllAssociations();
-						var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+				if (start_class) {
+					var all_assoc_from_start = start_class.getAllAssociations();
+					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+						
+					//start
+					for (var role in all_assoc_from_start) {
+						var assoc_name = all_assoc_from_start[role]["name"];
+							if (all_assoc_from_start[role]["type"] == "<=") {
+								assoc_name = "inv("+assoc_name+")";
+							};
+								addContinuation(place, assoc_name, 99);
+					}
+					//start - end
+					if (end_class){
 						var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
 							return _.find(all_sub_super_of_end, function(c) {
 									return c.localName == a.class
 							})
 						});
-
+						
 						for (var role in possible_assoc_list) {
 							var assoc_name = possible_assoc_list[role]["name"];
 								if (possible_assoc_list[role]["type"] == "<=") {
 									assoc_name = "inv("+assoc_name+")";
 								};
-								addContinuation(place, assoc_name, priority);
+								addContinuation(place, assoc_name, 100);
 						}
-					};
-				 
+					}		
+				};	
 			}
 			
 			// string -> idObject

@@ -416,6 +416,12 @@ VQ_Schema.prototype = {
 				else  if (cl.ontology.prefix == "") return {name: cl.localName};
 				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
+  getAllSchemaAssociations: function (){
+    return _.map(this.Associations, function (cl) {
+				if (cl.isUnique) return {name: cl.localName};
+				else  if (cl.ontology.prefix == "") return {name: cl.localName};
+				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+  },
   findElementByName: function (name, coll) {
     var element = _.find(coll, function(el){
 		if ( findName(name, el)) { return el; }; })
