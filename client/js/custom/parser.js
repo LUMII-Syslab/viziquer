@@ -2436,8 +2436,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				if(parseType == "attribute"){
 					SPARQLstring = pe
 					attributeFilter = "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"] + "')";
-				}					
-				SPARQLstring = SPARQLstring  + "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"] + "')";	
+				}				
 			}else if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "langmatchesShortMultiple"){
 				attributeFilter = true;
 				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)

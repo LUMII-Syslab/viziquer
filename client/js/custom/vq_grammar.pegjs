@@ -237,6 +237,7 @@
 			UnaryExpressionList = space Unary:("*" / "/") space UnaryExpression:UnaryExpression {return {Unary:Unary, UnaryExpression:UnaryExpression}}
 
 			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
+			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
 
 			//PrimaryExpression2 = BooleanLiteral / BuiltInCall / RDFLiteral / BrackettedExpression / iriOrFunction  / NumericLiteral /  Var / LNPath
 
@@ -254,6 +255,7 @@
 			BrackettedExpression = ("(" space BrackettedExpression: Expression space ")") {return {BrackettedExpression:BrackettedExpression}}
 
 			BuiltInCall = Aggregate / FunctionExpression / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall2 = Aggregate  / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
 
 			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 
@@ -354,7 +356,7 @@
 			
 			FunctionExpressionD = Function:(COALESCE / CONCAT) ExpressionList:ExpressionList2 {return {Function:Function, ExpressionList:ExpressionList}}
 			
-			FunctionCOALESCE = PrimaryExpression1:(QName / LN) space "??" space PrimaryExpression2:(QName / LN) {return {Function:"coalesceShort", PrimaryExpression1:PrimaryExpression1, PrimaryExpression2:PrimaryExpression2}}
+			FunctionCOALESCE = PrimaryExpression1:PrimaryExpression2 space "??" space PrimaryExpression2:PrimaryExpression2 {return {Function:"coalesceShort", PrimaryExpression1:PrimaryExpression1, PrimaryExpression2:PrimaryExpression2}}
 			
 			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
 			FunctionExpressionLANGMATCHESA = PrimaryExpression:(QName / LN) LANGTAG_MUL:LANGTAG_MUL {return {Function:"langmatchesShortMultiple", PrimaryExpression:PrimaryExpression, LANGTAG_MUL:LANGTAG_MUL}}

@@ -287,6 +287,7 @@
 			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
 			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
+			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
 
 			BooleanLiteral = (TRUE / FALSE) 
 			
@@ -302,6 +303,7 @@
 			BrackettedExpression = (br_open "(" space  Expression space br_close")") 
 
 			BuiltInCall = Aggregate / FunctionExpression / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall2 = Aggregate  / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
 
 			Aggregate = (AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) 
 
@@ -401,7 +403,7 @@
 			
 			FunctionExpressionD = (COALESCE / CONCAT) ExpressionList2 
 			
-			FunctionCOALESCE = (QName / LN) space dubble_question "??" space (QName / LN) 
+			FunctionCOALESCE = PrimaryExpression2 space dubble_question "??" space PrimaryExpression2 
 			
 			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
 			FunctionExpressionLANGMATCHESA = (QName / LN) LANGTAG_MUL 
