@@ -59,7 +59,6 @@ resolveTypesAndBuildSymbolTable = function (query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class, parents_scope_table) {
-
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
     if (obj_class.instanceAlias) {
@@ -91,6 +90,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               });
+			  
+			  obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
            };
         } else if (f.exp=="(*attr)") {
            var cl =schema.findClassByName(obj_class.identification.localName);
@@ -101,9 +102,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               });
+
            };
-        } else if (f.exp=="(*sub)") {
-          //TODO
+        } else if (f.exp=="(*sub)") { 
+           obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
         } else if (f.alias) {
               my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
         } else {
@@ -167,6 +169,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
        };
     }
 
+	
 
     // we should build symbol table entry for this Class.
     symbol_table[obj_class.identification._id] = {};
@@ -239,15 +242,17 @@ resolveTypesAndBuildSymbolTable = function (query) {
 		parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
 	 }
 
-    try {
-      var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
-      exp_obj.parsed_exp = parsed_exp;
-    } catch (e) {
-      // TODO: error handling
-      console.log(e)
-    } finally {
-      //nothing
-    };
+	if(parse_obj != "[*sub]"){
+		try {
+		  var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+		  exp_obj.parsed_exp = parsed_exp;
+		} catch (e) {
+		  // TODO: error handling
+		  console.log(e)
+		} finally {
+		  //nothing
+		};
+	}
   };
 
   // String, ObjectId, String, IdObject -->

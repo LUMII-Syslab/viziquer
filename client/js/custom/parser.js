@@ -217,12 +217,20 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		var aliasSet = false;
 		for(var key in idTable){
 			if (idTable[key] == alias) {
-				variableNamesAll[alias] = {"alias" : alias + "_" +counter, "nameIsTaken" : true, "counter" : counter, "isVar" : true};
+				var classes = [];
+				if(typeof variableNamesAll[alias] !== 'undefined' && typeof variableNamesAll[alias]["classes"] !== 'undefined') classes = variableNamesAll[alias]["classes"];
+				classes[classID] = alias + "_" +count;
+				variableNamesAll[alias] = {"alias" : alias + "_" +counter, "nameIsTaken" : true, "counter" : counter, "isVar" : true, "classes": classes};
 				aliasSet = true;
 				break;
 			}
 		}
-		if (aliasSet == false) variableNamesAll[alias] = {"alias" : alias, "nameIsTaken" : true, "counter" : 0, "isVar" : true};
+		if (aliasSet == false) {
+			var classes = [];
+			if(typeof variableNamesAll[alias] !== 'undefined' && typeof variableNamesAll[alias]["classes"] !== 'undefined') classes = variableNamesAll[alias]["classes"];
+			classes[classID] = alias;
+			variableNamesAll[alias] = {"alias" : alias, "nameIsTaken" : true, "counter" : 0, "isVar" : true, "classes": classes};
+		}
 		
 		return variableNamesAll[alias]["alias"];
 	}
@@ -241,18 +249,34 @@ function setVariableName(varName, alias, variableData, generateNewName){
 					if(typeof variableNamesAll[varName]=== 'undefined'){
 						expressionLevelNames[varName] = varNameRep;
 						variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-						variableNamesAll[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+						
+						var classes = [];
+						if(typeof variableNamesAll[varName] !== 'undefined' && typeof variableNamesAll[varName]["classes"] !== 'undefined') classes = variableNamesAll[varName]["classes"];
+						classes[classID] = varNameRep;
+			
+						variableNamesAll[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes":classes};
 					} else {
 						var count = variableNamesAll[varName]["counter"] + 1;
 						expressionLevelNames[varName] = varNameRep + "_" +count;
 						variableNamesAll[varName]["counter"] = count;
+						
+						var classes = [];
+						if(typeof variableNamesAll[varName] !== 'undefined' && typeof variableNamesAll[varName]["classes"] !== 'undefined') classes = variableNamesAll[varName]["classes"];
+						classes[classID] = varNameRep + "_" +count;
+						variableNamesAll[varName]["classes"] = classes;
+						
 						variableNamesClass[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[varName]["isVar"]};
 					}
 				} else {
 					var count = variableNamesClass[varName]["counter"] + 1;
 					expressionLevelNames[varName] = varNameRep + "_" +count;
 					variableNamesClass[varName]["counter"] = count;
-					variableNamesAll[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesClass[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[varName]["isVar"]};
+					
+					var classes = [];
+					if(typeof variableNamesAll[varName] !== 'undefined' && typeof variableNamesAll[varName]["classes"] !== 'undefined') classes = variableNamesAll[varName]["classes"];
+					classes[classID] = varNameRep + "_" +count;
+					
+					variableNamesAll[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesClass[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[varName]["isVar"], "classes":classes};
 					//console.log(count, varName + "_" +count, variableNamesClass[varName]["counter"], variableNamesAll[varName]["counter"])
 				}
 			}else{
@@ -371,7 +395,12 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							} else {
 								var count = variableNamesAll[varName]["counter"] + 1;
 								variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
-								variableNamesAll[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar}; //????? vai vajag
+								
+								var classes = [];
+								if(typeof variableNamesAll[varName] !== 'undefined' && typeof variableNamesAll[varName]["classes"] !== 'undefined') classes = variableNamesAll[varName]["classes"];
+								classes[classID] = varNameRep + "_" +count;
+								
+								variableNamesAll[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar, "classes":classes}; //????? vai vajag	
 							}
 						//is expression
 						} else {
@@ -1411,12 +1440,24 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					if(typeof variableNamesAll[vn]=== 'undefined'){
 						expressionLevelNames[vn] = vn;
 						variableNamesClass[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-						variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+						
+						var classes = [];
+						if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
+						classes[classID]  = tempAlias;
+						
+						variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes" : classes};
 						alias = tempAlias;
 					} else {
 						var count = variableNamesAll[vn]["counter"] + 1;
 						expressionLevelNames[vn] = vn + "_" +count;
 						variableNamesAll[vn]["counter"] = count;
+						
+						var classes = [];
+						if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
+						classes[classID]  = tempAlias + "_" +count;
+						
+						variableNamesAll[vn]["classes"] = classes;
+						
 						variableNamesClass[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
 						alias = tempAlias + "_" +count;
 					}
@@ -1424,7 +1465,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					var count = variableNamesClass[vn]["counter"] + 1;
 					expressionLevelNames[vn] = vn + "_" +count;
 					variableNamesClass[vn]["counter"] = count;
-					variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"]};
+					
+					var classes = [];
+					if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
+					classes[classID]  = tempAlias + "_" +count;
+					
+					variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"], "classes":classes};
 					alias = tempAlias + "_" +count;
 				}
 				
@@ -1440,7 +1486,12 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				tripleTable.push({"var":tempAlias, "prefixedName":varName, "object":className, "inFilter":false});
 				expressionLevelNames[varName.substr(1)] = varName;
 				variableNamesClass[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-				variableNamesAll[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : variableNamesClass[varName.substr(1)]["nameIsTaken"], "counter" : 0, "isVar" : variableNamesClass[varName.substr(1)]["isVar"]};
+				
+				var classes = [];
+				if(typeof variableNamesAll[varName.substr(1)] !== 'undefined' && typeof variableNamesAll[varName.substr(1)]["classes"] !== 'undefined') classes = variableNamesAll[varName.substr(1)]["classes"];
+				classes[classID]  = tempAlias;
+				
+				variableNamesAll[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : variableNamesClass[varName.substr(1)]["nameIsTaken"], "counter" : 0, "isVar" : variableNamesClass[varName.substr(1)]["isVar"], "classes":classes};
 					
 			}
 
