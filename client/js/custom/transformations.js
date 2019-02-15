@@ -523,9 +523,12 @@ Interpreter.customMethods({
 		// console.log(params);
 		Interpreter.destroyErrorMsg();
 		var startLink = new VQ_Element(params["startElement"]);
-		var endLink = new VQ_Element(params["endElement"]);		 
+		var endLink = new VQ_Element(params["endElement"]);	 
 		if (!startLink.isRoot() && !endLink.isRoot()) {
 			Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query). To merge two queries, use a query class (orange) at least at one link end.", -3);
+			return false;
+		} else if (startLink.isRoot() && !endLink.isRoot() && !(endLink.getLinkToRoot() === undefined)){
+			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
 			return false;
 		}		 
 		return true;
@@ -539,11 +542,9 @@ Interpreter.customMethods({
 		link.setLinkType("REQUIRED");		 
 		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
 		 	link.getEndElement().setClassStyle("condition");
-		} 
-		// if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
-		//  	Interpreter.showErrorMsg("Outer class can be added only to main query class (orange box).", -3);
-		//  	return false;
-		// }
+		} else if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
+			link.getEndElement().setClassStyle("condition");
+		}
 	},
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
