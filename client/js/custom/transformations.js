@@ -518,10 +518,32 @@ Interpreter.customMethods({
 		}
 	},
 
+	VQbeforeCreateLink: function(params) {
+		console.log("VQbeforeCreateLink");
+		// console.log(params);
+		Interpreter.destroyErrorMsg();
+		var startLink = new VQ_Element(params["startElement"]);
+		var endLink = new VQ_Element(params["endElement"]);		 
+		if (!startLink.isRoot() && !endLink.isRoot()) {
+			Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query). To merge two queries, use a query class (orange) at least at one link end.", -3);
+			return false;
+		}		 
+		return true;
+	},
+
 	VQafterCreateLink: function(params) {
-		 //console.log(params);
-		 var link = new VQ_Element(params["_id"]);
-		 link.setLinkType("REQUIRED");
+		console.log("VQafterCreateLink");
+		//console.log(params);
+		Interpreter.destroyErrorMsg();
+		var link = new VQ_Element(params["_id"]);
+		link.setLinkType("REQUIRED");		 
+		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
+		 	link.getEndElement().setClassStyle("condition");
+		} 
+		// if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
+		//  	Interpreter.showErrorMsg("Outer class can be added only to main query class (orange box).", -3);
+		//  	return false;
+		// }
 	},
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
