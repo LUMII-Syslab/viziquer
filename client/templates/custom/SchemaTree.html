@@ -6,22 +6,7 @@
             <ol class="dd-list">
 
                 {{#each classes}}
-                    <li class="dd-item class-item" data-id="{{localNam}}">
-                        <button class="toggle-tree-button expand" type="button">Expand</button>
-                        <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
-                        <div class="class-body dd-handle" value={{localName}}>{{localName}}</div>
-
-                        <ol class="dd-list attributes-list" style="display: none;">
-
-                            {{#each attributes}}
-
-                                <li class="dd-item" data-id="{{name}}">
-                                    <div class="dd-handle">{{name}}</div>
-                                </li>
-
-                            {{/each}}
-                        </ol>
-                    </li>
+                    {{> subTree}}
                 {{/each}}
 
             </ol>
@@ -29,6 +14,24 @@
     </div>
 
 </template>
+
+<template name="subTree">
+    <li class="dd-item class-item" data-id="{{localNam}}">
+        <button class="toggle-tree-button expand" type="button">Expand</button>
+        <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
+        <div class="class-body dd-handle" value={{localName}}>{{localName}}</div>
+
+        <ol class="dd-list attributes-list" style="display: none;">
+
+            {{#each attributes}}
+                {{> subTree}}
+            {{/each}}
+
+        </ol>
+    </li>
+
+</template>
+
 
 
 <template name="schemaTree2">
