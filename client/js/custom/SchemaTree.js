@@ -8,6 +8,8 @@ Template.schemaTree.helpers({
 
 	classes: function() {
     	var schema = new VQ_Schema();
+		//return schema.Tree;
+
 		if (schema) {
 			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
 				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}

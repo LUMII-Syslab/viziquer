@@ -247,6 +247,28 @@ function findCardinality(card, type)
 		else return -1;
 	}
 }
+function collectSubClasses(schema_class, parent_list, deep)
+{
+	var subClasses = [];
+	_.each(schema_class["subClasses"], function(sc) {
+	    var sc_name = schema_class.schema.getClassName(sc)
+		sc.isInTree = true;
+		if (_.indexOf(parent_list, sc_name) == -1 )
+		{
+		    var tree_info = [];
+			if (_.size(sc["tree"]) > 0 ) {
+				tree_info = sc["tree"];
+			}	
+			else {
+				tree_info = collectSubClasses(sc, _.union(parent_list,sc_name), deep+1);
+                sc.tree = tree_info;  				
+			}	
+			subClasses = _.union(subClasses, { localName:sc_name, children:tree_info });
+		}
+	})
+	return subClasses
+}
+
 VQ_Schema = function () {
 
    this.Classes = {};
@@ -257,6 +279,8 @@ VQ_Schema = function () {
    this.Associations = {};
    this.SchemaRoles = {};
    this.Ontologies = {};
+   this.Tree = [];
+   this.OwlFormat = {};
 
    if (Schema.find().count() == 0)
    { return; }
@@ -308,6 +332,19 @@ VQ_Schema = function () {
 			}
 		})
 	})
+	
+	
+	var top_classes = _.filter(this.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " "  } );
+	_.each(top_classes, function(cl) { cl.isInTee = true})
+	
+	//var top_classes = _.filter(this.Classes, function (cl) { return  cl.localName == "Thing"  } );
+    // *****************
+	var m_classes = _.filter(this.Classes, function (cl) { return _.size(cl["superClasses"]) > 1 && cl.localName != " "  } );
+	m_classes = _.map(m_classes, function(cl) { return {name:schema.getClassName(cl), count:_.size(cl["superClasses"])}})
+	//console.log(m_classes)
+	
+    this.Tree = _.map(top_classes, function (cl) { return { localName:schema.getClassName(cl), children:collectSubClasses(cl, [schema.getClassName(cl)]) }});
+	//console.log(this.Tree)
 
 	_.each(this.Classes, function (cl){
 	    _.each(schema.Classes, function (c){ c.isVisited = false})
@@ -319,7 +356,17 @@ VQ_Schema = function () {
 		_.extend(allSuperSubClasses, cl.allSubClasses);
 		cl.allSuperSubClasses = allSuperSubClasses;
 	})
-
+	// ***********************
+    var m_classes = _.filter(this.Classes, function (cl) { return _.size(cl["allSuperClasses"]) > 1 && cl.localName != " "  } );
+	m_classes = _.map(m_classes, function(cl) { 
+	                var sc_list = _.map(cl["allSuperClasses"], function(sc){ return schema.getClassName(sc) })
+					var paz = _.indexOf(sc_list, schema.getClassName(cl)) != -1
+					return {name:schema.getClassName(cl), count:_.size(cl["allSuperClasses"]), paz:paz, list:sc_list}
+	            })
+	//console.log(m_classes)
+	m_classes = _.filter(m_classes, function(cl){ return cl.paz})			
+	//console.log(m_classes)
+	
 	_.each(data.Attributes, function(atr){
 		var newAttr = new VQ_Attribute(atr, schema);
 	    schema.addAttribute(newAttr);
@@ -369,6 +416,18 @@ VQ_Schema = function () {
 	})
 	schema.addRole( new VQ_Role({}, schema));
 	VQ_r2rml(schema);
+	
+	//Prefix(:=<http://lumii.lv/ontologies/AA.owl#>)
+	//Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+	
+	schema.OwlFormat.Ontologies = ""
+	_.each(schema.Ontologies, function(ont){
+		if (ont.isDefault)
+			schema.OwlFormat.Ontologies = schema.OwlFormat.Ontologies.concat("\n","Prefix(:=<",ont.namespace,">)")
+		else
+			schema.OwlFormat.Ontologies = schema.OwlFormat.Ontologies.concat("\n","Prefix(",ont.prefix,":=<",ont.namespace,">)")
+	})
+	//console.log(schema.OwlFormat)
 };
 
 VQ_Schema.prototype = {
@@ -382,6 +441,8 @@ VQ_Schema.prototype = {
   SchemaRoles:null,
   SchemaProperties:null,
   Ontologies:null,
+  Tree:null,
+  OwlFormat:null,
   currentId: 0,
   getNewIdString: function(name) {
 	this.currentId = this.currentId + 1;
@@ -410,11 +471,17 @@ VQ_Schema.prototype = {
 	if (ontology) return this.checkOntologyPrefix(name+"1");
 	else return name;
   },
+  getClassName: function (cl){
+	if (cl.isUnique) return cl.localName;
+	else  if (cl.ontology.prefix == "") return cl.localName;
+		  else return cl.ontology.prefix + ":" + cl.localName; 
+  },
   getAllClasses: function (){
-    return _.map(this.Classes, function (cl) {
-				if (cl.isUnique) return {name: cl.localName};
-				else  if (cl.ontology.prefix == "") return {name: cl.localName};
-				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+    var schema = this;
+    var classes = _.filter(this.Classes, function (cl){
+	             return cl.localName != " "  });	
+    return _.map(classes, function (cl) {
+				return {name:schema.getClassName(cl)};});
   },
   getAllSchemaAssociations: function (){
     return _.map(this.Associations, function (cl) {
@@ -616,8 +683,14 @@ VQ_Class = function (classInfo, schema){
 	this.inAssoc = {};
 	this.outAssoc = {};
 	this.properties = {};
+	this.tree = [];
+	this.isInTree = false;
 	this.isUnique = true;
 	this.isVisited = false;
+	if (classInfo.instanceCount)
+		this.instanceCount = classInfo.instanceCount;
+	else 
+		this.instanceCount = -1
 	var e = schema.findClassByName(classInfo.localName);
 	if ( e && e.localName == classInfo.localName ){
 	  this.isUnique = false;
@@ -638,8 +711,11 @@ VQ_Class.prototype.schemaAttribute = null;
 VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
+VQ_Class.prototype.tree = null;
+VQ_Class.prototype.isInTree = null;
 VQ_Class.prototype.isUnique = null;
 VQ_Class.prototype.isVisited = null;
+VQ_Class.prototype.instanceCount = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
 				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
