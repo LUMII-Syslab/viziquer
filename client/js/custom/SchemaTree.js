@@ -8,6 +8,7 @@ Template.schemaTree.helpers({
 
 	classes: function() {
     	var schema = new VQ_Schema();
+		return schema.Tree;
 		if (schema) {
 			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
 				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
@@ -25,9 +26,11 @@ Template.schemaTree.events({
 	"click .toggle-tree-button": function(e) {
 		var toggle_button = $(e.target);
 		var class_item = toggle_button.closest(".class-item");
-
+		
 		if (toggle_button.hasClass("expand")) {
-			class_item.find(".attributes-list").css({display: "block"});
+			//class_item.find(".attributes-list").css({display: "block"});
+			class_item.children().css({display: "block"});
+			
 			toggle_button.removeClass("expand")
 						.addClass("collapse")
 						.text("Collapse");
@@ -35,6 +38,7 @@ Template.schemaTree.events({
 
 		else {
 			class_item.find(".attributes-list").css({display: "none"});
+			//class_item.children().css({display: "none"});
 			toggle_button.removeClass("collapse")
 						.addClass("expand")
 						.text("Expand");
@@ -44,6 +48,8 @@ Template.schemaTree.events({
 
 	"dblclick .class-body": function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
+		//console.log($(e.target).closest(".class-body"))
+		//var class_name = $(e.target).closest(".class-body").attr("data-id");
     const BLACK_HEADER_HEIGHT = 45;
 		const DEFAULT_BOX_WIDTH = 194;
 		const DEFAULT_BOX_HEIGHT = 66;
