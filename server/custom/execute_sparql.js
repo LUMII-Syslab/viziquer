@@ -30,7 +30,19 @@ Meteor.methods({
 		      		count_options.params.params.query = buildEnhancedQuery(count_options.params.params.query, "SELECT", " SELECT (COUNT(*) as ?number_of_rows_in_query_xyz) WHERE { ", "}");
 					count_options.params.params.format="application/sparql-results+json";
 
-					var qres = HTTP.post(count_options.endPoint, count_options.params);
+					////////////////////////////////////////////////////////
+					// to modify endpoint by adding URL encoded querry
+					let query = count_options.params.params.query;
+					query = query.replace(/(\r\n|\n|\r)/gm," ");	
+					query = encodeURIComponent(query);
+					query = query.replace(/[*]/g, '%2A');
+					query = query.replace(/[(]/g, '%28');
+					query = query.replace(/[)]/g, '%29');
+					count_options.endPoint = count_options.endPoint + '?query=' + query + '&format=JSON';
+					/////////////////////////////////////////////
+
+					//var qres = HTTP.post(count_options.endPoint, count_options.params);
+					var qres = HTTP.post(count_options.endPoint);
 
 		      		if (qres.statusCode == 200) {
 					    var content = JSON.parse(qres.content);
@@ -69,7 +81,19 @@ Meteor.methods({
 
 		    try {
 
-				HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
+				////////////////////////////////////////////////////////
+					// to modify endpoint by adding URL encoded querry
+					let query = options.params.params.query;
+					query = query.replace(/(\r\n|\n|\r)/gm," ");
+					query = encodeURIComponent(query);
+					query = query.replace(/(\*)/g, '%2A');
+					query = query.replace(/[(]/g, '%28');
+					query = query.replace(/[)]/g, '%29');
+					options.endPoint = options.endPoint + '?query=' + query;
+					/////////////////////////////////////////////
+
+				// HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
+				HTTP.call("POST", options.endPoint, function(err, resp) {
 					if (err) {
 						future.return({status: 505, error:err, limit_set: false, number_of_rows: 0});
 					}
