@@ -32,8 +32,8 @@ Template.AddAttribute.helpers({
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
-						var vq_obj = new VQ_Element(symbolTable[key][symbol]["context"]);
-						var links = vq_obj.getLinks();
+						var vq_obj2 = new VQ_Element(symbolTable[key][symbol]["context"]);
+						var links = vq_obj2.getLinks();
 						for (var assoc in links) {
 							if(links[assoc]["link"].isSubQuery() || links[assoc]["link"].isGlobalSubQuery()){
 								var association = links[assoc]["link"];
