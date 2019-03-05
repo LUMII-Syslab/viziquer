@@ -650,8 +650,7 @@ Template.ontologySettings.events({
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
 					showCardinalities: $("#show-cardinalities").is(":checked"),
-					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
-					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked")
+					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked")
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -686,7 +685,6 @@ Template.ontologySettings.events({
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
-		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames);
 	 }
 
 	},
@@ -795,12 +793,6 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.autoHideDefaultPropertyName=="true");
-		}
-	},
-	showPrefixesForAllNonLocalNames: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.showPrefixesForAllNonLocalNames=="true");
 		}
 	},
 });
