@@ -291,13 +291,7 @@ function generateInputValue(fi, con, cursorPosition){
 	return inputValue;
 }
 
-runCompletion = function (text, act_elem){
-
-	var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-	var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-	var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-	var className = compart["input"];
-	
+runCompletion = function (text, act_elem){	
 	try {
 		// var parsed_exp = vq_arithmetic.parse(str, {completions});
 		var schema = new VQ_Schema();
@@ -312,6 +306,11 @@ runCompletion = function (text, act_elem){
 			};
 		
 		} else {
+			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			var className = compart["input"];
+			
 			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType});
 			// var obj = JSON.parse(parsed_exp);
 		}

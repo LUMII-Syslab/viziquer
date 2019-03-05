@@ -1168,5 +1168,6 @@ generateSymbolTable = function() {
       // nothing selected
     }
 	
-	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+    return {};
   }
