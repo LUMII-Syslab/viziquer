@@ -39,7 +39,7 @@ Template.dialogTabContent.events({
 		
 		// if enter pressed, then trigger blur
 		if (e.keyCode == 13) {
-			$(e.target).find(".dialog-input").trigger("blur");
+			$(e.target).closest(".dialog-input").trigger("blur");
 			return;
 		}
 

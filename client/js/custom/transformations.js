@@ -524,6 +524,7 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		var startLink = new VQ_Element(params["startElement"]);
 		var endLink = new VQ_Element(params["endElement"]);	 
+// <<<<<<< HEAD
 		if (!startLink.isRoot() && !endLink.isRoot() &&
 			 !(startLink.getLinkToRoot() === undefined) && !(endLink.getLinkToRoot() === undefined)) {
 			//If both condition classes are connected to query classes
@@ -537,6 +538,17 @@ Interpreter.customMethods({
 			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
 			return false;
 		}		 
+// =======
+		// Suspended code: have to think to allow condition links within the same component
+		//if (!startLink.isRoot() && !endLink.isRoot()) {
+		//	Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query). To merge two queries, use a query class (orange) at least at one link end.", -3);
+		//	return false;
+		//} 
+		//else if (startLink.isRoot() && !endLink.isRoot() && !(endLink.getLinkToRoot() === undefined)){
+		//	Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
+		//	return false;
+		//}		 
+// >>>>>>> dd3635c5dcb0be742982b26565a0d74c4b46f485
 		return true;
 	},
 
