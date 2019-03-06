@@ -524,10 +524,16 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		var startLink = new VQ_Element(params["startElement"]);
 		var endLink = new VQ_Element(params["endElement"]);	 
-		if (!startLink.isRoot() && !endLink.isRoot()) {
-			Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query). To merge two queries, use a query class (orange) at least at one link end.", -3);
+		if (!startLink.isRoot() && !endLink.isRoot() &&
+			 !(startLink.getLinkToRoot() === undefined) && !(endLink.getLinkToRoot() === undefined)) {
+			//If both condition classes are connected to query classes
+			Interpreter.showErrorMsg("Condition (violet) classes of two queries can not be linked (to avoid two main classes in a query).", -3); 
+			// To merge two queries, use a query class (orange) at least at one link end.", -3);
 			return false;
 		} else if (startLink.isRoot() && !endLink.isRoot() && !(endLink.getLinkToRoot() === undefined)){
+			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
+			return false;
+		} else if (!startLink.isRoot() && endLink.isRoot() && !(startLink.getLinkToRoot() === undefined)){
 			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
 			return false;
 		}		 
@@ -543,7 +549,11 @@ Interpreter.customMethods({
 		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
 		 	link.getEndElement().setClassStyle("condition");
 		} else if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
-			link.getEndElement().setClassStyle("condition");
+			if (link.getStartElement().getLinkToRoot().start == false){
+				console.log("condition class has no connected query class")
+			} else {
+				link.getEndElement().setClassStyle("condition");
+			}
 		}
 	},
 	VQgetAssociationIsInverse: function() {
