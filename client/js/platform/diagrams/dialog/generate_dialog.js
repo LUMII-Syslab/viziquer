@@ -37,6 +37,12 @@ Template.dialogTabContent.events({
 	'keypress .dialog-input, keypress .dialog-combobox': function(e) {
 		e.stopPropagation();
 		
+		// if enter pressed, then trigger blur
+		if (e.keyCode == 13) {
+			$(e.target).find(".dialog-input").trigger("blur");
+			return;
+		}
+
 		var compart_type_id = $(e.target).closest(".compart-type").attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 
