@@ -73,8 +73,15 @@ Template.AddLink.helpers({
 							}*/
 						}
 					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
-
-					asc.push({name: e.name, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
+					var eName = e.name
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+							if (proj) {
+								if (proj.showPrefixesForAllNonLocalNames=="true") {
+									if(e["isDefOnt"] != true || (e["isDefOnt"] == true && e["isUnique"] != true))eName = e["prefix"] + ":" + eName;
+								};
+							}
+					
+					asc.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
 							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});

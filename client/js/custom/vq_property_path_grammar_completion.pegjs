@@ -29,23 +29,30 @@
 			function makeVar(o) {return makeString(o);};
 			
 			
-			function pathOrReference(o) {	
-				var propertyName = o.PathEltOrInverse.PathElt.PathPrimary.var.name;
+			function pathOrReference(o) {
+				var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
+				var propertyName = "";
+				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
+				if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
 				var targetSourceClass = "targetClass";
 				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 				
-				for (var key in options.schema.findAssociationByName(propertyName).schemaRole) {
-					var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[key][""+targetSourceClass+""]["localName"];
+				for (var k in options.schema.findAssociationByName(propertyName).schemaRole) {
+					var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[k][""+targetSourceClass+""]["localName"];
 					
 					var prop = options.schema.findClassByName(targetClass).getAllAssociations();
 					
 					for(var key in prop){
-						var association = prop[key]["name"];
-						if(prop[key]["type"] == "<=") {
-							addContinuation(location(), "^" + prop[key]["name"], 100, "end")
-							addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, "end")
+						var propName= prop[key]["name"];
+						if(options.showPrefixesForAllNonLocalNames == true){
+							if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
 						}
-						else addContinuation(location(), prop[key]["name"], 100, "end");
+						
+						if(prop[key]["type"] == "<=") {
+							addContinuation(location(), "^" + propName, 100, "end")
+							addContinuation(location(), "INV(" + propName + ")", 100, "end")
+						}
+						else addContinuation(location(), propName, 100, "end");
 					}
 				}
 
@@ -59,8 +66,13 @@
 				//all
 				var getAllSchemaAssociations = myschema.getAllSchemaAssociations();
 				for (var role in getAllSchemaAssociations) {
-					var assoc_name = getAllSchemaAssociations[role]["name"];
-					addContinuation(place, assoc_name, 1);
+					var prop = getAllSchemaAssociations[role];
+					//var assoc_name = getAllSchemaAssociations[role]["name"];
+					var propName= prop["name"];
+					if(options.showPrefixesForAllNonLocalNames == true){
+						if( prop["isDefOnt"] != true || ( prop["isDefOnt"] == true &&  prop["isUnique"] != true))propName =  prop["prefix"] + ":" + propName;
+					}
+					addContinuation(place, propName, 1);
 				}
 				
 				var start_class = myschema.findClassByName(options.link.getStartElement().getName());
@@ -71,11 +83,16 @@
 						
 					//start
 					for (var role in all_assoc_from_start) {
-						var assoc_name = all_assoc_from_start[role]["name"];
-							if (all_assoc_from_start[role]["type"] == "<=") {
-								assoc_name = "inv("+assoc_name+")";
-							};
-								addContinuation(place, assoc_name, 99);
+						var assoc_name= all_assoc_from_start[role]["name"];
+						if(options.showPrefixesForAllNonLocalNames == true){
+							if( all_assoc_from_start[role]["isDefOnt"] != true || ( all_assoc_from_start[role]["isDefOnt"] == true &&  all_assoc_from_start[role]["isUnique"] != true))assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
+						}
+						
+						// var assoc_name = all_assoc_from_start[role]["name"];
+						if (all_assoc_from_start[role]["type"] == "<=") {
+							assoc_name = "inv("+assoc_name+")";
+						};
+						addContinuation(place, assoc_name, 99);
 					}
 					//start - end
 					if (end_class){
@@ -87,10 +104,15 @@
 						
 						for (var role in possible_assoc_list) {
 							var assoc_name = possible_assoc_list[role]["name"];
-								if (possible_assoc_list[role]["type"] == "<=") {
-									assoc_name = "inv("+assoc_name+")";
-								};
-								addContinuation(place, assoc_name, 100);
+
+							if(options.showPrefixesForAllNonLocalNames == true){
+								if( possible_assoc_list[role]["isDefOnt"] != true || ( possible_assoc_list[role]["isDefOnt"] == true &&  possible_assoc_list[role]["isUnique"] != true))assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
+							}
+							
+							if (possible_assoc_list[role]["type"] == "<=") {
+								assoc_name = "inv("+assoc_name+")";
+							};
+							addContinuation(place, assoc_name, 100);
 						}
 					}		
 				};	

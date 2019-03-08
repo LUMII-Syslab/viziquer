@@ -3,6 +3,7 @@ Interpreter.customMethods({
 
 		$("#add-attribute-form").modal("show");
 		$('input[name=stack-checkbox]').attr('checked',false);
+		$("#class-associations")[0].style.display = "none";
 	}
 })
 
@@ -54,7 +55,17 @@ Template.AddAttribute.helpers({
 			var schema = new VQ_Schema();
 
 			if (schema.classExist(class_name)) {
-				attr_list = attr_list.concat(schema.findClassByName(class_name).getAllAttributes());
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				if (proj) {
+					var all_attributes = schema.findClassByName(class_name).getAllAttributes();
+					for (var key in all_attributes){
+						att_val = all_attributes[key]["name"];
+						if (proj.showPrefixesForAllNonLocalNames=="true") {
+							if(all_attributes[key]["isDefOnt"] != true || (all_attributes[key]["isDefOnt"] == true && all_attributes[key]["isUnique"] != true))att_val = all_attributes[key]["prefix"] + ":" + att_val;
+						};
+						attr_list.push({name: att_val});
+					}	
+				} else attr_list = attr_list.concat(schema.findClassByName(class_name).getAllAttributes());	
 			};
 
       var field_list = vq_obj.getFields().map(function(f) {return f.exp});
@@ -66,8 +77,47 @@ Template.AddAttribute.helpers({
 
 		}
 	},
+	
+	associations: function() {
 
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
+			var attr_list = [];
+			
+			var vq_obj = new VQ_Element(selected_elem_id);
+			
+			var class_name = vq_obj.getName();
+			var schema = new VQ_Schema();
+
+			if (schema.classExist(class_name)) {
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				if (proj) {
+					var all_attributes = schema.findClassByName(class_name).getAllAssociations();
+					for (var key in all_attributes){
+						att_val = all_attributes[key]["name"];
+						if (proj.showPrefixesForAllNonLocalNames=="true") {
+							if(all_attributes[key]["isDefOnt"] != true || (all_attributes[key]["isDefOnt"] == true && all_attributes[key]["isUnique"] != true))att_val = all_attributes[key]["prefix"] + ":" + att_val;
+						};
+						attr_list.push({name: att_val});
+					}	
+				} else attr_list = attr_list.concat(schema.findClassByName(class_name).getAllAssociations());	
+			};
+
+			//remove duplicates
+			attr_list = attr_list.filter(function(obj, index, self) { 
+				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
+			});
+			
+			var field_list = vq_obj.getFields().map(function(f) {return f.exp});
+			attr_list = attr_list.map(function(attr) {
+			attr.disabled = (_.indexOf(field_list,attr.name) > -1);
+				return attr;
+			});
+			return attr_list;
+
+		}
+	},
 });
 
 

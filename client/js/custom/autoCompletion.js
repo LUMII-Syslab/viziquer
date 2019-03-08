@@ -295,13 +295,20 @@ runCompletion = function (text, act_elem){
 	try {
 		// var parsed_exp = vq_arithmetic.parse(str, {completions});
 		var schema = new VQ_Schema();
+		var showPrefixesForAllNonLocalNames = false;
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			if (proj) {
+				if (proj.showPrefixesForAllNonLocalNames=="true") {
+					showPrefixesForAllNonLocalNames = true;
+				};
+			}
 		if(grammarType == "link"){
 			var name_list = [];
 			var act_elem = Session.get("activeElement");
 			if (act_elem) {
 				var vq_link = new VQ_Element(act_elem);
 				if (vq_link.isLink()) {
-					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, link:vq_link});
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, link:vq_link, showPrefixesForAllNonLocalNames:showPrefixesForAllNonLocalNames});
 				};
 			};
 		
@@ -311,11 +318,12 @@ runCompletion = function (text, act_elem){
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			var className = compart["input"];
 			
-			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType});
+			var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, showPrefixesForAllNonLocalNames:showPrefixesForAllNonLocalNames});
 			// var obj = JSON.parse(parsed_exp);
 		}
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
+		//console.log(com["message"]);
 		// console.log(com["message"], JSON.parse(com["message"]));
 		// console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));

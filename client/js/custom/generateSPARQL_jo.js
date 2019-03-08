@@ -711,7 +711,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 // remove duplicates
 			 tempSelect = tempSelect.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
-			 });
+			 });      
 			 
 			  var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
 			 

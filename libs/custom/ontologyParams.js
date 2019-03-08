@@ -15,6 +15,7 @@ Meteor.methods({
 																										 indirectClassMembershipRole: list.indirectClassMembershipRole,
 																										 showCardinalities: list.showCardinalities,
 																										 autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
+																										 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,
 										 }});
 		}
 	},

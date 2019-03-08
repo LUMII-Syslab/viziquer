@@ -5,6 +5,7 @@
 			// parse(string, options) where options is an object
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object}
       options = arguments[1];
+	  console.log(options)
 			//////////////////////////////////////////////
 			var continuations = {};
 			
@@ -31,7 +32,11 @@
 			function getProperties(place, priority){
 				var prop = options.schema.findClassByName(options.className).getAllAttributes()
 				for(var key in prop){
-					addContinuation(place, prop[key]["name"], 100);
+					var propName= prop[key]["name"];
+					if(options.showPrefixesForAllNonLocalNames == true){
+						if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
+					}
+					addContinuation(place, propName, 100);
 				}
 				getAssociations(place, 95);
 				//getClasses(place, 94);
@@ -50,12 +55,15 @@
 				var prop = options.schema.findClassByName(options.className).getAllAssociations()
 
 				for(var key in prop){
-					var association = prop[key]["name"];
-					if(prop[key]["type"] == "<=") {
-						addContinuation(place, "^" + prop[key]["name"], priority)
-						addContinuation(place, "INV(" + prop[key]["name"] + ")", priority)
+					var propName= prop[key]["name"];
+					if(options.showPrefixesForAllNonLocalNames == true){
+						if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
 					}
-					else addContinuation(place, prop[key]["name"], priority);
+					if(prop[key]["type"] == "<=") {
+						addContinuation(place, "^" + propName, priority)
+						addContinuation(place, "INV(" + propName + ")", priority)
+					}
+					else addContinuation(place, propName, priority);
 				}
 			}
 			

@@ -66,7 +66,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
     };
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
-    _.extend(obj_class.identification, parseExpression(obj_class.identification.localName, "CLASS_NAME", obj_class.identification._id));
+	//parser need class with prefix
+	var prefix = "";
+
+	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
+    _.extend(obj_class.identification, parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification._id));
 
     if (obj_class.linkIdentification) {
         _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));

@@ -243,6 +243,12 @@ Schemas.Projects = new SimpleSchema({
  			 label: "Projects.autoHideDefaultPropertyName",
  			 optional: true,
  	    },
+		
+		showPrefixesForAllNonLocalNames: {
+ 			 type: String,
+ 			 label: "Projects.showPrefixesForAllNonLocalNames",
+ 			 optional: true,
+ 	    },
 
     category: {
         type: String,

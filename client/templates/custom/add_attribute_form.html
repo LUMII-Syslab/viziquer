@@ -5,6 +5,10 @@
         overflow-y: auto;
         max-height: 60vh;
     }
+	
+	.form-group-associations{
+		display: none;
+    }
 </style>
 
 	<!-- Modal for new document -->
@@ -40,9 +44,29 @@
                             {{/each}}
 
                         </div>
+							
                     </form>
-                </div>
+					
+					 <button onclick="showAssociations()">[+]</button>
+					 <form class="form-horizontal" role="form">
+						<div class="form-group-associations"  id="class-associations" style="display: none">
 
+                            {{#each associations}}
+                                <div class="col-lg-10 attribute" name="{{name}}" >
+                                    <label class="label-checkbox">
+                                        <input type="checkbox" name="stack-checkbox" disabled="{{disabled}}">
+                                        <span class="custom-checkbox"></span>
+                                        {{name}}
+                                    </label>
+                                </div>
+
+                            {{/each}}
+
+                        </div>
+							
+					</form>
+                </div>
+	
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-attribute" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
@@ -51,5 +75,15 @@
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
+	<script>
+function showAssociations() {
+  var x = document.getElementById("class-associations");
+  if (x.style.display !== "none") {
+	x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
 
 </template>

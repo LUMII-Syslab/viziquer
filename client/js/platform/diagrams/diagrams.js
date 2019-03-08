@@ -694,7 +694,7 @@ Template.ontologySettings.events({
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
-		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames);
+		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
 	 }
 
 	},
