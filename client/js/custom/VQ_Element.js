@@ -148,468 +148,31 @@ TriplesMap.prototype = {
 	},
 }
 
-var class_list =
-
-[
-{								
-   "fullName" : "http://www.openarchives.org/ore/terms/Proxy",
-    "instanceCount" : 72488417},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/WebResource",
-    "instanceCount" : 53803680},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/EuropeanaAggregation",
-    "instanceCount" : 36244226},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/ProvidedCHO",
-    "instanceCount" : 36244226},
-{								
-   "fullName" : "http://www.openarchives.org/ore/terms/Aggregation",
-    "instanceCount" : 36244173},
-{								
-   "fullName" : "http://www.w3.org/2004/02/skos/core#Concept",
-    "instanceCount" : 1268535},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/Place",
-    "instanceCount" : 1186333},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/Agent",
-    "instanceCount" : 635000},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#phrase",
-    "instanceCount" : 56444},
-{								
-   "fullName" : "http://www.europeana.eu/schemas/edm/TimeSpan",
-    "instanceCount" : 24025},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#artifact",
-    "instanceCount" : 18022},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#constraint",
-    "instanceCount" : 9681},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#condition",
-    "instanceCount" : 8925},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#actor",
-    "instanceCount" : 8370},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#statement",
-    "instanceCount" : 6387},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#situation",
-    "instanceCount" : 6335},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#reference",
-    "instanceCount" : 4925},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#Fail_Safe_obligation",
-    "instanceCount" : 4584},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#action",
-    "instanceCount" : 3375},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#auxiliaryparty",
-    "instanceCount" : 3327},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#ObjectProperty",
-    "instanceCount" : 2463},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#time",
-    "instanceCount" : 1989},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#modality",
-    "instanceCount" : 1982},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#location",
-    "instanceCount" : 1875},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#source",
-    "instanceCount" : 1175},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#agent",
-    "instanceCount" : 1128},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#DatatypeProperty",
-    "instanceCount" : 894},
-{								
-   "fullName" : "http://creativecommons.org/ns#License",
-    "instanceCount" : 726},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#Class",
-    "instanceCount" : 704},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#exception",
-    "instanceCount" : 688},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#Restriction",
-    "instanceCount" : 644},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#permission",
-    "instanceCount" : 593},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#obligation",
-    "instanceCount" : 533},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#reason",
-    "instanceCount" : 518},
-{								
-   "fullName" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property",
-    "instanceCount" : 498},
-{								
-   "fullName" : "http://schema.org/Article",
-    "instanceCount" : 389},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#definition",
-    "instanceCount" : 341},
-{								
-   "fullName" : "http://wikiba.se/ontology#BestRank",
-    "instanceCount" : 335},
-{								
-   "fullName" : "http://wikiba.se/ontology#Statement",
-    "instanceCount" : 335},
-{								
-   "fullName" : "http://wikiba.se/ontology#Property",
-    "instanceCount" : 307},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#prohibition",
-    "instanceCount" : 262},
-{								
-   "fullName" : "http://www.w3.org/2000/01/rdf-schema#Class",
-    "instanceCount" : 261},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#target",
-    "instanceCount" : 220},
-{								
-   "fullName" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
-    "instanceCount" : 160},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#result",
-    "instanceCount" : 155},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#sanction",
-    "instanceCount" : 153},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat",
-    "instanceCount" : 130},
-{								
-   "fullName" : "http://wikiba.se/ontology#Item",
-    "instanceCount" : 129},
-{								
-   "fullName" : "http://www.w3.org/2000/01/rdf-schema#Datatype",
-    "instanceCount" : 122},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#Element",
-    "instanceCount" : 118},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#array-of-QuadMapFormat",
-    "instanceCount" : 98},
-{								
-   "fullName" : "http://wikiba.se/ontology#Reference",
-    "instanceCount" : 81},
-{								
-   "fullName" : "http://xmlns.com/foaf/0.1/Person",
-    "instanceCount" : 57},
-{								
-   "fullName" : "http://wikiba.se/ontology#TimeValue",
-    "instanceCount" : 51},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#fact/obligation",
-    "instanceCount" : 50},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#violation",
-    "instanceCount" : 46},
-{								
-   "fullName" : "http://www.w3.org/2000/01/rdf-schema#property",
-    "instanceCount" : 35},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#penalty",
-    "instanceCount" : 29},
-{								
-   "fullName" : "http://www.w3.org/TR/vocab-dcat#Download",
-    "instanceCount" : 26},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#FunctionalProperty",
-    "instanceCount" : 23},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#Group",
-    "instanceCount" : 20},
-{								
-   "fullName" : "http://wikiba.se/ontology#QuantityValue",
-    "instanceCount" : 17},
-{								
-   "fullName" : "http://xmlns.com/foaf/0.1/Organization",
-    "instanceCount" : 12},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#Ontology",
-    "instanceCount" : 11},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#NamedIndividual",
-    "instanceCount" : 11},
-{								
-   "fullName" : "https://www.auto.tuwien.ac.at/downloads/thinkhome/ontology/WeatherOntology.owl#WeatherCondition",
-    "instanceCount" : 11},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#AnnotationProperty",
-    "instanceCount" : 10},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#AllDisjointClasses",
-    "instanceCount" : 9},
-{								
-   "fullName" : "http://purl.org/dc/dcam/VocabularyEncodingScheme",
-    "instanceCount" : 9},
-{								
-   "fullName" : "http://xmlns.com/foaf/0.1/PersonalProfileDocument",
-    "instanceCount" : 8},
-{								
-   "fullName" : "http://schema.org/Dataset",
-    "instanceCount" : 8},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMapValue",
-    "instanceCount" : 8},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#array-of-QuadMapColumn",
-    "instanceCount" : 8},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMapColumn",
-    "instanceCount" : 8},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#Period",
-    "instanceCount" : 7},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#Thing",
-    "instanceCount" : 7},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Object100002684",
-    "instanceCount" : 6},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/PhysicalEntity100001930",
-    "instanceCount" : 6},
-{								
-   "fullName" : "http://purl.org/vocommons/voaf#Vocabulary",
-    "instanceCount" : 6},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/YagoLegalActorGeo",
-    "instanceCount" : 6},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#fact",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#StandardState",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.w3.org/2006/vcard/ns#Work",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#Block",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMapFText",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#SymmetricProperty",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://www.svv.lu/LMOnto#fail_safe_obligation",
-    "instanceCount" : 4},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/CausalAgent100007347",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Creator109614315",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Organism100004475",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Location100027167",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#array-of-QuadMap",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://www.daml.org/2003/01/periodictable/PeriodicTable#Classification",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://schema.org/Person",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Painter110391653",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/YagoLegalActor",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/YagoGeoEntity",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadStorage",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Artist109812338",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/LivingThing100004258",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Person100007846",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Whole100003553",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#TransitiveProperty",
-    "instanceCount" : 3},
-{								
-   "fullName" : "http://www.w3.org/2000/10/swap/pim/contact#Male",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Printmaker110475687",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Agent",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.wikidata.org/entity/Q515",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/WikicatCitiesInTheNetherlands",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Location",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/PopulatedPlace",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMap",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#QuadMapATable",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Wikicat17th-centuryDutchPeople",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/WikicatBaroquePainters",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/WikicatFlemishPainters",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#NaturalPerson",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.wikidata.org/entity/Q215627",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.wikidata.org/entity/Q5",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Artist",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Person",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://schema.org/City",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://schema.org/Place",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.wikidata.org/entity/Q486972",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/District108552138",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Municipality108626283",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Tract108673395",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/City",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Settlement",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#array-of-string",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.w3.org/ns/auth/cert#RSAPublicKey",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.wikidata.org/entity/Q483501",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/WikicatDutchPainters",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/AdministrativeDistrict108491826",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/City108524735",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/GeographicalArea108574314",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Region108630985",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/Site108651247",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/class/yago/UrbanArea108675967",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://dbpedia.org/ontology/Place",
-    "instanceCount" : 2},
-{								
-   "fullName" : "http://www.openlinksw.com/schemas/virtrdf#array-of-QuadMapATable",
-    "instanceCount" : 2}
-]	
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
+var schema = {};
 function collectClasses(cl, all, first){
 	var superClasses = {};
 	cl.isVisited = true
 	if ( _.size(cl[all]) > 0){
 		_.each(cl[all], function(sc){
-			superClasses[sc.getID()] = sc;
+			superClasses[sc.ID] = sc;
 			})
 		}
 	else {
 		_.each(cl[first], function(sc){
-			superClasses[sc.getID()] = sc;
+			superClasses[sc.ID] = sc;
 			if (sc.isVisited == false)
 			{
 				var allSuperClasses = collectClasses(sc, all, first);
 				_.extend(superClasses, allSuperClasses);
 			}
-			})
+		})
 	}
 	return superClasses;
 }
-
-function collectOriginalClasses(cl, all, first, schema){
+function collectOriginalClasses(cl, all, first){
 	var superClasses = [];
 	cl.isVisited = true
 	if ( _.size(cl[all]) > 0){
@@ -619,24 +182,25 @@ function collectOriginalClasses(cl, all, first, schema){
 	{
 		_.each(cl[first], function(sc_name){
 			sc = schema.findClassByName(sc_name);
-			superClasses = _.union(superClasses, sc.getClassName());
-			if (sc.isVisited == false)
+			if ( sc.localName != " ")
 			{
-				var allSuperClasses = collectOriginalClasses(sc, all, first, schema);
-				superClasses = _.union(superClasses, allSuperClasses);
+				superClasses = _.union(superClasses, sc.getClassName());
+				if (sc.isVisited == false)
+				{
+					var allSuperClasses = collectOriginalClasses(sc, all, first);
+					superClasses = _.union(superClasses, allSuperClasses);
+				}
 			}
-			})
+		})
 	}
 	return superClasses;
 }
-
 function createLink(s_class, t_class, s_role, t_role){
-	s_class[s_role][t_class.getID()] = t_class;
+	s_class[s_role][t_class.ID] = t_class;
 	t_class[t_role] = s_class;
 	//t_class[t_role][s_class.getID()] = s_class;
 }
-function findPrefixFromList(uri)
-{
+function findPrefixFromList(uri) {
   PrefixList =
   {
    "http://www.loc.gov/mads/rdf/v1#": "madsrdf",
@@ -692,8 +256,7 @@ function findPrefixFromList(uri)
   if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
   else { return null; }
 }
-function findCardinality(card, type)
-{
+function findCardinality(card, type) {
 	if (type == "MIN")
 	{
 		if (card == 1) return 1;
@@ -706,20 +269,16 @@ function findCardinality(card, type)
 		else return -1;
 	}
 }
-function findChildrenList(schema_class,parent_list,schema){
+function findChildrenList(schema_class,parent_list){
 	var cycle = [];
 	var cl_name = schema_class.getClassName();
 	if (_.indexOf(parent_list, cl_name) == -1 )
 	{
-		if (_.size(schema_class.originalSubClasses) == 1 )
-		{
-			cs = schema.findClassByName(schema_class.originalSubClasses[0]);
-			cycle = findChildrenList(cs,_.union(parent_list,cl_name),schema);
-		}
+		var subClasses = _.filter(schema.Classes, function(cl){ return _.indexOf(cl.fixedSuperClasses,cl_name) != -1 ; })
+		if (_.size(subClasses) == 1 && _.size(subClasses[0].fixedSuperClasses) == 1 && _.size(subClasses[0].cycle) == 0 )  
+			cycle = findChildrenList(subClasses[0],_.union(parent_list,cl_name));
 		else
-		{
 			cycle = _.union(parent_list,cl_name);
-		}		
 	}
 	else
 	{ 
@@ -727,9 +286,7 @@ function findChildrenList(schema_class,parent_list,schema){
 	}	
 	return cycle;
 }
-
-function checkClassForTree(schema_class, deep, schema)
-{
+function checkClassForTree(schema_class, deep) {
 	if ( schema.treeMode == "Remove" && schema_class.instanceCount < 6 ) // !!!!!! Te arī konstante, nav īsti labi
 		return false;
 	if ( schema.treeMode == "Compact" && schema_class.isInTree )
@@ -737,32 +294,42 @@ function checkClassForTree(schema_class, deep, schema)
 	return true;
 }
 var ccc = 0;
-function makeTreeList(classes, deep, schema) 
-{
+function makeTreeList(classes, deep) {
     var ekv = "= ";
 	var class_list = [];
 	var small_class_list = [];
 	var tree_list = [];
 	_.each(classes, function(cl_info) {
  ccc = ccc +1
- if ( ccc > 300 ) { console.log("DAUDZZZZZZZZZZZZZZZZZZZZZZZ makeTreeNode"); return tree_list;};	
+ if ( ccc > 300 ) { console.log("DAUDZZZZZZZZZZZZZZZZZZZZZZZ makeTreeNode"); return tree_list;};
 		var cl_name = cl_info.name;
-		var local_name = cl_name;
+		var data_id = cl_name;
 		var node_id = schema.getNewIdString(cl_name);
 		small_class_list = [];
 		var schema_class = schema.findClassByName(cl_name);
-		if ( _.size(schema_class.cycle) > 0 && cl_name != schema_class.cycle[0])
+		var local_name =  schema_class.getClassName(); // !!!!!!!cl_name;
+		if (schema_class.localName == "_")
+		{
+			local_name =  schema_class.ontology.dprefix.concat(":All classes"); // !!!!!!!cl_name;
+			data_id = "";
+		}	
+		if (schema_class.localName == "__")
+		{
+			local_name =  "Other classes"; // !!!!!!!cl_name;	
+			data_id = "";
+		}	
+		if ( _.size(schema_class.cycle) > 0 && cl_name != schema_class.cycle[0] && schema_class.localName != schema_class.cycle[0])
 			local_name = ekv.concat(local_name);
 		if ( schema_class.instanceCount > 0)
 			local_name = local_name.concat("  (", schema_class.instanceCount,")");		
-		var tree_node = {node_id:node_id,data_id:cl_name, localName:local_name, parent:cl_info.parent, tree_path:cl_info.parent_list.join(" > "), parent_list:cl_info.parent_list, deep:deep};
+		var tree_node = {node_id:node_id,data_id:data_id, localName:local_name, parent:cl_info.parent, tree_path:cl_info.parent_list.join(" > "), parent_list:cl_info.parent_list, deep:deep};
 	
 		tree_list = _.union(tree_list, tree_node);
-		schema_class.tree_nodes = _.union(schema_class.tree_nodes, tree_node);
+		//schema_class.tree_nodes = _.union(schema_class.tree_nodes, tree_node); // !!!!! vai to vajag
 		if ( schema.treeMode == "Compact" && deep == 5 )
 		{
 			_.each (schema_class.allSubClasses, function (sc){
-				if (checkClassForTree(sc, deep, schema))
+				if (checkClassForTree(sc, deep))
 				{
 					small_class_list  = _.union(small_class_list , {name:sc.getClassName(), inst_count:sc.instanceCount,parent:node_id,parent_list:_.union(cl_info.parent_list,cl_name)});		
 					sc.isInTree = true;
@@ -772,7 +339,7 @@ function makeTreeList(classes, deep, schema)
 		else
 		{
 			_.each (schema_class.subClasses, function (sc){
-				if ( checkClassForTree(sc, deep, schema))
+				if ( checkClassForTree(sc, deep))
 				{
 					small_class_list  = _.union(small_class_list , {name:sc.getClassName(),inst_count:sc.instanceCount,parent:node_id,parent_list:_.union(cl_info.parent_list,cl_name)});	
 					sc.isInTree = true;
@@ -781,19 +348,17 @@ function makeTreeList(classes, deep, schema)
 		}
 		
 		class_list = _.union(class_list , small_class_list);
-		class_list = _.sortBy(class_list, function(c) {return c.name});
+		class_list = _.sortBy(class_list, function(c) {return c.localName});
 		class_list = _.sortBy(class_list, function(c) {return -c.inst_count});
 		
 	})
 	
 	if (_.size(class_list) > 0 )
-		tree_list = _.union(tree_list, makeTreeList(class_list, deep + 1, schema));	
+		tree_list = _.union(tree_list, makeTreeList(class_list, deep + 1));	
 	
 	return tree_list;
 }
-
-function makeTree(tree_list, parent, deep)
-{
+function makeTree(tree_list, parent, deep) {
 	var Tree = [];
 	_.each(_.filter(tree_list, function(t){ return t.deep == deep && t.parent == parent; }), function(tr_node){
 		var children = makeTree(tree_list, tr_node.node_id, deep + 1);
@@ -804,346 +369,56 @@ function makeTree(tree_list, parent, deep)
 	return Tree;
 }
 	
-VQ_Schema = function () {
+VQ_Schema = function ( data = {}, tt = 0) {
+//console.log("***************************************")
+//console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
 
+   if (Schema.find().count() == 0 && _.size(data) == 0)
+   {
+		//console.log("Neatrada shēmu vai datus");  
+		return; 
+    }
+   
+   var startTime = Date.now()
+   this.Elements = {};	
    this.Classes = {};
-   this.Elements = {};
    this.Attributes = {};
    this.SchemaAttributes = {};
-   this.SchemaProperties = {};
    this.Associations = {};
+   this.SchemaProperties = {}
    this.SchemaRoles = {};
    this.Ontologies = {};
    this.Cycles = {};
    this.Tree = [];
-   this.OwlFormat = {};
+   this.OwlFormat = {};   
+   schema = this;
+   
+   if ((Schema.find().count() == 1 ))
+   {
+      data = Schema.findOne();
+      if (data.Schema) data = data.Schema;
+   } 	  
+   
+   if (_.size(data.NewClasses) == 0 )
+   {
+	   //console.log("Taisa visu no jauna")
+	   this.makeClassesAndTree(data);
+	   this.makeAttributesAndAssociations(data);
+   }
+   else
+   {
+	   //console.log("Atjauno esošo")
+	   this.restoreClassesAndTree(data);
+	   //console.log(Date.now() - startTime)
+       this.makeAttributesAndAssociations(data);  
+   }
+  
+   //console.log(schema)
 
-   if (Schema.find().count() == 0)
-   { return; }
+   VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
 
-   var data = Schema.findOne();
-   if (data.Schema) data = data.Schema;
-
-   var schema = this;
-   if (data.namespace) this.namespace = data.namespace;
-   if (data.Namespace) this.namespace = data.Namespace;
-   if (data.URI) this.namespace = data.URI;
-
-   if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
-     this.namespace = this.namespace + "#";
-
-   if (this.namespace)
-	  schema.addOntology(new VQ_ontology(schema, this.namespace));
-
-	_.each(data.Prefixes, function(ont){
-	  if (!schema.ontologyExist(ont.namespace))
-	    schema.addOntology(new VQ_ontology(schema, ont.namespace, ont.prefix));
-	})
-
-	_.each(data.Classes, function(cl){
-		schema.addClass( new VQ_Class(cl, schema));
-	})
-
-	if (!this.namespace) {
-	  var defaultOntology = _.max( this.Ontologies, function(ont) {return ont.instanceCount});
-	  if (defaultOntology.instanceCount = 0 )
-		defaultOntology = _.max( this.Ontologies, function(ont) {return ont.count});
-	  this.namespace = defaultOntology.namespace;
-	  defaultOntology.isDefault = true;
-	  defaultOntology.prefix = "";
-	}
-
-	schema.addClass( new VQ_Class({}, schema));
-	
-	// !!!! Te un citur ir iešūtas konstantes (pagaidām)
-	var class_count = _.size( _.filter(this.Classes, function (cl) { return cl.instanceCount > 4 && cl.localName != " "  }));
-	if (_.size(this.Classes) < 100 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī videjais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
-		this.treeMode = "Full";
-	else if ( class_count > 0 && class_count < 100 )
-		this.treeMode = "Remove";
-	else
-		this.treeMode = "Compact";
-		
-	//this.treeMode = "Compact" // Tas ir testam
-
-    // !!! Tas ir instanču skaita aizbāznis Europeanai
-	_.each(class_list, function(c){
-		cl = schema.findClassByName(c.fullName);
-		cl.instanceCount = c.instanceCount;
-	})	
-	
-	_.each(this.Classes, function(cl){
-		_.each(cl.originalSuperClasses, function (sc){
-			var superClass = schema.findClassByName(sc);
-			if (superClass.localName != " ")
-				superClass.originalSubClasses = _.union(superClass.originalSubClasses, [cl.getClassName()]);
-		})
-	})
-	
-	_.each(this.Classes, function (cl){
-	    _.each(schema.Classes, function (c){ c.isVisited = false})
-		cl.originalAllSuperClasses = collectOriginalClasses(cl, "originalAllSuperClasses", "originalSuperClasses", schema);
-		_.each(schema.Classes, function (c){ c.isVisited = false})
-		cl.originalAllSubClasses = collectOriginalClasses(cl, "originalAllSubClasses", "originalSubClasses", schema);
-	})
-	
-	_.each(this.Classes, function (cl){
-		var cycle = _.intersection(cl.originalAllSuperClasses,cl.originalAllSubClasses);
-		cycle = _.sortBy(cycle, function(nn){ return nn; });
-		cl.cycle = cycle;
-	})
-	
-	var top_classes = _.filter(this.Classes, function (cl) { return _.size(cl["originalSuperClasses"]) == 0 && cl.localName != " "  } );
-	
-	_.each(top_classes, function (cl){
-		var cycle = findChildrenList(cl,[],schema);
-		var cycle2 = cycle;
-		_.each(cycle, function(c){
-			c_class = schema.findClassByName(c);
-			cycle2 = _.union(cycle2,c_class.cycle);
-		})
-		_.each(cycle2, function(c){
-			c_class = schema.findClassByName(c);
-			c_class.cycle = cycle2;
-		})
-	})
-	
-	_.each(this.Classes, function (cl){
-		if (_.size(cl.cycle) > 1 )
-			schema.Cycles[cl.cycle[0]] = cl.cycle;		
-	})
-	
-    console.log(schema)
-	
-	top_classes = _.filter(this.Classes, function (cl) { return cl.instanceCount > 5 && cl.localName != " "  } );
-	
-	_.each(this.Classes, function(cl){
-		var cl_name = cl.getClassName();
-		if (_.size(cl.cycle) > 0)
-		{
-			var top_class = schema.findClassByName(cl.cycle[0]);
-			var top_class_name = top_class.getClassName();
-			_.each(cl.originalSuperClasses, function(cc){
-				cc_class = schema.findClassByName(cc);
-				cc_name = cc_class.getClassName();
-				if (_.indexOf(cl.cycle, cc_name) == 0 && cl_name != top_class_name)
-					{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_name]); }
-				if (_.indexOf(cl.cycle, cc_name) > 0 && cl_name != top_class_name)	
-					{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [top_class_name]); }
-				
-				if (_.indexOf(cl.cycle, cc_name) == -1)
-				{
-					if (cl_name == top_class_name)
-					{
-						if (_.size(cc_class.cycle) > 0)
-							{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_class.cycle[0]]); }
-						else
-							{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_name]); }					
-					}
-					else
-					{
-						if (_.size(cc_class.cycle) > 0)
-							{ top_class.fixedSuperClasses = _.union(top_class.fixedSuperClasses, [cc_class.cycle[0]]); }
-						else
-							{ top_class.fixedSuperClasses = _.union(top_class.fixedSuperClasses, [cc_name]); }						
-					}
-				}
-			})
-		}
-		else
-		{
-			_.each(cl.originalSuperClasses, function(cc){
-				cc_class = schema.findClassByName(cc);
-				cc_name = cc_class.getClassName();
-				if (_.size(cc_class.cycle) > 0)
-					{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_class.cycle[0]]); }
-				else
-					{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_name]); }
-			})
-		}
-	
-	})
-	
-	_.each(this.Classes, function(cl){
-		_.each(cl.fixedSuperClasses, function (sc){
-			var superClass = schema.findClassByName(sc);
-			if (superClass.localName != " ")
-			{
-				superClass.addSubClass(cl);
-				cl.addSuperClass(superClass);
-			}
-		})
-	})
-	
-    // ***************************
-	var m_classes = _.filter(this.Classes, function (cl) { return _.size(cl["superClasses"]) > 1 && cl.localName != " "  } );
-	m_classes = _.map(m_classes, function(cl) { return {name:cl.getClassName(), count_super:_.size(cl["superClasses"]), count_sub:_.size(cl["subClasses"]), inst:cl.instanceCount}});
-	//console.log(m_classes);
-	//console.log(_.filter(this.Classes, function(cl){ return _.size(cl["superClasses"]) == 1 }));
-	// *****************************
-	
-	_.each(this.Classes, function (cl){
-	    _.each(schema.Classes, function (c){ c.isVisited = false})
-	    cl.addAllSuperClasses();
-		_.each(schema.Classes, function (c){ c.isVisited = false})
-		cl.addAllSubClasses();
-		var allSuperSubClasses = {};
-		_.extend(allSuperSubClasses, cl.allSuperClasses);
-		_.extend(allSuperSubClasses, cl.allSubClasses);
-		cl.allSuperSubClasses = allSuperSubClasses;
-	})
-	
-	ccc = 0
-	tree_el = 0
-	tree_el_all = 0
-    top_classes = _.filter(this.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1, schema) } );
-	top_classes = _.map(top_classes, function(cl) { return {name:cl.getClassName(),inst_count:cl.instanceCount,parent:"",parent_list:[]}});
-	top_classes = _.sortBy(top_classes, function(cl) {return cl.name});
-	top_classes = _.sortBy(top_classes, function(cl) {return - cl.inst_count});
-	var tree_list = makeTreeList(top_classes, 1, schema)
-	
-	//console.log(tree_list)
-	
-	schema.Tree = makeTree(tree_list, "", 1);
-	
-	//if ( schema.treeMode == "Compact")
-	//	schema.Tree = []; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-	//console.log(this.Tree)
- 	
-	// ***********************
-    var m_classes = _.filter(this.Classes, function (cl) { return _.size(cl["allSuperClasses"]) > 1 && cl.localName != " "  } );
-	m_classes = _.map(m_classes, function(cl) { 
-	                var sc_list = _.map(cl["allSuperClasses"], function(sc){ return sc.getClassName() })
-					var paz = _.indexOf(sc_list, cl.getClassName()) != -1
-					return {name:cl.getClassName(), count:_.size(cl["allSuperClasses"]), paz:paz, list:sc_list}
-	            })
-	//console.log(m_classes)
-	m_classes = _.filter(m_classes, function(cl){ return cl.paz})			
-	//console.log(m_classes)
-	
-	_.each(data.Attributes, function(atr){
-		var newAttr = new VQ_Attribute(atr, schema);
-	    schema.addAttribute(newAttr);
-		_.each(atr.SourceClasses, function (sc){
-			var scClass = schema.findClassByName(sc);
-			var newSchAttr = new VQ_SchemaAttribute(atr, schema);
-			schema.addSchemaAttribute(newSchAttr, schema);
-			schema.addSchemaProperty(newSchAttr, schema);
-			scClass.addProperty(newSchAttr);
-			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
-		})
-	})
-
-	schema.addAttribute( new VQ_Attribute({}, schema));
-
-	_.each(data.Associations, function(asoc){
-		var newRole = new VQ_Role(asoc, schema);
-		schema.addRole(newRole, schema);
-		_.each(asoc.ClassPairs, function(cp){
-			var scClass = schema.findClassByName(cp.SourceClass);
-			var tClass = schema.findClassByName(cp.TargetClass);
-			newSchRole = new VQ_SchemaRole(asoc, cp, newRole, schema);
-			if ( !newRole.maxCardinality) {
-			  newRole.minCardinality = 0;
-			  newRole.maxCardinality = -1;
-			}
-			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
-			schema.addSchemaRole(newSchRole, schema);
-			schema.addSchemaProperty(newSchRole, schema);
-			scClass.addProperty(newSchRole);
-			createLink(newRole, newSchRole, "schemaRole", "role");
-  		    createLink(scClass, newSchRole, "outAssoc", "sourceClass");
-         	createLink(tClass, newSchRole, "inAssoc", "targetClass");
-		})
-	})
-
-	_.each(data.Associations, function(asoc){
-		_.each(asoc.ClassPairs, function(cp){
-			if (cp.inverseRole)
-			{
-			  var schRole = schema.findSchemaRoleByName(asoc.localName, cp.SourceClass, cp.TargetClass);
-			  var invSchRole = schema.findSchemaRoleByName(cp.inverseRole, cp.TargetClass, cp.SourceClass);
-			  schRole.inverseSchemaRole = invSchRole;
-			}
-		})
-	})
-	schema.addRole( new VQ_Role({}, schema));
-	VQ_r2rml(schema);
-	
-	var newLine = "\n";
-	
-	schema.OwlFormat["1_Ontologies"] = "";
-	_.each(schema.Ontologies, function(ont){
-		if (ont.isDefault)
-			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(:=<",ont.namespace,">)");
-		else
-			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(",ont.prefix,":=<",ont.namespace,">)");
-	})
-	
-	schema.OwlFormat["2_Declarations"] = "";
-	schema.OwlFormat["3_DeclarationsWithAnnot"] = "";
-	schema.OwlFormat["4_SubClassOf"] = "";
-	schema.OwlFormat["5_Cardinalities"] = "";
-	var list1 = [];
-	var a = ""
-	
-	
-	_.each(schema.Classes, function(cl){
-		if (cl.localName != " ")
-		{
-			cl_name = cl.ontology.prefix.concat(":",cl.localName);
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(Class(",cl_name,"))");
-			//if (cl.instanceCount > 4)
-			  //console.log(a.concat("Declaration(Class(",cl_name,"))"));
-			schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"Declaration(Class(",cl_name,"))");
-			if (cl.instanceCount > 0)
-			{			
-				schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )');  
-			    //if (cl.instanceCount > 4)
-				//console.log(a.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));
-			}	
-			if (_.size(cl.subClasses) > 0)
-			{
-				_.each(cl.subClasses, function(sc) {
-					sc_name = sc.ontology.prefix.concat(":",sc.localName);
-					schema.OwlFormat["4_SubClassOf"] = schema.OwlFormat["4_SubClassOf"].concat(newLine,"SubClassOf(",sc_name," ",cl_name,")");
-					
-					//if (cl.instanceCount > 4 && sc.instanceCount > 4 )
-					//	console.log(a.concat("SubClassOf(",sc_name," ",cl_name,")"));		
-			
-				}) 
-			}			
-		}
-	})
-	//console.log(list1);
-	
-	//SubClassOf(:AA ObjectMinCardinality(1 :p1))
-
-	_.each(schema.Associations, function(el){
-		if (el.localName != " ")
-		{   el_name = el.ontology.prefix.concat(":",el.localName); 
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
-			if (el.maxCardinality != -1)
-				schema.OwlFormat["5_Cardinalities"] = schema.OwlFormat["5_Cardinalities"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
-			
-		}
-	})
-
-	_.each(schema.Attributes, function(el){
-		if (el.localName != " ")
-		{
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(DataProperty(",el.ontology.prefix,":",el.localName,"))");
-		}			
-	})
-
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:source))");
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:target))");
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:instanceCount))");
-	
-	//console.log(schema.OwlFormat)
-	
+	//console.log("44444")
+	// console.log(Date.now() - startTime)
 };
 
 VQ_Schema.prototype = {
@@ -1162,9 +437,10 @@ VQ_Schema.prototype = {
   treeMode:null, 
   OwlFormat:null,
   currentId: 0,
+  classCount: 0,
   getNewIdString: function(name) {
 	this.currentId = this.currentId + 1;
-    return "ID_" + this.currentId + "_" + name;
+    return "ID_" + this.currentId; // + "_" + name;
   },
   classExist: function (name) {
     var cl = this.findClassByName(name);
@@ -1178,9 +454,9 @@ VQ_Schema.prototype = {
     var cl = this.findAttributeByName(name);
 	return findName(name, cl);
   },
-  ontologyExist: function (name, instanceCount = 0) {
+  ontologyExist: function (name) {
     var ontology = _.find(this.Ontologies, function (ont) {
-	  if (ont.namespace == name) { ont.count = ont.count +1; if( instanceCount > 0 ) { ont.instanceCount = ont.instanceCount + instanceCount; }  return ont}; });
+	  if (ont.namespace == name) { ont.elementCount = ont.elementCount +1; return ont}; });
     return ontology;
   },
   checkOntologyPrefix: function (name){
@@ -1191,9 +467,9 @@ VQ_Schema.prototype = {
   },
   getAllClasses: function (){
     var classes = _.filter(this.Classes, function (cl){
-	             return cl.localName != " "  });	
+	             return ( cl.localName != " " && cl.localName != "_" && cl.localName != "__" )  });	
     return _.map(classes, function (cl) {
-				return {name:cl.getClassName()};});
+				return {name:cl.getClassShortName()};});
   },
   getAllSchemaAssociations: function (){
     return _.map(this.Associations, function (cl) {
@@ -1201,15 +477,19 @@ VQ_Schema.prototype = {
 				else  if (cl.ontology.prefix == "") return {name: cl.localName};
 				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
   },
-  findElementByName: function (name, coll) {
-    var element = _.find(coll, function(el){
-		if ( findName(name, el)) { return el; }; })
+  findElementByName: function (name, coll) {  
+    var element = _.find(coll, function(el){ if ( findName(name, el)) { return el; }; })
 	if (element) return element;
-	return _.find(coll, function(el){
-		if (el.localName == " ") { return el; }; })
+	return _.find(coll, function(el){ if (el.localName == " ") { return el; }; })
   },
   findClassByName: function(name) {
-     return this.findElementByName(name, this.Classes);
+    return this.findElementByName(name, this.Classes);
+  },
+  findClassByNameAndCycle: function(name) {
+	var cl = this.findClassByName(name);
+	if (_.size(cl.cycle) > 0 )
+		return this.findClassByName(cl.cycle[0]);
+    return cl;
   },
   findAssociationByName: function(name) {
 	return this.findElementByName(name, this.Associations);
@@ -1249,7 +529,7 @@ VQ_Schema.prototype = {
 	this.SchemaProperties[newProperty.getID()] = newProperty;
   },
   addOntology: function(newOntology) {
-    this.Ontologies[newOntology.namespace] = newOntology;
+    this.Ontologies[newOntology.dprefix] = newOntology;
   },
   resolveClassByName: function (className) {
     if (this.classExist(className))
@@ -1286,10 +566,382 @@ VQ_Schema.prototype = {
 	})
 	return prefixes;
   },
-}
+  makeClassesAndTree: function(data) {
+		var top_classes = [];
+		if (data.namespace) this.namespace = data.namespace;
+	    if (data.Namespace) this.namespace = data.Namespace;
+	    if (data.URI) this.namespace = data.URI;
+
+	    if (this.namespace && !this.namespace.endsWith("#") && !this.namespace.endsWith("/"))
+		   this.namespace = this.namespace + "#";
+
+	    if (this.namespace)
+		  schema.addOntology(new VQ_ontology(this.namespace));
+
+		_.each(data.Prefixes, function(ont){
+		  if (!schema.ontologyExist(ont.namespace))
+			schema.addOntology(new VQ_ontology(ont.namespace, ont.prefix));
+		})
+		
+		_.each(data.Classes, function(cl){
+		schema.addClass( new VQ_Class(cl));
+		})
+	
+	  // !!!! Mēdz būt virsklases ieliktas, kuru nav shēmā 
+		top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.originalSuperClasses) == 0 && cl.localName != " "  } );
+		
+		_.each(top_classes, function (cl){
+			if( cl.instanceCount > 0 ) { cl.ontology.instanceCount = cl.ontology.instanceCount + cl.instanceCount; } 
+		})
+	
+		if (!this.namespace) {
+		  var defaultOntology = _.max( this.Ontologies, function(ont) {return ont.instanceCount});
+		  if (defaultOntology.instanceCount == 0 )
+			defaultOntology = _.max( this.Ontologies, function(ont) {return ont.classCount});
+		  this.namespace = defaultOntology.namespace;
+		  defaultOntology.isDefault = true;
+		  defaultOntology.prefix = "";
+		}
+		
+		schema.addClass( new VQ_Class({}));
+		
+		_.each(this.Classes, function(cl){
+			cl.classInfo = new VQ_ClassInfo(cl);
+		})
+	
+		_.each(this.Classes, function(cl){ 
+			var superClasses = [];
+			_.each(cl.originalSuperClasses, function (sc){
+				var superClass = schema.findClassByName(sc);
+				if (superClass.localName != " " && cl.getClassName() != superClass.getClassName())
+				{
+					superClasses = _.union(superClasses, [superClass.getClassName()]);
+					superClass.originalSubClasses = _.union(superClass.originalSubClasses, [cl.getClassName()]);
+				}	
+			})
+			cl.originalSuperClasses = superClasses;
+		})	
+
+		top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.originalSuperClasses) == 0 && cl.localName != " "  } );
+	
+		_.each(top_classes, function (cl){
+			cl.ontology.topClassCount = cl.ontology.topClassCount + 1 ;
+		})	
+	
+		_.each(this.Classes, function (cl){
+			_.each(schema.Classes, function (c){ c.isVisited = false})
+			cl.originalAllSuperClasses = collectOriginalClasses(cl, "originalAllSuperClasses", "originalSuperClasses");
+			_.each(schema.Classes, function (c){ c.isVisited = false})
+			cl.originalAllSubClasses = collectOriginalClasses(cl, "originalAllSubClasses", "originalSubClasses");
+		})
+	
+		_.each(this.Classes, function (cl){
+			var cycle = _.intersection(cl.originalAllSuperClasses,cl.originalAllSubClasses);
+			cycle = _.sortBy(cycle, function(nn){ return nn; });
+			cl.cycle = cycle;
+		})
+
+		_.each(this.Classes, function (cl){
+			if (_.size(cl.cycle) > 1 )
+				schema.Cycles[cl.cycle[0]] = cl.cycle;		
+		})
+	
+
+		_.each(this.Classes, function(cl){
+			var cl_class = schema.findClassByNameAndCycle(cl.getClassName());
+			var cl_name = cl_class.getClassName(); 
+			_.each(cl.originalSuperClasses, function(cc){
+				var cc_class = schema.findClassByNameAndCycle(cc);
+				var cc_name = cc_class.getClassName(); 
+				if (cl_class.localName != " " && cc_class.localName != " " && cl_name != cc_name)
+					{ cl_class.fixedSuperClasses = _.union(cl_class.fixedSuperClasses, [cc_name]); }
+				if (cl.getClassName() != cl_name && cc_name == cl_name)
+					{ cl.fixedSuperClasses = _.union(cl.fixedSuperClasses, [cc_name]); }
+			})
+		})
+	
+		top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.fixedSuperClasses) == 0 && cl.localName != " "  } );
+		_.each(top_classes, function(cl) {
+			var top_cycle = findChildrenList(cl,[]);
+			if (_.size(top_cycle) > 2)
+			{	
+				_.each(top_cycle, function(cc){
+					cc_class = schema.findClassByName(cc);
+					cc_class.cycle = top_cycle;
+					if (cc_class.getClassName() != top_cycle[0])
+						cc_class.fixedSuperClasses = [top_cycle[0]];
+				})
+			}
+		})
+
+		//console.log("22222")
+		//console.log(Date.now() - startTime)
+		
+		// !!!! Ja ciklu nav, tad var vienkaršāk (ātrāk) to izdarīt
+	
+		_.each(this.Classes, function(cl){
+			_.each(cl.fixedSuperClasses, function (sc){
+				var superClass = schema.findClassByName(sc);
+				if (superClass.localName != " ")
+				{
+					superClass.addSubClass(cl);
+					cl.addSuperClass(superClass);
+				}
+			})
+		})
+	
+		_.each(this.Classes, function (cl){
+			_.each(schema.Classes, function (c){ c.isVisited = false})
+			cl.addAllSuperClasses();
+			_.each(schema.Classes, function (c){ c.isVisited = false})
+			cl.addAllSubClasses();
+			var allSuperSubClasses = {};
+			_.extend(allSuperSubClasses, cl.allSuperClasses);
+			_.extend(allSuperSubClasses, cl.allSubClasses);
+			cl.allSuperSubClasses = allSuperSubClasses;
+		})  
+		
+	this.makeSchemaTree();	
+	//console.log(this.Tree)	
+  },
+  restoreClassesAndTree: function(data) {
+  	this.namespace = data.namespace;
+	this.Ontologies = data.Ontologies;
+    this.Cycles = data.Cycles;
+	this.Tree = data.Tree;
+	_.each(data.NewClasses, function(obj){
+		var newObj = new VQ_Class(obj.Info)
+		schema.addClass(newObj); 
+		newObj.fullName = obj.fullName;
+		newObj.classInfo = obj.classInfo;
+		//newObj.inAssoc = obj.inAssoc;
+		newObj.instanceCount = obj.instanceCount;
+		newObj.isUnique = obj.isUnique;
+		newObj.ontology = obj.ontology;
+		//newObj.outAssos = obj.outAssos;
+		//newObj.properties = obj.properties;
+		//newObj.schemaAttribute = obj.schemaAttribute;
+		newObj.subClasses = obj.subClasses;
+		newObj.superClasses = obj.superClasses;
+		newObj.allSubClasses = obj.allSubClasses;
+		newObj.allSuperClasses = obj.allSuperClasses;
+		newObj.allSuperSubClasses = obj.allSuperSubClasses;		
+	})
+  },
+  makeAttributesAndAssociations: function(data) {
+	_.each(data.Attributes, function(atr){
+		var newAttr = new VQ_Attribute(atr);
+	    schema.addAttribute(newAttr);
+		_.each(atr.SourceClasses, function (sc){
+			var scClass = schema.findClassByNameAndCycle(sc);
+			var newSchAttr = new VQ_SchemaAttribute(atr);
+			schema.addSchemaAttribute(newSchAttr);
+			schema.addSchemaProperty(newSchAttr);
+			scClass.addProperty(newSchAttr);
+			//createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+			newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
+			//createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+			scClass["schemaAttribute"][newSchAttr.getID()] = newSchAttr;  
+			newSchAttr["sourceClass"] = scClass.classInfo;
+		})
+	})
+	
+	_.each(data.Associations, function(asoc){
+		var newRole = new VQ_Role(asoc);
+		schema.addRole(newRole);
+		_.each(asoc.ClassPairs, function(cp){
+			var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
+			var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
+			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
+			if ( !newRole.maxCardinality) {
+			  newRole.minCardinality = 0;
+			  newRole.maxCardinality = -1;
+			}
+			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
+			schema.addSchemaRole(newSchRole);
+			schema.addSchemaProperty(newSchRole);
+			scClass.addProperty(newSchRole);
+			//createLink(newRole, newSchRole, "schemaRole", "role");
+			newRole["schemaRole"][newSchRole.ID] = newSchRole;
+  		    //createLink(scClass, newSchRole, "outAssoc", "sourceClass");
+			scClass["outAssoc"][newSchRole.ID] = newSchRole;
+			newSchRole["sourceClass"] = scClass.classInfo;
+         	//createLink(tClass, newSchRole, "inAssoc", "targetClass");
+			tClass["inAssoc"][newSchRole.ID] = newSchRole;
+			newSchRole["targetClass"] = tClass.classInfo;
+		})
+	})
+
+	_.each(data.Associations, function(asoc){
+		_.each(asoc.ClassPairs, function(cp){
+			if (cp.inverseRole)
+			{
+			  var schRole = schema.findSchemaRoleByName(asoc.localName, cp.SourceClass, cp.TargetClass);
+			  var invSchRole = schema.findSchemaRoleByName(cp.inverseRole, cp.TargetClass, cp.SourceClass);
+			  if (invSchRole)
+				schRole.inverseSchemaRole = invSchRole.ID;  
+			}
+		})
+	})
+  },
+  makeSchemaTree: function() {
+	var top_classes = [];
+	
+	var big_class_count = _.size( _.filter(schema.Classes, function (cl) { return cl.instanceCount > 4 && cl.localName != " "  }));
+	if ( schema.classCount < 100 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī vidējais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
+		schema.treeMode = "Full";
+	else if ( big_class_count > 0 && big_class_count < 100 )
+		schema.treeMode = "Remove";
+	else
+		schema.treeMode = "Compact";
+		
+	//schema.treeMode = "Compact" // Tas ir testam
+	
+	top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) } );
+	var top_ontologies = _.filter(schema.Ontologies, function (ont) { return ont.topClassCount > 0 } );
+
+// !!!! Te atkal ir konstante nu jau divas 
+	if (_.size(top_classes) > 10 || _.size(top_ontologies) > 2 )
+	{
+		//console.log(top_ontologies)
+		// !!!! To vajag darīt ne vienmēr, atkal kādu konstanti vajag izdomāt
+		_.each(top_ontologies, function(ont){
+			var top_class = _.find(schema.Classes, function(cl){ if (cl.localName == "Thing" && cl.ontology.namespace == ont.namespace ) return true;});
+			var t_name = "Thing";
+			if ( ont.topClassCount > 1 )
+			{
+				if ( ! top_class )
+				{
+					top_class = new VQ_Class({localName:"_",namespace:ont.namespace,SuperClasses:[],instanceCount:ont.instanceCount});
+					schema.addClass(top_class);	
+					t_name = "_";  // !!! Jāizdomā, kā labak nosaukt ko klasi 
+				}
+			}
+			else
+			{
+				top_class = schema.findClassByName("__");
+				t_name = "__";
+				if (top_class.localName == " ")
+				{								
+					top_class = new VQ_Class({localName:"__",namespace:schema.namespace,SuperClasses:[],instanceCount:0});
+					schema.addClass(top_class);	
+				}
+			}
+			
+			var ont_top_classes =  _.filter(schema.Classes, function (cl) { return _.size(cl.superClasses) == 0 && cl.ontology.namespace == ont.namespace && cl.localName != t_name && cl.localName != " "  } );
+			_.each(ont_top_classes, function(cl){
+				top_class.addSubClass(cl);  
+				cl.addSuperClass(top_class);
+			})
+			
+		})
+
+	}
+	
+	ccc = 0
+    top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) && cl.localName != "__" } );
+	//console.log(top_classes)
+	top_classes = _.map(top_classes, function(cl) { return {name:cl.getClassName(),inst_count:cl.instanceCount,parent:"",parent_list:[]}});
+	top_classes = _.sortBy(top_classes, function(cl) {return cl.name});  // !!! Te sakārtot pec klašu skaita ontoloģijā
+	top_classes = _.sortBy(top_classes, function(cl) {return - cl.inst_count});
+	
+	tmpClass = schema.findClassByName("__");
+	if (tmpClass.localName != " ")
+		top_classes = _.union(top_classes, [{name:tmpClass.getClassName(),inst_count:tmpClass.instanceCount,parent:"",parent_list:[]}])
+	var tree_list = makeTreeList(top_classes, 1)
+	
+	//console.log(tree_list)
+	
+	schema.Tree = makeTree(tree_list, "", 1);
+	//console.log(JSON.stringify(schema.Tree,0, 2))
+	//Session.set("SSSS",JSON.stringify(schema.Tree,0, 2))
+	//console.log(Session)
+	var ttt = JSON.parse(JSON.stringify(schema.Tree,0, 2))
+  },  
+  getOwlFormat: function() {
+	// !!!! Jāpaskatās, vai nav jau sarēķināts
+	var newLine = "\n";
+	
+	schema.OwlFormat["1_Ontologies"] = "";
+	_.each(schema.Ontologies, function(ont){
+		if (ont.isDefault)
+			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(:=<",ont.namespace,">)");
+		else
+			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(",ont.prefix,":=<",ont.namespace,">)");
+	})
+	
+	schema.OwlFormat["2_Declarations"] = "";
+	schema.OwlFormat["3_DeclarationsWithAnnot"] = "";
+	schema.OwlFormat["4_SubClassOf"] = "";
+	schema.OwlFormat["5_Cardinalities"] = "";
+	var list1 = [];
+	var a = ""
+	
+	
+	_.each(schema.Classes, function(cl){
+		if (cl.localName != " ")
+		{
+			cl_name = cl.getClassName();
+			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(Class(",cl_name,"))");
+			//if (cl.instanceCount > 4)
+			  //console.log(a.concat("Declaration(Class(",cl_name,"))"));
+			schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"Declaration(Class(",cl_name,"))");
+			if (cl.instanceCount > 0)
+			{			
+				schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )');  
+			    //if (cl.instanceCount > 4)
+				//console.log(a.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));
+			}	
+			if (_.size(cl.subClasses) > 0)
+			{
+				_.each(cl.subClasses, function(sc) {
+					sc_name = sc.getClassName();
+					schema.OwlFormat["4_SubClassOf"] = schema.OwlFormat["4_SubClassOf"].concat(newLine,"SubClassOf(",sc_name," ",cl_name,")");
+					
+					//if (cl.instanceCount > 4 && sc.instanceCount > 4 )
+					//	console.log(a.concat("SubClassOf(",sc_name," ",cl_name,")"));		
+			
+				}) 
+			}			
+		}
+	})
+	//console.log(list1);
+	
+	//SubClassOf(:AA ObjectMinCardinality(1 :p1))
+
+	_.each(schema.Associations, function(el){
+		if (el.localName != " ")
+		{   el_name = el.getElementName(); 
+			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
+			if (el.maxCardinality != -1)
+				schema.OwlFormat["5_Cardinalities"] = schema.OwlFormat["5_Cardinalities"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
+			
+		}
+	})
+
+	_.each(schema.Attributes, function(el){
+		if (el.localName != " ")
+		{
+			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(DataProperty(",el.getElementName(),"))");
+		}			
+	})
+
+	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:source))");
+	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:target))");
+	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:instanceCount))");
+	
+	//console.log(schema.OwlFormat)
+	   			//	var link = document.createElement("a");
+				//link.setAttribute("download", "data.json");
+				//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema.OwlFormat, 0, 4)], {type: "application/json;charset=utf-8;"}));
+				//document.body.appendChild(link);
+				//link.click();	
+  },
+ }
 
 function findName(name, element) {
-  if (element && (element.localName == name || element.fullName == name || element.ontology.prefix + ":" + element.localName == name )) return true;
+  if (element && (element.localName == name || element.fullName == name || 
+     element.ontology.prefix + ":" + element.localName == name || element.ontology.dprefix + ":" + element.localName == name )) return true;
   return false
 }
 
@@ -1299,13 +951,14 @@ function findPrefix(arr, pos) {
   return arr[pos].split("#")[0];
 }
 
-VQ_ontology = function (schema, URI, prefix, instanceCount = 0) {
+VQ_ontology = function (URI, prefix) {
+  if ( URI.endsWith("/#"))
+    URI = URI.substring(0, URI.length -1);
   this.namespace = URI;
-  this.count = 1;
-  if ( instanceCount > 0)
-	this.instanceCount = instanceCount ;
-  else
-    this.instanceCount = 0;
+  this.elementCount = 1;
+  this.classCount = 0;
+  this.topClassCount = 0;
+  this.instanceCount = 0;
   p = "";
   this.namesAreUnique = true;
   if (prefix) p = prefix;
@@ -1315,6 +968,8 @@ VQ_ontology = function (schema, URI, prefix, instanceCount = 0) {
 	{
 	  var arr = URI.split("/");
 	  p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
+	  if ( p.endsWith(".owl"))
+		p = p.substring(0, p.length -4 );
 	}
   }
   if (schema.namespace == URI) {
@@ -1326,11 +981,6 @@ VQ_ontology = function (schema, URI, prefix, instanceCount = 0) {
     this.isDefault = false;
 	this.prefix = p;
 	this.dprefix = p;
-	//if (prefix) this.prefix = prefix;
-	//else {
-	//	var arr = URI.split("/");
-	//	this.prefix = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
-	//}
   }
 };
 
@@ -1339,19 +989,22 @@ VQ_ontology.prototype = {
   namespace: null,
   prefix: null,
   dprefix: null,
-  count: null,
+  elementCount: null,
+  classCount:null,
+  topClassCount:null,
   instanceCount: null,
   isDefault: null,
   namesAreUnique:null
 }
 
-VQ_Elem = function (elemInfo, schema, elemType){
+VQ_Elem = function (elemInfo, elemType){
     var localName = " ";
 	var fullName = " ";
+	this.Info = elemInfo;
+	this.isUnique = true;
     if (elemInfo.localName) localName = elemInfo.localName;
 	this.ID = schema.getNewIdString(localName) + " (" + elemType + ")";
 	this.localName = localName;
-	this.schema = schema;
 	this.triplesMaps = [];
 	var uri = null;
 
@@ -1364,10 +1017,10 @@ VQ_Elem = function (elemInfo, schema, elemType){
 	else 
 		this.instanceCount = -1
 	
-	var ontology = schema.ontologyExist(uri, this.instanceCount );
+	var ontology = schema.ontologyExist(uri);
 	if (ontology) { this.ontology = ontology }
 	else {
-	  ontology = new VQ_ontology(schema, uri, elemInfo.prefix, this.instanceCount);
+	  ontology = new VQ_ontology(uri, elemInfo.prefix);
 	  schema.addOntology(ontology);
 	  this.ontology = ontology;
 	}
@@ -1384,19 +1037,22 @@ VQ_Elem.prototype = {
   localName: null,
   fullName: null,
   ontology: null,
+  isUnique: null,
   instanceCount: null,
-  schema: null,
   triplesMaps: null,
   getID: function() { return this.ID },
   getElemInfo: function() {
     if (this.localName == " ") return {};
 	return {localName:this.localName, URI:this.fullName, Namespace:this.ontology.namespace,
-			Prefix:this.ontology.prefix, DefaultNamespace:this.schema.namespace, triplesMaps:this.triplesMaps};
+			Prefix:this.ontology.prefix, DefaultNamespace:schema.namespace, triplesMaps:this.triplesMaps};  
+  },
+  getElementName : function (){
+	return this.ontology.dprefix + ":" + this.localName; 
   }
 }
 
-VQ_Class = function (classInfo, schema){
-    VQ_Elem.call(this, classInfo, schema, "class");
+VQ_Class = function (classInfo){
+    VQ_Elem.call(this, classInfo, "class");
 	this.superClasses = {};
 	this.originalSuperClasses = classInfo.SuperClasses;
 	this.originalAllSuperClasses = [];
@@ -1417,19 +1073,21 @@ VQ_Class = function (classInfo, schema){
 	this.tree_nodes = [];
 	this.tree_path = "";
 	this.isInTree = false;
-	this.isUnique = true;
 	this.isVisited = false;
-	var e = schema.findClassByName(classInfo.localName);
+	var e = schema.findClassByName(classInfo.localName);  
 	if ( e && e.localName == classInfo.localName ){
 	  this.isUnique = false;
 	  e.isUnique = false;
 	  this.ontology.namesAreUnique = false;
 	  e.ontology.namesAreUnigue = false;
 	}
+	this.ontology.classCount = this.ontology.classCount + 1;
+	schema.classCount = schema.classCount +1;
 };
 
 VQ_Class.prototype = Object.create(VQ_Elem.prototype);
 VQ_Class.prototype.constructor = VQ_Class;
+VQ_Class.prototype.classInfo = null;
 VQ_Class.prototype.superClasses = null;
 VQ_Class.prototype.originalSuperClasses = null;
 VQ_Class.prototype.originalAllSuperClasses = null;
@@ -1450,7 +1108,6 @@ VQ_Class.prototype.tree_deep = null;
 VQ_Class.prototype.tree_nodes = null;
 VQ_Class.prototype.tree_path = null;
 VQ_Class.prototype.isInTree = null;
-VQ_Class.prototype.isUnique = null;
 VQ_Class.prototype.isVisited = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
@@ -1461,15 +1118,19 @@ VQ_Class.prototype.getAssociations = function() {
 				});
     return out_assoc;
   };
-VQ_Class.prototype.getClassName = function (){
+VQ_Class.prototype.getClassShortName = function (){
 	if (this.isUnique) return this.localName;
 	else  if (this.ontology.prefix == "") return this.localName;
 		  else return this.ontology.prefix + ":" + this.localName; 
   };
+VQ_Class.prototype.getClassName = function (){
+	return this.ontology.dprefix + ":" + this.localName; 
+  };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
 	_.each(this.allSuperSubClasses, function(sc){
-			assoc = _.union(assoc, sc.getAssociations());
+		sc_class = schema.findClassByName(sc.shortName);		
+		assoc = _.union(assoc, sc_class.getAssociations());
 	})
 	return _.sortBy(assoc, "name");
   };
@@ -1480,15 +1141,16 @@ VQ_Class.prototype.getAttributes = function() {
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes();
 	_.each(this.allSuperSubClasses, function(sc){
-			attributes = _.union(attributes, sc.getAttributes());
+		sc_class = schema.findClassByName(sc.shortName);
+		attributes = _.union(attributes, sc_class.getAttributes());
 	})
 	return attributes;
   };
 VQ_Class.prototype.addSubClass = function(subClass) {
-	this.subClasses[subClass.getID()] = subClass;
+	this.subClasses[subClass.getID()] = subClass.classInfo;
   };
 VQ_Class.prototype.addSuperClass = function(superClass) {
-	this.superClasses[superClass.getID()] = superClass;
+	this.superClasses[superClass.getID()] = superClass.classInfo;
   };
 VQ_Class.prototype.addProperty = function(property) {
 	this.properties[property.getID()] = property;
@@ -1503,11 +1165,39 @@ VQ_Class.prototype.getClassInfo = function() {
   return this.getElemInfo();
   };
 
+VQ_ClassInfo = function (cl) {
+  this.ID = cl.ID;
+  this.localName = cl.localName;
+  this.shortName = cl.ontology.dprefix.concat(":",cl.localName); 
+  this.isUnique = cl.isUnique;
+  this.ontology = cl.ontology; 
+  this.instanceCount = cl.instanceCount;  
+};
 
-VQ_Attribute = function (attrInfo, schema){
-	VQ_Elem.call(this, attrInfo, schema, "attribute");
+VQ_ClassInfo.prototype = {
+  constructor:VQ_ClassInfo,
+  ID: null,
+  localName: null,
+  shortName: null,
+  isUnique: null,   
+  ontology: null,
+  instanceCount: null,
+  getClassName : function() { return this.ontology.dprefix.concat(":",this.localName); }
+};
+
+VQ_Attribute = function (attrInfo){
+	VQ_Elem.call(this, attrInfo, "attribute");
 	this.schemaAttribute = {};
 	this.type = attrInfo.type;
+	
+	var e = schema.findAttributeByName(attrInfo.localName);  
+	if ( e && e.localName == attrInfo.localName ){
+	  this.isUnique = false;
+	  e.isUnique = false;
+	  this.ontology.namesAreUnique = false;
+	  e.ontology.namesAreUnigue = false;
+	}
+	
 	if (attrInfo.maxCardinality || attrInfo.minCardinality) {
 	  this.minCardinality = findCardinality(attrInfo.minCardinality, "MIN");
 	  this.maxCardinality = findCardinality(attrInfo.maxCardinality, "MAX");
@@ -1534,8 +1224,8 @@ VQ_Attribute.prototype.getAttributeInfo = function() {
   };
 
 
-VQ_SchemaAttribute = function (attrInfo, schema){
-	VQ_Elem.call(this, attrInfo, schema, "schemaAttribute");
+VQ_SchemaAttribute = function (attrInfo){
+	VQ_Elem.call(this, attrInfo, "schemaAttribute");
 	this.attribute = {};
 	this.sourceClass = {};
 };
@@ -1546,9 +1236,16 @@ VQ_SchemaAttribute.prototype.attribute = null;
 VQ_SchemaAttribute.prototype.sourceClass = null;
 
 
-VQ_Role = function (roleInfo, schema){
-	VQ_Elem.call(this, roleInfo, schema, "role");
+VQ_Role = function (roleInfo){
+	VQ_Elem.call(this, roleInfo, "role");
 	this.schemaRole = {};
+	var e = schema.findAssociationByName(roleInfo.localName);  
+	if ( e && e.localName == roleInfo.localName ){
+	  this.isUnique = false;
+	  e.isUnique = false;
+	  this.ontology.namesAreUnique = false;
+	  e.ontology.namesAreUnigue = false;
+	}
 	if (roleInfo.maxCardinality || roleInfo.minCardinality) {
 	  this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
 	  this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");
@@ -1567,8 +1264,8 @@ VQ_Role.prototype.getAssociationInfo = function() {
   return _.extend(this.getElemInfo(), this.getAssocInfo());
   };
 
-VQ_SchemaRole = function (roleInfo, cpInfo, role, schema){
-	VQ_Elem.call(this, roleInfo, schema, "schemaRole");
+VQ_SchemaRole = function (roleInfo, cpInfo, role){
+	VQ_Elem.call(this, roleInfo, "schemaRole");
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
@@ -2204,7 +1901,7 @@ VQ_Element.prototype = {
 	// Determines whether the link is the only possible option between two classes
 	isDefaultLink: function() {
 		 if (this.isLink()) {
-			 var schema = new VQ_Schema();
+			 var schema = new VQ_Schema({});
 			 var assoc = schema.findAssociationByName(this.getName());
 			 //console.log(assoc);
 			 if (assoc) {

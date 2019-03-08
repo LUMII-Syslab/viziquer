@@ -543,11 +543,19 @@ Template.importOntology.events({
 				if (data)
 				{
 					if ( data.Classes ){
+						var schema = new VQ_Schema(data);
+						data.namespace = schema.namespace;
+						//data.schemaInfo = JSON.stringify(schema);
+						data.Tree = schema.Tree;
+						data.Ontologies = schema.Ontologies;
+						data.Cycles = schema.Cycles;
+						data.NewClasses = schema.Classes;
+						
 						var list = {projectId: Session.get("activeProject"),
 									versionId: Session.get("versionId"),
 									data: data,
 								};
-						  Utilities.callMeteorMethod("loadMOntology", list);
+						Utilities.callMeteorMethod("loadMOntology", list);
 					}
 					else {
 						var list = {projectId: Session.get("activeProject"),
