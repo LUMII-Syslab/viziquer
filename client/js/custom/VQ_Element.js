@@ -2557,4 +2557,22 @@ VQ_Element.prototype = {
 	    return;
     },
 
+    // Get ID of the root element for any element
+    getRootId: function (){
+    	var classObj = this;
+    	if (!classObj.isClass()) {return 0;}
+    	if (classObj.isRoot()){console.log(classObj.obj);
+    		return classObj.obj._id;
+    	} else {
+    		if (classObj.getLinkToRoot()){
+    			var elements = classObj.getLinkToRoot().link.getElements();
+    			if (classObj.getLinkToRoot().start) {
+    				return elements.start.getRootId();
+    			} else {
+    				return elements.end.getRootId();
+    			}
+    		}
+    	}
+    }
+
 }
