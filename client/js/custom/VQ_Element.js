@@ -61,7 +61,6 @@ VQ_r2rml.prototype = {
   views: null,
 }
 
-
 TriplesMap = function(name){
 	this.name = name;
 	this.predicateObjectMap = [];
@@ -479,7 +478,16 @@ VQ_Schema.prototype = {
   },
   findElementByName: function (name, coll) {  
     var element = _.find(coll, function(el){ if ( findName(name, el)) { return el; }; })
-	if (element) return element;
+	if (element)
+	{
+		if (!element.isUnique && !name.includes(":"))
+		{
+			var tt = ":";
+			return this.findElementByName(tt.concat(name), coll)
+		}	
+		else
+			return element; 
+	}
 	return _.find(coll, function(el){ if (el.localName == " ") { return el; }; })
   },
   findClassByName: function(name) {
