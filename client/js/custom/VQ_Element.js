@@ -799,6 +799,7 @@ VQ_Schema.prototype = {
 	
 	top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) } );
 	var top_ontologies = _.filter(schema.Ontologies, function (ont) { return ont.topClassCount > 0 } );
+	top_ontologies = _.sortBy(top_ontologies, function(ont) {return -ont.topClassCount});
 
 // !!!! Te atkal ir konstante nu jau divas 
 	if (_.size(top_classes) > 10 || _.size(top_ontologies) > 2 )
@@ -840,7 +841,7 @@ VQ_Schema.prototype = {
 	
 	ccc = 0
     top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) && cl.localName != "__" } );
-	//console.log(top_classes)
+
 	top_classes = _.map(top_classes, function(cl) { return {name:cl.getClassName(),inst_count:cl.instanceCount,parent:"",parent_list:[]}});
 	top_classes = _.sortBy(top_classes, function(cl) {return cl.name});  // !!! Te sakārtot pec klašu skaita ontoloģijā
 	top_classes = _.sortBy(top_classes, function(cl) {return - cl.inst_count});
@@ -848,6 +849,7 @@ VQ_Schema.prototype = {
 	tmpClass = schema.findClassByName("__");
 	if (tmpClass.localName != " ")
 		top_classes = _.union(top_classes, [{name:tmpClass.getClassName(),inst_count:tmpClass.instanceCount,parent:"",parent_list:[]}])
+		
 	var tree_list = makeTreeList(top_classes, 1)
 	
 	//console.log(tree_list)
