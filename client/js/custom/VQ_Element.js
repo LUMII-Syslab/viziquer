@@ -1111,10 +1111,11 @@ VQ_Class.prototype.isInTree = null;
 VQ_Class.prototype.isVisited = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
-				return {name: a.localName, class: a.targetClass.localName , type: "=>"}; });
+				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.targetClass.localName , type: "=>"}; });
     _.each(this.inAssoc, function (a) {
 				 if ( _.size(a.inverseSchemaRole ) == 0 && !a.isSymmetric)
-					out_assoc = _.union(out_assoc, {name: a.localName, class: a.sourceClass.localName , type: "<="});
+					out_assoc = _.union(out_assoc, 
+					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.sourceClass.localName , type: "<="});
 				});
     return out_assoc;
   };
@@ -1136,7 +1137,7 @@ VQ_Class.prototype.getAllAssociations = function() {
   };
 VQ_Class.prototype.getAttributes = function() {
 	return _.map(this.schemaAttribute, function (a) {
-				return {name: a["localName"]}; });
+				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault,}; });
   };
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes();
