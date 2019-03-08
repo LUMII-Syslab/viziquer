@@ -685,6 +685,14 @@ Interpreter.customMethods({
 
 			name_list = _.map(possible_assoc_list, function(assoc) {
 				var assoc_name = assoc["name"];
+				
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				if (proj) {
+					if (proj.showPrefixesForAllNonLocalNames=="true") {
+						if(assoc["isDefOnt"] != true || (assoc["isDefOnt"] == true && assoc["isUnique"] != true))assoc_name = assoc["prefix"] + ":" + assoc_name;
+					};
+				}
+				
 				if (assoc["type"] == "<=") {
 					assoc_name = "inv("+assoc_name+")";
 				};
