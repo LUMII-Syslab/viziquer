@@ -156,18 +156,18 @@ function collectClasses(cl, all, first){
 	cl.isVisited = true
 	if ( _.size(cl[all]) > 0){
 		_.each(cl[all], function(sc){
-			superClasses[sc.ID] = sc;
+			superClasses[sc.getID()] = sc;
 			})
 		}
 	else {
 		_.each(cl[first], function(sc){
-			superClasses[sc.ID] = sc;
+			superClasses[sc.getID()] = sc;
 			if (sc.isVisited == false)
 			{
 				var allSuperClasses = collectClasses(sc, all, first);
 				_.extend(superClasses, allSuperClasses);
 			}
-		})
+			})
 	}
 	return superClasses;
 }
@@ -683,30 +683,79 @@ VQ_Schema.prototype = {
 
 		//console.log("22222")
 		//console.log(Date.now() - startTime)
-		
-		// !!!! Ja ciklu nav, tad var vienkaršāk (ātrāk) to izdarīt
-	
-		_.each(this.Classes, function(cl){
-			_.each(cl.fixedSuperClasses, function (sc){
-				var superClass = schema.findClassByName(sc);
-				if (superClass.localName != " ")
-				{
-					superClass.addSubClass(cl);
-					cl.addSuperClass(superClass);
-				}
+
+		if ( _.size(schema.Cycles) == 0 )
+		{
+			_.each(this.Classes, function(cl){
+				_.each(cl.originalSubClasses, function(o){ 
+					var o_class = schema.findClassByName(o); 
+					var ID = o_class.getID(); 
+					cl.subClasses[ID] = o_class.classInfo; 
+				});	
+				_.each(cl.originalSuperClasses, function(o){ 
+					var o_class = schema.findClassByName(o); 
+					var ID = o_class.getID();
+					cl.superClasses[ID] = o_class.classInfo; 
+				});
+				_.each(cl.originalAllSubClasses, function(o){ 
+					var o_class = schema.findClassByName(o); 
+					var ID = o_class.getID();
+					cl.allSubClasses[ID] = o_class.classInfo; 
+				});
+				_.each(cl.originalAllSuperClasses, function(o){ 
+					var o_class = schema.findClassByName(o); 
+					var ID = o_class.getID();
+					cl.allSuperClasses[ID] = o_class.classInfo; 
+				});
+				var allSuperSubClasses = {};
+				_.extend(allSuperSubClasses, cl.allSuperClasses);
+				_.extend(allSuperSubClasses, cl.allSubClasses);
+				cl.allSuperSubClasses = allSuperSubClasses;					
 			})
-		})
-	
-		_.each(this.Classes, function (cl){
-			_.each(schema.Classes, function (c){ c.isVisited = false})
-			cl.addAllSuperClasses();
-			_.each(schema.Classes, function (c){ c.isVisited = false})
-			cl.addAllSubClasses();
-			var allSuperSubClasses = {};
-			_.extend(allSuperSubClasses, cl.allSuperClasses);
-			_.extend(allSuperSubClasses, cl.allSubClasses);
-			cl.allSuperSubClasses = allSuperSubClasses;
-		})  
+		}
+		else
+		{
+			_.each(this.Classes, function(cl){
+				_.each(cl.fixedSuperClasses, function (sc){
+					var superClass = schema.findClassByName(sc);
+					if (superClass.localName != " ")
+					{
+						superClass.addSubClass(cl);
+						cl.addSuperClass(superClass);
+					}
+				})
+			})
+		
+			_.each(this.Classes, function (cl){
+				_.each(schema.Classes, function (c){ c.isVisited = false})
+				cl.addAllSuperClasses();
+				_.each(schema.Classes, function (c){ c.isVisited = false})
+				cl.addAllSubClasses();
+				var allSuperSubClasses = {};
+				_.extend(allSuperSubClasses, cl.allSuperClasses);
+				_.extend(allSuperSubClasses, cl.allSubClasses);
+				cl.allSuperSubClasses = allSuperSubClasses;		
+			})
+			
+			_.each(this.Classes, function(cl){
+				_.each(cl.subClasses, function(o_class){ 
+					var ID = o_class.getID();
+					cl.subClasses[ID] = o_class.classInfo; });	
+				_.each(cl.superClasses, function(o_class){ 
+					var ID = o_class.getID();
+					cl.superClasses[ID] = o_class.classInfo; });
+				_.each(cl.allSubClasses, function(o_class){ 
+					var ID = o_class.getID();
+					cl.allSubClasses[ID] = o_class.classInfo; });
+				_.each(cl.allSuperClasses, function(o_class){ 
+					var ID = o_class.getID();
+					cl.allSuperClasses[ID] = o_class.classInfo; });
+				_.each(cl.allSuperSubClasses, function(o_class){ 
+					var ID = o_class.getID();
+					cl.allSuperSubClasses[ID] = o_class.classInfo; });					
+			})		
+
+		} 
 		
 	this.makeSchemaTree();	
 	//console.log(this.Tree)	
@@ -725,7 +774,6 @@ VQ_Schema.prototype = {
 		newObj.instanceCount = obj.instanceCount;
 		newObj.isUnique = obj.isUnique;
 		newObj.ontology = obj.ontology;
-		newObj.schemaAttribute = obj.schemaAttribute;
 	})
 	
 	_.each(data.NewClasses, function(obj){
@@ -1164,10 +1212,10 @@ VQ_Class.prototype.getAllAttributes = function() {
 	return attributes;
   };
 VQ_Class.prototype.addSubClass = function(subClass) {
-	this.subClasses[subClass.getID()] = subClass.classInfo;
+	this.subClasses[subClass.getID()] = subClass;
   };
 VQ_Class.prototype.addSuperClass = function(superClass) {
-	this.superClasses[superClass.getID()] = superClass.classInfo;
+	this.superClasses[superClass.getID()] = superClass;
   };
 VQ_Class.prototype.addProperty = function(property) {
 	this.properties[property.getID()] = property;
