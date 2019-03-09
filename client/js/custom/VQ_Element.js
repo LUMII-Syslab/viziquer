@@ -486,12 +486,12 @@ VQ_Schema.prototype = {
 			return this.findElementByName(tt.concat(name), coll)
 		}	
 		else
-			return element; 
+		return element; 
 	}
 	return _.find(coll, function(el){ if (el.localName == " ") { return el; }; })
   },
   findClassByName: function(name) {
-    return this.findElementByName(name, this.Classes);
+	return this.findElementByName(name, this.Classes);
   },
   findClassByNameAndCycle: function(name) {
 	var cl = this.findClassByName(name);
@@ -567,9 +567,8 @@ VQ_Schema.prototype = {
 		return null;
   },
   getPrefixes: function() {
-    prefixes = []
+    var prefixes = []
 	_.each(this.Ontologies, function (o){
-
 		prefixes = _.union( prefixes, [[o.prefix, o.namespace]]);
 	})
 	return prefixes;
@@ -592,7 +591,7 @@ VQ_Schema.prototype = {
 		})
 		
 		_.each(data.Classes, function(cl){
-		schema.addClass( new VQ_Class(cl));
+		  schema.addClass( new VQ_Class(cl));
 		})
 	
 	  // !!!! Mēdz būt virsklases ieliktas, kuru nav shēmā 
@@ -719,21 +718,23 @@ VQ_Schema.prototype = {
 	this.Tree = data.Tree;
 	_.each(data.NewClasses, function(obj){
 		var newObj = new VQ_Class(obj.Info)
-		schema.addClass(newObj); 
+		schema.addClass(newObj);
+		obj.NewClass = newObj;
 		newObj.fullName = obj.fullName;
 		newObj.classInfo = obj.classInfo;
-		//newObj.inAssoc = obj.inAssoc;
 		newObj.instanceCount = obj.instanceCount;
 		newObj.isUnique = obj.isUnique;
 		newObj.ontology = obj.ontology;
-		//newObj.outAssos = obj.outAssos;
-		//newObj.properties = obj.properties;
-		//newObj.schemaAttribute = obj.schemaAttribute;
-		newObj.subClasses = obj.subClasses;
-		newObj.superClasses = obj.superClasses;
-		newObj.allSubClasses = obj.allSubClasses;
-		newObj.allSuperClasses = obj.allSuperClasses;
-		newObj.allSuperSubClasses = obj.allSuperSubClasses;		
+		newObj.schemaAttribute = obj.schemaAttribute;
+	})
+	
+	_.each(data.NewClasses, function(obj){
+		var newObj = obj.NewClass; 
+		_.each(obj.subClasses, function(o){ var ID = o.ID; newObj.subClasses[ID] = schema.findClassByName(o.shortName); });  
+		_.each(obj.superClasses, function(o){ var ID = o.ID; newObj.superClasses[ID] = schema.findClassByName(o.shortName); });  
+		_.each(obj.allSubClasses, function(o){ var ID = o.ID; newObj.allSubClasses[ID] = schema.findClassByName(o.shortName); }); 
+		_.each(obj.allSuperClasses, function(o){ var ID = o.ID; newObj.allSuperClasses[ID] = schema.findClassByName(o.shortName); }); 
+		_.each(obj.allSuperSubClasses, function(o){ var ID = o.ID; newObj.allSuperSubClasses[ID] = schema.findClassByName(o.shortName); }); 
 	})
   },
   makeAttributesAndAssociations: function(data) {
@@ -822,7 +823,8 @@ VQ_Schema.prototype = {
 				if ( ! top_class )
 				{
 					top_class = new VQ_Class({localName:"_",namespace:ont.namespace,SuperClasses:[],instanceCount:ont.instanceCount});
-					schema.addClass(top_class);	
+					schema.addClass(top_class);
+					top_class.classInfo = new VQ_ClassInfo(top_class);
 					t_name = "_";  // !!! Jāizdomā, kā labak nosaukt ko klasi 
 				}
 			}
@@ -834,6 +836,7 @@ VQ_Schema.prototype = {
 				{								
 					top_class = new VQ_Class({localName:"__",namespace:schema.namespace,SuperClasses:[],instanceCount:0});
 					schema.addClass(top_class);	
+					top_class.classInfo = new VQ_ClassInfo(top_class);
 				}
 			}
 			
@@ -1073,6 +1076,7 @@ VQ_Class = function (classInfo){
     this.allSuperClasses = {};
     this.allSubClasses = {};
 	this.allSuperSubClasses = {};
+	this.allSuperSubSuperClasses = {};
 	this.schemaAttribute = {};
 	this.inAssoc = {};
 	this.outAssoc = {};
@@ -1084,7 +1088,8 @@ VQ_Class = function (classInfo){
 	this.tree_path = "";
 	this.isInTree = false;
 	this.isVisited = false;
-	var e = schema.findClassByName(classInfo.localName);  
+	
+	var e = _.find(schema.Classes, function(el){ if ( el.localName == classInfo.localName ) { return el; }; })
 	if ( e && e.localName == classInfo.localName ){
 	  this.isUnique = false;
 	  e.isUnique = false;
@@ -1108,6 +1113,7 @@ VQ_Class.prototype.subClasses = null;
 VQ_Class.prototype.allSuperClasses = null;
 VQ_Class.prototype.allSubClasses = null;
 VQ_Class.prototype.allSuperSubClasses = null;
+VQ_Class.prototype.allSuperSubSuperClasses = null;
 VQ_Class.prototype.schemaAttribute = null;
 VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
@@ -1140,8 +1146,8 @@ VQ_Class.prototype.getClassName = function (){
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();
 	_.each(this.allSuperSubClasses, function(sc){
-		sc_class = schema.findClassByName(sc.shortName);		
-		assoc = _.union(assoc, sc_class.getAssociations());
+		//sc_class = schema.findClassByName(sc.shortName);		
+		assoc = _.union(assoc, sc.getAssociations());
 	})
 	return _.sortBy(assoc, "name");
   };
@@ -1152,8 +1158,8 @@ VQ_Class.prototype.getAttributes = function() {
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes();
 	_.each(this.allSuperSubClasses, function(sc){
-		sc_class = schema.findClassByName(sc.shortName);
-		attributes = _.union(attributes, sc_class.getAttributes());
+		//sc_class = schema.findClassByName(sc.shortName);
+		attributes = _.union(attributes, sc.getAttributes());
 	})
 	return attributes;
   };
