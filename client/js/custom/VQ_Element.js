@@ -180,7 +180,7 @@ function collectOriginalClasses(cl, all, first){
 	else
 	{
 		_.each(cl[first], function(sc_name){
-			sc = schema.findClassByName(sc_name);
+			var sc = schema.findClassByName(sc_name);
 			if ( sc.localName != " ")
 			{
 				superClasses = _.union(superClasses, sc.getClassName());
@@ -200,7 +200,7 @@ function createLink(s_class, t_class, s_role, t_role){
 	//t_class[t_role][s_class.getID()] = s_class;
 }
 function findPrefixFromList(uri) {
-  PrefixList =
+  var PrefixList =
   {
    "http://www.loc.gov/mads/rdf/v1#": "madsrdf",
     "http://id.loc.gov/ontologies/bflc/": "bflc",
@@ -268,104 +268,137 @@ function findCardinality(card, type) {
 		else return -1;
 	}
 }
-function findChildrenList(schema_class,parent_list){
-	var cycle = [];
-	var cl_name = schema_class.getClassName();
-	if (_.indexOf(parent_list, cl_name) == -1 )
-	{
-		var subClasses = _.filter(schema.Classes, function(cl){ return _.indexOf(cl.fixedSuperClasses,cl_name) != -1 ; })
-		if (_.size(subClasses) == 1 && _.size(subClasses[0].fixedSuperClasses) == 1 && _.size(subClasses[0].cycle) == 0 )  
-			cycle = findChildrenList(subClasses[0],_.union(parent_list,cl_name));
-		else
-			cycle = _.union(parent_list,cl_name);
-	}
-	else
-	{ 
-		cycle = parent_list;
-	}	
-	return cycle;
+function checkClassForTree(schema_class, prefix) {
+	if ( schema_class.instanceCount < schema.treeMode.RemoveLevel ) 
+		return 0;
+	if ( schema.treeMode.CompressLevel == 2 && schema_class.isInTree )  
+		return 0;
+	if ( schema.treeMode.CompressLevel == 1 && schema_class.isInTree )  
+		return 1;
+	if ( schema.treeMode.CompressLevel < 2 && schema_class.ontology.dprefix != prefix)  
+		return 1;
+	return 2;
 }
-function checkClassForTree(schema_class, deep) {
-	if ( schema.treeMode == "Remove" && schema_class.instanceCount < 6 ) // !!!!!! Te arī konstante, nav īsti labi
-		return false;
-	if ( schema.treeMode == "Compact" && schema_class.isInTree )
-		return false;
-	return true;
+function makeTreeNodeLocalName(class_name, parent_cycle_name, occurence = false) {
+    var ekv = "= ";
+	var pre = "";
+	var schema_class = schema.findClassByName(class_name);
+	var local_name = schema_class.localName;
+	if (!schema_class.ontology.isDefault)
+		local_name = schema_class.ontology.prefix.concat(":",local_name);
+	if ( schema_class.cycleName == parent_cycle_name && schema_class.cycleName != "")
+		local_name = ekv.concat(local_name);
+	if ( _.size(schema_class.superClasses) > 1)
+		pre = pre.concat("V");
+	if ( _.size(schema_class.subClasses) > 0 ) // && occurence)
+		pre = pre.concat("A");
+	if (pre != "")
+		local_name = local_name.concat("  (", pre,")")
+	if ( schema_class.instanceCount > 0)
+		local_name = local_name.concat("  (", schema_class.instanceCount,")");	
+	
+	return local_name;
 }
 var ccc = 0;
-function makeTreeList(classes, deep) {
-    var ekv = "= ";
-	var class_list = [];
-	var small_class_list = [];
+function makeSubTree(classes, deep) {
+	var ch_class_list = [];
+	var temp_class_list = [];
+	var local_list = [];
 	var tree_list = [];
 	_.each(classes, function(cl_info) {
  ccc = ccc +1
  if ( ccc > 300 ) { console.log("DAUDZZZZZZZZZZZZZZZZZZZZZZZ makeTreeNode"); return tree_list;};
+		ch_class_list = [];
 		var cl_name = cl_info.name;
-		var data_id = cl_name;
 		var node_id = schema.getNewIdString(cl_name);
-		small_class_list = [];
+		var prefix = cl_info.prefix;
 		var schema_class = schema.findClassByName(cl_name);
-		var local_name =  schema_class.getClassName(); // !!!!!!!cl_name;
-		if (schema_class.localName == "_")
-		{
-			local_name =  schema_class.ontology.dprefix.concat(":All classes"); // !!!!!!!cl_name;
-			data_id = "";
-		}	
-		if (schema_class.localName == "__")
-		{
-			local_name =  "Other classes"; // !!!!!!!cl_name;	
-			data_id = "";
-		}	
-		if ( _.size(schema_class.cycle) > 0 && cl_name != schema_class.cycle[0] && schema_class.localName != schema_class.cycle[0])
-			local_name = ekv.concat(local_name);
-		if ( schema_class.instanceCount > 0)
-			local_name = local_name.concat("  (", schema_class.instanceCount,")");		
-		var tree_node = {node_id:node_id,data_id:data_id, localName:local_name, parent:cl_info.parent, tree_path:cl_info.parent_list.join(" > "), parent_list:cl_info.parent_list, deep:deep};
-	
+		
+		var tree_node = {node_id:node_id,data_id:cl_name, localName:cl_info.tr_name, tree_path:cl_info.parent_list.join(" > "), deep:deep};
 		tree_list = _.union(tree_list, tree_node);
-		//schema_class.tree_nodes = _.union(schema_class.tree_nodes, tree_node); // !!!!! vai to vajag
-		if ( schema.treeMode == "Compact" && deep == 5 )
+		
+		if ( !cl_info.occurence)
 		{
-			_.each (schema_class.allSubClasses, function (sc){
-				if (checkClassForTree(sc, deep))
+			var cycleName = "";//schema_class.cycleName;
+			/*if (schema_class.cycleName != "")
+			{
+				temp_class_list = _.filter(schema.Classes, function(cl){ 
+					return cl.cycleName == cycleName && cl.getClassName() != schema_class.getClassName() })
+					
+				_.each(temp_class_list, function(cl){
+					var occur = (checkClassForTree(cl, prefix) == 1);
+					ch_class_list  = _.union(ch_class_list, {name:cl.getClassName(), parent_list:_.union(cl_info.parent_list,cl_name),
+									prefix:prefix, tr_name:makeTreeNodeLocalName(cl.getClassName(), cycleName, occur),
+									occurence:occur});	
+					if (prefix == cl.ontology.dprefix)
+						cl.isInTree = true;
+				})
+			} */
+			if ( schema.treeMode.CompressLevel > 0 && deep == schema.treeMode.MaxDeep -1 )
+			{
+				temp_class_list = _.filter(schema_class.allSubClasses, function(cl){ 
+					return cl.ontology.dprefix == prefix }); //return cl.cycleName != cycleName && cl.ontology.dprefix == prefix });  // !! Te (cl) nav informācijas par cikliem
+				var temp_list = [];	
+				_.each (temp_class_list, function (cl){
+					if (checkClassForTree(cl, prefix ) > 0)
+					{
+						temp_list  = _.union(temp_list, {name:cl.getClassName(), parent_list:_.union(cl_info.parent_list,cl_name),
+							prefix:prefix, tr_name:makeTreeNodeLocalName(cl.getClassName(), cycleName), occurence:true});
+						cl.isInTree = true;
+					}	
+				})
+				temp_list = _.sortBy(temp_list, function(t){ return t.name;})
+				ch_class_list  = _.union(ch_class_list,temp_list);
+			}
+			else
+			{
+				temp_class_list = _.filter(schema_class.subClasses, function(cl){ 
+					return cl.ontology.dprefix == prefix });//return cl.cycleName != cycleName && cl.ontology.dprefix == prefix });
+				var temp_list = [];	
+				_.each (temp_class_list, function (cl){
+					if (checkClassForTree(cl, prefix ) > 0)
+					{
+						var occur = (checkClassForTree(cl, prefix) == 1);
+						temp_list  = _.union(temp_list, {name:cl.getClassName(), parent_list:_.union(cl_info.parent_list,cl_name),
+							prefix:prefix, tr_name:makeTreeNodeLocalName(cl.getClassName(), cycleName, occur), occurence:occur});
+						cl.isInTree = true;
+					}	
+				})					
+				temp_list = _.sortBy(temp_list, function(t){ return t.name;})
+				ch_class_list  = _.union(ch_class_list,temp_list);		
+			}
+			
+			temp_class_list = _.filter(schema_class.subClasses, function(cl){ 
+				return cl.ontology.dprefix != prefix }); //return cl.cycleName != cycleName && cl.ontology.dprefix != prefix });
+			var temp_list = [];	
+			_.each (temp_class_list, function (cl){
+				if (checkClassForTree(cl, prefix ) > 0 )
 				{
-					small_class_list  = _.union(small_class_list , {name:sc.getClassName(), inst_count:sc.instanceCount,parent:node_id,parent_list:_.union(cl_info.parent_list,cl_name)});		
-					sc.isInTree = true;
+					temp_list  = _.union(temp_list, {name:cl.getClassName(), parent_list:_.union(cl_info.parent_list,cl_name),
+						prefix:prefix, tr_name:makeTreeNodeLocalName(cl.getClassName(), cycleName), occurence:true});
+					//cl.isInTree = true;
 				}	
-			})
+			})					
+			temp_list = _.sortBy(temp_list, function(t){ return t.name;})
+			ch_class_list  = _.union(ch_class_list,temp_list);
+			
+		}
+		if (_.size(ch_class_list) > 0)
+		{
+			tree_node.children = makeSubTree(ch_class_list, deep+1);
+			tree_node.ch_count = _.size(tree_node.children);
 		}
 		else
 		{
-			_.each (schema_class.subClasses, function (sc){
-				if ( checkClassForTree(sc, deep))
-				{
-					small_class_list  = _.union(small_class_list , {name:sc.getClassName(),inst_count:sc.instanceCount,parent:node_id,parent_list:_.union(cl_info.parent_list,cl_name)});	
-					sc.isInTree = true;
-				}		
-			})
+			tree_node.children = [];
+			tree_node.ch_count = 0;			
 		}
-		
-		class_list = _.union(class_list , small_class_list);
-		class_list = _.sortBy(class_list, function(c) {return c.localName});
-		class_list = _.sortBy(class_list, function(c) {return -c.inst_count});
+		//schema_class.tree_nodes = _.union(schema_class.tree_nodes, tree_node); // !!!!! vai to vajag
+	
 		
 	})
-	
-	if (_.size(class_list) > 0 )
-		tree_list = _.union(tree_list, makeTreeList(class_list, deep + 1));	
-	
+
 	return tree_list;
-}
-function makeTree(tree_list, parent, deep) {
-	var Tree = [];
-	_.each(_.filter(tree_list, function(t){ return t.deep == deep && t.parent == parent; }), function(tr_node){
-		var children = makeTree(tree_list, tr_node.node_id, deep + 1);
-		tr_node.children = children;
-		tr_node.ch_count = _.size(children)
-		Tree = _.union(Tree,tr_node);
-	})
-	return Tree;
 }
 	
 VQ_Schema = function ( data = {}, tt = 0) {
@@ -378,7 +411,8 @@ VQ_Schema = function ( data = {}, tt = 0) {
 		return; 
     }
    
-   var startTime = Date.now()
+   var startTime = Date.now();
+   this.projectID = Session.get("activeProject");
    this.Elements = {};	
    this.Classes = {};
    this.Attributes = {};
@@ -413,14 +447,16 @@ VQ_Schema = function ( data = {}, tt = 0) {
    }
   
    //console.log(schema)
+  
    VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
-
+   //schema.getOwlFormat();
 	//console.log("44444")
 	//console.log(Date.now() - startTime)
 };
 
 VQ_Schema.prototype = {
   constructor: VQ_Schema,
+  projectID:null,
   namespace:null,
   Elements: null,
   Classes: null,
@@ -628,11 +664,11 @@ VQ_Schema.prototype = {
 			cl.originalSuperClasses = superClasses;
 		})	
 
-		top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.originalSuperClasses) == 0 && cl.localName != " "  } );
-	
-		_.each(top_classes, function (cl){
-			cl.ontology.topClassCount = cl.ontology.topClassCount + 1 ;
-		})	
+		//top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.originalSuperClasses) == 0 && cl.localName != " "  } );
+		// Tas tiek sareķināts citur
+		//_.each(top_classes, function (cl){
+		//	cl.ontology.topClassCount = cl.ontology.topClassCount + 1 ;
+		// })	
 	
 		_.each(this.Classes, function (cl){
 			_.each(schema.Classes, function (c){ c.isVisited = false})
@@ -649,10 +685,13 @@ VQ_Schema.prototype = {
 
 		_.each(this.Classes, function (cl){
 			if (_.size(cl.cycle) > 1 )
-				schema.Cycles[cl.cycle[0]] = cl.cycle;		
+			{
+				cl.cycleName = cl.cycle[0];
+				// cl.classInfo.cycleName = cl.cycle[0];  // !!! To vajadzēs, bet vēl jāsakārto
+				schema.Cycles[cl.cycle[0]] = cl.cycle;
+			}							
 		})
 	
-
 		_.each(this.Classes, function(cl){
 			var cl_class = schema.findClassByNameAndCycle(cl.getClassName());
 			var cl_name = cl_class.getClassName(); 
@@ -666,20 +705,8 @@ VQ_Schema.prototype = {
 			})
 		})
 	
-		top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.fixedSuperClasses) == 0 && cl.localName != " "  } );
-		_.each(top_classes, function(cl) {
-			var top_cycle = findChildrenList(cl,[]);
-			if (_.size(top_cycle) > 2)
-			{	
-				_.each(top_cycle, function(cc){
-					cc_class = schema.findClassByName(cc);
-					cc_class.cycle = top_cycle;
-					if (cc_class.getClassName() != top_cycle[0])
-						cc_class.fixedSuperClasses = [top_cycle[0]];
-				})
-			}
-		})
-
+		// Te vēl bija tie desiņveidīgie cikli, bet tos vajag savādāk apstrādāt
+		
 		//console.log("22222")
 		//console.log(Date.now() - startTime)
 
@@ -780,14 +807,13 @@ VQ_Schema.prototype = {
 				}
 			});		
 		})
-		
-		
+	
 	this.makeSchemaTree();	
 	//console.log(this.Tree)	
   },
   restoreClassesAndTree: function(data) {
   	this.namespace = data.namespace;
-	this.Ontologies = data.Ontologies;
+	//this.Ontologies = data.Ontologies;
     this.Cycles = data.Cycles;
 	this.Tree = data.Tree;
 	_.each(data.NewClasses, function(obj){
@@ -868,82 +894,100 @@ VQ_Schema.prototype = {
 	})
   },
   makeSchemaTree: function() {
-	var top_classes = [];
-	
+
+	ccc = 0  // Skaitītājs (tāds neinteliģents), lai koks nesanāk par lielu
+	var tree_list = [];
 	var big_class_count = _.size( _.filter(schema.Classes, function (cl) { return cl.instanceCount > 4 && cl.localName != " "  }));
-	if ( schema.classCount < 100 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī vidējais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
-		schema.treeMode = "Full";
+	if ( schema.classCount < 50 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī vidējais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
+		schema.treeMode = { CompressLevel:0, RemoveLevel:-1, MaxDeep:10};
 	else if ( big_class_count > 0 && big_class_count < 100 )
-		schema.treeMode = "Remove";
+		schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
 	else
-		schema.treeMode = "Compact";
-		
-	//schema.treeMode = "Compact" // Tas ir testam
+		schema.treeMode = { CompressLevel:2, RemoveLevel:5, MaxDeep:6};
+	 
 	
-	top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) } );
-	var top_ontologies = _.filter(schema.Ontologies, function (ont) { return ont.topClassCount > 0 } );
-	top_ontologies = _.sortBy(top_ontologies, function(ont) {return -ont.topClassCount});
+	var good_classes = _.filter(schema.Classes, function(cl) { return cl.instanceCount >= schema.treeMode.RemoveLevel; });
+	_.each(schema.Ontologies, function(ont) { ont.classCount = 0});
+	_.each(good_classes, function(cl) { cl.ontology.classCount = cl.ontology.classCount+1;});
+	
+	var ontologies = _.filter(schema.Ontologies, function (ont) { return ont.classCount > 1 && !ont.isDefault});
+	ontologies = _.sortBy(ontologies, function(ont) {return -ont.classCount});
+	ontologies = _.union(_.find(schema.Ontologies, function (ont) { return ont.isDefault}),ontologies);
+	_.each(ontologies, function(ont){
+		var top_class = null;
+		var t_name = "";
+		var t_cycle_name = "";
+		var tr_local_name = "";
+		var tr_data_id = "";
+		var ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.namespace == ont.namespace && cl.localName != " " } );
+		ont_top_classes =  _.filter(ont_top_classes, function (cl){ 
+			var ownSuperClasses = _.filter(cl.superClasses, function(c) { return c.ontology.dprefix == ont.dprefix })
+			return _.size(ownSuperClasses) == 0; });
 
-// !!!! Te atkal ir konstante nu jau divas 
-	if (_.size(top_classes) > 10 || _.size(top_ontologies) > 2 )
-	{
-		//console.log(top_ontologies)
-		// !!!! To vajag darīt ne vienmēr, atkal kādu konstanti vajag izdomāt
-		_.each(top_ontologies, function(ont){
-			var top_class = _.find(schema.Classes, function(cl){ if (cl.localName == "Thing" && cl.ontology.namespace == ont.namespace ) return true;});
-			var t_name = "Thing";
-			if ( ont.topClassCount > 1 )
-			{
-				if ( ! top_class )
-				{
-					top_class = new VQ_Class({localName:"_",namespace:ont.namespace,SuperClasses:[],instanceCount:ont.instanceCount});
-					schema.addClass(top_class);
-					top_class.classInfo = new VQ_ClassInfo(top_class);
-					t_name = "_";  // !!! Jāizdomā, kā labak nosaukt ko klasi 
-				}
-			}
-			else
-			{
-				top_class = schema.findClassByName("__");
-				t_name = "__";
-				if (top_class.localName == " ")
-				{								
-					top_class = new VQ_Class({localName:"__",namespace:schema.namespace,SuperClasses:[],instanceCount:0});
-					schema.addClass(top_class);	
-					top_class.classInfo = new VQ_ClassInfo(top_class);
-				}
-			}
-			
-			var ont_top_classes =  _.filter(schema.Classes, function (cl) { return _.size(cl.superClasses) == 0 && cl.ontology.namespace == ont.namespace && cl.localName != t_name && cl.localName != " "  } );
+		ont.topClassCount = _.size(ont_top_classes);
+		
+		// if ( _.size(ont_top_classes) == 1 ) { Pagaidām lai ir visiem vienādi
+		//	top_class = ont_top_classes[0];
+		//	t_name = top_class.localName; 
+		//	t_cycle_name = top_class.cycleName;
+		//	tr_data_id = top_class.getClassName();   
+		// }
+		// else {
+			top_class = new VQ_Class({localName:"_",namespace:ont.namespace,SuperClasses:[],instanceCount:ont.instanceCount});
+			schema.addClass(top_class);
+			top_class.classInfo = new VQ_ClassInfo(top_class);
+			t_name = "_"; 
 			_.each(ont_top_classes, function(cl){
-				top_class.subClasses[cl.getID()] = cl.classInfo; //top_class.addSubClass(cl); 
-				cl.superClasses[top_class.getID()] = top_class.classInfo; //cl.addSuperClass(top_class);
+				cl.isInTree = true;
+				top_class.subClasses[cl.getID()] = cl.classInfo; 
+				cl.superClasses[top_class.getID()] = top_class.classInfo; 
 			})
-			
-		})
+		// }
 
-	}
-	
-	ccc = 0
-    top_classes = _.filter(schema.Classes, function (cl) { return _.size(cl["superClasses"]) == 0 && cl.localName != " " && checkClassForTree(cl, 1) && cl.localName != "__" } );
-
-	top_classes = _.map(top_classes, function(cl) { return {name:cl.getClassName(),inst_count:cl.instanceCount,parent:"",parent_list:[]}});
-	top_classes = _.sortBy(top_classes, function(cl) {return cl.name});  // !!! Te sakārtot pec klašu skaita ontoloģijā
-	top_classes = _.sortBy(top_classes, function(cl) {return - cl.inst_count});
-	
-	tmpClass = schema.findClassByName("__");
-	if (tmpClass.localName != " ")
-		top_classes = _.union(top_classes, [{name:tmpClass.getClassName(),inst_count:tmpClass.instanceCount,parent:"",parent_list:[]}])
+		if (ont.isDefault) { var l = "(local):"; tr_local_name = l.concat(t_name); }
+		else { tr_local_name = ont.prefix.concat(":",t_name);}
 		
-	var tree_list = makeTreeList(top_classes, 1)
+		var tree_node_id = schema.getNewIdString(t_name);
+		var tree_node = {node_id:tree_node_id ,data_id:tr_data_id, localName:tr_local_name, tree_path:"", deep:1 };
+		
+		var top_classes_list = _.map(ont_top_classes, function(cl) { 
+			return {name:cl.getClassName(), tr_name:makeTreeNodeLocalName(cl.getClassName(), t_cycle_name), occurence:false,
+				parent_list:[tr_local_name], prefix:cl.ontology.dprefix}});
+		
+		top_classes_list = _.sortBy(top_classes_list, function(t){ return t.name;} )		
+		tree_node.ch_count = _.size(top_classes_list);
+		tree_node.children = makeSubTree(top_classes_list, 2);
+		tree_list = _.union(tree_list, tree_node);			
 	
-	//console.log(tree_list)
+	})
 	
-	schema.Tree = makeTree(tree_list, "", 1);
+	ontologies = _.filter(schema.Ontologies, function (ont) { return ont.classCount == 1 && !ont.isDefault});  // Tās tās kārnās
+	if (_.size(ontologies) > 0)
+	{
+		var tree_node_id = schema.getNewIdString("__");
+		var children = [];
+		var ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.classCount == 1 && cl.localName != " " } );
+		_.each(ont_top_classes, function(cl){
+			cl.isInTree = true;
+			var subtree_node_id = schema.getNewIdString(cl.localName);
+			var tr_local_name = makeTreeNodeLocalName(cl.getClassName(), "");
+			//if  ( cl.instanceCount >= schema.treeMode.RemoveLevel ) 
+				children = _.union(children, 
+					{node_id:subtree_node_id, data_id:cl.getClassName(), localName:tr_local_name, tree_path:"Other classes",
+					parent_list:["Other classes"], deep:2 });
+		})
+		children = _.sortBy(children, function(c){ return c.localName; })
+		var tree_node = {node_id:tree_node_id, data_id:"", localName:"Other classes", tree_path:"", deep:1,
+						children:children, ch_count:_.size(children)};
+		tree_list = _.union(tree_list, tree_node);
+	}
+
+	schema.Tree = tree_list;
+	//console.log(schema.Tree)
 	//console.log(JSON.stringify(schema.Tree,0, 2))
 	//Session.set("SSSS",JSON.stringify(schema.Tree,0, 2))
 	//console.log(Session)
-	var ttt = JSON.parse(JSON.stringify(schema.Tree,0, 2))
+	//var ttt = JSON.parse(JSON.stringify(schema.Tree,0, 2))
   },  
   getOwlFormat: function() {
 	// !!!! Jāpaskatās, vai nav jau sarēķināts
@@ -1156,6 +1200,7 @@ VQ_Class = function (classInfo){
 	this.outAssoc = {};
 	this.properties = {};
 	this.cycle = [];
+	this.cycleName = "";
 	this.tree = [];
 	this.tree_deep = 0;
 	this.tree_nodes = [];
@@ -1193,6 +1238,7 @@ VQ_Class.prototype.inAssoc = null;
 VQ_Class.prototype.outAssoc = null;
 VQ_Class.prototype.properties = null;
 VQ_Class.prototype.cycle = null;
+VQ_Class.prototype.cycleName = null;
 VQ_Class.prototype.tree = null;
 VQ_Class.prototype.tree_deep = null;
 VQ_Class.prototype.tree_nodes = null;
