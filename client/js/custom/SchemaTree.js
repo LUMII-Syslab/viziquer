@@ -9,6 +9,7 @@ Template.schemaTree.helpers({
 	classes: function() {
     	var schema = new VQ_Schema();
 		return schema.Tree;
+
 		if (schema) {
 			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
 				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
@@ -26,6 +27,7 @@ Template.schemaTree.events({
 	"click .toggle-tree-button": function(e) {
 		var toggle_button = $(e.target);
 		var class_item = toggle_button.closest(".class-item");
+		var tree_node_id = toggle_button[0].attributes["node-id"].value;
 		
 		if (toggle_button.hasClass("expand")) {
 			//class_item.find(".attributes-list").css({display: "block"});
@@ -34,6 +36,9 @@ Template.schemaTree.events({
 			toggle_button.removeClass("expand")
 						.addClass("collapse")
 						.text("Collapse");
+						
+			if ( VQ_Shema_copy && VQ_Shema_copy.TreeList[tree_node_id])
+				VQ_Shema_copy.TreeList[tree_node_id].display = "block";
 		}
 
 		else {
@@ -42,6 +47,9 @@ Template.schemaTree.events({
 			toggle_button.removeClass("collapse")
 						.addClass("expand")
 						.text("Expand");
+					
+			if ( VQ_Shema_copy && VQ_Shema_copy.TreeList[tree_node_id])	
+				VQ_Shema_copy.TreeList[tree_node_id].display = "none";	
 		}
 	},
 

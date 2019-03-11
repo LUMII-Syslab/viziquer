@@ -18,14 +18,14 @@
 <template name="subTree">
     <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
 	{{#if ch_count  }}
-		<button class="toggle-tree-button expand" type="button">Expand</button>
+		<button class="toggle-tree-button expand" node-id="{{node_id}}"  type="button">Expand</button>
 	{{/if}}	
 
        
         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
         <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
 
-        <ol class="dd-list attributes-list" style="display: none; " >
+        <ol class="dd-list attributes-list" style="display: {{display}}; " >
 
             {{#each children}}
                 {{> subTree}}

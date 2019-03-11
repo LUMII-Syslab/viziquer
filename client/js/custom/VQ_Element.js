@@ -314,7 +314,8 @@ function makeSubTree(classes, deep) {
 		var prefix = cl_info.prefix;
 		var schema_class = schema.findClassByName(cl_name);
 		
-		var tree_node = {node_id:node_id,data_id:cl_name, localName:cl_info.tr_name, tree_path:cl_info.parent_list.join(" > "), deep:deep};
+		var tree_node = {node_id:node_id,data_id:cl_name, localName:cl_info.tr_name, tree_path:cl_info.parent_list.join(" > "), deep:deep, display:"none"};
+		schema.TreeList[node_id] = tree_node;
 		tree_list = _.union(tree_list, tree_node);
 		
 		if ( !cl_info.occurence)
@@ -400,16 +401,47 @@ function makeSubTree(classes, deep) {
 
 	return tree_list;
 }
-	
+function makeTreeListNode(tree_node) {
+	schema.TreeList[tree_node.node_id] = tree_node;
+	_.each(tree_node.children, function(ch) { makeTreeListNode(ch); })
+}
+
+VQ_Shema_copy = null; 	
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
+   if (_.size(data) > 0 )  VQ_Shema_copy = null;
 
    if (Schema.find().count() == 0 && _.size(data) == 0)
    {
 		//console.log("Neatrada shēmu vai datus");  
 		return; 
     }
+   
+   if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) 
+   {
+	   //console.log("Atrada derīgu")
+	   this.projectID = Session.get("activeProject");
+	   this.Elements = VQ_Shema_copy.Elements;	
+	   this.Classes = VQ_Shema_copy.Classes;
+	   this.Attributes = VQ_Shema_copy.Attributes;
+	   this.SchemaAttributes = VQ_Shema_copy.SchemaAttributes;
+	   this.Associations = VQ_Shema_copy.Associations;
+	   this.SchemaProperties = VQ_Shema_copy.SchemaProperties;
+	   this.SchemaRoles = VQ_Shema_copy.SchemaRoles;
+	   this.Ontologies = VQ_Shema_copy.Ontologies;
+	   this.Cycles = VQ_Shema_copy.Cycles;
+	   this.Tree = VQ_Shema_copy.Tree;
+	   this.TreeList = {};
+	   this.OwlFormat = VQ_Shema_copy.OwlFormat;
+	   this.namespace = VQ_Shema_copy.namespace;
+	   this.classCount = VQ_Shema_copy.classCount;
+	   schema = this;
+
+	   _.each(this.Tree, function(tree_node) { makeTreeListNode(tree_node); });  
+	   
+	   return;	
+   }
    
    var startTime = Date.now();
    this.projectID = Session.get("activeProject");
@@ -423,6 +455,7 @@ VQ_Schema = function ( data = {}, tt = 0) {
    this.Ontologies = {};
    this.Cycles = {};
    this.Tree = [];
+   this.TreeList = {};
    this.OwlFormat = {};   
    schema = this;
    
@@ -437,15 +470,17 @@ VQ_Schema = function ( data = {}, tt = 0) {
 	   //console.log("Taisa visu no jauna")
 	   this.makeClassesAndTree(data);
 	   this.makeAttributesAndAssociations(data);
+	   VQ_Shema_copy = null;
    }
    else
    {
 	   //console.log("Atjauno esošo")
 	   this.restoreClassesAndTree(data);
 	   //console.log(Date.now() - startTime)
-       this.makeAttributesAndAssociations(data);  
+       this.makeAttributesAndAssociations(data);
+	   VQ_Shema_copy = schema;	
    }
-  
+ 
    //console.log(schema)
   
    VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
@@ -468,6 +503,7 @@ VQ_Schema.prototype = {
   Ontologies:null,
   Cycles:null,
   Tree:null,
+  TreeList:null,
   treeMode:null, 
   OwlFormat:null,
   currentId: 0,
@@ -816,6 +852,10 @@ VQ_Schema.prototype = {
 	//this.Ontologies = data.Ontologies;
     this.Cycles = data.Cycles;
 	this.Tree = data.Tree;
+	//this.TreeList = data.TreeList;
+	
+    _.each(this.Tree, function(tree_node) { makeTreeListNode(tree_node); }); 
+	
 	_.each(data.NewClasses, function(obj){
 		var newObj = new VQ_Class(obj.Info)
 		schema.addClass(newObj);
@@ -948,7 +988,8 @@ VQ_Schema.prototype = {
 		else { tr_local_name = ont.prefix.concat(":",t_name);}
 		
 		var tree_node_id = schema.getNewIdString(t_name);
-		var tree_node = {node_id:tree_node_id ,data_id:tr_data_id, localName:tr_local_name, tree_path:"", deep:1 };
+		var tree_node = {node_id:tree_node_id ,data_id:tr_data_id, localName:tr_local_name, tree_path:"", deep:1, display:"none" };
+		schema.TreeList[tree_node_id] = tree_node;
 		
 		var top_classes_list = _.map(ont_top_classes, function(cl) { 
 			return {name:cl.getClassName(), tr_name:makeTreeNodeLocalName(cl.getClassName(), t_cycle_name), occurence:false,
@@ -971,14 +1012,15 @@ VQ_Schema.prototype = {
 			cl.isInTree = true;
 			var subtree_node_id = schema.getNewIdString(cl.localName);
 			var tr_local_name = makeTreeNodeLocalName(cl.getClassName(), "");
-			//if  ( cl.instanceCount >= schema.treeMode.RemoveLevel ) 
-				children = _.union(children, 
-					{node_id:subtree_node_id, data_id:cl.getClassName(), localName:tr_local_name, tree_path:"Other classes",
-					parent_list:["Other classes"], deep:2 });
+		    var tree_node = {node_id:subtree_node_id, data_id:cl.getClassName(), localName:tr_local_name, tree_path:"Other classes",
+							parent_list:["Other classes"], deep:2, display:"none" };
+			children = _.union(children, tree_node);
+			schema.TreeList[subtree_node_id] = tree_node;	
 		})
 		children = _.sortBy(children, function(c){ return c.localName; })
-		var tree_node = {node_id:tree_node_id, data_id:"", localName:"Other classes", tree_path:"", deep:1,
+		var tree_node = {node_id:tree_node_id, data_id:"", localName:"Other classes", tree_path:"", deep:1, display:"none",
 						children:children, ch_count:_.size(children)};
+		schema.TreeList[tree_node_id] = tree_node;
 		tree_list = _.union(tree_list, tree_node);
 	}
 
