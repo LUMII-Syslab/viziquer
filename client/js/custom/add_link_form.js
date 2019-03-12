@@ -40,7 +40,14 @@ Template.AddLink.helpers({
 			}
 
 			if (schema.classExist(className)) {
-				_.each(schema.findClassByName(className).getAllAssociations(), function(e){
+				
+				var allAssociations = schema.findClassByName(className).getAllAssociations();
+				
+				//remove duplicates
+				allAssociations = allAssociations.filter(function(obj, index, self) { 
+					return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
+				});
+				_.each(allAssociations, function(e){
 					var cardinality = "";
 					var colorLetters = "";				
 					if (proj) {					
