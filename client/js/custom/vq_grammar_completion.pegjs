@@ -34,8 +34,11 @@
 				for(var key in prop){
 					var propName= prop[key]["name"];
 					if(options.showPrefixesForAllNonLocalNames == true){
-						if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
+						if( prop[key]["isDefOnt"] != true)propName =  prop[key]["prefix"] + ":" + propName;
+					} else {
+						if( prop[key]["isDefOnt"] != true &&  prop[key]["isUnique"] != true)propName =  prop[key]["prefix"] + ":" + propName;
 					}
+					
 					addContinuation(place, propName, 100);
 				}
 				getAssociations(place, 95);
@@ -57,7 +60,9 @@
 				for(var key in prop){
 					var propName= prop[key]["name"];
 					if(options.showPrefixesForAllNonLocalNames == true){
-						if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
+						if( prop[key]["isDefOnt"] != true)propName =  prop[key]["prefix"] + ":" + propName;
+					} else {
+						if( prop[key]["isDefOnt"] != true &&  prop[key]["isUnique"] != true)propName =  prop[key]["prefix"] + ":" + propName;
 					}
 					if(prop[key]["type"] == "<=") {
 						addContinuation(place, "^" + propName, priority)

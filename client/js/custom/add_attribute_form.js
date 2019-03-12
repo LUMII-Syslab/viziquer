@@ -61,12 +61,12 @@ Template.AddAttribute.helpers({
 					if (proj.showPrefixesForAllNonLocalNames=="true") {
 						showPrefixesForAllNonLocalNames="true";
 					}
-				}// else attr_list = attr_list.concat(schema.findClassByName(class_name).getAllAttributes());	
+				}
 				var all_attributes = schema.findClassByName(class_name).getAllAttributes();
 				for (var key in all_attributes){
 					att_val = all_attributes[key]["name"];
 					if (showPrefixesForAllNonLocalNames=="true") {
-						if(all_attributes[key]["isDefOnt"] != true || (all_attributes[key]["isDefOnt"] == true && all_attributes[key]["isUnique"] != true))att_val = all_attributes[key]["prefix"] + ":" + att_val;
+						if(all_attributes[key]["isDefOnt"] != true)att_val = all_attributes[key]["prefix"] + ":" + att_val;
 					} else {
 						if(all_attributes[key]["isDefOnt"] != true && all_attributes[key]["isUnique"] != true)att_val = all_attributes[key]["prefix"] + ":" + att_val;
 					}
@@ -103,17 +103,23 @@ Template.AddAttribute.helpers({
 			var schema = new VQ_Schema();
 
 			if (schema.classExist(class_name)) {
+				var showPrefixesForAllNonLocalNames = "false";
 				var proj = Projects.findOne({_id: Session.get("activeProject")});
 				if (proj) {
-					var all_attributes = schema.findClassByName(class_name).getAllAssociations();
-					for (var key in all_attributes){
-						att_val = all_attributes[key]["name"];
-						if (proj.showPrefixesForAllNonLocalNames=="true") {
-							if(all_attributes[key]["isDefOnt"] != true || (all_attributes[key]["isDefOnt"] == true && all_attributes[key]["isUnique"] != true))att_val = all_attributes[key]["prefix"] + ":" + att_val;
-						};
-						attr_list.push({name: att_val});
-					}	
-				} else attr_list = attr_list.concat(schema.findClassByName(class_name).getAllAssociations());	
+					if (proj.showPrefixesForAllNonLocalNames=="true") {
+						showPrefixesForAllNonLocalNames="true";
+					}
+				}
+				var all_attributes = schema.findClassByName(class_name).getAllAssociations();
+				for (var key in all_attributes){
+					att_val = all_attributes[key]["name"];
+					if (showPrefixesForAllNonLocalNames=="true") {
+						if(all_attributes[key]["isDefOnt"] != true)att_val = all_attributes[key]["prefix"] + ":" + att_val;
+					} else {
+						if(all_attributes[key]["isDefOnt"] != true && all_attributes[key]["isUnique"] != true)att_val = all_attributes[key]["prefix"] + ":" + att_val;
+					}
+					attr_list.push({name: att_val});
+				}
 			};
 
 			//remove duplicates

@@ -15,6 +15,7 @@ Template.AddLink.helpers({
 		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
 			//Associations
 			var asc = [];
+			var ascReverse = [];
 			// var ascDetails = getDetailedAttributes(); 
 			// //check if max cardinality exists 
 			// var hasCardinalities = false;
@@ -42,10 +43,10 @@ Template.AddLink.helpers({
 			if (schema.classExist(className)) {
 				
 				var allAssociations = schema.findClassByName(className).getAllAssociations();
-				
+
 				//remove duplicates
 				allAssociations = allAssociations.filter(function(obj, index, self) { 
-					return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
+					return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 				});
 				_.each(allAssociations, function(e){
 					var cardinality = "";
@@ -80,33 +81,45 @@ Template.AddLink.helpers({
 							}*/
 						}
 					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
-					var eName = e.name
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-							if (proj) {
-								if (proj.showPrefixesForAllNonLocalNames=="true") {
-									if(e["isDefOnt"] != true || (e["isDefOnt"] == true && e["isUnique"] != true))eName = e["prefix"] + ":" + eName;
-								};
-							}
 					
-					asc.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
+					/////////////////////////////////////////////////////////////////////////////////
+					//prefix:name part
+					var eName = e.name
+					var showPrefixesForAllNonLocalNames = "false";
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					if (proj) {
+						if (proj.showPrefixesForAllNonLocalNames=="true") {
+							showPrefixesForAllNonLocalNames="true";
+						}
+					}
+					if (showPrefixesForAllNonLocalNames=="true") {
+						if(e["isDefOnt"] != true)eName = e["prefix"] + ":" + eName;
+					} else {
+						if(e["isDefOnt"] != true && e["isUnique"] != true)e["prefix"] + ":" + eName;
+					}
+					/////////////////////////////////////////////////////////////////////////////////
+					
+					if(e.type == "=>") asc.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
+					else ascReverse.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
+					
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
 							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
 						else
-							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
+							ascReverse.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
 				});
 			}
 
 			//default value for any case
 			if (proj){
       			if (proj.showCardinalities=="true")
-      				asc.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
+      				ascReverse.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
 				else {
-      				asc.push({name: "++", class: "", type: "=>", card: "", clr: ""});
+      				ascReverse.push({name: "++", class: "", type: "=>", card: "", clr: ""});
       			}
       		}
 
-			return asc;
+			return asc.concat(ascReverse);
 		}
 	},
 

@@ -45,7 +45,9 @@
 					for(var key in prop){
 						var propName= prop[key]["name"];
 						if(options.showPrefixesForAllNonLocalNames == true){
-							if( prop[key]["isDefOnt"] != true || ( prop[key]["isDefOnt"] == true &&  prop[key]["isUnique"] != true))propName =  prop[key]["prefix"] + ":" + propName;
+							if( prop[key]["isDefOnt"] != true)propName =  prop[key]["prefix"] + ":" + propName;
+						} else {
+							if( prop[key]["isDefOnt"] != true &&  prop[key]["isUnique"] != true)propName =  prop[key]["prefix"] + ":" + propName;
 						}
 						
 						if(prop[key]["type"] == "<=") {
@@ -70,7 +72,9 @@
 					//var assoc_name = getAllSchemaAssociations[role]["name"];
 					var propName= prop["name"];
 					if(options.showPrefixesForAllNonLocalNames == true){
-						if( prop["isDefOnt"] != true || ( prop["isDefOnt"] == true &&  prop["isUnique"] != true))propName =  prop["prefix"] + ":" + propName;
+						if( prop["isDefOnt"] != true)propName =  prop["prefix"] + ":" + propName;
+					} else {
+						if( prop["isDefOnt"] != true && prop["isUnique"] != true)propName =  prop["prefix"] + ":" + propName;
 					}
 					addContinuation(place, propName, 1);
 				}
@@ -85,7 +89,9 @@
 					for (var role in all_assoc_from_start) {
 						var assoc_name= all_assoc_from_start[role]["name"];
 						if(options.showPrefixesForAllNonLocalNames == true){
-							if( all_assoc_from_start[role]["isDefOnt"] != true || ( all_assoc_from_start[role]["isDefOnt"] == true &&  all_assoc_from_start[role]["isUnique"] != true))assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
+							if( all_assoc_from_start[role]["isDefOnt"] != true)assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
+						} else {
+							if( all_assoc_from_start[role]["isDefOnt"] != true &&  all_assoc_from_start[role]["isUnique"] != true)assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
 						}
 						
 						// var assoc_name = all_assoc_from_start[role]["name"];
@@ -106,7 +112,9 @@
 							var assoc_name = possible_assoc_list[role]["name"];
 
 							if(options.showPrefixesForAllNonLocalNames == true){
-								if( possible_assoc_list[role]["isDefOnt"] != true || ( possible_assoc_list[role]["isDefOnt"] == true &&  possible_assoc_list[role]["isUnique"] != true))assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
+								if( possible_assoc_list[role]["isDefOnt"] != true)assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
+							} else {
+								if( possible_assoc_list[role]["isDefOnt"] != true &&  possible_assoc_list[role]["isUnique"] != true)assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
 							}
 							
 							if (possible_assoc_list[role]["type"] == "<=") {
