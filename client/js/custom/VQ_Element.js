@@ -471,6 +471,7 @@ VQ_Schema = function ( data = {}, tt = 0) {
 	   this.makeClassesAndTree(data);
 	   this.makeAttributesAndAssociations(data);
 	   VQ_Shema_copy = null;
+	   //this.getOwlFormat();
    }
    else
    {
@@ -886,12 +887,16 @@ VQ_Schema.prototype = {
 			schema.addSchemaAttribute(newSchAttr);
 			schema.addSchemaProperty(newSchAttr);
 			scClass.addProperty(newSchAttr);
-			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-			//newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
+			//createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+			newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
 			//createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
 			scClass["schemaAttribute"][newSchAttr.getID()] = newSchAttr;  
 			newSchAttr["sourceClass"] = scClass.classInfo;
 		})
+	})
+	
+	_.each(schema.Attributes, function(attr) {
+		_.each(attr.schemaAttribute, function(sc_attr) { sc_attr.isUnique = attr.isUnique; });
 	})
 	
 	_.each(data.Associations, function(asoc){
@@ -909,8 +914,8 @@ VQ_Schema.prototype = {
 			schema.addSchemaRole(newSchRole);
 			schema.addSchemaProperty(newSchRole);
 			scClass.addProperty(newSchRole);
-			createLink(newRole, newSchRole, "schemaRole", "role");
-			//newRole["schemaRole"][newSchRole.ID] = newSchRole;
+			//createLink(newRole, newSchRole, "schemaRole", "role");
+			newRole["schemaRole"][newSchRole.ID] = newSchRole;
   		    //createLink(scClass, newSchRole, "outAssoc", "sourceClass");
 			scClass["outAssoc"][newSchRole.ID] = newSchRole;
 			newSchRole["sourceClass"] = scClass.classInfo;
@@ -918,6 +923,10 @@ VQ_Schema.prototype = {
 			tClass["inAssoc"][newSchRole.ID] = newSchRole;
 			newSchRole["targetClass"] = tClass.classInfo;
 		})
+	})
+	
+	_.each(schema.Associations, function(assoc) {
+		_.each(assoc.schemaRole, function(sc_assos) { sc_assos.isUnique = assoc.isUnique; });
 	})
 
 	_.each(data.Associations, function(asoc){
@@ -1032,20 +1041,20 @@ VQ_Schema.prototype = {
   },  
   getOwlFormat: function() {
 	// !!!! Jāpaskatās, vai nav jau sarēķināts
-	var newLine = "\n";
+	var newLine = "";
 	
-	schema.OwlFormat["1_Ontologies"] = "";
+	schema.OwlFormat["1_Ontologies"] = [];
 	_.each(schema.Ontologies, function(ont){
 		if (ont.isDefault)
-			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(:=<",ont.namespace,">)");
+			schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Prefix(:=<",ont.namespace,">)"));
 		else
-			schema.OwlFormat["1_Ontologies"] = schema.OwlFormat["1_Ontologies"].concat(newLine,"Prefix(",ont.prefix,":=<",ont.namespace,">)");
+			schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Prefix(",ont.prefix,":=<",ont.namespace,">)"));
 	})
 	
-	schema.OwlFormat["2_Declarations"] = "";
-	schema.OwlFormat["3_DeclarationsWithAnnot"] = "";
-	schema.OwlFormat["4_SubClassOf"] = "";
-	schema.OwlFormat["5_Cardinalities"] = "";
+	schema.OwlFormat["2_Declarations"] = [];
+	schema.OwlFormat["3_DeclarationsWithAnnot"] = [];
+	schema.OwlFormat["4_SubClassOf"] = [];
+	schema.OwlFormat["5_Cardinalities"] = [];
 	var list1 = [];
 	var a = ""
 	
@@ -1053,22 +1062,22 @@ VQ_Schema.prototype = {
 	_.each(schema.Classes, function(cl){
 		if (cl.localName != " ")
 		{
-			cl_name = cl.getClassName();
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(Class(",cl_name,"))");
+			cl_name = cl.getClassOntName();
+			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"], newLine.concat("Declaration(Class(",cl_name,"))"));
 			//if (cl.instanceCount > 4)
 			  //console.log(a.concat("Declaration(Class(",cl_name,"))"));
-			schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"Declaration(Class(",cl_name,"))");
+			//schema.OwlFormat["3_DeclarationsWithAnnot"] = _.union(schema.OwlFormat["3_DeclarationsWithAnnot"],newLine.concat("Declaration(Class(",cl_name,"))"));
 			if (cl.instanceCount > 0)
 			{			
-				schema.OwlFormat["3_DeclarationsWithAnnot"] = schema.OwlFormat["3_DeclarationsWithAnnot"].concat(newLine,"AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )');  
+				//schema.OwlFormat["3_DeclarationsWithAnnot"] = _.union(schema.OwlFormat["3_DeclarationsWithAnnot"],newLine.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));  
 			    //if (cl.instanceCount > 4)
 				//console.log(a.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));
 			}	
 			if (_.size(cl.subClasses) > 0)
 			{
 				_.each(cl.subClasses, function(sc) {
-					sc_name = sc.getClassName();
-					schema.OwlFormat["4_SubClassOf"] = schema.OwlFormat["4_SubClassOf"].concat(newLine,"SubClassOf(",sc_name," ",cl_name,")");
+					sc_name = sc.getClassOntName();
+					schema.OwlFormat["4_SubClassOf"] = _.union(schema.OwlFormat["4_SubClassOf"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
 					
 					//if (cl.instanceCount > 4 && sc.instanceCount > 4 )
 					//	console.log(a.concat("SubClassOf(",sc_name," ",cl_name,")"));		
@@ -1077,6 +1086,8 @@ VQ_Schema.prototype = {
 			}			
 		}
 	})
+	
+	return;
 	//console.log(list1);
 	
 	//SubClassOf(:AA ObjectMinCardinality(1 :p1))
@@ -1084,9 +1095,9 @@ VQ_Schema.prototype = {
 	_.each(schema.Associations, function(el){
 		if (el.localName != " ")
 		{   el_name = el.getElementName(); 
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
+			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(ObjectProperty(",el_name,"))"));
 			if (el.maxCardinality != -1)
-				schema.OwlFormat["5_Cardinalities"] = schema.OwlFormat["5_Cardinalities"].concat(newLine,"Declaration(ObjectProperty(",el_name,"))");
+				schema.OwlFormat["5_Cardinalities"] = _.union(schema.OwlFormat["5_Cardinalities"],newLine.concat("Declaration(ObjectProperty(",el_name,"))"));
 			
 		}
 	})
@@ -1094,20 +1105,20 @@ VQ_Schema.prototype = {
 	_.each(schema.Attributes, function(el){
 		if (el.localName != " ")
 		{
-			schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(DataProperty(",el.getElementName(),"))");
+			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(DataProperty(",el.getElementName(),"))"));
 		}			
 	})
 
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:source))");
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:target))");
-	schema.OwlFormat["2_Declarations"] = schema.OwlFormat["2_Declarations"].concat(newLine,"Declaration(AnnotationProperty(owlc:instanceCount))");
+	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:source))"));
+	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:target))"));
+	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:instanceCount))"));
 	
-	//console.log(schema.OwlFormat)
-	   			//	var link = document.createElement("a");
-				//link.setAttribute("download", "data.json");
-				//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema.OwlFormat, 0, 4)], {type: "application/json;charset=utf-8;"}));
-				//document.body.appendChild(link);
-				//link.click();	
+	console.log(schema.OwlFormat)
+	   				var link = document.createElement("a");
+				link.setAttribute("download", "data.json");
+				link.href = URL.createObjectURL(new Blob([JSON.stringify(schema.OwlFormat, 0, 4)], {type: "application/json;charset=utf-8;"}));
+				document.body.appendChild(link);
+				link.click();	
   },
  }
 
@@ -1292,7 +1303,7 @@ VQ_Class.prototype.getAssociations = function() {
     _.each(this.inAssoc, function (a) {
 				 if ( _.size(a.inverseSchemaRole ) == 0 && !a.isSymmetric)
 					out_assoc = _.union(out_assoc, 
-					{name: a.localName, isUnique:a.role.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.sourceClass.localName , type: "<="});
+					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.sourceClass.localName , type: "<="});
 				});
     return out_assoc;
   };
@@ -1304,6 +1315,9 @@ VQ_Class.prototype.getClassShortName = function (){
 VQ_Class.prototype.getClassName = function (){
 	return this.ontology.dprefix + ":" + this.localName; 
   };
+VQ_Class.prototype.getClassOntName = function (){
+	return this.ontology.prefix + ":" + this.localName; 
+  };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();  
 	_.each(this.allSuperSubSuperClasses, function(sc){
@@ -1314,7 +1328,7 @@ VQ_Class.prototype.getAllAssociations = function() {
   };
 VQ_Class.prototype.getAttributes = function() {   // a.ontology.dprefix.concat(":",a.localName) - nu ne gluži tā
 	return _.map(this.schemaAttribute, function (a) {
-		return {name:a.localName, isUnique:a.attribute.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault,}; });
+		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault,}; });
   };
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes(); 
@@ -1360,7 +1374,8 @@ VQ_ClassInfo.prototype = {
   isUnique: null,   
   ontology: null,
   instanceCount: null,
-  getClassName : function() { return this.ontology.dprefix.concat(":",this.localName); }
+  getClassName : function() { return this.ontology.dprefix.concat(":",this.localName); }, 
+  getClassOntName : function (){ return this.ontology.prefix + ":" + this.localName; }
 };
 
 VQ_Attribute = function (attrInfo){
