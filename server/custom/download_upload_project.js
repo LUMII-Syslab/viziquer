@@ -24,7 +24,7 @@ Meteor.methods({
 
 			var tool_name = tool.name;
 
-			var diagrams = Diagrams.find({projectId: project_id, versionId: version_id}).map(function(diagram) {
+			var diagrams = Diagrams.find({projectId: project_id, versionId: version_id}).map(function(diagram) {  
 
 				var diagram_type = DiagramTypes.findOne({_id: diagram.diagramTypeId,});
 				if (!diagram_type) {
@@ -65,8 +65,10 @@ Meteor.methods({
 
 				return diagram;
 			});
+			var schema = Schema.findOne({projectId: project_id, versionId: version_id});
+			if (!schema) { schema = {}; }
 
-			return {diagrams: diagrams, project: project,};
+			return {diagrams: diagrams, project: project, schema:schema };
 		}
 	},
 
@@ -240,6 +242,16 @@ Meteor.methods({
 				
 				});
 			});
+			
+			var schema = data.schema;
+			if (_.size(schema) > 0 )
+			{
+				delete schema._id;
+				_.extend(schema, {projectId: project_id, versionId: version_id	});
+				Schema.insert(schema);
+
+			}
+
 		}
 	},
 

@@ -57,7 +57,7 @@ Meteor.methods({
                     Schema.remove({projectId: list.projectId, versionId: list.versionId});
 
                     var data = list.data;
-					console.log(data);
+					//console.log(data);
 					var schema = _.extend(data, {projectId: list.projectId, versionId: list.versionId});
 					
 					//console.log(schema);
