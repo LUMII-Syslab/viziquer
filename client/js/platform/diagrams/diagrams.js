@@ -654,7 +654,7 @@ Template.ontologySettings.events({
           useStringLiteralConversion: $("#use-string-literal-conversion").val(),
           queryEngineType: $("#query-engine-type").val(),
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
-					defaultGroupingSeparator: $("#default-grouping-separator").val(),
+					defaultGroupingSeparator: $("#default-grouping-separator").val(", "),
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
 					showCardinalities: $("#show-cardinalities").is(":checked"),
@@ -687,7 +687,7 @@ Template.ontologySettings.events({
 		 $("#ontology-endpoint").val(proj.endpoint);
 		 $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
 		 $("#query-engine-type").val(proj.queryEngineType);
-		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
+		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator=="true");
 		 $("#default-grouping-separator").prop('disabled', proj.useDefaultGroupingSeparator=="false");
 		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);

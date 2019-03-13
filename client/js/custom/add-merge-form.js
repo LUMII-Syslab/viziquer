@@ -1,7 +1,7 @@
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.alias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
-Template.AddMergeValues.aggregation = new ReactiveVar("count");
+Template.AddMergeValues.aggregation = new ReactiveVar("group_concat");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
 Template.AddMergeValues.e = new ReactiveVar("");
 
@@ -16,7 +16,7 @@ Interpreter.customMethods({
 		var aggregation = parsedExpression["aggregation"];
 		Template.AddMergeValues.expression.set(expr);
 		Template.AddMergeValues.alias.set(getAlais(e).val());
-		Template.AddMergeValues.aggregation.set(aggregation);
+		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.cardinality.set(countCardinality(expr, Session.get("activeElement")));
 		Template.AddMergeValues.expressionField.set(expressionField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
@@ -129,7 +129,7 @@ Template.AddMergeValues.events({
 function parsedExpressionField(expression){
 	if(expression.indexOf("(") != -1 && expression.endsWith(")") == true ){
 		var aggregation = expression.substring(0, expression.indexOf("("));
-		var aggregationList = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "concat"];
+		var aggregationList = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
 		if(aggregationList.indexOf(aggregation.toLowerCase()) != -1) return {expression:expression.substring(expression.indexOf("(")+1, expression.length-1), aggregation:aggregation.toLowerCase()}
 	}
 	return {expression:expression, aggregation:""}
@@ -138,7 +138,7 @@ function parsedExpressionField(expression){
 function clearMergeValuesInput(){
 	var defaultFunctions = document.getElementsByName("function-name-merge");
 	_.each(defaultFunctions, function(e){
-		if (e.value == "count") e.selected = true;
+		if (e.value == "group_concat") e.selected = true;
 		else e.selected = false;
 	});
 
