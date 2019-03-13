@@ -104,9 +104,9 @@ Template.AddLink.helpers({
 					
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
-							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
+							ascReverse.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
 						else
-							ascReverse.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
+							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
 				});
 			}
 
