@@ -410,17 +410,22 @@ VQ_Shema_copy = null;
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
+var druka = false;
    if (_.size(data) > 0 )  VQ_Shema_copy = null;
+   
+   var isData = false;
+   if (_.size(data) > 0 )
+		isData = true;
 
    if (Schema.find().count() == 0 && _.size(data) == 0)
    {
-		//console.log("Neatrada shēmu vai datus");  
+		if (druka) console.log("Neatrada shēmu vai datus");  
 		return; 
     }
    
    if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) 
    {
-	   //console.log("Atrada derīgu")
+	   if (druka) console.log("Atrada derīgu");
 	   this.projectID = Session.get("activeProject");
 	   this.Elements = VQ_Shema_copy.Elements;	
 	   this.Classes = VQ_Shema_copy.Classes;
@@ -465,24 +470,49 @@ VQ_Schema = function ( data = {}, tt = 0) {
       if (data.Schema) data = data.Schema;
    } 	  
    
-   if (_.size(data.NewClasses) == 0 )
+   if ( isData )
    {
-	   //console.log("Taisa visu no jauna")
+	   if (druka) console.log("Taisa visu no jauna - shēmas ielādes brīdis");
 	   this.makeClassesAndTree(data);
 	   this.makeAttributesAndAssociations(data);
+	   console.log(schema)
 	   VQ_Shema_copy = null;
 	   //this.getOwlFormat();
    }
+   else if ( _.size(data.NewClasses) == 0 )
+   {
+		if (druka) console.log("Vecais shēmas saglabātais variants");
+		this.makeClassesAndTree(data);
+		var new_data = 
+		{
+			namespace: this.namespace,
+			Cycles: this.Cycles,
+			Tree: this.Tree,
+			NewClasses: this.Classes,
+		};
+		console.log(new_data)
+		
+		this.Elements = {};	
+		this.Classes = {};
+		this.Ontologies = {};
+		this.Cycles = {};
+		this.Tree = [];
+		
+		this.restoreClassesAndTree(new_data);
+		console.log(this)
+        this.makeAttributesAndAssociations(data);
+  	    VQ_Shema_copy = schema;		
+   }
    else
    {
-	   //console.log("Atjauno esošo")
+	   if (druka) console.log("Atjauno esošo - saglabāts jaunais vairiants");
 	   this.restoreClassesAndTree(data);
-	   //console.log(Date.now() - startTime)
        this.makeAttributesAndAssociations(data);
-	   VQ_Shema_copy = schema;	
+	   VQ_Shema_copy = schema;
+	   if (druka) console.log(schema);	   
    }
  
-   //console.log(schema)
+   if (druka) console.log(schema);
   
    VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
    //schema.getOwlFormat();
@@ -567,7 +597,7 @@ VQ_Schema.prototype = {
   },
   findClassByNameAndCycle: function(name) {
 	var cl = this.findClassByName(name);
-	if (_.size(cl.cycle) > 0 )
+	if (_.size(cl.cycle) > 0 )  // !!!! Šis būs jāmaina
 		return this.findClassByName(cl.cycle[0]);
     return cl;
   },
@@ -580,6 +610,11 @@ VQ_Schema.prototype = {
   findSchemaRoleByName: function(name, sourceClass, targetClass) {
     var element = _.find(this.SchemaRoles, function(el){
 		if ( findName(name, el) && findName(sourceClass, el.sourceClass) && findName(targetClass, el.targetClass)) { return el; }; })
+	return element;
+  },
+  findSchemaRoleByNameAndTarget: function(name, sourceClass, targetClass) {
+    var element = _.find(this.SchemaRoles, function(el){
+		if ( findName(name, el) && findName(targetClass, el.targetClass)) { return el; }; })
 	return element;
   },
   addElement: function(newElement) {
@@ -626,7 +661,7 @@ VQ_Schema.prototype = {
   resolveSchemaRoleByName: function (linkName, sourceClass, targetClass) {
     if (this.associationExist(linkName))
 	{    
-		return this.findSchemaRoleByName(linkName, sourceClass, targetClass).getSchemaRoleInfo();
+		return this.findSchemaRoleByNameAndTarget(linkName, sourceClass, targetClass).getSchemaRoleInfo();
 	}
 	else
 		return null;
@@ -938,6 +973,15 @@ VQ_Schema.prototype = {
 			  if (invSchRole)
 				schRole.inverseSchemaRole = invSchRole.ID;  
 			}
+		})
+	})
+	
+	_.each(schema.Associations, function(asoc){
+		_.each(asoc.schemaRole, function(schemaRole){
+			if (!schemaRole.maxCardinality)
+				schemaRole.maxCardinality = asoc.maxCardinality;
+			if (!schemaRole.minCardinality)
+				schemaRole.minCardinality = asoc.minCardinality;	
 		})
 	})
   },
@@ -1299,11 +1343,11 @@ VQ_Class.prototype.isInTree = null;
 VQ_Class.prototype.isVisited = null;
 VQ_Class.prototype.getAssociations = function() {
     var out_assoc =  _.map(this.outAssoc, function (a) {
-				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.targetClass.localName , type: "=>"}; });
+				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.targetClass.localName , type: "=>", maxCard: a.maxCardinality}; });
     _.each(this.inAssoc, function (a) {
 				 if ( _.size(a.inverseSchemaRole ) == 0 && !a.isSymmetric)
 					out_assoc = _.union(out_assoc, 
-					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.sourceClass.localName , type: "<="});
+					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault, class: a.sourceClass.localName , type: "<=", maxCard: a.maxCardinality});
 				});
     return out_assoc;
   };
@@ -1328,7 +1372,7 @@ VQ_Class.prototype.getAllAssociations = function() {
   };
 VQ_Class.prototype.getAttributes = function() {   // a.ontology.dprefix.concat(":",a.localName) - nu ne gluži tā
 	return _.map(this.schemaAttribute, function (a) {
-		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault,}; });
+		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.dprefix, isDefOnt:a.ontology.isDefault}; });
   };
 VQ_Class.prototype.getAllAttributes = function() {
 	var attributes = this.getAttributes(); 
