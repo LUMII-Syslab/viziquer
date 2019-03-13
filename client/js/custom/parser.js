@@ -1651,7 +1651,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					if (typeof expressionTable[key]['SEPARATOR'] !== 'undefined') separator = "; SEPARATOR=" + expressionTable[key]['SEPARATOR'];
 					else {
 						if(typeof parameterTable["defaultGroupingSeparator"] !== 'undefined') separator = "; SEPARATOR='"+ parameterTable["defaultGroupingSeparator"] +"'";
-						else separator = "; SEPARATOR=','";
+						else separator = "; SEPARATOR=', '";
 					}	
 					SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + separator + ")";
 				}
