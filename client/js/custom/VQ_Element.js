@@ -292,8 +292,8 @@ function makeTreeNodeLocalName(class_name, parent_cycle_name, occurence = false)
 		pre = pre.concat("V");
 	if ( _.size(schema_class.subClasses) > 0 ) // && occurence)
 		pre = pre.concat("A");
-	if (pre != "")
-		local_name = local_name.concat("  (", pre,")")
+	//if (pre != "")
+	//	local_name = local_name.concat("  (", pre,")")
 	if ( schema_class.instanceCount > 0)
 		local_name = local_name.concat("  (", schema_class.instanceCount,")");	
 	
