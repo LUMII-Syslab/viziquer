@@ -25,7 +25,7 @@ Template.AddLink.helpers({
 
 			var className = startElement.getName(); 
 			var schema = new VQ_Schema();
-			var proj = Projects.findOne({_id: Session.get("activeProject")}); 
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
 
 			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
 				if (startElement.getLinkToRoot()){
@@ -38,7 +38,7 @@ Template.AddLink.helpers({
         				className = newStartClass.getName();
         			}						
 				}					
-			}
+			} 
 
 			if (schema.classExist(className)) {
 				
@@ -50,9 +50,9 @@ Template.AddLink.helpers({
 				});
 				_.each(allAssociations, function(e){
 					var cardinality = "";
-					var colorLetters = "";				
-					if (proj) {					
-						if (proj.showCardinalities=="true"){
+					var colorLetters = ""; 				
+					if (proj) {				
+						if (proj.showCardinalities=="true"){ 
 							if (e.type == "<=") {
 								cardinality = cardinality.concat("[*]");
 								colorLetters = colorLetters.concat("color: purple");
@@ -86,7 +86,7 @@ Template.AddLink.helpers({
 					//prefix:name part
 					var eName = e.name
 					var showPrefixesForAllNonLocalNames = "false";
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					//var projInfo = Projects.findOne({_id: Session.get("activeProject")});
 					if (proj) {
 						if (proj.showPrefixesForAllNonLocalNames=="true") {
 							showPrefixesForAllNonLocalNames="true";
@@ -104,9 +104,9 @@ Template.AddLink.helpers({
 					
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
-							asc.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
+							ascReverse.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
 						else
-							ascReverse.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
+							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
 				});
 			}
 

@@ -73,8 +73,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
     _.extend(obj_class.identification, parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification._id));
 
     if (obj_class.linkIdentification) {
-        _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
-        _.extend(obj_class.linkIdentification, parsePathExpression(obj_class.linkIdentification.localName, obj_class.identification._id))
+		
+		//parser need link with prefix
+		var prefix = "";
+		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
+		if(typeof obj_class.linkIdentification.Prefix !== 'undefined' && obj_class.linkIdentification.Prefix != "") prefix = obj_class.linkIdentification.Prefix + ":";
+        _.extend(obj_class.linkIdentification, parsePathExpression(prefix+obj_class.linkIdentification.localName, obj_class.identification._id))
     };
 
     obj_class.conditionLinks.forEach(function(cl) {
