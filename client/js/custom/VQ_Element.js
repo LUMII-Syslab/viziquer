@@ -475,7 +475,7 @@ var druka = false;
 	   if (druka) console.log("Taisa visu no jauna - shēmas ielādes brīdis");
 	   this.makeClassesAndTree(data);
 	   this.makeAttributesAndAssociations(data);
-	   console.log(schema)
+	   if (druka) console.log(schema);
 	   VQ_Shema_copy = null;
 	   //this.getOwlFormat();
    }
@@ -993,7 +993,7 @@ VQ_Schema.prototype = {
 	if ( schema.classCount < 50 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī vidējais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
 		schema.treeMode = { CompressLevel:0, RemoveLevel:-1, MaxDeep:10};
 	else if ( big_class_count > 0 && big_class_count < 100 )
-		schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
+		schema.treeMode = { CompressLevel:1, RemoveLevel:-1, MaxDeep:6}; //schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
 	else
 		schema.treeMode = { CompressLevel:2, RemoveLevel:5, MaxDeep:6};
 	 
@@ -1057,17 +1057,21 @@ VQ_Schema.prototype = {
 	ontologies = _.filter(schema.Ontologies, function (ont) { return ont.classCount == 1 && !ont.isDefault});  // Tās tās kārnās
 	if (_.size(ontologies) > 0)
 	{
+		var t_cycle_name = "";
 		var tree_node_id = schema.getNewIdString("__");
 		var children = [];
 		var ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.classCount == 1 && cl.localName != " " } );
 		_.each(ont_top_classes, function(cl){
 			cl.isInTree = true;
 			var subtree_node_id = schema.getNewIdString(cl.localName);
-			var tr_local_name = makeTreeNodeLocalName(cl.getClassName(), "");
-		    var tree_node = {node_id:subtree_node_id, data_id:cl.getClassName(), localName:tr_local_name, tree_path:"Other classes",
-							parent_list:["Other classes"], deep:2, display:"none" };
-			children = _.union(children, tree_node);
-			schema.TreeList[subtree_node_id] = tree_node;	
+			var tr_local_name = makeTreeNodeLocalName(cl.getClassName(), t_cycle_name);
+		    //var tree_node = {node_id:subtree_node_id, data_id:cl.getClassName(), localName:tr_local_name, tree_path:"Other classes",   
+			//				parent_list:["Other classes"], deep:2, display:"none" };
+			var class_info = {name:cl.getClassName(), tr_name:tr_local_name, occurence:false, parent_list:["Other classes"], prefix:cl.ontology.dprefix};
+			var child = makeSubTree([class_info], 2);
+
+			children = _.union(children, child);
+			//schema.TreeList[subtree_node_id] = tree_node;	
 		})
 		children = _.sortBy(children, function(c){ return c.localName; })
 		var tree_node = {node_id:tree_node_id, data_id:"", localName:"Other classes", tree_path:"", deep:1, display:"none",
