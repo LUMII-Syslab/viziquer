@@ -848,7 +848,7 @@ VQ_Schema.prototype = {
   },
   restoreClassesAndTree: function(data) {
   	this.namespace = data.namespace;
-	//this.Ontologies = data.Ontologies;
+	this.Ontologies = data.Ontologies;
     this.Cycles = data.Cycles;
 	this.Tree = data.Tree;
 	//this.TreeList = data.TreeList;
