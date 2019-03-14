@@ -513,7 +513,7 @@ var druka = false;
    }
  
    if (druka) console.log(schema);
-  
+   
    VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
    //schema.getOwlFormat();
 	//console.log("44444")
@@ -1355,10 +1355,27 @@ VQ_Class.prototype.getAssociations = function() {
 				});
     return out_assoc;
   };
-VQ_Class.prototype.getClassShortName = function (){
-	if (this.isUnique) return this.localName;
-	else  if (this.ontology.prefix == "") return this.localName;
+VQ_Class.prototype.getClassShortName = function (){  
+
+	var showPrefixesForAllNonLocalNames = false;
+	var proj = Projects.findOne({_id: schema.projectID});
+	if (proj) {
+		if (proj.showPrefixesForAllNonLocalNames=="true") {
+			showPrefixesForAllNonLocalNames = true ;
+		}
+	}
+
+	if ( showPrefixesForAllNonLocalNames )
+	{
+		if (this.ontology.prefix == "") return this.localName;
 		  else return this.ontology.prefix + ":" + this.localName; 
+	}
+	else
+	{
+		if (this.isUnique) return this.localName;
+		else  if (this.ontology.prefix == "") return this.localName;
+			  else return this.ontology.prefix + ":" + this.localName; 
+	}
   };
 VQ_Class.prototype.getClassName = function (){
 	return this.ontology.dprefix + ":" + this.localName; 
