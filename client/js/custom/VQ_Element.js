@@ -488,18 +488,18 @@ var druka = false;
 			namespace: this.namespace,
 			Cycles: this.Cycles,
 			Tree: this.Tree,
+			Ontologies: this.Ontologies,
 			NewClasses: this.Classes,
 		};
 		console.log(new_data)
 		
 		this.Elements = {};	
 		this.Classes = {};
-		this.Ontologies = {};
 		this.Cycles = {};
 		this.Tree = [];
 		
 		this.restoreClassesAndTree(new_data);
-		console.log(this)
+		console.log(schema)
         this.makeAttributesAndAssociations(data);
   	    VQ_Shema_copy = schema;		
    }
