@@ -94,7 +94,7 @@ Interpreter.customMethods({
 				return {value: c["name"], input: c["name"]};
 			});
 
-			class_names = _.sortBy(class_names, "input");
+			// class_names = _.sortBy(class_names, "input"); // Saraksts ir jau sakārtots, ņemot vērā ontoloģijas
 
 		 	class_names =  _.uniq(class_names, false, function(c) {
 		 		return c["input"];

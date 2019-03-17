@@ -82,7 +82,7 @@ Template.schemaTree.events({
 								 height: DEFAULT_BOX_HEIGHT};
 	  //console.log(loc);
 			var schema = new VQ_Schema;
-			class_name =  schema.findClassByName(class_name).getClassShortName();
+			class_name =  schema.findClassByName(class_name).getElementShortName();
 			Create_VQ_Element(function(boo) {
 				boo.setName(class_name);
 				var proj = Projects.findOne({_id: Session.get("activeProject")});

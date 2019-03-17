@@ -543,13 +543,13 @@ Template.importOntology.events({
 				if (data)
 				{
 					if ( data.Classes ){
-						var schema = new VQ_Schema(data);
-						data.namespace = schema.namespace;
-						//data.schemaInfo = JSON.stringify(schema);
-						data.Tree = schema.Tree;
-						data.Ontologies = schema.Ontologies;
-						data.Cycles = schema.Cycles;
-						data.NewClasses = schema.Classes;
+						//var schema = new VQ_Schema(data);
+						//data.namespace = schema.namespace;
+						//data.Tree = schema.Tree;
+						//data.Ontologies = schema.Ontologies;
+						//data.Cycles = schema.Cycles;
+						//data.NewClasses = schema.Classes;
+						VQ_Shema_copy = null;
 						
 						var list = {projectId: Session.get("activeProject"),
 									versionId: Session.get("versionId"),
