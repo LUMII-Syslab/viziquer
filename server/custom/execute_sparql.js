@@ -25,23 +25,24 @@ Meteor.methods({
 		    	try {
 					// clone object. It is an efficient hack
 					var count_options = JSON.parse(JSON.stringify(options));
-
 					// inserting SELECT COUNT before the first occurence of SELECT
 		      		count_options.params.params.query = buildEnhancedQuery(count_options.params.params.query, "SELECT", " SELECT (COUNT(*) as ?number_of_rows_in_query_xyz) WHERE { ", "}");
 					count_options.params.params.format="application/sparql-results+json";
-
 					////////////////////////////////////////////////////////
 					// to modify endpoint by adding URL encoded querry
 					let query = count_options.params.params.query;
+					let namedGraph = count_options.params.params['default-graph-uri'];
+
 					query = query.replace(/(\r\n|\n|\r)/gm," ");	
 					query = encodeURIComponent(query);
 					query = query.replace(/[*]/g, '%2A');
 					query = query.replace(/[(]/g, '%28');
 					query = query.replace(/[)]/g, '%29');
-					count_options.endPoint = count_options.endPoint + '?query=' + query + '&format=JSON';
+					count_options.endPoint = count_options.endPoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query + '&format=JSON';
+					
 					/////////////////////////////////////////////
 					
-					//var qres = HTTP.post(count_options.endPoint, count_options.params);
+					// var qres = HTTP.post(count_options.endPoint, count_options.params);
 					var qres = HTTP.post(count_options.endPoint);
 					
 		      		if (qres.statusCode == 200) {
@@ -84,16 +85,20 @@ Meteor.methods({
 				////////////////////////////////////////////////////////
 					// to modify endpoint by adding URL encoded querry
 					let query = options.params.params.query;
+					let namedGraph = options.params.params['default-graph-uri'];
+
 					query = query.replace(/(\r\n|\n|\r)/gm," ");
 					query = encodeURIComponent(query);
 					query = query.replace(/(\*)/g, '%2A');
 					query = query.replace(/[(]/g, '%28');
 					query = query.replace(/[)]/g, '%29');
-					options.endPoint = options.endPoint + '?query=' + query;
+					options.endPoint = options.endPoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query;
+
 					/////////////////////////////////////////////
 
 				// HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
 				HTTP.call("POST", options.endPoint, function(err, resp) {
+
 					if (err) {
 						future.return({status: 505, error:err, limit_set: false, number_of_rows: 0});
 					}
@@ -131,11 +136,10 @@ Meteor.methods({
 	},
 
 	testProjectEndPoint: function(list) {
-
 		var user_id = Meteor.userId();
 		if (is_project_member(user_id, list)) {
-
-			if (!list.endpoint || !list.uri) {
+// if (!list.endpoint || !list.uri) {
+			if (!list.endpoint && !list.uri) {
 				console.error("No data specified");
 				return {status: 500,};
 			}
@@ -144,6 +148,17 @@ Meteor.methods({
 			var future = new Future();
 
 			var params = {};
+
+///////////////////////////////////////////////
+// aded SELECT ?a ?b ?c where{?a?b?c}LIMIT 10 to test query
+			let query = 'SELECT ?a ?b ?c where{?a ?b ?c} LIMIT 10'
+			query = encodeURIComponent(query);
+			query = query.replace(/(\*)/g, '%2A');
+			query = query.replace(/[(]/g, '%28');
+			query = query.replace(/[)]/g, '%29');
+			list.endpoint = list.endpoint + '?query=' + query;
+ ////////////////////////////////////
+
 			HTTP.call("POST", list.endpoint, params, function(err, resp) {
 
 				if (err) {
