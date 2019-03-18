@@ -1003,7 +1003,6 @@ function autoHideDefaultPropertyNameForDiagrams(diagram, sort_by){
 	//selecting child diagrams
 	Diagrams.find({parentDiagrams: id}, {sort: sort_by}).map(
 		function(child_diagram) {
-			console.log("gggggggggggg");
 			autoHideDefaultPropertyNameForDiagrams(child_diagram, sort_by);
 	});
 }

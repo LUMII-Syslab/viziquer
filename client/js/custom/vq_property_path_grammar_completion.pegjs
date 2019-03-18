@@ -43,13 +43,7 @@
 					var prop = options.schema.findClassByName(targetClass).getAllAssociations();
 					
 					for(var key in prop){
-						var propName= prop[key]["name"];
-						if(options.showPrefixesForAllNonLocalNames == true){
-							if( prop[key]["isDefOnt"] != true)propName =  prop[key]["prefix"] + ":" + propName;
-						} else {
-							if( prop[key]["isDefOnt"] != true &&  prop[key]["isUnique"] != true)propName =  prop[key]["prefix"] + ":" + propName;
-						}
-						
+						var propName= prop[key]["short_name"];
 						if(prop[key]["type"] == "<=") {
 							addContinuation(location(), "^" + propName, 100, "end")
 							addContinuation(location(), "INV(" + propName + ")", 100, "end")
@@ -70,12 +64,7 @@
 				for (var role in getAllSchemaAssociations) {
 					var prop = getAllSchemaAssociations[role];
 					//var assoc_name = getAllSchemaAssociations[role]["name"];
-					var propName= prop["name"];
-					if(options.showPrefixesForAllNonLocalNames == true){
-						if( prop["isDefOnt"] != true)propName =  prop["prefix"] + ":" + propName;
-					} else {
-						if( prop["isDefOnt"] != true && prop["isUnique"] != true)propName =  prop["prefix"] + ":" + propName;
-					}
+					var propName= prop["short_name"];
 					addContinuation(place, propName, 1);
 				}
 				
@@ -87,12 +76,7 @@
 						
 					//start
 					for (var role in all_assoc_from_start) {
-						var assoc_name= all_assoc_from_start[role]["name"];
-						if(options.showPrefixesForAllNonLocalNames == true){
-							if( all_assoc_from_start[role]["isDefOnt"] != true)assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
-						} else {
-							if( all_assoc_from_start[role]["isDefOnt"] != true &&  all_assoc_from_start[role]["isUnique"] != true)assoc_name =  all_assoc_from_start[role]["prefix"] + ":" + assoc_name;
-						}
+						var assoc_name= all_assoc_from_start[role]["short_name"];
 						
 						// var assoc_name = all_assoc_from_start[role]["name"];
 						if (all_assoc_from_start[role]["type"] == "<=") {
@@ -109,14 +93,7 @@
 						});
 						
 						for (var role in possible_assoc_list) {
-							var assoc_name = possible_assoc_list[role]["name"];
-
-							if(options.showPrefixesForAllNonLocalNames == true){
-								if( possible_assoc_list[role]["isDefOnt"] != true)assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
-							} else {
-								if( possible_assoc_list[role]["isDefOnt"] != true &&  possible_assoc_list[role]["isUnique"] != true)assoc_name =  possible_assoc_list[role]["prefix"] + ":" + assoc_name;
-							}
-							
+							var assoc_name = possible_assoc_list[role]["short_name"];
 							if (possible_assoc_list[role]["type"] == "<=") {
 								assoc_name = "inv("+assoc_name+")";
 							};

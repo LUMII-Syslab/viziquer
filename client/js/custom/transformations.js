@@ -269,24 +269,8 @@ Interpreter.customMethods({
 			if (schema.classExist(compart["input"])) {
 				var klass = schema.findClassByName(compart["input"]);
 
-				
-				var showPrefixesForAllNonLocalNames = "false";
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				if (proj) {
-					if (proj.showPrefixesForAllNonLocalNames=="true") {
-						showPrefixesForAllNonLocalNames="true";
-					}
-				}
-				
 				_.each(klass.getAllAttributes(), function(att){
-					var att_val = att["name"];
-					
-					if (showPrefixesForAllNonLocalNames=="true") {
-						if(att["isDefOnt"] != true)att_val = att["prefix"] + ":" + att_val;
-					} else {
-						if(att["isDefOnt"] != true && att["isUnique"] != true)att_val = att["prefix"] + ":" + att_val;
-					}
-					
+					var att_val = att["short_name"];
 					atr_names.push({value: att_val, input: att_val});
 				})
 			}
@@ -690,14 +674,7 @@ Interpreter.customMethods({
 			});
 
 			name_list = _.map(possible_assoc_list, function(assoc) {
-				var assoc_name = assoc["name"];
-				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				if (proj) {
-					if (proj.showPrefixesForAllNonLocalNames=="true") {
-						if(assoc["isDefOnt"] != true || (assoc["isDefOnt"] == true && assoc["isUnique"] != true))assoc_name = assoc["prefix"] + ":" + assoc_name;
-					};
-				}
+				var assoc_name = assoc["short_name"];
 				
 				if (assoc["type"] == "<=") {
 					assoc_name = "inv("+assoc_name+")";
@@ -730,27 +707,8 @@ Interpreter.customMethods({
 					 	})
 			  		});
 
-					
-					var showPrefixesForAllNonLocalNames = "false";
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					if (proj) {
-						if (proj.showPrefixesForAllNonLocalNames=="true") {
-							showPrefixesForAllNonLocalNames="true";
-						}
-					}
-					
 					name_list = _.union(name_list, _.map(possible_assoc_list, function(assoc) {
-						var assoc_name = assoc["name"];
-						if (showPrefixesForAllNonLocalNames=="true") {
-							if(assoc["isDefOnt"] != true)assoc_name = assoc["prefix"] + ":" + assoc_name;
-						} else {
-							if(assoc["isDefOnt"] != true && assoc["isUnique"] != true)assoc_name = assoc["prefix"] + ":" + assoc_name;
-						}
-							
-						if (assoc["type"] == "<=") {
-							assoc_name = "inv("+assoc_name+")";
-						};
-
+						var assoc_name = assoc["short_name"];
 						return {value:assoc_name, input:assoc_name};
 					}));
 				};

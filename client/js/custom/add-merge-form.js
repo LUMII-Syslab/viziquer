@@ -7,9 +7,7 @@ Template.AddMergeValues.e = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
-		// console.log("eeeee", e, e.target.parentElement.parentElement.parentElement.parentElement);
-		//console.log("eeeee", Session.get("activeElement"));
-		
+
 		var expressionField = getExpression(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
@@ -17,7 +15,15 @@ Interpreter.customMethods({
 		Template.AddMergeValues.expression.set(expr);
 		Template.AddMergeValues.alias.set(getAlais(e).val());
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
-		Template.AddMergeValues.cardinality.set(countCardinality(expr, Session.get("activeElement")));
+		var card = countCardinality(expr, Session.get("activeElement"))
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj){
+      		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!="true"){
+      			card = -1;
+      		}
+      	} else card = -1;
+		
+		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 

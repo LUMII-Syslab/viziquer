@@ -82,31 +82,19 @@ Template.AddLink.helpers({
 						}
 					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
 					
-					/////////////////////////////////////////////////////////////////////////////////
-					//prefix:name part
-					var eName = e.name
-					var showPrefixesForAllNonLocalNames = "false";
-					//var projInfo = Projects.findOne({_id: Session.get("activeProject")});
-					if (proj) {
-						if (proj.showPrefixesForAllNonLocalNames=="true") {
-							showPrefixesForAllNonLocalNames="true";
-						}
-					}
-					if (showPrefixesForAllNonLocalNames=="true") {
-						if(e["isDefOnt"] != true)eName = e["prefix"] + ":" + eName;
-					} else {
-						if(e["isDefOnt"] != true && e["isUnique"] != true)e["prefix"] + ":" + eName;
-					}
-					/////////////////////////////////////////////////////////////////////////////////
 					
-					if(e.type == "=>") asc.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
-					else ascReverse.push({name: eName, class: e.class, type: e.type, card: cardinality, clr: colorLetters});
+					//prefix:name
+					var eName = e.short_name
+					
+					
+					if(e.type == "=>") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
+					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
 					
 					if (e.class == className) //Link to itself
 						if (e.type == "=>")
-							ascReverse.push({name: e.name, class: e.class, type: "<=", card: cardinality, clr: colorLetters});
+							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
 						else
-							asc.push({name: e.name, class: e.class, type: "=>", card: cardinality, clr: colorLetters});
+							asc.push({name: e.name, class: e.short_class_name, type: "=>", card: cardinality, clr: colorLetters});
 				});
 			}
 
@@ -118,7 +106,6 @@ Template.AddLink.helpers({
       				ascReverse.push({name: "++", class: "", type: "=>", card: "", clr: ""});
       			}
       		}
-
 			return asc.concat(ascReverse);
 		}
 	},
