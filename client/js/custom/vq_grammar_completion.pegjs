@@ -155,26 +155,27 @@
 				var targetSourceClass = "targetClass";
 				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 				
-				for (var key in options.schema.findAssociationByName(propertyName).schemaRole) {
-					var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[key][""+targetSourceClass+""]["localName"];
-					var prop = options.schema.findClassByName(targetClass).getAllAttributes();
-					
-					for(var key in prop){
-						addContinuation(location(), prop[key]["name"], 100, "end");
-					}
-					
-					prop = options.schema.findClassByName(targetClass).getAllAssociations();
-					
-					for(var key in prop){
-						var association = prop[key]["name"];
-						if(prop[key]["type"] == "<=") {
-							addContinuation(location(), "^" + prop[key]["name"], 100, "end")
-							addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, "end")
+				if(typeof options.schema.findAssociationByName(propertyName) !== 'undefined'){
+					for (var key in options.schema.findAssociationByName(propertyName).schemaRole) {
+						var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[key][""+targetSourceClass+""]["localName"];
+						var prop = options.schema.findClassByName(targetClass).getAllAttributes();
+						
+						for(var key in prop){
+							addContinuation(location(), prop[key]["name"], 100, "end");
 						}
-						else addContinuation(location(), prop[key]["name"], 100, "end");
+						
+						prop = options.schema.findClassByName(targetClass).getAllAssociations();
+						
+						for(var key in prop){
+							var association = prop[key]["name"];
+							if(prop[key]["type"] == "<=") {
+								addContinuation(location(), "^" + prop[key]["name"], 100, "end")
+								addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, "end")
+							}
+							else addContinuation(location(), prop[key]["name"], 100, "end");
+						}
 					}
 				}
-
 				return o;
 			};
 			
