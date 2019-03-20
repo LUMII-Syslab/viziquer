@@ -488,16 +488,7 @@ var druka = false;
    VQ_Shema_copy = schema;	 
    
    if (druka) console.log(schema);   
-     // console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c1"), ""));
-     // console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c2"), ""));
-    //console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c3"), ""));  
-   //console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c4"), ""));
-    //     console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c5"), ""));
-    //  console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c6"), ""));
-   // console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c7"), ""));  
-  // console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c8"), ""));
-  //    console.log(makeCycleNode(schema.findClassByName("conference-ontology:_c9"), ""));
-
+   schema.getOwlFormat();
    return;
 
    
@@ -1036,29 +1027,27 @@ VQ_Schema.prototype = {
 		var newRole = new VQ_Role(asoc);
 		schema.addRole(newRole);
 		_.each(asoc.ClassPairs, function(cp){
-			if (cp.TargetClass) {
-				//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
-				//var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
-				var scClass = schema.findClassByName(cp.SourceClass);
-				var tClass = schema.findClassByName(cp.TargetClass);
-				var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
-				if ( !newRole.maxCardinality) {
-				  newRole.minCardinality = 0;
-				  newRole.maxCardinality = -1;
-				}
-				if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
-				schema.addSchemaRole(newSchRole);
-				schema.addSchemaProperty(newSchRole);
-				scClass.addProperty(newSchRole);
-				createLink(newRole, newSchRole, "schemaRole", "role");
-				//newRole["schemaRole"][newSchRole.ID] = newSchRole;
-				createLink(scClass, newSchRole, "outAssoc", "sourceClass");
-				//scClass["outAssoc"][newSchRole.ID] = newSchRole;
-				//newSchRole["sourceClass"] = scClass.classInfo;
-				createLink(tClass, newSchRole, "inAssoc", "targetClass");
-				//tClass["inAssoc"][newSchRole.ID] = newSchRole;
-				//newSchRole["targetClass"] = tClass.classInfo;
+			//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
+			//var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
+			var scClass = schema.findClassByName(cp.SourceClass);
+			var tClass = schema.findClassByName(cp.TargetClass);
+			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
+			if ( !newRole.maxCardinality) {
+			  newRole.minCardinality = 0;
+			  newRole.maxCardinality = -1;
 			}
+			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
+			schema.addSchemaRole(newSchRole);
+			schema.addSchemaProperty(newSchRole);
+			scClass.addProperty(newSchRole);
+			createLink(newRole, newSchRole, "schemaRole", "role");
+			//newRole["schemaRole"][newSchRole.ID] = newSchRole;
+			createLink(scClass, newSchRole, "outAssoc", "sourceClass");
+			//scClass["outAssoc"][newSchRole.ID] = newSchRole;
+			//newSchRole["sourceClass"] = scClass.classInfo;
+			createLink(tClass, newSchRole, "inAssoc", "targetClass");
+			//tClass["inAssoc"][newSchRole.ID] = newSchRole;
+			//newSchRole["targetClass"] = tClass.classInfo;
 		})
 	})
 	
@@ -1183,86 +1172,149 @@ VQ_Schema.prototype = {
 	//var tt = JSON.parse(JSON.stringify(schema.Tree,0, 2))
   },  
   getOwlFormat: function() {
-	// !!!! Jāpaskatās, vai nav jau sarēķināts
 	var newLine = "";
 	
 	schema.OwlFormat["1_Ontologies"] = [];
 	_.each(schema.Ontologies, function(ont){
-		if (ont.isDefault)
+		if (ont.isDefault) 
 			schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Prefix(:=<",ont.namespace,">)"));
 		else
 			schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Prefix(",ont.prefix,":=<",ont.namespace,">)"));
 	})
+	if (!schema.Ontologies.owlc)
+		schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Prefix(owlc:=<http://lumii.lv/2018/1.0/owlc#>)"));
+	
+	var def_ont = _.find(schema.Ontologies, function(o) {return o.isDefault});
+	schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], [""]);
+	schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Ontology(<", def_ont.namespace,">"));
 	
 	schema.OwlFormat["2_Declarations"] = [];
-	schema.OwlFormat["3_DeclarationsWithAnnot"] = [];
-	schema.OwlFormat["4_SubClassOf"] = [];
-	schema.OwlFormat["5_Cardinalities"] = [];
-	var list1 = [];
-	var a = ""
-	
-	
+	schema.OwlFormat["3_SubClassOf"] = [];	
+	schema.OwlFormat["4_Properties"] = [];
+	schema.OwlFormat["5_Annotations"] = [];
+
 	_.each(schema.Classes, function(cl){
-		if (cl.localName != " ")
+		if (!cl.isAbstract)
 		{
-			cl_name = cl.getClassOntName();
+			cl_name = cl.getElementOntName();
 			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"], newLine.concat("Declaration(Class(",cl_name,"))"));
-			//if (cl.instanceCount > 4)
-			  //console.log(a.concat("Declaration(Class(",cl_name,"))"));
-			//schema.OwlFormat["3_DeclarationsWithAnnot"] = _.union(schema.OwlFormat["3_DeclarationsWithAnnot"],newLine.concat("Declaration(Class(",cl_name,"))"));
 			if (cl.instanceCount > 0)
 			{			
-				//schema.OwlFormat["3_DeclarationsWithAnnot"] = _.union(schema.OwlFormat["3_DeclarationsWithAnnot"],newLine.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));  
-			    //if (cl.instanceCount > 4)
-				//console.log(a.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));
+				schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));  
 			}	
-			if (_.size(cl.subClasses) > 0)
+			if (_.size(cl.originalSubClasses) > 0)
 			{
-				_.each(cl.subClasses, function(sc) {
-					sc_name = sc.getClassOntName();
-					schema.OwlFormat["4_SubClassOf"] = _.union(schema.OwlFormat["4_SubClassOf"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
-					
-					//if (cl.instanceCount > 4 && sc.instanceCount > 4 )
-					//	console.log(a.concat("SubClassOf(",sc_name," ",cl_name,")"));		
-			
+				_.each(cl.originalSubClasses, function(sc_full_name) {
+					sc_name = schema.findClassByName(sc_full_name).getElementOntName();
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
+
 				}) 
 			}			
 		}
 	})
 	
-	return;
-	//console.log(list1);
+	function getOwlName(el) { return el.ontology.prefix.concat(":",el.localName)};
 	
-	//SubClassOf(:AA ObjectMinCardinality(1 :p1))
-
-	_.each(schema.Associations, function(el){
-		if (el.localName != " ")
-		{   el_name = el.getElementName(); 
-			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(ObjectProperty(",el_name,"))"));
-			if (el.maxCardinality != -1)
-				schema.OwlFormat["5_Cardinalities"] = _.union(schema.OwlFormat["5_Cardinalities"],newLine.concat("Declaration(ObjectProperty(",el_name,"))"));
-			
-		}
-	})
-
 	_.each(schema.Attributes, function(el){
 		if (el.localName != " ")
 		{
-			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(DataProperty(",el.getElementName(),"))"));
+			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(DataProperty(",getOwlName(el),"))"));
+			var atrr_source_classes = _.map( el.schemaAttribute, function(e) { return getOwlName(e.sourceClass);} );
+			if  (_.size(atrr_source_classes) == 1 ) {
+				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ",atrr_source_classes[0],")"));
+				if (el.type){				
+					schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",atrr_source_classes[0],")"));
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",atrr_source_classes[0]," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
+				}
+			}	
+			else { 
+				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ObjectUnionOf(",atrr_source_classes.join(" "),"))"));
+				if (el.type)
+					_.each(atrr_source_classes, function (cl) {
+						schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",cl,")"));
+						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
+					}) 
+			}
+			// !!! Te būs jāprecizē, jasameklē sākotnējās
+			_.each(atrr_source_classes, function (cl) {
+				if ( el.minCardinality == el.maxCardinality) {
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+				}
+				else {
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+					if (el.maxCardinality!= -1)
+						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
+				}
+			}) 
 		}			
 	})
+	
+	var str = "";
+	// !!! Ja ir vairāki klašu pāri bez target klases, tad iespējams nestrādās
+	_.each(schema.Associations, function(el){
 
+		if (el.localName != " ") {
+			var source_classes = [];
+			var target_classes = [];
+			_.each(el.schemaRole, function (s) {
+				source_classes = _.union(source_classes, getOwlName(s.sourceClass));
+				if (s.targetClass.localName != " ")
+				target_classes = _.union(target_classes, getOwlName(s.targetClass));
+			})
+			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(ObjectProperty(",getOwlName(el),"))"));
+			
+			var source_classes_list = ( _.size(source_classes) == 1 ? source_classes[0] : str.concat("ObjectUnionOf(",source_classes.join(" "),")"));
+			var target_classes_list = ( _.size(target_classes) == 1 ? target_classes[0] : str.concat("ObjectUnionOf(",target_classes.join(" "),")"));
+			
+			schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyDomain(",getOwlName(el)," ",source_classes_list,")"));
+			if (target_classes_list != ": " )
+				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyRange(",getOwlName(el)," ",target_classes_list,")"));
+				
+			_.each(source_classes, function(source_class){
+				var target_cl = [];
+				_.each(el.schemaRole, function (s) {
+					if (getOwlName(s.sourceClass) == source_class)
+						if (s.targetClass.localName != " ")
+							target_cl = _.union(target_cl, getOwlName(s.targetClass));
+				})
+				var target_cl_list = ( _.size(target_cl) == 1 ? target_cl[0] : str.concat("ObjectUnionOf(",target_cl.join(" "),")"));
+				if (_.size(target_cl) > 0 )
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",source_class," ObjectAllValuesFrom(",getOwlName(el)," ",target_cl_list, "))"));
+			})	
+			
+			_.each(el.schemaRole, function (s) {
+				if (s.targetClass.localName != " " )
+					schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target ", getOwlName(s.targetClass),") owlc:source ",getOwlName(el)," ",getOwlName(s.sourceClass),")"));
+			})
+			
+			// !!! Te būs jāprecizē, jasameklē sākotnējās
+			_.each(source_classes, function (cl) {
+				schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," ObjectMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+				if (el.maxCardinality!= -1)
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," ObjectMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
+			}) 
+		}
+	})
+	
 	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:source))"));
 	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:target))"));
 	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:instanceCount))"));
 	
-	console.log(schema.OwlFormat)
-	   				var link = document.createElement("a");
-				link.setAttribute("download", "data.json");
-				link.href = URL.createObjectURL(new Blob([JSON.stringify(schema.OwlFormat, 0, 4)], {type: "application/json;charset=utf-8;"}));
-				document.body.appendChild(link);
-				link.click();	
+	schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat(")"));
+
+	//console.log(schema.OwlFormat)
   },
+  printOwlFormat: function() {
+  	
+	var owl_list = _.union(schema.OwlFormat["1_Ontologies"],[""],schema.OwlFormat["2_Declarations"],[""],schema.OwlFormat["3_SubClassOf"],[""],
+					schema.OwlFormat["4_Properties"],[""],schema.OwlFormat["5_Annotations"]);
+	
+	var link = document.createElement("a");
+	link.setAttribute("download", "data.owl");
+	link.href = URL.createObjectURL(new Blob([owl_list.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+	document.body.appendChild(link);
+	link.click();
+  }
  }
 
 function findName(name, element) {
@@ -1378,6 +1430,9 @@ VQ_Elem.prototype = {
   },
   getElementShortName : function (){  
 	return schema.getElementShortName(this);
+  },
+  getElementOntName : function (){
+	return this.ontology.prefix + ":" + this.localName; 
   }
 }
 
@@ -1466,9 +1521,6 @@ VQ_Class.prototype.getAssociations = function() {
   };
 VQ_Class.prototype.getClassName = function (){
 	return this.ontology.dprefix + ":" + this.localName; 
-  };
-VQ_Class.prototype.getClassOntName = function (){
-	return this.ontology.prefix + ":" + this.localName; 
   };
 VQ_Class.prototype.getAllAssociations = function() {
 	var assoc = this.getAssociations();  
@@ -1595,7 +1647,8 @@ VQ_Role.prototype.getAssociationInfo = function() {
   };
 
 VQ_SchemaRole = function (roleInfo, cpInfo, role){
-	VQ_Elem.call(this, roleInfo, "schemaRole");
+	VQ_Elem.call(this, cpInfo, "schemaRole");
+	//VQ_Elem.call(this, roleInfo, "schemaRole");
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
