@@ -439,6 +439,7 @@ var druka = false;
    {
 	   if (druka) console.log("Atrada derīgu shēmu");
 	   this.projectID = Session.get("activeProject");
+	   this.Data = VQ_Shema_copy.Data;
 	   this.Elements = VQ_Shema_copy.Elements;	
 	   this.Classes = VQ_Shema_copy.Classes;
 	   this.Attributes = VQ_Shema_copy.Attributes;
@@ -479,7 +480,9 @@ var druka = false;
    {
       data = Schema.findOne();
       if (data.Schema) data = data.Schema;
-   } 	  
+   } 	 
+
+   this.Data = data;
    
    if (druka) console.log("Taisa shēmu no datiem");
    this.makeClasses(data);
@@ -547,6 +550,7 @@ VQ_Schema.prototype = {
   constructor: VQ_Schema,
   projectID:null,
   namespace:null,
+  Data:null,
   Elements: null,
   Classes: null,
   Attributes:null,
