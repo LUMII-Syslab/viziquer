@@ -95,11 +95,11 @@ Template.diagramsRibbon.events({
 		if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) {
 			schema_full = VQ_Shema_copy;
 			schema_data = VQ_Shema_copy.Data;
-			var link = document.createElement("a");
-			link.setAttribute("download", "schema.json");
-			link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
-			document.body.appendChild(link);
-			link.click(); 
+			//var link = document.createElement("a");
+			//link.setAttribute("download", "schema.json");
+			//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
+			//document.body.appendChild(link);
+			//link.click(); 
 
 			schema_full.printOwlFormat();
 		}		
@@ -110,11 +110,11 @@ Template.diagramsRibbon.events({
 					schema_data = resp.schema;
 					schema_full = new VQ_Schema(schema_data);
 
-					var link = document.createElement("a");
-					link.setAttribute("download", "schema.json");
-					link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
-					document.body.appendChild(link);
-					link.click(); 
+					//var link = document.createElement("a");
+					//link.setAttribute("download", "schema.json");
+					//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
+					//document.body.appendChild(link);
+					//link.click(); 
 					
 					schema_full.printOwlFormat();
 					

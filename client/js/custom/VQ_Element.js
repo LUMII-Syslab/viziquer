@@ -437,7 +437,7 @@ var druka = false;
    
    if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) 
    {
-	   if (druka) console.log("Atrada derīgu shēmu");
+	   if (druka)  console.log("Atrada derīgu shēmu");
 	   this.projectID = Session.get("activeProject");
 	   this.Data = VQ_Shema_copy.Data;
 	   this.Elements = VQ_Shema_copy.Elements;	
@@ -456,7 +456,6 @@ var druka = false;
 	   this.namespace = VQ_Shema_copy.namespace;
 	   this.classCount = VQ_Shema_copy.classCount;
 	   schema = this;
-	   
 	   return;	
    }
    
@@ -1526,11 +1525,13 @@ VQ_Class.prototype.getAssociations = function() {
 VQ_Class.prototype.getClassName = function (){
 	return this.ontology.dprefix + ":" + this.localName; 
   };
-VQ_Class.prototype.getAllAssociations = function() {
+VQ_Class.prototype.getAllAssociations = function(paz = true) { 
 	var assoc = this.getAssociations();  
 	_.each(this.allSuperSubSuperClasses, function(sc){
-		//sc_class = schema.findClassByName(sc.shortName);		
-		assoc = _.union(assoc, sc.getAssociations());
+		if (paz && sc.isAbstract)
+			assoc = _.union(assoc, sc.getAllAssociations(false));
+		else	
+			assoc = _.union(assoc, sc.getAssociations());
 	})
 	return _.sortBy(assoc, "name");
   };
@@ -1538,10 +1539,13 @@ VQ_Class.prototype.getAttributes = function() {
 	return _.map(this.schemaAttribute, function (a) {
 		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, short_name:a.getElementShortName()}; });
   };
-VQ_Class.prototype.getAllAttributes = function() {
+VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	var attributes = this.getAttributes(); 
 	_.each(this.allSuperSubSuperClasses, function(sc){
-		attributes = _.union(attributes, sc.getAttributes());
+		if (paz && sc.isAbstract)
+			attributes = _.union(attributes, sc.getAllAttributes(false));
+		else
+			attributes = _.union(attributes, sc.getAttributes());
 	})
 	attributes = _.sortBy(attributes, function(a) { return a.name}); 
 	return attributes;
@@ -1651,8 +1655,8 @@ VQ_Role.prototype.getAssociationInfo = function() {
   };
 
 VQ_SchemaRole = function (roleInfo, cpInfo, role){
-	VQ_Elem.call(this, cpInfo, "schemaRole");
-	//VQ_Elem.call(this, roleInfo, "schemaRole");
+	//VQ_Elem.call(this, cpInfo, "schemaRole");
+	VQ_Elem.call(this, roleInfo, "schemaRole");
 	this.role = {};
 	this.sourceClass = {};
 	this.targetClass = {};
