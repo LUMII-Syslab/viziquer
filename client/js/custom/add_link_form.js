@@ -133,7 +133,57 @@ Template.AddLink.events({
 			//start_elem
 			var start_elem_id = Session.get("activeElement");			
 			Template.AggregateWizard.startClassId.set(start_elem_id);
-			var elem_start = Elements.findOne({_id: start_elem_id});
+			// var elem_start = Elements.findOne({_id: start_elem_id});
+
+			var currentElement = new VQ_Element(start_elem_id);
+			if (currentElement == null) {
+				console.log("Unknown error - active element does not exist.");
+				return;
+			}
+            var d = 30; //distance between boxes
+            var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
+            var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
+            //Link Coordinates
+            var coordX = newPosition.x + Math.round(newPosition.width/2);
+            var coordY = oldPosition.y + oldPosition.height;
+            var locLink = [];
+            
+            Create_VQ_Element(function(cl){
+                cl.setName(class_name);
+                var proj = Projects.findOne({_id: Session.get("activeProject")});
+                cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+                cl.setClassStyle("condition");
+                var proj = Projects.findOne({_id: Session.get("activeProject")});
+                if (line_direct == "=>") {
+                	locLink = [coordX, coordY, coordX, newPosition.y];                 
+	                Create_VQ_Element(function(lnk) {
+	                    lnk.setName(name);
+	                    lnk.setLinkType("REQUIRED");
+	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
+						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+						if (proj && proj.autoHideDefaultPropertyName=="true") { 
+							lnk.hideDefaultLinkName(true);
+							lnk.setHideDefaultLinkName("true");
+						}
+	                }, locLink, true, currentElement, cl);
+	            } else {
+	            	locLink = [coordX, newPosition.y, coordX, coordY];
+	            	Create_VQ_Element(function(lnk) {
+	                    lnk.setName(name);
+	                    lnk.setLinkType("REQUIRED");
+	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
+						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
+						if (proj && proj.autoHideDefaultPropertyName=="true") {
+							lnk.hideDefaultLinkName(true);
+							lnk.setHideDefaultLinkName("true");
+						}
+	                }, locLink, true, cl, currentElement);
+	            }                
+                var proj = Projects.findOne({_id: Session.get("activeProject")});
+                cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+            }, newPosition);
+
+/* O L D   V E R S I O N
 
 			//Initial coordinate values original box and new box
 			var d = 30;
@@ -386,7 +436,7 @@ Template.AddLink.events({
 
 				}
 
-			});
+			});*/
 
 			if (document.getElementById("goto-wizard").checked == true ){
 
