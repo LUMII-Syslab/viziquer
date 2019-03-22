@@ -153,7 +153,6 @@ Template.AddLink.events({
                 var proj = Projects.findOne({_id: Session.get("activeProject")});
                 cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
                 cl.setClassStyle("condition");
-                var proj = Projects.findOne({_id: Session.get("activeProject")});
                 if (line_direct == "=>") {
                 	locLink = [coordX, coordY, coordX, newPosition.y];                 
 	                Create_VQ_Element(function(lnk) {
@@ -178,9 +177,7 @@ Template.AddLink.events({
 							lnk.setHideDefaultLinkName("true");
 						}
 	                }, locLink, true, cl, currentElement);
-	            }                
-                var proj = Projects.findOne({_id: Session.get("activeProject")});
-                cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+	            }
             }, newPosition);
 
 /* O L D   V E R S I O N
