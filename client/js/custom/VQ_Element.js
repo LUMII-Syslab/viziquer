@@ -487,62 +487,11 @@ var druka = false;
    this.makeClasses(data);
    this.makeSchemaTree();
    this.makeAttributesAndAssociations(data);
-   VQ_Shema_copy = schema;	 
-   
+   this.getOwlFormat();   
+   VQ_r2rml(schema);  
+   VQ_Shema_copy = schema;
+    
    if (druka) console.log(schema);   
-   schema.getOwlFormat();
-   return;
-
-   
-   if ( isData )
-   {
-	   if (druka) console.log("Taisa visu no jauna - shēmas ielādes brīdis");
-	   this.makeClassesAndTree(data);
-	   this.makeAttributesAndAssociations(data);
-	   if (druka) console.log(schema);
-	   VQ_Shema_copy = null;
-	   //this.getOwlFormat();
-   }
-   else if ( _.size(data.NewClasses) == 0 )
-   {
-		if (druka) console.log("Vecais shēmas saglabātais variants");
-		this.makeClassesAndTree(data);
-		var new_data = 
-		{
-			namespace: this.namespace,
-			Cycles: this.Cycles,
-			Tree: this.Tree,
-			Ontologies: this.Ontologies,
-			NewClasses: this.Classes,
-		};
-		console.log(new_data)
-		
-		this.Elements = {};	
-		this.Classes = {};
-		this.Cycles = {};
-		this.Tree = [];
-		
-		this.restoreClassesAndTree(new_data);
-		console.log(schema)
-        this.makeAttributesAndAssociations(data);
-  	    VQ_Shema_copy = schema;		
-   }
-   else
-   {
-	   if (druka) console.log("Atjauno esošo - saglabāts jaunais vairiants");
-	   if (druka) console.log(data);
-	   this.restoreClassesAndTree(data);
-       this.makeAttributesAndAssociations(data);
-	   VQ_Shema_copy = schema;
-	   if (druka) console.log(schema);	   
-   }
- 
-   if (druka) console.log(schema);
-   
-   VQ_r2rml(schema); 	// !!! To varbūt jāatstāj dzīvajā
-   //schema.getOwlFormat();
-	//console.log("44444")
-	//console.log(Date.now() - startTime)
 };
 
 VQ_Schema.prototype = {
@@ -805,9 +754,6 @@ VQ_Schema.prototype = {
 			}
 		})
 				
-		
-		//console.log("22222")
-		//console.log(Date.now() - startTime)
 		function setInfo(cl,sc,key){
 			var s_class = schema.findClassByName(sc); 
 			var ID = s_class.getID(); 
@@ -971,37 +917,6 @@ VQ_Schema.prototype = {
 		}
 	})
   },
-  restoreClassesAndTree: function(data) {
-  // !!! Šis vairs nebūs vajadzīgs
-  	this.namespace = data.namespace;
-	this.Ontologies = data.Ontologies;
-    this.Cycles = data.Cycles;
-	this.Tree = data.Tree;
-	//this.TreeList = data.TreeList;
-	
-    _.each(this.Tree, function(tree_node) { makeTreeListNode(tree_node); }); 
-	
-	_.each(data.NewClasses, function(obj){
-		var newObj = new VQ_Class(obj.Info)
-		schema.addClass(newObj);
-		obj.NewClass = newObj;
-		newObj.fullName = obj.fullName;
-		newObj.classInfo = obj.classInfo;
-		newObj.instanceCount = obj.instanceCount;
-		newObj.isUnique = obj.isUnique;
-		newObj.ontology = obj.ontology;
-	})
-	
-	_.each(data.NewClasses, function(obj){
-		var newObj = obj.NewClass; 
-		_.each(obj.subClasses, function(o){ var ID = o.ID; newObj.subClasses[ID] = schema.findClassByName(o.shortName); });  
-		_.each(obj.superClasses, function(o){ var ID = o.ID; newObj.superClasses[ID] = schema.findClassByName(o.shortName); });  
-		_.each(obj.allSubClasses, function(o){ var ID = o.ID; newObj.allSubClasses[ID] = schema.findClassByName(o.shortName); }); 
-		_.each(obj.allSuperClasses, function(o){ var ID = o.ID; newObj.allSuperClasses[ID] = schema.findClassByName(o.shortName); }); 
-		_.each(obj.allSuperSubClasses, function(o){ var ID = o.ID; newObj.allSuperSubClasses[ID] = schema.findClassByName(o.shortName); }); 
-		_.each(obj.allSuperSubSuperClasses, function(o){ var ID = o.ID; newObj.allSuperSubSuperClasses[ID] = schema.findClassByName(o.shortName); }); 
-	})
-  },
   makeAttributesAndAssociations: function(data) {
 	_.each(data.Attributes, function(atr){
 		var newAttr = new VQ_Attribute(atr);
@@ -1086,7 +1001,7 @@ VQ_Schema.prototype = {
 	if ( schema.classCount < 50 ) // !! Te varbūt jāpadomā kā drusku gudrāk atšķirot - jāpaskatās arī vidējais virsklašu skaits, ja ir zinams instanču skaits daļa iet nost
 		schema.treeMode = { CompressLevel:0, RemoveLevel:-1, MaxDeep:10};
 	else if ( schema.classCount < 100 )
-		schema.treeMode = { CompressLevel:1, RemoveLevel:-1, MaxDeep:6}; //schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
+		schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6}; //schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
 	else
 		schema.treeMode = { CompressLevel:2, RemoveLevel:5, MaxDeep:6};  // bija CompressLevel:2
 	 
@@ -1216,6 +1131,16 @@ VQ_Schema.prototype = {
 		}
 	})
 	
+	
+	_.each(schema.Cycles, function(cycle){
+		var cycle_classes = [];
+		for (i = 1; i < _.size(cycle); i++) { 
+			var cycle_class = schema.findClassByName(cycle[i].name)
+			cycle_classes = _.union(cycle_classes, cycle_class.getElementOntName());
+		}
+		schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"], newLine.concat("EquivalentClasses(",cycle_classes.join(" "),")"));
+	})
+	
 	function getOwlName(el) { return el.ontology.prefix.concat(":",el.localName)};
 	
 	_.each(schema.Attributes, function(el){
@@ -1225,7 +1150,7 @@ VQ_Schema.prototype = {
 			var atrr_source_classes = _.map( el.schemaAttribute, function(e) { return getOwlName(e.sourceClass);} );
 			if  (_.size(atrr_source_classes) == 1 ) {
 				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ",atrr_source_classes[0],")"));
-				if (el.type){				
+				if (el.type){
 					schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",atrr_source_classes[0],")"));
 					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",atrr_source_classes[0]," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
 				}
@@ -1244,7 +1169,7 @@ VQ_Schema.prototype = {
 					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el),"))"));
 				}
 				else {
-					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
 					if (el.maxCardinality!= -1)
 						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
 				}
@@ -1572,7 +1497,11 @@ VQ_Class.prototype.getClassInfo = function() {
 VQ_Attribute = function (attrInfo){
 	VQ_Elem.call(this, attrInfo, "attribute");
 	this.schemaAttribute = {};
-	this.type = attrInfo.type;
+	var type = attrInfo.type;
+	if (type == "XSD_STRING") type = "xsd:string";
+	if (type == "XSD_DATE") type = "xsd:date";
+	if (type == "XSD_DATE_TIME") type = "xsd:dateTime";
+	this.type = type;
 	
 	//var e = schema.findAttributeByName(attrInfo.localName);  
 	var named_elements = {};
