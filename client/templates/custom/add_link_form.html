@@ -21,10 +21,10 @@
     .help-tip{
         position: relative;
         display:inline;
-        padding-right: 3px;
+        padding-right: 5px;
         padding-left: 5px;
         text-align: center;
-        background-color: silver;
+        background-color: #8A2BE2;
         border-radius: 50%;
         width: 24px;
         height: 24px;
@@ -55,7 +55,13 @@
         position: absolute;
         right: 105%; 
         z-index: 1000;
-    }    
+    }  
+
+    .describe {
+        margin-left:25px; 
+        font-size:90%;
+        font-style: italic;
+    }  
 </style>
 
 	<!-- Modal for new document -->
@@ -79,6 +85,7 @@
                                     <div class="help-tip">
                                         <p>Use to join linked instances of both classes.</p>
                                     </div>
+                                    <div class="describe">for joining all instances</div>
                                 </label>
                                 <!-- <br style="line-height: 200%;"> -->
                                 <label class="label-radio">
@@ -86,11 +93,12 @@
                                     <span class="custom-radio"></span>
                                     Nested Query Link &ensp;
                                     <div class="help-tip">
-                                        <p>Use for aggregates (count, sum, max, ...) over linked class. Use to check, if a linked class instance exists.</p>
+                                        <p>Use for aggregates (count, sum, max, ...) over linked class. <br>Use to check, if a linked class instance exists.</p>
                                     </div>
+                                    <div class="describe">for aggregation or existance check</div>
                                 </label>
 
-                                <div style="margin-left:15px; margin-right: 20px;"> <!-- "display:inline;" -->
+                                <div style="margin-left:25px; margin-right: 20px; margin-top:5px;"> <!-- "display:inline;" -->
                                     <input type="checkbox" id="goto-wizard" value="DISPLAY" disabled>
                                     <span class="custom-checkbox"></span>
                                     Use Aggregate wizard
