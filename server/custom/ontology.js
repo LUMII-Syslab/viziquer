@@ -89,4 +89,18 @@ Meteor.methods({
                 }
 				
 	},
+	getProjectSchema: function(list) {
+
+		var user_id = this.userId;
+		if (is_project_member(user_id, list)) {
+
+			var project_id = list.projectId;
+			var version_id = list.versionId;
+
+			var schema = Schema.findOne({projectId: project_id, versionId: version_id});
+			if (!schema) { schema = {}; }
+
+			return { schema:schema };
+		}
+	},
 });
