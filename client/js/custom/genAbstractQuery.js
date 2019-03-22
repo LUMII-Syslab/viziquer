@@ -73,7 +73,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
     _.extend(obj_class.identification, parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification._id));
 
     if (obj_class.linkIdentification) {
-		
+
 		//parser need link with prefix
 		var prefix = "";
 		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
@@ -98,7 +98,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
                 obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               });
-			  
+
 			  obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
            };
         } else if (f.exp=="(*attr)") {
@@ -112,7 +112,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
               });
 
            };
-        } else if (f.exp=="(*sub)") { 
+        } else if (f.exp=="(*sub)") {
            obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
         } else if (f.alias) {
               my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
@@ -167,17 +167,23 @@ resolveTypesAndBuildSymbolTable = function (query) {
          my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
+           if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+           };
            parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(clone_ca)
          });
          my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
+           if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+           };
            parents_scope_table.UNRESOLVED_NAME.push(clone_ca)
          });
        };
     }
 
-	
+
 
     // we should build symbol table entry for this Class.
     symbol_table[obj_class.identification._id] = {};
@@ -186,7 +192,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
          if (!symbol_table[obj_class.identification._id][entry.id]) {
            symbol_table[obj_class.identification._id][entry.id] = [];
          };
-         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional});
+         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery});
        })
     })
 
@@ -305,7 +311,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 if (_.isEmpty(symbol_table[current_context][name])) {
                   delete symbol_table[current_context][name];
                 };
-            })      
+            })
       })
   };
 
