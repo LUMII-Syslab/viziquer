@@ -476,6 +476,38 @@ Template.AddLink.events({
 		clearAddLinkInput();
 	},
 
+	"change #type-choice": function() {
+		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
+        if (checkedName === 'JOIN') {
+            $('#goto-wizard:checked').attr('checked', false);
+            $('#goto-wizard').attr('disabled',"disabled");
+        } else {
+            $('#goto-wizard').removeAttr("disabled");
+        } 
+	},
+
+	"change #link-list-form": function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+        if (proj) {
+            if(proj.showCardinalities=="true"){            
+                $('#link-list-form').change(function(){
+                    var checkedName = $('input[name=stack-radio]').filter(':checked').attr("card"); //console.log(checkedName);
+                    if (checkedName.indexOf("[*]") == -1){//max cardinality not [*]
+                        $('input[value=JOIN]').prop('checked', true);
+                        $('input[value=NESTED]').prop('checked', false);
+                        $('input[value=NESTED]').attr('disabled',"disabled");
+                        $('#goto-wizard:checked').attr('checked', false);
+                        $('#goto-wizard').attr('disabled',"disabled");
+                    } else {
+                        $('input[value=NESTED]').removeAttr('disabled');
+                        $('input[value=NESTED]').prop('checked', true);
+                        $('#goto-wizard').removeAttr('disabled');
+                    }                
+                });
+            }
+        }
+	},
+
 });
 
 //++++++++++++
