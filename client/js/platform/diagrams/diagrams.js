@@ -92,9 +92,9 @@ Template.diagramsRibbon.events({
 		var schema_full = {};
 		var schema_data = {};	
 					
-		if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) {
-			schema_full = VQ_Shema_copy;
-			schema_data = VQ_Shema_copy.Data;
+		if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
+			schema_full = VQ_Schema_copy;
+			schema_data = VQ_Schema_copy.Data;
 			//var link = document.createElement("a");
 			//link.setAttribute("download", "schema.json");
 			//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
@@ -589,7 +589,7 @@ Template.importOntology.events({
 						//data.Ontologies = schema.Ontologies;
 						//data.Cycles = schema.Cycles;
 						//data.NewClasses = schema.Classes;
-						VQ_Shema_copy = null;
+						VQ_Schema_copy = null;
 						
 						var list = {projectId: Session.get("activeProject"),
 									versionId: Session.get("versionId"),

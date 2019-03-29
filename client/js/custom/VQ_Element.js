@@ -423,17 +423,13 @@ function makeSubTree(classes, deep) {
 
 	return tree_list;
 }
-function makeTreeListNode(tree_node) {
-	schema.TreeList[tree_node.node_id] = tree_node;
-	_.each(tree_node.children, function(ch) { makeTreeListNode(ch); })
-}
 
-VQ_Shema_copy = null; 	
+VQ_Schema_copy = null; 	
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
 var druka = false;
-   if (_.size(data) > 0 )  VQ_Shema_copy = null;
+   if (_.size(data) > 0 )  VQ_Schema_copy = null;
    
    var isData = false;
    if (_.size(data) > 0 )
@@ -445,26 +441,26 @@ var druka = false;
 		return; 
     }
    
-   if (VQ_Shema_copy && VQ_Shema_copy.projectID == Session.get("activeProject")) 
+   if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) 
    {
 	   if (druka)  console.log("Atrada derīgu shēmu");
 	   this.projectID = Session.get("activeProject");
-	   this.Data = VQ_Shema_copy.Data;
-	   this.Elements = VQ_Shema_copy.Elements;	
-	   this.Classes = VQ_Shema_copy.Classes;
-	   this.Attributes = VQ_Shema_copy.Attributes;
-	   this.SchemaAttributes = VQ_Shema_copy.SchemaAttributes;
-	   this.Associations = VQ_Shema_copy.Associations;
-	   this.SchemaProperties = VQ_Shema_copy.SchemaProperties;
-	   this.SchemaRoles = VQ_Shema_copy.SchemaRoles;
-	   this.Ontologies = VQ_Shema_copy.Ontologies;
-	   this.Cycles = VQ_Shema_copy.Cycles;
-	   this.Tree = VQ_Shema_copy.Tree;
-	   this.TreeMode = VQ_Shema_copy.TreeMode;
-	   this.TreeList = VQ_Shema_copy.TreeList;
-	   this.OwlFormat = VQ_Shema_copy.OwlFormat;
-	   this.namespace = VQ_Shema_copy.namespace;
-	   this.classCount = VQ_Shema_copy.classCount;
+	   this.Data = VQ_Schema_copy.Data;
+	   this.Elements = VQ_Schema_copy.Elements;	
+	   this.Classes = VQ_Schema_copy.Classes;
+	   this.Attributes = VQ_Schema_copy.Attributes;
+	   this.SchemaAttributes = VQ_Schema_copy.SchemaAttributes;
+	   this.Associations = VQ_Schema_copy.Associations;
+	   this.SchemaProperties = VQ_Schema_copy.SchemaProperties;
+	   this.SchemaRoles = VQ_Schema_copy.SchemaRoles;
+	   this.Ontologies = VQ_Schema_copy.Ontologies;
+	   this.Cycles = VQ_Schema_copy.Cycles;
+	   this.Tree = VQ_Schema_copy.Tree;
+	   this.TreeMode = VQ_Schema_copy.TreeMode;
+	   this.TreeList = VQ_Schema_copy.TreeList;
+	   this.OwlFormat = VQ_Schema_copy.OwlFormat;
+	   this.namespace = VQ_Schema_copy.namespace;
+	   this.classCount = VQ_Schema_copy.classCount;
 	   schema = this;
 	   return;	
    }
@@ -495,11 +491,22 @@ var druka = false;
    
    if (druka) console.log("Taisa shēmu no datiem");
    this.makeClasses(data);
+   if (druka) console.log("—-------------Pēc klasēm -----------------")
+   if (druka)console.log(Date.now() - startTime  )
+   startTime = Date.now() 
    this.makeSchemaTree();
+   if (druka) console.log("—----------Pēc koka--------------------")
+   if (druka) console.log(Date.now() - startTime  )
+   startTime = Date.now() 
    this.makeAttributesAndAssociations(data);
+   if (druka) console.log("—-----------Pēc Asociācijām-------------------")
+   if (druka) console.log(Date.now() - startTime  )
+   startTime = Date.now() 
    this.getOwlFormat();   
    VQ_r2rml(schema);  
-   VQ_Shema_copy = schema;
+   VQ_Schema_copy = schema;
+   if (druka) console.log("—----------Pēc OWL formāta--------------------")
+   if (druka) console.log(Date.now() - startTime  )
 
    if (druka) console.log(schema);   
 };
@@ -695,6 +702,24 @@ VQ_Schema.prototype = {
 	else
 		return null;
   },
+  resolveAttributeByNameAndClass: function (className, attributeName) {
+    var sc_class = this.findClassByName(className);
+    if (sc_class.localName != " ") {
+        var attributes = sc_class.getAttributes();
+        var att_list = _.filter(attributes, function(attr) {return attr.name == attributeName || attr.short_name == attributeName });
+        if (_.size(att_list) == 1) return [this.resolveAttributeByName(className,(att_list[0].short_name)), sc_class.getClassInfo()];
+        else if (_.size(att_list) > 1 )  return [this.resolveAttributeByName(className, attributeName), sc_class.getClassInfo()];
+        attributes = sc_class.getAllAttributes();
+        var att_list = _.filter(attributes, function(attr) {return attr.name == attributeName || attr.short_name == attributeName });
+        if (_.size(att_list) == 1) return [this.resolveAttributeByName(className,(att_list[0].short_name)), sc_class.getClassInfo()];
+        else if (_.size(att_list) > 1 )  return [this.resolveAttributeByName(className, attributeName), sc_class.getClassInfo()];
+        else return [this.resolveAttributeByName(className, attributeName), null];
+    }
+    else {
+        return [this.resolveAttributeByName(className, attributeName), null];
+    }
+  },
+
   getPrefixes: function() {
     var prefixes = []
 	_.each(this.Ontologies, function (o){
@@ -1197,8 +1222,25 @@ VQ_Schema.prototype = {
 		if (el.localName != " ")
 		{
 			var atrr_source_classes = _.map( _.filter(el.schemaAttribute, function(s) {return checkInstances(s.sourceClass) }), function(e) { return getOwlName(e.sourceClass);} );
-			if (_.size(atrr_source_classes) > 0 )
+			if (_.size(atrr_source_classes) > 0 ) {
 				schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(DataProperty(",getOwlName(el),"))"));
+				if (el.type)
+					schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
+				
+				var type_string = (el.type ? el.type: "");  
+				// Te ir arī manas pierēķinātās vērtības, ne tikai sākotnējās.
+				_.each(atrr_source_classes, function (cl) {
+					if ( el.minCardinality == el.maxCardinality) {
+						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
+					}
+					else {
+						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
+						if (el.maxCardinality!= -1)
+							schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el)," ",type_string,"))"));
+					}					
+				})				
+
+			}	
 			
 			if  (_.size(atrr_source_classes) == 1 ) {
 				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ",atrr_source_classes[0],")"));
@@ -1217,7 +1259,7 @@ VQ_Schema.prototype = {
 						//schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
 					}) 
 			}
-			// !!! Te būs jāprecizē, jasameklē sākotnējās, un vispār jāpieliek arī tips klāt
+
 			/*
 			_.each(atrr_source_classes, function (cl) {
 				if ( el.minCardinality == el.maxCardinality) {
@@ -1234,25 +1276,26 @@ VQ_Schema.prototype = {
 	
 	var str = "";
 	// !!! Ja ir vairāki klašu pāri bez target klases, tad iespējams nestrādās
-	  			//checkInstances(cycle_class
+
 	_.each(schema.Associations, function(el){
-		
-		var schemaRoles = _.filter( el.schemaRole, function(s) { return checkInstances(s.sourceClass) && checkInstances(s.targetClass)} );
-		if (_.size(schemaRoles) > 0 && el.localName != " ") {
-			var source_classes = [];
-			var target_classes = [];
-			_.each(schemaRoles, function (s) {
+		var schemaRoles = _.filter( el.schemaRole, function(s) { return checkInstances(s.sourceClass) || checkInstances(s.targetClass)} );
+		var source_classes = [];
+		var target_classes = [];
+		_.each(schemaRoles, function (s) {
+			if ( checkInstances(s.sourceClass)) 
 				source_classes = _.union(source_classes, getOwlName(s.sourceClass));
-				if (s.targetClass.localName != " ")
+			if (s.targetClass.localName != " " && checkInstances(s.targetClass) )
 				target_classes = _.union(target_classes, getOwlName(s.targetClass));
-			})
+		})
+		if (_.size(schemaRoles) > 0 && _.size(source_classes) && el.localName != " ") {
+
 			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(ObjectProperty(",getOwlName(el),"))"));
 			
 			var source_classes_list = ( _.size(source_classes) == 1 ? source_classes[0] : str.concat("ObjectUnionOf(",source_classes.join(" "),")"));
 			var target_classes_list = ( _.size(target_classes) == 1 ? target_classes[0] : str.concat("ObjectUnionOf(",target_classes.join(" "),")"));
 			
 			schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyDomain(",getOwlName(el)," ",source_classes_list,")"));
-			if (target_classes_list != ": " )
+			if (target_classes_list != ": " && target_classes_list != "ObjectUnionOf()")
 				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyRange(",getOwlName(el)," ",target_classes_list,")"));
 				
 			_.each(source_classes, function(source_class){
@@ -1263,8 +1306,8 @@ VQ_Schema.prototype = {
 							target_cl = _.union(target_cl, getOwlName(s.targetClass));
 				})
 				var target_cl_list = ( _.size(target_cl) == 1 ? target_cl[0] : str.concat("ObjectUnionOf(",target_cl.join(" "),")"));
-				//if (_.size(target_cl) > 0 )
-				//	schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",source_class," ObjectAllValuesFrom(",getOwlName(el)," ",target_cl_list, "))"));
+				if (_.size(target_cl) > 0 )
+					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",source_class," ObjectAllValuesFrom(",getOwlName(el)," ",target_cl_list, "))"));
 			})	
 			
 			_.each(schemaRoles, function (s) {
@@ -1295,7 +1338,8 @@ VQ_Schema.prototype = {
 					schema.OwlFormat["4_Properties"],[""],[")"]); // ,[""],schema.OwlFormat["5_Annotations"]);
 	
 	var link = document.createElement("a");
-	link.setAttribute("download", "data.owl");
+	var file_name = _.find(schema.Ontologies, function(o) {return o.isDefault;}).dprefix.concat(".owl")
+	link.setAttribute("download", file_name);
 	link.href = URL.createObjectURL(new Blob([owl_list.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 	document.body.appendChild(link);
 	link.click();
@@ -1332,6 +1376,7 @@ VQ_ontology = function (URI, prefix) {
 	  p = schema.checkOntologyPrefix(findPrefix(arr, _.size(arr)-1));
 	  if ( p.endsWith(".owl"))
 		p = p.substring(0, p.length -4 );
+	  p =  p.split(".").join("_");	
 	}
   }
   if (schema.namespace == URI) {
@@ -1554,7 +1599,7 @@ VQ_Class.prototype.getClassInfo = function() {
 VQ_Attribute = function (attrInfo){
 	VQ_Elem.call(this, attrInfo, "attribute");
 	this.schemaAttribute = {};
-	var type = attrInfo.type;
+	var type = attrInfo.type;  // !!! Šeit vajadzētu tā elegantāk pārvērst
 	if (type == "XSD_STRING" || type == "xsd_langString" || type == "xsd_string") type = "xsd:string";
 	if (type == "XSD_DATE") type = "xsd:date";
 	if (type == "XSD_DATE_TIME") type = "xsd:dateTime";

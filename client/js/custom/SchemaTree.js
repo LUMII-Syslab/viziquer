@@ -37,8 +37,8 @@ Template.schemaTree.events({
 						.addClass("collapse")
 						.text("Collapse");
 						
-			if ( VQ_Shema_copy && VQ_Shema_copy.TreeList[tree_node_id])
-				VQ_Shema_copy.TreeList[tree_node_id].display = "block";
+			if ( VQ_Schema_copy && VQ_Schema_copy.TreeList[tree_node_id])
+				VQ_Schema_copy.TreeList[tree_node_id].display = "block";
 		}
 
 		else {
@@ -48,8 +48,8 @@ Template.schemaTree.events({
 						.addClass("expand")
 						.text("Expand");
 					
-			if ( VQ_Shema_copy && VQ_Shema_copy.TreeList[tree_node_id])	
-				VQ_Shema_copy.TreeList[tree_node_id].display = "none";	
+			if ( VQ_Schema_copy && VQ_Schema_copy.TreeList[tree_node_id])	
+				VQ_Schema_copy.TreeList[tree_node_id].display = "none";	
 		}
 	},
 
