@@ -33,18 +33,7 @@ Template.AddAttribute.helpers({
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
-						var vq_obj2 = new VQ_Element(symbolTable[key][symbol]["context"]);
-						var links = vq_obj2.getLinks();
-						for (var assoc in links) {
-							if(links[assoc]["link"].isSubQuery() || links[assoc]["link"].isGlobalSubQuery()){
-								var association = links[assoc]["link"];
-								var isStart = links[assoc]["start"];
-								var clazz;
-								if(isStart == true) clazz = association.getStartElement();
-								else clazz = association.getEndElement();
-								if(clazz["obj"]["_id"] == selected_elem_id) attr_list.push({name: key});
-							}
-						}
+						if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)attr_list.push({name: key});
 					}
 				}	
 			}

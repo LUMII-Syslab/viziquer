@@ -210,7 +210,16 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	// console.log("rrrrrrrrr", typeof variableNamesClass[varName]);
 	// console.log("----------------------------------------");
 	// console.log("     ");
-	
+	console.log(classID, symbolTable[classID][varName])
+	var isPropertyFromSubQuery = false;
+	if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
+		for(var key in symbolTable[classID][varName]){
+			if(typeof symbolTable[classID][varName][key]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][key]["upBySubQuery"] == 1) {
+				isPropertyFromSubQuery = true;
+				break;
+			}
+		}
+	}
 	var varNameRep = varName.replace(/-/g, '_');
 	if(alias != null) {
 		//console.log("1111", varName, alias);
@@ -234,6 +243,11 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		
 		return variableNamesAll[alias]["alias"];
 	}
+	//if symbol table has variable with property upBySubQuery = 1
+	else if(isPropertyFromSubQuery){
+		return varName;
+	}
+	
 	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined'){
 		// console.log("2222", varName);
 		//Aply exists to filter if variable is not defined
@@ -1564,7 +1578,18 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						|| variableData["type"] != null && false)) inFilter = true;
 						var inv = "";
 						if(typeof expressionTable[key]["INV"] !== 'undefined') inv = "^";
-						tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
+						
+						var isPropertyFromSubQuery = false;
+						if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
+							for(var k in symbolTable[classID][varName]){
+								if(typeof symbolTable[classID][varName][k]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][k]["upBySubQuery"] == 1) {
+									isPropertyFromSubQuery = true;
+									break;
+								}
+							}
+						}
+				
+						if(isPropertyFromSubQuery == false) tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
 						var namespace = expressionTable[key]["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 						prefixTable[getPrefix(expressionTable[key]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
