@@ -1,18 +1,14 @@
 version: "2"
 services:
  main: 
-#  image: arturs/ajoo
-  build: ./viziquer_meteor
-  volumes:
-   - .:/code
+  build: .
   ports:
-   - "80:80"
+   - "80:3000"
   links:
    - mongodb
   environment:
    MONGO_URL: mongodb://mongodb
-   ROOT_URL: http://185.23.162.188
-   METEOR_SETTINGS: '{"kadira": {"appId": "g7LszfeyEpj5idoMp", "appSecret": "6f8ab09c-20bd-4a98-b48f-0d7a9a1721e8"}}'
  mongodb:
   image: mongo
-
+  volumes:
+   - ./data/mongo:/data/db
