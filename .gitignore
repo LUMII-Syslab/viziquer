@@ -1,6 +1,9 @@
 settings.json
 package-lock.json
 
+# MongoDB data directory
+data/mongo
+
 # generated content follows
 
 ### MeteorJS ###
