@@ -12,55 +12,63 @@
       // string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
 			function resolveTypeFromSymbolTable(id) {
-				var context = options.context;
-				
+				var context = options.context._id;
+
 				if(typeof options.symbol_table[context] === 'undefined') return null;
-				
-				var st_row = options.symbol_table[context][id]; 
-				if (st_row) { 
+
+				var st_row = options.symbol_table[context][id];
+				if (st_row) {
 					if(st_row.length == 0) return null;
 					if(st_row.length == 1){
-						return st_row[0].type 
+						return st_row[0].type
 					}
 					if(st_row.length > 1){
 						for (var symbol in st_row) {
 							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
 						}
 					}
-					return st_row.type 
-				} else { 
-					return null 
-				} 
+					return st_row.type
+				} else {
+					return null
+				}
 			};
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
-			function resolveKindFromSymbolTable(id) { 
-				var context = options.context;
-				
+			function resolveKindFromSymbolTable(id) {
+				var context = options.context._id;
+
 				if(typeof options.symbol_table[context] === 'undefined') return null;
-				
-				var st_row = options.symbol_table[context][id]; 
-				if (st_row) { 
+
+				var st_row = options.symbol_table[context][id];
+				if (st_row) {
 					if(st_row.length == 0) return null;
 					if(st_row.length == 1){
-						return st_row[0].kind 
+						return st_row[0].kind
 					}
 					if(st_row.length > 1){
 						for (var symbol in st_row) {
 							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
 						}
 					}
-					return st_row.kind 
-				} else { 
-					return null 
-				} 
+					return st_row.kind
+				} else {
+					return null
+				}
 			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (!aorl) { aorl = options.schema.resolveLinkByName(id)}; return aorl};
+			function resolveTypeFromSchemaForAttributeAndLink(id) {
+				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+				var res = aorl[0];
+				if (!res) { res = options.schema.resolveLinkByName(id)}
+				else {
+						res["parentType"] = aorl[1];
+				};
+				return res
+			};
 			// string -> idObject
 			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
 			// then in schema. Null if does not exist
@@ -107,8 +115,8 @@
 			function pathOrReference(o) {
 				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
         // It does not make sense calculate this every time function is called, but ...
-				
-				
+
+
 				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
 					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
 					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
@@ -120,22 +128,22 @@
 					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
 					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
 					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
-					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" || 
+					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
 					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
 				){
 					//console.log("REFERENCE REFERENCE", o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]);
-					
-					return {Reference: 
-						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"], 
+
+					return {Reference:
+						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
 						type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-					var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"], 
-					Substring : o["Substring"], 
-					FunctionBETWEEN : o["FunctionBETWEEN"], 
+					var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+					Substring : o["Substring"],
+					FunctionBETWEEN : o["FunctionBETWEEN"],
 					FunctionLike : o["FunctionLike"]
 					}
-				
+
 				}
-				
+
 				// var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
 				// if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]["name"]) > -1) {
 					// return {Reference: {name:o["Path"][0]["path"]["name"], type:resolveTypeFromSymbolTable(o["Path"][0]["path"]["name"])}, var : o["PrimaryExpression"]["var"], Substring : o["PrimaryExpression"]["Substring"], FunctionBETWEEN : o["FunctionBETWEEN"], FunctionLike : o["FunctionLike"]}
@@ -344,7 +352,7 @@
 			NOW = "NOW"i {return "NOW"}
 			UUID = "UUID"i {return "UUID"}
 			STRUUID = "STRUUID"i {return "STRUUID"}
-			
+
 
 			FunctionExpressionA = Function:(STR / LANG / DATATYPE / IRI / URI / ABS / CEIL / FLOOR / ROUND / STRLEN / UCASE /
 					 LCASE / ENCODE_FOR_URI / YEAR / MONTH  / DAY/ HOURS2 / MINUTES2 / SECONDS2 / TIMEZONE / TZ / MD5 / SHA1 / SHA256 / SHA384 / SHA512 / isIRI /
@@ -353,22 +361,22 @@
 			FunctionExpressionB = Function:(LANGMATCHES / CONTAINS / STRSTARTS / STRENDS / STRBEFORE / STRAFTER / STRLANG / STRDT / sameTerm) "(" space Expression1:Expression space "," space Expression2:Expression space ")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2}}
 
 			FunctionExpressionC = FunctionTime: (days / years / months / hours / minutes / seconds ) "(" space PrimaryExpressionL: PrimaryExpression space "-" space PrimaryExpressionR: PrimaryExpression space ")" {return {FunctionTime:FunctionTime, PrimaryExpressionL:PrimaryExpressionL, PrimaryExpressionR:PrimaryExpressionR}}
-			
+
 			FunctionExpressionD = Function:(COALESCE / CONCAT) ExpressionList:ExpressionList2 {return {Function:Function, ExpressionList:ExpressionList}}
-			
+
 			FunctionCOALESCE = PrimaryExpression1:PrimaryExpression2 space "??" space PrimaryExpression2:PrimaryExpression2 {return {Function:"coalesceShort", PrimaryExpression1:PrimaryExpression1, PrimaryExpression2:PrimaryExpression2}}
-			
+
 			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
 			FunctionExpressionLANGMATCHESA = PrimaryExpression:(QName / LN) LANGTAG_MUL:LANGTAG_MUL {return {Function:"langmatchesShortMultiple", PrimaryExpression:PrimaryExpression, LANGTAG_MUL:LANGTAG_MUL}}
 			FunctionExpressionLANGMATCHESB = PrimaryExpression:(QName / LN) LANGTAG:LANGTAG {return {Function:"langmatchesShort", PrimaryExpression:PrimaryExpression, LANGTAG:makeVar(LANGTAG)}}
-			
+
 			BOUNDFunction = Function: BOUND "(" space PrimaryExpression:PrimaryExpression space")" {return {Function:Function, PrimaryExpression:PrimaryExpression}}
 			NilFunction = Function: (RAND / NOW / UUID / STRUUID) NIL:NIL {return {Function:Function, NIL:NIL}}
 			BNODEFunction = BNODEFunctionA / BNODEFunctionB
 			BNODEFunctionA = Function:BNODE "(" space Expression: Expression space ")" {return {Function:Function, Expression:Expression}}
 			BNODEFunctionB = Function: BNODE NIL:NIL {return {Function:Function, NIL:NIL}}
 			IFFunction = Function: IF "(" space Expression1:Expression space "," space Expression2:Expression space "," space Expression3:Expression space")" {return {Function:Function, Expression1:Expression1, Expression2:Expression2, Expression3:Expression3}}
-			
+
 			HASMAX = (HASMAX:'HASMAX' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASMAX, SpecialExpression:SpecialExpression}}
 			HASRANK = (HASRANK:'HASRANK' '(' space SpecialExpression: SpecialExpression space ')') {return {Function:HASRANK, SpecialExpression:SpecialExpression}}
 
@@ -496,9 +504,9 @@
 			//-----ReferenceToClass----- QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			//QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			QName = Path:(Path / PathBr)  {return pathOrReference(Path)}
-			
-			
-			
+
+
+
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 			//PathA = "[" (Path:PathBr) "]" {return Path}
 			//PathB =  (Path:Path) {return Path}
@@ -513,7 +521,7 @@
 			PathElt2 = "^" PathElt:PathElt {return {inv:"^", PathElt:PathElt}}
 			PathElt3 = "inv"i "(" space PathElt:PathElt space ")" {return {inv:"^", PathElt:PathElt}}
 			PathElt = PathPrimary:PathPrimary PathMod:PathMod? {return {PathPrimary:PathPrimary, PathMod:PathMod}}
-			PathPrimary =  ("!" PathNegatedPropertySet)/ iriP / ("(" space Path space ")") / LNameP/ "a" 
+			PathPrimary =  ("!" PathNegatedPropertySet)/ iriP / ("(" space Path space ")") / LNameP/ "a"
 			PathNegatedPropertySet = PathNegatedPropertySet:(PathNegatedPropertySet2 / PathNegatedPropertySet1){return {PathNegatedPropertySet:PathNegatedPropertySet}}
 			PathNegatedPropertySet1 = PathOneInPropertySet:PathOneInPropertySet {return {PathOneInPropertySet:PathOneInPropertySet}}
 			PathNegatedPropertySet2 = PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted {return {PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted}}
@@ -523,21 +531,21 @@
 			PathOneInPropertySet2 = "^" iriOra:(iriP  / LNameP/ 'a') {return {inv:"^", iriOra:iriOra}}
 			PathOneInPropertySet3 = "inv"i "(" iriOra:(iriP / LNameP/ 'a' ) ")" {return {inv:"^", iriOra:iriOra}}
 			PathMod = ("?" / "*" / "+")
-			
+
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? ':') {return makeVar(Prefix)}
 			PNAME_LNP = (PNAME_NS:PNAME_NSP  LName:Chars_String_prefix) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
 			// LNameP = (LName:(Chars_String_prefix) Substring:Substring FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LNameP = (LName:(Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
-			
+
 			VERTICAL = "|" {return {Alternative:"|"}}
-			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}} 
-			//////////////////////////////////////////////////////////////////////////////////////////////////////			
-			
-			
-			
-			
+			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}}
+			//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 			// path =(path2:path2 space ".") {return {path:path2}}
 			// path2 =(invPath1 / (invPath2) / (invPath3))
 			// invPath1 = ("INV(" Chars_String:Chars_String ")" PathMod:PathMod?) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)), PathMod:PathMod}} // atributs vai associacija
@@ -550,9 +558,9 @@
 																																																			//atributs vai associacija
 			LN =((LNameINV / LNameINV2 / LName) )
 			//LNPath =((LNameINVPath / LNameINV2Path / LNamePath) )
-			
+
 			PathMod = PathMod:("?" / "*" / "+")
-			
+
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			//LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring){return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix))
@@ -560,19 +568,19 @@
 			//-----ReferenceToClass----- LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			// LNamePath = (LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod? Substring:Substring) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
 			// LName = (LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod? Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-			
+
 			// LNameINVPath = (INV: "INV" "(" LName:LNameSimple  ")" PathMod:PathMod? Substring:Substring ) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
 			// LNameINV = (INV: "INV" "(" LName:LNameSimple  ")"PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-			
+
 			// LNameINV2Path = (INV: "^" LName:LNameSimple PathMod:PathMod? Substring:Substring) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
 			// LNameINV2 = (INV: "^" LName:LNameSimple PathMod:PathMod? Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-			
+
 			//LNamePath = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LName = (PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			
+
 			//LNameINVPath = (INV: "INV" "(" LName:LNameSimple  ")"  Substring:Substring ) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LNameINV = (PropertyReference:PropertyReference? INV: "INV" "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			
+
 			//LNameINV2Path = (INV: "^" LName:LNameSimple  Substring:Substring) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LNameINV2 = (PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
