@@ -8,6 +8,7 @@ services:
    - mongodb
   environment:
    MONGO_URL: mongodb://mongodb
+   STARTUP_DELAY: 10
  mongodb:
   image: mongo
   volumes:
