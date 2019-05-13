@@ -13,7 +13,7 @@
 			// returns type of the identifier from symbol table. Null if does not exist.
 			// returns type of the identifier from symbol table. Null if does not exist.
 			function resolveTypeFromSymbolTable(id) {
-				var context = options.context;
+				var context = options.context._id;
 				
 				if(typeof options.symbol_table[context] === 'undefined') return null;
 				
@@ -38,7 +38,15 @@
 			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (!aorl) { aorl = options.schema.resolveLinkByName(id)}; return aorl};
+			function resolveTypeFromSchemaForAttributeAndLink(id) {
+				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+				var res = aorl[0];
+				if (!res) { res = options.schema.resolveLinkByName(id)}
+				else {
+						res["parentType"] = aorl[1];
+				};
+				return res
+			};
 			// string -> idObject
 			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
 			// then in schema. Null if does not exist
