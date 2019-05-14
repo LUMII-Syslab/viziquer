@@ -27,7 +27,7 @@ Meteor.methods({
 
 			var id = Users.insert(user_data);
 
-			if (!is_test_user(list["email"]))
+			// if (!is_test_user(list["email"]))
 				// Accounts.sendVerificationEmail(user_id, list["email"]);
 
 			if (is_first_user) {
@@ -36,6 +36,42 @@ Meteor.methods({
 				
 				//loading configurator data
 				load_configurator(user_id);
+
+	  			var new_tool = {name: "Viziquer",
+	  							createdAt: new Date,
+	  							createdBy: user_id,
+	  							documents: true,
+	  							archive: true,
+	  							analytics: true,
+	  							users: true,
+	  							forum: true,
+	  							tasks: true,
+	  							training: true,
+	  						};
+
+				var tool_id = Tools.insert(new_tool);
+				var version_id = ToolVersions.insert({createdAt: new_tool.createdAt,
+														createdBy: user_id,
+														status: "New",
+														toolId: tool_id,
+													});
+
+				var fs = Npm.require('fs');
+				var current_dir = process.env.PWD;
+
+				var file_name = "VQ_configuration_dump_v0.0.json";
+				if (Meteor.settings && Meteor.settings.configurationName) {
+					file_name = Meteor.settings.configurationName;
+				}
+
+
+				console.log("file_name", file_name)
+
+	  			var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
+
+	  			var list = {toolId: tool_id, versionId: version_id, data: file,};
+
+	  			Meteor.call("importAjooConfiguration", list);
 			}
 
 			return id;

@@ -531,6 +531,7 @@ Schemas.DiagramLogs = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "DiagramLogs.authorId",
         denyUpdate: true,
+        optional: true,
     },
 
     createdAt: {
@@ -3143,6 +3144,7 @@ Schemas.UserTools = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "UserTools.userSystemId",
         denyUpdate: true,
+        optional: true,
     },
 });
 UserTools.attachSchema(Schemas.UserTools);

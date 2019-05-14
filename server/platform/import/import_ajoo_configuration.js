@@ -2,10 +2,12 @@
 Meteor.methods({
 
 	importAjooConfiguration: function(list) {
-
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
 
 		var data = list.data;
+		console.log("data", data)
+
+
 		_import.importDiagrams(data.presentations);
 		_import.importDiagramTypes(data.types);
 	},
