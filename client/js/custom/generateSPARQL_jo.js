@@ -736,7 +736,7 @@ function generateSPARQLtext(abstractQueryTable){
 
 			 //SELECT DISTINCT
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0){
-				 SPARQL_text = SPARQL_text + "{SELECT DISTINCT " + selectResult["innerDistinct"] + " WHERE{\n";
+				 SPARQL_text = SPARQL_text + "{SELECT DISTINCT " + selectResult["innerDistinct"].join(" ") + " WHERE{\n";
 			 }
 
 			  //HAVING
