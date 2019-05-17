@@ -178,6 +178,7 @@ Template.AddLink.events({
 						}
 	                }, locLink, true, cl, currentElement);
 	            }
+                Template.AggregateWizard.endClassId.set(cl.obj._id);
             }, newPosition);
 
 /* O L D   V E R S I O N
