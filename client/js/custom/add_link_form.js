@@ -101,9 +101,9 @@ Template.AddLink.helpers({
 			//default value for any case
 			if (proj){
       			if (proj.showCardinalities=="true")
-      				ascReverse.push({name: "++", class: "", type: "=>", card: "[*]", clr: "color: purple"}); 
+      				ascReverse.push({name: "++", class: " ", type: "=>", card: "[*]", clr: "color: purple"}); 
 				else {
-      				ascReverse.push({name: "++", class: "", type: "=>", card: "", clr: ""});
+      				ascReverse.push({name: "++", class: " ", type: "=>", card: "", clr: ""});
       			}
       		}
 			return asc.concat(ascReverse);
