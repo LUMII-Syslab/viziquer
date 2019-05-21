@@ -744,16 +744,13 @@ Interpreter.customMethods({
 		}
 		
 		var order_by_list = [];
-
-		
-		var symbolTable = generateSymbolTable()
-		
-		var isAggregateInClass = false;
+	
+		var symbolTable = generateSymbolTable();
 		
 		for (var  key in symbolTable) {
-			order_by_list.push({value: key, input: key});
+			
 			for(var k in symbolTable[key]){
-				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" && symbolTable[key][k]["context"] == Session.get("activeElement")) isAggregateInClass = true;
+				if(symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
 			}
 		}
 
@@ -764,8 +761,15 @@ Interpreter.customMethods({
 			var select_distinct_compart_type = CompartmentTypes.findOne({name: "Distinct", elementTypeId: act_el["elementTypeId"]});
 			var select_distinct = Compartments.findOne({compartmentTypeId: select_distinct_compart_type["_id"], elementId: act_elem});
 			
-			if(isAggregateInClass == false && select_distinct.input != "true"){
-				console.log("ttttttttttttttttttttttttt")
+			var e = new VQ_Element(act_elem);
+			var aggregationAliases = e.getAggregateFields();
+			
+			for (var key in aggregationAliases) {
+				var alias = aggregationAliases[key]["alias"];
+				if(alias != "")order_by_list.push({value: alias, input: alias});
+			}
+			
+			if(_.size(aggregationAliases) == 0 && select_distinct.input != "true"){
 				//check if Class name is defined for active element
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 
