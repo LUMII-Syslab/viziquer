@@ -28,6 +28,7 @@ var classTable = [];
 var classMembership = "a";
 var attributeFilter = "";
 var classID = null;
+var attributesNames = [];
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
        "owl:":"http://www.w3.org/2002/07/owl#",
@@ -58,7 +59,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID, attribNames){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -84,6 +85,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	classMembership = memS;
 	classID = clID;
 	attributeFilter = "";
+	attributesNames = attribNames;
 	
 	for(var key in knPr){
 		if(knPr[key][0] == "")knownNamespaces[":"] = knPr[key][1];
@@ -92,8 +94,8 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	
 }
 
-parse_filter = function(clID, parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID);
+parse_filter = function(attribNames, clID, parsed_exp, className, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -134,13 +136,13 @@ parse_filter = function(clID, parsed_exp, className, vnc, vna, count, ep, st, cl
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(clID, parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr) {
+parse_attrib = function(attribNames, clID, parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr) {
 	
 	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr, clID);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr, clID);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames);
 	
 	variableNamesClass = vnc;
 	var parsed_exp1 = transformSubstring(parsed_exp);
@@ -210,16 +212,60 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	// console.log("rrrrrrrrr", typeof variableNamesClass[varName]);
 	// console.log("----------------------------------------");
 	// console.log("     ");
-	console.log(classID, symbolTable[classID][varName])
-	var isPropertyFromSubQuery = false;
+	//console.log("eeeeeeeeeeeee", attributesNames, classID, symbolTable[classID][varName])
+	var isPropertyFromSubQuery = null;
+	var isOwnProperty = false;
 	if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
-		for(var key in symbolTable[classID][varName]){
-			if(typeof symbolTable[classID][varName][key]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][key]["upBySubQuery"] == 1) {
-				isPropertyFromSubQuery = true;
-				break;
+		if( symbolTable[classID][varName].length > 1){
+			var parentTypeIsNull = false;
+			var isNotJoinedClass = false;
+			var definedInJoinClass = null;
+			for(var key in symbolTable[classID][varName]){
+				if(symbolTable[classID][varName][key]["context"] != classID && typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] != null) isNotJoinedClass = true;
+				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] == null) {
+					parentTypeIsNull = true;
+				}
+				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' 
+				&& symbolTable[classID][varName][key]["context"] != classID
+				&& typeof symbolTable[classID][varName][key]["upBySubQuery"] === 'undefined') {
+					definedInJoinClass = idTable[symbolTable[classID][varName][key]["context"]];
+				}
+			}
+			
+			if( definedInJoinClass != null && parentTypeIsNull == true && isNotJoinedClass == true){
+				messages.push({
+					"type" : "Warning",
+					"message" : "The name '"+varName+"' in '"+idTable[classID]+"' class may refer both to '"+varName+"' field in '"+definedInJoinClass+"' class node and to some instance attribute name. Introduce an alias to '"+varName+"' field in '"+definedInJoinClass+"' node to disambiguate.",
+					"listOfElementId" : [classID],
+					"isBlocking" : true
+				});
 			}
 		}
+		
+		
+		for(var key in symbolTable[classID][varName]){
+			if(typeof symbolTable[classID][varName][key]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][key]["upBySubQuery"] == 1) {
+				isPropertyFromSubQuery = symbolTable[classID][varName][key]["context"];
+			}
+			if(symbolTable[classID][varName][key]["context"] == classID 
+			&& typeof symbolTable[classID][varName][key]["type"] !== "undefined" && symbolTable[classID][varName][key]["type"] != null 
+			&& symbolTable[classID][varName][key]["type"]["parentType"] != null) {
+				isOwnProperty = true;
+			}
+		}
+		
+		if(isPropertyFromSubQuery!= null && isOwnProperty){
+			messages.push({
+					"type" : "Warning",
+					"message" : "The name '"+varName+"' in '"+idTable[classID]+"' class is defined both as its schema attribute name, and as a field from a subquery. Introduce an alias to the subquery field to disambiguate.",
+					"listOfElementId" : [classID],
+					"isBlocking" : true
+				});
+		}
 	}
+	
+	//console.log("qqqqqqqqqqqqqqqqqqq", isPropertyFromSubQuery, isOwnProperty, idTable[classID], varName)
+	
 	var varNameRep = varName.replace(/-/g, '_');
 	if(alias != null) {
 		//console.log("1111", varName, alias);
@@ -244,8 +290,9 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		return variableNamesAll[alias]["alias"];
 	}
 	//if symbol table has variable with property upBySubQuery = 1
-	else if(isPropertyFromSubQuery){
-		return varName;
+	else if(isPropertyFromSubQuery != null && !isOwnProperty && typeof attributesNames[varName] != 'undefined'){
+		//console.log("aaaaaaa", attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"], isPropertyFromSubQuery);
+		return attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"];
 	}
 	
 	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined'){
@@ -261,6 +308,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			if(typeof expressionLevelNames[varName] === 'undefined'){
 				if(typeof variableNamesClass[varName]=== 'undefined'){
 					if(typeof variableNamesAll[varName]=== 'undefined'){
+						// console.log("1111", attributesNames[varName]["classes"][classID]["name"])
 						expressionLevelNames[varName] = varNameRep;
 						variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
 						
@@ -270,6 +318,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			
 						variableNamesAll[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes":classes};
 					} else {
+						// console.log("2222", attributesNames[varName]["classes"][classID]["name"])
 						var count = variableNamesAll[varName]["counter"] + 1;
 						expressionLevelNames[varName] = varNameRep + "_" +count;
 						variableNamesAll[varName]["counter"] = count;
@@ -282,6 +331,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						variableNamesClass[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[varName]["isVar"]};
 					}
 				} else {
+					// console.log("3333", attributesNames[varName]["classes"][classID]["name"])
 					var count = variableNamesClass[varName]["counter"] + 1;
 					expressionLevelNames[varName] = varNameRep + "_" +count;
 					variableNamesClass[varName]["counter"] = count;
@@ -296,82 +346,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			}else{
 				return expressionLevelNames[varName];
 			}
-		// cardinality is more then 1 or is unknown (for each variable new definition)
-		}/* else if(variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1)){
-		// console.log("2bbbb", varName);		   
-		   //if not used in given expression
-			if(typeof expressionLevelNames[varName] === 'undefined'){
-				//if not used in class scope
-				if(typeof variableNamesClass[varName] === 'undefined'){
-					//if not used in query scope
-					if(typeof variableNamesAll[varName]=== 'undefined'){
-						//not used at all
-						
-						//if simple variable
-						if(isSimpleVariableForNameDef == true){
-							var tempIsVar = false;
-							if(parseType == "attribute") tempIsVar = true;
-							variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : 0, "isVar" : tempIsVar};
-						} else {
-							variableNamesClass[varName] = {"alias" : varName+"_1", "nameIsTaken" : false, "counter" : 1, "isVar" : false};
-						}
-						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
-					
-					//is used in query, but not in a given class (somewhere else)
-					} else {
-						//if simple variable
-						if(isSimpleVariableForNameDef == true){
-							var tempIsVar = false;
-							if(parseType == "attribute") tempIsVar = true;
-							
-							//name is not taken
-							if(variableNamesAll[varName]["nameIsTaken"] != true){
-								variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : variableNamesAll[varName]["counter"], "isVar" : tempIsVar};
-							//name is taken
-							} else {
-								var count = variableNamesAll[varName]["counter"] + 1;
-								variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
-								variableNamesAll[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar}; //????? vai vajag
-							}
-						//is expression
-						} else {
-							var count = variableNamesAll[varName]["counter"] + 1;
-							variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : false};
-						}
-						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
-					}
-					return variableNamesClass[varName]["alias"];
-				//is used in a given class
-				}else{
-					//if simple variable
-					if(isSimpleVariableForNameDef == true){
-						var tempIsVar = false;
-						if(parseType == "attribute") tempIsVar = true;
-						
-						//name is not taken
-						if(variableNamesClass[varName]["nameIsTaken"] != true){
-							variableNamesClass[varName] = {"alias" : varName, "nameIsTaken" : true, "counter" : variableNamesClass[varName]["counter"], "isVar" : tempIsVar};
-						//name is taken
-						} else {
-							var count = variableNamesClass[varName]["counter"] + 1;
-							variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
-						}
-					//is expression
-					} else {
-						var count = variableNamesClass[varName]["counter"] + 1;
-						variableNamesClass[varName] = {"alias" : varName+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : false};
-					}
-					
-					expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
-					return variableNamesClass[varName]["alias"];
-				}
-			//used in given expression
-			} else {
-				return expressionLevelNames[varName];
-			}
-		}*/
-		// cardinality is <=1
-		else{
+		}else{
 			// console.log("2cccc", varName, isSimpleVariableForNameDef);
 			//if not used in given expression
 			if(typeof expressionLevelNames[varName] === 'undefined' || typeof expressionLevelNames[varName] === 'function'){
@@ -385,11 +360,23 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						// console.log("2c 111", varName, parseType);
 						//if simple variable
 						if(isSimpleVariableForNameDef == true){
+							//console.log("4444", attributesNames[varName]["classes"][classID]["name"], attributesNames[varName])
+							var count = 0;
+							if(typeof  attributesNames[varName] !== 'undefined'){
+								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
+								count = attributesNames[varName]["counter"];
+							}
 							var tempIsVar = false;
 							if(parseType == "attribute" || parseType == "class") tempIsVar = true;
-							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : 0, "isVar" : tempIsVar};
+							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 						} else {
-							variableNamesClass[varName] = {"alias" : varNameRep+"_1", "nameIsTaken" : false, "counter" : 1, "isVar" : false};
+							//console.log("5555", attributesNames[varName]["classes"][classID]["name"])
+							var count = 0;
+							if(typeof  attributesNames[varName] !== 'undefined'){
+								count = attributesNames[varName]["counter"];
+							}
+							count = count+1;
+							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : false, "counter" : count, "isVar" : false};
 						}
 						// console.log("variableNamesClass[varName]", variableNamesClass[varName]);
 						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
@@ -404,21 +391,42 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							
 							//name is not taken
 							if(variableNamesAll[varName]["nameIsTaken"] != true){
-								variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : variableNamesAll[varName]["counter"], "isVar" : tempIsVar};
+
+								var count = 0;
+								if(typeof  attributesNames[varName] !== 'undefined'){
+									if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
+									count = attributesNames[varName]["counter"];
+								}
+								if(count<variableNamesAll[varName]["counter"])count = variableNamesAll[varName]["counter"]
+
+								variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 							//name is taken
 							} else {
+								
 								var count = variableNamesAll[varName]["counter"] + 1;
-								variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
+								var varN = varNameRep+"_"+count;
+								if(typeof  attributesNames[varName] !== 'undefined'){
+									if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varN = attributesNames[varName]["classes"][classID]["name"];
+									count = attributesNames[varName]["counter"];
+								}
+								if(count<variableNamesAll[varName]["counter"])count = variableNamesAll[varName]["counter"];
+								variableNamesClass[varName] = {"alias" : varN, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 								
 								var classes = [];
 								if(typeof variableNamesAll[varName] !== 'undefined' && typeof variableNamesAll[varName]["classes"] !== 'undefined') classes = variableNamesAll[varName]["classes"];
-								classes[classID] = varNameRep + "_" +count;
+								classes[classID] = varN;
 								
-								variableNamesAll[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar, "classes":classes}; //????? vai vajag	
+								variableNamesAll[varName] = {"alias" : varN, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar, "classes":classes}; //????? vai vajag	
 							}
 						//is expression
 						} else {
-							var count = variableNamesAll[varName]["counter"] + 1;
+							var count = variableNamesAll[varName]["counter"];
+							if(typeof  attributesNames[varName] !== 'undefined'){
+								count = attributesNames[varName]["counter"];
+							}
+							if(count<variableNamesAll[varName]["counter"])count = variableNamesAll[varName]["counter"];
+							count = count + 1;
+								
 							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : variableNamesAll[varName]["nameIsTaken"], "counter" : count, "isVar" : false};
 						}
 						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
@@ -435,13 +443,25 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						
 						//name is not taken
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
+							var count = 0;
+							if(typeof  attributesNames[varName] !== 'undefined'){
+								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
+								count = attributesNames[varName]["counter"];
+							}
+							if(count<variableNamesClass[varName]["counter"])count = variableNamesClass[varName]["counter"]
+
 							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : variableNamesClass[varName]["counter"], "isVar" : tempIsVar};
 						//name is taken
 						} else {
 							//if name is not defined as variable
 							if(variableNamesClass[varName]["isVar"] != true) {
+								var count = variableNamesClass[varName]["counter"];
+								if(typeof  attributesNames[varName] !== 'undefined'){
+									count = attributesNames[varName]["counter"];
+								}
+								if(count<variableNamesClass[varName]["counter"])count = variableNamesClass[varName]["counter"];
+								count = count + 1;
 								
-								var count = variableNamesClass[varName]["counter"] + 1;
 								variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 							}
 						}
@@ -451,7 +471,13 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						// console.log("2c 122", varName);
 						//name is not taken
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
-							var count = variableNamesClass[varName]["counter"] + 1;
+							var count = variableNamesClass[varName]["counter"];
+							if(typeof  attributesNames[varName] !== 'undefined'){
+								count = attributesNames[varName]["counter"];
+							}
+							if(count<variableNamesClass[varName]["counter"])count = variableNamesClass[varName]["counter"];
+							count = count + 1;
+								
 							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : false, "counter" : count, "isVar" : false};
 						//name is taken
 						} //else {
@@ -1580,16 +1606,21 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						if(typeof expressionTable[key]["INV"] !== 'undefined') inv = "^";
 						
 						var isPropertyFromSubQuery = false;
+						var isOwnProperty = false;
 						if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
 							for(var k in symbolTable[classID][varName]){
 								if(typeof symbolTable[classID][varName][k]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][k]["upBySubQuery"] == 1) {
 									isPropertyFromSubQuery = true;
-									break;
+								}
+								if(symbolTable[classID][varName][k]["context"] == classID 
+								&& typeof symbolTable[classID][varName][k]["type"] !== "undefined" && symbolTable[classID][varName][k]["type"] != null 
+								&& symbolTable[classID][varName][k]["type"]["parentType"] != null){
+									isOwnProperty = true;
 								}
 							}
 						}
 				
-						if(isPropertyFromSubQuery == false) tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
+						if(isPropertyFromSubQuery == false || isOwnProperty == true) tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["Prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
 						var namespace = expressionTable[key]["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 						prefixTable[getPrefix(expressionTable[key]["type"]["Prefix"]) + ":"] = "<"+namespace+">";
@@ -2831,3 +2862,4 @@ function typeStringFromSymbolTable(symbolTable, expression){
 	
 	return value;
 }
+

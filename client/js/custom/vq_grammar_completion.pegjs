@@ -84,7 +84,7 @@
 			// returns type of the identifier from symbol table. Null if does not exist.
 			// returns type of the identifier from symbol table. Null if does not exist.
 			function resolveTypeFromSymbolTable(id) {
-				var context = options.context;
+				var context = options.context._id;
 				
 				if(typeof options.symbol_table[context] === 'undefined') return null;
 				
@@ -107,7 +107,7 @@
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
 			function resolveKindFromSymbolTable(id) { 
-				var context = options.context;
+				var context = options.context._id;
 				
 				if(typeof options.symbol_table[context] === 'undefined') return null;
 				

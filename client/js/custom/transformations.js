@@ -227,6 +227,7 @@ Interpreter.customMethods({
 	VQgetAttributeNames: function() {
 
 		//console.log("VQgetAttributeNames executed");
+		// console.log("Attributes names")
 
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
@@ -281,6 +282,7 @@ Interpreter.customMethods({
 		atr_names = _.sortBy(atr_names, "input");
 		
 		var selected_elem_id = Session.get("activeElement");
+		
 		
 		var symbolTable = generateSymbolTable()
 		
@@ -724,7 +726,7 @@ Interpreter.customMethods({
 	},
 	
 	VQgetOrderByFields: function(val) {
-			
+			// console.log("order by")
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
@@ -743,37 +745,52 @@ Interpreter.customMethods({
 		
 		var order_by_list = [];
 
+		
 		var symbolTable = generateSymbolTable()
+		
+		var isAggregateInClass = false;
+		
 		for (var  key in symbolTable) {
 			order_by_list.push({value: key, input: key});
+			for(var k in symbolTable[key]){
+				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" && symbolTable[key][k]["context"] == Session.get("activeElement")) isAggregateInClass = true;
+			}
 		}
 
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
 		if (act_el) {
-		//check if Class name is defined for active element
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+		
+			var select_distinct_compart_type = CompartmentTypes.findOne({name: "Distinct", elementTypeId: act_el["elementTypeId"]});
+			var select_distinct = Compartments.findOne({compartmentTypeId: select_distinct_compart_type["_id"], elementId: act_elem});
+			
+			if(isAggregateInClass == false && select_distinct.input != "true"){
+				console.log("ttttttttttttttttttttttttt")
+				//check if Class name is defined for active element
+				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 
-			if (!compart_type) {
-				return order_by_list;
-			}
+				if (!compart_type) {
+					return order_by_list;
+				}
 
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			if (!compart) {
-				return order_by_list;
-			}
+				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+				if (!compart) {
+					return order_by_list;
+				}
 
-			//Read attribute values from DB
-			var schema = new VQ_Schema();
-			if (schema.classExist(compart["input"])) {
-				var klass = schema.findClassByName(compart["input"]);
+				//Read attribute values from DB
+				var schema = new VQ_Schema();
+				if (schema.classExist(compart["input"])) {
+					var klass = schema.findClassByName(compart["input"]);
 
-				_.each(klass.getAllAttributes(), function(att){
-					var att_val = att["name"];
-					order_by_list.push({value: att_val, input: att_val});
-				})
+					_.each(klass.getAllAttributes(), function(att){
+						var att_val = att["name"];
+						order_by_list.push({value: att_val, input: att_val});
+					})
+				}
 			}
 		}
+		
 
 	 	order_by_list = _.uniq(order_by_list, false, function(item) {
 	 		return item["input"];
@@ -783,6 +800,7 @@ Interpreter.customMethods({
 	},
 	
 	VQgetGroupByFields: function(val) {
+		//console.log("group by")
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
@@ -801,6 +819,8 @@ Interpreter.customMethods({
 		
 		var group_by_list = [];
 
+		
+		
 		var symbolTable = generateSymbolTable();
 
 		for (var  key in symbolTable) {
@@ -874,7 +894,7 @@ Interpreter.customMethods({
 	},
 
 	isAggregateWizardAvailable: function() {
-		console.log("isAggregateWizardAvailable");
+		//console.log("isAggregateWizardAvailable");
 		return true;
 	},
 
@@ -1108,7 +1128,7 @@ Interpreter.customMethods({
 
 
 generateSymbolTable = function() {
-
+// console.log("    generateSymbolTable")
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
