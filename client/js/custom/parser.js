@@ -2567,6 +2567,16 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				
 				SPARQLstring = SPARQLstring + "COALESCE(" + pe + ", " + pe2 + ")";
 				
+			} else if(typeof expressionTable[key]["Function"]!== 'undefined' && (expressionTable[key]["Function"].toLowerCase() == 'month' 
+					|| expressionTable[key]["Function"].toLowerCase() == 'day' || expressionTable[key]["Function"].toLowerCase() == 'year'
+					|| expressionTable[key]["Function"].toLowerCase() == 'hours' || expressionTable[key]["Function"].toLowerCase() == 'minutes'
+					|| expressionTable[key]["Function"].toLowerCase() == 'seconds'
+					|| expressionTable[key]["Function"].toLowerCase() == 'timezone' || expressionTable[key]["Function"].toLowerCase() == 'tz')){
+				isTimeFunction = true;
+				isFunction = true;
+				prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
+				SPARQLstring = SPARQLstring  + expressionTable[key]["Function"];
+				SPARQLstring = SPARQLstring  + "(xsd:dateTime(" + generateExpression({Expression : expressionTable[key]["Expression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "))";	
 			} else{
 				isFunction = true;
 			

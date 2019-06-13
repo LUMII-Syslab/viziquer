@@ -627,6 +627,9 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
           };
           if (proj.indirectClassMembershipRole) {
             proj_params.indirectClassMembershipRole = proj.indirectClassMembershipRole;
+          }; 
+		  if (proj.completeRDFBoxesInDatetimeFunctions) {
+            proj_params.completeRDFBoxesInDatetimeFunctions = proj.completeRDFBoxesInDatetimeFunctions;
           };
           return proj_params;
      }

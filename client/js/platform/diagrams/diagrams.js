@@ -693,7 +693,8 @@ Template.ontologySettings.events({
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
 					showCardinalities: $("#show-cardinalities").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
-					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked")
+					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
+					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked")
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -729,6 +730,7 @@ Template.ontologySettings.events({
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
+		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
 	 }
 
 	},
@@ -843,6 +845,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.showPrefixesForAllNonLocalNames=="true");
+		}
+	},
+	completeRDFBoxesInDatetimeFunctions: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
 		}
 	},
 });
