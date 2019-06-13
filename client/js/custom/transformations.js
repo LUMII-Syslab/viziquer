@@ -769,7 +769,7 @@ Interpreter.customMethods({
 				if(alias != "")order_by_list.push({value: alias, input: alias});
 			}
 			
-			if(_.size(aggregationAliases) == 0 && select_distinct.input != "true"){
+			if(_.size(aggregationAliases) == 0 && typeof select_distinct !== 'undefined' && select_distinct.input != "true"){
 				//check if Class name is defined for active element
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 
