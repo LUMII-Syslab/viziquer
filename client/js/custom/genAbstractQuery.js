@@ -209,7 +209,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
   function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
+		  var parsed_exp = vq_grammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
+		  // var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -244,7 +245,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
    try {
-      parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+	  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
 	 // console.log("parse_obj", parse_obj);
     } catch (e) {
       // TODO: error handling
@@ -258,7 +259,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
 	if(parse_obj != "[*sub]"){
 		try {
-		  var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+		  var parsed_exp = vq_grammar_parser.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+		  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
 		  exp_obj.parsed_exp = parsed_exp;
 		} catch (e) {
 		  // TODO: error handling

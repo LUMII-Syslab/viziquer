@@ -6,7 +6,6 @@
 			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object, exprType:String}
 			// exprType: CLASS_NAME or null if other - at the moment it determines the precedence of resolving - class or property first in case of name clash
       options = arguments[1];
-
 			function makeVar(o) {return makeString(o);};
 
       // string -> idObject
@@ -558,8 +557,6 @@
 																																																			//atributs vai associacija
 			LN =((LNameINV / LNameINV2 / LName) )
 			//LNPath =((LNameINVPath / LNameINV2Path / LNamePath) )
-
-			PathMod = PathMod:("?" / "*" / "+")
 
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			//LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring){return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
