@@ -2041,7 +2041,7 @@
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Distinct",
-				"label": "Distinct values (for output or aggregation)",
+				"label": "Distinct values (attributes and in-aggregates)",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
                 "inputType": {
@@ -2052,7 +2052,7 @@
                       "compartmentStyle": "828245acc3241ea17517a71b",
                       "elementStyle": "NoStyle",
                       "input": "true",
-                      "value": "Distinct values output/aggregation values"
+                      "value": "distinct values"
                     },
                     {
                       "compartmentStyle": "828245acc3241ea17517a71b",
