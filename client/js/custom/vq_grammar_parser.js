@@ -470,9 +470,9 @@ vq_grammar_parser = (function() {
         peg$c430 = function() {return {PathSymbol :"/"}},
         peg$c431 = function(Chars_String_variables) {return Chars_String_variables},
         peg$c432 = function(PropertyReference, LName, PathMod, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c433 = "INV",
-        peg$c434 = { type: "literal", value: "INV", description: "\"INV\"" },
-        peg$c435 = function(PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c433 = { type: "literal", value: "INV", description: "\"INV\"" },
+        peg$c434 = function(PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c435 = function(PropertyReference, INV, PNAME_NS, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c436 = function(PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c437 = "!=",
         peg$c438 = { type: "literal", value: "!=", description: "\"!=\"" },
@@ -689,7 +689,7 @@ vq_grammar_parser = (function() {
     function peg$parseMain() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 0,
+      var key    = peg$currPos * 260 + 0,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -728,7 +728,7 @@ vq_grammar_parser = (function() {
     function peg$parseExpression() {
       var s0;
 
-      var key    = peg$currPos * 259 + 1,
+      var key    = peg$currPos * 260 + 1,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -780,7 +780,7 @@ vq_grammar_parser = (function() {
     function peg$parseValueScope() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 2,
+      var key    = peg$currPos * 260 + 2,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -894,7 +894,7 @@ vq_grammar_parser = (function() {
     function peg$parseValueScopeA() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 3,
+      var key    = peg$currPos * 260 + 3,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -940,7 +940,7 @@ vq_grammar_parser = (function() {
     function peg$parseclassExpr() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 4,
+      var key    = peg$currPos * 260 + 4,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -998,7 +998,7 @@ vq_grammar_parser = (function() {
     function peg$parseConditionalOrExpressionA() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 5,
+      var key    = peg$currPos * 260 + 5,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1023,7 +1023,7 @@ vq_grammar_parser = (function() {
     function peg$parseConditionalOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 6,
+      var key    = peg$currPos * 260 + 6,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1113,7 +1113,7 @@ vq_grammar_parser = (function() {
     function peg$parseOROriginal() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 7,
+      var key    = peg$currPos * 260 + 7,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1153,7 +1153,7 @@ vq_grammar_parser = (function() {
     function peg$parseConditionalAndExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 8,
+      var key    = peg$currPos * 260 + 8,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1178,7 +1178,7 @@ vq_grammar_parser = (function() {
     function peg$parseValueLogicalA() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 9,
+      var key    = peg$currPos * 260 + 9,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1268,7 +1268,7 @@ vq_grammar_parser = (function() {
     function peg$parseANDOriginal() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 10,
+      var key    = peg$currPos * 260 + 10,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1308,7 +1308,7 @@ vq_grammar_parser = (function() {
     function peg$parseValueLogical() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 11,
+      var key    = peg$currPos * 260 + 11,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1333,7 +1333,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpression() {
       var s0;
 
-      var key    = peg$currPos * 259 + 12,
+      var key    = peg$currPos * 260 + 12,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1367,7 +1367,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionA() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 13,
+      var key    = peg$currPos * 260 + 13,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1392,7 +1392,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 14,
+      var key    = peg$currPos * 260 + 14,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1452,7 +1452,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionB1() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 15,
+      var key    = peg$currPos * 260 + 15,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1512,7 +1512,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionB2() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 16,
+      var key    = peg$currPos * 260 + 16,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1572,7 +1572,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionC() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 17,
+      var key    = peg$currPos * 260 + 17,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1635,7 +1635,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelationalExpressionC1() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 18,
+      var key    = peg$currPos * 260 + 18,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1701,7 +1701,7 @@ vq_grammar_parser = (function() {
     function peg$parseIN() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 19,
+      var key    = peg$currPos * 260 + 19,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1732,7 +1732,7 @@ vq_grammar_parser = (function() {
     function peg$parseNOT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 20,
+      var key    = peg$currPos * 260 + 20,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1763,7 +1763,7 @@ vq_grammar_parser = (function() {
     function peg$parseNOTIN() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 21,
+      var key    = peg$currPos * 260 + 21,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1808,7 +1808,7 @@ vq_grammar_parser = (function() {
     function peg$parseNumericExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 22,
+      var key    = peg$currPos * 260 + 22,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1833,7 +1833,7 @@ vq_grammar_parser = (function() {
     function peg$parseAdditiveExpression() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 23,
+      var key    = peg$currPos * 260 + 23,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1867,7 +1867,7 @@ vq_grammar_parser = (function() {
     function peg$parseMultiplicativeExpressionListA() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 24,
+      var key    = peg$currPos * 260 + 24,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1891,7 +1891,7 @@ vq_grammar_parser = (function() {
     function peg$parseMultiplicativeExpressionList() {
       var s0;
 
-      var key    = peg$currPos * 259 + 25,
+      var key    = peg$currPos * 260 + 25,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1919,7 +1919,7 @@ vq_grammar_parser = (function() {
     function peg$parseConcat() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 26,
+      var key    = peg$currPos * 260 + 26,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -1971,7 +1971,7 @@ vq_grammar_parser = (function() {
     function peg$parseAdditive() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 27,
+      var key    = peg$currPos * 260 + 27,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2032,7 +2032,7 @@ vq_grammar_parser = (function() {
     function peg$parseMultiplicativeExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 28,
+      var key    = peg$currPos * 260 + 28,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2080,7 +2080,7 @@ vq_grammar_parser = (function() {
     function peg$parseUnaryExpression() {
       var s0;
 
-      var key    = peg$currPos * 259 + 29,
+      var key    = peg$currPos * 260 + 29,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2102,7 +2102,7 @@ vq_grammar_parser = (function() {
     function peg$parseUnaryExpressionA() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 30,
+      var key    = peg$currPos * 260 + 30,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2163,7 +2163,7 @@ vq_grammar_parser = (function() {
     function peg$parseUnaryExpressionB() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 31,
+      var key    = peg$currPos * 260 + 31,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2197,7 +2197,7 @@ vq_grammar_parser = (function() {
     function peg$parseUnaryExpressionListA() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 32,
+      var key    = peg$currPos * 260 + 32,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2221,7 +2221,7 @@ vq_grammar_parser = (function() {
     function peg$parseUnaryExpressionList() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 33,
+      var key    = peg$currPos * 260 + 33,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2282,7 +2282,7 @@ vq_grammar_parser = (function() {
     function peg$parsePrimaryExpression() {
       var s0;
 
-      var key    = peg$currPos * 259 + 34,
+      var key    = peg$currPos * 260 + 34,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2325,7 +2325,7 @@ vq_grammar_parser = (function() {
     function peg$parsePrimaryExpression2() {
       var s0;
 
-      var key    = peg$currPos * 259 + 35,
+      var key    = peg$currPos * 260 + 35,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2368,7 +2368,7 @@ vq_grammar_parser = (function() {
     function peg$parseBooleanLiteral() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 36,
+      var key    = peg$currPos * 260 + 36,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2396,7 +2396,7 @@ vq_grammar_parser = (function() {
     function peg$parseTRUE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 37,
+      var key    = peg$currPos * 260 + 37,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2427,7 +2427,7 @@ vq_grammar_parser = (function() {
     function peg$parseFALSE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 38,
+      var key    = peg$currPos * 260 + 38,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2458,7 +2458,7 @@ vq_grammar_parser = (function() {
     function peg$parseRDFLiteral() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 39,
+      var key    = peg$currPos * 260 + 39,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2489,7 +2489,7 @@ vq_grammar_parser = (function() {
     function peg$parseRDFLiteralA() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 40,
+      var key    = peg$currPos * 260 + 40,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2523,7 +2523,7 @@ vq_grammar_parser = (function() {
     function peg$parseRDFLiteralB() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 41,
+      var key    = peg$currPos * 260 + 41,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2569,7 +2569,7 @@ vq_grammar_parser = (function() {
     function peg$parseBrackettedExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 42,
+      var key    = peg$currPos * 260 + 42,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2633,7 +2633,7 @@ vq_grammar_parser = (function() {
     function peg$parseBuiltInCall() {
       var s0;
 
-      var key    = peg$currPos * 259 + 43,
+      var key    = peg$currPos * 260 + 43,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2679,7 +2679,7 @@ vq_grammar_parser = (function() {
     function peg$parseBuiltInCall2() {
       var s0;
 
-      var key    = peg$currPos * 259 + 44,
+      var key    = peg$currPos * 260 + 44,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2722,7 +2722,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregate() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 45,
+      var key    = peg$currPos * 260 + 45,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2765,7 +2765,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateAO() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 46,
+      var key    = peg$currPos * 260 + 46,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2835,7 +2835,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateA() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 47,
+      var key    = peg$currPos * 260 + 47,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -2926,7 +2926,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateB() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 48,
+      var key    = peg$currPos * 260 + 48,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3011,7 +3011,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateC() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 49,
+      var key    = peg$currPos * 260 + 49,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3093,7 +3093,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateD() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 50,
+      var key    = peg$currPos * 260 + 50,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3169,7 +3169,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateE() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 51,
+      var key    = peg$currPos * 260 + 51,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3245,7 +3245,7 @@ vq_grammar_parser = (function() {
     function peg$parseAggregateF() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 52,
+      var key    = peg$currPos * 260 + 52,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3315,7 +3315,7 @@ vq_grammar_parser = (function() {
     function peg$parseCOUNT_DISTINCT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 53,
+      var key    = peg$currPos * 260 + 53,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3346,7 +3346,7 @@ vq_grammar_parser = (function() {
     function peg$parseDISTINCT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 54,
+      var key    = peg$currPos * 260 + 54,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3377,7 +3377,7 @@ vq_grammar_parser = (function() {
     function peg$parseCOUNT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 55,
+      var key    = peg$currPos * 260 + 55,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3408,7 +3408,7 @@ vq_grammar_parser = (function() {
     function peg$parseSUM() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 56,
+      var key    = peg$currPos * 260 + 56,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3439,7 +3439,7 @@ vq_grammar_parser = (function() {
     function peg$parseMIN() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 57,
+      var key    = peg$currPos * 260 + 57,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3470,7 +3470,7 @@ vq_grammar_parser = (function() {
     function peg$parseMAX() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 58,
+      var key    = peg$currPos * 260 + 58,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3501,7 +3501,7 @@ vq_grammar_parser = (function() {
     function peg$parseAVG() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 59,
+      var key    = peg$currPos * 260 + 59,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3532,7 +3532,7 @@ vq_grammar_parser = (function() {
     function peg$parseSAMPLE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 60,
+      var key    = peg$currPos * 260 + 60,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3563,7 +3563,7 @@ vq_grammar_parser = (function() {
     function peg$parseGROUP_CONCAT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 61,
+      var key    = peg$currPos * 260 + 61,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3594,7 +3594,7 @@ vq_grammar_parser = (function() {
     function peg$parseSEPARATORTer() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 62,
+      var key    = peg$currPos * 260 + 62,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3625,7 +3625,7 @@ vq_grammar_parser = (function() {
     function peg$parseSEPARATOR() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 63,
+      var key    = peg$currPos * 260 + 63,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3724,7 +3724,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 64,
+      var key    = peg$currPos * 260 + 64,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3776,7 +3776,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTR() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 65,
+      var key    = peg$currPos * 260 + 65,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3807,7 +3807,7 @@ vq_grammar_parser = (function() {
     function peg$parseLANG() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 66,
+      var key    = peg$currPos * 260 + 66,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3838,7 +3838,7 @@ vq_grammar_parser = (function() {
     function peg$parseDATATYPE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 67,
+      var key    = peg$currPos * 260 + 67,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3869,7 +3869,7 @@ vq_grammar_parser = (function() {
     function peg$parseIRI() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 68,
+      var key    = peg$currPos * 260 + 68,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3900,7 +3900,7 @@ vq_grammar_parser = (function() {
     function peg$parseURI() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 69,
+      var key    = peg$currPos * 260 + 69,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3931,7 +3931,7 @@ vq_grammar_parser = (function() {
     function peg$parseABS() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 70,
+      var key    = peg$currPos * 260 + 70,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3962,7 +3962,7 @@ vq_grammar_parser = (function() {
     function peg$parseCEIL() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 71,
+      var key    = peg$currPos * 260 + 71,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -3993,7 +3993,7 @@ vq_grammar_parser = (function() {
     function peg$parseFLOOR() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 72,
+      var key    = peg$currPos * 260 + 72,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4024,7 +4024,7 @@ vq_grammar_parser = (function() {
     function peg$parseROUND() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 73,
+      var key    = peg$currPos * 260 + 73,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4055,7 +4055,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRLEN() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 74,
+      var key    = peg$currPos * 260 + 74,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4086,7 +4086,7 @@ vq_grammar_parser = (function() {
     function peg$parseUCASE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 75,
+      var key    = peg$currPos * 260 + 75,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4117,7 +4117,7 @@ vq_grammar_parser = (function() {
     function peg$parseLCASE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 76,
+      var key    = peg$currPos * 260 + 76,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4148,7 +4148,7 @@ vq_grammar_parser = (function() {
     function peg$parseENCODE_FOR_URI() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 77,
+      var key    = peg$currPos * 260 + 77,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4179,7 +4179,7 @@ vq_grammar_parser = (function() {
     function peg$parseYEAR() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 78,
+      var key    = peg$currPos * 260 + 78,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4210,7 +4210,7 @@ vq_grammar_parser = (function() {
     function peg$parseMONTH() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 79,
+      var key    = peg$currPos * 260 + 79,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4241,7 +4241,7 @@ vq_grammar_parser = (function() {
     function peg$parseDAY() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 80,
+      var key    = peg$currPos * 260 + 80,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4272,7 +4272,7 @@ vq_grammar_parser = (function() {
     function peg$parseTIMEZONE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 81,
+      var key    = peg$currPos * 260 + 81,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4303,7 +4303,7 @@ vq_grammar_parser = (function() {
     function peg$parseTZ() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 82,
+      var key    = peg$currPos * 260 + 82,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4334,7 +4334,7 @@ vq_grammar_parser = (function() {
     function peg$parseMD5() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 83,
+      var key    = peg$currPos * 260 + 83,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4365,7 +4365,7 @@ vq_grammar_parser = (function() {
     function peg$parseSHA1() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 84,
+      var key    = peg$currPos * 260 + 84,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4396,7 +4396,7 @@ vq_grammar_parser = (function() {
     function peg$parseSHA256() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 85,
+      var key    = peg$currPos * 260 + 85,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4427,7 +4427,7 @@ vq_grammar_parser = (function() {
     function peg$parseSHA384() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 86,
+      var key    = peg$currPos * 260 + 86,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4458,7 +4458,7 @@ vq_grammar_parser = (function() {
     function peg$parseSHA512() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 87,
+      var key    = peg$currPos * 260 + 87,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4489,7 +4489,7 @@ vq_grammar_parser = (function() {
     function peg$parseisIRI() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 88,
+      var key    = peg$currPos * 260 + 88,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4520,7 +4520,7 @@ vq_grammar_parser = (function() {
     function peg$parseisURI() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 89,
+      var key    = peg$currPos * 260 + 89,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4551,7 +4551,7 @@ vq_grammar_parser = (function() {
     function peg$parseisBLANK() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 90,
+      var key    = peg$currPos * 260 + 90,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4582,7 +4582,7 @@ vq_grammar_parser = (function() {
     function peg$parsedateTime() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 91,
+      var key    = peg$currPos * 260 + 91,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4613,7 +4613,7 @@ vq_grammar_parser = (function() {
     function peg$parsedate() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 92,
+      var key    = peg$currPos * 260 + 92,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4644,7 +4644,7 @@ vq_grammar_parser = (function() {
     function peg$parseisLITERAL() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 93,
+      var key    = peg$currPos * 260 + 93,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4675,7 +4675,7 @@ vq_grammar_parser = (function() {
     function peg$parseisNUMERIC() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 94,
+      var key    = peg$currPos * 260 + 94,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4706,7 +4706,7 @@ vq_grammar_parser = (function() {
     function peg$parseLANGMATCHES() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 95,
+      var key    = peg$currPos * 260 + 95,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4737,7 +4737,7 @@ vq_grammar_parser = (function() {
     function peg$parseCONTAINS() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 96,
+      var key    = peg$currPos * 260 + 96,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4768,7 +4768,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRSTARTS() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 97,
+      var key    = peg$currPos * 260 + 97,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4799,7 +4799,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRENDS() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 98,
+      var key    = peg$currPos * 260 + 98,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4830,7 +4830,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRBEFORE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 99,
+      var key    = peg$currPos * 260 + 99,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4861,7 +4861,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRAFTER() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 100,
+      var key    = peg$currPos * 260 + 100,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4892,7 +4892,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRLANG() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 101,
+      var key    = peg$currPos * 260 + 101,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4923,7 +4923,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRDT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 102,
+      var key    = peg$currPos * 260 + 102,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4954,7 +4954,7 @@ vq_grammar_parser = (function() {
     function peg$parsesameTerm() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 103,
+      var key    = peg$currPos * 260 + 103,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -4985,7 +4985,7 @@ vq_grammar_parser = (function() {
     function peg$parsedays() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 104,
+      var key    = peg$currPos * 260 + 104,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5016,7 +5016,7 @@ vq_grammar_parser = (function() {
     function peg$parseyears() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 105,
+      var key    = peg$currPos * 260 + 105,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5047,7 +5047,7 @@ vq_grammar_parser = (function() {
     function peg$parsemonths() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 106,
+      var key    = peg$currPos * 260 + 106,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5078,7 +5078,7 @@ vq_grammar_parser = (function() {
     function peg$parseHOURS2() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 107,
+      var key    = peg$currPos * 260 + 107,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5109,7 +5109,7 @@ vq_grammar_parser = (function() {
     function peg$parsehours() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 108,
+      var key    = peg$currPos * 260 + 108,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5140,7 +5140,7 @@ vq_grammar_parser = (function() {
     function peg$parseminutes() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 109,
+      var key    = peg$currPos * 260 + 109,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5171,7 +5171,7 @@ vq_grammar_parser = (function() {
     function peg$parseMINUTES2() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 110,
+      var key    = peg$currPos * 260 + 110,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5202,7 +5202,7 @@ vq_grammar_parser = (function() {
     function peg$parseseconds() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 111,
+      var key    = peg$currPos * 260 + 111,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5233,7 +5233,7 @@ vq_grammar_parser = (function() {
     function peg$parseSECONDS2() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 112,
+      var key    = peg$currPos * 260 + 112,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5264,7 +5264,7 @@ vq_grammar_parser = (function() {
     function peg$parseIF() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 113,
+      var key    = peg$currPos * 260 + 113,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5295,7 +5295,7 @@ vq_grammar_parser = (function() {
     function peg$parseCOALESCE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 114,
+      var key    = peg$currPos * 260 + 114,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5326,7 +5326,7 @@ vq_grammar_parser = (function() {
     function peg$parseBOUND() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 115,
+      var key    = peg$currPos * 260 + 115,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5357,7 +5357,7 @@ vq_grammar_parser = (function() {
     function peg$parseBNODE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 116,
+      var key    = peg$currPos * 260 + 116,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5388,7 +5388,7 @@ vq_grammar_parser = (function() {
     function peg$parseRAND() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 117,
+      var key    = peg$currPos * 260 + 117,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5419,7 +5419,7 @@ vq_grammar_parser = (function() {
     function peg$parseCONCAT() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 118,
+      var key    = peg$currPos * 260 + 118,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5450,7 +5450,7 @@ vq_grammar_parser = (function() {
     function peg$parseNOW() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 119,
+      var key    = peg$currPos * 260 + 119,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5481,7 +5481,7 @@ vq_grammar_parser = (function() {
     function peg$parseUUID() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 120,
+      var key    = peg$currPos * 260 + 120,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5512,7 +5512,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRUUID() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 121,
+      var key    = peg$currPos * 260 + 121,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5543,7 +5543,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionA() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 122,
+      var key    = peg$currPos * 260 + 122,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5709,7 +5709,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 123,
+      var key    = peg$currPos * 260 + 123,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5833,7 +5833,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionC() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 124,
+      var key    = peg$currPos * 260 + 124,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5948,7 +5948,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionD() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 125,
+      var key    = peg$currPos * 260 + 125,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -5985,7 +5985,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionCOALESCE() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 126,
+      var key    = peg$currPos * 260 + 126,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6043,7 +6043,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionLANGMATCHES() {
       var s0;
 
-      var key    = peg$currPos * 259 + 127,
+      var key    = peg$currPos * 260 + 127,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6065,7 +6065,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionLANGMATCHESA() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 128,
+      var key    = peg$currPos * 260 + 128,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6102,7 +6102,7 @@ vq_grammar_parser = (function() {
     function peg$parseFunctionExpressionLANGMATCHESB() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 129,
+      var key    = peg$currPos * 260 + 129,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6139,7 +6139,7 @@ vq_grammar_parser = (function() {
     function peg$parseBOUNDFunction() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 130,
+      var key    = peg$currPos * 260 + 130,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6209,7 +6209,7 @@ vq_grammar_parser = (function() {
     function peg$parseNilFunction() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 131,
+      var key    = peg$currPos * 260 + 131,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6252,7 +6252,7 @@ vq_grammar_parser = (function() {
     function peg$parseBNODEFunction() {
       var s0;
 
-      var key    = peg$currPos * 259 + 132,
+      var key    = peg$currPos * 260 + 132,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6274,7 +6274,7 @@ vq_grammar_parser = (function() {
     function peg$parseBNODEFunctionA() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 133,
+      var key    = peg$currPos * 260 + 133,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6344,7 +6344,7 @@ vq_grammar_parser = (function() {
     function peg$parseBNODEFunctionB() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 134,
+      var key    = peg$currPos * 260 + 134,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6378,7 +6378,7 @@ vq_grammar_parser = (function() {
     function peg$parseIFFunction() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14;
 
-      var key    = peg$currPos * 259 + 135,
+      var key    = peg$currPos * 260 + 135,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6508,7 +6508,7 @@ vq_grammar_parser = (function() {
     function peg$parseHASMAX() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 136,
+      var key    = peg$currPos * 260 + 136,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6584,7 +6584,7 @@ vq_grammar_parser = (function() {
     function peg$parseHASRANK() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 137,
+      var key    = peg$currPos * 260 + 137,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6660,7 +6660,7 @@ vq_grammar_parser = (function() {
     function peg$parseSpecialExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15;
 
-      var key    = peg$currPos * 259 + 138,
+      var key    = peg$currPos * 260 + 138,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6855,7 +6855,7 @@ vq_grammar_parser = (function() {
     function peg$parseRegexExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 139,
+      var key    = peg$currPos * 260 + 139,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -6883,7 +6883,7 @@ vq_grammar_parser = (function() {
     function peg$parseRegexExpressionA() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
-      var key    = peg$currPos * 259 + 140,
+      var key    = peg$currPos * 260 + 140,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7002,7 +7002,7 @@ vq_grammar_parser = (function() {
     function peg$parseRegexExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 141,
+      var key    = peg$currPos * 260 + 141,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7095,7 +7095,7 @@ vq_grammar_parser = (function() {
     function peg$parseREGEX() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 142,
+      var key    = peg$currPos * 260 + 142,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7126,7 +7126,7 @@ vq_grammar_parser = (function() {
     function peg$parseSUBSTRING() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 143,
+      var key    = peg$currPos * 260 + 143,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7157,7 +7157,7 @@ vq_grammar_parser = (function() {
     function peg$parseSUBSTR() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 144,
+      var key    = peg$currPos * 260 + 144,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7188,7 +7188,7 @@ vq_grammar_parser = (function() {
     function peg$parsebifSUBSTRING() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 145,
+      var key    = peg$currPos * 260 + 145,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7219,7 +7219,7 @@ vq_grammar_parser = (function() {
     function peg$parsebifSUBSTR() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 146,
+      var key    = peg$currPos * 260 + 146,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7250,7 +7250,7 @@ vq_grammar_parser = (function() {
     function peg$parseREPLACE() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 147,
+      var key    = peg$currPos * 260 + 147,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7281,7 +7281,7 @@ vq_grammar_parser = (function() {
     function peg$parseEXISTS() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 148,
+      var key    = peg$currPos * 260 + 148,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7312,7 +7312,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 149,
+      var key    = peg$currPos * 260 + 149,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7340,7 +7340,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringExpressionA() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
-      var key    = peg$currPos * 259 + 150,
+      var key    = peg$currPos * 260 + 150,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7467,7 +7467,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 151,
+      var key    = peg$currPos * 260 + 151,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7570,7 +7570,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringBifExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 152,
+      var key    = peg$currPos * 260 + 152,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7598,7 +7598,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringBifExpressionA() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
-      var key    = peg$currPos * 259 + 153,
+      var key    = peg$currPos * 260 + 153,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7725,7 +7725,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstringBifExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 154,
+      var key    = peg$currPos * 260 + 154,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7828,7 +7828,7 @@ vq_grammar_parser = (function() {
     function peg$parseStrReplaceExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 155,
+      var key    = peg$currPos * 260 + 155,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7856,7 +7856,7 @@ vq_grammar_parser = (function() {
     function peg$parseStrReplaceExpressionA() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
-      var key    = peg$currPos * 259 + 156,
+      var key    = peg$currPos * 260 + 156,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -7980,7 +7980,7 @@ vq_grammar_parser = (function() {
     function peg$parseStrReplaceExpressionB() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 157,
+      var key    = peg$currPos * 260 + 157,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8080,7 +8080,7 @@ vq_grammar_parser = (function() {
     function peg$parseExistsFunc() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 158,
+      var key    = peg$currPos * 260 + 158,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8111,7 +8111,7 @@ vq_grammar_parser = (function() {
     function peg$parseExistsFuncA1() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 159,
+      var key    = peg$currPos * 260 + 159,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8181,7 +8181,7 @@ vq_grammar_parser = (function() {
     function peg$parseExistsFuncA() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 160,
+      var key    = peg$currPos * 260 + 160,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8221,7 +8221,7 @@ vq_grammar_parser = (function() {
     function peg$parseExistsFuncB() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 161,
+      var key    = peg$currPos * 260 + 161,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8285,7 +8285,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFunc() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 162,
+      var key    = peg$currPos * 260 + 162,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8322,7 +8322,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFuncA() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 163,
+      var key    = peg$currPos * 260 + 163,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8398,7 +8398,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFuncB() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 164,
+      var key    = peg$currPos * 260 + 164,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8450,7 +8450,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFuncB1() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 165,
+      var key    = peg$currPos * 260 + 165,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8532,7 +8532,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFuncC() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 166,
+      var key    = peg$currPos * 260 + 166,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8572,7 +8572,7 @@ vq_grammar_parser = (function() {
     function peg$parseNotExistsFuncC1() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 167,
+      var key    = peg$currPos * 260 + 167,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8642,7 +8642,7 @@ vq_grammar_parser = (function() {
     function peg$parseExpressionList2() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 259 + 168,
+      var key    = peg$currPos * 260 + 168,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8765,7 +8765,7 @@ vq_grammar_parser = (function() {
     function peg$parseExpressionList3() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 259 + 169,
+      var key    = peg$currPos * 260 + 169,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8885,7 +8885,7 @@ vq_grammar_parser = (function() {
     function peg$parseExpressionList4() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 259 + 170,
+      var key    = peg$currPos * 260 + 170,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -8979,7 +8979,7 @@ vq_grammar_parser = (function() {
     function peg$parseComma() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 171,
+      var key    = peg$currPos * 260 + 171,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9010,7 +9010,7 @@ vq_grammar_parser = (function() {
     function peg$parseLANGTAG() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 172,
+      var key    = peg$currPos * 260 + 172,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9049,7 +9049,7 @@ vq_grammar_parser = (function() {
     function peg$parseLANGTAG_MUL() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 173,
+      var key    = peg$currPos * 260 + 173,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9132,7 +9132,7 @@ vq_grammar_parser = (function() {
     function peg$parseLANGTAG_LIST() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 174,
+      var key    = peg$currPos * 260 + 174,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9172,7 +9172,7 @@ vq_grammar_parser = (function() {
     function peg$parseRDFLiteralC() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 175,
+      var key    = peg$currPos * 260 + 175,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9197,7 +9197,7 @@ vq_grammar_parser = (function() {
     function peg$parseiri() {
       var s0;
 
-      var key    = peg$currPos * 259 + 176,
+      var key    = peg$currPos * 260 + 176,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9219,7 +9219,7 @@ vq_grammar_parser = (function() {
     function peg$parseIRIREF() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 177,
+      var key    = peg$currPos * 260 + 177,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9419,7 +9419,7 @@ vq_grammar_parser = (function() {
     function peg$parsePrefixedName() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 178,
+      var key    = peg$currPos * 260 + 178,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9444,7 +9444,7 @@ vq_grammar_parser = (function() {
     function peg$parsePNAME_NS() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 179,
+      var key    = peg$currPos * 260 + 179,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9492,7 +9492,7 @@ vq_grammar_parser = (function() {
     function peg$parsePNAME_LN() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 180,
+      var key    = peg$currPos * 260 + 180,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9568,7 +9568,7 @@ vq_grammar_parser = (function() {
     function peg$parsePN_LOCAL() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 181,
+      var key    = peg$currPos * 260 + 181,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9593,7 +9593,7 @@ vq_grammar_parser = (function() {
     function peg$parsePropertyReference() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 182,
+      var key    = peg$currPos * 260 + 182,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9624,7 +9624,7 @@ vq_grammar_parser = (function() {
     function peg$parseiriOrFunction() {
       var s0;
 
-      var key    = peg$currPos * 259 + 183,
+      var key    = peg$currPos * 260 + 183,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9646,7 +9646,7 @@ vq_grammar_parser = (function() {
     function peg$parseiriOrFunctionA() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 184,
+      var key    = peg$currPos * 260 + 184,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9680,7 +9680,7 @@ vq_grammar_parser = (function() {
     function peg$parseiriOrFunctionB() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 185,
+      var key    = peg$currPos * 260 + 185,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9705,7 +9705,7 @@ vq_grammar_parser = (function() {
     function peg$parseArgList() {
       var s0;
 
-      var key    = peg$currPos * 259 + 186,
+      var key    = peg$currPos * 260 + 186,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9730,7 +9730,7 @@ vq_grammar_parser = (function() {
     function peg$parseArgListA() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 187,
+      var key    = peg$currPos * 260 + 187,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9806,7 +9806,7 @@ vq_grammar_parser = (function() {
     function peg$parseArgListB() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 188,
+      var key    = peg$currPos * 260 + 188,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9870,7 +9870,7 @@ vq_grammar_parser = (function() {
     function peg$parseNIL() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 189,
+      var key    = peg$currPos * 260 + 189,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -9922,7 +9922,7 @@ vq_grammar_parser = (function() {
     function peg$parseArgListExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 190,
+      var key    = peg$currPos * 260 + 190,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10000,7 +10000,7 @@ vq_grammar_parser = (function() {
     function peg$parseNumericLiteral() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 191,
+      var key    = peg$currPos * 260 + 191,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10031,7 +10031,7 @@ vq_grammar_parser = (function() {
     function peg$parseNumericLiteralUnsigned() {
       var s0;
 
-      var key    = peg$currPos * 259 + 192,
+      var key    = peg$currPos * 260 + 192,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10056,7 +10056,7 @@ vq_grammar_parser = (function() {
     function peg$parseNumericLiteralPositive() {
       var s0;
 
-      var key    = peg$currPos * 259 + 193,
+      var key    = peg$currPos * 260 + 193,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10081,7 +10081,7 @@ vq_grammar_parser = (function() {
     function peg$parseNumericLiteralNegative() {
       var s0;
 
-      var key    = peg$currPos * 259 + 194,
+      var key    = peg$currPos * 260 + 194,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10106,7 +10106,7 @@ vq_grammar_parser = (function() {
     function peg$parseDECIMAL() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 195,
+      var key    = peg$currPos * 260 + 195,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10195,7 +10195,7 @@ vq_grammar_parser = (function() {
     function peg$parseDOUBLE() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 196,
+      var key    = peg$currPos * 260 + 196,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10522,7 +10522,7 @@ vq_grammar_parser = (function() {
     function peg$parseINTEGER() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 197,
+      var key    = peg$currPos * 260 + 197,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10568,7 +10568,7 @@ vq_grammar_parser = (function() {
     function peg$parseINTEGER_POSITIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 198,
+      var key    = peg$currPos * 260 + 198,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10613,7 +10613,7 @@ vq_grammar_parser = (function() {
     function peg$parseDECIMAL_POSITIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 199,
+      var key    = peg$currPos * 260 + 199,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10658,7 +10658,7 @@ vq_grammar_parser = (function() {
     function peg$parseDOUBLE_POSITIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 200,
+      var key    = peg$currPos * 260 + 200,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10703,7 +10703,7 @@ vq_grammar_parser = (function() {
     function peg$parseINTEGER_NEGATIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 201,
+      var key    = peg$currPos * 260 + 201,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10748,7 +10748,7 @@ vq_grammar_parser = (function() {
     function peg$parseDECIMAL_NEGATIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 202,
+      var key    = peg$currPos * 260 + 202,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10793,7 +10793,7 @@ vq_grammar_parser = (function() {
     function peg$parseDOUBLE_NEGATIVE() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 203,
+      var key    = peg$currPos * 260 + 203,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10838,7 +10838,7 @@ vq_grammar_parser = (function() {
     function peg$parseVar() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 204,
+      var key    = peg$currPos * 260 + 204,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10869,7 +10869,7 @@ vq_grammar_parser = (function() {
     function peg$parseVAR1() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 205,
+      var key    = peg$currPos * 260 + 205,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10911,7 +10911,7 @@ vq_grammar_parser = (function() {
     function peg$parseVAR2() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 206,
+      var key    = peg$currPos * 260 + 206,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10950,7 +10950,7 @@ vq_grammar_parser = (function() {
     function peg$parseVAR3() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 207,
+      var key    = peg$currPos * 260 + 207,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -10989,7 +10989,7 @@ vq_grammar_parser = (function() {
     function peg$parseVARNAME() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 208,
+      var key    = peg$currPos * 260 + 208,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11090,7 +11090,7 @@ vq_grammar_parser = (function() {
     function peg$parseStringQuotes() {
       var s0;
 
-      var key    = peg$currPos * 259 + 209,
+      var key    = peg$currPos * 260 + 209,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11112,7 +11112,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRING_LITERAL1() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 210,
+      var key    = peg$currPos * 260 + 210,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11163,7 +11163,7 @@ vq_grammar_parser = (function() {
     function peg$parseSTRING_LITERAL2() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 211,
+      var key    = peg$currPos * 260 + 211,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11214,7 +11214,7 @@ vq_grammar_parser = (function() {
     function peg$parseQName() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 212,
+      var key    = peg$currPos * 260 + 212,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11242,7 +11242,7 @@ vq_grammar_parser = (function() {
     function peg$parsePath() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 213,
+      var key    = peg$currPos * 260 + 213,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11306,7 +11306,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathBr() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 259 + 214,
+      var key    = peg$currPos * 260 + 214,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11400,7 +11400,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathAlternative() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 215,
+      var key    = peg$currPos * 260 + 215,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11496,7 +11496,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathAlternativeBr() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 259 + 216,
+      var key    = peg$currPos * 260 + 216,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11592,7 +11592,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathSequence() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 217,
+      var key    = peg$currPos * 260 + 217,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11668,7 +11668,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathSequenceBr() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 218,
+      var key    = peg$currPos * 260 + 218,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11740,7 +11740,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathEltOrInverse() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 219,
+      var key    = peg$currPos * 260 + 219,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11771,7 +11771,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathElt1() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 220,
+      var key    = peg$currPos * 260 + 220,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11796,7 +11796,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathElt2() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 221,
+      var key    = peg$currPos * 260 + 221,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11836,7 +11836,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathElt3() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 259 + 222,
+      var key    = peg$currPos * 260 + 222,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11912,7 +11912,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathElt() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 223,
+      var key    = peg$currPos * 260 + 223,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -11949,7 +11949,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathPrimary() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 224,
+      var key    = peg$currPos * 260 + 224,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12050,7 +12050,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathNegatedPropertySet() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 225,
+      var key    = peg$currPos * 260 + 225,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12078,7 +12078,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathNegatedPropertySet1() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 226,
+      var key    = peg$currPos * 260 + 226,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12103,7 +12103,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathNegatedPropertySet2() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 227,
+      var key    = peg$currPos * 260 + 227,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12128,7 +12128,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathNegatedPropertySetBracketted() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 228,
+      var key    = peg$currPos * 260 + 228,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12265,7 +12265,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathOneInPropertySet() {
       var s0;
 
-      var key    = peg$currPos * 259 + 229,
+      var key    = peg$currPos * 260 + 229,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12290,7 +12290,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathOneInPropertySet1() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 230,
+      var key    = peg$currPos * 260 + 230,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12327,7 +12327,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathOneInPropertySet2() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 231,
+      var key    = peg$currPos * 260 + 231,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12379,7 +12379,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathOneInPropertySet3() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 259 + 232,
+      var key    = peg$currPos * 260 + 232,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12455,7 +12455,7 @@ vq_grammar_parser = (function() {
     function peg$parsePathMod() {
       var s0;
 
-      var key    = peg$currPos * 259 + 233,
+      var key    = peg$currPos * 260 + 233,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12498,7 +12498,7 @@ vq_grammar_parser = (function() {
     function peg$parseiriP() {
       var s0;
 
-      var key    = peg$currPos * 259 + 234,
+      var key    = peg$currPos * 260 + 234,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12520,7 +12520,7 @@ vq_grammar_parser = (function() {
     function peg$parsePrefixedNameP() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 235,
+      var key    = peg$currPos * 260 + 235,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12548,7 +12548,7 @@ vq_grammar_parser = (function() {
     function peg$parsePNAME_NSP() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 236,
+      var key    = peg$currPos * 260 + 236,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12596,7 +12596,7 @@ vq_grammar_parser = (function() {
     function peg$parsePNAME_LNP() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 237,
+      var key    = peg$currPos * 260 + 237,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12630,7 +12630,7 @@ vq_grammar_parser = (function() {
     function peg$parseLNameP() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 238,
+      var key    = peg$currPos * 260 + 238,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12655,7 +12655,7 @@ vq_grammar_parser = (function() {
     function peg$parseVERTICAL() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 239,
+      var key    = peg$currPos * 260 + 239,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12686,7 +12686,7 @@ vq_grammar_parser = (function() {
     function peg$parsePATH_SYMBOL() {
       var s0, s1;
 
-      var key    = peg$currPos * 259 + 240,
+      var key    = peg$currPos * 260 + 240,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12726,7 +12726,7 @@ vq_grammar_parser = (function() {
     function peg$parseChars_String() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 241,
+      var key    = peg$currPos * 260 + 241,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12827,7 +12827,7 @@ vq_grammar_parser = (function() {
     function peg$parseChars_String_prefix() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 242,
+      var key    = peg$currPos * 260 + 242,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -12955,7 +12955,7 @@ vq_grammar_parser = (function() {
     function peg$parseChars_String_variables() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 243,
+      var key    = peg$currPos * 260 + 243,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13007,7 +13007,7 @@ vq_grammar_parser = (function() {
     function peg$parseLN() {
       var s0;
 
-      var key    = peg$currPos * 259 + 244,
+      var key    = peg$currPos * 260 + 244,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13020,7 +13020,10 @@ vq_grammar_parser = (function() {
       if (s0 === peg$FAILED) {
         s0 = peg$parseLNameINV2();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseLName();
+          s0 = peg$parseLNameINV3();
+          if (s0 === peg$FAILED) {
+            s0 = peg$parseLName();
+          }
         }
       }
 
@@ -13032,7 +13035,7 @@ vq_grammar_parser = (function() {
     function peg$parseSubstring() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 245,
+      var key    = peg$currPos * 260 + 245,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13129,7 +13132,7 @@ vq_grammar_parser = (function() {
     function peg$parseLNameSimple() {
       var s0;
 
-      var key    = peg$currPos * 259 + 246,
+      var key    = peg$currPos * 260 + 246,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13151,7 +13154,7 @@ vq_grammar_parser = (function() {
     function peg$parseLName() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 247,
+      var key    = peg$currPos * 260 + 247,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13230,7 +13233,7 @@ vq_grammar_parser = (function() {
     function peg$parseLNameINV() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 259 + 248,
+      var key    = peg$currPos * 260 + 248,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13245,12 +13248,12 @@ vq_grammar_parser = (function() {
         s1 = null;
       }
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c433) {
-          s2 = peg$c433;
+        if (input.substr(peg$currPos, 3).toLowerCase() === peg$c417) {
+          s2 = input.substr(peg$currPos, 3);
           peg$currPos += 3;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c434); }
+          if (peg$silentFails === 0) { peg$fail(peg$c433); }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 40) {
@@ -13286,8 +13289,117 @@ vq_grammar_parser = (function() {
                       }
                       if (s9 !== peg$FAILED) {
                         peg$savedPos = s0;
-                        s1 = peg$c435(s1, s2, s4, s6, s8, s9);
+                        s1 = peg$c434(s1, s2, s4, s6, s8, s9);
                         s0 = s1;
+                      } else {
+                        peg$currPos = s0;
+                        s0 = peg$FAILED;
+                      }
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
+                  } else {
+                    peg$currPos = s0;
+                    s0 = peg$FAILED;
+                  }
+                } else {
+                  peg$currPos = s0;
+                  s0 = peg$FAILED;
+                }
+              } else {
+                peg$currPos = s0;
+                s0 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      peg$resultsCache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
+    function peg$parseLNameINV3() {
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+
+      var key    = peg$currPos * 260 + 249,
+          cached = peg$resultsCache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      s1 = peg$parsePropertyReference();
+      if (s1 === peg$FAILED) {
+        s1 = null;
+      }
+      if (s1 !== peg$FAILED) {
+        if (input.substr(peg$currPos, 3).toLowerCase() === peg$c417) {
+          s2 = input.substr(peg$currPos, 3);
+          peg$currPos += 3;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c433); }
+        }
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 40) {
+            s3 = peg$c80;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c81); }
+          }
+          if (s3 !== peg$FAILED) {
+            s4 = peg$parsePNAME_NS();
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parseLNameSimple();
+              if (s5 !== peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 41) {
+                  s6 = peg$c82;
+                  peg$currPos++;
+                } else {
+                  s6 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c83); }
+                }
+                if (s6 !== peg$FAILED) {
+                  s7 = peg$parseSubstring();
+                  if (s7 !== peg$FAILED) {
+                    s8 = peg$parsespace();
+                    if (s8 !== peg$FAILED) {
+                      s9 = peg$parseBetweenExpression();
+                      if (s9 === peg$FAILED) {
+                        s9 = null;
+                      }
+                      if (s9 !== peg$FAILED) {
+                        s10 = peg$parseLikeExpression();
+                        if (s10 === peg$FAILED) {
+                          s10 = null;
+                        }
+                        if (s10 !== peg$FAILED) {
+                          peg$savedPos = s0;
+                          s1 = peg$c435(s1, s2, s4, s5, s7, s9, s10);
+                          s0 = s1;
+                        } else {
+                          peg$currPos = s0;
+                          s0 = peg$FAILED;
+                        }
                       } else {
                         peg$currPos = s0;
                         s0 = peg$FAILED;
@@ -13333,7 +13445,7 @@ vq_grammar_parser = (function() {
     function peg$parseLNameINV2() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 259 + 249,
+      var key    = peg$currPos * 260 + 250,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13412,7 +13524,7 @@ vq_grammar_parser = (function() {
     function peg$parseRelation() {
       var s0;
 
-      var key    = peg$currPos * 259 + 250,
+      var key    = peg$currPos * 260 + 251,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13491,7 +13603,7 @@ vq_grammar_parser = (function() {
     function peg$parsespace() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 251,
+      var key    = peg$currPos * 260 + 252,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13533,7 +13645,7 @@ vq_grammar_parser = (function() {
     function peg$parsespaceObl() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 252,
+      var key    = peg$currPos * 260 + 253,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13579,7 +13691,7 @@ vq_grammar_parser = (function() {
     function peg$parsestring() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 253,
+      var key    = peg$currPos * 260 + 254,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13661,7 +13773,7 @@ vq_grammar_parser = (function() {
     function peg$parsestring2() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 259 + 254,
+      var key    = peg$currPos * 260 + 255,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13707,7 +13819,7 @@ vq_grammar_parser = (function() {
     function peg$parseLikeExpression() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 259 + 255,
+      var key    = peg$currPos * 260 + 256,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13756,7 +13868,7 @@ vq_grammar_parser = (function() {
     function peg$parselikeString1() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 256,
+      var key    = peg$currPos * 260 + 257,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -13895,7 +14007,7 @@ vq_grammar_parser = (function() {
     function peg$parselikeString2() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 259 + 257,
+      var key    = peg$currPos * 260 + 258,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -14034,7 +14146,7 @@ vq_grammar_parser = (function() {
     function peg$parseBetweenExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 259 + 258,
+      var key    = peg$currPos * 260 + 259,
           cached = peg$resultsCache[key];
 
       if (cached) {
@@ -14245,6 +14357,7 @@ vq_grammar_parser = (function() {
     			function pathOrReference(o) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
+    				// console.log("oooooooooooo", o, options.symbol_table, options.symbol_table[options.context._id])
 
     				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
@@ -14262,7 +14375,7 @@ vq_grammar_parser = (function() {
     					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
     					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
     				){
-    					//console.log("REFERENCE REFERENCE", o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]);
+    					console.log("REFERENCE REFERENCE", o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]);
 
     					return {Reference:
     						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],

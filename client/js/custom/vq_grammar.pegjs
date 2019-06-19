@@ -172,24 +172,11 @@
 		}
 
 			Main = (space Expression space)
-			// Expression = classExpr / ExpressionA
 			Expression = "[ ]" / "[ + ]" / "(no_class)"  / ValueScope / ConditionalOrExpressionA / classExpr
 			ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
 			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
 
-			// ExpressionA = (OrExpression:OrExpression) {return {OrExpression: OrExpression}}
-
 			classExpr = ("(.)" / "."/ "(select this)" / "(this)") {return {classExpr: "true"}}
-
-			// OrExpression = (ANDExpression ( space OR space ANDExpression )*)
-
-			// OR = "OR" {return {OROriginal:"||"}}
-
-			// ANDExpression = ANDExpression:ANDExpressionA {return {ANDExpression: ANDExpression}}
-
-			// ANDExpressionA = (ConditionalOrExpressionA ( space AND space ConditionalOrExpressionA )*)
-
-			// AND = "AND" {return {ANDOriginal:"&&"}}
 
 			ConditionalOrExpressionA = (ConditionalOrExpression:ConditionalOrExpression){return {ConditionalOrExpression: ConditionalOrExpression}}
 
@@ -249,8 +236,6 @@
 
 			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
 			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
-
-			//PrimaryExpression2 = BooleanLiteral / BuiltInCall / RDFLiteral / BrackettedExpression / iriOrFunction  / NumericLiteral /  Var / LNPath
 
 			BooleanLiteral = BooleanLiteral:(TRUE/ FALSE) {return {BooleanLiteral:BooleanLiteral}}
 
@@ -453,11 +438,8 @@
 
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 
-			// PNAME_NS = (Prefix:PN_PREFIX?) ":" {return makeVar(Prefix)}
 			PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
 
-			//-----ReferenceToClass----- PNAME_LN = (Prefix:PNAME_NS LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{Prefix: Prefix, name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			// PNAME_LN = (Prefix:PNAME_NS LName: Chars_String Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{Prefix: Prefix, name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			PNAME_LN = (PropertyReference:PropertyReference? Prefix:PNAME_NS  LName:(Chars_String_variables / Chars_String_prefix) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(Prefix)+makeVar(LName),type:resolveType(makeVar(Prefix)+makeVar(LName)), kind:resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			PN_PREFIX = Chars_String_prefix
@@ -503,16 +485,12 @@
 			StringQuotes = STRING_LITERAL1  / STRING_LITERAL2
 			STRING_LITERAL1 = "'" string "'"
 			STRING_LITERAL2 = '"' string '"'
-			//QName = QNameB:QNameB {return pathOrReference(QNameB)}
-			//-----ReferenceToClass----- QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			//QNameB = (Path:path+ PrimaryExpression:PrimaryExpression2 space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {Path:Path, PrimaryExpression:PrimaryExpression, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			QName = Path:(Path / PathBr)  {return pathOrReference(Path)}
 
 
 
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
-			//PathA = "[" (Path:PathBr) "]" {return Path}
-			//PathB =  (Path:Path) {return Path}
+
 			Path = (space PathProperty:(PathAlternative) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			PathBr = "[" space PathProperty:(PathAlternativeBr) Substring:Substring space "]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			PathAlternative = PathAlternative:(PathSequence (space VERTICAL space PathSequence)*) {return {PathAlternative:PathAlternative}}
@@ -539,53 +517,27 @@
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? ':') {return makeVar(Prefix)}
 			PNAME_LNP = (PNAME_NS:PNAME_NSP  LName:Chars_String_prefix) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
-			// LNameP = (LName:(Chars_String_prefix) Substring:Substring FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LNameP = (LName:(Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 
 			VERTICAL = "|" {return {Alternative:"|"}}
 			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}}
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-			// path =(path2:path2 space ".") {return {path:path2}}
-			// path2 =(invPath1 / (invPath2) / (invPath3))
-			// invPath1 = ("INV(" Chars_String:Chars_String ")" PathMod:PathMod?) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)), PathMod:PathMod}} // atributs vai associacija
-			// invPath2 = ("^" Chars_String:Chars_String PathMod:PathMod?) {return {inv:"^", name:(makeVar(Chars_String)), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)), PathMod:PathMod}} // atributs vai associacija
-			// invPath3 = (Chars_String:Chars_String PathMod:PathMod?) {return {name:makeVar(Chars_String), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(Chars_String)), PathMod:PathMod}} // atributs vai associacija
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
 			Chars_String_variables = ("[" Chars_String_variables:Chars_String_prefix "]") {return Chars_String_variables}
-			//-----ReferenceToClass----- LName = (LName: Chars_String Substring:Substring ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-																																																			//atributs vai associacija
-			LN =((LNameINV / LNameINV2 / LName) )
-			//LNPath =((LNameINVPath / LNameINV2Path / LNamePath) )
-
+																																																//atributs vai associacija
+			LN =((LNameINV / LNameINV2  / LNameINV3 / LName) )
+			
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
-			//LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring){return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix))
 
-			//-----ReferenceToClass----- LNameINV = (INV: "INV" "(" LName:LNameSimple ")" ReferenceToClass: ReferenceToClass? space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {INV:INV, var:makeVar(LName), ReferenceToClass: ReferenceToClass, FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			// LNamePath = (LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod? Substring:Substring) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
-			// LName = (LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod? Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-
-			// LNameINVPath = (INV: "INV" "(" LName:LNameSimple  ")" PathMod:PathMod? Substring:Substring ) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
-			// LNameINV = (INV: "INV" "(" LName:LNameSimple  ")"PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-
-			// LNameINV2Path = (INV: "^" LName:LNameSimple PathMod:PathMod? Substring:Substring) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), PathMod:PathMod}}
-			// LNameINV2 = (INV: "^" LName:LNameSimple PathMod:PathMod? Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike, PathMod:PathMod}}
-
-			//LNamePath = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LName = (PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			//LNameINVPath = (INV: "INV" "(" LName:LNameSimple  ")"  Substring:Substring ) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
-			LNameINV = (PropertyReference:PropertyReference? INV: "INV" "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (PropertyReference:PropertyReference? INV: "INV"i "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV3 = (PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			//LNameINV2Path = (INV: "^" LName:LNameSimple  Substring:Substring) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 			LNameINV2 = (PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-
-			//LName2 = (LName: (Chars_String_variables / Chars_String_prefix) Substring:Substring) {return {var:{name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring)}}
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
@@ -596,7 +548,5 @@
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
 			likeString1 = ('"' start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? '"') {return {string: makeVar(string), start:start, end:end}}
 			likeString2 = ("'" start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? "'") {return {string: makeVar(string), start:start, end:end}}
-
-			// ReferenceToClass = (" : " Class:Chars_String) {return {name:makeVar(Class),type:resolveTypeFromSchemaForClass(makeVar(Class))}}
 
 			BetweenExpression = ('BETWEEN'i space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}

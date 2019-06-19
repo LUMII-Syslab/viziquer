@@ -46,6 +46,7 @@ Template.AddAttribute.helpers({
 			if (schema.classExist(class_name)) {
 				var all_attributes = schema.findClassByName(class_name).getAllAttributes();
 				for (var key in all_attributes){
+					
 					att_val = all_attributes[key]["short_name"];
 					attr_list.push({name: att_val});
 				}
@@ -73,6 +74,7 @@ Template.AddAttribute.helpers({
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
+			var attr_list_reverse = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
 			
@@ -81,11 +83,14 @@ Template.AddAttribute.helpers({
 
 			if (schema.classExist(class_name)) {
 				var all_attributes = schema.findClassByName(class_name).getAllAssociations();
-				for (var key in all_attributes){
+				for (var key in all_attributes){	
 					att_val = all_attributes[key]["short_name"];
-					attr_list.push({name: att_val});
+					if(all_attributes[key]["type"] == "=>") attr_list.push({name: att_val});
+					else attr_list_reverse.push({name: "INV("+att_val+")"});
 				}
 			};
+			
+			attr_list = attr_list.concat(attr_list_reverse);
 
 			//remove duplicates
 			attr_list = attr_list.filter(function(obj, index, self) { 
