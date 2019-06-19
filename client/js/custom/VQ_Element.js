@@ -853,7 +853,8 @@ VQ_Schema.prototype = {
 		
 		_.each(this.Classes, function (cl){
 			_.each(cl.allSubClasses, function(sc){
-				if (cl.instanceCount == sc.instanceCount || ( cl.instanceCount > 0 && cl.instanceCount > 0 && sc.instanceCount > 5 && sc.instanceCount > 10*cl.instanceCount/100 ) )
+				//if (cl.instanceCount == sc.instanceCount || ( cl.instanceCount > 0 && cl.instanceCount > 0 && sc.instanceCount > 5 && sc.instanceCount > 10*cl.instanceCount/100 ) )
+				if (cl.instanceCount == sc.instanceCount || ( sc.instanceCount > cl.instanceCount ) )  // in fact, superclasses of subclasses are not considered
 				{
 					_.each(sc.allSuperClasses, function(ssc){
 						var ID = ssc.ID;
