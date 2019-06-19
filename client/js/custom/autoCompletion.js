@@ -302,7 +302,7 @@ runCompletion = function (text, act_elem){
 			if (act_elem) {
 				var vq_link = new VQ_Element(act_elem);
 				if (vq_link.isLink()) {
-					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, link:vq_link});
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 				};
 			};
 		
@@ -317,7 +317,7 @@ runCompletion = function (text, act_elem){
 		}
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
-		//console.log(com["message"]);
+		//console.log(Session.get("activeElement"),  com["message"]);
 		// console.log(com["message"], JSON.parse(com["message"]));
 		// console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
