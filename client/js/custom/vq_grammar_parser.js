@@ -14218,22 +14218,6 @@ vq_grammar_parser = (function() {
     					}
 
     				}
-    				
-    				
-    				// var t=null;
-    				// if (options.exprType) {
-    					// t=resolveTypeFromSchemaForClass(id);
-    					// if (!t) {
-    						// t=resolveTypeFromSchemaForAttributeAndLink(id)
-    					// }
-    				// } else {
-    					// t=resolveTypeFromSchemaForAttributeAndLink(id);
-    					// if (!t) {
-    						// t=resolveTypeFromSchemaForClass(id)
-    					// }
-    				// }
-    				// if (!t) t=resolveTypeFromSymbolTable(id);
-    				
     				return t;
     			};
           //string -> string
@@ -14262,7 +14246,6 @@ vq_grammar_parser = (function() {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
 
-
     				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
@@ -14275,6 +14258,8 @@ vq_grammar_parser = (function() {
     					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
     					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "BIND_ALIAS" ||
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
     					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
     				){
     					//console.log("REFERENCE REFERENCE", o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]);
@@ -14289,6 +14274,8 @@ vq_grammar_parser = (function() {
     					}
 
     				}
+    				
+    				
 
     				// var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
     				// if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]["name"]) > -1) {
@@ -14338,5 +14325,5 @@ vq_grammar_parser = (function() {
     SyntaxError: peg$SyntaxError,
     parse:       peg$parse
   };
-   })()
+})()
 }).call(this);
