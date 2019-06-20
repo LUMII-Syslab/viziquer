@@ -1630,6 +1630,13 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			} else if (typeof variableNamesAll[expressionTable[key]["name"]] !== 'undefined'){
 				SPARQLstring = SPARQLstring + "?" + expressionTable[key]["name"];
 				variableTable.push("?" + expressionTable[key]["name"]);
+			} else if (expressionTable[key]["name"].toLowerCase() == 'type'){
+				var name = alias;
+				if(name == null || name == "") name = expressionTable[key]["name"];
+				tripleTable.push({"var":"?"+name, "prefixedName":"rdf:type", "object":className, "inFilter" : true});
+				SPARQLstring = SPARQLstring + "?" + name;
+				variableTable.push("?" + name);
+				prefixTable["rdf:"] = "<"+knownNamespaces["rdf:"]+">";
 			}else{
 				var clId;
 				for(var k in idTable){
@@ -1638,7 +1645,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						break;
 					}
 				}
-
+				
 				messages.push({
 					"type" : "Error",
 					"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
@@ -2511,15 +2518,17 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 			if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
 				var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
 				if(expressionTable[key]["iri"]["PrefixedName"]['var']['type'] !== null){
-					//valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['type']['localName'];
-					//triple
-					//tripleTable.push({"var":"?"+valueString, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]['var']['name'], "object":className, "inFilter" : true});
-					//prefix
-					//if(expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Prefix'] !== null) prefixTable[expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Prefix']+":"] = expressionTable[key]["iri"]["PrefixedName"]['var']['type']['Namespace'];
-					
 					valueString = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
 				} else {
-					if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null)prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
+					if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null){
+						prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
+						if(parseType == "attribute"){
+							var name = alias;
+							if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
+							tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
+							valueString = "?"+name;
+						}
+					}
 				}
 				
 				if (valueString == "vq:datediff") valueString = "bif:datediff" ;
