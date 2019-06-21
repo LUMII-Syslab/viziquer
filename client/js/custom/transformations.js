@@ -46,6 +46,17 @@ Interpreter.customMethods({
 		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
 		 }
  	},
+	
+	VQsetDistinct: function() {
+		 var act_elem = Session.get("activeElement");
+		 var elem = new VQ_Element(act_elem);
+		 var comp_val_distinct = elem.getCompartmentValue("Distinct");
+
+ 		 if (comp_val_distinct != "true")
+		 {
+		   elem.setCompartmentValue("Distinct", "", "");
+		 }
+ 	},
 
 	TogglePlainMode: function() {
 
