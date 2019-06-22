@@ -1,15 +1,18 @@
 version: "2"
 services:
  main: 
-  build: .
+  image: viziquer/viziquer
   ports:
    - "80:3000"
   links:
    - mongodb
   environment:
+   ROOT_URL: http://185.23.162.165 
+   METEOR_SETTINGS: {"configurationName":"VQ_configuration_dump_v0.12_devel.json"}
    MONGO_URL: mongodb://mongodb
    STARTUP_DELAY: 10
  mongodb:
   image: mongo
   volumes:
    - ./data/mongo:/data/db
+
