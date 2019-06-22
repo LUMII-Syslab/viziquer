@@ -49,6 +49,16 @@ Meteor.methods({
 
                 }
 	},
+
+    loadMOntologyByUrl: function(list) {
+    // http://viziquer.lumii.lv/schema-store/schemas/Scholarly.json        
+        console.log("in loadMOntologyByUrl", list)
+
+        var result = HTTP.call('GET', list.url);
+
+        console.log("result", result)
+    },
+
 	loadMOntology: function(list) {
 
                 var user_id = Meteor.userId();

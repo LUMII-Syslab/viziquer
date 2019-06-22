@@ -565,60 +565,63 @@ Template.importOntology.events({
 		//hidding the form
 		$('#import-ontology-form').modal("hide");
 
-		var fileList = $("#fileList")[0].files;
-	    _.each(fileList, function(file) {
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+					
+				};
 
 
+		var url_value = $("#import-url").val();
 
-	        var reader = new FileReader();
+		if (url_value) {
+			list.url = url_value;
+			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
+		}
+		
+		else {
+			var fileList = $("#fileList")[0].files;
+		    _.each(fileList, function(file) {
 
-	        reader.onload = function(event) {
+		        var reader = new FileReader();
 
-			//console.log(reader.result);
-			//var x=require('n3').Parser().parse(require('fs').readFileSync('UnivExample_hasMarkS2.n3').toString())
-			//Utilities.callMeteorMethod("loadTriplesMaps", reader.result);
+		        reader.onload = function(event) {
+					var data = JSON.parse(reader.result)
+					if (data) {
+						if ( data.Classes ) {
+							//var schema = new VQ_Schema(data);
+							//data.namespace = schema.namespace;
+							//data.Tree = schema.Tree;
+							//data.Ontologies = schema.Ontologies;
+							//data.Cycles = schema.Cycles;
+							//data.NewClasses = schema.Classes;
+							VQ_Schema_copy = null;
+							list.data = data;
 
-				var data = JSON.parse(reader.result)
+							Utilities.callMeteorMethod("loadMOntology", list);
+						}
+						else {
+							var list = {projectId: Session.get("activeProject"),
+										versionId: Session.get("versionId"),
+										data: { Data: data },
+									};
+							Utilities.callMeteorMethod("loadTriplesMaps", list );
+						}
 
-				if (data)
-				{
-					if ( data.Classes ){
-						//var schema = new VQ_Schema(data);
-						//data.namespace = schema.namespace;
-						//data.Tree = schema.Tree;
-						//data.Ontologies = schema.Ontologies;
-						//data.Cycles = schema.Cycles;
-						//data.NewClasses = schema.Classes;
-						VQ_Schema_copy = null;
-						
-						var list = {projectId: Session.get("activeProject"),
-									versionId: Session.get("versionId"),
-									data: data,
-								};
-						Utilities.callMeteorMethod("loadMOntology", list);
+
+						//if ( data.Schema ) {
+						//	Utilities.callMeteorMethod("loadMOntology", list); }
+						//else {
+						//	Utilities.callMeteorMethod("loadOntology", list); }
 					}
-					else {
-						var list = {projectId: Session.get("activeProject"),
-									versionId: Session.get("versionId"),
-									data: { Data: data },
-								};
-						Utilities.callMeteorMethod("loadTriplesMaps", list );
-					}
+					//else  Te būs kļūdas ziņojums lietotājam};
+		        }
 
-
-					//if ( data.Schema ) {
-					//	Utilities.callMeteorMethod("loadMOntology", list); }
-					//else {
-					//	Utilities.callMeteorMethod("loadOntology", list); }
-				}
-				//else  Te būs kļūdas ziņojums lietotājam};
-	        }
-
-	        reader.onerror = function(error) {
-	            console.error("Error: ", error);
-	        }
-	        reader.readAsText(file);
-	    });
+		        reader.onerror = function(error) {
+		            console.error("Error: ", error);
+		        }
+		        reader.readAsText(file);
+		    });
+		}
 	},
 
 });
