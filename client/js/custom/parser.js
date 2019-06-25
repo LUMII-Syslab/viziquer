@@ -2282,6 +2282,168 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						}
 					}
 					
+					//`rdf:type, `pr:attr	in attribute
+					if(visited != 1 && typeof expressionTable[key]['Relation'] === 'undefined' && parseType == "attribute"){
+						if(typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["var"] !== 'undefined'
+
+						){
+							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
+							if(variable['PropertyReference'] != null){
+								var expression = expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'];
+								if(knownNamespaces[expression["PrefixedName"]["Prefix"]] != null){
+									prefixTable[expression["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expression["PrefixedName"]["Prefix"]]+">";
+									var name = alias;
+									if(name == null || name == "") name = expression["PrefixedName"]["Name"];
+									tripleTable.push({"BIND":"BIND(" + expression["PrefixedName"]["var"]["name"] + " AS ?" + name + ")"})
+									valueString = "?"+name;
+									SPARQLstring = SPARQLstring  + valueString; 
+								} else if(variable["type"] != null){
+									var name = setVariableName(expression["PrefixedName"]["Name"], alias, variable);
+									var namespace = variable["type"]["Namespace"]
+									prefixTable[getPrefix(variable["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+									
+									tripleTable.push({"BIND":"BIND(" + expression["PrefixedName"]["var"]["name"] + " AS ?" + name + ")"})
+									valueString = "?"+name;
+									SPARQLstring = SPARQLstring  + valueString; 
+								}
+								
+								visited = 1;
+							}
+						}
+					}
+					
+					//`attribute		
+					if(visited != 1 && typeof expressionTable[key]['Relation'] === 'undefined'){
+						if(typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']["var"] !== 'undefined'
+
+						){
+							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
+							if(variable['PropertyReference'] != null){
+								
+								var name = setVariableName(variable["name"], alias, variable);
+									tripleTable.push({"BIND":"BIND(" + variable["type"]["Prefix"]+":" + variable["name"] + " AS ?" + name + ")"})
+									valueString = "?"+name;
+									SPARQLstring = SPARQLstring  + valueString; 
+								visited = 1;
+							}
+						}
+					}
+					console.log(expressionTable[key]['NumericExpressionL'])
+					//property = `attribute				
+					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
+						if(typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']["var"] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']["var"]['PropertyReference'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']["var"]['PropertyReference'] != null
+						
+						&& typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& ((typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['Reference'] === 'undefined'
+						&& (expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_NAME'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_ALIAS'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == null))
+						||(typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var'] !== 'undefined'
+						&& (expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == 'PROPERTY_ALIAS'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == 'PROPERTY_NAME'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == null)
+						))
+						){
+							
+							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
+							var varName = variable["name"];
+							varName = setVariableName(varName, null,variable);
+							if(isSimpleFilter && typeof variable["type"] !== 'undefined' && variable["type"] != null) {
+								applyExistsToFilter = false;
+								var relation = expressionTable[key]['Relation'];
+								if(relation = "<>") relation = "!=";
+								SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " " + variable["type"]["Prefix"] + ":" + variable["name"];
+							}
+							visited = 1;
+						}
+					}
+					
+					//property = `pr:attribute				
+					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
+						if(typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["var"] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["var"]['PropertyReference'] != null
+						
+						&& typeof expressionTable[key]['NumericExpressionL'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression'] !== 'undefined'
+						&& expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpressionList'].length < 1
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'] !== 'undefined'
+						&& ((typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['Reference'] === 'undefined'
+						&& (expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_NAME'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'PROPERTY_ALIAS'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == null))
+						||(typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName'] !== 'undefined'
+						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var'] !== 'undefined'
+						&& (expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == 'PROPERTY_ALIAS'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == 'PROPERTY_NAME'
+							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == null)
+						))
+						){
+							
+							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
+							var varName = variable["name"];
+							varName = setVariableName(varName, null,variable);
+							if(isSimpleFilter && typeof variable["type"] !== 'undefined' && variable["type"] != null) {
+								
+								var namespace = variable["type"]["Namespace"]
+								prefixTable[getPrefix(variable["type"]["Prefix"]) + ":"] = "<"+namespace+">"
+								
+								applyExistsToFilter = false;
+								var relation = expressionTable[key]['Relation'];
+								if(relation = "<>") relation = "!=";
+								SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " " + variable["name"];
+							}
+							visited = 1;
+						}
+					}
+					
 					//property = "2000-01-01"
 					//date/tateTime = "string"
 					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
