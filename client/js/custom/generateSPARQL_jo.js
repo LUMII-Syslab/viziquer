@@ -1187,7 +1187,37 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	classSimpleTriples = classSimpleTriples.concat(classFunctionTriples);
 	sparqlTable["simpleTriples"] = classSimpleTriples;
 
-
+	var isMultipleAllowedAggregation = false;
+	var isMultipleAllowedCardinality = false;
+		
+	if(clazz["aggregations"].length > 1){
+		_.each(clazz["aggregations"],function(field) {
+			// console.log(field["parsed_exp"])
+			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"]);
+			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
+				isMultipleAllowedAggregation = true;
+				_.each(clazz["aggregations"],function(field2) {
+					if(field != field2){
+						var aggregationParseResult = parseAggregationMultiple(field2["parsed_exp"]);
+						if(aggregationParseResult["isMultipleAllowedCardinality"] == true) isMultipleAllowedCardinality = true;
+					}
+				})
+			}
+			
+		})
+		
+		// console.log(isMultipleAllowedAggregation, isMultipleAllowedCardinality)
+	}
+	
+	if(isMultipleAllowedAggregation == true && isMultipleAllowedCardinality == true){
+		messages.push({
+			"type" : "Error",
+			"message" : "Ambiguous aggregation scope due to multiple aggregation expressions in a single class node. Place each aggregation expression into a separate class node, or ensure that each aggregation body is single-valued with respect to its starting reference point from the query.",
+			"listOfElementId" : [clazz["identification"]["_id"]],
+			"isBlocking" : true
+		});
+	}
+	
 	//aggregations
 	_.each(clazz["aggregations"],function(field) {
 		if(field["exp"] != ""){
@@ -2420,4 +2450,43 @@ function checkIfIsSimpleAttribute(expressionTable, isSimpleVariable){
 		}
 	}
 	return {isSimpleVariable:isSimpleVariable, kind:kind, parentType:parentType}
+}
+
+function parseAggregationMultiple(expressionTable){
+	var isMultipleAllowedAggregation = null;
+	var isMultipleAllowedCardinality = null;
+	
+	for(var key in expressionTable){
+		if (key == "Aggregate" && typeof expressionTable[key] === "string"){
+			var aggregation = expressionTable[key].toLowerCase();
+			if(aggregation != "min" && aggregation != "max" && aggregation != "sample") isMultipleAllowedAggregation = true;
+			//console.log("cfffdfdfdfdfgdfgdfg", typeof expressionTable[key], expressionTable);
+			
+		}
+		
+		if(key == "var") {	
+			//if type information is known
+			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
+				//if maxCardinality is known
+				if(typeof expressionTable[key]['type']['maxCardinality'] !== 'undefined' && expressionTable[key]['type']['maxCardinality'] != null){
+					if(expressionTable[key]['type']['maxCardinality'] == -1 || expressionTable[key]['type']['maxCardinality'] > 1) {
+						isMultipleAllowedCardinality = true;
+					}
+				//if maxCardinality not known
+				} else {
+					isMultipleAllowedCardinality = true;
+				}
+			// if type information not known
+			} else if(typeof expressionTable[key]['type'] === 'undefined' || expressionTable[key]['type'] == null )  {
+				isMultipleAllowedCardinality = true;
+			}
+		}
+	
+		if(typeof expressionTable[key] == 'object'){
+			var temp = parseAggregationMultiple(expressionTable[key]);
+			if(temp["isMultipleAllowedAggregation"]==true) isMultipleAllowedAggregation = true;
+			if(temp["isMultipleAllowedCardinality"]==true) isMultipleAllowedCardinality = true;
+		}
+	}
+	return {isMultipleAllowedAggregation:isMultipleAllowedAggregation, isMultipleAllowedCardinality:isMultipleAllowedCardinality}
 }
