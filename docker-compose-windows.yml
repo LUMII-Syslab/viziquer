@@ -12,4 +12,7 @@ services:
  mongodb:
   image: mongo
   volumes:
-   - ./data/mongo:/data/db --name mongodata
+   - vqdata:/data/db
+volumes:
+ vqdata:
+  external: true
