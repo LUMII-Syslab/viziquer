@@ -18,13 +18,17 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
 
-### To run ViziQuer within a Docker environment
+### To run ViziQuer within a Docker environment on MacOs or Linux
 
 1. Download, install and start Docker: https://docs.docker.com/install/
-1. On Linux or Mac, start `docker-compose -f docker-compose-public.yml up`. 
-1. On Windows, create a volume for Mongo DB before the first use: `docker volume create --name=mongodata` (to avoid issues of Mongo DB not working from a shared Windows folder).
-Then, every time before the container start, mount the volume: `docker run -d -p 27017:27017 -v mongodata:/data/db mongo`.
-Start the container by `docker-compose -f docker-compose-windows.yml up`.
+1. Start the tool by `docker-compose -f docker-compose-public.yml up`. 
+1. Open browser and type `localhost:80`.
+
+### To run ViziQuer within a Docker environment on Windows
+
+1. Download, install and start Docker: https://docs.docker.com/install/
+1. Create a volume for Mongo DB before the first use: `docker volume create --name=vqdata` (to avoid issues of Mongo DB not working from a shared Windows folder).
+1. Start the tool by `docker-compose -f docker-compose-windows.yml up`.
 1. Open browser and type `localhost:80`.
 
 ## Configuration for the first use
