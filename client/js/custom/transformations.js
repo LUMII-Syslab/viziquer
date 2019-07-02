@@ -295,8 +295,9 @@ Interpreter.customMethods({
 		var selected_elem_id = Session.get("activeElement");
 		
 		
-		var symbolTable = generateSymbolTable()
-		
+		var tempSymbolTable = generateSymbolTable();
+		var symbolTable = tempSymbolTable["symbolTable"];
+
 		for (var  key in symbolTable) {	
 			for (var symbol in symbolTable[key]) {
 				if(symbolTable[key][symbol]["context"] != selected_elem_id){
@@ -756,14 +757,22 @@ Interpreter.customMethods({
 		
 		var order_by_list = [];
 	
-		var symbolTable = generateSymbolTable();
+		var tempSymbolTable = generateSymbolTable();
+		var symbolTable = tempSymbolTable["symbolTable"];
+		var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
 		
-		for (var  key in symbolTable) {
-			
+		for (var key in rootSymbolTable) {
+			for(var k in rootSymbolTable[key]){
+				if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") order_by_list.push({value: key, input: key});
+			}
+		}
+		
+		for (var key in symbolTable) {
 			for(var k in symbolTable[key]){
 				if(symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
 			}
 		}
+		
 
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 
@@ -775,10 +784,10 @@ Interpreter.customMethods({
 			var e = new VQ_Element(act_elem);
 			var aggregationAliases = e.getAggregateFields();
 			
-			for (var key in aggregationAliases) {
-				var alias = aggregationAliases[key]["alias"];
-				if(alias != "")order_by_list.push({value: alias, input: alias});
-			}
+			// for (var key in aggregationAliases) {
+				// var alias = aggregationAliases[key]["alias"];
+				// if(alias != "")order_by_list.push({value: alias, input: alias});
+			// }
 			
 			if(_.size(aggregationAliases) == 0 && typeof select_distinct !== 'undefined' && select_distinct.input != "true"){
 				//check if Class name is defined for active element
@@ -836,7 +845,8 @@ Interpreter.customMethods({
 
 		
 		
-		var symbolTable = generateSymbolTable();
+		var tempSymbolTable = generateSymbolTable();
+		var symbolTable = tempSymbolTable["symbolTable"];
 
 		for (var  key in symbolTable) {
 			for (var  k in symbolTable[key]) {
@@ -1182,6 +1192,6 @@ generateSymbolTable = function() {
       // nothing selected
     }
 	
-	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return abstractQueryTable["symbolTable"][Session.get("activeElement")];
-    return {};
+	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"]};
+    return {symbolTable:{}, rootSymbolTable:{}};
   }

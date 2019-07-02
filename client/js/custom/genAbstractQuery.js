@@ -60,6 +60,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // function recursively modifies query by adding identification info
   function resolveClass(obj_class, parents_scope_table) {
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
+    var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
     if (obj_class.instanceAlias) {
       my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName), context:obj_class.identification._id});
@@ -129,7 +130,9 @@ resolveTypesAndBuildSymbolTable = function (query) {
              // TODO: longer path!
              // TODO: resolve type
              parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
-          };
+          } else if(typeof obj_class.linkIdentification === "undefined") {
+			  diagramm_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+		  };
         };
     });
 
@@ -193,6 +196,16 @@ resolveTypesAndBuildSymbolTable = function (query) {
            symbol_table[obj_class.identification._id][entry.id] = [];
          };
          symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery});
+       })
+    })
+	// we should build symbol table entry for this Class.
+    symbol_table["root"] = {};
+    _.each(diagramm_scope_table, function(value, key) {
+       _.each(value, function(entry) {
+         if (!symbol_table["root"][entry.id]) {
+           symbol_table["root"][entry.id] = [];
+         };
+         symbol_table["root"][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery});
        })
     })
 

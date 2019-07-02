@@ -28,7 +28,7 @@ Template.AddAttribute.helpers({
 			attr_list.push({separator:"line"});
 			
 		
-			var symbolTable = generateSymbolTable()
+			var symbolTable = generateSymbolTable()["symbolTable"];
 			
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
