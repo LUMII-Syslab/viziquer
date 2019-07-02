@@ -588,22 +588,18 @@ Template.importOntology.events({
 					var data = JSON.parse(reader.result)
 					if (data) {
 						if ( data.Classes ) {
-							//var schema = new VQ_Schema(data);
-							//data.namespace = schema.namespace;
-							//data.Tree = schema.Tree;
-							//data.Ontologies = schema.Ontologies;
-							//data.Cycles = schema.Cycles;
-							//data.NewClasses = schema.Classes;
 							VQ_Schema_copy = null;
 							list.data = data;
 
 							Utilities.callMeteorMethod("loadMOntology", list);
 						}
 						else {
-							var list = {projectId: Session.get("activeProject"),
-										versionId: Session.get("versionId"),
-										data: { Data: data },
-									};
+							//var list = {projectId: Session.get("activeProject"),
+							//			versionId: Session.get("versionId"),
+							//			data: { Data: data },
+							//		};
+							VQ_Schema_copy = null;
+							list.data = { Data: data };
 							Utilities.callMeteorMethod("loadTriplesMaps", list );
 						}
 

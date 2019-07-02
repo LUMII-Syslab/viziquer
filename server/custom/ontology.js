@@ -53,10 +53,22 @@ Meteor.methods({
     loadMOntologyByUrl: function(list) {
     // http://viziquer.lumii.lv/schema-store/schemas/Scholarly.json        
         console.log("in loadMOntologyByUrl", list)
-
         var result = HTTP.call('GET', list.url);
+        //console.log("result", result)
+		console.log("result", result.data)
+		var user_id = Meteor.userId();
+		if (is_project_version_admin(user_id, list)) {
 
-        console.log("result", result)
+			Schema.remove({projectId: list.projectId, versionId: list.versionId});
+
+			var data = result.data;
+			var schema = _.extend(data, {projectId: list.projectId, versionId: list.versionId});
+			
+			//console.log(schema);
+			Schema.batchInsert([schema]);
+
+		} 
+
     },
 
 	loadMOntology: function(list) {
