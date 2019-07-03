@@ -103,27 +103,32 @@ Meteor.methods({
 						future.return({status: 505, error:err, limit_set: false, number_of_rows: 0});
 					}
 					else {
+						if( resp["statusCode"] == 200 && resp["headers"]["content-type"].toLowerCase().startsWith("text")){
+							var error_message = resp.content;
+							if(error_message.length > 514) error_message = error_message.substring(0, 514) + "...";
+							future.return({status: 504, error:resp.content, limit_set: false, number_of_rows: 0});
+						} else{
+							xml2js.parseString(resp.content, function(json_err, json_res) {
 
-						xml2js.parseString(resp.content, function(json_err, json_res) {
-
-							if (json_err) {
-								future.return({status: 504, error:json_err, limit_set: false, number_of_rows: 0});
-							}
-							else {
-
-								if (limit_set) {
-									if (options.paging_info) {
-										 _.extend(json_res, {limit: 50, offset:options.paging_info.offset + 50});
-									}
-									else {
-										_.extend(json_res, {limit: 50, offset: 50});
-									}
+								if (json_err) {
+									future.return({status: 504, error:json_err, limit_set: false, number_of_rows: 0});
 								}
+								else {
 
-	              _.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
-								future.return({status: 200, result: json_res});
-							}
-						});
+									if (limit_set) {
+										if (options.paging_info) {
+											 _.extend(json_res, {limit: 50, offset:options.paging_info.offset + 50});
+										}
+										else {
+											_.extend(json_res, {limit: 50, offset: 50});
+										}
+									}
+
+								_.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
+									future.return({status: 200, result: json_res});
+								}
+							});
+						}
 					}
 				});
 			}

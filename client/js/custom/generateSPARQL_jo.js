@@ -441,11 +441,13 @@ function executeSparqlString(sparql, paging_info) {
 
     } else {
       Session.set("executedSparql", {limit_set:false, number_of_rows:0});
-      //console.error(res);
+      // console.error(res);
       if (res.status==503) {
           Interpreter.showErrorMsg("SPARQL execution failed: most probably the endpoint is not reachable.",-3)
       } else if (res.status==504) {
-          Interpreter.showErrorMsg("SPARQL execution results unreadable.",-3)
+          var errorMessage = "";
+		  if(typeof errorMessage === "string") errorMessage =  res.error;
+		  Interpreter.showErrorMsg("SPARQL execution results unreadable. " + errorMessage,-3)
       } else {
           var msg = ".";
           if (res.error && res.error.response) {
