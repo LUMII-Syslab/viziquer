@@ -681,9 +681,10 @@ function generateSPARQLtext(abstractQueryTable){
 		//counter for variables with equals names
 		 var counter = 0;
 		 
+		 var tempAttrNames = setAttributeNames(rootClass, idTable, symbolTable, []);
+		 var attributesNames = tempAttrNames["attributeNames"];
+		 messages = messages.concat(tempAttrNames["messages"]);
 		 
-		 var attributesNames = setAttributeNames(rootClass, idTable, symbolTable, []);
-
 		 var result = forAbstractQueryTable(attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
 		 
 		 messages = messages.concat(result["messages"]);
@@ -2391,9 +2392,11 @@ function checkIfIsURI(text){
 }
 
 function setAttributeNames(clazz, idTable, symbolTable, attributeNames){
-
+	var aliasFieldsOptional = [];
+	var messages = [];
 	//attributes
 	_.each(clazz["fields"],function(field) {
+		
 		var attributeName = field["exp"];
 		var temp = checkIfIsSimpleAttribute(field["parsed_exp"], true);
 		if(temp["isSimpleVariable"] == true && temp["kind"] == "PROPERTY_NAME"){
@@ -2410,7 +2413,13 @@ function setAttributeNames(clazz, idTable, symbolTable, attributeNames){
 					attributeNames[attributeName]["classes"][clazz["identification"]["_id"]] = {name:attrName, parentType:temp["parentType"]};
 				}
 			}
+		} 
+		if(aliasFieldsOptional.length > 0) messages = messages.concat(checkIfOptionalReferenceParse(field, field["parsed_exp"], temp["isSimpleVariable"], aliasFieldsOptional));
+		if(field.alias != null && field.alias != "" && field.requireValues == false){
+			aliasFieldsOptional.push(field.alias);
 		}
+		
+		
 	})
 	
 	//subClasses
@@ -2418,7 +2427,39 @@ function setAttributeNames(clazz, idTable, symbolTable, attributeNames){
 		var temp = setAttributeNames(subclazz, idTable, symbolTable, attributeNames);
 		attributeNames = temp;
 	})
-	return attributeNames
+	return {attributeNames:attributeNames, messages:messages}
+}
+
+
+function checkIfOptionalReferenceParse(field, expressionTable, isSimpleVariable, aliasFieldsOptional){
+	var messages = [];
+	for(var key in expressionTable){
+		
+		if(key == "Reference" && aliasFieldsOptional.includes(expressionTable[key]["name"])){
+			messages.push({
+					"type" : "Error",
+					"message" : "Reference to optional field " + expressionTable[key]["name"] + " from a field expression " + field.fulltext + " not allowed. To use the reference, mark " + expressionTable[key]["name"] + " as required (check the 'Require Values' box)",
+					// "listOfElementId" : listOfElementId,
+					"isBlocking" : true
+				});
+		}
+		
+
+		if(key == "var" &&  isSimpleVariable != true && aliasFieldsOptional.includes(expressionTable[key]["name"])){
+			messages.push({
+					"type" : "Error",
+					"message" : "Reference to optional field " + expressionTable[key]["name"] + " from a field expression " + field.fulltext + " not allowed. To use the reference, mark " + expressionTable[key]["name"] + " as required (check the 'Require Values' box)",
+					// "listOfElementId" : listOfElementId,
+					"isBlocking" : true
+				});
+		}
+		
+		if(typeof expressionTable[key] == 'object'){
+			messages = messages.concat(checkIfOptionalReferenceParse(field, expressionTable[key], isSimpleVariable, aliasFieldsOptional));
+
+		}
+	}
+	return messages;
 }
 
 function checkIfIsSimpleAttribute(expressionTable, isSimpleVariable){
