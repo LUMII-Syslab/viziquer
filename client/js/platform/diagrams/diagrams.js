@@ -567,9 +567,7 @@ Template.importOntology.events({
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
-					
 				};
-
 
 		var url_value = $("#import-url").val();
 
@@ -594,20 +592,11 @@ Template.importOntology.events({
 							Utilities.callMeteorMethod("loadMOntology", list);
 						}
 						else {
-							//var list = {projectId: Session.get("activeProject"),
-							//			versionId: Session.get("versionId"),
-							//			data: { Data: data },
-							//		};
 							VQ_Schema_copy = null;
 							list.data = { Data: data };
 							Utilities.callMeteorMethod("loadTriplesMaps", list );
 						}
 
-
-						//if ( data.Schema ) {
-						//	Utilities.callMeteorMethod("loadMOntology", list); }
-						//else {
-						//	Utilities.callMeteorMethod("loadOntology", list); }
 					}
 					//else  Te būs kļūdas ziņojums lietotājam};
 		        }
@@ -629,27 +618,36 @@ Template.uploadProject.events({
 
 		//hidding the form
 		$('#upload-project-form').modal("hide");
+		
+		var list = {projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+		};
+		
+		var url_value = $("#import-projecturl").val();
 
-		var fileList = $("#projectFileList")[0].files;
-	    _.each(fileList, function(file) {
+		if (url_value) {
+			list.url = url_value;
+			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+		}
+		else {
+			var fileList = $("#projectfileList")[0].files;
+			_.each(fileList, function(file) {
 
-	        var reader = new FileReader();
+				var reader = new FileReader();
 
-	        reader.onload = function(event) {
-				var diagrams = JSON.parse(reader.result)
-	        	var list = {projectId: Session.get("activeProject"),
-	        				versionId: Session.get("versionId"),
-	                        data: diagrams,
-	                    };
+				reader.onload = function(event) {
+					var diagrams = JSON.parse(reader.result)
+					list.data = diagrams;
 
-				Utilities.callMeteorMethod("uploadProjectData", list);
-			}
+					Utilities.callMeteorMethod("uploadProjectData", list);
+				}
 
-	        reader.onerror = function(error) {
-	            console.error("Error: ", error);
-	        }
-	        reader.readAsText(file);
-	    });
+				reader.onerror = function(error) {
+					console.error("Error: ", error);
+				}
+				reader.readAsText(file);
+			});
+		}
 
 	},
 

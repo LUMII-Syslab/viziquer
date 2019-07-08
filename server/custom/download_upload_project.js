@@ -72,8 +72,25 @@ Meteor.methods({
 		}
 	},
 
+    uploadProjectDataByUrl: function(list) {
+
+		console.log("in uploadProjectDataByUrl", list)
+        var result = HTTP.call('GET', list.url);
+        //console.log("result", result)
+		console.log("result", result.data)
+		list.data = result.data;
+		
+		uploadProject(list);
+    },
+	
 	uploadProjectData: function(list) {
 
+		uploadProject(list)
+	},
+
+});
+
+function uploadProject(list) {
 		var user_id = this.userId;
 		if (is_project_member(user_id, list)) {
 
@@ -253,8 +270,6 @@ Meteor.methods({
 			}
 
 		}
-	},
-
-});
+}
 
 
