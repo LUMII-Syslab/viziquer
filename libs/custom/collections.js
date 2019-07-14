@@ -5,4 +5,5 @@ Attributes = new Mongo.Collection("Attributes");
 Classes = new Mongo.Collection("Classes");
 Schema = new Mongo.Collection("Schema");
 TriplesMaps = new Mongo.Collection("TriplesMaps");
+Services = new Mongo.Collection("Services");
 

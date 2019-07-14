@@ -165,12 +165,51 @@
                             <label for="tool" class="control-label col-sm-2">{{_ "project_tool"}}</label>
                             <div class="col-sm-10">
                                 <select class="form-control" id="tool">
-                                    {{#each tools}}
+                                    {{#each tools.tools}}
                                         <option id="{{_id}}">{{name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                         </div>
+						
+						{{#if tools.schemas  }}
+                        <div class="form-group">
+                            <label for="category-name" class="col-sm-2 control-label">Schemas</label>
+                        </div>
+						{{/if}}	
+							
+                        <div class="form-group">  
+				
+                            {{#each tools.schemas}}
+                                <div class="col-lg-10 schema">
+                                    <label class="label-radio">
+                                        <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
+                                        <span class="custom-radio"></span>
+                                         <span style="{{clr}}">{{caption}} </span>
+                                    </label>
+                                </div>
+                            {{/each}}
+                        </div>
+						
+						{{#if tools.projects  }}
+                        <div class="form-group">
+                            <label for="category-name" class="col-sm-2 control-label">Projects</label>
+                        </div>
+						{{/if}}	
+							
+                        <div class="form-group">  
+				
+                            {{#each tools.projects}}
+                                <div class="col-lg-10 schema">
+                                    <label class="label-radio">
+                                        <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
+                                        <span class="custom-radio"></span>
+                                         <span style="{{clr}}">{{caption}} </span>
+                                    </label>
+                                </div>
+                            {{/each}}
+                        </div>
+
 
                     </form>  
                 </div>
