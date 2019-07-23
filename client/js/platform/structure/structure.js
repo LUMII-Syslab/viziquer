@@ -242,7 +242,7 @@ Template.createProjectModal.events({
 		            toolId: tool_id,
 				};
 
-		// !!!     Utilities.callMeteorMethod("insertProject", list);
+		Utilities.callMeteorMethod("insertProject", list);
 	},
 });
 
