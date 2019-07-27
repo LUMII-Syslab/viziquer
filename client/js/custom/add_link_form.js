@@ -487,7 +487,7 @@ Template.AddLink.events({
         } 
 	},
 
-	"change #link-list-form": function() {
+	"click #link-list-form": function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
         if (proj) {
             if(proj.showCardinalities=="true"){            
