@@ -18,6 +18,14 @@
         width: 30%;        
     }
 
+    div.searchBox {
+        margin-top: 0px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-top: 0px;
+        overflow-y: auto;            
+    }
+
     .help-tip{
         position: relative;
         display:inline;
@@ -73,6 +81,12 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Add Link</h4>
                 </div>
+
+                <div class="searchBox" id="searchBox">
+                    <p style="margin-bottom:10px; size:10px;">Type something in the input field to search the list for specific items (no spaces allowed):</p>  
+                    <input class="form-control" id="mySearch" type="text" placeholder="Search..">
+                    <hr>
+                </div>
    
                 <div class="link-type-part">
                     <form id="type-choice" class="form-horizontal" role="form">
@@ -108,10 +122,10 @@
                     </form>                    
                 </div>
                
-                <div class="modal-body">
+                <div class="modal-body">                    
                     <form id="link-list-form" class="form-horizontal" role="form">                        
                         <div class="form-group">                   
-                            {{#each associations}}
+                            {{#each shortList}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" card={{card}}>
