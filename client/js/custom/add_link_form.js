@@ -465,7 +465,7 @@ function clearAddLinkInput(){
 
 	$('input[id=goto-wizard]').attr('checked', false);
 	$('input[id=goto-wizard]').attr("disabled","disabled");
-
+	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
 }
 
