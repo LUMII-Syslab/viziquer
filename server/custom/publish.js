@@ -9,7 +9,7 @@ Meteor.publish("Ontology", function(list) {
 				Associations.find({projectId: list.projectId, versionId: list.versionId}),
 				Attributes.find({projectId: list.projectId, versionId: list.versionId}),
 				Classes.find({projectId: list.projectId, versionId: list.versionId}),
-				Schema.find({projectId: list.projectId, versionId: list.versionId}),
+				Schema.find({projectId: list.projectId}), //Schema.find({projectId: list.projectId, versionId: list.versionId}),
 				TriplesMaps.find({projectId: list.projectId, versionId: list.versionId}),
 			];
 	}
@@ -23,9 +23,8 @@ Meteor.publish("Services", function(list) {
 	if (!list || list["noQuery"]) {
 		return this.stop();
 	}
-console.log("Publicējam");
-console.log(list);
-	if (is_project_member(this.userId, list)) { console.log(Services.find().count()); console.log(Services.findOne({toolId: list.toolId }));
+
+	if (is_project_member(this.userId, list)) { //console.log(Services.find().count()); console.log(Services.findOne({toolId: list.toolId }));
 		return [
 				Services.find(),//Services.find({toolId: list.toolId }),
 			];

@@ -196,7 +196,7 @@ Template.createProjectModal.helpers({
 			{
 				result.schemas = [];
 				_.each(services.schemas, function (s){
-					result.schemas.push({caption: s.caption, name: s.name});
+					result.schemas.push({caption: s.caption, name: s.name, link: s.link});
 				});
 			}
 			
@@ -204,7 +204,7 @@ Template.createProjectModal.helpers({
 			{
 				result.projects = [];
 				_.each(services.projects, function (p){
-					result.projects.push({caption: p.caption, name: p.name});
+					result.projects.push({caption: p.caption, name: p.name, link: p.link});
 				});
 			}
 		}
@@ -227,8 +227,6 @@ Template.createProjectModal.events({
 		var tool_id = $("#tool").find(":selected").attr("id");
 		var icon_name = icon_name_obj.val();
 		var category_name = category_obj.val();
-
-		//console.log("Jauna projekta taisīšana");
 		//console.log(tool_id);
 		//console.log(Services.find().count())
 		//console.log(Services.findOne({toolId: tool_id }));
@@ -241,6 +239,14 @@ Template.createProjectModal.events({
 					category: category_name,
 		            toolId: tool_id,
 				};
+
+		var obj = $('input[name=stack-radio]:checked').closest(".schema");
+		var type = obj.attr("type");
+		if ( type == "schema" )
+			list.schema_link = obj.attr("link")
+		if ( type == "project" )
+			list.project_link = obj.attr("link")	
+		//console.log("Jauna projekta taisīšana");
 
 		Utilities.callMeteorMethod("insertProject", list);
 	},

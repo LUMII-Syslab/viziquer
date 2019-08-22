@@ -1,0 +1,32 @@
+{
+	"schemas": [
+	{
+		"caption": "Initialise by Mini unversity schema",
+		"name": "Mini_unversity",
+		"link": "http://viziquer.lumii.lv/schemas/mini_univ.json",
+		"description": "http://viziquer.lumii.lv/"
+	},
+	{
+		"caption": "Initialise by Scholarly data schema",
+		"name": "Scholarly_data",
+		"link": "http://viziquer.lumii.lv/schema-store/schemas/Scholarly.json",
+		"description": "http://viziquer.lumii.lv/schema-store/index.html"
+	}
+	],
+	"projects": [
+	{
+		"caption": "Initialise by Scholarly data example small project",
+		"name": "Mini_unversity",
+		"link": "http://susurs.mii.lu.lv/karlis/ViziQuer/Scholarly_Test_Small.json",
+		"description": ""
+	},
+	{
+		"caption": "Initialise by Scholarly data example project",
+		"name": "Scholarly_data",
+		"link": "http://susurs.mii.lu.lv/karlis/ViziQuer/Scholarly_Test.json",
+		"decsription": ""
+	}
+	]
+}
+
+

@@ -172,16 +172,21 @@
                             </div>
                         </div>
 						
-						{{#if tools.schemas  }}
-                        <div class="form-group">
-                            <label for="category-name" class="col-sm-2 control-label">Schemas</label>
-                        </div>
-						{{/if}}	
+						<div class="form-group">						
+								<div class="col-lg-10 schema" name="Def" type = "def">
+                                    <label class="label-radio">
+                                        <input type="radio" name="stack-radio" value="Def" checked="checked">
+                                        <span class="custom-radio"></span>
+                                         <span style="{{clr}}">Start empty project </span>
+                                    </label>
+                                </div>
+					    </div>
+						
 							
                         <div class="form-group">  
 				
                             {{#each tools.schemas}}
-                                <div class="col-lg-10 schema">
+                                <div class="col-lg-10 schema" name="{{name}}" type = "schema" link = "{{link}}" >
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
                                         <span class="custom-radio"></span>
@@ -191,16 +196,12 @@
                             {{/each}}
                         </div>
 						
-						{{#if tools.projects  }}
-                        <div class="form-group">
-                            <label for="category-name" class="col-sm-2 control-label">Projects</label>
-                        </div>
-						{{/if}}	
+
 							
                         <div class="form-group">  
 				
                             {{#each tools.projects}}
-                                <div class="col-lg-10 schema">
+                                <div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
                                         <span class="custom-radio"></span>

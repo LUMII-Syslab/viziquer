@@ -101,13 +101,53 @@ Projects.hookOptions.after.remove = {fetchPrevious: false};
 Meteor.methods({
 
 	insertProject: function(list) {
-
+		var schema_link = null;
+		var project_link = null;
+		var varsionId = null;
 		var user_id = Meteor.userId();
 		if (user_id) {
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
-
+            
+			if (list.schema_link)
+			{
+				schema_link = list.schema_link;
+				delete 	list.schema_link;
+			}
+			if (list.project_link)
+			{
+				project_link = list.project_link;
+				delete 	list.project_link;
+			}
+			
 		    Projects.insert(list);
+			
+			var project = Projects.findOne({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
+			var projectsUsers = ProjectsUsers.findOne({projectId: project._id})
+			if ( projectsUsers )
+				varsionId = projectsUsers.versionId;
+			
+			//console.log(project)
+			//console.log(projectsUsers)
+			
+			if (schema_link)
+			{
+				//console.log("Ir shēmas links")
+				var list = { projectId: project._id,
+							 url: schema_link,
+							};
+				Meteor.call("loadMOntologyByUrl", list);
+			}
+			
+			if (project_link)
+			{
+				//console.log("Ir projekta links")
+				var list = { projectId: project._id,
+							 versionId: varsionId, 	
+							 url: project_link,
+							};
+				Meteor.call("uploadProjectDataByUrl", list);
+			}
 		}
 	},
 

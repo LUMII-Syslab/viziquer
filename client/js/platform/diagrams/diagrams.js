@@ -572,6 +572,7 @@ Template.importOntology.events({
 		var url_value = $("#import-url").val();
 
 		if (url_value) {
+			VQ_Schema_copy = null;
 			list.url = url_value;
 			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
 		}
