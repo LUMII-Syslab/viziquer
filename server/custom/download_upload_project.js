@@ -263,7 +263,8 @@ function uploadProject(list) {
 			if (_.size(schema) > 0 )
 			{
 				delete schema._id;
-				_.extend(schema, {projectId: project_id, versionId: version_id	});
+				//_.extend(schema, {projectId: project_id, versionId: version_id	});
+				_.extend(schema, {projectId: project_id});
 				Schema.insert(schema);
 
 			}
