@@ -585,8 +585,48 @@ Template.importOntology.events({
 
 		        reader.onload = function(event) {
 					var data = JSON.parse(reader.result)
+
 					if (data) {
 						if ( data.Classes ) {
+							_.each(data.Classes, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var superclasses = [];
+								_.each(el.SuperClasses, function (sc){
+									superclasses.push(decodeURIComponent(sc));
+								});
+								el.SuperClasses = superclasses;
+							});
+							_.each(data.Attributes, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var sourceclasses = [];
+								_.each(el.SourceClasses, function (sc){
+									sourceclasses.push(decodeURIComponent(sc));
+								});
+								el.SourceClasses = sourceclasses;
+							});
+							_.each(data.Associations, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var classpairs = [];
+								_.each(el.ClassPairs, function (cp){
+									var cp_new = {};
+									if ( cp.SourceClass )
+										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
+									if ( cp.TargetClass )
+										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)	
+									classpairs.push(cp_new);
+								});
+								el.ClassPairs = classpairs;
+							});
+						
 							VQ_Schema_copy = null;
 							list.data = data;
 
