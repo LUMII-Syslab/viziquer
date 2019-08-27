@@ -745,7 +745,7 @@ function generateSPARQLtext(abstractQueryTable){
 			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership);
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
-	
+
 			 groupByTemp = groupByTemp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			});
@@ -1607,7 +1607,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	
 	//console.log("orderings", orderings)
 	//console.log("fieldNames", fieldNames)
-	//console.log("symbolTable", symbolTable)
+	// console.log("symbolTable", symbolTable)
 	
 	var messages = [];
 	var orderTable = [];
@@ -1649,9 +1649,20 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							}
 						}
 					}
+					
+					
+					
 					if(!result.startsWith("?")) result = "?" + result;
 					orderTable.push(descendingStart +  result + descendingEnd + " ");
-					orderGroupBy.push(result);
+					
+					var isAgretedAlias = false;
+					if(typeof symbolTable["root"] !== 'undefined' && typeof symbolTable["root"][orderName] !== 'undefined'){
+							for(var attrName in symbolTable["root"][orderName]){
+								if(symbolTable["root"][orderName][attrName]["kind"] == "AGGREGATE_ALIAS") isAgretedAlias = true;
+							}
+						}
+					
+					if(isAgretedAlias!=true)orderGroupBy.push(result);
 				} else {
 					var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 					 messages = messages.concat(result["messages"]);
