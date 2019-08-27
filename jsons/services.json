@@ -1,30 +1,30 @@
 {
 	"schemas": [
 	{
-		"caption": "Initialise by Mini unversity schema",
+		"caption": "Mini unversity schema",
 		"name": "Mini_unversity",
 		"link": "http://viziquer.lumii.lv/schemas/mini_univ.json",
-		"description": "http://viziquer.lumii.lv/"
+		"description": "Example mini-university data schema"
 	},
 	{
-		"caption": "Initialise by Scholarly data schema",
+		"caption": "Scholarly data schema",
 		"name": "Scholarly_data",
 		"link": "http://viziquer.lumii.lv/schema-store/schemas/Scholarly.json",
-		"description": "http://viziquer.lumii.lv/schema-store/index.html"
+		"description": "Scholarly data schema in ViziQuer"
 	}
 	],
 	"projects": [
 	{
-		"caption": "Initialise by Scholarly data example small project",
+		"caption": "Mini-University example project",
 		"name": "Mini_unversity",
-		"link": "http://susurs.mii.lu.lv/karlis/ViziQuer/Scholarly_Test_Small.json",
-		"description": ""
+		"link": "https://viziquer.lumii.lv/schema-store/projects/mini_university.json",
+		"description": "Example mini-university project (with data schema, connection information and query examples)"
 	},
 	{
-		"caption": "Initialise by Scholarly data example project",
+		"caption": "Scholarly Data example project",
 		"name": "Scholarly_data",
-		"link": "http://susurs.mii.lu.lv/karlis/ViziQuer/Scholarly_Test.json",
-		"decsription": ""
+		"link": "https://viziquer.lumii.lv/schema-store/projects/scholarly_demo.json",
+		"decsription": "Example project to access the scholarly data endpoint (cf. http://scholarlydata.org)"
 	}
 	]
 }
