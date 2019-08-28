@@ -35,7 +35,7 @@ Template.AddLink.events({
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
-		var name = obj.attr("name");
+		var name = obj.attr("name"); console.log(name);
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
@@ -61,6 +61,7 @@ Template.AddLink.events({
 				console.log("Unknown error - active element does not exist.");
 				return;
 			}
+
             var d = 30; //distance between boxes
             var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
             var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
@@ -567,7 +568,38 @@ function getAllAssociations(){
       				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: ""});
       			}
       		}
-      		asc = asc.concat(ascReverse);      		
+      		asc = asc.concat(ascReverse);
+
+      		if (proj){
+      			var selfName = "";
+      			if (className.indexOf("[") == -1) {      				
+      				selfName = className;
+      			} else {
+					var linkUp = startElement.getLinkToRoot(); 
+					if (!linkUp || linkUp == undefined) {
+						selfName = "";
+					} else {
+						linkUp = linkUp.link.obj;
+						var previousClassId = "";		
+						if (linkUp.startElement == start_elem_id) {
+							previousClassId = linkUp.endElement;
+						} else if (linkUp.endElement == start_elem_id) {
+							previousClassId = linkUp.startElement;
+						} else {
+							console.log(73, ": error with previous element");
+							return;
+						}
+
+						var previousVQelement = new VQ_Element(previousClassId);
+						selfName = previousVQelement.getName();
+					}
+				}
+      			if (proj.showCardinalities=="true")
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""}); 
+				else {
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""});
+      			}
+      		}  		
 			return asc;
 		}
 }
