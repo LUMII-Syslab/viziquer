@@ -218,7 +218,30 @@ Interpreter.customMethods({
  				})
  			}
 
+			var selected_elem_id = Session.get("activeElement");
+		
+			var tempSymbolTable = generateSymbolTable();
+			var symbolTable = tempSymbolTable["symbolTable"];
 
+			for (var  key in symbolTable) {	
+				for (var symbol in symbolTable[key]) {
+					if(symbolTable[key][symbol]["context"] == selected_elem_id){
+						if ((typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined')
+							&& symbolTable[key][symbol]["kind"] == 'PROPERTY_ALIAS'){
+							var att_val = "avg("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "min("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "max("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "sum("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "group_concat("+key+",',')";
+							atr_names.push({value: att_val, input: att_val});
+						}
+					}
+				}	
+			}
 
  		}
 
@@ -718,6 +741,7 @@ Interpreter.customMethods({
 			};
 		};
 
+		name_list = _.union(name_list, {value: "==", input: "=="});
 		return name_list;
 	},
 	
@@ -769,7 +793,7 @@ Interpreter.customMethods({
 		
 		for (var key in symbolTable) {
 			for(var k in symbolTable[key]){
-				if(symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
+				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
 			}
 		}
 		
@@ -990,6 +1014,23 @@ Interpreter.customMethods({
                     _.each(klass.getAllAttributes(), function(att){
                         attr_list.push({attribute: att["name"]});
                     })
+					
+					var selected_elem_id = Session.get("activeElement");
+		
+					var tempSymbolTable = generateSymbolTable();
+					var symbolTable = tempSymbolTable["symbolTable"];
+
+					for (var  key in symbolTable) {	
+						for (var symbol in symbolTable[key]) {
+							if(symbolTable[key][symbol]["context"] == selected_elem_id){
+								if ((typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined')
+									&& symbolTable[key][symbol]["kind"] == 'PROPERTY_ALIAS'){
+									 attr_list.push({attribute: key});
+								}
+							}
+						}	
+					}
+					
                     attr_list = _.sortBy(attr_list, "attribute");
                 }
                 // console.log(attr_list);
