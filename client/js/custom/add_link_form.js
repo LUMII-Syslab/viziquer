@@ -35,7 +35,7 @@ Template.AddLink.events({
 		var obj = $('input[name=stack-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
-		var name = obj.attr("name"); console.log(name);
+		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		var class_name = obj.attr("className");
 
