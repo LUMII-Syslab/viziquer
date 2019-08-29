@@ -732,7 +732,9 @@ Template.ontologySettings.events({
 					showCardinalities: $("#show-cardinalities").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
-					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked")
+					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
+					endpointUsername: $("#endpoint-username").val(),
+					endpointPassword: $("#endpoint-password").val()
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -769,6 +771,8 @@ Template.ontologySettings.events({
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
+		 $("#endpoint-username").val(proj.endpointUsername);
+		 $("#endpoint-password").val(proj.endpointPassword);
 	 }
 
 	},
@@ -889,6 +893,18 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
+		}
+	},
+	endpointUsername: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.endpointUsername;
+		}
+	},
+	endpointPassword: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.endpointPassword;
 		}
 	},
 });

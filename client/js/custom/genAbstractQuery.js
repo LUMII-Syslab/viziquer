@@ -646,6 +646,12 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
 		  if (proj.completeRDFBoxesInDatetimeFunctions) {
             proj_params.completeRDFBoxesInDatetimeFunctions = proj.completeRDFBoxesInDatetimeFunctions;
           };
+		  if (proj.endpointUsername) {
+            proj_params.endpointUsername = proj.endpointUsername;
+          };
+		  if (proj.endpointPassword) {
+            proj_params.endpointPassword = proj.endpointPassword;
+          };
           return proj_params;
      }
    };

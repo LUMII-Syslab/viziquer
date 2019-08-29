@@ -17,6 +17,8 @@ Meteor.methods({
 																										 autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
 																										 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,
 																										 completeRDFBoxesInDatetimeFunctions: list.completeRDFBoxesInDatetimeFunctions,
+																										 endpointUsername: list.endpointUsername,
+																										 endpointPassword: list.endpointPassword,
 										 }});
 		}
 	},
