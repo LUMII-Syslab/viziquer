@@ -35,6 +35,29 @@ Template.AddAggregate.helpers({
 					attr_list.push({aggregate:"group_concat("+att["name"]+",',')"});
 				})
 
+				var tempSymbolTable = generateSymbolTable();
+				var symbolTable = tempSymbolTable["symbolTable"];
+				for (var  key in symbolTable) {	
+					for (var symbol in symbolTable[key]) {
+						if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
+							attr_list.push({aggregate:"avg("+key+")"});
+							attr_list.push({aggregate:"min("+key+")"});
+							attr_list.push({aggregate:"max("+key+")"});
+							attr_list.push({aggregate:"sum("+key+")"});
+							attr_list.push({aggregate:"group_concat("+key+",',')"});
+						} else{
+							var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+							if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
+								attr_list.push({aggregate:"avg("+key+")"});
+								attr_list.push({aggregate:"min("+key+")"});
+								attr_list.push({aggregate:"max("+key+")"});
+								attr_list.push({aggregate:"sum("+key+")"});
+								attr_list.push({aggregate:"group_concat("+key+",',')"});
+							}
+						}
+					}	
+				}
+
 				attr_list = _.sortBy(attr_list, "aggregate");
 		 	 	attr_list = _.uniq(attr_list, false, function(item) {
 		 	 		return item["aggregate"];
