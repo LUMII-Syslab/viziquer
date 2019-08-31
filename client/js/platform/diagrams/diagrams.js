@@ -82,16 +82,16 @@ Template.diagramsRibbon.events({
 
 		});
 	},
-	
-	'click #export': function(e) { 
+
+	'click #export': function(e) {
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 				};
-		
+
 		var schema_full = {};
-		var schema_data = {};	
-					
+		var schema_data = {};
+
 		if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
 			schema_full = VQ_Schema_copy;
 			schema_data = VQ_Schema_copy.Data;
@@ -99,14 +99,14 @@ Template.diagramsRibbon.events({
 			//link.setAttribute("download", "schema.json");
 			//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
 			//document.body.appendChild(link);
-			//link.click(); 
+			//link.click();
 
 			schema_full.printOwlFormat();
-		}		
+		}
 
-		if (_.size(schema_full) == 0 ) {		
+		if (_.size(schema_full) == 0 ) {
 			Utilities.callMeteorMethod("getProjectSchema", list, function(resp) {
-				if (_.size(resp.schema) > 0 ) { 
+				if (_.size(resp.schema) > 0 ) {
 					schema_data = resp.schema;
 					schema_full = new VQ_Schema(schema_data);
 
@@ -114,13 +114,13 @@ Template.diagramsRibbon.events({
 					//link.setAttribute("download", "schema.json");
 					//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
 					//document.body.appendChild(link);
-					//link.click(); 
-					
+					//link.click();
+
 					schema_full.printOwlFormat();
-					
+
 				}
 			});
-		}	
+		}
 	},
 
 	'click #upload-project': function(e, templ) {
@@ -576,7 +576,7 @@ Template.importOntology.events({
 			list.url = url_value;
 			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
 		}
-		
+
 		else {
 			var fileList = $("#fileList")[0].files;
 		    _.each(fileList, function(file) {
@@ -621,12 +621,12 @@ Template.importOntology.events({
 									if ( cp.SourceClass )
 										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
 									if ( cp.TargetClass )
-										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)	
+										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
 									classpairs.push(cp_new);
 								});
 								el.ClassPairs = classpairs;
 							});
-						
+
 							VQ_Schema_copy = null;
 							list.data = data;
 
@@ -659,11 +659,11 @@ Template.uploadProject.events({
 
 		//hidding the form
 		$('#upload-project-form').modal("hide");
-		
+
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 		};
-		
+
 		var url_value = $("#import-projecturl").val();
 
 		if (url_value) {
@@ -783,6 +783,8 @@ Template.ontologySettings.events({
 					versionId: Session.get("versionId"),
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
+					endpointUsername: $("#endpoint-username").val(),
+					endpointPassword: $("#endpoint-password").val(),
 				};
 
 		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
@@ -793,6 +795,8 @@ Template.ontologySettings.events({
 			if (res.status == 200) {
 				class_name = "success";
 				text = "Connection is ok";
+			} else if (res.status === 401) {
+				text = "Connection failed; probably wrong credentials";
 			}
 
 			var msg = {text: text,
