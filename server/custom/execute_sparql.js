@@ -13,6 +13,11 @@ Meteor.methods({
 			var limit_set = false;
 			var number_of_rows = 0;
 
+			var httpOptions = {};
+			if (hasAuthInfo(options)) {
+				httpOptions = { auth: makeAuthString(options) };
+			}
+
 			var sparql_log_entry = {};
 			_.extend(sparql_log_entry, list);
 			_.extend(sparql_log_entry, {user:user_id});
@@ -33,18 +38,18 @@ Meteor.methods({
 					let query = count_options.params.params.query;
 					let namedGraph = count_options.params.params['default-graph-uri'];
 
-					query = query.replace(/(\r\n|\n|\r)/gm," ");	
+					query = query.replace(/(\r\n|\n|\r)/gm," ");
 					query = encodeURIComponent(query);
 					query = query.replace(/[*]/g, '%2A');
 					query = query.replace(/[(]/g, '%28');
 					query = query.replace(/[)]/g, '%29');
 					count_options.endPoint = count_options.endPoint + '?'+ 'default-graph-uri=' + namedGraph +'&query=' + query + '&format=JSON';
-					
+
 					/////////////////////////////////////////////
-					
+
 					// var qres = HTTP.post(count_options.endPoint, count_options.params);
-					var qres = HTTP.post(count_options.endPoint);
-					
+					var qres = HTTP.post(count_options.endPoint, httpOptions);
+
 		      		if (qres.statusCode == 200) {
 					    var content = JSON.parse(qres.content);
 						number_of_rows = content.results.bindings[0].number_of_rows_in_query_xyz.value;
@@ -70,7 +75,7 @@ Meteor.methods({
 					number_of_rows = options.paging_info.number_of_rows;
 				} else {
 					// Do not change query
-				  // Since no refresh is intended = no additional parameters required	
+				  // Since no refresh is intended = no additional parameters required
 				}
 
 			}
@@ -97,7 +102,7 @@ Meteor.methods({
 					/////////////////////////////////////////////
 
 				// HTTP.call("POST", options.endPoint, options.params, function(err, resp) {
-				HTTP.call("POST", options.endPoint, function(err, resp) {
+				HTTP.call("POST", options.endPoint, httpOptions, function(err, resp) {
 
 					if (err) {
 						future.return({status: 505, error:err, limit_set: false, number_of_rows: 0});
@@ -153,6 +158,11 @@ Meteor.methods({
 			var future = new Future();
 
 			var params = {};
+			var httpOptions = {};
+
+			if (hasAuthInfo(list)) {
+				httpOptions = { auth: makeAuthString(list) }
+			}
 
 ///////////////////////////////////////////////
 // aded SELECT ?a ?b ?c where{?a?b?c}LIMIT 10 to test query
@@ -164,13 +174,16 @@ Meteor.methods({
 			list.endpoint = list.endpoint + '?query=' + query;
  ////////////////////////////////////
 
-			HTTP.call("POST", list.endpoint, params, function(err, resp) {
+			HTTP.call("POST", list.endpoint, httpOptions, function(err, resp) {
 
 				if (err) {
-					future.return({status: 500,});
+					if (err.response.statusCode === 401) {
+						future.return({status: 401,});
+					} else {
+						future.return({status: 500,});
+					}
 				}
 				else {
-
 	                xml2js.parseString(resp.content, function(json_err, json_res) {
 
 	                	if (json_err) {
@@ -211,4 +224,12 @@ function buildEnhancedQuery(originalQuery, fragmentToFind, fragmentToInsert, fra
 
 function add_sparql_log(log) {
 	VQ_sparql_logs.insert(log)
+}
+
+function hasAuthInfo(params) {
+	return params.endpointUsername && params.endpointPassword;
+}
+
+function makeAuthString(params) {
+	return params.endpointUsername + ':' + params.endpointPassword;
 }
