@@ -33,7 +33,8 @@ Template.AddAttribute.helpers({
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
-						if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)attr_list.push({name: key});
+						if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 ))attr_list.push({name: key});
+						// if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)attr_list.push({name: key});
 					}
 				}	
 			}
