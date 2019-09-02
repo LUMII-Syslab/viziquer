@@ -166,26 +166,26 @@
                             <div class="col-sm-10">
                                 <select class="form-control" id="tool">
                                     {{#each tools.tools}}
-                                        <option id="{{_id}}">{{name}}</option>
+                                        <option id="{{_id}}" name={{name}}>{{name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                         </div>
 						
-						<div class="form-group">						
+						<div class="form-group">	
+								<label for="Init" class="control-label col-sm-2">  </label>						
 								<div class="col-lg-10 schema" name="Def" type = "def">
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="Def" checked="checked">
                                         <span class="custom-radio"></span>
-                                         <span style="{{clr}}">Start empty project </span>
+                                         <span style="{{clr}}">Start empty project (fill schema and connection later)</span>
                                     </label>
                                 </div>
 					    </div>
-						
 							
                         <div class="form-group">  
-				
-                            {{#each tools.schemas}}
+                            {{#each services.schemas}}
+								<label for="Init" class="control-label col-sm-2">  </label>	
                                 <div class="col-lg-10 schema" name="{{name}}" type = "schema" link = "{{link}}" >
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
@@ -195,12 +195,10 @@
                                 </div>
                             {{/each}}
                         </div>
-						
-
 							
                         <div class="form-group">  
-				
-                            {{#each tools.projects}}
+                            {{#each services.projects}}
+								<label for="Init" class="control-label col-sm-2">  </label>	
                                 <div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
                                     <label class="label-radio">
                                         <input type="radio" name="stack-radio" value="{{name}}" {{name}}>
@@ -210,7 +208,6 @@
                                 </div>
                             {{/each}}
                         </div>
-
 
                     </form>  
                 </div>

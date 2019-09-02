@@ -179,24 +179,34 @@ Template.structureRibbon.events({
 Template.createProjectModal.helpers({
 
 	tools: function() {
-	    Meteor.subscribe("Services", {});
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
 		var result = {tools:[]};
-	    var tool_id = "";
-		
+
 		tools.forEach(function(t) {
 			result.tools.push({_id: t._id, name: t.name}); 
-			tool_id = t._id
 		});
-
-		if ( tools.count() == 1)
+		
+		if ( tools.count() > 0)
+			Session.set("tool", result.tools[0]._id);
+	
+		else
+			Session.set("tool", reset_variable());
+		
+		return result;
+	},
+	services: function() {
+		var result = {};
+	    var tool_id = Session.get("tool");
+	    Meteor.subscribe("Services", {});			
+		
+		if ( tool_id != 'undefined')
 		{
 			var services = Services.findOne({toolId: tool_id });
 			if (services && services.schemas)
 			{
 				result.schemas = [];
 				_.each(services.schemas, function (s){
-					result.schemas.push({caption: s.caption, name: s.name, link: s.link});
+					result.schemas.push({caption: "Initialise project by " + s.caption, name: s.name, link: s.link});
 				});
 			}
 			
@@ -204,13 +214,15 @@ Template.createProjectModal.helpers({
 			{
 				result.projects = [];
 				_.each(services.projects, function (p){
-					result.projects.push({caption: p.caption, name: p.name, link: p.link});
+					result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 				});
-			}
-		}
+			}			
 
+		}
+					
 		return result;
 	},
+
 });
 
 Template.createProjectModal.events({
@@ -227,6 +239,7 @@ Template.createProjectModal.events({
 		var tool_id = $("#tool").find(":selected").attr("id");
 		var icon_name = icon_name_obj.val();
 		var category_name = category_obj.val();
+
 		//console.log(tool_id);
 		//console.log(Services.find().count())
 		//console.log(Services.findOne({toolId: tool_id }));
@@ -250,6 +263,14 @@ Template.createProjectModal.events({
 
 		Utilities.callMeteorMethod("insertProject", list);
 	},
+	'click #tool' : function(e){
+		var tool_id = $("#tool").find(":selected").attr("id");
+		Session.set("tool", tool_id)
+	},
+});
+
+Template.createProjectModal.onDestroyed(function() {
+	Session.set("tool", reset_variable()) ;  
 });
 
 Template.editProjectModal.helpers({
