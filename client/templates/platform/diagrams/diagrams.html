@@ -495,122 +495,162 @@
                     <h4 class="modal-title">Project Settings</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
-
-                      <div class="form-group">
-                          <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>
-                          <div class="col-sm-9">
-                              <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}">
-                          </div>
-                      </div>
-
-                        <div class="form-group">
-                            <label for="ontology-uri" class="col-sm-3 control-label">Named Graph</label>
-                            <div class="col-sm-9">
-                                <input id="ontology-uri" type="text" class="form-control" value="{{uri}}">
-                            </div>
+                    <div class="panel panel-default">
+                        <div class="panel-tab clearfix">
+                            <ul class="tab-bar">
+                                <li class="active" id="project-settings"><a href="#main" data-toggle="tab">Main</a></li>
+                                <li id="project-security"><a href="#sec" data-toggle="tab">Security</a></li>
+								<li id="project-extra"><a href="#extra" data-toggle="tab">Extra</a></li>
+                            </ul>
                         </div>
 
-                        <div class="form-group">
-                            <label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="use-string-literal-conversion" value="{{useStringLiteralConversion}}">
-                                  <option>SIMPLE</option>
-                                  <option>TYPED</option>
-                                  <option>OFF</option>
-                                </select>
-                            </div>
-                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content user-tab-content">
 
-						<div class="form-group">
-                            <div class="col-sm-5">
-                                <label class="form-check-label">
-                                 <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}">
-                                 <span class="custom-checkbox"></span>
-                                 Complete RDF boxes in datetime functions
-                              </label>
-                            </div>
-                        </div>
+                                <!-- tab1 -->
+                                <div class="tab-pane fade in active" id="main">
+									<form class="form-horizontal" role="form">
 
-                        <div class="form-group">
-                            <label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="query-engine-type" value="{{queryEngineType}}">
-                                  <option>VIRTUOSO</option>
-                                  <option>GENERAL</option>
-                                </select>
-                            </div>
-                        </div>
+									  <div class="form-group">
+										  <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>
+										  <div class="col-sm-9">
+											  <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}">
+										  </div>
+									  </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-5">
-                                <label class="form-check-label">
-                                 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{useDefaultGroupingSeparator}}">
-                                 <span class="custom-checkbox"></span>
-                                 Use Default Grouping Separator
-                              </label>
-                            </div>
-                            <div class="col-sm-5">
-                                <input id="default-grouping-separator" type="text" class="form-control" value="{{defaultGroupingSeparator}}" disabled="{{NOTuseDefaultGroupingSeparator}}">
-                            </div>
-                        </div>
+										<div class="form-group">
+											<label for="ontology-uri" class="col-sm-3 control-label">Named Graph</label>
+											<div class="col-sm-9">
+												<input id="ontology-uri" type="text" class="form-control" value="{{uri}}">
+											</div>
+										</div>
 
-                        <div class="form-group">
-                            <label for="direct-class-membership-role" class="col-sm-3 control-label">Direct Class Membership Role</label>
-                            <div class="col-sm-9">
-                                <input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}">
-                            </div>
-                        </div>
+										<div class="form-group">
+											<label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
+											<div class="col-sm-9">
+												<select class="form-control" id="use-string-literal-conversion" value="{{useStringLiteralConversion}}">
+												  <option>SIMPLE</option>
+												  <option>TYPED</option>
+												  <option>OFF</option>
+												</select>
+											</div>
+										</div>
+						
+										<div class="form-group">
+											<label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
+											<div class="col-sm-9">
+												<select class="form-control" id="query-engine-type" value="{{queryEngineType}}">
+												  <option>VIRTUOSO</option>
+												  <option>GENERAL</option>
+												</select>
+											</div>
+										</div>
 
-                        <div class="form-group">
-                            <label for="indirect-class-membership-role" class="col-sm-3 control-label">Indirect Class Membership Role</label>
-                            <div class="col-sm-9">
-                                <input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}">
-                            </div>
-                        </div>
+										<div class="form-group">
+											<div class="col-sm-5">
+												<label class="form-check-label">
+												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{useDefaultGroupingSeparator}}">
+												 <span class="custom-checkbox"></span>
+												 Use Default Grouping Separator
+											  </label>
+											</div>
+											<div class="col-sm-5">
+												<input id="default-grouping-separator" type="text" class="form-control" value="{{defaultGroupingSeparator}}" disabled="{{NOTuseDefaultGroupingSeparator}}">
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<div class="col-sm-5">
+												<label class="form-check-label">
+												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{showCardinalities}}">
+												 <span class="custom-checkbox"></span>
+												 Show Cardinalities
+											  </label>
+											</div>
+										</div>
+									
+                                    </form>
+                                </div>
+                                <!-- end of tab1 -->
 
-                        <div class="form-group">
-                            <div class="col-sm-5">
-                                <label class="form-check-label">
-                                 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{showCardinalities}}">
-                                 <span class="custom-checkbox"></span>
-                                 Show Cardinalities
-                              </label>
-                            </div>
-                        </div>
+                                <!-- tab2 -->
+                                <div class="tab-pane fade padding-10" id="sec">
+									<form class="form-horizontal" role="form">
 
-						 <div class="form-group">
-                            <div class="col-sm-5">
-                                <label class="form-check-label">
-                                 <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}">
-                                 <span class="custom-checkbox"></span>
-                                 Auto-hide default property name
-                              </label>
-                            </div>
-                        </div>
+									<div class="form-group">
+										<label for="endpoint-username" class="col-sm-3 control-label">Username</label>
+										<div class="col-sm-9">
+											<input id="endpoint-username" type="text" class="form-control" value="{{endpointUsername}}">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="endpoint-password" class="col-sm-3 control-label">Password</label>
+										<div class="col-sm-9">
+											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{endpointPassword}}">
+										</div>
+									</div>
+									
+                                    </form>
+                                </div>
+                                <!-- end of tab2 -->
+								
+								<!-- tab3 -->
+                                <div class="tab-pane fade padding-10" id="extra">
+									<form class="form-horizontal" role="form">
 
-						<div class="form-group">
-                            <div class="col-sm-5">
-                                <label class="form-check-label">
-                                 <input class="form-check-input" id="show-prefixes-for-all-non-local-names" type="checkbox" checked="{{showPrefixesForAllNonLocalNames}}">
-                                 <span class="custom-checkbox"></span>
-                                 Show prefixes for all non-local names
-                              </label>
+										<div class="form-group">
+											<label for="direct-class-membership-role" class="col-sm-3 control-label">Direct Class Membership Role</label>
+											<div class="col-sm-9">
+												<input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Indirect Class Membership Role</label>
+											<div class="col-sm-9">
+												<input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}">
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<div class="col-sm-10">
+												<label class="form-check-label">
+												 <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}">
+												 <span class="custom-checkbox"></span>
+												 Complete RDF boxes in datetime functions
+											  </label>
+											</div>
+										</div>
+										
+										 <div class="form-group">
+											<div class="col-sm-10">
+												<label class="form-check-label">
+												 <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}">
+												 <span class="custom-checkbox"></span>
+												 Auto-hide default property name
+											  </label>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="col-sm-10">
+												<label class="form-check-label">
+												 <input class="form-check-input" id="show-prefixes-for-all-non-local-names" type="checkbox" checked="{{showPrefixesForAllNonLocalNames}}">
+												 <span class="custom-checkbox"></span>
+												 Show prefixes for all non-local names
+											  </label>
+											</div>
+										</div>
+									
+                                    </form>
+                                </div>
+                                <!-- end of tab3 -->
+
                             </div>
                         </div>
-						<div class="form-group">
-                            <label for="endpoint-username" class="col-sm-3 control-label">Username</label>
-                            <div class="col-sm-9">
-                                <input id="endpoint-username" type="text" class="form-control" value="{{endpointUsername}}">
-                            </div>
-                        </div>
-						<div class="form-group">
-                            <label for="endpoint-password" class="col-sm-3 control-label">Password</label>
-                            <div class="col-sm-9">
-                                <input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{endpointPassword}}">
-                            </div>
-                        </div>
-                    </form>
+                    </div>			
+		
+
                 </div>
 
                 <div class="modal-footer">
