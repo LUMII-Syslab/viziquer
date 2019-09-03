@@ -557,6 +557,34 @@ Template.addDiagram.events({
 
 });
 
+Template.importOntology.helpers({
+
+	schemas: function() {
+		var result = null;
+		var tool_id = null;
+		
+		if (Projects && Projects.find().count() > 0)
+			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		
+	    Meteor.subscribe("Services", {});
+	
+		if ( tool_id && tool_id != 'undefined')
+		{
+			var services = Services.findOne({toolId: tool_id });
+			
+			if (services && services.schemas)
+			{
+				result = [];
+				_.each(services.schemas, function (s){
+					result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
+				});
+			}
+	
+		}
+		return result;
+	},
+
+});
 
 Template.importOntology.events({
 
@@ -570,13 +598,18 @@ Template.importOntology.events({
 				};
 
 		var url_value = $("#import-url").val();
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
 			VQ_Schema_copy = null;
 			list.url = url_value;
 			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
 		}
-
+		else if (url_value_from_list) {
+			VQ_Schema_copy = null;
+			list.url = url_value_from_list;
+			Utilities.callMeteorMethod("loadMOntologyByUrl", list);			
+		}
 		else {
 			var fileList = $("#fileList")[0].files;
 		    _.each(fileList, function(file) {
@@ -652,6 +685,34 @@ Template.importOntology.events({
 
 });
 
+Template.uploadProject.helpers({
+
+	projects: function() {
+		var result = null;
+		var tool_id = null;
+		
+		if (Projects && Projects.find().count() > 0)
+			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		
+	    Meteor.subscribe("Services", {});
+	
+		if ( tool_id && tool_id != 'undefined')
+		{
+			var services = Services.findOne({toolId: tool_id });
+			
+			if (services && services.projects)
+			{
+				result = [];
+				_.each(services.projects, function (p){
+					result.push({caption: "Upload " + p.caption, name: p.name, link: p.link});
+				});
+			}			
+		}
+		return result;
+	},
+
+});
+
 
 Template.uploadProject.events({
 
@@ -665,9 +726,14 @@ Template.uploadProject.events({
 		};
 
 		var url_value = $("#import-projecturl").val();
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
 			list.url = url_value;
+			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+		}
+		else if (url_value_from_list) {
+			list.url = url_value_from_list;
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
 		}
 		else {

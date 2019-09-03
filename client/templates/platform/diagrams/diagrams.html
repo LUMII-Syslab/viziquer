@@ -283,6 +283,9 @@
                             <ul class="tab-bar">
                                 <li class="active" id="project-members"><a href="#file" data-toggle="tab">File</a></li>
                                 <li id="find-people"><a href="#url" data-toggle="tab">URL</a></li>
+								{{#if schemas}}
+								<li id="project-list"><a href="#schemaslist" data-toggle="tab">List</a></li>
+								{{/if}}
                             </ul>
                         </div>
 
@@ -317,6 +320,25 @@
 
                                 </div>
                                 <!-- end of tab2 -->
+													
+								<!-- tab3 -->
+								{{#if schemas}}
+								<div class="tab-pane fade padding-10" id="schemaslist">
+									<div class="form-group">  
+										{{#each schemas}}
+											<div class="col-lg-10 schema" name="{{name}}" type = "schema" link = "{{link}}" >
+												<label class="label-radio">
+													<input type="radio" name="stack-radio" value="{{name}}" {{name}}>
+													<span class="custom-radio"></span>
+													 <span style="{{clr}}">{{caption}} </span>
+												</label>
+											</div>
+										{{/each}}
+									</div>
+								</div>
+								{{/if}}
+				
+                                <!-- end of tab3 -->
 
                             </div>
                         </div>
@@ -350,6 +372,9 @@
                             <ul class="tab-bar">
                                 <li class="active" id="project-members"><a href="#projectfile" data-toggle="tab">File</a></li>
                                 <li id="find-people"><a href="#projecturl" data-toggle="tab">URL</a></li>
+								{{#if projects}}
+								<li id="project-list"><a href="#projectlist" data-toggle="tab">List</a></li>
+								{{/if}}
                             </ul>
                         </div>
                         <div class="panel-body">
@@ -382,7 +407,27 @@
                                     </form>
 
                                 </div>
+				
                                 <!-- end of tab2 -->
+								               
+								<!-- tab3 -->
+								{{#if projects}}
+								<div class="tab-pane fade padding-10" id="projectlist">
+									<div class="form-group">  
+										{{#each projects}}
+											<div class="col-lg-10 schema" name="{{name}}" type = "project" link = "{{link}}" >
+												<label class="label-radio">
+													<input type="radio" name="stack-radio" value="{{name}}" {{name}}>
+													<span class="custom-radio"></span>
+													 <span style="{{clr}}">{{caption}} </span>
+												</label>
+											</div>
+										{{/each}}
+									</div>
+								</div>
+								{{/if}}
+				
+                                <!-- end of tab3 -->
 
                             </div>
                         </div>
