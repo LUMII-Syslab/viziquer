@@ -105,7 +105,10 @@ transformSubstring = function(expressionTable){
 			var substrStart, substrEnd = null;
 			substrStart = substringValues.substring(1,2);
 			if(substringValues.search(",") != -1) substrEnd = substringValues.substring(substringValues.search(",")+1,substringValues.search(",")+2);
-			else substrEnd = substrStart;
+			else {
+				substrEnd = substrStart;
+				substrStart = 1;
+			}
 		
 			t["Substring"] = "";
 			
