@@ -65,7 +65,7 @@ Meteor.methods({
 
 				return diagram;
 			});
-			var schema = Schema.findOne({projectId: project_id, versionId: version_id});
+			var schema = Schema.findOne({projectId: project_id});
 			if (!schema) { schema = {}; }
 
 			return {diagrams: diagrams, project: project, schema:schema };
@@ -76,8 +76,7 @@ Meteor.methods({
 
 		console.log("in uploadProjectDataByUrl", list)
         var result = HTTP.call('GET', list.url);
-        //console.log("result", result)
-		console.log("result", result.data)
+		//console.log("result", result.data)
 		list.data = result.data;
 		
 		uploadProject(list);
@@ -264,7 +263,8 @@ function uploadProject(list) {
 			if (_.size(schema) > 0 )
 			{
 				delete schema._id;
-				_.extend(schema, {projectId: project_id, versionId: version_id	});
+				//_.extend(schema, {projectId: project_id, versionId: version_id	});
+				_.extend(schema, {projectId: project_id});
 				Schema.insert(schema);
 
 			}

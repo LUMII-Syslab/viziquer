@@ -82,16 +82,16 @@ Template.diagramsRibbon.events({
 
 		});
 	},
-	
-	'click #export': function(e) { 
+
+	'click #export': function(e) {
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 				};
-		
+
 		var schema_full = {};
-		var schema_data = {};	
-					
+		var schema_data = {};
+
 		if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
 			schema_full = VQ_Schema_copy;
 			schema_data = VQ_Schema_copy.Data;
@@ -99,14 +99,14 @@ Template.diagramsRibbon.events({
 			//link.setAttribute("download", "schema.json");
 			//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
 			//document.body.appendChild(link);
-			//link.click(); 
+			//link.click();
 
 			schema_full.printOwlFormat();
-		}		
+		}
 
-		if (_.size(schema_full) == 0 ) {		
+		if (_.size(schema_full) == 0 ) {
 			Utilities.callMeteorMethod("getProjectSchema", list, function(resp) {
-				if (_.size(resp.schema) > 0 ) { 
+				if (_.size(resp.schema) > 0 ) {
 					schema_data = resp.schema;
 					schema_full = new VQ_Schema(schema_data);
 
@@ -114,13 +114,13 @@ Template.diagramsRibbon.events({
 					//link.setAttribute("download", "schema.json");
 					//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
 					//document.body.appendChild(link);
-					//link.click(); 
-					
+					//link.click();
+
 					schema_full.printOwlFormat();
-					
+
 				}
 			});
-		}	
+		}
 	},
 
 	'click #upload-project': function(e, templ) {
@@ -557,6 +557,34 @@ Template.addDiagram.events({
 
 });
 
+Template.importOntology.helpers({
+
+	schemas: function() {
+		var result = null;
+		var tool_id = null;
+		
+		if (Projects && Projects.find().count() > 0)
+			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		
+	    Meteor.subscribe("Services", {});
+	
+		if ( tool_id && tool_id != 'undefined')
+		{
+			var services = Services.findOne({toolId: tool_id });
+			
+			if (services && services.schemas)
+			{
+				result = [];
+				_.each(services.schemas, function (s){
+					result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
+				});
+			}
+	
+		}
+		return result;
+	},
+
+});
 
 Template.importOntology.events({
 
@@ -570,12 +598,18 @@ Template.importOntology.events({
 				};
 
 		var url_value = $("#import-url").val();
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
+			VQ_Schema_copy = null;
 			list.url = url_value;
 			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
 		}
-		
+		else if (url_value_from_list) {
+			VQ_Schema_copy = null;
+			list.url = url_value_from_list;
+			Utilities.callMeteorMethod("loadMOntologyByUrl", list);			
+		}
 		else {
 			var fileList = $("#fileList")[0].files;
 		    _.each(fileList, function(file) {
@@ -584,8 +618,48 @@ Template.importOntology.events({
 
 		        reader.onload = function(event) {
 					var data = JSON.parse(reader.result)
+
 					if (data) {
 						if ( data.Classes ) {
+							_.each(data.Classes, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var superclasses = [];
+								_.each(el.SuperClasses, function (sc){
+									superclasses.push(decodeURIComponent(sc));
+								});
+								el.SuperClasses = superclasses;
+							});
+							_.each(data.Attributes, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var sourceclasses = [];
+								_.each(el.SourceClasses, function (sc){
+									sourceclasses.push(decodeURIComponent(sc));
+								});
+								el.SourceClasses = sourceclasses;
+							});
+							_.each(data.Associations, function(el) {
+								if (el.localName)
+									el.localName = decodeURIComponent(el.localName);
+								if (el.fullName)
+									el.fullName = decodeURIComponent(el.fullName);
+								var classpairs = [];
+								_.each(el.ClassPairs, function (cp){
+									var cp_new = {};
+									if ( cp.SourceClass )
+										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
+									if ( cp.TargetClass )
+										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
+									classpairs.push(cp_new);
+								});
+								el.ClassPairs = classpairs;
+							});
+
 							VQ_Schema_copy = null;
 							list.data = data;
 
@@ -611,6 +685,34 @@ Template.importOntology.events({
 
 });
 
+Template.uploadProject.helpers({
+
+	projects: function() {
+		var result = null;
+		var tool_id = null;
+		
+		if (Projects && Projects.find().count() > 0)
+			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		
+	    Meteor.subscribe("Services", {});
+	
+		if ( tool_id && tool_id != 'undefined')
+		{
+			var services = Services.findOne({toolId: tool_id });
+			
+			if (services && services.projects)
+			{
+				result = [];
+				_.each(services.projects, function (p){
+					result.push({caption: "Upload " + p.caption, name: p.name, link: p.link});
+				});
+			}			
+		}
+		return result;
+	},
+
+});
+
 
 Template.uploadProject.events({
 
@@ -618,15 +720,20 @@ Template.uploadProject.events({
 
 		//hidding the form
 		$('#upload-project-form').modal("hide");
-		
+
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 		};
-		
+
 		var url_value = $("#import-projecturl").val();
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
 			list.url = url_value;
+			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+		}
+		else if (url_value_from_list) {
+			list.url = url_value_from_list;
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
 		}
 		else {
@@ -691,7 +798,9 @@ Template.ontologySettings.events({
 					showCardinalities: $("#show-cardinalities").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
-					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked")
+					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
+					endpointUsername: $("#endpoint-username").val(),
+					endpointPassword: $("#endpoint-password").val()
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -728,6 +837,8 @@ Template.ontologySettings.events({
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
+		 $("#endpoint-username").val(proj.endpointUsername);
+		 $("#endpoint-password").val(proj.endpointPassword);
 	 }
 
 	},
@@ -738,6 +849,8 @@ Template.ontologySettings.events({
 					versionId: Session.get("versionId"),
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
+					endpointUsername: $("#endpoint-username").val(),
+					endpointPassword: $("#endpoint-password").val(),
 				};
 
 		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
@@ -748,6 +861,8 @@ Template.ontologySettings.events({
 			if (res.status == 200) {
 				class_name = "success";
 				text = "Connection is ok";
+			} else if (res.status === 401) {
+				text = "Connection failed; probably wrong credentials";
 			}
 
 			var msg = {text: text,
@@ -848,6 +963,18 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
+		}
+	},
+	endpointUsername: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.endpointUsername;
+		}
+	},
+	endpointPassword: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return proj.endpointPassword;
 		}
 	},
 });

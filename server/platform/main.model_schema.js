@@ -255,6 +255,17 @@ Schemas.Projects = new SimpleSchema({
  			 label: "Projects.completeRDFBoxesInDatetimeFunctions",
  			 optional: true,
  	    },
+		endpointUsername: {
+ 			 type: String,
+ 			 label: "Projects.endpointUsername",
+ 			 optional: true,
+ 	    },
+		endpointPassword: {
+ 			 type: String,
+ 			 label: "Projects.endpointPassword",
+ 			 optional: true,
+ 	    },
+		
 
     category: {
         type: String,

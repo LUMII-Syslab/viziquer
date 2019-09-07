@@ -1,0 +1,122 @@
+
+<template name="ConnectClasses">
+    <style>
+        label {
+            padding-right: 5px;
+        }
+
+        input:invalid+span.validity:after {
+          content: 'X';
+          padding-left: 5px;
+          color: red;
+        }
+
+        input:valid+span.validity:after {
+          content: 'V';
+          padding-left: 5px;
+          color: green;
+        }
+
+        .form-group { 
+            padding-left: 10px;
+            font-size: 12;
+        }
+
+        .custom-radio{
+            transform: scale(0.75);
+        }
+
+        .label-radio:hover input ~ .custom-radio{
+            background-color: lightgrey;
+        }
+       
+        p{
+            margin: 0px 0px;
+            font-size: 80%;       
+        }
+
+        div.modal-bodyCC {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 50vh;
+            font-size: 12;
+        }
+
+        #max_length {
+            width: 30%;
+        }
+
+        #show-settings, #apply-settings {
+            border-radius: 4px; 
+            background: transparent;
+        }
+
+        #show-settings:hover, #apply-settings:hover {
+            background: lightgrey;
+        }
+    </style>
+    <div id="connect-classes-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Connect Classes</h4>
+                </div>
+                <div class="modal-body">
+                    <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> </p>
+                    <div id="settings" style="display:block;">
+                        <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
+                        <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
+                        <span class="validity"></span>
+                        <p id = "direction_text">Please choose chain's direction:</p>                        
+                        <form id="radioList0" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                {{#each elements}}                                
+                                    <div class="col-lg-10 elements" name="sequence">                                
+                                        <label class="label-radio">                                            
+                                            <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
+                                            <span class="custom-radio"></span>
+                                            From <span style="color:darkorange;">{{name}}</span>
+                                        </label>
+                                    </div>
+                                {{/each}} 
+                            </div>
+                        </form>                          
+                    </div>
+                    <hr>
+
+                    <div class="searchBox" id="searchBox">
+                        <p style="margin-left: 0px; margin-bottom:10px;">Type something in the input field to search the list for specific items (no spaces allowed):</p>  
+                        <input class="form-control" id="searchList" type="text" placeholder="Search..">
+                        
+                    </div>
+                    <hr>
+
+                    <div class="modal-bodyCC">
+                        <form id="radioList" class="form-horizontal" role="form">
+                            <div class="form-group">                
+                                <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
+                                {{#each shortLinkList}}                                
+                                    <div class="col-lg-10 connections" name="chain">                                
+                                        <label class="label-radio">                                            
+                                            <input type="radio" name="stack-radio" value="{{number}}" style="font-size:14px">
+                                            <span class="custom-radio"></span>                                    
+                                            {{#each array}}
+                                               {{this.type}}{{this.link}} <span style="color:darkorange;">{{this.class}}</span>
+                                            {{/each}}
+                                        </label>
+                                    </div>
+                                {{/each}} 
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="modal-footer">                    
+                    <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-connect" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>

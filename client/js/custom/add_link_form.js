@@ -1,115 +1,30 @@
 Interpreter.customMethods({
 	AddLink: function () {
-		Interpreter.destroyErrorMsg();		
+		Interpreter.destroyErrorMsg();
+		Template.AddLink.fullList.set(getAllAssociations());
+		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);		
 		$("#add-link-form").modal("show");
 	},
 })
 
+Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
+Template.AddLink.shortList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 
 Template.AddLink.helpers({
 
-	associations: function() {
-		//start_elem
-		var start_elem_id = Session.get("activeElement");
-		var startElement = new VQ_Element(start_elem_id);
-		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
-			//Associations
-			var asc = [];
-			var ascReverse = [];
-			// var ascDetails = getDetailedAttributes(); 
-			// //check if max cardinality exists 
-			// var hasCardinalities = false;
-			// _.each(ascDetails, function(e){
-			// 	if (e.max) hasCardinalities = true;
-			// })
-
-			var className = startElement.getName(); 
-			var schema = new VQ_Schema();
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-
-			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
-				if (startElement.getLinkToRoot()){
-					var element = startElement.getLinkToRoot().link.getElements();
-					if (startElement.getLinkToRoot().start) {
-						var newStartClass = new VQ_Element(element.start.obj._id);						
-        				className = newStartClass.getName();
-        			} else {
-        				var newStartClass = new VQ_Element(element.end.obj._id);						
-        				className = newStartClass.getName();
-        			}						
-				}					
-			} 
-
-			if (schema.classExist(className)) {
-				
-				var allAssociations = schema.findClassByName(className).getAllAssociations();
-
-				//remove duplicates
-				allAssociations = allAssociations.filter(function(obj, index, self) { 
-					return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-				});
-				_.each(allAssociations, function(e){
-					var cardinality = "";
-					var colorLetters = ""; 				
-					if (proj) {				
-						if (proj.showCardinalities=="true"){ 
-							if (e.type == "<=") {
-								cardinality = cardinality.concat("[*]");
-								colorLetters = colorLetters.concat("color: purple");
-							} else {
-								//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
-								var maxCard = e.maxCard;
-								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
-									cardinality = cardinality.concat("[*]");
-									colorLetters = colorLetters.concat("color: purple");
-								}
-							}
-							/*if (!hasCardinalities || e.type == "<=") { 
-								cardinality = cardinality.concat("[*]");
-								colorLetters = colorLetters.concat("color: purple");
-							} else {
-								_.each(ascDetails, function(d){
-									//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
-									if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
-										&& d.max == -1) {
-										cardinality = cardinality.concat("[*]");
-										colorLetters = colorLetters.concat("color: purple");
-									}
-									//}
-								});
-								
-							}*/
-						}
-					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
-					
-					
-					//prefix:name
-					var eName = e.short_name
-					
-					
-					if(e.type == "=>") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
-					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
-					
-					if (e.class == className) //Link to itself
-						if (e.type == "=>")
-							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
-						else
-							asc.push({name: e.name, class: e.short_class_name, type: "=>", card: cardinality, clr: colorLetters});
-				});
-			}
-
-			//default value for any case
-			if (proj){
-      			if (proj.showCardinalities=="true")
-      				ascReverse.push({name: "++", class: " ", type: "=>", card: "[*]", clr: "color: purple"}); 
-				else {
-      				ascReverse.push({name: "++", class: " ", type: "=>", card: "", clr: ""});
-      			}
-      		}
-			return asc.concat(ascReverse);
-		}
+	fullList: function(){
+		return Template.AddLink.fullList.get();
 	},
 
+	shortList: function(){
+		return Template.AddLink.shortList.get();
+	},
+
+	/*associations: function() {
+		asc = getAllAssociations();		
+		console.log(asc);
+		return asc;
+	},*/
 
 });
 
@@ -127,8 +42,14 @@ Template.AddLink.events({
 		$("div[id=errorField]").remove();
 
         if (!name || name == "") {
-            console.log("Choose valid link");
-            $(".modal-body").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");
+        	var value = $("#mySearch").val();
+        	if (!value){
+	            console.log("Choose valid link");
+	            $(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");
+	        } else {
+	        	Template.AddLink.fullList.set(getAllAssociations());
+	        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link. <br> Path deffinition will be added later</div>");
+	        }
         } else {
 			//start_elem
 			var start_elem_id = Session.get("activeElement");			
@@ -140,6 +61,7 @@ Template.AddLink.events({
 				console.log("Unknown error - active element does not exist.");
 				return;
 			}
+
             var d = 30; //distance between boxes
             var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
             var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
@@ -487,7 +409,8 @@ Template.AddLink.events({
         } 
 	},
 
-	"change #link-list-form": function() {
+	"click #link-list-form": function() {
+		$("div[id=errorField]").remove();
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
         if (proj) {
             if(proj.showCardinalities=="true"){            
@@ -507,6 +430,20 @@ Template.AddLink.events({
                 });
             }
         }
+	},
+
+	"keyup #mySearch": function(){
+		$("div[id=errorField]").remove();
+		var value = $("#mySearch").val().toLowerCase();
+		if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
+			Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		} else {
+			var ascList = Template.AddLink.fullList.curValue;
+			ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
+				return e.name.toLowerCase().indexOf(value) > -1 || e.class.toLowerCase().indexOf(value) > -1;
+			})
+			Template.AddLink.shortList.set(ascList);
+		}
 	},
 
 });
@@ -529,8 +466,142 @@ function clearAddLinkInput(){
 
 	$('input[id=goto-wizard]').attr('checked', false);
 	$('input[id=goto-wizard]').attr("disabled","disabled");
-
+	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
+}
+
+function getAllAssociations(){
+	//start_elem
+		var start_elem_id = Session.get("activeElement");
+		var startElement = new VQ_Element(start_elem_id);
+		if (!_.isEmpty(startElement) && startElement.isClass()){ //Because in case of deleted element ID is still "activeElement"
+			//Associations
+			var asc = [];
+			var ascReverse = [];
+			// var ascDetails = getDetailedAttributes(); 
+			// //check if max cardinality exists 
+			// var hasCardinalities = false;
+			// _.each(ascDetails, function(e){
+			// 	if (e.max) hasCardinalities = true;
+			// })
+
+			var className = startElement.getName(); 
+			var schema = new VQ_Schema();
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+
+			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
+				if (startElement.getLinkToRoot()){
+					var element = startElement.getLinkToRoot().link.getElements();
+					if (startElement.getLinkToRoot().start) {
+						var newStartClass = new VQ_Element(element.start.obj._id);						
+        				className = newStartClass.getName();
+        			} else {
+        				var newStartClass = new VQ_Element(element.end.obj._id);						
+        				className = newStartClass.getName();
+        			}						
+				}					
+			} 
+
+			if (schema.classExist(className)) {
+				
+				var allAssociations = schema.findClassByName(className).getAllAssociations();
+
+				//remove duplicates
+				allAssociations = allAssociations.filter(function(obj, index, self) { 
+					return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+				});
+				_.each(allAssociations, function(e){
+					var cardinality = "";
+					var colorLetters = ""; 				
+					if (proj) {				
+						if (proj.showCardinalities=="true"){ 
+							if (e.type == "<=") {
+								cardinality = cardinality.concat("[*]");
+								colorLetters = colorLetters.concat("color: purple");
+							} else {
+								//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
+								var maxCard = e.maxCard;
+								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
+									cardinality = cardinality.concat("[*]");
+									colorLetters = colorLetters.concat("color: purple");
+								}
+							}
+							/*if (!hasCardinalities || e.type == "<=") { 
+								cardinality = cardinality.concat("[*]");
+								colorLetters = colorLetters.concat("color: purple");
+							} else {
+								_.each(ascDetails, function(d){
+									//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
+									if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
+										&& d.max == -1) {
+										cardinality = cardinality.concat("[*]");
+										colorLetters = colorLetters.concat("color: purple");
+									}
+									//}
+								});
+								
+							}*/
+						}
+					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
+					
+					
+					//prefix:name
+					var eName = e.short_name
+					
+					
+					if(e.type == "=>") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
+					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
+					
+					if (e.class == className) //Link to itself
+						if (e.type == "=>")
+							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
+						else
+							asc.push({name: e.name, class: e.short_class_name, type: "=>", card: cardinality, clr: colorLetters});
+				});
+			}
+
+			//default value for any case
+			if (proj){
+      			if (proj.showCardinalities=="true")
+      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple"}); 
+				else {
+      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: ""});
+      			}
+      		}
+      		asc = asc.concat(ascReverse);
+
+      		if (proj){
+      			var selfName = "";
+      			if (className.indexOf("[") == -1) {      				
+      				selfName = className;
+      			} else {
+					var linkUp = startElement.getLinkToRoot(); 
+					if (!linkUp || linkUp == undefined) {
+						selfName = "";
+					} else {
+						linkUp = linkUp.link.obj;
+						var previousClassId = "";		
+						if (linkUp.startElement == start_elem_id) {
+							previousClassId = linkUp.endElement;
+						} else if (linkUp.endElement == start_elem_id) {
+							previousClassId = linkUp.startElement;
+						} else {
+							console.log(73, ": error with previous element");
+							return;
+						}
+
+						var previousVQelement = new VQ_Element(previousClassId);
+						selfName = previousVQelement.getName();
+					}
+				}
+      			if (proj.showCardinalities=="true")
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""}); 
+				else {
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""});
+      			}
+      		}  		
+			return asc;
+		}
 }
 
 // function getDetailedAttributes() {

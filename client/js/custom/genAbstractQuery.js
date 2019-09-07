@@ -129,7 +129,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
           if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
              // TODO: longer path!
              // TODO: resolve type
-             parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+             parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id, upBySubQuery:1, distanceFromClass:1});
           } else if(typeof obj_class.linkIdentification === "undefined") {
 			  diagramm_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 		  };
@@ -148,7 +148,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
                 parents_scope_table.CLASS_ALIAS.push(_.clone(ca))
             });
             my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
-                parents_scope_table.AGGREGATE_ALIAS.push(_.clone(ca))
+				clone_ca = _.clone(ca);
+				if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+				  if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+			    };
+				if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+                parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
             });
        };
 
@@ -161,6 +166,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
          my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
+             if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+			   if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+			 }else{
+				if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+			 }
              parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
          });
        };
@@ -172,7 +182,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
            if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
-           };
+			 clone_ca["distanceFromClass"] = 1
+           }else{
+			if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+		   }
            parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(clone_ca)
          });
          my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
@@ -180,8 +193,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
            if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
-           };
+			 clone_ca["distanceFromClass"] = 1
+           }else{
+		     if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
+		   }
            parents_scope_table.UNRESOLVED_NAME.push(clone_ca)
+		   
          });
        };
     }
@@ -195,7 +212,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
          if (!symbol_table[obj_class.identification._id][entry.id]) {
            symbol_table[obj_class.identification._id][entry.id] = [];
          };
-         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery});
+         symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
        })
     })
 	// we should build symbol table entry for this Class.
@@ -205,7 +222,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
          if (!symbol_table["root"][entry.id]) {
            symbol_table["root"][entry.id] = [];
          };
-         symbol_table["root"][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery});
+         symbol_table["root"][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
        })
     })
 
@@ -645,6 +662,12 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
           }; 
 		  if (proj.completeRDFBoxesInDatetimeFunctions) {
             proj_params.completeRDFBoxesInDatetimeFunctions = proj.completeRDFBoxesInDatetimeFunctions;
+          };
+		  if (proj.endpointUsername) {
+            proj_params.endpointUsername = proj.endpointUsername;
+          };
+		  if (proj.endpointPassword) {
+            proj_params.endpointPassword = proj.endpointPassword;
           };
           return proj_params;
      }

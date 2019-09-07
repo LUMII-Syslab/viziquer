@@ -101,13 +101,54 @@ Projects.hookOptions.after.remove = {fetchPrevious: false};
 Meteor.methods({
 
 	insertProject: function(list) {
-
+		var schema_link = null;
+		var project_link = null;
+		var versionId = null;
 		var user_id = Meteor.userId();
 		if (user_id) {
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
-
+            
+			if (list.schema_link)
+			{
+				schema_link = list.schema_link;
+				delete 	list.schema_link;
+			}
+			if (list.project_link)
+			{
+				project_link = list.project_link;
+				delete 	list.project_link;
+			}
+			
 		    Projects.insert(list);
+			
+			var project = Projects.findOne({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
+			var projectsUsers = ProjectsUsers.findOne({projectId: project._id})
+			if ( projectsUsers )
+				versionId = projectsUsers.versionId;
+			
+			//console.log(project)
+			//console.log(projectsUsers)
+			
+			if (schema_link)
+			{
+				//console.log("Ir shēmas links")
+				var list = { projectId: project._id,
+							 versionId: versionId, 	
+							 url: schema_link,
+							};
+				Meteor.call("loadMOntologyByUrl", list);
+			}
+			
+			if (project_link)
+			{
+				//console.log("Ir projekta links")
+				var list = { projectId: project._id,
+							 versionId: versionId, 	
+							 url: project_link,
+							};
+				Meteor.call("uploadProjectDataByUrl", list);
+			}
 		}
 	},
 
@@ -135,10 +176,9 @@ Meteor.methods({
 
 
 	dublicateProject: function(list) {
-
 		var user_id = Meteor.userId();
+		var versionId = null;
 		if (is_project_member(user_id, list)) {
-
 			var project_id = list.projectId;
 			var project = Projects.findOne({_id: project_id});
 			if (!project) {
@@ -150,13 +190,20 @@ Meteor.methods({
 			var new_project_id = Projects.direct.insert(project);
 			list.newProjectId = new_project_id;
 
-
 			project._id = new_project_id;
 			var new_version_id = afterInsert(user_id, project);
 
 			Diagrams.find({projectId: project_id}).forEach(function(diagram) {
 				dublicateDiagram(diagram, new_project_id, new_version_id);
 			});
+			
+			var schema = Schema.findOne({projectId: project_id});
+			if (schema) {
+				delete schema._id;
+				_.extend(schema, {projectId: new_project_id});
+				Schema.insert(schema);			
+			}
+
 		}
 
 	},

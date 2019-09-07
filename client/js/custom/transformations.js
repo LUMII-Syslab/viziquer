@@ -218,7 +218,40 @@ Interpreter.customMethods({
  				})
  			}
 
-
+			var selected_elem_id = Session.get("activeElement");
+		
+			var tempSymbolTable = generateSymbolTable();
+			var symbolTable = tempSymbolTable["symbolTable"];
+			for (var  key in symbolTable) {	
+				for (var symbol in symbolTable[key]) {
+					if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
+						var att_val = "avg("+key+")";
+						atr_names.push({value: att_val, input: att_val});
+						att_val = "min("+key+")";
+						atr_names.push({value: att_val, input: att_val});
+						att_val = "max("+key+")";
+						atr_names.push({value: att_val, input: att_val});
+						att_val = "sum("+key+")";
+						atr_names.push({value: att_val, input: att_val});
+						att_val = "group_concat("+key+",',')";
+						atr_names.push({value: att_val, input: att_val});
+					} else {
+						var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+						if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
+							var att_val = "avg("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "min("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "max("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "sum("+key+")";
+							atr_names.push({value: att_val, input: att_val});
+							att_val = "group_concat("+key+",',')";
+							atr_names.push({value: att_val, input: att_val});
+						}
+					}
+				}	
+			}
 
  		}
 
@@ -301,7 +334,8 @@ Interpreter.customMethods({
 		for (var  key in symbolTable) {	
 			for (var symbol in symbolTable[key]) {
 				if(symbolTable[key][symbol]["context"] != selected_elem_id){
-					if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)atr_names.push({value: key, input: key});
+					// if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)atr_names.push({value: key, input: key});
+					if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 ))atr_names.push({value: key, input: key});
 				}
 			}	
 		}
@@ -317,7 +351,7 @@ Interpreter.customMethods({
 		} else {atr_names.push({input:"(select this)",value:"(select this)"});}
 				
 		atr_names.push({input:"*",value:"*"});
-		atr_names.push({input:"(*attr)",value:"(*attr)"});
+		//atr_names.push({input:"(*attr)",value:"(*attr)"});
 		atr_names.push({input:"(*sub)",value:"(*sub)"});
 		// atr_names.push({input:"**",value:"**"});
 
@@ -718,6 +752,7 @@ Interpreter.customMethods({
 			};
 		};
 
+		name_list = _.union(name_list, {value: "==", input: "=="});
 		return name_list;
 	},
 	
@@ -769,7 +804,7 @@ Interpreter.customMethods({
 		
 		for (var key in symbolTable) {
 			for(var k in symbolTable[key]){
-				if(symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
+				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
 			}
 		}
 		
@@ -842,17 +877,42 @@ Interpreter.customMethods({
 		}
 		
 		var group_by_list = [];
-
+		var group_by_list_vissible = [];
 		
+		var group_by_list_sub = [];
+		var group_by_list_vissible_sub = [];
+
+		var selected_elem_id = Session.get("activeElement");
 		
 		var tempSymbolTable = generateSymbolTable();
+		console.log("group by", tempSymbolTable);
 		var symbolTable = tempSymbolTable["symbolTable"];
 
+
+		
 		for (var  key in symbolTable) {
+			
 			for (var  k in symbolTable[key]) {
-				if(symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "CLASS_ALIAS" || symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") group_by_list.push({value: key, input: key});
+				var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][k]["context"], tempSymbolTable["abstractQueryTable"], key);
+					
+				if(symbolTable[key][k]["context"] == selected_elem_id){
+					
+					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS") {
+						if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list.push({value: key, input: key});
+						else group_by_list_vissible.push({value: key, input: key});
+					}
+					if(symbolTable[key][k]["kind"] == "CLASS_ALIAS") group_by_list.unshift({value: key, input: key});
+				}
+				if (symbolTable[key][k]["upBySubQuery"] == 1) {
+					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list_sub.push({value: key, input: key});
+					else group_by_list_vissible_sub.push({value: key, input: key});
+				}
 			}
 		}
+
+		group_by_list = _.union(group_by_list, group_by_list_vissible);
+		group_by_list = _.union(group_by_list, group_by_list_sub);
+		group_by_list = _.union(group_by_list, group_by_list_vissible_sub);
 		
 		group_by_list = _.uniq(group_by_list, false, function(item) {
 	 		return item["input"];
@@ -959,9 +1019,6 @@ Interpreter.customMethods({
         Template.AggregateWizard.endClassId.set(classId);
 
 
-        console.log("classId ", classId)
-
-
         if (classId) {
             var classObj = new VQ_Element(classId);
             if (classObj && classObj.isClass()) {
@@ -990,6 +1047,27 @@ Interpreter.customMethods({
                     _.each(klass.getAllAttributes(), function(att){
                         attr_list.push({attribute: att["name"]});
                     })
+					
+					var selected_elem_id = Session.get("activeElement");
+		
+					var tempSymbolTable = generateSymbolTable();
+					var symbolTable = tempSymbolTable["symbolTable"];
+					for (var  key in symbolTable) {	
+						for (var symbol in symbolTable[key]) {
+							// if(symbolTable[key][symbol]["context"] == selected_elem_id){
+							if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){		
+								attr_list.push({attribute: key});
+							}else{
+								var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+								if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) attr_list.push({attribute: key});
+							}
+							// }
+						}	
+					}
+					attr_list = _.uniq(attr_list, false, function(item) {
+						return item["attribute"];
+					});
+					
                     attr_list = _.sortBy(attr_list, "attribute");
                 }
                 // console.log(attr_list);
@@ -1151,6 +1229,26 @@ Interpreter.customMethods({
 	
 });
 
+findAttributeInAbstractTable = function(context, clazz, fieldValue){
+	var fieldInContext = {};
+
+	if(clazz["identification"]["_id"] == context){
+		//attributes
+		_.each(clazz["fields"],function(field) {
+			if(field["alias"] == fieldValue || field["exp"] == fieldValue){
+				fieldInContext = field;
+			}
+		})
+	} else{
+
+		_.each(clazz["children"],function(subclazz) {
+			fieldInContext = findAttributeInAbstractTable(context, subclazz, fieldValue);
+		})
+	}
+
+	return fieldInContext;
+
+}
 
 generateSymbolTable = function() {
 // console.log("    generateSymbolTable")
@@ -1191,7 +1289,7 @@ generateSymbolTable = function() {
     } else {
       // nothing selected
     }
-	
-	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"]};
-    return {symbolTable:{}, rootSymbolTable:{}};
+	// console.log(abstractQueryTable);
+	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"]};
+    return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"]};
   }
