@@ -4,7 +4,7 @@
 	<div class="login-wrapper" style="-webkit-animation: none !important;">
 		<div class="text-center">
 	    </div>
-		<div class="login-widget">	
+		<div class="login-widget">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<i class="fa fa-plus-circle fa-lg"></i> {{_ "sign_up"}}
@@ -73,18 +73,22 @@
 						</div><!-- /form-group -->
 
 						<div class="seperator"></div>
-						<div class="form-group">
-							<div class="controls">
-								{{_ "already_have_account"}} <a href="/" class="primary-font login-link">{{_ "sign_in"}}</a>
-							</div>
-						</div><!-- /form-group -->
-							
-						<hr/>
+
 						<div class="form-group">
 							<div id="signup" class="controls text-right">
 								<a class="btn btn-success btn-sm login-link {{button_enabled}}" href="/"><i class="fa fa-plus-circle"></i> {{_ "sign_up"}}</a>
 							</div>
 						</div><!-- /form-group -->
+
+						<div class="form-group">
+							<div class="controls">
+								{{_ "already_have_account"}} <a href="/" class="primary-font login-link">{{_ "sign_in"}}</a>
+							</div>
+						</div><!-- /form-group -->
+
+						<hr/>
+
+						{{> loginBranding}}
 					</form>
 				</div>
 			</div><!-- /panel -->

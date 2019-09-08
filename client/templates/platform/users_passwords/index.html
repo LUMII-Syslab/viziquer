@@ -3,7 +3,7 @@
 <template name="index">
 
 	<div class="login-wrapper" style="-webkit-animation: none !important;">
-		<div class="login-widget">	
+		<div class="login-widget">
 			<div class="panel panel-default">
 				<div class="panel-heading clearfix">
 					<div class="pull-left">
@@ -25,12 +25,8 @@
 							<label>{{_ "login_password"}}</label>
 							<input id="password" type="password" placeholder='{{_ "login_password"}}' class="form-control input-sm">
 						</div>
-		
+
 						<div class="seperator"></div>
-						<div class="form-group">
-							{{_ "forgot_password"}}<br/>
-							{{_ "click"}}<a href="{{pathFor 'resetPasswordPage'}}"> {{_ "here"}}</a>{{_ "reset_password"}}
-						</div>
 
 						<div class="panel-footer text-right">
 							<div class="text-right">
@@ -62,11 +58,13 @@
 						</div>
 
 						<div class="form-group">
-							<div class="text-left">
-								<a href="http://viziquer.lumii.lv/">ViziQuer</a>, version 0.2.1 <br>
-								(c) IMCS, University of Latvia
-							</div>
+							{{_ "forgot_password"}}<br/>
+							{{_ "click"}}<a href="{{pathFor 'resetPasswordPage'}}"> {{_ "here"}}</a>{{_ "reset_password"}}
 						</div>
+
+						<hr />
+
+						{{> loginBranding}}
 
 					</form>
 				</div>
