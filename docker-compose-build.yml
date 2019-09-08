@@ -1,13 +1,13 @@
 version: "2"
 services:
- main: 
+ main:
   build: .
   ports:
    - "80:3000"
   links:
    - mongodb
   environment:
-   MONGO_URL: mongodb://mongodb
+   MONGO_URL: mongodb://mongodb/vq
    STARTUP_DELAY: 10
  mongodb:
   image: mongo
