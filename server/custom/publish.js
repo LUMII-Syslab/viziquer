@@ -24,13 +24,13 @@ Meteor.publish("Services", function(list) {
 		return this.stop();
 	}
 
-	if (is_project_member(this.userId, list)) { //console.log(Services.find().count()); console.log(Services.findOne({toolId: list.toolId }));
+	//if (is_project_member(this.userId, list)) { //console.log(Services.find().count()); console.log(Services.findOne({toolId: list.toolId }));
 		return [
 				Services.find(),//Services.find({toolId: list.toolId }),
 			];
-	}
-	else {
+	//}
+	//else {
 		//error_msg();
-		return this.stop();
-	}
+	//	return this.stop();
+	//}
 });
