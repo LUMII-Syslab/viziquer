@@ -185,6 +185,7 @@
       "localName" : "course",
       "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
       "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#course",
+      "maxCardinality" : "1",
       "ClassPairs" : [ {
         "SourceClass" : "http://lumii.lv/ontologies/UnivExample.owl#Registration",
         "TargetClass" : "http://lumii.lv/ontologies/UnivExample.owl#Course"
@@ -193,6 +194,7 @@
       "localName" : "nationality",
       "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
       "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#nationality",
+	  "maxCardinality" : "1",
       "ClassPairs" : [ {
         "SourceClass" : "http://lumii.lv/ontologies/UnivExample.owl#Person",
         "TargetClass" : "http://lumii.lv/ontologies/UnivExample.owl#Nationality"
@@ -209,6 +211,7 @@
       "localName" : "facultyLevel",
       "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
       "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#facultyLevel",
+      "maxCardinality" : "1",
       "ClassPairs" : [ {
         "SourceClass" : "http://lumii.lv/ontologies/UnivExample.owl#Teacher",
         "TargetClass" : "http://lumii.lv/ontologies/UnivExample.owl#FacultyLevel"
@@ -233,6 +236,7 @@
       "localName" : "student",
       "namespace" : "http://lumii.lv/ontologies/UnivExample.owl#",
       "fullName" : "http://lumii.lv/ontologies/UnivExample.owl#student",
+      "maxCardinality" : "1",
       "ClassPairs" : [ {
         "SourceClass" : "http://lumii.lv/ontologies/UnivExample.owl#Registration",
         "TargetClass" : "http://lumii.lv/ontologies/UnivExample.owl#Student"
