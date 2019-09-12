@@ -343,13 +343,13 @@ function setVariableName(varName, alias, variableData, generateNewName){
 					classes[classID] = varNameRep + "_" +count;
 					
 					variableNamesAll[varName] = {"alias" : varNameRep + "_" +count, "nameIsTaken" : variableNamesClass[varName]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[varName]["isVar"], "classes":classes};
-					//console.log(count, varName + "_" +count, variableNamesClass[varName]["counter"], variableNamesAll[varName]["counter"])
+					// console.log(count, varName + "_" +count, variableNamesClass[varName]["counter"], variableNamesAll[varName]["counter"])
 				}
 			}else{
 				return expressionLevelNames[varName];
 			}
 		}else{
-			// console.log("2cccc", varName, isSimpleVariableForNameDef);
+			 // console.log("2cccc", varName, isSimpleVariableForNameDef);
 			//if not used in given expression
 			if(typeof expressionLevelNames[varName] === 'undefined' || typeof expressionLevelNames[varName] === 'function'){
 				// console.log("2c 1", varName);
@@ -362,17 +362,18 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						// console.log("2c 111", varName, parseType);
 						//if simple variable
 						if(isSimpleVariableForNameDef == true){
-							//console.log("4444", attributesNames[varName]["classes"][classID]["name"], attributesNames[varName])
+							// console.log("4444", attributesNames[varName]["classes"][classID]["name"], attributesNames[varName])
 							var count = 0;
 							if(typeof  attributesNames[varName] !== 'undefined'){
-								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
+								// console.log("4a")
+								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"].replace(/-/g, '_');
 								count = attributesNames[varName]["counter"];
 							}
 							var tempIsVar = false;
 							if(parseType == "attribute" || parseType == "class") tempIsVar = true;
 							variableNamesClass[varName] = {"alias" : varNameRep, "nameIsTaken" : true, "counter" : count, "isVar" : tempIsVar};
 						} else {
-							//console.log("5555", attributesNames[varName]["classes"][classID]["name"])
+							// console.log("5555", attributesNames[varName]["classes"][classID]["name"])
 							var count = 0;
 							if(typeof  attributesNames[varName] !== 'undefined'){
 								count = attributesNames[varName]["counter"];
@@ -380,12 +381,12 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							count = count+1;
 							variableNamesClass[varName] = {"alias" : varNameRep+"_"+count, "nameIsTaken" : false, "counter" : count, "isVar" : false};
 						}
-						// console.log("variableNamesClass[varName]", variableNamesClass[varName]);
+						 // console.log("variableNamesClass[varName]", variableNamesClass[varName]);
 						expressionLevelNames[varName] = variableNamesClass[varName]["alias"];
 					
 					//is used in query, but not in a given class (somewhere else)
 					} else {
-						// console.log("2c 112", varName);
+						//  console.log("2c 112", varName);
 						//if simple variable
 						if(isSimpleVariableForNameDef == true){
 							var tempIsVar = false;
@@ -436,10 +437,10 @@ function setVariableName(varName, alias, variableData, generateNewName){
 					return variableNamesClass[varName]["alias"];
 				//is used in a given class
 				}else{
-					// console.log("2c 12", varName);
+					//  console.log("2c 12", varName);
 					//if simple variable
 					if(isSimpleVariableForNameDef == true){
-						// console.log("2c 121", varName);
+						//  console.log("2c 121", varName);
 						var tempIsVar = false;
 						if(parseType == "attribute"|| parseType == "class") tempIsVar = true;
 						
@@ -470,7 +471,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						// console.log("variableNamesClass[varName]", variableNamesClass[varName]);
 					//is expression
 					} else {
-						// console.log("2c 122", varName);
+						 // console.log("2c 122", varName);
 						//name is not taken
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
 							var count = variableNamesClass[varName]["counter"];
@@ -493,13 +494,13 @@ function setVariableName(varName, alias, variableData, generateNewName){
 				}
 			//used in given expression
 			} else {
-				// console.log("2c 2", varName);
+				//  console.log("2c 2", varName);
 				return expressionLevelNames[varName];
 			}
 		}
 		return expressionLevelNames[varName];
 	} else {
-		// console.log("3333", varName);
+		//  console.log("3333", varName);
 		return varName;
 	}
 }
