@@ -411,7 +411,7 @@ Template.AddLink.events({
 
 	"click #link-list-form": function() {
 		$("div[id=errorField]").remove();
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		/*var proj = Projects.findOne({_id: Session.get("activeProject")});
         if (proj) {
             if(proj.showCardinalities=="true"){            
                 $('#link-list-form').change(function(){
@@ -429,7 +429,7 @@ Template.AddLink.events({
                     }                
                 });
             }
-        }
+        }*/
 	},
 
 	"keyup #mySearch": function(){
