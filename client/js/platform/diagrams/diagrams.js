@@ -729,10 +729,12 @@ Template.uploadProject.events({
 		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
+			VQ_Schema_copy = null;
 			list.url = url_value;
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
 		}
 		else if (url_value_from_list) {
+			VQ_Schema_copy = null;
 			list.url = url_value_from_list;
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
 		}
@@ -745,7 +747,7 @@ Template.uploadProject.events({
 				reader.onload = function(event) {
 					var diagrams = JSON.parse(reader.result)
 					list.data = diagrams;
-
+					VQ_Schema_copy = null;
 					Utilities.callMeteorMethod("uploadProjectData", list);
 				}
 

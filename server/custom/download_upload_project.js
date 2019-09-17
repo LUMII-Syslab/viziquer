@@ -262,11 +262,11 @@ function uploadProject(list) {
 			var schema = data.schema;
 			if (_.size(schema) > 0 )
 			{
+				Schema.remove({projectId: project_id});
 				delete schema._id;
 				//_.extend(schema, {projectId: project_id, versionId: version_id	});
 				_.extend(schema, {projectId: project_id});
-				Schema.insert(schema);
-
+				Schema.batchInsert([schema]);
 			}
 
 		}

@@ -200,8 +200,7 @@ function createLink(s_class, t_class, s_role, t_role){
 	t_class[t_role] = s_class;
 	//t_class[t_role][s_class.getID()] = s_class;
 }
-function findPrefixFromList(uri) {
-  var PrefixList =
+var PrefixList =
   {
    "http://www.loc.gov/mads/rdf/v1#": "madsrdf",
     "http://id.loc.gov/ontologies/bflc/": "bflc",
@@ -253,8 +252,19 @@ function findPrefixFromList(uri) {
     "http://rdfs.org/sioc/types#": "sioct",
     "http://www.europeana.eu/schemas/edm/": "edm"
   }
+  
+function findPrefixFromList(uri) {
   if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
   else { return null; }
+}
+function findUriFromList(prefix) {
+	var rez = null;
+	_.each(PrefixList, function(val, key){
+			if (val == prefix)
+				rez = key;
+	})
+	console.log(rez);
+	return rez;
 }
 function findCardinality(card, type) {
 	if (type == "MIN")
@@ -356,7 +366,7 @@ function makeSubTree(classes, deep) {
 		var tree_node = {node_id:node_id,data_id:data_id, localName:cl_info.tr_name, tree_path:cl_info.parent_list.join(" > "), deep:deep, display:"none", orderNum:cl_info.orderNum};
 
 		ccc = ccc +1
-		if ( ccc > 300 ) { console.log("DAUDZZZZZZZZZZZZZZZZZZZZZZZ makeTreeNode"); return tree_list;};
+		//if ( ccc > 300 ) { console.log("DAUDZZZZZZZZZZZZZZZZZZZZZZZ makeTreeNode"); return tree_list;};
 		
 		schema.TreeList[node_id] = tree_node;
 		tree_list = _.union(tree_list, tree_node);
@@ -546,6 +556,9 @@ VQ_Schema.prototype = {
   attributeExist: function (name) {
     var cl = this.findAttributeByName(name);
 	return findName(name, cl);
+  },
+  findUriFromList: function(prefix){
+	return findUriFromList(prefix)
   },
   ontologyExist: function (name) {
     var ontology = _.find(this.Ontologies, function (ont) {
@@ -1058,9 +1071,9 @@ VQ_Schema.prototype = {
 	else if ( schema.classCount < 100 )
 		schema.treeMode = { CompressLevel:1, RemoveLevel:-1, OwlRemoveLevel:10, MaxDeep:6}; //schema.treeMode = { CompressLevel:1, RemoveLevel:5, MaxDeep:6};
 	else if ( schema.classCount < 250 )
-		schema.treeMode = { CompressLevel:2, RemoveLevel:5, OwlRemoveLevel:10, MaxDeep:6};  
+		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:10, MaxDeep:6};  
 	else 
-		schema.treeMode = { CompressLevel:2, RemoveLevel:5, OwlRemoveLevel:10, MaxDeep:6}; 
+		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:10, MaxDeep:6}; 
 	 
 	//schema.treeMode = { CompressLevel:1, RemoveLevel:-1, MaxDeep:6};  // !!!! Testam   
   },
