@@ -929,6 +929,10 @@
                 "procedure": "AddLink"
               },
               {
+                "item": "Add Subquery ...",
+                "procedure": "AddSubquery"
+              },
+              {
                 "item": "Add Attributes ...",
                 "procedure": "AddAttribute"
               },
