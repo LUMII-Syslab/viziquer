@@ -3451,13 +3451,13 @@
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Nested Query",
+                      "input": "Subquery",
                       "value": "SUBQUERY"
                     },
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Global Nested Query",
+                      "input": "Global Subquery",
                       "value": "GLOBAL_SUBQUERY"
                     },
                     {

@@ -2084,7 +2084,7 @@ VQ_Element.prototype = {
   },
   // string  -->
   setNestingType: function(type) {
-    var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Nested Query","GLOBAL_SUBQUERY":"Global Nested Query", "CONDITION":"Extra"};
+    var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Subquery","GLOBAL_SUBQUERY":"Global Subquery", "CONDITION":"Extra"};
     this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
     this.setLinkQueryType(type);
   },
