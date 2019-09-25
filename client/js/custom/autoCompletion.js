@@ -7,14 +7,14 @@ Interpreter.customMethods({
 	conditionAutoCompletion: function(e, compart) {
  
 		grammarType = "class"
-		symbolTable = generateSymbolTable();
+		symbolTable = generateSymbolTableAC();
 		autoCompletion(e);		
 		
 	},
 	attributeAutoCompletion: function(e, compart) {
  
 		grammarType = "attribute"
-		symbolTable = generateSymbolTable();
+		symbolTable = generateSymbolTableAC();
 		autoCompletion(e);		
 		
 	},
@@ -27,14 +27,13 @@ Interpreter.customMethods({
 var currentFocus = 0;
 
 
-generateSymbolTable = function() {
-
+generateSymbolTableAC = function() {
+	console.log("AutoCompletion generateSymbolTable");
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
 		
-		console.log("ddsdsdsds", elem)
-    // now we should find the connected classes ...
+	// now we should find the connected classes ...
     if (elem) {
        var selected_elem = new VQ_Element(elem[0]);
        var visited_elems = {};
@@ -318,7 +317,7 @@ runCompletion = function (text, act_elem){
 		}
 		//console.log("parsed_exp", parsed_exp, obj);
 	} catch (com) {
-		//console.log(Session.get("activeElement"),  com["message"]);
+		// console.log(Session.get("activeElement"),  com["message"]);
 		// console.log(com["message"], JSON.parse(com["message"]));
 		// console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
