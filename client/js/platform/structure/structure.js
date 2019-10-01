@@ -197,7 +197,7 @@ Template.createProjectModal.helpers({
 	services: function() {
 		var result = {};
 	    var tool_id = Session.get("tool");
-	    Meteor.subscribe("Services", {});			
+	    Meteor.subscribe("Services", {});	
 		
 		if ( tool_id != 'undefined')
 		{
@@ -217,7 +217,6 @@ Template.createProjectModal.helpers({
 					result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 				});
 			}			
-
 		}
 					
 		return result;

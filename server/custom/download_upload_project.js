@@ -74,7 +74,7 @@ Meteor.methods({
 
     uploadProjectDataByUrl: function(list) {
 
-		console.log("in uploadProjectDataByUrl", list)
+		//console.log("in uploadProjectDataByUrl", list)
         var result = HTTP.call('GET', list.url);
 		//console.log("result", result.data)
 		list.data = result.data;

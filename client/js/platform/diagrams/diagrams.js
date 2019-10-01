@@ -84,43 +84,7 @@ Template.diagramsRibbon.events({
 	},
 
 	'click #export': function(e) {
-
-		var list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-				};
-
-		var schema_full = {};
-		var schema_data = {};
-
-		if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
-			schema_full = VQ_Schema_copy;
-			schema_data = VQ_Schema_copy.Data;
-			//var link = document.createElement("a");
-			//link.setAttribute("download", "schema.json");
-			//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
-			//document.body.appendChild(link);
-			//link.click();
-
-			schema_full.printOwlFormat();
-		}
-
-		if (_.size(schema_full) == 0 ) {
-			Utilities.callMeteorMethod("getProjectSchema", list, function(resp) {
-				if (_.size(resp.schema) > 0 ) {
-					schema_data = resp.schema;
-					schema_full = new VQ_Schema(schema_data);
-
-					//var link = document.createElement("a");
-					//link.setAttribute("download", "schema.json");
-					//link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
-					//document.body.appendChild(link);
-					//link.click();
-
-					schema_full.printOwlFormat();
-
-				}
-			});
-		}
+		$('#export-ontology-form').modal("show");
 	},
 
 	'click #upload-project': function(e, templ) {
@@ -598,7 +562,7 @@ Template.importOntology.events({
 				};
 
 		var url_value = $("#import-url").val();
-		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
+		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");
 
 		if (url_value) {
 			VQ_Schema_copy = null;
@@ -1011,6 +975,93 @@ Template.renameDiagramForm.events({
 		Utilities.callMeteorMethod("updateDiagram", list);
 	},
 
+});
+
+Template.exportOntology.helpers({
+	parameters: function() {
+		var parameters = {schema:"true"};
+		//console.log("exportOntology.helpers")
+		//console.log(Session.get("activeProject"))
+		if (Session.get("activeProject"))
+		{		
+			var list = {projectId: Session.get("activeProject")};
+
+			if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
+				console.log("Ir jau pareizā shēma gatava")
+				parameters.label = "Schema contains " + _.size(VQ_Schema_copy.Data.Classes) + " classes."
+			}
+		}
+		//console.log(parameters)
+		return parameters;		
+	},
+});
+
+Template.exportOntology.events({
+
+	'click #ok-export-ontology' : function(e) {
+		$('#export-ontology-form').modal("hide");
+		//console.log("exportOntology.events")
+		var choice = $('input[name=stack-radio]:checked').closest(".choice").attr("name");
+		//console.log(choice)
+
+		var list = {projectId: Session.get("activeProject")};
+
+		var schema_full = {};
+		var schema_data = {};
+
+		if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
+			schema_full = VQ_Schema_copy;
+			schema_data = VQ_Schema_copy.Data;
+			if ( choice == "Ch2" )
+				schema_full.printOwlFormat(1);  
+			if ( choice == "Ch3" )
+				schema_full.printOwlFormat(2);  
+			if ( choice == "Ch4" )
+				schema_full.printOwlFormat(3); 
+			if ( choice == "Ch1" ) {
+				delete schema_data._id;
+				delete schema_data.projectId;
+				delete schema_data.versionId;
+				var link = document.createElement("a");
+				var file_name = Projects.findOne({_id: Session.get("activeProject")}).name.concat(".json")
+				link.setAttribute("download", file_name);
+				link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
+				document.body.appendChild(link);
+				link.click();
+			}	
+		}
+
+		if (_.size(schema_full) == 0 ) {
+			Utilities.callMeteorMethod("getProjectSchema", list, function(resp) {
+				if (_.size(resp.schema) > 0 ) {
+					schema_data = resp.schema;
+					if ( choice == "Ch2" || choice == "Ch3" || choice == "Ch4" ) {
+						schema_full = new VQ_Schema(schema_data);
+						if ( choice == "Ch2" )
+							schema_full.printOwlFormat(1);  
+						if ( choice == "Ch3" )
+							schema_full.printOwlFormat(2); 
+						if ( choice == "Ch4" )
+							schema_full.printOwlFormat(2);  
+					}
+					if ( choice == "Ch1" ) {
+						delete schema_data._id;
+						delete schema_data.projectId;
+						delete schema_data.versionId;
+						var link = document.createElement("a");
+						var file_name = Projects.findOne({_id: Session.get("activeProject")}).name.concat(".json")
+						link.setAttribute("download", file_name);
+						link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
+						document.body.appendChild(link);
+						link.click();
+					}
+				}
+			});
+		}
+
+		
+		
+	},
 });
 
 

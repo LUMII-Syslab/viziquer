@@ -511,13 +511,13 @@ var druka = false;
    this.makeAttributesAndAssociations(data);
    if (druka) console.log("—-----------Pēc Asociācijām-------------------")
    if (druka) console.log(Date.now() - startTime  )
-   startTime = Date.now() 
-   this.getOwlFormat();   
-   VQ_r2rml(schema);  
+   //startTime = Date.now() 
+   //this.getOwlFormat();   
+   //VQ_r2rml(schema);   // Tas kaut kam bija paredzēts
+   //if (druka) console.log("—----------Pēc OWL formāta--------------------")
+   //if (druka) console.log(Date.now() - startTime  )  
+   
    VQ_Schema_copy = schema;
-   if (druka) console.log("—----------Pēc OWL formāta--------------------")
-   if (druka) console.log(Date.now() - startTime  )
-
    if (druka) console.log(schema);   
 };
 
@@ -1073,7 +1073,7 @@ VQ_Schema.prototype = {
 	else if ( schema.classCount < 250 )
 		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:10, MaxDeep:6};  
 	else 
-		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:10, MaxDeep:6}; 
+		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:-1, MaxDeep:6}; 
 	 
 	//schema.treeMode = { CompressLevel:1, RemoveLevel:-1, MaxDeep:6};  // !!!! Testam   
   },
@@ -1192,27 +1192,26 @@ VQ_Schema.prototype = {
 	schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], [""]);
 	schema.OwlFormat["1_Ontologies"] = _.union(schema.OwlFormat["1_Ontologies"], newLine.concat("Ontology(<", def_ont.namespace,">"));
 	
-	schema.OwlFormat["2_Declarations"] = [];
-	schema.OwlFormat["3_SubClassOf"] = [];	
-	schema.OwlFormat["4_Properties"] = [];
-	schema.OwlFormat["5_Annotations"] = [];
+	schema.OwlFormat["2_Common"] = [];
+	schema.OwlFormat["3_Restriction"] = [];	
+	schema.OwlFormat["4_Annotation"] = [];
 
 	function checkInstances(cl) { return cl.instanceCount >= schema.treeMode.OwlRemoveLevel || cl.isClassificator};	
 	_.each(schema.Classes, function(cl){
 		if (!cl.isAbstract && checkInstances(cl))
 		{
 			cl_name = cl.getElementOntName();
-			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"], newLine.concat("Declaration(Class(",cl_name,"))"));
+			schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"], newLine.concat("Declaration(Class(",cl_name,"))"));
 			if (cl.instanceCount > 0)
 			{			
-				schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));  
+				schema.OwlFormat["4_Annotation"] = _.union(schema.OwlFormat["4_Annotation"],newLine.concat("AnnotationAssertion(owlc:instanceCount ",cl_name,' "',cl.instanceCount,'"^^xsd:integer )'));  
 			}	
 			if (_.size(cl.originalSubClasses) > 0)
 			{
 				_.each(cl.originalSubClasses, function(sc_full_name) {
 					sc_name = schema.findClassByName(sc_full_name).getElementOntName();
 					if (checkInstances(cl) && checkInstances(schema.findClassByName(sc_full_name)))
-						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
+						schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
 				}) 
 			}			
 		}
@@ -1227,7 +1226,7 @@ VQ_Schema.prototype = {
 				cycle_classes = _.union(cycle_classes, cycle_class.getElementOntName());
 		}
 		if (_.size(cycle_classes) > 1 )
-			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"], newLine.concat("EquivalentClasses(",cycle_classes.join(" "),")"));
+			schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"], newLine.concat("EquivalentClasses(",cycle_classes.join(" "),")"));
 	})
 	
 	function getOwlName(el) { return el.ontology.prefix.concat(":",el.localName)};
@@ -1237,54 +1236,54 @@ VQ_Schema.prototype = {
 		{
 			var atrr_source_classes = _.map( _.filter(el.schemaAttribute, function(s) {return checkInstances(s.sourceClass) }), function(e) { return getOwlName(e.sourceClass);} );
 			if (_.size(atrr_source_classes) > 0 ) {
-				schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(DataProperty(",getOwlName(el),"))"));
+				schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("Declaration(DataProperty(",getOwlName(el),"))"));
 				if (el.type)
-					schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
 				
 				var type_string = (el.type ? el.type: "");  
 				// Te ir arī manas pierēķinātās vērtības, ne tikai sākotnējās.
 				_.each(atrr_source_classes, function (cl) {
 					if ( el.minCardinality == el.maxCardinality) {
-						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
+						schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
 					}
 					else {
-						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
+						schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el)," ",type_string,"))"));
 						if (el.maxCardinality!= -1)
-							schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el)," ",type_string,"))"));
+							schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el)," ",type_string,"))"));
 					}					
 				})				
 
 			}	
 			
 			if  (_.size(atrr_source_classes) == 1 ) {
-				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ",atrr_source_classes[0],")"));
+				schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ",atrr_source_classes[0],")"));
 				if (el.type){
-					schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
-					schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",atrr_source_classes[0],")"));
-					//schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",atrr_source_classes[0]," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
+					schema.OwlFormat["4_Annotation"] = _.union(schema.OwlFormat["4_Annotation"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",atrr_source_classes[0],")"));
+					//schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("SubClassOf(",atrr_source_classes[0]," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))")); // !!! bija aizkomentēts
 				}
 			}	
 			else if  (_.size(atrr_source_classes) > 1 ) { 
-				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ObjectUnionOf(",atrr_source_classes.join(" "),"))"));
+				schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("DataPropertyDomain(",getOwlName(el)," ObjectUnionOf(",atrr_source_classes.join(" "),"))"));
 				if (el.type)
-					schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("DataPropertyRange(",getOwlName(el)," ",el.type,")"));
 					_.each(atrr_source_classes, function (cl) {
-						schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",cl,")"));
-						//schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))"));
+						schema.OwlFormat["4_Annotation"] = _.union(schema.OwlFormat["4_Annotation"],newLine.concat("AnnotationAssertion(Annotation(owlc:target " ,el.type,") owlc:source ",getOwlName(el)," ",cl,")"));
+						//schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("SubClassOf(",cl," DataAllValuesFrom(",getOwlName(el)," ",el.type,"))")); // !!! bija aizkomentēts
 					}) 
 			}
 
 			/*
 			_.each(atrr_source_classes, function (cl) {
 				if ( el.minCardinality == el.maxCardinality) {
-					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataExactCardinality(",el.minCardinality," ",getOwlName(el),"))"));
 				}
 				else {
-					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
 					if (el.maxCardinality!= -1)
-						schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
-				}
-			}) */ 
+						schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," DataMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
+				} 
+			})  */
 		}			
 	})
 	
@@ -1303,14 +1302,14 @@ VQ_Schema.prototype = {
 		})
 		if (_.size(schemaRoles) > 0 && _.size(source_classes) && el.localName != " ") {
 
-			schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(ObjectProperty(",getOwlName(el),"))"));
+			schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("Declaration(ObjectProperty(",getOwlName(el),"))"));
 			
 			var source_classes_list = ( _.size(source_classes) == 1 ? source_classes[0] : str.concat("ObjectUnionOf(",source_classes.join(" "),")"));
 			var target_classes_list = ( _.size(target_classes) == 1 ? target_classes[0] : str.concat("ObjectUnionOf(",target_classes.join(" "),")"));
 			
-			schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyDomain(",getOwlName(el)," ",source_classes_list,")"));
+			schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("ObjectPropertyDomain(",getOwlName(el)," ",source_classes_list,")"));
 			if (target_classes_list != ": " && target_classes_list != "ObjectUnionOf()")
-				schema.OwlFormat["4_Properties"] = _.union(schema.OwlFormat["4_Properties"],newLine.concat("ObjectPropertyRange(",getOwlName(el)," ",target_classes_list,")"));
+				schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("ObjectPropertyRange(",getOwlName(el)," ",target_classes_list,")"));
 				
 			_.each(source_classes, function(source_class){
 				var target_cl = [];
@@ -1321,35 +1320,40 @@ VQ_Schema.prototype = {
 				})
 				var target_cl_list = ( _.size(target_cl) == 1 ? target_cl[0] : str.concat("ObjectUnionOf(",target_cl.join(" "),")"));
 				if (_.size(target_cl) > 0 )
-					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",source_class," ObjectAllValuesFrom(",getOwlName(el)," ",target_cl_list, "))"));
+					schema.OwlFormat["3_Restriction"] = _.union(schema.OwlFormat["3_Restriction"],newLine.concat("SubClassOf(",source_class," ObjectAllValuesFrom(",getOwlName(el)," ",target_cl_list, "))"));
 			})	
 			
 			_.each(schemaRoles, function (s) {
 				if (s.targetClass.localName != " " )
-					schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat("AnnotationAssertion(Annotation(owlc:target ", getOwlName(s.targetClass),") owlc:source ",getOwlName(el)," ",getOwlName(s.sourceClass),")"));
+					schema.OwlFormat["4_Annotation"] = _.union(schema.OwlFormat["4_Annotation"],newLine.concat("AnnotationAssertion(Annotation(owlc:target ", getOwlName(s.targetClass),") owlc:source ",getOwlName(el)," ",getOwlName(s.sourceClass),")"));
 			})
 			
 			// !!! Te būs jāprecizē, jasameklē sākotnējās
 			_.each(source_classes, function (cl) {
-				schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," ObjectMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
+				schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," ObjectMinCardinality(",el.minCardinality," ",getOwlName(el),"))"));
 				if (el.maxCardinality!= -1)
-					schema.OwlFormat["3_SubClassOf"] = _.union(schema.OwlFormat["3_SubClassOf"],newLine.concat("SubClassOf(",cl," ObjectMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
+					schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",cl," ObjectMaxCardinality(",el.maxCardinality," ",getOwlName(el),"))"));
 			}) 
 		}
 	}) 
 	
-	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:source))"));
-	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:target))"));
-	schema.OwlFormat["2_Declarations"] = _.union(schema.OwlFormat["2_Declarations"],newLine.concat("Declaration(AnnotationProperty(owlc:instanceCount))"));
-	
-	schema.OwlFormat["5_Annotations"] = _.union(schema.OwlFormat["5_Annotations"],newLine.concat(")"));
+	schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("Declaration(AnnotationProperty(owlc:source))"));
+	schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("Declaration(AnnotationProperty(owlc:target))"));
+	schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("Declaration(AnnotationProperty(owlc:instanceCount))"));
 
 	//console.log(schema.OwlFormat)
   },
-  printOwlFormat: function() {
+  printOwlFormat: function(par) {
   	
-	var owl_list = _.union(schema.OwlFormat["1_Ontologies"],[""],schema.OwlFormat["2_Declarations"],[""],schema.OwlFormat["3_SubClassOf"],[""],
-					schema.OwlFormat["4_Properties"],[""],[")"]); // ,[""],schema.OwlFormat["5_Annotations"]);
+	schema.getOwlFormat();
+	var owl_list = "";	
+	
+	if ( par == 1 )
+		owl_list = _.union(schema.OwlFormat["1_Ontologies"],[""],schema.OwlFormat["2_Common"],[""],schema.OwlFormat["3_Restriction"],[""],[")"]); 
+	else if ( par == 2)
+		owl_list = _.union(schema.OwlFormat["1_Ontologies"],[""],schema.OwlFormat["2_Common"],[""],schema.OwlFormat["4_Annotation"],[""],[")"]); 
+	else
+		owl_list = _.union(schema.OwlFormat["1_Ontologies"],[""],schema.OwlFormat["2_Common"],[""],schema.OwlFormat["3_Restriction"],[""],schema.OwlFormat["4_Annotation"],[""],[")"]); 	
 	
 	var link = document.createElement("a");
 	var file_name = _.find(schema.Ontologies, function(o) {return o.isDefault;}).dprefix.concat(".owl")
