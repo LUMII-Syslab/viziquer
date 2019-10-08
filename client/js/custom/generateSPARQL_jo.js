@@ -496,7 +496,11 @@ function generateIds(rootClass){
 
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
-	if(rootClassId == null || rootClassId.replace(" ", "") =="") rootClassId = rootClass["identification"]["localName"];
+	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
+		rootClassId = rootClass["identification"]["localName"];
+		if (checkIfIsURI(rootClassId) == "full_form") rootClassId = "expr";
+		if (checkIfIsURI(rootClassId) == "prefix_form") rootClassId = rootClassId.substr(rootClassId.indexOf(":")+1);
+	}
 	else rootClassId = rootClassId.replace(/ /g, '_');
 
 	//set rootClassId to "expr" if no class name
@@ -513,6 +517,7 @@ function generateIds(rootClass){
 	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
 
 
+	
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
 
@@ -996,7 +1001,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
 
 		var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
-
+		for (var prefix in resultClass["prefixTable"]) {
+			if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
+		}
 		counter = resultClass["counter"]
 		var temp = [];
 		messages = messages.concat(resultClass["messages"]);

@@ -738,6 +738,9 @@ VQ_Schema.prototype = {
 	_.each(this.Ontologies, function (o){
 		prefixes = _.union( prefixes, [[o.prefix, o.namespace]]);
 	})
+	for(var key in PrefixList){
+		prefixes = _.union( prefixes, [[PrefixList[key], key]]);
+	}
 	return prefixes;
   },
   makeClasses: function(data) {
