@@ -11,13 +11,13 @@ Meteor.methods({
 			var is_first_user = false;;
 
 			var first_user = Users.findOne();
-			
-			//if the user is the first, then this is a system admin 
+
+			//if the user is the first, then this is a system admin
 			if (!first_user) {
 				is_system_admin = true;
 				is_first_user = true;
 			}
-			
+
 			//inserting user in accounts
 			var user_id = Accounts.createUser({email: list["email"], password: list["password"]});
 
@@ -33,7 +33,7 @@ Meteor.methods({
 			if (is_first_user) {
 				var role = build_power_user_role();
 				Roles.addUsersToRoles(user_id, [role]);
-				
+
 				//loading configurator data
 				load_configurator(user_id);
 
@@ -59,7 +59,7 @@ Meteor.methods({
 				var fs = Npm.require('fs');
 				var current_dir = process.env.PWD;
 
-				var file_name = "VQ_configuration_dump_v0.0.json";
+				var file_name = "VQ_configuration_latest.json";
 				if (Meteor.settings && Meteor.settings.configurationName) {
 					file_name = Meteor.settings.configurationName;
 				}
@@ -102,11 +102,11 @@ Meteor.methods({
 	},
 
 	sendResetPasswordLink: function(list) {
-			
+
 		if (list) {
 
 			//var secret_phrase = list["secretPhrase"] || "";
-			
+
 			var user = Users.findOne({email: list["email"]});
 			if (user) {
 
@@ -147,7 +147,7 @@ Meteor.methods({
 
 				send_email(email);
 			}
-		}	
+		}
 	},
 
 	enrollUser: function(list) {
@@ -159,7 +159,7 @@ Meteor.methods({
 
 				var new_user_id;
 				var new_user = Meteor.users.findOne({"emails.address": list["email"]});
-					
+
 				//if user is not registred in the system, then sending an invitation email
 				if (!new_user) {
 
@@ -290,7 +290,7 @@ Meteor.methods({
 
 
 Accounts.validateLoginAttempt(function(obj) {
-	
+
 	if (!obj) {
 		return;
 	}
@@ -353,7 +353,7 @@ UserStatus.events.on("connectionLogout", function(fields) {
 
 // // userId, connectionId, and lastActivity.
 // 	var user_id = fields.userId;
-// 	//var last_activity = 
+// 	//var last_activity =
 
 // 	console.log("in connection user going idle ", fields)
 
@@ -406,11 +406,11 @@ Accounts.urls.enrollAccount = function (token) {
 };
 
 Accounts.emailTemplates.enrollAccount.text = function (user, url) {
-    //return "Hello, " + user.profile.name + "\n" + 
+    //return "Hello, " + user.profile.name + "\n" +
    	//	"This is from ajoo , click on the link: " + url;
 
-   	return "Hello, you have successfully been registred in ajoo system.\n" + 
-			"To activate the account, click on the link: " + url; 
+   	return "Hello, you have successfully been registred in ajoo system.\n" +
+			"To activate the account, click on the link: " + url;
 };
 
 Accounts.emailTemplates.resetPassword.subject = function (user) {
@@ -420,7 +420,7 @@ Accounts.emailTemplates.resetPassword.subject = function (user) {
 Accounts.emailTemplates.resetPassword.text = function (user_obj, url) {
 
 	var user = Users.findOne({systemId: user_obj["_id"]});
-    return "Hello, " + user.name + " " + user.surname + "\n" + 
+    return "Hello, " + user.name + " " + user.surname + "\n" +
    			"Click on the link: " + url;
 };
 
@@ -461,7 +461,7 @@ function build_user_data(user_id, list) {
 
 // 	// id just came online
 // 	added: function(id) {
-	
+
 // 	},
 
 // 	// id just went offline
