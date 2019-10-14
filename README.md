@@ -21,7 +21,7 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 ### To run ViziQuer within a Docker environment on MacOs or Linux
 
 1. Download, install and start Docker: https://docs.docker.com/install/
-1. Start the tool by `docker-compose -f docker-compose-public.yml up`. 
+1. Start the tool by `docker-compose -f docker-compose-public.yml up`.
 1. Open browser and type `localhost:80`.
 
 ### To run ViziQuer within a Docker environment on Windows
@@ -34,5 +34,6 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 ## Configuration for the first use
 
 1. The first user that signs up to the tool instance shall get administrator rights (the rights to manage tool configurations)
-1. To create a tool and load ViziQuer configuration, go to Configurator (in panel on left) and create a tool, for example, ViziQuer and then click button _Import_.
+1. (Not necessary since 0.2.4) To create a tool and load ViziQuer configuration, go to Configurator (in panel on left) and create a tool, for example, ViziQuer and then click button _Import_.
    Then choose the VQ tool configuration file (e.g. `vq_configuration_dump_vnn.json`) to upload from `./jsons` directory.
+   Since version 0.2.4, the tool configuration is loaded automatically from `jsons/VQ_configuration_latest.json`.
