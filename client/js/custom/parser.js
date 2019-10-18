@@ -1276,7 +1276,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						"isBlocking" : true
 					});
 			}
-			if(typeof path["messages"] !== 'undefined') {
+			if(path["messages"].length > 0) {
 				prefixName = null;
 				messages = messages.concat(path["messages"]);
 			}

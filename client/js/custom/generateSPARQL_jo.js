@@ -1460,7 +1460,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 						var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
 						
-						if(typeof path["messages"].length > 0){
+						if(path["messages"].length > 0){
 							messages = messages.concat(path["messages"]);
 						} else {
 							for (var prefix in path["prefixTable"]) {
