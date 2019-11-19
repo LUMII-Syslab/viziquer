@@ -380,6 +380,7 @@ function executeSparqlString(sparql, paging_info) {
 						endPoint: endpoint,
 						endpointUsername: proj.endpointUsername,
 						endpointPassword: proj.endpointPassword,
+						// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
                         paging_info: paging_info
               },
            };
@@ -517,7 +518,7 @@ function generateIds(rootClass){
 	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
 
 
-	
+
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
 
@@ -1459,7 +1460,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					if(typeof subclazz["linkIdentification"]["parsed_exp"]["PathProperty"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
 						// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 						var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
-						
+
 						if(path["messages"].length > 0){
 							messages = messages.concat(path["messages"]);
 						} else {

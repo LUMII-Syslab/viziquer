@@ -526,16 +526,16 @@ Template.importOntology.helpers({
 	schemas: function() {
 		var result = null;
 		var tool_id = null;
-		
+
 		if (Projects && Projects.find().count() > 0)
 			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
-		
+
 	    Meteor.subscribe("Services", {});
-	
+
 		if ( tool_id && tool_id != 'undefined')
 		{
 			var services = Services.findOne({toolId: tool_id });
-			
+
 			if (services && services.schemas)
 			{
 				result = [];
@@ -543,7 +543,7 @@ Template.importOntology.helpers({
 					result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
 				});
 			}
-	
+
 		}
 		return result;
 	},
@@ -572,7 +572,7 @@ Template.importOntology.events({
 		else if (url_value_from_list) {
 			VQ_Schema_copy = null;
 			list.url = url_value_from_list;
-			Utilities.callMeteorMethod("loadMOntologyByUrl", list);			
+			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
 		}
 		else {
 			var fileList = $("#fileList")[0].files;
@@ -654,23 +654,23 @@ Template.uploadProject.helpers({
 	projects: function() {
 		var result = null;
 		var tool_id = null;
-		
+
 		if (Projects && Projects.find().count() > 0)
 			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
-		
+
 	    Meteor.subscribe("Services", {});
-	
+
 		if ( tool_id && tool_id != 'undefined')
 		{
 			var services = Services.findOne({toolId: tool_id });
-			
+
 			if (services && services.projects)
 			{
 				result = [];
 				_.each(services.projects, function (p){
 					result.push({caption: "Upload " + p.caption, name: p.name, link: p.link});
 				});
-			}			
+			}
 		}
 		return result;
 	},
@@ -817,6 +817,7 @@ Template.ontologySettings.events({
 					endpoint: $("#ontology-endpoint").val(),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val(),
+					// httpRequestProfileName: "P1", // use the specified http request profile for executing SPARQL queries
 				};
 
 		Utilities.callMeteorMethod("testProjectEndPoint", list, function(res) {
@@ -983,7 +984,7 @@ Template.exportOntology.helpers({
 		//console.log("exportOntology.helpers")
 		//console.log(Session.get("activeProject"))
 		if (Session.get("activeProject"))
-		{		
+		{
 			var list = {projectId: Session.get("activeProject")};
 
 			if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
@@ -992,7 +993,7 @@ Template.exportOntology.helpers({
 			}
 		}
 		//console.log(parameters)
-		return parameters;		
+		return parameters;
 	},
 });
 
@@ -1013,11 +1014,11 @@ Template.exportOntology.events({
 			schema_full = VQ_Schema_copy;
 			schema_data = VQ_Schema_copy.Data;
 			if ( choice == "Ch2" )
-				schema_full.printOwlFormat(1);  
+				schema_full.printOwlFormat(1);
 			if ( choice == "Ch3" )
-				schema_full.printOwlFormat(2);  
+				schema_full.printOwlFormat(2);
 			if ( choice == "Ch4" )
-				schema_full.printOwlFormat(3); 
+				schema_full.printOwlFormat(3);
 			if ( choice == "Ch1" ) {
 				delete schema_data._id;
 				delete schema_data.projectId;
@@ -1028,7 +1029,7 @@ Template.exportOntology.events({
 				link.href = URL.createObjectURL(new Blob([JSON.stringify(schema_data, 0, 4)], {type: "application/json;charset=utf-8;"}));
 				document.body.appendChild(link);
 				link.click();
-			}	
+			}
 		}
 
 		if (_.size(schema_full) == 0 ) {
@@ -1038,11 +1039,11 @@ Template.exportOntology.events({
 					if ( choice == "Ch2" || choice == "Ch3" || choice == "Ch4" ) {
 						schema_full = new VQ_Schema(schema_data);
 						if ( choice == "Ch2" )
-							schema_full.printOwlFormat(1);  
+							schema_full.printOwlFormat(1);
 						if ( choice == "Ch3" )
-							schema_full.printOwlFormat(2); 
+							schema_full.printOwlFormat(2);
 						if ( choice == "Ch4" )
-							schema_full.printOwlFormat(2);  
+							schema_full.printOwlFormat(2);
 					}
 					if ( choice == "Ch1" ) {
 						delete schema_data._id;
@@ -1059,8 +1060,8 @@ Template.exportOntology.events({
 			});
 		}
 
-		
-		
+
+
 	},
 });
 
