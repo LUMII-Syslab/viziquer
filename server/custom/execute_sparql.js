@@ -259,7 +259,7 @@ function selectHttpRequestProfile(options) {
     }
 }
 
-var DEFAULT_PROFILE_NAME = "P1";
+var DEFAULT_PROFILE_NAME = "P2";
 
 var NON_DEFAULT_PROFILES = [
     { pattern: 'wikidata.org', profileName: 'P1' },
