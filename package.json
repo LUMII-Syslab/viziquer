@@ -2,7 +2,9 @@
   "name": "wwsna",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor run",
+    "debug": "meteor run --inspect=5959",
+    "debug-brk": "meteor run --inspect-brk=5959"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
