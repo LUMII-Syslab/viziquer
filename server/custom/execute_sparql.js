@@ -7,7 +7,7 @@ Meteor.methods({
 		if (!is_project_member(user_id, list)) return;
 
         console.log("in exec sparql");
-        console.log("list:", JSON.stringify(list));
+        // console.log("list:", JSON.stringify(list));
 
         var options = list.options;
         if (!options || !options.params || !options.params.params || !options.params.params.query) {
@@ -142,7 +142,7 @@ Meteor.methods({
         if (!is_project_member(user_id, options)) return;
 
         console.log("in test endpoint");
-        console.log("options:", options);
+        // console.log("options:", options);
 
         if (!options.endpoint) {
             console.error("No data specified");
@@ -360,7 +360,7 @@ var DO_CALL = DO_CALL_PROD;
  */
 
 function doHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P1", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P1", url, query, namedGraph, httpOptions, preferJSON);
     // let fullUrl = `${url}?query=${encodeQuery2(query)}`;
     let fullUrl = `${url}?query=${encodeQueryForUrl(query)}`;
     if (namedGraph) {
@@ -379,7 +379,7 @@ function doHttpRequestP1(url, httpOptions, query, namedGraph, preferJSON, callba
 }
 
 function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P1b", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P1b", url, query, namedGraph, httpOptions, preferJSON);
     let fullUrl = url;
     let fullOptions = _.extend({}, httpOptions, { timeout: TIMEOUT });
 
@@ -402,7 +402,7 @@ function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callb
 }
 
 function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P2", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P2", url, query, namedGraph, httpOptions, preferJSON);
     let fullUrl = url;
     let fullOptions = _.extend({}, httpOptions, { timeout: TIMEOUT });
     fullOptions.headers = _.extend(
@@ -427,7 +427,7 @@ function doHttpRequestP2(url, httpOptions, query, namedGraph, preferJSON, callba
 }
 
 function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P2b", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P2b", url, query, namedGraph, httpOptions, preferJSON);
     let fullUrl = url;
     let fullOptions = _.extend({}, httpOptions, { timeout: TIMEOUT });
     fullOptions.headers = _.extend(
@@ -453,7 +453,7 @@ function doHttpRequestP2b(url, httpOptions, query, namedGraph, preferJSON, callb
 }
 
 function doHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P3", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P3", url, query, namedGraph, httpOptions, preferJSON);
     let fullUrl = `${url}`;
     if (namedGraph) {
         fullUrl += `?default-graph-uri=${encodeURIComponent(namedGraph)}`;
@@ -476,7 +476,7 @@ function doHttpRequestP3(url, httpOptions, query, namedGraph, preferJSON, callba
 }
 
 function doHttpRequestP4(url, httpOptions, query, namedGraph, preferJSON, callback) {
-    console.log("profile P4", url, query, namedGraph, httpOptions, preferJSON);
+    // console.log("profile P4", url, query, namedGraph, httpOptions, preferJSON);
     let fullUrl = `${url}?query=${encodeQueryForUrl(query)}`;
     if (namedGraph) {
         fullUrl += `&default-graph-uri=${encodeURIComponent(namedGraph)}`;
