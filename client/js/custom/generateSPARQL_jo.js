@@ -710,6 +710,12 @@ function generateSPARQLtext(abstractQueryTable){
 			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable);
 			SPARQL_text = unionResult["result"];
 			messages = messages.concat(unionResult["messages"]);
+			//Prefixes
+			var prefixes = "";
+			for (var prefix in prefixTable){
+				if(typeof prefixTable[prefix] === "string") prefixes = prefixes + "PREFIX " + prefix + " " + prefixTable[prefix] + "\n";
+			}
+			SPARQL_text = prefixes + SPARQL_text;
 		 } else{
 			SPARQL_text = "SELECT ";
 
