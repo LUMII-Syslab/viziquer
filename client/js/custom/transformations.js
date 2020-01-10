@@ -695,10 +695,11 @@ Interpreter.customMethods({
 
 		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
 		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
-		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
+		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: end_class["elementTypeId"]});
 		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
 		var schema = new VQ_Schema();
-		if (schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
+
+		if (typeof compart !== "undefined" && typeof compart_end !== "undefined" && schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
 			var start_class = schema.findClassByName(compart["input"]);
 			var end_class = schema.findClassByName(compart_end["input"]);
 				
@@ -967,6 +968,7 @@ Interpreter.customMethods({
 
 	visualizeSPARQL: function() {
 		var query_text = yasqe3.getValue();
+		console.log("query_text", query_text);
 		Interpreter.customExtensionPoints.generateVisualQuery(query_text)
 	},
 
