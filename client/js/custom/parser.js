@@ -542,7 +542,8 @@ getPathFullGrammar = function(expressionTable){
 	var prTable = [];
 	var path = "";
 	var variable;
-	var isPath = true;
+	// var isPath = true;
+	var isPath = null;
 	var mes = [];
 	
 	for(var key in expressionTable){
@@ -551,10 +552,13 @@ getPathFullGrammar = function(expressionTable){
 		//PathPrimary
 		//iriOra
 		if((key == "PathPrimary" || key == "iriOra") && typeof expressionTable[key]["var"] !== 'undefined'){
-
+// console.log("3333333", expressionTable[key]["var"], expressionTable[key]["var"]["type"]["property_type"])
 			if(typeof expressionTable[key]["var"]["type"] !== 'undefined' && expressionTable[key]["var"]["type"] != null){	
-				if(typeof expressionTable[key]["var"]["type"]["parentType"] !== 'undefined' && expressionTable[key]["var"]["type"]["parentType"] != null) isPath = false;
-				
+				if(typeof expressionTable[key]["var"]["type"]["property_type"] !== 'undefined' && expressionTable[key]["var"]["type"]["property_type"] == "OBJECT_PROPERTY") {isPath = true; console.log("TTTTTTTTTTtt")}
+				// if(typeof expressionTable[key]["var"]["type"]["parentType"] !== 'undefined' && expressionTable[key]["var"]["type"]["parentType"] != null) 
+				// {isPath = false;
+				// console.log("3333333", expressionTable[key]["var"])
+				// }
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["Prefix"]) + ":" + expressionTable[key]["var"]["name"];
 				path = path + pathPart;
 				
@@ -567,7 +571,8 @@ getPathFullGrammar = function(expressionTable){
 			
 				visited = 1;
 			}else {
-					isPath = false;
+				//console.log("444444444")
+				isPath = false;
 			}
 		}
 		//IRIREF
@@ -631,7 +636,7 @@ getPathFullGrammar = function(expressionTable){
 			}
 			path = path + temp["path"];
 			if(typeof temp["variable"] !== 'undefined') variable = temp["variable"];
-			if(temp["isPath"] == false) isPath = temp["isPath"];
+			if(temp["isPath"] != null) isPath = temp["isPath"];
 		}
 	}
 
@@ -1260,8 +1265,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		//PathFull
 		if(key  == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"] !== 'undefined'){
 			var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
-
-			if(path["isPath"] == false){
+			console.log("PathProperty",path["isPath"], expressionTable[key]["PathProperty"])
+			if(path["isPath"] != true){
 				var clId;
 					for(var k in idTable){
 						if (idTable[k] == className) {

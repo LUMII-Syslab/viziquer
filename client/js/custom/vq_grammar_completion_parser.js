@@ -343,128 +343,128 @@ vq_grammar_completion_parser = (function() {
         peg$c303 = "between",
         peg$c304 = { type: "literal", value: "BETWEEN", description: "\"BETWEEN\"" },
         peg$c305 = "",
-        peg$c306 = function() {addContinuation(location(), "[ ]", 50);},
-        peg$c307 = function() {addContinuation(location(), "[ + ]", 50);},
-        peg$c308 = function() {addContinuation(location(), "(no_class)", 50);},
-        peg$c309 = function() {addContinuation(location(), "{", 50);/*}*/},
-        peg$c310 = function() {addContinuation(location(), /*{*/"}", 50);},
-        peg$c311 = function() {addContinuation(location(), "..", 50);},
-        peg$c312 = function() {addContinuation(location(), ".", 50);},
-        peg$c313 = function() {addContinuation(location(), "(.)", 50);},
-        peg$c314 = function() {addContinuation(location(), "(select this)", 50);},
-        peg$c315 = function() {addContinuation(location(), "(this)", 50);},
-        peg$c316 = function() {addContinuation(location(), "||", 90); addContinuation(location(), "OR", 90);},
-        peg$c317 = function() {addContinuation(location(), "&&", 90); addContinuation(location(), "AND", 90);},
-        peg$c318 = function() {addContinuation(location(), "IN", 90);},
-        peg$c319 = function() {addContinuation(location(), "NOT", 90);},
-        peg$c320 = function() {addContinuation(location(), "NOT IN", 90);},
-        peg$c321 = function() {addContinuation(location(), "++", 90);},
-        peg$c322 = function() {addContinuation(location(), "+", 90);},
-        peg$c323 = function() {addContinuation(location(), "-", 90);},
-        peg$c324 = function() {addContinuation(location(), "!", 90);},
-        peg$c325 = function() {addContinuation(location(), "a", 90);},
-        peg$c326 = function() {addContinuation(location(), "*", 90);},
-        peg$c327 = function() {addContinuation(location(), "/", 90);},
-        peg$c328 = function() {addContinuation(location(), "true", 90);},
-        peg$c329 = function() {addContinuation(location(), "false", 90);},
-        peg$c330 = function() {addContinuation(location(), "^^", 90);},
-        peg$c331 = function() {addContinuation(location(), "^", 90);},
-        peg$c332 = function() {addContinuation(location(), "(", 90);},
-        peg$c333 = function() {addContinuation(location(), ")", 90);},
-        peg$c334 = function() {addContinuation(location(), "COUNT_DISTINCT", 90);},
-        peg$c335 = function() {addContinuation(location(), "DISTINCT", 90);},
-        peg$c336 = function() {addContinuation(location(), "COUNT", 90);},
-        peg$c337 = function() {addContinuation(location(), "SUM", 90);},
-        peg$c338 = function() {addContinuation(location(), "MIN", 90);},
-        peg$c339 = function() {addContinuation(location(), "MAX", 90);},
-        peg$c340 = function() {addContinuation(location(), "AVG", 90);},
-        peg$c341 = function() {addContinuation(location(), "SAMPLE", 90);},
-        peg$c342 = function() {addContinuation(location(), "GROUP_CONCAT", 90);},
-        peg$c343 = function() {addContinuation(location(), "SEPARATOR", 90);},
-        peg$c344 = function() {addContinuation(location(), ";", 90);},
-        peg$c345 = function() {addContinuation(location(), "=", 90);},
-        peg$c346 = function() {addContinuation(location(), ",", 90);},
-        peg$c347 = function() {addContinuation(location(), "STR", 90);},
-        peg$c348 = function() {addContinuation(location(), "LANG", 90);},
-        peg$c349 = function() {addContinuation(location(), "DATATYPE", 90);},
-        peg$c350 = function() {addContinuation(location(), "IRI", 90);},
-        peg$c351 = function() {addContinuation(location(), "URI", 90);},
-        peg$c352 = function() {addContinuation(location(), "ABS", 90);},
-        peg$c353 = function() {addContinuation(location(), "CEIL", 90);},
-        peg$c354 = function() {addContinuation(location(), "FLOOR", 90);},
-        peg$c355 = function() {addContinuation(location(), "ROUND", 90);},
-        peg$c356 = function() {addContinuation(location(), "STRLEN", 90);},
-        peg$c357 = function() {addContinuation(location(), "UCASE", 90);},
-        peg$c358 = function() {addContinuation(location(), "LCASE", 90);},
-        peg$c359 = function() {addContinuation(location(), "ENCODE_FOR_URI", 90);},
-        peg$c360 = function() {addContinuation(location(), "YEAR", 90);},
-        peg$c361 = function() {addContinuation(location(), "MONTH", 90);},
-        peg$c362 = function() {addContinuation(location(), "DAY", 90);},
-        peg$c363 = function() {addContinuation(location(), "TIMEZONE", 90);},
-        peg$c364 = function() {addContinuation(location(), "TZ", 90);},
-        peg$c365 = function() {addContinuation(location(), "MD5", 90);},
-        peg$c366 = function() {addContinuation(location(), "SHA1", 90);},
-        peg$c367 = function() {addContinuation(location(), "SHA256", 90);},
-        peg$c368 = function() {addContinuation(location(), "SHA384", 90);},
-        peg$c369 = function() {addContinuation(location(), "SHA512", 90);},
-        peg$c370 = function() {addContinuation(location(), "isIRI", 90);},
-        peg$c371 = function() {addContinuation(location(), "isURI", 90);},
-        peg$c372 = function() {addContinuation(location(), "isBLANK", 90);},
-        peg$c373 = function() {addContinuation(location(), "dateTime", 90);},
-        peg$c374 = function() {addContinuation(location(), "date", 90);},
-        peg$c375 = function() {addContinuation(location(), "isLITERAL", 90);},
-        peg$c376 = function() {addContinuation(location(), "isNUMERIC", 90);},
-        peg$c377 = function() {addContinuation(location(), "LANGMATCHES", 90);},
-        peg$c378 = function() {addContinuation(location(), "CONTAINS", 90);},
-        peg$c379 = function() {addContinuation(location(), "STRSTARTS", 90);},
-        peg$c380 = function() {addContinuation(location(), "STRENDS", 90);},
-        peg$c381 = function() {addContinuation(location(), "STRBEFORE", 90);},
-        peg$c382 = function() {addContinuation(location(), "STRAFTER", 90);},
-        peg$c383 = function() {addContinuation(location(), "STRLANG", 90);},
-        peg$c384 = function() {addContinuation(location(), "STRDT", 90);},
-        peg$c385 = function() {addContinuation(location(), "sameTerm", 90);},
-        peg$c386 = function() {addContinuation(location(), "days", 90);},
-        peg$c387 = function() {addContinuation(location(), "years", 90);},
-        peg$c388 = function() {addContinuation(location(), "months", 90);},
-        peg$c389 = function() {addContinuation(location(), "hours", 90);},
-        peg$c390 = function() {addContinuation(location(), "minutes", 90);},
-        peg$c391 = function() {addContinuation(location(), "seconds", 90);},
-        peg$c392 = function() {addContinuation(location(), "IF", 90);},
-        peg$c393 = function() {addContinuation(location(), "COALESCE", 90);},
-        peg$c394 = function() {addContinuation(location(), "BOUND", 90);},
-        peg$c395 = function() {addContinuation(location(), "BNODE", 90);},
-        peg$c396 = function() {addContinuation(location(), "RAND", 90);},
-        peg$c397 = function() {addContinuation(location(), "CONCAT", 90);},
-        peg$c398 = function() {addContinuation(location(), "NOW", 90);},
-        peg$c399 = function() {addContinuation(location(), "UUID", 90);},
-        peg$c400 = function() {addContinuation(location(), "STRUUID", 90);},
-        peg$c401 = function() {addContinuation(location(), "REGEX", 90);},
-        peg$c402 = function() {addContinuation(location(), "SUBSTRING", 90);},
-        peg$c403 = function() {addContinuation(location(), "SUBSTR", 90);},
-        peg$c404 = function() {addContinuation(location(), "bif:SUBSTRING", 90);},
-        peg$c405 = function() {addContinuation(location(), "bif:SUBSTR", 90);},
-        peg$c406 = function() {addContinuation(location(), "REPLACE", 90);},
-        peg$c407 = function() {addContinuation(location(), "EXISTS", 90);},
-        peg$c408 = function() {addContinuation(location(), "@", 90);},
-        peg$c409 = function() {addContinuation(location(), ":", 90);},
-        peg$c410 = function() {addContinuation(location(), "?", 90);},
-        peg$c411 = function() {addContinuation(location(), "??", 90);},
-        peg$c412 = function() {addContinuation(location(), "$", 90);},
-        peg$c413 = function() {addContinuation(location(), "'", 90);},
-        peg$c414 = function() {addContinuation(location(), '"', 90);},
-        peg$c415 = function() {addContinuation(location(), "INV", 90);},
-        peg$c416 = function() {addContinuation(location(), "[", 90);},
-        peg$c417 = function() {addContinuation(location(), "]", 90);},
-        peg$c418 = function() {addContinuation(location(), "=", 90); addContinuation(location(), "!=", 90);  addContinuation(location(), "<>", 90);  addContinuation(location(), "<=", 90);  addContinuation(location(), ">=", 90);  addContinuation(location(), "<", 90); addContinuation(location(), ">", 90);},
-        peg$c419 = function() {addContinuation(location(), "LIKE", 90);},
-        peg$c420 = function() {addContinuation(location(), ">", 90);},
-        peg$c421 = function() {addContinuation(location(), "<", 90);},
-        peg$c422 = function() {addContinuation(location(), "%", 90);},
-        peg$c423 = function() {addContinuation(location(), "BETWEEN", 90);},
-        peg$c424 = function() {addContinuation(location(), "", 1);},
-        peg$c425 = function() {addContinuation(location(), "|", 90);},
-        peg$c426 = function() {addContinuation(location(), " ", 10);},
-        peg$c427 = function() {addContinuation(location(), "`", 10);},
+        peg$c306 = function() {addContinuation(location(), "[ ]", 50, 4);},
+        peg$c307 = function() {addContinuation(location(), "[ + ]", 50, 4);},
+        peg$c308 = function() {addContinuation(location(), "(no_class)", 50, 4);},
+        peg$c309 = function() {addContinuation(location(), "{", 50, 4);/*}*/},
+        peg$c310 = function() {addContinuation(location(), /*{*/"}", 50, 4);},
+        peg$c311 = function() {addContinuation(location(), "..", 50, 4);},
+        peg$c312 = function() {addContinuation(location(), ".", 50, 4);},
+        peg$c313 = function() {addContinuation(location(), "(.)", 50, 4);},
+        peg$c314 = function() {addContinuation(location(), "(select this)", 50, 4);},
+        peg$c315 = function() {addContinuation(location(), "(this)", 50, 4);},
+        peg$c316 = function() {addContinuation(location(), "||", 90, 4); addContinuation(location(), "OR", 90, 4);},
+        peg$c317 = function() {addContinuation(location(), "&&", 90, 4); addContinuation(location(), "AND", 90, 4);},
+        peg$c318 = function() {addContinuation(location(), "IN", 90, 4);},
+        peg$c319 = function() {addContinuation(location(), "NOT", 90, 4);},
+        peg$c320 = function() {addContinuation(location(), "NOT IN", 90, 4);},
+        peg$c321 = function() {addContinuation(location(), "++", 90, 4);},
+        peg$c322 = function() {addContinuation(location(), "+", 90, 4);},
+        peg$c323 = function() {addContinuation(location(), "-", 90, 4);},
+        peg$c324 = function() {addContinuation(location(), "!", 90, 4);},
+        peg$c325 = function() {addContinuation(location(), "a", 90, 4);},
+        peg$c326 = function() {addContinuation(location(), "*", 90, 4);},
+        peg$c327 = function() {addContinuation(location(), "/", 90, 4);},
+        peg$c328 = function() {addContinuation(location(), "true", 90, 4);},
+        peg$c329 = function() {addContinuation(location(), "false", 90, 4);},
+        peg$c330 = function() {addContinuation(location(), "^^", 90, 4);},
+        peg$c331 = function() {addContinuation(location(), "^", 90, 4);},
+        peg$c332 = function() {addContinuation(location(), "(", 90, 4);},
+        peg$c333 = function() {addContinuation(location(), ")", 90, 4);},
+        peg$c334 = function() {addContinuation(location(), "COUNT_DISTINCT", 90, 4);},
+        peg$c335 = function() {addContinuation(location(), "DISTINCT", 90, 4);},
+        peg$c336 = function() {addContinuation(location(), "COUNT", 90, 4);},
+        peg$c337 = function() {addContinuation(location(), "SUM", 90, 4);},
+        peg$c338 = function() {addContinuation(location(), "MIN", 90, 4);},
+        peg$c339 = function() {addContinuation(location(), "MAX", 90, 4);},
+        peg$c340 = function() {addContinuation(location(), "AVG", 90, 4);},
+        peg$c341 = function() {addContinuation(location(), "SAMPLE", 90, 4);},
+        peg$c342 = function() {addContinuation(location(), "GROUP_CONCAT", 90, 4);},
+        peg$c343 = function() {addContinuation(location(), "SEPARATOR", 90, 4);},
+        peg$c344 = function() {addContinuation(location(), ";", 90, 4);},
+        peg$c345 = function() {addContinuation(location(), "=", 90, 4);},
+        peg$c346 = function() {addContinuation(location(), ",", 90, 4);},
+        peg$c347 = function() {addContinuation(location(), "STR", 90, 4);},
+        peg$c348 = function() {addContinuation(location(), "LANG", 90, 4);},
+        peg$c349 = function() {addContinuation(location(), "DATATYPE", 90, 4);},
+        peg$c350 = function() {addContinuation(location(), "IRI", 90, 4);},
+        peg$c351 = function() {addContinuation(location(), "URI", 90, 4);},
+        peg$c352 = function() {addContinuation(location(), "ABS", 90, 4);},
+        peg$c353 = function() {addContinuation(location(), "CEIL", 90, 4);},
+        peg$c354 = function() {addContinuation(location(), "FLOOR", 90, 4);},
+        peg$c355 = function() {addContinuation(location(), "ROUND", 90, 4);},
+        peg$c356 = function() {addContinuation(location(), "STRLEN", 90, 4);},
+        peg$c357 = function() {addContinuation(location(), "UCASE", 90, 4);},
+        peg$c358 = function() {addContinuation(location(), "LCASE", 90, 4);},
+        peg$c359 = function() {addContinuation(location(), "ENCODE_FOR_URI", 90, 4);},
+        peg$c360 = function() {addContinuation(location(), "YEAR", 90, 4);},
+        peg$c361 = function() {addContinuation(location(), "MONTH", 90, 4);},
+        peg$c362 = function() {addContinuation(location(), "DAY", 90, 4);},
+        peg$c363 = function() {addContinuation(location(), "TIMEZONE", 90, 4);},
+        peg$c364 = function() {addContinuation(location(), "TZ", 90, 4);},
+        peg$c365 = function() {addContinuation(location(), "MD5", 90, 4);},
+        peg$c366 = function() {addContinuation(location(), "SHA1", 90, 4);},
+        peg$c367 = function() {addContinuation(location(), "SHA256", 90, 4);},
+        peg$c368 = function() {addContinuation(location(), "SHA384", 90, 4);},
+        peg$c369 = function() {addContinuation(location(), "SHA512", 90, 4);},
+        peg$c370 = function() {addContinuation(location(), "isIRI", 90, 4);},
+        peg$c371 = function() {addContinuation(location(), "isURI", 90, 4);},
+        peg$c372 = function() {addContinuation(location(), "isBLANK", 90, 4);},
+        peg$c373 = function() {addContinuation(location(), "dateTime", 90, 4);},
+        peg$c374 = function() {addContinuation(location(), "date", 90, 4);},
+        peg$c375 = function() {addContinuation(location(), "isLITERAL", 90, 4);},
+        peg$c376 = function() {addContinuation(location(), "isNUMERIC", 90, 4);},
+        peg$c377 = function() {addContinuation(location(), "LANGMATCHES", 90, 4);},
+        peg$c378 = function() {addContinuation(location(), "CONTAINS", 90, 4);},
+        peg$c379 = function() {addContinuation(location(), "STRSTARTS", 90, 4);},
+        peg$c380 = function() {addContinuation(location(), "STRENDS", 90, 4);},
+        peg$c381 = function() {addContinuation(location(), "STRBEFORE", 90, 4);},
+        peg$c382 = function() {addContinuation(location(), "STRAFTER", 90, 4);},
+        peg$c383 = function() {addContinuation(location(), "STRLANG", 90, 4);},
+        peg$c384 = function() {addContinuation(location(), "STRDT", 90, 4);},
+        peg$c385 = function() {addContinuation(location(), "sameTerm", 90, 4);},
+        peg$c386 = function() {addContinuation(location(), "days", 90, 4);},
+        peg$c387 = function() {addContinuation(location(), "years", 90, 4);},
+        peg$c388 = function() {addContinuation(location(), "months", 90, 4);},
+        peg$c389 = function() {addContinuation(location(), "hours", 90, 4);},
+        peg$c390 = function() {addContinuation(location(), "minutes", 90, 4);},
+        peg$c391 = function() {addContinuation(location(), "seconds", 90, 4);},
+        peg$c392 = function() {addContinuation(location(), "IF", 90, 4);},
+        peg$c393 = function() {addContinuation(location(), "COALESCE", 90, 4);},
+        peg$c394 = function() {addContinuation(location(), "BOUND", 90, 4);},
+        peg$c395 = function() {addContinuation(location(), "BNODE", 90, 4);},
+        peg$c396 = function() {addContinuation(location(), "RAND", 90, 4);},
+        peg$c397 = function() {addContinuation(location(), "CONCAT", 90, 4);},
+        peg$c398 = function() {addContinuation(location(), "NOW", 90, 4);},
+        peg$c399 = function() {addContinuation(location(), "UUID", 90, 4);},
+        peg$c400 = function() {addContinuation(location(), "STRUUID", 90, 4);},
+        peg$c401 = function() {addContinuation(location(), "REGEX", 90, 4);},
+        peg$c402 = function() {addContinuation(location(), "SUBSTRING", 90, 4);},
+        peg$c403 = function() {addContinuation(location(), "SUBSTR", 90, 4);},
+        peg$c404 = function() {addContinuation(location(), "bif:SUBSTRING", 90, 4);},
+        peg$c405 = function() {addContinuation(location(), "bif:SUBSTR", 90, 4);},
+        peg$c406 = function() {addContinuation(location(), "REPLACE", 90, 4);},
+        peg$c407 = function() {addContinuation(location(), "EXISTS", 90, 4);},
+        peg$c408 = function() {addContinuation(location(), "@", 90, 4);},
+        peg$c409 = function() {addContinuation(location(), ":", 90, 4);},
+        peg$c410 = function() {addContinuation(location(), "?", 90, 4);},
+        peg$c411 = function() {addContinuation(location(), "??", 90, 4);},
+        peg$c412 = function() {addContinuation(location(), "$", 90, 4);},
+        peg$c413 = function() {addContinuation(location(), "'", 90, 4);},
+        peg$c414 = function() {addContinuation(location(), '"', 90, 4);},
+        peg$c415 = function() {addContinuation(location(), "INV", 90, 4);},
+        peg$c416 = function() {addContinuation(location(), "[", 90, 4);},
+        peg$c417 = function() {addContinuation(location(), "]", 90, 4);},
+        peg$c418 = function() {addContinuation(location(), "=", 90, 4); addContinuation(location(), "!=", 90, 4);  addContinuation(location(), "<>", 90, 4);  addContinuation(location(), "<=", 90, 4);  addContinuation(location(), ">=", 90, 4);  addContinuation(location(), "<", 90, 4); addContinuation(location(), ">", 90, 4);},
+        peg$c419 = function() {addContinuation(location(), "LIKE", 90, 4);},
+        peg$c420 = function() {addContinuation(location(), ">", 90, 4);},
+        peg$c421 = function() {addContinuation(location(), "<", 90, 4);},
+        peg$c422 = function() {addContinuation(location(), "%", 90, 4);},
+        peg$c423 = function() {addContinuation(location(), "BETWEEN", 90, 4);},
+        peg$c424 = function() {addContinuation(location(), "", 1, 4);},
+        peg$c425 = function() {addContinuation(location(), "|", 90, 4);},
+        peg$c426 = function() {addContinuation(location(), " ", 10, 4);},
+        peg$c427 = function() {addContinuation(location(), "`", 10, 4);},
         peg$c428 = function() {getProperties(location(), 91);},
         peg$c429 = function() {getReferences(location(), 91);},
         peg$c430 = function() {getAssociations(location(), 91);},
@@ -19350,13 +19350,13 @@ vq_grammar_completion_parser = (function() {
     			function getClasses(place, priority){
     				var cls = options.schema.getAllClasses();
     				for(var key in cls){
-    					addContinuation(place, cls[key]["name"], priority);
+    					addContinuation(place, cls[key]["name"], priority, 3);
     				}
     			}
     			function getReferences(place, priority){
     				for(var key in options["symbol_table"]){
     					for(var k in options["symbol_table"][key]){
-    						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority);
+    						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority, 3);
     					}
     				};
     			}
@@ -19364,7 +19364,7 @@ vq_grammar_completion_parser = (function() {
     				var prop = options.schema.findClassByName(options.className).getAllAttributes()
     				for(var key in prop){
     					var propName= prop[key]["short_name"];
-    					addContinuation(place, propName, 100);
+    					addContinuation(place, propName, 100, 1);
     				}
     				getAssociations(place, 95);
     				//getClasses(place, 94);
@@ -19374,7 +19374,7 @@ vq_grammar_completion_parser = (function() {
     				for(var key in options["symbol_table"]){
     					for(var k in options["symbol_table"][key]){
     						var kind = options["symbol_table"][key][k]["kind"];
-    						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority);
+    						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority, 3);
     					}
     				};
     			}
@@ -19385,25 +19385,25 @@ vq_grammar_completion_parser = (function() {
     				for(var key in prop){
     					var propName= prop[key]["short_name"];
     					if(prop[key]["type"] == "<=") {
-    						addContinuation(place, "^" + propName, priority)
-    						addContinuation(place, "INV(" + propName + ")", priority)
+    						addContinuation(place, "^" + propName, priority, 2)
+    						addContinuation(place, "INV(" + propName + ")", priority, 2)
     					}
-    					else addContinuation(place, propName, priority);
+    					else addContinuation(place, propName, priority, 2);
     				}
     			}
     			
     			function getAttrSub(place, priority){
     				if(options.type == "attribute"){
-    					addContinuation(place, "(*attr)", priority);
-    					addContinuation(place, "(*sub)", priority);
+    					addContinuation(place, "(*attr)", priority, 3);
+    					addContinuation(place, "(*sub)", priority, 3);
     				}
     			}
     			
-    			function addContinuation(place, continuation, priority, start_end){
+    			function addContinuation(place, continuation, priority, type, start_end){
     				var position = "start";
     				if(start_end != null)position = start_end;
     				makeArray(place[position]["offset"]);
-    				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:"type"};
+    				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type};
     			}
     			function returnContinuation(){
     				return JSON.stringify(continuations,null,2);
@@ -19492,7 +19492,7 @@ vq_grammar_completion_parser = (function() {
     						var prop = options.schema.findClassByName(targetClass).getAllAttributes();
     						
     						for(var key in prop){
-    							addContinuation(location(), prop[key]["name"], 100, "end");
+    							addContinuation(location(), prop[key]["name"], 100, 1, "end");
     						}
     						
     						prop = options.schema.findClassByName(targetClass).getAllAssociations();
@@ -19500,10 +19500,10 @@ vq_grammar_completion_parser = (function() {
     						for(var key in prop){
     							var association = prop[key]["name"];
     							if(prop[key]["type"] == "<=") {
-    								addContinuation(location(), "^" + prop[key]["name"], 100, "end")
-    								addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, "end")
+    								addContinuation(location(), "^" + prop[key]["name"], 100, 2, "end")
+    								addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, 2, "end")
     							}
-    							else addContinuation(location(), prop[key]["name"], 100, "end");
+    							else addContinuation(location(), prop[key]["name"], 100, 2, "end");
     						}
     					}
     				}
@@ -19522,12 +19522,12 @@ vq_grammar_completion_parser = (function() {
     			
     				var prop = options.schema.findClassByName(classAliasTable[o]).getAllAttributes();
     				for(var key in prop){
-    					addContinuation(location(), prop[key]["name"], 100, "end");
+    					addContinuation(location(), prop[key]["name"], 100, 1, "end");
     				}
     					
     				prop = options.schema.findClassByName(classAliasTable[o]).getAllAssociations();
     				for(var key in prop){
-    					addContinuation(location(), prop[key]["name"], 99, "end");
+    					addContinuation(location(), prop[key]["name"], 99, 2, "end");
     				}
 
     				return o;

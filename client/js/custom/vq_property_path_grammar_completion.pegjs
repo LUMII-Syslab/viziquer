@@ -16,11 +16,11 @@
 				return continuations;
 			}
 			
-			function addContinuation(place, continuation, priority, start_end){
+			function addContinuation(place, continuation, priority, type, start_end){
 				var position = "start";
 				if(start_end != null)position = start_end;
 				makeArray(place[position]["offset"]);
-				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:"type"};
+				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type};
 			}
 			function returnContinuation(){
 				return JSON.stringify(continuations,null,2);
@@ -45,10 +45,10 @@
 					for(var key in prop){
 						var propName= prop[key]["short_name"];
 						if(prop[key]["type"] == "<=") {
-							addContinuation(location(), "^" + propName, 100, "end")
-							addContinuation(location(), "INV(" + propName + ")", 100, "end")
+							addContinuation(location(), "^" + propName, 100, 2, "end")
+							addContinuation(location(), "INV(" + propName + ")", 100, 2, "end")
 						}
-						else addContinuation(location(), propName, 100, "end");
+						else addContinuation(location(), propName, 100, 2, "end");
 					}
 				}
 
@@ -65,7 +65,7 @@
 					var prop = getAllSchemaAssociations[role];
 					//var assoc_name = getAllSchemaAssociations[role]["name"];
 					var propName= prop["short_name"];
-					addContinuation(place, propName, 1);
+					addContinuation(place, propName, 1, 3);
 				}
 				
 				var start_class = myschema.findClassByName(options.link.getStartElement().getName());
@@ -82,7 +82,7 @@
 						if (all_assoc_from_start[role]["type"] == "<=") {
 							assoc_name = "inv("+assoc_name+")";
 						};
-						addContinuation(place, assoc_name, 99);
+						addContinuation(place, assoc_name, 99, 2);
 					}
 					//start - end
 					if (end_class){
@@ -97,7 +97,7 @@
 							if (possible_assoc_list[role]["type"] == "<=") {
 								assoc_name = "inv("+assoc_name+")";
 							};
-							addContinuation(place, assoc_name, 100);
+							addContinuation(place, assoc_name, 100, 2);
 						}
 					}		
 				};	
@@ -221,25 +221,25 @@
 			PATH_SYMBOL = ((dot ".") / (div "/")) {return {PathSymbol :"/"}} 
 			PEPS = (PathEltOrInverse:PathEltOrInverse PATH_SYMBOL)  {return pathOrReference(PathEltOrInverse)}
 
-			PathEltOrInverse_c = "" {getAssociations(location(), 90);}
-			plusplus = "" {addContinuation(location(), "++", 50);}
-			equalequal = "" {addContinuation(location(), "==", 50);}
-			check = "" {addContinuation(location(), "^", 50);}
-			inv_c = "" {addContinuation(location(), "inv", 50);}
-			br_open = "" {addContinuation(location(), "(", 50);}
-			br_close = "" {addContinuation(location(), ")", 50);}
-			exclamation = "" {addContinuation(location(), "!", 50);}
-			a_c = "" {addContinuation(location(), "a", 50);}
-			question = "" {addContinuation(location(), "?", 50);}
-			mult = "" {addContinuation(location(), "*", 50);}
-			plus = "" {addContinuation(location(), "+", 50);}
-			dot = "" {addContinuation(location(), ".", 50);}
-			div = "" {addContinuation(location(), "/", 50);}
-			vertical_c = "" {addContinuation(location(), "|", 50);}
-			questionquestion = "" {addContinuation(location(), "??", 50);}
-			less = "" {addContinuation(location(), "<", 50);}
-			more = "" {addContinuation(location(), ">", 50);}
-			colon = "" {addContinuation(location(), ":", 50);}
-			space_c = "" {addContinuation(location(), " ", 10);}
+			PathEltOrInverse_c = "" {getAssociations(location(), 90, 4);}
+			plusplus = "" {addContinuation(location(), "++", 50, 4);}
+			equalequal = "" {addContinuation(location(), "==", 50, 4);}
+			check = "" {addContinuation(location(), "^", 50, 4);}
+			inv_c = "" {addContinuation(location(), "inv", 50, 4);}
+			br_open = "" {addContinuation(location(), "(", 50, 4);}
+			br_close = "" {addContinuation(location(), ")", 50, 4);}
+			exclamation = "" {addContinuation(location(), "!", 50, 4);}
+			a_c = "" {addContinuation(location(), "a", 50, 4);}
+			question = "" {addContinuation(location(), "?", 50, 4);}
+			mult = "" {addContinuation(location(), "*", 50, 4);}
+			plus = "" {addContinuation(location(), "+", 50, 4);}
+			dot = "" {addContinuation(location(), ".", 50, 4);}
+			div = "" {addContinuation(location(), "/", 50, 4);}
+			vertical_c = "" {addContinuation(location(), "|", 50, 4);}
+			questionquestion = "" {addContinuation(location(), "??", 50, 4);}
+			less = "" {addContinuation(location(), "<", 50, 4);}
+			more = "" {addContinuation(location(), ">", 50, 4);}
+			colon = "" {addContinuation(location(), ":", 50, 4);}
+			space_c = "" {addContinuation(location(), " ", 10, 4);}
 			
 			end = "" {error(returnContinuation()); return;}

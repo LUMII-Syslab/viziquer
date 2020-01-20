@@ -2,6 +2,33 @@ var symbolTable = {};
 var grammarType = "class";
 // var completionOn = false;
 
+/*'
+"
+
+%
+.
+,
+/
++
+-
+=
+!
+<
+>
+{
+[
+(
+}
+)
+]
+?
+|
+*
+@
+`
+&
+*/
+
 Interpreter.customMethods({
 
 	conditionAutoCompletion: function(e, compart) {
@@ -28,7 +55,6 @@ var currentFocus = 0;
 
 
 generateSymbolTableAC = function() {
-	console.log("AutoCompletion generateSymbolTable");
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
@@ -90,6 +116,7 @@ autoCompletion = function(e) {
 		text = text.substring(0, elem.selectionStart);
 				
 		var continuations = runCompletion(text, Session.get("activeElement"));		
+		// var continuations = runCompletionNew(text, Session.get("activeElement"));		
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 			errorMessage(continuations, elem);
 		}else{
@@ -108,6 +135,7 @@ function keyUpHandler(e){
 			removeMessage();
 			var text = e.target.value;
 			var continuations = runCompletion(text, Session.get("activeElement"));
+			// var continuations = runCompletionNew(text, Session.get("activeElement"));
 			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 				errorMessage(continuations,  document.activeElement);
 				closeAllLists();
@@ -290,14 +318,14 @@ function generateInputValue(fi, con, cursorPosition){
 	return inputValue;
 }
 
-runCompletion = function (text, act_elem){	
+runCompletion = function (text, act_elem2){	
+	var act_elem = Session.get("activeElement");
 	try {
-		// var parsed_exp = vq_arithmetic.parse(str, {completions});
 		var schema = new VQ_Schema();
 		
 		if(grammarType == "link"){
 			var name_list = [];
-			var act_elem = Session.get("activeElement");
+			//var act_elem = Session.get("activeElement");
 			if (act_elem) {
 				var vq_link = new VQ_Element(act_elem);
 				if (vq_link.isLink()) {
@@ -321,10 +349,39 @@ runCompletion = function (text, act_elem){
 		// console.log(com["message"], JSON.parse(com["message"]));
 		// console.log(com);
 		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
-		
 		// console.log(JSON.stringify(c, 0, 2));
-		// var elem = document.activeElement;
-		// autocomplete(elem, c);
+		return c;
+	}
+
+	return [];
+}
+
+runCompletionNew = function (text, fullText, cursorPosition){	
+	var act_elem = Session.get("activeElement");
+	try {
+		var schema = new VQ_Schema();
+		
+		if(grammarType == "link"){
+			var name_list = [];
+			
+			if (act_elem) {
+				var vq_link = new VQ_Element(act_elem);
+				if (vq_link.isLink()) {
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+				};
+			};
+		
+		} else {
+			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			var className = compart["input"];
+			
+			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+		}
+	} catch (com) {
+		var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));
+		console.log(c);
 		return c;
 	}
 
@@ -352,6 +409,18 @@ function getCompletionTable(continuations_to_report) {
 	}
 			
 	return uniqueMessages
+}
+
+function getCompletionTableNew(continuations_to_report) {
+	var sortable = [];
+	for (var  key in continuations_to_report) {
+		sortable.push(continuations_to_report[key]);
+	}
+
+	sortable = sortable.sort(function(a, b) {
+		return  a.type-b.type;
+	});
+	return sortable
 }
 		
 //text - input string
@@ -414,7 +483,7 @@ function getContinuations(text, length, continuations) {
 			var uniqueMessages = getCompletionTable(continuations_to_report)
 			var messages = [];
 					
-			var messages = "ERROR: in a possotion " + farthest_pos + ", possible follows are:";
+			var messages = "ERROR: in a position " + farthest_pos + ", possible follows are:";
 					
 			for (var pos in uniqueMessages) {
 				messages = messages+ "\n" + uniqueMessages[pos] + ",";
@@ -423,8 +492,87 @@ function getContinuations(text, length, continuations) {
 		}
 	}
 			
-	var uniqueMessages = getCompletionTable(continuations_to_report)
+	var uniqueMessages = getCompletionTable(continuations_to_report);
+
 	return uniqueMessages
+}
+
+//text - input string
+//length - input string length
+function getContinuationsNew(text, length, continuations) {
+	var farthest_pos = -1 //farthest position in continuation table
+	var farthest_pos_prev = -1 // previous farthest position (is used only some nonterminal symbol is started)
+	var continuations_to_report;
+	
+	var prefix = text;
+			
+	//find farthest position in continuation table
+	//find  previous farthest position
+	for (var pos in continuations) {
+		if (farthest_pos != -1) {
+			farthest_pos_prev = farthest_pos
+		}
+		if (parseInt(pos) > farthest_pos) {
+			farthest_pos = parseInt(pos)
+			continuations_to_report = continuations[pos]
+		}
+	}
+			
+	if (farthest_pos_prev != -1) {
+		for (i = farthest_pos; i >=0; i--) {	
+			if (continuations[i] != null) {
+				var varrible = text.substring(i, farthest_pos);
+				
+				
+				var startedContinuations = [];
+				var wholeWordMatch = false;
+				for (var pos in continuations[i]) {	
+					//if contuniation contains sub string
+					if (pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+						prefix = text.substring(0, i);
+						continuations_to_report[pos] = continuations[i][pos];
+						startedContinuations[pos] = continuations[i][pos];
+					} else if(varrible == pos) wholeWordMatch = true;
+				}
+				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch != true) continuations_to_report = startedContinuations;
+			}
+		}
+	}
+			
+	var TermMessages=[];
+			
+	if (length>=farthest_pos) { 
+		//nemam mainigo no kludas vietas lidz beigam
+		var er = text.substring(farthest_pos, length)
+		var er_lenght = er.length
+	
+		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
+		for (var pos in continuations_to_report) {
+			//console.log("pospospos", er, pos);
+			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
+				TermMessages[pos]=continuations_to_report[pos]; 
+			}
+		}
+		TermMessages = getCompletionTableNew(TermMessages) 
+		if (TermMessages[0] != null) {
+			return {prefix:prefix, suggestions:TermMessages}
+			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
+		} else {
+			var uniqueMessages = getCompletionTableNew(continuations_to_report)
+			var messages = [];
+					
+			var messages = "ERROR: in a position " + farthest_pos + ", possible follows are:";
+					
+			for (var pos in uniqueMessages) {
+				messages = messages+ "\n" + uniqueMessages[pos] + ",";
+			}
+			return messages
+		}
+	}
+			
+	var uniqueMessages = getCompletionTableNew(continuations_to_report);
+	
+	return {prefix:prefix, suggestions:uniqueMessages}
 }
 
 function errorMessage(message, elem){

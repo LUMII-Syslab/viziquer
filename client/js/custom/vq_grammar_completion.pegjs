@@ -19,13 +19,13 @@
 			function getClasses(place, priority){
 				var cls = options.schema.getAllClasses();
 				for(var key in cls){
-					addContinuation(place, cls[key]["name"], priority);
+					addContinuation(place, cls[key]["name"], priority, 3);
 				}
 			}
 			function getReferences(place, priority){
 				for(var key in options["symbol_table"]){
 					for(var k in options["symbol_table"][key]){
-						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority);
+						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority, 3);
 					}
 				};
 			}
@@ -33,7 +33,7 @@
 				var prop = options.schema.findClassByName(options.className).getAllAttributes()
 				for(var key in prop){
 					var propName= prop[key]["short_name"];
-					addContinuation(place, propName, 100);
+					addContinuation(place, propName, 100, 1);
 				}
 				getAssociations(place, 95);
 				//getClasses(place, 94);
@@ -43,7 +43,7 @@
 				for(var key in options["symbol_table"]){
 					for(var k in options["symbol_table"][key]){
 						var kind = options["symbol_table"][key][k]["kind"];
-						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority);
+						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority, 3);
 					}
 				};
 			}
@@ -54,25 +54,25 @@
 				for(var key in prop){
 					var propName= prop[key]["short_name"];
 					if(prop[key]["type"] == "<=") {
-						addContinuation(place, "^" + propName, priority)
-						addContinuation(place, "INV(" + propName + ")", priority)
+						addContinuation(place, "^" + propName, priority, 2)
+						addContinuation(place, "INV(" + propName + ")", priority, 2)
 					}
-					else addContinuation(place, propName, priority);
+					else addContinuation(place, propName, priority, 2);
 				}
 			}
 			
 			function getAttrSub(place, priority){
 				if(options.type == "attribute"){
-					addContinuation(place, "(*attr)", priority);
-					addContinuation(place, "(*sub)", priority);
+					addContinuation(place, "(*attr)", priority, 3);
+					addContinuation(place, "(*sub)", priority, 3);
 				}
 			}
 			
-			function addContinuation(place, continuation, priority, start_end){
+			function addContinuation(place, continuation, priority, type, start_end){
 				var position = "start";
 				if(start_end != null)position = start_end;
 				makeArray(place[position]["offset"]);
-				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:"type"};
+				continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type};
 			}
 			function returnContinuation(){
 				return JSON.stringify(continuations,null,2);
@@ -161,7 +161,7 @@
 						var prop = options.schema.findClassByName(targetClass).getAllAttributes();
 						
 						for(var key in prop){
-							addContinuation(location(), prop[key]["name"], 100, "end");
+							addContinuation(location(), prop[key]["name"], 100, 1, "end");
 						}
 						
 						prop = options.schema.findClassByName(targetClass).getAllAssociations();
@@ -169,10 +169,10 @@
 						for(var key in prop){
 							var association = prop[key]["name"];
 							if(prop[key]["type"] == "<=") {
-								addContinuation(location(), "^" + prop[key]["name"], 100, "end")
-								addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, "end")
+								addContinuation(location(), "^" + prop[key]["name"], 100, 2, "end")
+								addContinuation(location(), "INV(" + prop[key]["name"] + ")", 100, 2, "end")
 							}
-							else addContinuation(location(), prop[key]["name"], 100, "end");
+							else addContinuation(location(), prop[key]["name"], 100, 2, "end");
 						}
 					}
 				}
@@ -191,12 +191,12 @@
 			
 				var prop = options.schema.findClassByName(classAliasTable[o]).getAllAttributes();
 				for(var key in prop){
-					addContinuation(location(), prop[key]["name"], 100, "end");
+					addContinuation(location(), prop[key]["name"], 100, 1, "end");
 				}
 					
 				prop = options.schema.findClassByName(classAliasTable[o]).getAllAssociations();
 				for(var key in prop){
-					addContinuation(location(), prop[key]["name"], 99, "end");
+					addContinuation(location(), prop[key]["name"], 99, 2, "end");
 				}
 
 				return o;
@@ -603,131 +603,131 @@
 			BetweenExpression = (space between_c 'BETWEEN'i space br_open'(' space NumericExpression space Comma space NumericExpression br_close')') 
 
 			
-			unit = "" {addContinuation(location(), "[ ]", 50);}
+			unit = "" {addContinuation(location(), "[ ]", 50, 4);}
 			
-			union = "" {addContinuation(location(), "[ + ]", 50);}
-			no_class = "" {addContinuation(location(), "(no_class)", 50);}
-			curv_br_open = "" {addContinuation(location(), "{", 50);/*}*/}
-            curv_br_close = "" {addContinuation(location(), /*{*/"}", 50);}
-			two_dots = "" {addContinuation(location(), "..", 50);}
-			dot = "" {addContinuation(location(), ".", 50);}
-			dot_in_br = "" {addContinuation(location(), "(.)", 50);}
-			select_this = "" {addContinuation(location(), "(select this)", 50);}
-			this_c = "" {addContinuation(location(), "(this)", 50);}
-			or = "" {addContinuation(location(), "||", 90); addContinuation(location(), "OR", 90);}
-			and = "" {addContinuation(location(), "&&", 90); addContinuation(location(), "AND", 90);}
-			in_c = "" {addContinuation(location(), "IN", 90);}
-			not_c = "" {addContinuation(location(), "NOT", 90);}
-			notIn_c = "" {addContinuation(location(), "NOT IN", 90);}
-			concat_c = "" {addContinuation(location(), "++", 90);}
-			plus = "" {addContinuation(location(), "+", 90);}
-			minus = "" {addContinuation(location(), "-", 90);}
-			exclamation = "" {addContinuation(location(), "!", 90);}
-			a_c = "" {addContinuation(location(), "a", 90);}
-			mult = "" {addContinuation(location(), "*", 90);}
-			div = "" {addContinuation(location(), "/", 90);}
-			true_c = "" {addContinuation(location(), "true", 90);}
-			false_c = "" {addContinuation(location(), "false", 90);}
-			double_check = "" {addContinuation(location(), "^^", 90);}
-			check = "" {addContinuation(location(), "^", 90);}
-			br_open = "" {addContinuation(location(), "(", 90);}
-			br_close = "" {addContinuation(location(), ")", 90);}
-			count_distinct_c = "" {addContinuation(location(), "COUNT_DISTINCT", 90);}
-			distinct_c = "" {addContinuation(location(), "DISTINCT", 90);}
-			count_c = "" {addContinuation(location(), "COUNT", 90);}
-			sum_c = "" {addContinuation(location(), "SUM", 90);}
-			min_c = "" {addContinuation(location(), "MIN", 90);}
-			max_c = "" {addContinuation(location(), "MAX", 90);}
-			avg_c = "" {addContinuation(location(), "AVG", 90);}
-			sample_c = "" {addContinuation(location(), "SAMPLE", 90);}
-			group_concat_c = "" {addContinuation(location(), "GROUP_CONCAT", 90);}
-			separator_c = "" {addContinuation(location(), "SEPARATOR", 90);}
-			semi_colon = "" {addContinuation(location(), ";", 90);}
-			equal = "" {addContinuation(location(), "=", 90);}
-			comma_c = "" {addContinuation(location(), ",", 90);}
-			str_c = "" {addContinuation(location(), "STR", 90);}
-			lang_c = "" {addContinuation(location(), "LANG", 90);}
-			datatype_c = "" {addContinuation(location(), "DATATYPE", 90);}
-			iri_c = "" {addContinuation(location(), "IRI", 90);}
-			uri_c = "" {addContinuation(location(), "URI", 90);}
-			abs_c = "" {addContinuation(location(), "ABS", 90);}
-			ceil_c = "" {addContinuation(location(), "CEIL", 90);}
-			floor_c = "" {addContinuation(location(), "FLOOR", 90);}
-			round_c = "" {addContinuation(location(), "ROUND", 90);}
-			strlen_c = "" {addContinuation(location(), "STRLEN", 90);}
-			ucase_c = "" {addContinuation(location(), "UCASE", 90);}
-			lcase_c = "" {addContinuation(location(), "LCASE", 90);}
-			encode_for_uri_c = "" {addContinuation(location(), "ENCODE_FOR_URI", 90);}
-			year_c = "" {addContinuation(location(), "YEAR", 90);}
-			month_c = "" {addContinuation(location(), "MONTH", 90);}
-			day_c = "" {addContinuation(location(), "DAY", 90);}
-			time_zone_c = "" {addContinuation(location(), "TIMEZONE", 90);}
-			tz_c = "" {addContinuation(location(), "TZ", 90);}
-			md5_c = "" {addContinuation(location(), "MD5", 90);}
-			sha1_c = "" {addContinuation(location(), "SHA1", 90);}
-			SHA256_c = "" {addContinuation(location(), "SHA256", 90);}
-			SHA384_c = "" {addContinuation(location(), "SHA384", 90);}
-			SHA512_c = "" {addContinuation(location(), "SHA512", 90);}
-			isIRI_c = "" {addContinuation(location(), "isIRI", 90);}
-			isURI_c = "" {addContinuation(location(), "isURI", 90);}
-			isBLANK_c = "" {addContinuation(location(), "isBLANK", 90);}
-			dateTime_c = "" {addContinuation(location(), "dateTime", 90);}
-			date_c = "" {addContinuation(location(), "date", 90);}
-			isLITERAL_c = "" {addContinuation(location(), "isLITERAL", 90);}
-			isNUMERIC_c  = "" {addContinuation(location(), "isNUMERIC", 90);}
-			LANGMATCHES_c = "" {addContinuation(location(), "LANGMATCHES", 90);}
-			CONTAINS_c = "" {addContinuation(location(), "CONTAINS", 90);}
-			STRSTARTS_c = "" {addContinuation(location(), "STRSTARTS", 90);}
-			STRENDS_c = "" {addContinuation(location(), "STRENDS", 90);}
-			STRBEFORE_c = "" {addContinuation(location(), "STRBEFORE", 90);}
-			STRAFTER_c = "" {addContinuation(location(), "STRAFTER", 90);}
-			STRLANG_c = "" {addContinuation(location(), "STRLANG", 90);}
-			STRDT_c  = "" {addContinuation(location(), "STRDT", 90);}
-			sameTerm_c = "" {addContinuation(location(), "sameTerm", 90);}
-			days_c  = "" {addContinuation(location(), "days", 90);}
-			years_c  = "" {addContinuation(location(), "years", 90);}
-			months_c = "" {addContinuation(location(), "months", 90);}
-			hours_c = "" {addContinuation(location(), "hours", 90);}
-			minutes_c = "" {addContinuation(location(), "minutes", 90);}
-			seconds_c = "" {addContinuation(location(), "seconds", 90);}
-			if_c  = "" {addContinuation(location(), "IF", 90);}
-			COALESCE_c  = "" {addContinuation(location(), "COALESCE", 90);}
-			BOUND_c  = "" {addContinuation(location(), "BOUND", 90);}
-			BNODE_c  = "" {addContinuation(location(), "BNODE", 90);}
-			RAND_c  = "" {addContinuation(location(), "RAND", 90);}
-			CONCAT_c  = "" {addContinuation(location(), "CONCAT", 90);}
-			NOW_c  = "" {addContinuation(location(), "NOW", 90);}
-			UUID_c  = "" {addContinuation(location(), "UUID", 90);}
-			STRUUID_c  = "" {addContinuation(location(), "STRUUID", 90);}
-			REGEX_c = "" {addContinuation(location(), "REGEX", 90);}
-			SUBSTRING_c = "" {addContinuation(location(), "SUBSTRING", 90);}
-			SUBSTR_c  = "" {addContinuation(location(), "SUBSTR", 90);}
-			bif_SUBSTRING_c = "" {addContinuation(location(), "bif:SUBSTRING", 90);}
-			bif_SUBSTR_c = "" {addContinuation(location(), "bif:SUBSTR", 90);}
-			REPLACE_c  = "" {addContinuation(location(), "REPLACE", 90);}
-			EXISTS_c = "" {addContinuation(location(), "EXISTS", 90);}
-			at = "" {addContinuation(location(), "@", 90);}
-			colon = "" {addContinuation(location(), ":", 90);}
-			question = "" {addContinuation(location(), "?", 90);}
-			dubble_question = "" {addContinuation(location(), "??", 90);}
-			dollar = "" {addContinuation(location(), "$", 90);}
-			quote = "" {addContinuation(location(), "'", 90);}
-			dubble_quote = "" {addContinuation(location(), '"', 90);}
-			inv_c = "" {addContinuation(location(), "INV", 90);}
-			squere_br_open = "" {addContinuation(location(), "[", 90);}
-			squere_br_close = "" {addContinuation(location(), "]", 90);}
-			relations = "" {addContinuation(location(), "=", 90); addContinuation(location(), "!=", 90);  addContinuation(location(), "<>", 90);  addContinuation(location(), "<=", 90);  addContinuation(location(), ">=", 90);  addContinuation(location(), "<", 90); addContinuation(location(), ">", 90);}
-			like_c = "" {addContinuation(location(), "LIKE", 90);}
-			more = "" {addContinuation(location(), ">", 90);}
-			less = "" {addContinuation(location(), "<", 90);}
-			percent = "" {addContinuation(location(), "%", 90);}
-			between_c = "" {addContinuation(location(), "BETWEEN", 90);}
-			int_c = "" {addContinuation(location(), "", 1);}
-			string_c = "" {addContinuation(location(), "", 1);}
-			colon_c = "" {addContinuation(location(), ":", 90);}
-			vertical_c = "" {addContinuation(location(), "|", 90);}
-			space_c = "" {addContinuation(location(), " ", 10);}
-			PropertyReference_c = "" {addContinuation(location(), "`", 10);}
+			union = "" {addContinuation(location(), "[ + ]", 50, 4);}
+			no_class = "" {addContinuation(location(), "(no_class)", 50, 4);}
+			curv_br_open = "" {addContinuation(location(), "{", 50, 4);/*}*/}
+            curv_br_close = "" {addContinuation(location(), /*{*/"}", 50, 4);}
+			two_dots = "" {addContinuation(location(), "..", 50, 4);}
+			dot = "" {addContinuation(location(), ".", 50, 4);}
+			dot_in_br = "" {addContinuation(location(), "(.)", 50, 4);}
+			select_this = "" {addContinuation(location(), "(select this)", 50, 4);}
+			this_c = "" {addContinuation(location(), "(this)", 50, 4);}
+			or = "" {addContinuation(location(), "||", 90, 4); addContinuation(location(), "OR", 90, 4);}
+			and = "" {addContinuation(location(), "&&", 90, 4); addContinuation(location(), "AND", 90, 4);}
+			in_c = "" {addContinuation(location(), "IN", 90, 4);}
+			not_c = "" {addContinuation(location(), "NOT", 90, 4);}
+			notIn_c = "" {addContinuation(location(), "NOT IN", 90, 4);}
+			concat_c = "" {addContinuation(location(), "++", 90, 4);}
+			plus = "" {addContinuation(location(), "+", 90, 4);}
+			minus = "" {addContinuation(location(), "-", 90, 4);}
+			exclamation = "" {addContinuation(location(), "!", 90, 4);}
+			a_c = "" {addContinuation(location(), "a", 90, 4);}
+			mult = "" {addContinuation(location(), "*", 90, 4);}
+			div = "" {addContinuation(location(), "/", 90, 4);}
+			true_c = "" {addContinuation(location(), "true", 90, 4);}
+			false_c = "" {addContinuation(location(), "false", 90, 4);}
+			double_check = "" {addContinuation(location(), "^^", 90, 4);}
+			check = "" {addContinuation(location(), "^", 90, 4);}
+			br_open = "" {addContinuation(location(), "(", 90, 4);}
+			br_close = "" {addContinuation(location(), ")", 90, 4);}
+			count_distinct_c = "" {addContinuation(location(), "COUNT_DISTINCT", 90, 4);}
+			distinct_c = "" {addContinuation(location(), "DISTINCT", 90, 4);}
+			count_c = "" {addContinuation(location(), "COUNT", 90, 4);}
+			sum_c = "" {addContinuation(location(), "SUM", 90, 4);}
+			min_c = "" {addContinuation(location(), "MIN", 90, 4);}
+			max_c = "" {addContinuation(location(), "MAX", 90, 4);}
+			avg_c = "" {addContinuation(location(), "AVG", 90, 4);}
+			sample_c = "" {addContinuation(location(), "SAMPLE", 90, 4);}
+			group_concat_c = "" {addContinuation(location(), "GROUP_CONCAT", 90, 4);}
+			separator_c = "" {addContinuation(location(), "SEPARATOR", 90, 4);}
+			semi_colon = "" {addContinuation(location(), ";", 90, 4);}
+			equal = "" {addContinuation(location(), "=", 90, 4);}
+			comma_c = "" {addContinuation(location(), ",", 90, 4);}
+			str_c = "" {addContinuation(location(), "STR", 90, 4);}
+			lang_c = "" {addContinuation(location(), "LANG", 90, 4);}
+			datatype_c = "" {addContinuation(location(), "DATATYPE", 90, 4);}
+			iri_c = "" {addContinuation(location(), "IRI", 90, 4);}
+			uri_c = "" {addContinuation(location(), "URI", 90, 4);}
+			abs_c = "" {addContinuation(location(), "ABS", 90, 4);}
+			ceil_c = "" {addContinuation(location(), "CEIL", 90, 4);}
+			floor_c = "" {addContinuation(location(), "FLOOR", 90, 4);}
+			round_c = "" {addContinuation(location(), "ROUND", 90, 4);}
+			strlen_c = "" {addContinuation(location(), "STRLEN", 90, 4);}
+			ucase_c = "" {addContinuation(location(), "UCASE", 90, 4);}
+			lcase_c = "" {addContinuation(location(), "LCASE", 90, 4);}
+			encode_for_uri_c = "" {addContinuation(location(), "ENCODE_FOR_URI", 90, 4);}
+			year_c = "" {addContinuation(location(), "YEAR", 90, 4);}
+			month_c = "" {addContinuation(location(), "MONTH", 90, 4);}
+			day_c = "" {addContinuation(location(), "DAY", 90, 4);}
+			time_zone_c = "" {addContinuation(location(), "TIMEZONE", 90, 4);}
+			tz_c = "" {addContinuation(location(), "TZ", 90, 4);}
+			md5_c = "" {addContinuation(location(), "MD5", 90, 4);}
+			sha1_c = "" {addContinuation(location(), "SHA1", 90, 4);}
+			SHA256_c = "" {addContinuation(location(), "SHA256", 90, 4);}
+			SHA384_c = "" {addContinuation(location(), "SHA384", 90, 4);}
+			SHA512_c = "" {addContinuation(location(), "SHA512", 90, 4);}
+			isIRI_c = "" {addContinuation(location(), "isIRI", 90, 4);}
+			isURI_c = "" {addContinuation(location(), "isURI", 90, 4);}
+			isBLANK_c = "" {addContinuation(location(), "isBLANK", 90, 4);}
+			dateTime_c = "" {addContinuation(location(), "dateTime", 90, 4);}
+			date_c = "" {addContinuation(location(), "date", 90, 4);}
+			isLITERAL_c = "" {addContinuation(location(), "isLITERAL", 90, 4);}
+			isNUMERIC_c  = "" {addContinuation(location(), "isNUMERIC", 90, 4);}
+			LANGMATCHES_c = "" {addContinuation(location(), "LANGMATCHES", 90, 4);}
+			CONTAINS_c = "" {addContinuation(location(), "CONTAINS", 90, 4);}
+			STRSTARTS_c = "" {addContinuation(location(), "STRSTARTS", 90, 4);}
+			STRENDS_c = "" {addContinuation(location(), "STRENDS", 90, 4);}
+			STRBEFORE_c = "" {addContinuation(location(), "STRBEFORE", 90, 4);}
+			STRAFTER_c = "" {addContinuation(location(), "STRAFTER", 90, 4);}
+			STRLANG_c = "" {addContinuation(location(), "STRLANG", 90, 4);}
+			STRDT_c  = "" {addContinuation(location(), "STRDT", 90, 4);}
+			sameTerm_c = "" {addContinuation(location(), "sameTerm", 90, 4);}
+			days_c  = "" {addContinuation(location(), "days", 90, 4);}
+			years_c  = "" {addContinuation(location(), "years", 90, 4);}
+			months_c = "" {addContinuation(location(), "months", 90, 4);}
+			hours_c = "" {addContinuation(location(), "hours", 90, 4);}
+			minutes_c = "" {addContinuation(location(), "minutes", 90, 4);}
+			seconds_c = "" {addContinuation(location(), "seconds", 90, 4);}
+			if_c  = "" {addContinuation(location(), "IF", 90, 4);}
+			COALESCE_c  = "" {addContinuation(location(), "COALESCE", 90, 4);}
+			BOUND_c  = "" {addContinuation(location(), "BOUND", 90, 4);}
+			BNODE_c  = "" {addContinuation(location(), "BNODE", 90, 4);}
+			RAND_c  = "" {addContinuation(location(), "RAND", 90, 4);}
+			CONCAT_c  = "" {addContinuation(location(), "CONCAT", 90, 4);}
+			NOW_c  = "" {addContinuation(location(), "NOW", 90, 4);}
+			UUID_c  = "" {addContinuation(location(), "UUID", 90, 4);}
+			STRUUID_c  = "" {addContinuation(location(), "STRUUID", 90, 4);}
+			REGEX_c = "" {addContinuation(location(), "REGEX", 90, 4);}
+			SUBSTRING_c = "" {addContinuation(location(), "SUBSTRING", 90, 4);}
+			SUBSTR_c  = "" {addContinuation(location(), "SUBSTR", 90, 4);}
+			bif_SUBSTRING_c = "" {addContinuation(location(), "bif:SUBSTRING", 90, 4);}
+			bif_SUBSTR_c = "" {addContinuation(location(), "bif:SUBSTR", 90, 4);}
+			REPLACE_c  = "" {addContinuation(location(), "REPLACE", 90, 4);}
+			EXISTS_c = "" {addContinuation(location(), "EXISTS", 90, 4);}
+			at = "" {addContinuation(location(), "@", 90, 4);}
+			colon = "" {addContinuation(location(), ":", 90, 4);}
+			question = "" {addContinuation(location(), "?", 90, 4);}
+			dubble_question = "" {addContinuation(location(), "??", 90, 4);}
+			dollar = "" {addContinuation(location(), "$", 90, 4);}
+			quote = "" {addContinuation(location(), "'", 90, 4);}
+			dubble_quote = "" {addContinuation(location(), '"', 90, 4);}
+			inv_c = "" {addContinuation(location(), "INV", 90, 4);}
+			squere_br_open = "" {addContinuation(location(), "[", 90, 4);}
+			squere_br_close = "" {addContinuation(location(), "]", 90, 4);}
+			relations = "" {addContinuation(location(), "=", 90, 4); addContinuation(location(), "!=", 90, 4);  addContinuation(location(), "<>", 90, 4);  addContinuation(location(), "<=", 90, 4);  addContinuation(location(), ">=", 90, 4);  addContinuation(location(), "<", 90, 4); addContinuation(location(), ">", 90, 4);}
+			like_c = "" {addContinuation(location(), "LIKE", 90, 4);}
+			more = "" {addContinuation(location(), ">", 90, 4);}
+			less = "" {addContinuation(location(), "<", 90, 4);}
+			percent = "" {addContinuation(location(), "%", 90, 4);}
+			between_c = "" {addContinuation(location(), "BETWEEN", 90, 4);}
+			int_c = "" {addContinuation(location(), "", 1, 4);}
+			string_c = "" {addContinuation(location(), "", 1, 4);}
+			colon_c = "" {addContinuation(location(), ":", 90, 4);}
+			vertical_c = "" {addContinuation(location(), "|", 90, 4);}
+			space_c = "" {addContinuation(location(), " ", 10, 4);}
+			PropertyReference_c = "" {addContinuation(location(), "`", 10, 4);}
 			variables_c = "" {getProperties(location(), 91);}
 			references_c = "" {getReferences(location(), 91);}
 			associations_c = "" {getAssociations(location(), 91);}

@@ -14305,9 +14305,13 @@ vq_grammar_parser = (function() {
     			function resolveTypeFromSchemaForAttributeAndLink(id) {
     				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
     				var res = aorl[0];
-    				if (!res) { res = options.schema.resolveLinkByName(id)}
+    				if (!res) { 
+    					res = options.schema.resolveLinkByName(id); 
+    					if (res) res["property_type"] = "OBJECT_PROPERTY"
+    				}
     				else {
     						res["parentType"] = aorl[1];
+    						res["property_type"] = "DATA_PROPERTY";
     				};
     				return res
     			};
