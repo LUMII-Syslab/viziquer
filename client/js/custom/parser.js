@@ -660,8 +660,6 @@ function transformExistsNotExists(expressionTable, alias, className){
 			// visited = 1;
 		}
 		
-		// if(key == "ConditionalAndExpression") transformVariableFilter(expressionTable[key], prefix, existsExpr, 0, alias, className);
-		
 		// if(visited == 0 && typeof expressionTable[key] == 'object'){
 		if(typeof expressionTable[key] == 'object'){
 			transformExistsNotExists(expressionTable[key], alias, className);
@@ -868,119 +866,6 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 	return expressionTable
 }
 
-function transformVariableFilter(expressionTable, prefix, existsExpr, count, alias, className){
-	if(typeof expressionTable[count]["ExistsExpr"] === 'undefined' && typeof expressionTable[count]["NotExistsExpr"] === 'undefined'){
-		if(typeof expressionTable[count]["RelationalExpression"]["Relation"] !== 'undefined'){
-			var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
-			if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
-				var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
-				var variable, prefixedName
-				if(typeof pe["Reference"] !== 'undefined'){
-					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
-					prefixedName = pe["var"]["name"];
-					referenceTable.push("?"+pe["Reference"]["name"]);
-					referenceCandidateTable.push(pe["Reference"]["name"]);
-				}
-				else if(typeof pe["Path"] !== 'undefined'){
-					var path = getPath(pe["Path"]);
-					if(typeof path["messages"] !== 'undefined') {
-						prefixedName = null;
-						messages = messages.concat(path["messages"]);
-					}
-					else{
-						for (var prefix in path["prefixTable"]) { 
-							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
-						}
-						prefixedName = path["path"];
-					}
-					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
-					variableNamesClass[pe["var"]["name"]] ={"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
-					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-					variable = setVariableName(pe["var"]["name"], alias, pe["var"])
-				}
-				else if(typeof pe["var"] !== 'undefined') {
-					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
-					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
-					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
-				
-					var path = getPath(pe["var"]["name"]);
-					if(typeof path["messages"] !== 'undefined') {
-						prefixedName = null;
-						messages = messages.concat(path["messages"]);
-					}
-					else{
-						for (var prefix in path["prefixTable"]) { 
-							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
-						}
-						prefixedName = path["path"];
-					}
-				}
-						
-				expressionTable[count] =  {
-					["ExistsExpr"] : {
-						"Triple" : [{
-							"variable" : variable,
-							"prefixedName" : prefixedName,
-							"object" : className,
-						}],
-						"Filter" : {"RelationalExpression":expressionTable[count]["RelationalExpression"]}
-					}
-				} 
-			}
-		} else {
-			var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
-			if(tempAliasOrAttribute == "PROPERTY_NAME" || tempAliasOrAttribute == "CLASS_NAME"){
-				var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "PrimaryExpression");
-				var variable, prefixedName
-				if(typeof pe["Reference"] !== 'undefined'){
-					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
-					prefixedName = pe["var"]["name"];
-					referenceTable.push("?"+pe["Reference"]["name"]);
-					referenceCandidateTable.push(pe["Reference"]["name"]);
-				}
-				else if(typeof pe["Path"] !== 'undefined'){
-					var path = getPath(pe["Path"]);
-					if(typeof path["messages"] !== 'undefined') {
-						prefixedName = null;
-						messages = messages.concat(path["messages"]);
-					}
-					else{
-						for (var prefix in path["prefixTable"]) { 
-							if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
-						}
-						prefixedName = path["path"];
-					}
-					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
-					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
-					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
-				}
-				else if(typeof pe["var"] !== 'undefined') {
-					//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
-					variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
-					variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
-					variable = setVariableName(pe["var"]["name"], alias, pe["var"]);
-					prefixedName = pe["var"]["name"];
-				}
-						
-				expressionTable[count] =  {
-					["ExistsExpr"] : {
-						"Triple" : [{
-							"variable" : variable,
-							"prefixedName" : prefixedName,
-							"object" : className,
-						}],
-					}
-				} 
-			}
-		}
-	}
-	for(var key in expressionTable[1]){
-		if(typeof expressionTable[1][key][3] !== 'undefined') expressionTable[1][key] = transformVariableFilter(expressionTable[1][key], prefix, existsExpr, 3, alias, className);
-	}
-	return expressionTable
-}
 
 // transform a BETWEEN(1, 3) into a>=1 && a<=3
 // transform a LIKE "%abc" into REGEX(a, "abc$")
@@ -1941,7 +1826,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false
 						){
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
-							messages = messages.concat(path["messages"]);
+							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
 							typeof path["variable"]["var"]["type"] !== 'undefined' &&
@@ -1968,7 +1853,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false
 						){
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
-							messages = messages.concat(path["messages"]);
+							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
 							typeof path["variable"]["var"]["type"] !== 'undefined' &&
@@ -2063,7 +1948,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false)
 						{
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
-							messages = messages.concat(path["messages"]);
+							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
 							typeof path["variable"]["var"]["type"] !== 'undefined' &&
@@ -2092,7 +1977,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false)
 						{
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
-							messages = messages.concat(path["messages"]);
+							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
 							typeof path["variable"]["var"]["type"] !== 'undefined' &&
