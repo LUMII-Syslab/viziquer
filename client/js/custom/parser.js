@@ -554,7 +554,7 @@ getPathFullGrammar = function(expressionTable){
 		if((key == "PathPrimary" || key == "iriOra") && typeof expressionTable[key]["var"] !== 'undefined'){
 // console.log("3333333", expressionTable[key]["var"], expressionTable[key]["var"]["type"]["property_type"])
 			if(typeof expressionTable[key]["var"]["type"] !== 'undefined' && expressionTable[key]["var"]["type"] != null){	
-				if(typeof expressionTable[key]["var"]["type"]["property_type"] !== 'undefined' && expressionTable[key]["var"]["type"]["property_type"] == "OBJECT_PROPERTY") {isPath = true; console.log("TTTTTTTTTTtt")}
+				if(typeof expressionTable[key]["var"]["type"]["property_type"] !== 'undefined' && expressionTable[key]["var"]["type"]["property_type"] == "OBJECT_PROPERTY") {isPath = true;}
 				// if(typeof expressionTable[key]["var"]["type"]["parentType"] !== 'undefined' && expressionTable[key]["var"]["type"]["parentType"] != null) 
 				// {isPath = false;
 				// console.log("3333333", expressionTable[key]["var"])
@@ -639,7 +639,6 @@ getPathFullGrammar = function(expressionTable){
 			if(temp["isPath"] != null) isPath = temp["isPath"];
 		}
 	}
-
 	return {path:path, prefixTable:prTable, variable:variable, isPath:isPath, messages:mes};
 }
 
@@ -712,9 +711,10 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				expressionLevelNames[pe["PrimaryExpression"]["var"]["name"]] = variable;
 				
 			}else if(typeof pe["PathProperty"] !== 'undefined'){
+
 				var path = getPathFullGrammar(pe["PathProperty"]);
-				
-				if(typeof path["messages"] !== 'undefined' ) {
+
+				if(path["messages"].length > 0) {
 					prefixedName = null;
 					messages = messages.concat(path["messages"]);
 				}
