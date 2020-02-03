@@ -149,6 +149,7 @@ Template.AddLink.events({
 		});
 		Template.ConnectClasses.elements.set(data);
 		Template.ConnectClasses.addLongLink.set({data: true});
+		Template.ConnectClasses.linkMenu.set({data: false});
 		$("#connect-classes-form").modal("show");
 		// console.log("Connect classes activated");
 		//Hide Add Link 

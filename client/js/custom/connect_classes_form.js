@@ -35,10 +35,33 @@ Interpreter.customMethods({
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
 				Template.ConnectClasses.shortLinkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
+				Template.ConnectClasses.addLongLink.set({data: false});
+				Template.ConnectClasses.linkMenu.set({data: false});
+				$("#show-as-property-path")[0].checked = false;
 				$("#connect-classes-form").modal("show");			
 			}
 		}		
 		
+	},
+
+	linkConnectClasses: function () {
+		var link = new VQ_Element(Session.get("activeElement"));
+		if (link && link.isLink()) {
+			var startClass = link.getStartElement();
+			var endClass = link.getEndElement();
+			if (startClass && endClass) {
+				Template.ConnectClasses.IDS.set([{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}]);
+				Template.ConnectClasses.elements.set([{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}]);
+				Template.ConnectClasses.linkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
+				Template.ConnectClasses.shortLinkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
+				Template.ConnectClasses.addLongLink.set({data: false});
+				Template.ConnectClasses.linkMenu.set({data: true});
+				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
+				$("#show-as-property-path")[0].checked = true;			
+				$("#connect-classes-form").modal("show");
+				console.log("link with classes");
+			}
+		}
 	},
 		
 })
@@ -47,7 +70,9 @@ Template.ConnectClasses.IDS= new ReactiveVar([{name: "no class", id:"0"}]);
 Template.ConnectClasses.linkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], number: -1}]);
 Template.ConnectClasses.shortLinkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], number: -1}]);
 Template.ConnectClasses.elements = new ReactiveVar([{name: "No class", id: 0}]);
-
+Template.ConnectClasses.addLongLink = new ReactiveVar({data: false});
+Template.ConnectClasses.linkMenu = new ReactiveVar({data: false});
+Template.ConnectClasses.linkID = new ReactiveVar({data: "no link"});
 Template.ConnectClasses.helpers({
 
 	IDS: function(){
@@ -66,6 +91,14 @@ Template.ConnectClasses.helpers({
 		return Template.ConnectClasses.elements.get();
 	},
 
+	addLongLink: function(){
+		return Template.ConnectClasses.addLongLink.get();
+	},
+
+	linkID: function(){
+		return Template.ConnectClasses.addLongLink.get();
+	},
+
 });
 
 Template.ConnectClasses.events({
@@ -82,49 +115,88 @@ Template.ConnectClasses.events({
 	},
 
 	"click #apply-settings": function(){
-		//check if starting element is selected
 		var first = "";
-		first = $('input[name=fc-radio]:checked').val();
 		var fullList;
-		if (!first || first == "" || first == undefined) {
-			$('#direction_text')[0].style.color = "red";
-			fullList = [{array: [{class: "Please choose direction to connect classes"}], number: -1}]
-		} else {
-			var maxLength = $("#max_length")[0].value;			
-			if (maxLength) {
-				$('#direction_text')[0].style.color = "";
-				$('#max_length_text')[0].style.color = "";
-			//check if length is integer
-				if( (maxLength - Math.round(maxLength)) != 0 ) { 
-					Template.ConnectClasses.linkList.set([{array: [{class: "Please choose correct maximum length"}], number: -1}]);
-					$('#max_length_text')[0].style.color = "red";
-					return; 
-				}				
-				var ids = Template.ConnectClasses.IDS.curValue;
-				//sort IDs in the right order top pass to GetChains
-				//from-class at position 0, to-class at possition 1
-				var newIds = [];
-				_.each(ids, function(e){
-					if (e.text == first){
-						newIds[0] = e; 
-					} else {
-						newIds[1] = e;
-					}
-				})
-				ids = newIds;
+		if (!Template.ConnectClasses.addLongLink.get().data){
+			//check if starting element is selected			
+			first = $('input[name=fc-radio]:checked').val();			
+			if (!first || first == "" || first == undefined) {
+				$('#direction_text')[0].style.color = "red";
+				fullList = [{array: [{class: "Please choose direction to connect classes"}], number: -1}]
+			} else {
+				var maxLength = $("#max_length")[0].value;			
+				if (maxLength) {
+					$('#direction_text')[0].style.color = "";
+					$('#max_length_text')[0].style.color = "";
+				//check if length is integer
+					if( (maxLength - Math.round(maxLength)) != 0 ) { 
+						Template.ConnectClasses.linkList.set([{array: [{class: "Please choose correct maximum length"}], number: -1}]);
+						$('#max_length_text')[0].style.color = "red";
+						return; 
+					}				
+					var ids = Template.ConnectClasses.IDS.curValue;
+					//sort IDs in the right order top pass to GetChains
+					//from-class at position 0, to-class at possition 1
+					var newIds = [];
+					_.each(ids, function(e){
+						if (e.text == first){
+							newIds[0] = e; 
+						} else {
+							newIds[1] = e;
+						}
+					})
+					ids = newIds; //console.log("ids: ", newIds);
 
-				// Create possible linking chains
-				fullList = GetChains(ids, maxLength);				
+					// Create possible linking chains
+					fullList = GetChains(ids, maxLength);				
+				}
 			}
-		}
-		Template.ConnectClasses.linkList.set(fullList);
-		var value = $("#searchList").val().toLowerCase();
-		if (value == "" || value.indexOf(' ') > -1) {
-			Template.ConnectClasses.shortLinkList.set(fullList);
+			Template.ConnectClasses.linkList.set(fullList);
+			var value = $("#searchList").val().toLowerCase();
+			if (value == "" || value.indexOf(' ') > -1) {
+				Template.ConnectClasses.shortLinkList.set(fullList);
+			} else {
+				Template.ConnectClasses.shortLinkList.set(applySearch(fullList, value));
+			}
 		} else {
-			Template.ConnectClasses.shortLinkList.set(applySearch(fullList, value));
-		}
-		
+			// console.log("159 - from add link");
+			first = Session.get("activeElement");			
+			if (!first || first == "" || first == undefined) {
+				$('#direction_text')[0].style.color = "red";
+				fullList = [{array: [{class: "Please choose class to connect from"}], number: -1}]
+			} else {				
+				var endClassName = $('#classList').val();
+				if (!endClassName || endClassName == "") {
+					$('#direction_text')[0].style.color = "red";
+					fullList = [{array: [{class: "Please choose class to connect to"}], number: -1}]
+				} else {
+					var maxLength = $("#max_length")[0].value;			
+					if (maxLength) {
+						$('#direction_text')[0].style.color = "";
+						$('#max_length_text')[0].style.color = "";
+					//check if length is integer
+						if( (maxLength - Math.round(maxLength)) != 0 ) { 
+							Template.ConnectClasses.linkList.set([{array: [{class: "Please choose correct maximum length"}], number: -1}]);
+							$('#max_length_text')[0].style.color = "red";
+							return; 
+						}				
+						var newIds = [];
+						newIds[0] = {text: first};
+						newIds[1] = {text: "no_class_exists", name: endClassName}					
+
+						// Create possible linking chains
+						fullList = GetChains(newIds, maxLength);									
+					}
+				}
+			}
+			Template.ConnectClasses.linkList.set(fullList);
+			var value = $("#searchList").val().toLowerCase();
+			if (value == "" || value.indexOf(' ') > -1) {
+				Template.ConnectClasses.shortLinkList.set(fullList);
+			} else {
+				Template.ConnectClasses.shortLinkList.set(applySearch(fullList, value));
+			}			
+		}		
 	},
 
 	"keyup #searchList": function(){
@@ -142,6 +214,7 @@ Template.ConnectClasses.events({
 
 
 	"click #ok-connect": function(){
+		var firstId = "";
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
 		if (number < 0 || !number) {
@@ -151,11 +224,37 @@ Template.ConnectClasses.events({
 			return;
 		}
 		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
-		chain = _.rest(chain); console.log(chain);
-		var firstId = $('input[name=fc-radio]:checked').val();
+		chain = _.rest(chain); //console.log(chain);
+		if (!Template.ConnectClasses.addLongLink.get().data){			
+			firstId = $('input[name=fc-radio]:checked').val();
+		} else {
+			firstId = Session.get("activeElement");
+		}
 		var currentVQElment = new VQ_Element(firstId);
 		var lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0]; console.log(170, lastElement);
-		AddNextLink(currentVQElment, chain, lastElement);		
+		AddNextLink(currentVQElment, chain, lastElement);
+		if (Template.ConnectClasses.linkMenu.get().data) {
+			console.log("TODO delete element");
+		//From addNextLink
+			// if (Template.ConnectClasses.linkMenu.get().data && chain[0].class == lastElement.name) {
+			// 	console.log("TODO delete element");		
+				// var linkElem = new VQ_Element(Template.ConnectClasses.linkID.get().data);
+				// linkElem.setName(chain[0].link);
+				// console.log(396, linkElem.obj);		
+				// if (chain[0].direction == "=>") {
+					// console.log(391, "inside linkMenu");
+					// linkElem.setLinkElementEnds(currentElement.obj["_id"], lastElement.id);
+					// linkElem.obj["startElement"] = currentElement.obj["_id"];
+					// linkElem.obj["endElement"] = lastElement.id;
+				// } else {
+					// console.log(391, "inside linkMenu <=");
+					// linkElem.setLinkElementEnds(lastElement.id, currentElement.obj["_id"]);
+				// 	linkElem.obj["startElement"] = lastVQElement;
+				// 	linkElem.obj["endElement"] = currentElement;
+				// }
+				// return;
+			// }	
+		}	
 		$("#connect-classes-form").modal("hide");
 		clearConnectClassesInput();
 		return;
@@ -177,6 +276,11 @@ function clearConnectClassesInput(){
 	$('input[name=stack-radio]:checked').attr('checked', false);
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
+	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
+	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
+	Template.ConnectClasses.shortLinkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
+	Template.ConnectClasses.elements.set([{name: "No class", id: 0}]);
+	Template.ConnectClasses.addLongLink.set({data: false});
 	Interpreter.destroyErrorMsg();
 }
 
@@ -188,9 +292,13 @@ function GetChains(ids, maxLength){
 	var link_chain = [];
 	linkRezult = [];
 	elemInfo = [];	
-	_.each(ids, function(id){
-		elem = new VQ_Element(id["text"])
-		elemInfo.push({id: id["text"], class: elem.getName()});
+	_.each(ids, function(id){		
+		if (id["text"] == "no_class_exists") {
+			elemInfo.push({id: id["text"], class: id["name"]});
+		}else {
+			elem = new VQ_Element(id["text"]);
+			elemInfo.push({id: id["text"], class: elem.getName()});
+		}
 	})
 
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
@@ -248,7 +356,7 @@ function GetChains(ids, maxLength){
 			if (ee["type"] == "=>") {
 				resultChain.push({link: ee["name"], class: ee["class"], type: "", direction: ee["type"]});
 			} else {
-				resultChain.push({link: ee["name"], class: ee["class"], type: "(inv)", direction: ee["type"]});
+				resultChain.push({link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]});
 			}
 		})
 		resultStringArray.push({number: i, array:resultChain});
@@ -305,16 +413,16 @@ function AddNextLink(currentElement, chain, lastElement){
 	}
 
     var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
-    var locLink = [];
-	console.log(370, chain[0].class, lastElement.name);
-	if (chain[0].class == lastElement.name) {
-		console.log(370, "last chain", chain);		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});		
+    var locLink = [];	
+	if (chain[0].class == lastElement.name && !Template.ConnectClasses.addLongLink.get().data) {
+		// console.log(400, "last chain", chain);
 		var lastVQElement = new VQ_Element(lastElement.id);
+		var proj = Projects.findOne({_id: Session.get("activeProject")});			
 		var newPosition = lastVQElement.getCoordinates(); 
 		var coordinates = GetLinkCoordinates(oldPosition, newPosition);
-		lastVQElement.setClassStyle("condition");		
-		if (chain[0].direction == "=>") {
+		lastVQElement.setClassStyle("condition");
+		// console.log(406, currentElement, lastVQElement);		
+		if (chain[0].direction == "=>") {				
         	if (coordinates.bind) {
         		locLink = [coordinates.x1, coordinates.y1, coordinates.x2, coordinates.y1, coordinates.x2, coordinates.y2];
         	} else {
@@ -329,7 +437,7 @@ function AddNextLink(currentElement, chain, lastElement){
 					lnk.setHideDefaultLinkName("true");
 				}
             }, locLink, true, currentElement, lastVQElement);
-        } else {
+        } else {        	
         	if (coordinates.bind) {
         		locLink = [coordinates.x2, coordinates.y2, coordinates.x2, coordinates.y1, coordinates.x1, coordinates.y1];
         	} else {
@@ -345,7 +453,7 @@ function AddNextLink(currentElement, chain, lastElement){
 				}
             }, locLink, true, lastVQElement, currentElement);
         }
-	} else { console.log(409, "chain", chain);
+	} else { //console.log(454, "chain", chain);
 		var d = 30; //distance between boxes
 	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
 	    //Link Coordinates
@@ -381,11 +489,12 @@ function AddNextLink(currentElement, chain, lastElement){
 	            }, locLink, true, cl, currentElement);
 	        }
 	        var newChain = _.rest(chain);
+	        // console.log(490, newChain);
 	        AddNextLink(cl, newChain, lastElement);
 	    }, newPosition);
 	}
 
-    console.log(446);
+    // console.log(492, "end");
 }
 
 function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height: h}
@@ -413,9 +522,9 @@ function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height
 		y1 = Math.round((Math.max(startElem.y, endElem.y) + Math.min(startElem.y + startElem.height, endElem.y + endElem.height))/2);
 		y2 = y1;
 		bY = false;
-	} console.log({x1: x1, y1: y1, x2: x2, y2: y2, bind: (bX && bY)});
+	} //console.log({x1: x1, y1: y1, x2: x2, y2: y2, bind: (bX && bY)});
 
-	if (!bX) { console.log(485);
+	if (!bX) { //console.log(485);
 		if ((startElem.y + startElem.height) < endElem.y){ console.log(486);
 			y1 = y1 + Math.round(startElem.height/2);
 		} else if (startElem.y > (endElem.y + endElem.height)) { console.log(488);
@@ -423,7 +532,7 @@ function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height
 		}				
 	}
 
-	if (!bY) {console.log(493);
+	if (!bY) {//console.log(493);
 		if ((startElem.x + startElem.width) < endElem.x){
 			x2 = x2 - Math.round(endElem.width/2);		
 		} else if (startElem.x > (endElem.x + endElem.width)) {

@@ -35,10 +35,10 @@
             font-size: 80%;       
         }
 
-        div.modal-bodyCC {
+        #chain-list {
             overflow-y: auto;
             overflow-x: hidden;
-            max-height: 50vh;
+            max-height: 15vh;
             font-size: 12;
         }
 
@@ -61,26 +61,37 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Connect Classes</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow:hidden;">
                     <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> </p>
                     <div id="settings" style="display:block;">
                         <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
                         <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
                         <span class="validity"></span>
-                        <p id = "direction_text">Please choose chain's direction:</p>                        
-                        <form id="radioList0" class="form-horizontal" role="form">
-                            <div class="form-group">
-                                {{#each elements}}                                
-                                    <div class="col-lg-10 elements" name="sequence">                                
-                                        <label class="label-radio">                                            
-                                            <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
-                                            <span class="custom-radio"></span>
-                                            From <span style="color:darkorange;">{{name}}</span>
-                                        </label>
-                                    </div>
-                                {{/each}} 
-                            </div>
-                        </form>                          
+                        {{#if addLongLink.data}}
+                            <p id = "direction_text">Please choose class to connect to:</p>   
+                            <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList">
+                            <datalist id="allClassList">
+                                {{#each elements}}
+                                    <option name="classListV" value="{{name}}"></option>
+                                {{/each}}
+                            </datalist>
+                        {{else}}
+                            <p id = "direction_text">Please choose chain's direction:</p>
+                            <form id="radioList0" class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    {{#each elements}}                                
+                                        <div class="col-lg-10 elements" name="sequence">                                
+                                            <label class="label-radio">                                            
+                                                <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
+                                                <span class="custom-radio"></span>
+                                                From <span style="color:darkorange;">{{name}}</span>
+                                            </label>
+                                        </div>
+                                    {{/each}} 
+                                </div>
+                            </form>
+                        {{/if}}                                             
+                                                  
                     </div>
                     <hr>
 
@@ -93,8 +104,8 @@
 
                     <div class="modal-bodyCC">
                         <form id="radioList" class="form-horizontal" role="form">
-                            <div class="form-group">                
-                                <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
+                            <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
+                            <div class="form-group" id="chain-list">
                                 {{#each shortLinkList}}                                
                                     <div class="col-lg-10 connections" name="chain">                                
                                         <label class="label-radio">                                            
@@ -105,13 +116,18 @@
                                             {{/each}}
                                         </label>
                                     </div>
-                                {{/each}} 
+                                {{/each}}
                             </div>
                         </form>
-                    </div>
+                    </div>                  
                 </div>
 
-                <div class="modal-footer">                    
+                <div class="modal-footer">
+                    <form style="float:left;">
+                        <input type="checkbox" id="show-as-property-path">
+                        <span class="custom-checkbox"></span>
+                        <p style="display:inline;">Use property path </p>
+                    </form>                    
                     <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect" type="button" class="btn btn-primary">OK</button>
                 </div>
