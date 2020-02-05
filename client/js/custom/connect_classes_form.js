@@ -217,6 +217,7 @@ Template.ConnectClasses.events({
 		var firstId = "";
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
+		var propertyPath = $("#show-as-property-path").is(':checked'); console.log(propertyPath); //document.getElementById("goto-wizard").checked
 		if (number < 0 || !number) {
 			$('#chain_text')[0].style.color = "red";
 			$("#connect-classes-form").modal("show");
@@ -232,28 +233,14 @@ Template.ConnectClasses.events({
 		}
 		var currentVQElment = new VQ_Element(firstId);
 		var lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0]; console.log(170, lastElement);
-		AddNextLink(currentVQElment, chain, lastElement);
-		if (Template.ConnectClasses.linkMenu.get().data) {
-			console.log("TODO delete element");
-		//From addNextLink
-			// if (Template.ConnectClasses.linkMenu.get().data && chain[0].class == lastElement.name) {
-			// 	console.log("TODO delete element");		
-				// var linkElem = new VQ_Element(Template.ConnectClasses.linkID.get().data);
-				// linkElem.setName(chain[0].link);
-				// console.log(396, linkElem.obj);		
-				// if (chain[0].direction == "=>") {
-					// console.log(391, "inside linkMenu");
-					// linkElem.setLinkElementEnds(currentElement.obj["_id"], lastElement.id);
-					// linkElem.obj["startElement"] = currentElement.obj["_id"];
-					// linkElem.obj["endElement"] = lastElement.id;
-				// } else {
-					// console.log(391, "inside linkMenu <=");
-					// linkElem.setLinkElementEnds(lastElement.id, currentElement.obj["_id"]);
-				// 	linkElem.obj["startElement"] = lastVQElement;
-				// 	linkElem.obj["endElement"] = currentElement;
-				// }
-				// return;
-			// }	
+		if (propertyPath) {
+			console.log("TODO property path");
+		} else {
+			AddNextLink(currentVQElment, chain, lastElement);		
+			if (Template.ConnectClasses.linkMenu.get().data) {
+				var currentLink = new VQ_Element(Template.ConnectClasses.linkID.curValue.data);
+				currentLink.deleteElement();
+			}
 		}	
 		$("#connect-classes-form").modal("hide");
 		clearConnectClassesInput();
@@ -274,6 +261,7 @@ function clearConnectClassesInput(){
 	$("#max_length")[0].value = "1";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
+	$("#show-as-property-path")[0].checked = false;
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);

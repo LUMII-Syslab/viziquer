@@ -2978,7 +2978,7 @@ VQ_Element.prototype = {
 			 a["diagramId"] = diagram_id
 			 a["projectId"] = Session.get("activeProject");
 			 a["versionId"] = Session.get("versionId");
-			 a["styleId"] = elem_style.id; console.log(elem_style.id);
+			 a["styleId"] = elem_style.id; //console.log(elem_style.id);
 
 			 Utilities.callMeteorMethod("updateElementStyle", a);
 		})
@@ -3005,6 +3005,11 @@ VQ_Element.prototype = {
     			}
     		}
     	}
-    }
+    },
+
+    deleteElement: function(){
+    	// elements: array of IDs; elementNames: empty or array of IDs (for logs)
+    	Interpreter.extensionPoints.DeleteElementsCollection({elements: [this.obj["_id"]], elementNames: [this.obj["_id"]], diagramId: Session.get("activeDiagram"), versionId: Session.get("versionId")});    	 
+    },
 
 }
