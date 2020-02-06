@@ -38,7 +38,7 @@
         #chain-list {
             overflow-y: auto;
             overflow-x: hidden;
-            max-height: 15vh;
+            max-height: 30vh;
             font-size: 12;
         }
 
@@ -61,12 +61,40 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Connect Classes</h4>
                 </div>
-                <div class="modal-body" style="overflow:hidden;">
-                    <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> </p>
-                    <div id="settings" style="display:block;">
+                <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
+                    <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> {{#if test.data}}<button id="show-long" style="margin-left: 10px; display:inline-block;">Show longer chains (test)</button>{{/if}}</p>
+                    <div id="settings" style="display:block; overflow: hidden;">
                         <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
                         <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
                         <span class="validity"></span>
+                        {{#if test.data}}
+                            <p>To test new functionality</p>
+                            <form>
+                                <input type="checkbox" id="default-max-length">
+                                <span class="custom-checkbox"></span>
+                                <p style="display:inline;">Use default length (TODO: block input form at given number) </p>
+                            </form>
+                            <form>
+                                <label class="label-radio">                                            
+                                                <input type="radio" name = "inverse-links" value="none" style="font-size:14px">
+                                                <span class="custom-radio"></span>
+                                                Do not include inverse links
+                                            </label>
+                                <label class="label-radio">                                            
+                                    <input type="radio" name = "inverse-links" value="one" style="font-size:14px">
+                                    <span class="custom-radio"></span>
+                                    Show links with maximum 1 inverse link
+                                </label>
+                                <label class="label-radio">                                            
+                                    <input type="radio" name = "inverse-links" value="more" style="font-size:14px">
+                                    <span class="custom-radio"></span>
+                                    Show links with more then 1 inverse link (TODO WARNING: can lead do queries with no practical meaning)
+                                </label>
+                                <!-- <input type="radio" name="inverse-links" value="none" checked> Do not include inverse links<br>
+                                <input type="radio" name="inverse-links" value="one">Show links with maximum 1 inverse link<br>
+                                <input type="radio" name="inverse-links" value="more"> Show links with more then 1 inverse link (TODO WARNING: ca n lead do queries with no practical meaning)<br>-->
+                            </form>
+                        {{/if}}
                         {{#if addLongLink.data}}
                             <p id = "direction_text">Please choose class to connect to:</p>   
                             <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList">
@@ -118,7 +146,7 @@
                                     </div>
                                 {{/each}}
                             </div>
-                        </form>
+                        </form>                                 
                     </div>                  
                 </div>
 
