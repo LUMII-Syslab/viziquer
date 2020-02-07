@@ -7,7 +7,7 @@
     "debug-brk": "meteor run --inspect-brk=5959"
   },
   "dependencies": {
-    "@babel/runtime": "^7.7.2",
+    "@babel/runtime": "^7.8.3",
     "bcrypt": "^1.0.3",
     "json2csv": "^4.5.2",
     "meteor-node-stubs": "^0.4.1",
