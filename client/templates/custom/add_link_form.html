@@ -53,6 +53,8 @@
     .help-tip p{
         display: none;
         text-align: left;
+        font-size: 12px; 
+        line-height: 16px;
         color: white;
         border: 1px solid #7F7F7F;
         background-color: slategrey; 
@@ -74,10 +76,6 @@
         background-color:#4CAF50;
         float:left;
     }
-
-   /* #search-help{
-        width: 600px;
-    }  */
 </style>
 
 	<!-- Modal for new document -->
@@ -93,7 +91,7 @@
                 <div class="searchBox" id="searchBox">                                        
                     <input class="form-control" id="mySearch" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
                     &ensp;
-                    <div class="help-tip" id="search-help">
+                    <div class="help-tip">
                         <p style="width:500px">Point is used to separate search in link and class parts:<br>&ensp;&ensp;[what to search in link]<span style="color:orange; font-size: 20px;">.</span>[what to search in class].<br>Only one point is allowed.<br>Spaces and commas are allowed as separators to search for multiple words.</p>
                     </div>
                     <hr>

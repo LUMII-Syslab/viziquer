@@ -147,6 +147,8 @@ Template.AddLink.events({
 			data.push({name: c.name, id: count});
 			count++;
 		});
+		var activeClass = new VQ_Element(Session.get("activeElement"));
+		Template.ConnectClasses.IDS.set({name: activeClass.getName(), id: activeClass.obj["_id"]});
 		Template.ConnectClasses.elements.set(data);
 		Template.ConnectClasses.addLongLink.set({data: true});
 		Template.ConnectClasses.linkMenu.set({data: false});
@@ -173,11 +175,12 @@ Template.AddLink.events({
 		$("div[id=errorField]").remove();
 	},
 
-	"keyup #mySearch": function(){
+	"keyup #mySearch": function(){ console.log("\nmySearch action");
 		$("div[id=errorField]").remove();
-		var value = $("#mySearch").val().toLowerCase();
+		var value = $("#mySearch").val().toLowerCase(); console.log("mySearch read value: ", value);
 		if (value == "" || value == " ") {//empty or space - show all elements
 			Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+			console.log("mySearch empty value or space");
 		} else if (value.indexOf('.') > -1) {
 			console.log("TODO property path");
 			value = value.split(".");
@@ -186,6 +189,7 @@ Template.AddLink.events({
 	        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 point to separate link and class</div>");
 				console.log("Multiple points (.)");
 			} else {
+				console.log("mySearch single point");
 				$("div[id=errorField]").remove();
 
 				if (value[0].indexOf(' ') > -1 || value[0].indexOf(',') > -1) {
@@ -226,16 +230,16 @@ Template.AddLink.events({
 				Template.AddLink.shortList.set(ascList);
 			}
 
-		} else {
+		} else { console.log("mySearch no point");
 			if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
 				value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
 				value = value.split(" ");			
 			} else {
 				value = [value];
 			}
-			value = value.filter(function(e) { return e !== "" });
+			value = value.filter(function(e) { return e !== "" }); console.log("mySearch new value: ", value);
 
-			var ascList = Template.AddLink.fullList.curValue;
+			var ascList = Template.AddLink.fullList.curValue; console.log("mySearch full list: ", ascList);
 			ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
 				var hasValues = true;
 				_.each(value, function(v){ //check if any of searched values is missing
@@ -244,8 +248,8 @@ Template.AddLink.events({
 					}
 				});
 				return hasValues;
-			})
-			Template.AddLink.shortList.set(ascList);
+			}); console.log("mySearch filtered list: ", ascList);
+			Template.AddLink.shortList.set(ascList); console.log("mySearch no point finished\n");
 		}
 //Original
 		// if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
