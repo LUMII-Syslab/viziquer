@@ -31,6 +31,9 @@ Interpreter.customMethods({
 					elem = new VQ_Element(id.text);
 					usedClasses.push({name: elem.getName(), id: id.text});
 				})
+				//order ID
+				
+
 				Template.ConnectClasses.IDS.set(ids);
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
@@ -71,14 +74,20 @@ Interpreter.customMethods({
 			var startClass = link.getStartElement();
 			var endClass = link.getEndElement();
 			if (startClass && endClass) {
-				Template.ConnectClasses.IDS.set([{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}]);
-				Template.ConnectClasses.elements.set([{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}]);
-				Template.ConnectClasses.linkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
-				Template.ConnectClasses.shortLinkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
+				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
+				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
+				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue.data);
+				Template.ConnectClasses.IDS.set(ids);				
+				Template.ConnectClasses.elements.set(usedClasses);							
+				Template.ConnectClasses.linkList.set(list);
+				Template.ConnectClasses.shortLinkList.set(list);
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
 				Template.ConnectClasses.test.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
+
+				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
+
 				$("#show-as-property-path")[0].checked = true;			
 				$("#connect-classes-form").modal("show");
 				console.log("TEST");
@@ -302,7 +311,131 @@ Template.ConnectClasses.events({
 	"click #cancel-connect": function(){
 		clearConnectClassesInput();
 	},
+
+	"click #option-button": function(){
+		if (Template.ConnectClasses.addLongLink.curValue.data) {
+			console.log("options from AddLink");
+			Template.ConnectClassesSettings.fromFunction.set({data: "add"});			
+		} else if(Template.ConnectClasses.linkMenu.curValue.data) {
+			console.log("options from Link");
+			Template.ConnectClassesSettings.fromFunction.set({data: "link"});
+
+		} else {
+			console.log("options from collection");
+			Template.ConnectClassesSettings.fromFunction.set({data: "coll"});
+		}
+		// Template.ConnectClasses.addLongLink.set({data: false});
+		// Template.ConnectClasses.linkMenu.set({data: false});
+		$("#connect-classes-settings").modal("show");
+	},
 });
+
+//===========================
+//SETTINGS
+//===========================
+Template.ConnectClassesSettings.fromFunction = new ReactiveVar({data: "coll"}); //"coll"(ection), "link", "add"(Link)
+Template.ConnectClassesSettings.fromToClass = new ReactiveVar({fromName: "", fromID: "", toName: "", toID:""});
+Template.ConnectClassesSettings.directionValue = new ReactiveVar({data: 0});
+Template.ConnectClassesSettings.inverseValue = new ReactiveVar({data: "more"}); //"none", "one", "more"
+Template.ConnectClassesSettings.pathLength = new ReactiveVar({data: 4});
+
+Template.ConnectClassesSettings.helpers({
+
+	fromFunction: function(){
+		return Template.ConnectClassesSettings.fromFunction.get();
+	},
+
+	fromToClass: function(){
+		return Template.ConnectClassesSettings.fromToClass.get();
+	},
+
+	directionValue: function(){
+		return Template.ConnectClassesSettings.directionValue.get();
+	},
+
+	inverseValue: function(){
+		return Template.ConnectClassesSettings.inverseValue.get();
+	},
+
+	pathLength: function(){
+		return Template.ConnectClassesSettings.pathLength.get();
+	},
+})
+
+Template.ConnectClassesSettings.events({
+	"click #ok-connect-settings": function(){
+		// console.log("Settings - OK");
+		//Path's length
+		if (document.getElementById("default-max-length").checked) {
+			Template.ConnectClassesSettings.pathLength.set({data: 4});
+			$('#max_length').val("4");
+		} else {
+			Template.ConnectClassesSettings.pathLength.set({data: $('#max_length').val()});
+		}
+
+		//Direction
+		var startElemID = $('input[name=path-radio]:checked').val();
+		var elementList = Template.ConnectClassesSettings.fromToClass.curValue;
+		if (elementList.fromID == startElemID){
+			// console.log("original order");
+			Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
+			Template.ConnectClasses.linkList.set(GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue.data))
+		} else if (elementList.toID == startElemID) {
+			// console.log("oposite order");
+			Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
+			Template.ConnectClasses.linkList.set(GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue.data))		
+		} else {
+			// console.log("unknown order");
+			return;
+		}
+		Template.ConnectClassesSettings.directionValue.set({data: $('input[name=path-radio]:checked').val()});
+
+		//Inverse
+		var inverseCount = $('input[name=inverse-links]:checked').val();
+		Template.ConnectClassesSettings.inverseValue.set({data: inverseCount});
+		var fullList = Template.ConnectClasses.linkList.curValue;
+		if (inverseCount != "more"){			
+			fullList = fullList.filter(function(a){
+				var invCount = countInverse(a.array); console.log(invCount)
+				if (inverseCount == "none") {
+					if (invCount < 1) {
+						return true;
+					}
+					return false;
+				} else if (inverseCount == "one") {
+					if (invCount < 2) {
+						return true;
+					}
+					return false;
+				} else {
+					console.log("ConnectClassesSettings - unknown inverse ammount");
+				}
+			});
+		}
+		if (fullList.length == 0) {
+			fullList = [{array: [{class: "No connection of given length is found"}], number: -1}];
+		}
+		Template.ConnectClasses.shortLinkList.set(fullList);					
+		
+		$("#connect-classes-settings").modal("hide");
+		clearConnectClassesSettingsInput();
+	},
+
+	"click #cancel-connect-settings": function(){	
+		clearConnectClassesSettingsInput();
+	},
+
+	"click #default-max-length": function() {		
+        if (document.getElementById("default-max-length").checked) {
+        	$('#max_length').val("4");
+            $('#max_length').attr('disabled',"disabled");
+        } else {
+            $('#max_length').removeAttr("disabled");
+        } 
+	},
+});
+
+
 
 //===========================
 //FUNCTIONS
@@ -313,7 +446,6 @@ function clearConnectClassesInput(){
 	$("#max_length")[0].value = "1";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
-	$('input[name=inverse-links][value=none]').attr('checked', true);
 	$("#show-as-property-path")[0].checked = false;
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
@@ -326,6 +458,14 @@ function clearConnectClassesInput(){
 	Interpreter.destroyErrorMsg();
 }
 
+function clearConnectClassesSettingsInput(){
+	_.each($('input[name=path-radio]'), function(e){
+			if (e.value == Template.ConnectClassesSettings.directionValue.curValue.data) e.checked = true;
+		});
+	_.each($('input[name=inverse-links]'), function(e){
+		if (e.value == Template.ConnectClassesSettings.inverseValue.curValue.data) e.checked = true;
+	});
+}
 //Based on AddLink
 //Find all the associations for class with given ID
 //Output: association name, class on the other side, link direction as [{name: "", class: "", type: "(inv)", direction: "=>"}]
@@ -381,7 +521,7 @@ function GetChains(ids, maxLength){
 				})
 			})
 		} else {
-			i = maxLength +1;
+			i = maxLength + 1; //stop for cycle
 		}
 	}
 
@@ -605,4 +745,15 @@ function applySearch(list, value){
 		return found;				
 	});
 	return newList;
+}
+
+function countInverse(list) {			
+	var count = 0;
+	_.each(list, function(a){console.log(a);
+		var aDirection = a.direction;
+		if (aDirection && aDirection == "<=") {
+			count++;
+		}
+	})						
+	return count;
 }

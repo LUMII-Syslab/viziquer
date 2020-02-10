@@ -62,71 +62,59 @@
                     <h4 class="modal-title">Connect Classes</h4>
                 </div>
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
-                    <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> {{#if test.data}}<button id="show-long" style="margin-left: 10px; display:inline-block;">Show longer chains (test)</button>{{/if}}</p>
-                    <div id="settings" style="display:block; overflow: hidden;">
-                        <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
-                        <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
-                        <span class="validity"></span>
-                        {{#if test.data}}
-                            <p>To test new functionality</p>
-                            <form>
-                                <input type="checkbox" id="default-max-length">
-                                <span class="custom-checkbox"></span>
-                                <p style="display:inline;">Use default length (TODO: block input form at given number) </p>
-                            </form>
-                            <form>
-                                <label class="label-radio">                                            
-                                                <input type="radio" name = "inverse-links" value="none" style="font-size:14px">
-                                                <span class="custom-radio"></span>
-                                                Do not include inverse links
-                                            </label>
-                                <label class="label-radio">                                            
-                                    <input type="radio" name = "inverse-links" value="one" style="font-size:14px">
-                                    <span class="custom-radio"></span>
-                                    Show links with maximum 1 inverse link
-                                </label>
-                                <label class="label-radio">                                            
-                                    <input type="radio" name = "inverse-links" value="more" style="font-size:14px">
-                                    <span class="custom-radio"></span>
-                                    Show links with more then 1 inverse link (TODO WARNING: can lead do queries with no practical meaning)
-                                </label>
-                                <!-- <input type="radio" name="inverse-links" value="none" checked> Do not include inverse links<br>
-                                <input type="radio" name="inverse-links" value="one">Show links with maximum 1 inverse link<br>
-                                <input type="radio" name="inverse-links" value="more"> Show links with more then 1 inverse link (TODO WARNING: ca n lead do queries with no practical meaning)<br>-->
-                            </form>
-                        {{/if}}
+                    {{#if test.data}}
                         {{#if addLongLink.data}}
-                            <p id = "direction_text">Please choose class to connect to:</p>   
-                            <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList">
-                            <datalist id="allClassList">
+                            <p> {{IDS.class}} => </p>
+                            <p id = "direction_text2">Please choose class to connect to:</p>   
+                            <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList2">
+                            <datalist id="allClassList2">
                                 {{#each elements}}
                                     <option name="classListV" value="{{name}}"></option>
                                 {{/each}}
                             </datalist>
-                        {{else}}
-                            <p id = "direction_text">Please choose chain's direction:</p>
-                            <form id="radioList0" class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    {{#each elements}}                                
-                                        <div class="col-lg-10 elements" name="sequence">                                
-                                            <label class="label-radio">                                            
-                                                <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
-                                                <span class="custom-radio"></span>
-                                                From <span style="color:darkorange;">{{name}}</span>
-                                            </label>
-                                        </div>
-                                    {{/each}} 
-                                </div>
-                            </form>
-                        {{/if}}                                             
-                                                  
-                    </div>
+                        {{else}}                        
+                            <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options (test)</button> </p>
+                        {{/if}}
+                    {{else}}
+                        <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> </p>
+                        <div id="settings" style="display:block; overflow: hidden;">
+                            <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
+                            <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
+                            <span class="validity"></span>                        
+                            {{#if addLongLink.data}}
+                                <p id = "direction_text">Please choose class to connect to:</p>   
+                                <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList">
+                                <datalist id="allClassList">
+                                    {{#each elements}}
+                                        <option name="classListV" value="{{name}}"></option>
+                                    {{/each}}
+                                </datalist>
+                            {{else}}
+                                <p id = "direction_text">Please choose chain's direction:</p>
+                                <form id="radioList0" class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        {{#each elements}}                                
+                                            <div class="col-lg-10 elements" name="sequence">                                
+                                                <label class="label-radio">                                            
+                                                    <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
+                                                    <span class="custom-radio"></span>
+                                                    From <span style="color:darkorange;">{{name}}</span>
+                                                </label>
+                                            </div>
+                                        {{/each}} 
+                                    </div>
+                                </form>
+                            {{/if}}                                             
+                                                      
+                        </div>
+                    {{/if}}
                     <hr>
-
-                    <div class="searchBox" id="searchBox">
-                        <p style="margin-left: 0px; margin-bottom:10px;">Type something in the input field to search the list for specific items (no spaces allowed):</p>  
-                        <input class="form-control" id="searchList" type="text" placeholder="Search..">
-                        
+                    <div class="searchBox">                       
+                        <input class="form-control" id="searchList" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
+                        &ensp;
+                        <div class="help-tip">
+                            <p style="width:500px;font-size: 12px; line-height: 16px;">Point is used to separate search in link and class parts:<br>&ensp;&ensp;[what to search in link]<span style="color:orange; font-size: 20px;">.</span>[what to search in class].<br>Only one point is allowed.<br>Spaces and commas are allowed as separators to search for multiple words.</p>
+                        </div>
                     </div>
                     <hr>
 
@@ -158,6 +146,126 @@
                     </form>                    
                     <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect" type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<template name="ConnectClassesSettings">
+    <style>
+        input:invalid+span.validity:after {
+          content: 'X';
+          padding-left: 5px;
+          color: red;
+        }
+
+        input:valid+span.validity:after {
+          content: 'V';
+          padding-left: 5px;
+          color: green;
+        } 
+
+        #connect-setting-warning{
+            position: relative;
+            display:inline;
+            padding-right: 5px;
+            padding-left: 5px;
+            text-align: center;
+            background-color: orange;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            line-height: 26px;
+            cursor: help;
+        }
+
+        #connect-setting-warning:before{
+            content:'!';
+            font-weight: bold;
+            color:#fff;               
+        }
+
+        .help-tip:hover p{
+            display: block;
+        }
+
+        .help-tip p{
+            display: none;
+            text-align: left;
+            color: white;
+            border: 1px solid #7F7F7F;
+            background-color: slategrey; 
+            border-radius: 5px;       
+            padding: 10px;
+            width: 200px;
+            position: absolute;
+            right: 105%; 
+            z-index: 1000;
+        }         
+    </style>
+    <div id="connect-classes-settings" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Connect Classes Settings</h4>
+                </div>
+
+                <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
+                    <div id="settings" style="display:block; overflow: hidden;">
+                        <form>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="none">
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Do not include inverse links</p>
+                                </label>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="one">
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Show paths with at most 1 inverse link</p>
+                            </label>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="more" checked>
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Show paths with any inverse links &ensp;</p>
+                                <div class="help-tip" id="connect-setting-warning">
+                                    <p style="left:-50%; width: 300px;">This can lead to queries with no practical meaning</p>
+                                </div>
+                            </label>
+                        </form> 
+                        <hr style="border: 1px solid lightgrey;">
+                        <label id="max_length_text" for="max_length"><p>Paths length limit:</p> </label>
+                        <input id="max_length" type="number" min="0" pattern="[0-9]" value="{{pathLength.data}}" required>
+                        <span class="validity"></span>
+                        <form style="padding-left: 50px;">
+                            <input type="checkbox" id="default-max-length">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Use default length limit</p>
+                        </form>
+                        <hr style="border: 1px solid lightgrey;">                                                   
+                        <p>Path's direction</p>
+                        <div class="col-lg-10 elements">                               
+                            <form id="direction-settings">                                
+                                <label class="label-radio">                                            
+                                    <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
+                                    <span class="custom-radio"></span>
+                                    From <span style="color:darkorange;">{{fromToClass.fromName}}</span> to <span style="color:darkorange;">{{fromToClass.toName}}</span>
+                                </label>
+                                <label class="label-radio">                                            
+                                    <input type="radio" name = "path-radio" value="{{fromToClass.toID}}" style="font-size:14px">
+                                    <span class="custom-radio"></span>
+                                    From <span style="color:darkorange;">{{fromToClass.toName}}</span> to <span style="color:darkorange;">{{fromToClass.fromName}}</span>
+                                </label>
+                            </form>
+                        </div>                          
+                    </div>                                                      
+                </div>
+
+                <div class="modal-footer">                   
+                    <button id="cancel-connect-settings" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-connect-settings" type="button" class="btn btn-primary">OK</button>
                 </div>
             </div>
         </div>

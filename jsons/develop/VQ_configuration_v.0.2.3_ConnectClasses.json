@@ -2836,12 +2836,16 @@
             "readModeKeyStrokes": [],
             "contextMenu": [
               {
-                "item": "Delete",
-                "procedure": "Delete"
+                "item": "Connect classes",
+                "procedure": "linkConnectClasses"
               },
               {
                 "item": "Connect classes",
-                "procedure": "linkConnectClasses"
+                "procedure": "test_linkConnectClasses"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
               }
             ],
             "readModeContextMenu": [],
