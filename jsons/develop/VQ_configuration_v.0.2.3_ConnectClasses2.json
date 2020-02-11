@@ -933,6 +933,10 @@
                 "procedure": "AddLink"
               },
               {
+                "item": "TEST: Add Link ...",
+                "procedure": "AddLinkTest"
+              },
+              {
                 "item": "Add Subquery ...",
                 "procedure": "AddSubquery"
               },

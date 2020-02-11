@@ -153,7 +153,9 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button id="add-long-link" type="button" class="btn btn-default">Connect remote classes</button>
+                    {{#if testAddLink.data}} 
+                        <button id="add-long-link" type="button" class="btn btn-default">Connect remote classes</button> 
+                    {{/if}}
                     <button id="cancel-add-link" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-link" type="button" class="btn btn-primary">OK</button>
                 </div>
