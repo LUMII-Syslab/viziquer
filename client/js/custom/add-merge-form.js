@@ -1,19 +1,30 @@
 Template.AddMergeValues.expression = new ReactiveVar("");
-Template.AddMergeValues.alias = new ReactiveVar("");
+// Template.AddMergeValues.alias = new ReactiveVar("");
+Template.AddMergeValues.aliasField = new ReactiveVar("");
+Template.AddMergeValues.mergeAlias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
 Template.AddMergeValues.aggregation = new ReactiveVar("group_concat");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
+//Template.AddMergeValues.hideField = new ReactiveVar("");
 Template.AddMergeValues.e = new ReactiveVar("");
+Template.AddMergeValues.attribute = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
-
+		document.getElementById("merge-values-wizard-id").style.display = "none";
 		var expressionField = getExpression(e);
+		//var hideField = getHide(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
 		var aggregation = parsedExpression["aggregation"];
+		
 		Template.AddMergeValues.expression.set(expr);
-		Template.AddMergeValues.alias.set(getAlais(e).val());
+		var mergeAlias = getAlais(e).val();
+		if(mergeAlias == null || mergeAlias == "") mergeAlias = expr.substring(0,1).toUpperCase();
+		Template.AddMergeValues.mergeAlias.set(mergeAlias);
+		// Template.AddMergeValues.alias.set(getAlais(e).val());
+		Template.AddMergeValues.aliasField.set(getAlais(e));
+		Template.AddMergeValues.attribute.set(e);
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		var card = countCardinality(expr, Session.get("activeElement"))
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -25,6 +36,7 @@ Interpreter.customMethods({
 		
 		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);
+		//Template.AddMergeValues.hideField.set(hideField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 
 		if(expr != null && expr != "")$("#merge-values-form").modal("show");
@@ -55,6 +67,10 @@ Template.AddMergeValues.helpers({
 
 	expression: function() {
 		return Template.AddMergeValues.expression.get();
+	},
+	
+	mergeAlias: function() {
+		return Template.AddMergeValues.mergeAlias.get();
 	},
 
 	selectedCount: function() {
@@ -102,20 +118,55 @@ Template.AddMergeValues.helpers({
 Template.AddMergeValues.events({
 
 	"click #ok-merge-values": function(e) {
-
 		var mergeType = $('input[name=type-radio-merge]:checked').val();
 
-		var alias = Template.AddMergeValues.alias.get();
+		// var alias = Template.AddMergeValues.alias.get();
 		var expr = $('input[name=expression-merge]').val();
 		var aggregation = $('option[name=function-name-merge]:selected').val();
 		expr = aggregation + "(" + expr + ")";
-
+		var displayCase = document.getElementById("merge-display-results").checked;
+		var mergeAliasName = $('input[id=merge-alias-name]').val();
+		var minValue = $('input[id=merge-results-least]').val();
+		var maxValue = $('input[id=merge-results-most]').val();
+		
 		if((typeof mergeType !== 'undefined' && mergeType == "MULTIPLE") || typeof mergeType === 'undefined'){
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){
 				var vq_obj = new VQ_Element(selected_elem_id);
-				vq_obj.addAggregateField(expr,alias);
-				/*TODO close Attributes form, remove attribute if existed*/
+
+				var parentClass;
+				var links = vq_obj.getLinks();
+				for(var key in links) {
+					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.startElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
+					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.endElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
+				}
+				
+				if(typeof parentClass !== 'undefined'){
+					if(displayCase) parentClass.addField(mergeAliasName,"",false,false,false);
+					if (minValue != "") parentClass.addCondition(mergeAliasName + ">=" + minValue);
+					if (maxValue != "") parentClass.addCondition(mergeAliasName + "<=" + maxValue);
+					
+					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
+				}
+				vq_obj.addAggregateField(expr,mergeAliasName);
+				//Template.AddMergeValues.hideField.get().prop("checked", true);
+				Template.AddMergeValues.expressionField.get().val("");
+				Template.AddMergeValues.aliasField.get().val("");
+				var list = {compartmentId: document.getElementById($(Template.AddMergeValues.attribute.get().target).closest(".multi-field").attr("id")).getAttribute("compartmentid"),
+					projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+				};
+
+				Utilities.callMeteorMethod("removeCompartment", list);
+				
+				var form = $(Template.AddMergeValues.attribute.get().target).closest(".row-form")
+				form.modal("hide");
 			};
 		} else {
 			Template.AddMergeValues.expressionField.get().val(expr);
@@ -125,9 +176,18 @@ Template.AddMergeValues.events({
 
 	},
 
-	"click #cancel-add-link": function() {
+	"click #cancel-merge-values": function() {
 		clearMergeValuesInput();
 		$(Template.AddMergeValues.e.get()).modal('toggle');
+	},
+	
+	"change #merge-choice": function() {
+		var checkedName = $('input[name=type-radio-merge]').filter(':checked').val();
+        if (checkedName === 'SINGLE') {
+           document.getElementById("merge-values-wizard-id").style.display = "none";
+        } else {
+           document.getElementById("merge-values-wizard-id").style.display = "block";
+        } 
 	},
 
 });
@@ -153,11 +213,18 @@ function clearMergeValuesInput(){
 		if (e.value == "SINGLE") e.checked = true;
 		else e.checked = false;
 	});
-
+	
+	document.getElementById("merge-alias-name").value = Template.AddMergeValues.mergeAlias.get();
+	document.getElementById("merge-display-results").checked = false;
+	document.getElementById("merge-results-least").value = "";
+	document.getElementById("merge-results-most").value = "";
 }
 
 function getExpression(e){
 	return getField(e, "Expression");
+}
+function getHide(e){
+	return getField(e, "IsInternal");
 }
 
 function getAlais(e){
@@ -165,7 +232,6 @@ function getAlais(e){
 }
 
 function getField(e, fieldName){
-
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: parent_id});

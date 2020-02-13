@@ -4,6 +4,11 @@
             margin-top: 5px;
             margin-left: 20px;                        
         }
+		div.merge-values-wizard {
+            margin-top: 5px;
+            margin-left: 20px;    
+			margin-right: 60px; 
+        }
 		div.merge-values-expression {
             margin-top: 5px;
             margin-left: 20px;                        
@@ -39,6 +44,10 @@
 			width: 100%;
 		}
 		
+		#merge-results-least, #merge-results-most{
+            width: 95%;            
+        }
+		
     </style>
     <!-- Modal for new document -->
     <div id="merge-values-form" class="modal fade">
@@ -53,7 +62,7 @@
 					
 					{{#if isMultiple}}                   
 					   <div class="merge-type-part">
-							<form id="type-choice" class="form-horizontal" role="form">
+							<form id="merge-choice" class="form-horizontal" role="form">
 								<div class="form-group">                            
 									<div name="chain">                       
 										<label class="label-radio">
@@ -89,7 +98,7 @@
 					<div class="merge-values-list">                       
                         <form class="function-radio-list">
                             <p>Functions: </p>
-                            <select name="function-list" id="function-list">
+                            <select name="merge-function-list" id="merge-function-list">
                                 <option name="function-name-merge" value="count" {{selectedCount}}>count</option>
                                 <option name="function-name-merge" value="count_distinct" {{selectedDistinct}}>count_distinct</option>
                                 <option name="function-name-merge" value="sum" {{selectedSum}}>sum</option>
@@ -101,6 +110,65 @@
                             </select>                                                        
                         </form>                                          
                     </div>
+					{{#if isMultiple}}
+					
+					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:none;">                       
+                        
+                         <form>
+                            <p>Result name: </p>
+                            <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                        </form>
+                        
+                        <hr>
+
+                        <form> <!-- style="color: lightgrey !important;" -->
+                            <input type="checkbox" id="merge-display-results">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Display result </p>
+                        </form>
+
+                        <form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                            <label><p>Result at least (&gt;=): &emsp;</p> </label>
+                            <input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+                            <span class="validity"></span>  
+                        </form>
+
+                        <form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
+                            <label><p>Result at most (&lt;=):&emsp;</p> </label>
+                            <input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+                            <span class="validity"></span>  
+                        </form>                        
+                    </div>
+					{{else}}
+					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:block;">                       
+                        
+                         <form>
+                            <p>Result name: </p>
+                            <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                        </form>
+                        
+                        <hr>
+
+                        <form> <!-- style="color: lightgrey !important;" -->
+                            <input type="checkbox" id="merge-display-results">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Display result </p>
+                        </form>
+
+                        <form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                            <label><p>Result at least (&gt;=): &emsp;</p> </label>
+                            <input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+                            <span class="validity"></span>  
+                        </form>
+
+                        <form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
+                            <label><p>Result at most (&lt;=):&emsp;</p> </label>
+                            <input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+                            <span class="validity"></span>  
+                        </form>                        
+                    </div>
+					
+					{{/if}}
                 </div>
 
                 <div class="modal-footer">                    
