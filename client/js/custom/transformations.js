@@ -559,7 +559,10 @@ Interpreter.customMethods({
 		var startLink = new VQ_Element(params["startElement"]);
 		var endLink = new VQ_Element(params["endElement"]);	 
 
-		if (!startLink.isRoot() && !endLink.isRoot() &&
+		if (startLink.getRootId() == endLink.getRootId()) {
+			// console.log("inside one query");
+			return true;
+		} else if (!startLink.isRoot() && !endLink.isRoot() &&
 			 !(startLink.getLinkToRoot() === undefined) && !(endLink.getLinkToRoot() === undefined)) {
 			//If both condition classes are connected to different query classes
 			if (startLink.getRootId() != endLink.getRootId()){
