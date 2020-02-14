@@ -11,7 +11,7 @@ Template.AddMergeValues.attribute = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
-		document.getElementById("merge-values-wizard-id").style.display = "none";
+		
 		var expressionField = getExpression(e);
 		//var hideField = getHide(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
@@ -33,6 +33,8 @@ Interpreter.customMethods({
       			card = -1;
       		}
       	} else card = -1;
+		
+		if(card == -1)document.getElementById("merge-values-wizard-id").style.display = "none";
 		
 		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);
@@ -158,6 +160,7 @@ Template.AddMergeValues.events({
 				//Template.AddMergeValues.hideField.get().prop("checked", true);
 				Template.AddMergeValues.expressionField.get().val("");
 				Template.AddMergeValues.aliasField.get().val("");
+				
 				var list = {compartmentId: document.getElementById($(Template.AddMergeValues.attribute.get().target).closest(".multi-field").attr("id")).getAttribute("compartmentid"),
 					projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
