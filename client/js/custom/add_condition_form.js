@@ -35,4 +35,8 @@ Template.AddCondition.events({
 		return;
 	},
 
+	"shown.bs.modal #add-condition-form": function(e) {
+		$('#condition-expression').focus();
+	},
+
 });

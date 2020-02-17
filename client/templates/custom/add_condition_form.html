@@ -21,10 +21,12 @@
                           <div class="form-group" style="margin-bottom:5px;margin-top:10px;">
 				                        <label for="condition-expression" class="col-sm-2 control-label">Expression</label>
                                 <div class="col-sm-10">
-                                  <textarea id="condition-expression" type="text" class="form-control" style="overflow:auto; resize:none;" rows="3"></textarea>
+                                  <!-- <textarea id="condition-expression" type="text" class="form-control" style="overflow:auto; resize:none;" rows="3"></textarea> -->
+                                  <input id="condition-expression" type="text" class="form-control" />
                                 </div>
 			              </div>
-						  <span class="help-block">Use Ctrl+Space for text auto-completion</span>	
+                          <span class="help-block">Use Ctrl+Space to activate auto-completion<br />
+                            Use Arrow-Down / Arrow-Up to change the selection; click or use Tab to autocomplete</span>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -35,6 +37,6 @@
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
-	
-	
+
+
 </template>
