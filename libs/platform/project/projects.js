@@ -175,7 +175,7 @@ Meteor.methods({
 	},
 
 
-	dublicateProject: function(list) {
+	duplicateProject: function(list) {
 		var user_id = Meteor.userId();
 		var versionId = null;
 		if (is_project_member(user_id, list)) {
@@ -194,7 +194,7 @@ Meteor.methods({
 			var new_version_id = afterInsert(user_id, project);
 
 			Diagrams.find({projectId: project_id}).forEach(function(diagram) {
-				dublicateDiagram(diagram, new_project_id, new_version_id);
+				duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
 			var schema = Schema.findOne({projectId: project_id});
@@ -224,7 +224,7 @@ Meteor.methods({
 
 
 
-function dublicateDiagram(diagram, new_project_id, new_version_id) {
+function duplicateDiagram(diagram, new_project_id, new_version_id) {
 
 	var diagram_id = diagram._id;
 	var project_id = diagram.projectId;

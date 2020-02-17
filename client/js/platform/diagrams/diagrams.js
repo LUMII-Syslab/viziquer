@@ -369,7 +369,7 @@ Template.defaultDiagramsView.events({
 		Interpreter.execute("delete_diagram", [diagram_id]);
 	},
 
-	"click .dublicate-diagram": function(e) {
+	"click .duplicate-diagram": function(e) {
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -387,7 +387,7 @@ Template.defaultDiagramsView.events({
 		list["projectId"] = Session.get("activeProject");
 		list["versionId"] =	Session.get("versionId");
 
-		Utilities.callMeteorMethod("dublicateDiagram", list);
+		Utilities.callMeteorMethod("duplicateDiagram", list);
 	},
 
 });

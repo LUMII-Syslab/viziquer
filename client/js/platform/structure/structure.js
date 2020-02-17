@@ -133,14 +133,14 @@ Template.structureTemplate.events({
 	},
 
 
-	'click .dublicate-project-obj': function(e) {
+	'click .duplicate-project-obj': function(e) {
 		e.preventDefault();
 		//e.stopPropagation();
 
 		var proj_id = $(e.target).closest(".project-path").attr("id");
 		var list = {projectId: proj_id};
 
-		Utilities.callMeteorMethod("dublicateProject", list);
+		Utilities.callMeteorMethod("duplicateProject", list);
 
 		return;
 	},

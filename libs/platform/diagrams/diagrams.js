@@ -141,7 +141,7 @@ Meteor.methods({
 	},
 
 
-	dublicateDiagram: function(list) {
+	duplicateDiagram: function(list) {
 
 		var user_id = Meteor.userId();
 		if (is_project_version_admin(user_id, list)) {
