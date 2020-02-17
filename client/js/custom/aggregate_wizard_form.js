@@ -82,7 +82,7 @@ Template.AggregateWizard.events({
 		return;
 	},
 
-	"change #function-list": function() {
+	"change #aggregate-wizard-function-list": function() {
 		// console.log("changed");
 		var vq_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
 		var alias = $('input[id=alias-name]').val();

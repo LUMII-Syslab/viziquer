@@ -174,7 +174,7 @@ Template.AddLink.events({
 	},
 
 //Menu listeners
-	"click #type-choice": function() {
+	"click #add-link-type-choice": function() {
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
         if (checkedName === 'JOIN') {
             //$('#goto-wizard:checked').attr('checked', false);
