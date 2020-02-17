@@ -34,7 +34,7 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", true);
 	},
 
-	'keypress .dialog-input, keypress .dialog-combobox': function(e) {
+	'keydown .dialog-input, keypress .dialog-combobox': function(e) {
 		e.stopPropagation();
 		
 		// if enter pressed, then trigger blur
