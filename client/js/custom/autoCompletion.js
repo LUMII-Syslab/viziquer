@@ -377,6 +377,7 @@ runCompletionNew = function (text, fullText, cursorPosition){
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			var className = compart["input"];
 			
+			// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 		}
 	} catch (com) {
@@ -411,15 +412,24 @@ function getCompletionTable(continuations_to_report) {
 	return uniqueMessages
 }
 
-function getCompletionTableNew(continuations_to_report) {
+function getCompletionTableNew(continuations_to_report, text) {
+	
 	var sortable = [];
 	for (var  key in continuations_to_report) {
-		sortable.push(continuations_to_report[key]);
+		if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
+		else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
+		// sortable.push(continuations_to_report[key]);
 	}
 
-	sortable = sortable.sort(function(a, b) {
-		return  a.type-b.type;
+	sortable = sortable.sort(function (a, b) {
+		if (a.type < b.type) return -1;
+		if (a.type > b.type) return 1;
+
+		if (a.priority < b.priority) return 1;
+		if (a.priority > b.priority) return -1;
+
 	});
+	
 	return sortable
 }
 		
@@ -505,7 +515,7 @@ function getContinuationsNew(text, length, continuations) {
 	var continuations_to_report;
 	
 	var prefix = text;
-			
+	
 	//find farthest position in continuation table
 	//find  previous farthest position
 	for (var pos in continuations) {
@@ -553,12 +563,12 @@ function getContinuationsNew(text, length, continuations) {
 				TermMessages[pos]=continuations_to_report[pos]; 
 			}
 		}
-		TermMessages = getCompletionTableNew(TermMessages) 
+		TermMessages = getCompletionTableNew(TermMessages, text) 
 		if (TermMessages[0] != null) {
 			return {prefix:prefix, suggestions:TermMessages}
 			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
-			var uniqueMessages = getCompletionTableNew(continuations_to_report)
+			var uniqueMessages = getCompletionTableNew(continuations_to_report, text)
 			var messages = [];
 					
 			var messages = "ERROR: in a position " + farthest_pos + ", possible follows are:";
@@ -570,7 +580,7 @@ function getContinuationsNew(text, length, continuations) {
 		}
 	}
 			
-	var uniqueMessages = getCompletionTableNew(continuations_to_report);
+	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
 	
 	return {prefix:prefix, suggestions:uniqueMessages}
 }

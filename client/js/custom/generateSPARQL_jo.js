@@ -1580,12 +1580,31 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			target = "?" + idTable[condLink["target"]];
 			sourse = "?" + idTable[clazz["identification"]["_id"]];
 		}
-		var triple = sourse + " " + getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) + ":" + condLink["identification"]["localName"] + " " + target + ".";
+		
+		var triple = "";
+		
+		if(typeof condLink["identification"]["parsed_exp"]["PathProperty"] !== 'undefined' && condLink["identification"]["localName"] != "=="){
+			var path = getPathFullGrammar(condLink["identification"]["parsed_exp"]);
+			console.log(path);
+			if(path["messages"].length > 0){
+				messages = messages.concat(path["messages"]);
+			} else {
+				for (var prefix in path["prefixTable"]) {
+					if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
+				}
+				triple = sourse + " " + path["path"] + " " + target + ".";
+			}
+		} else {
+			triple = sourse + " " + getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) + ":" + condLink["identification"]["localName"] + " " + target + ".";
+			var namespace = condLink["identification"]["Namespace"]
+			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+			prefixTable[getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) +":"] = "<"+namespace+">";
+		}
+		
+		
 		if(condLink["isNot"] == true) triple = "FILTER NOT EXISTS{" + triple + "}";
 		sparqlTable["conditionLinks"].push(triple);
-		var namespace = condLink["identification"]["Namespace"]
-		if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-		prefixTable[getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) +":"] = "<"+namespace+">";
+		
 	})
 
 	for (var attrname in variableNamesClass) {
