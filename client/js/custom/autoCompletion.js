@@ -118,6 +118,12 @@ autoCompletion = function(e) {
 	}
 }
 
+autoCompletionCleanup = function() {
+	// console.log('auto completion cleanup');
+	removeMessage();
+	closeAllLists();
+}
+
 function keyUpHandler(e){
 	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){

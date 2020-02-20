@@ -29,7 +29,7 @@ Template.AddCondition.events({
 		return;
 
 	},
-	
+
 	"keydown #condition-expression": function(e) {
 		autoCompletion(e);
 		return;
@@ -37,6 +37,10 @@ Template.AddCondition.events({
 
 	"shown.bs.modal #add-condition-form": function(e) {
 		$('#condition-expression').focus();
+	},
+
+	"hidden.bs.modal #add-condition-form": function(e) {
+		autoCompletionCleanup();
 	},
 
 });
