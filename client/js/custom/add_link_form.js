@@ -208,7 +208,45 @@ Template.AddLink.events({
 			if (value == "" || value == " ") {//empty or space - show all elements
 				Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 			} else if (value.indexOf('.') > -1) {
-				console.log("TODO property path");
+				console.log("property path");
+				value = value.split('.');
+				if (value.length > 2) {
+					console.log("too many points");
+					return;
+				}
+
+				_.each(value, function(v){
+					console.log(v);
+					if (v.indexOf(' ') > -1 || v.indexOf(',') > -1) {
+						var newV = v.replace(/,/g, ' ').replace(/ {2,}/g, ' ').split(" ");
+						value[value.indexOf(v)] = newV;			
+					} else {
+						value[value.indexOf(v)] = [v];
+					}
+				})
+
+				console.log(value);
+
+				var ascList = Template.AddLink.fullList.curValue;
+				ascList = ascList.filter(function(e){
+					var hasLink = true;
+					var hasClass = true;
+
+					_.each(value[0], function(v){
+						if (v != "" && e.name.toLowerCase().indexOf(v) == -1) {
+							hasLink = false;
+						}
+					});
+
+					_.each(value[1], function(v){
+						if (v != "" && e.class.toLowerCase().indexOf(v) == -1) {
+							hasClass = false;
+						}
+					});
+					return (hasLink && hasClass);
+				})
+
+				Template.AddLink.shortList.set(ascList);	
 			} else {
 				if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
 					value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
@@ -226,7 +264,7 @@ Template.AddLink.events({
 							hasValues = false;
 						}
 					});
-						return hasValues;
+					return hasValues;
 				})			
 				Template.AddLink.shortList.set(ascList);
 			}
@@ -337,6 +375,9 @@ function clearAddLinkInput(){
 		if (e.value == "JOIN") e.checked = true;
 		else e.checked = false;
 	});
+
+	Template.AddLink.fullList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
+	Template.AddLink.shortList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 
 	$('input[id=goto-wizard]').attr('checked', false);
 	$('input[id=goto-wizard]').attr("disabled","disabled");
