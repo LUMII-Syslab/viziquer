@@ -42,7 +42,7 @@ Template.multiField.events({
 						currentCompartment: {id: next_compart._id, index: next_compart.index,},
 					};
 
-			Utilities.callMeteorMethod("swapCompartments", list);			
+			Utilities.callMeteorMethod("swapCompartments", list);
 		}
 	},
 
@@ -65,7 +65,7 @@ Template.multiField.events({
 						currentCompartment: {id: current_compart._id, index: current_compart.index,},
 					};
 
-			Utilities.callMeteorMethod("swapCompartments", list);			
+			Utilities.callMeteorMethod("swapCompartments", list);
 		}
 	},
 
@@ -74,6 +74,7 @@ Template.multiField.events({
 		e.preventDefault();
 
 		var src = $(e.target);
+		$('.dialog-input').val('');
 		var multi_field = $(src).closest(".multi-field");
 		var compart_type_id = multi_field.attr("id");
 
@@ -135,7 +136,7 @@ Template.show_multi_field_form.helpers({
 
 		//var compart_type_id = $(this).$(".multi-field").attr("id");
 		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
-		
+
 		var compart_type_id = data_in["compartmentTypeId"];
 		var compart = Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
 
@@ -265,7 +266,7 @@ function process_sub_compart_types(subCompartmentTypes, fields, sub_compartments
 		if (sub_compartments) {
 			sub_sub_compartments = sub_compartments[sub_compart_type["name"]];
 		}
-		
+
 		//if compartment has an input type
 		if (sub_compart_type["inputType"] && sub_compart_type["inputType"]["type"]) {
 
