@@ -56,58 +56,22 @@
         }
     </style>
     <div id="connect-classes-form" class="modal fade">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width:50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Connect Classes</h4>
                 </div>
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
-                    {{#if test.data}}
-                        {{#if addLongLink.data}}
-                            <p> {{IDS.class}} => </p>
-                            <p id = "direction_text2">Please choose class to connect to:</p>   
-                            <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList2">
-                            <datalist id="allClassList2">
-                                {{#each elements}}
-                                    <option name="classListV" value="{{name}}"></option>
-                                {{/each}}
-                            </datalist>
-                        {{else}}                        
-                            <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options (test)</button> </p>
-                        {{/if}}
-                    {{else}}
-                        <p><b>Settings:</b> <button id="apply-settings" style="margin-left: 10px; display:inline-block;">Apply settings</button> <button id="show-settings" style="margin-left: 10px; display:inline-block;">Hide settings</button> </p>
-                        <div id="settings" style="display:block; overflow: hidden;">
-                            <label id="max_length_text" for="max_length"><p>Maximum class-type elements in connecting chain:</p> </label>
-                            <input id="max_length" type="number" min="0" pattern="[0-9]" value="1" required>
-                            <span class="validity"></span>                        
-                            {{#if addLongLink.data}}
-                                <p id = "direction_text">Please choose class to connect to:</p>   
-                                <input type="text" class="form-control dialog-combobox input-sm" list="allClassList" id="classList">
-                                <datalist id="allClassList">
-                                    {{#each elements}}
-                                        <option name="classListV" value="{{name}}"></option>
-                                    {{/each}}
-                                </datalist>
-                            {{else}}
-                                <p id = "direction_text">Please choose chain's direction:</p>
-                                <form id="radioList0" class="form-horizontal" role="form">
-                                    <div class="form-group">
-                                        {{#each elements}}                                
-                                            <div class="col-lg-10 elements" name="sequence">                                
-                                                <label class="label-radio">                                            
-                                                    <input type="radio" name = "fc-radio" value="{{id}}" style="font-size:14px">
-                                                    <span class="custom-radio"></span>
-                                                    From <span style="color:darkorange;">{{name}}</span>
-                                                </label>
-                                            </div>
-                                        {{/each}} 
-                                    </div>
-                                </form>
-                            {{/if}}                                             
-                                                      
-                        </div>
-                    {{/if}}
+                    {{#if addLongLink.data}}
+                        <p> <span style="color:darkorange;">{{IDS.name}}</span> => <input type="text" class="form-control dialog-combobox input-sm" list="allClassList2" id="classList2" placeholder="Choose class to connect to.." style="width: 50%; display:inline-block;"><button id="choose-second-class-button" style="margin-left: 10px; display:inline-block; ">Ok</button> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button> </p>                        
+                        <datalist id="allClassList2">
+                            {{#each elements}}
+                                <option name="classListV" value="{{name}}"></option>
+                            {{/each}}
+                        </datalist>
+                    {{else}}                        
+                        <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button> </p>
+                    {{/if}}                    
                     <hr>
                     <div class="searchBox">                       
                         <input class="form-control" id="searchList" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
@@ -122,17 +86,19 @@
                         <form id="radioList" class="form-horizontal" role="form">
                             <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
                             <div class="form-group" id="chain-list">
-                                {{#each shortLinkList}}                                
+                            {{#each linkList}}
+                                {{#if show}}                                
                                     <div class="col-lg-10 connections" name="chain">                                
                                         <label class="label-radio">                                            
                                             <input type="radio" name="stack-radio" value="{{number}}" style="font-size:14px">
                                             <span class="custom-radio"></span>                                    
-                                            {{#each array}}
+                                            {{#each this.array}}
                                                {{this.type}}{{this.link}} <span style="color:darkorange;">{{this.class}}</span>
                                             {{/each}}
                                         </label>
                                     </div>
-                                {{/each}}
+                                {{/if}}
+                            {{/each}}                                                          
                             </div>
                         </form>                                 
                     </div>                  
@@ -167,7 +133,7 @@
           color: green;
         } 
 
-        #connect-setting-warning{
+        #connect-setting-warning, #connect-setting-warning-long-length{
             position: relative;
             display:inline;
             padding-right: 5px;
@@ -183,6 +149,12 @@
         }
 
         #connect-setting-warning:before{
+            content:'!';
+            font-weight: bold;
+            color:#fff;               
+        }
+
+        #connect-setting-warning-long-length:before{
             content:'!';
             font-weight: bold;
             color:#fff;               
@@ -237,29 +209,46 @@
                         </form> 
                         <hr style="border: 1px solid lightgrey;">
                         <label id="max_length_text" for="max_length"><p>Paths length limit:</p> </label>
-                        <input id="max_length" type="number" min="0" pattern="[0-9]" value="{{pathLength.data}}" required>
+                        <input id="max_length" type="number" min="1" pattern="[0-9]" value="{{pathLength.data}}" required>
                         <span class="validity"></span>
                         <form style="padding-left: 50px;">
                             <input type="checkbox" id="default-max-length">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Use default length limit</p>
                         </form>
+                        <form style="padding-left: 50px;">
+                            <input type="checkbox" id="great-max-length">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Allow very long path (length > 5)</p>
+                            <div class="help-tip" id="connect-setting-warning-long-length">
+                                    <p style="left:-50%; width: 300px;">This can lead to slow system response or memory issues.</p>
+                            </div>
+                        </form>
                         <hr style="border: 1px solid lightgrey;">                                                   
-                        <p>Path's direction</p>
+                        <p>Path's direction</p>                        
                         <div class="col-lg-10 elements">                               
-                            <form id="direction-settings">                                
-                                <label class="label-radio">                                            
-                                    <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
-                                    <span class="custom-radio"></span>
-                                    From <span style="color:darkorange;">{{fromToClass.fromName}}</span> to <span style="color:darkorange;">{{fromToClass.toName}}</span>
-                                </label>
-                                <label class="label-radio">                                            
-                                    <input type="radio" name = "path-radio" value="{{fromToClass.toID}}" style="font-size:14px">
-                                    <span class="custom-radio"></span>
-                                    From <span style="color:darkorange;">{{fromToClass.toName}}</span> to <span style="color:darkorange;">{{fromToClass.fromName}}</span>
-                                </label>
+                            <form id="direction-settings"> 
+                                {{#if addLongLinkS.data}}
+                                    <label class="label-radio">                                            
+                                        <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
+                                        <span class="custom-radio"></span>
+                                        <span style="color:darkorange;">Path direction change is not available for Add Link.</span> 
+                                    </label>
+                                {{else}}                               
+                                    <label class="label-radio">                                            
+                                        <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
+                                        <span class="custom-radio"></span>
+                                        From <span style="color:darkorange;">{{fromToClass.fromName}}</span> to <span style="color:darkorange;">{{fromToClass.toName}}</span>
+                                    </label>
+                                    <label class="label-radio">                                            
+                                        <input type="radio" name = "path-radio" value="{{fromToClass.toID}}" style="font-size:14px">
+                                        <span class="custom-radio"></span>
+                                        From <span style="color:darkorange;">{{fromToClass.toName}}</span> to <span style="color:darkorange;">{{fromToClass.fromName}}</span>
+                                    </label>
+                                {{/if}}
                             </form>
-                        </div>                          
+                        </div>
+                                                 
                     </div>                                                      
                 </div>
 
