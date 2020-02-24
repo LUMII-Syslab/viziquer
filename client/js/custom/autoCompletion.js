@@ -101,11 +101,11 @@ autoCompletionAddCondition = function(e) {
 	autoCompletion(e);
 }
 
-  
+
 autoCompletion = function(e) {
 
 	removeMessage();
-	if (e.ctrlKey && (e.keyCode === 32 || e.keyCode === 0)) {
+	// if (e.ctrlKey && (e.keyCode === 32 || e.keyCode === 0)) {
 		// completionOn = true;
 
 		var elem = document.activeElement;
@@ -122,7 +122,7 @@ autoCompletion = function(e) {
 			currentFocus = 0;
 			autocomplete(elem, continuations);
 		}
-	}
+	// }
 }
 
 autoCompletionCleanup = function() {
@@ -543,7 +543,7 @@ function getContinuationsNew(text, length, continuations) {
 	var continuations_to_report;
 
 	var prefix = text;
-	
+
 	//find farthest position in continuation table
 	//find  previous farthest position
 	for (var pos in continuations) {
@@ -564,7 +564,7 @@ function getContinuationsNew(text, length, continuations) {
 
 				var startedContinuations = [];
 				var wholeWordMatch = false;
-				
+
 				for (var pos in continuations[i]) {
 					if(varrible.toLowerCase() == pos.toLowerCase()) wholeWordMatch = true;
 				}
@@ -582,11 +582,11 @@ function getContinuationsNew(text, length, continuations) {
 							var suggestions = pos.substring(varrible.length);
 							continuations_to_report[pos] = {"name":suggestions, "priority":100, "type":continuations[i][pos]["type"], "spaceBefore":false}
 							startedContinuations[pos] = {"name":suggestions, "priority":100, "type":continuations[i][pos]["type"], "spaceBefore":false}
-							
-						} 
+
+						}
 					}
 				}
-				
+
 				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch != true) continuations_to_report = startedContinuations;
 			}
 		}
@@ -624,7 +624,7 @@ function getContinuationsNew(text, length, continuations) {
 	}
 
 	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
-	
+
 	return {prefix:prefix, suggestions:uniqueMessages}
 }
 
