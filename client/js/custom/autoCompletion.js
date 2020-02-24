@@ -95,6 +95,13 @@ generateSymbolTableAC = function() {
 	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
   }
 
+autoCompletionAddCondition = function(e) {
+	grammarType = "class"
+	symbolTable = generateSymbolTableAC();
+	autoCompletion(e);
+}
+
+  
 autoCompletion = function(e) {
 
 	removeMessage();
@@ -397,13 +404,12 @@ runCompletionNew = function (text, fullText, cursorPosition){
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			var className = compart["input"];
 
-			// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-
+			//var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 		}
 	} catch (com) {
 		var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));
-		console.log(c);
+		//console.log(c);
 		return c;
 	}
 
@@ -537,8 +543,7 @@ function getContinuationsNew(text, length, continuations) {
 	var continuations_to_report;
 
 	var prefix = text;
-		console.log("PREFIX0", prefix);
-
+	
 	//find farthest position in continuation table
 	//find  previous farthest position
 	for (var pos in continuations) {

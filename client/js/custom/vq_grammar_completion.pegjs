@@ -645,16 +645,16 @@
 			check = "" {addContinuation(location(), "^", 10, false, 4);}
 			br_open = "" {addContinuation(location(), "(", 90, false, 4);}
 			br_close = "" {addContinuation(location(), ")", 10, false, 4);}
-			count_distinct_c = "" {addContinuation(location(), "COUNT_DISTINCT", 35, false, 4);}
+			count_distinct_c = "" {if(options.type=="attribute") addContinuation(location(), "COUNT_DISTINCT", 35, false, 4); else addContinuation(location(), "", 1, false, 4);}
 			distinct_c = "" {addContinuation(location(), "DISTINCT", 90, false, 4);}
-			count_c = "" {addContinuation(location(), "COUNT", 35, false, 4);}
-			sum_c = "" {addContinuation(location(), "SUM", 35, false, 4);}
-			min_c = "" {addContinuation(location(), "MIN", 35, false, 4);}
-			max_c = "" {addContinuation(location(), "MAX", 35, false, 4);}
-			avg_c = "" {addContinuation(location(), "AVG", 35, false, 4);}
-			sample_c = "" {addContinuation(location(), "SAMPLE", 35, false, 4);}
-			group_concat_c = "" {addContinuation(location(), "GROUP_CONCAT", 35, false, 4);}
-			separator_c = "" {addContinuation(location(), "SEPARATOR", 35, false, 4);}
+			count_c = "" {if(options.type=="attribute") addContinuation(location(), "COUNT", 35, false, 4); else addContinuation(location(), "", 1, false, 4);}
+			sum_c = "" {if(options.type=="attribute")addContinuation(location(), "SUM", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			min_c = "" {if(options.type=="attribute")addContinuation(location(), "MIN", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			max_c = "" {if(options.type=="attribute")addContinuation(location(), "MAX", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			avg_c = "" {if(options.type=="attribute")addContinuation(location(), "AVG", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			sample_c = "" {if(options.type=="attribute")addContinuation(location(), "SAMPLE", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			group_concat_c = "" {if(options.type=="attribute")addContinuation(location(), "GROUP_CONCAT", 35, false, 4);else addContinuation(location(), "", 1, false, 4);}
+			separator_c = "" {addContinuation(location(), "SEPARATOR", 10, false, 4);}
 			semi_colon = "" {addContinuation(location(), ";", 10, false, 4);}
 			equal = "" {addContinuation(location(), "=", 90, false, 4);}
 			comma_c = "" {addContinuation(location(), ",", 10, false, 4);}

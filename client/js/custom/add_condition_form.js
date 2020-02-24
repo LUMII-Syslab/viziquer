@@ -31,7 +31,7 @@ Template.AddCondition.events({
 	},
 
 	"keydown #condition-expression": function(e) {
-		autoCompletion(e);
+		autoCompletionAddCondition(e);
 		return;
 	},
 
