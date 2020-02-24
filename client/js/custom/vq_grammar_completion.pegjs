@@ -40,12 +40,21 @@
 				getPropertyAlias(place, 93);
 			}
 			function getPropertyAlias(place, priority){
-				for(var key in options["symbol_table"]){
+				/*for(var key in options["symbol_table"]){
 					for(var k in options["symbol_table"][key]){
 						var kind = options["symbol_table"][key][k]["kind"];
 						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority, false, 3);
 					}
-				};
+				};*/
+				
+				var selected_elem_id = Session.get("activeElement");
+				for (var  key in options["symbol_table"]) {	
+					for (var symbol in options["symbol_table"][key]) {
+						if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){
+							if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))addContinuation(place, key, priority, false, 3);;
+						}
+					}	
+				}
 			}
 			
 			function getAssociations(place, priority){
