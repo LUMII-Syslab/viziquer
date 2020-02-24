@@ -531,11 +531,13 @@ function getContinuations(text, length, continuations) {
 //text - input string
 //length - input string length
 function getContinuationsNew(text, length, continuations) {
+	var allSuggestions = []
 	var farthest_pos = -1 //farthest position in continuation table
 	var farthest_pos_prev = -1 // previous farthest position (is used only some nonterminal symbol is started)
 	var continuations_to_report;
 
 	var prefix = text;
+		console.log("PREFIX0", prefix);
 
 	//find farthest position in continuation table
 	//find  previous farthest position
@@ -557,14 +559,29 @@ function getContinuationsNew(text, length, continuations) {
 
 				var startedContinuations = [];
 				var wholeWordMatch = false;
+				
+				for (var pos in continuations[i]) {
+					if(varrible.toLowerCase() == pos.toLowerCase()) wholeWordMatch = true;
+				}
+
 				for (var pos in continuations[i]) {
 					//if contuniation contains sub string
-					if (pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+					if (wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
 						prefix = text.substring(0, i);
 						continuations_to_report[pos] = continuations[i][pos];
 						startedContinuations[pos] = continuations[i][pos];
-					} else if(varrible == pos) wholeWordMatch = true;
+					} //else if(varrible == pos) wholeWordMatch = true;
+					else {
+						//if starts with
+						if (pos.substring(0, varrible.length).toLowerCase() == varrible.toLowerCase() && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+							var suggestions = pos.substring(varrible.length);
+							continuations_to_report[pos] = {"name":suggestions, "priority":100, "type":continuations[i][pos]["type"], "spaceBefore":false}
+							startedContinuations[pos] = {"name":suggestions, "priority":100, "type":continuations[i][pos]["type"], "spaceBefore":false}
+							
+						} 
+					}
 				}
+				
 				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch != true) continuations_to_report = startedContinuations;
 			}
 		}
@@ -602,7 +619,7 @@ function getContinuationsNew(text, length, continuations) {
 	}
 
 	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
-
+	
 	return {prefix:prefix, suggestions:uniqueMessages}
 }
 
