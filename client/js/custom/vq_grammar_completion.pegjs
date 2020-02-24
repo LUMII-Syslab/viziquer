@@ -224,12 +224,12 @@
 			}
 		}
 
-			Main = (space  ((attrSub_c ("(*attr)" / "(*sub)")) / Expression) space)? end
+			Main = (space  ((("(*attr)" / "(*sub)")) / Expression) space)? end
 			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr
 			ValueScope = (curv_br_open "{" (ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) curv_br_close "}")
 			ValueScopeA = (INTEGER two_dots ".." INTEGER)
 
-			classExpr = ((dot ".") / (dot_in_br "(.)") / (select_this"(select this)" / this_c "(this)"))
+			classExpr = ((dot ".") / ("(.)") / (select_this"(select this)" / this_c "(this)"))
 
 			ConditionalOrExpressionA = (ConditionalOrExpression)
 
