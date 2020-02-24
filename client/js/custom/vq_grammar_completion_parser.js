@@ -343,136 +343,133 @@ vq_grammar_completion_parser = (function() {
         peg$c303 = "between",
         peg$c304 = { type: "literal", value: "BETWEEN", description: "\"BETWEEN\"" },
         peg$c305 = "",
-        peg$c306 = function() {addContinuation(location(), "[ ]", 50, false, 4);},
-        peg$c307 = function() {addContinuation(location(), "[ + ]", 50, false, 4);},
-        peg$c308 = function() {addContinuation(location(), "(no_class)", 50, false, 4);},
-        peg$c309 = function() {addContinuation(location(), "{", 50, false, 4);/*}*/},
-        peg$c310 = function() {addContinuation(location(), /*{*/"}", 50, false, 4);},
-        peg$c311 = function() {addContinuation(location(), "..", 50, false, 4);},
-        peg$c312 = function() {addContinuation(location(), ".", 50, false, 4);},
-        peg$c313 = function() {addContinuation(location(), ".", 95, false, 4);},
-        peg$c314 = function() {addContinuation(location(), "(.)", 50, false, 4);},
-        peg$c315 = function() {addContinuation(location(), "(select this)", 50, false, 4);},
-        peg$c316 = function() {addContinuation(location(), "(this)", 50, false, 4);},
-        peg$c317 = function() {addContinuation(location(), "||", 90, true, 4); addContinuation(location(), "OR", 90, true, 4);},
-        peg$c318 = function() {addContinuation(location(), "&&", 90, true, 4); addContinuation(location(), "AND", 90, true, 4);},
-        peg$c319 = function() {addContinuation(location(), "IN", 90, true, 4);},
-        peg$c320 = function() {addContinuation(location(), "NOT", 90, false, 4);},
-        peg$c321 = function() {addContinuation(location(), "NOT IN", 90, true, 4);},
-        peg$c322 = function() {addContinuation(location(), "++", 90, true, 4);},
-        peg$c323 = function() {addContinuation(location(), "+", 90, true, 4);},
-        peg$c324 = function() {addContinuation(location(), "-", 90, true, 4);},
-        peg$c325 = function() {addContinuation(location(), "!", 90, false, 4);},
-        peg$c326 = function() {addContinuation(location(), "a", 90, false, 4);},
-        peg$c327 = function() {addContinuation(location(), "*", 90, true, 4);},
-        peg$c328 = function() {addContinuation(location(), "/", 90, false, 4);},
-        peg$c329 = function() {addContinuation(location(), "/", 90, true, 4);},
-        peg$c330 = function() {addContinuation(location(), "true", 90, false, 4);},
-        peg$c331 = function() {addContinuation(location(), "false", 90, false, 4);},
-        peg$c332 = function() {addContinuation(location(), "^^", 90, false, 4);},
-        peg$c333 = function() {addContinuation(location(), "^", 90, false, 4);},
-        peg$c334 = function() {addContinuation(location(), "(", 90, false, 4);},
-        peg$c335 = function() {addContinuation(location(), ")", 90, false, 4);},
-        peg$c336 = function() {addContinuation(location(), "COUNT_DISTINCT", 90, false, 4);},
-        peg$c337 = function() {addContinuation(location(), "DISTINCT", 90, false, 4);},
-        peg$c338 = function() {addContinuation(location(), "COUNT", 90, false, 4);},
-        peg$c339 = function() {addContinuation(location(), "SUM", 90, false, 4);},
-        peg$c340 = function() {addContinuation(location(), "MIN", 90, false, 4);},
-        peg$c341 = function() {addContinuation(location(), "MAX", 90, false, 4);},
-        peg$c342 = function() {addContinuation(location(), "AVG", 90, false, 4);},
-        peg$c343 = function() {addContinuation(location(), "SAMPLE", 90, false, 4);},
-        peg$c344 = function() {addContinuation(location(), "GROUP_CONCAT", 90, false, 4);},
-        peg$c345 = function() {addContinuation(location(), "SEPARATOR", 90, false, 4);},
-        peg$c346 = function() {addContinuation(location(), ";", 90, false, 4);},
-        peg$c347 = function() {addContinuation(location(), "=", 90, false, 4);},
-        peg$c348 = function() {addContinuation(location(), ",", 90, false, 4);},
-        peg$c349 = function() {addContinuation(location(), "STR", 90, false, 4);},
-        peg$c350 = function() {addContinuation(location(), "LANG", 90, false, 4);},
-        peg$c351 = function() {addContinuation(location(), "DATATYPE", 90, false, 4);},
-        peg$c352 = function() {addContinuation(location(), "IRI", 90, false, 4);},
-        peg$c353 = function() {addContinuation(location(), "URI", 90, false, 4);},
-        peg$c354 = function() {addContinuation(location(), "ABS", 90, false, 4);},
-        peg$c355 = function() {addContinuation(location(), "CEIL", 90, false, 4);},
-        peg$c356 = function() {addContinuation(location(), "FLOOR", 90, false, 4);},
-        peg$c357 = function() {addContinuation(location(), "ROUND", 90, false, 4);},
-        peg$c358 = function() {addContinuation(location(), "STRLEN", 90, false, 4);},
-        peg$c359 = function() {addContinuation(location(), "UCASE", 90, false, 4);},
-        peg$c360 = function() {addContinuation(location(), "LCASE", 90, false, 4);},
-        peg$c361 = function() {addContinuation(location(), "ENCODE_FOR_URI", 90, false, 4);},
-        peg$c362 = function() {addContinuation(location(), "YEAR", 90, false, 4);},
-        peg$c363 = function() {addContinuation(location(), "MONTH", 90, false, 4);},
-        peg$c364 = function() {addContinuation(location(), "DAY", 90, false, 4);},
-        peg$c365 = function() {addContinuation(location(), "TIMEZONE", 90, false, 4);},
-        peg$c366 = function() {addContinuation(location(), "TZ", 90, false, 4);},
-        peg$c367 = function() {addContinuation(location(), "MD5", 90, false, 4);},
-        peg$c368 = function() {addContinuation(location(), "SHA1", 90, false, 4);},
-        peg$c369 = function() {addContinuation(location(), "SHA256", 90, false, 4);},
-        peg$c370 = function() {addContinuation(location(), "SHA384", 90, false, 4);},
-        peg$c371 = function() {addContinuation(location(), "SHA512", 90, false, 4);},
-        peg$c372 = function() {addContinuation(location(), "isIRI", 90, false, 4);},
-        peg$c373 = function() {addContinuation(location(), "isURI", 90, false, 4);},
-        peg$c374 = function() {addContinuation(location(), "isBLANK", 90, false, 4);},
-        peg$c375 = function() {addContinuation(location(), "dateTime", 90, false, 4);},
-        peg$c376 = function() {addContinuation(location(), "date", 90, false, 4);},
-        peg$c377 = function() {addContinuation(location(), "isLITERAL", 90, false, 4);},
-        peg$c378 = function() {addContinuation(location(), "isNUMERIC", 90, false, 4);},
-        peg$c379 = function() {addContinuation(location(), "LANGMATCHES", 90, false, 4);},
-        peg$c380 = function() {addContinuation(location(), "CONTAINS", 90, false, 4);},
-        peg$c381 = function() {addContinuation(location(), "STRSTARTS", 90, false, 4);},
-        peg$c382 = function() {addContinuation(location(), "STRENDS", 90, false, 4);},
-        peg$c383 = function() {addContinuation(location(), "STRBEFORE", 90, false, 4);},
-        peg$c384 = function() {addContinuation(location(), "STRAFTER", 90, false, 4);},
-        peg$c385 = function() {addContinuation(location(), "STRLANG", 90, false, 4);},
-        peg$c386 = function() {addContinuation(location(), "STRDT", 90, false, 4);},
-        peg$c387 = function() {addContinuation(location(), "sameTerm", 90, false, 4);},
-        peg$c388 = function() {addContinuation(location(), "days", 90, false, 4);},
-        peg$c389 = function() {addContinuation(location(), "years", 90, false, 4);},
-        peg$c390 = function() {addContinuation(location(), "months", 90, false, 4);},
-        peg$c391 = function() {addContinuation(location(), "hours", 90, false, 4);},
-        peg$c392 = function() {addContinuation(location(), "minutes", 90, false, 4);},
-        peg$c393 = function() {addContinuation(location(), "seconds", 90, false, 4);},
-        peg$c394 = function() {addContinuation(location(), "IF", 90, false, 4);},
-        peg$c395 = function() {addContinuation(location(), "COALESCE", 90, false, 4);},
-        peg$c396 = function() {addContinuation(location(), "BOUND", 90, false, 4);},
-        peg$c397 = function() {addContinuation(location(), "BNODE", 90, false, 4);},
-        peg$c398 = function() {addContinuation(location(), "RAND", 90, false, 4);},
-        peg$c399 = function() {addContinuation(location(), "CONCAT", 90, false, 4);},
-        peg$c400 = function() {addContinuation(location(), "NOW", 90, false, 4);},
-        peg$c401 = function() {addContinuation(location(), "UUID", 90, false, 4);},
-        peg$c402 = function() {addContinuation(location(), "STRUUID", 90, false, 4);},
-        peg$c403 = function() {addContinuation(location(), "REGEX", 90, false, 4);},
-        peg$c404 = function() {addContinuation(location(), "SUBSTRING", 90, false, 4);},
-        peg$c405 = function() {addContinuation(location(), "SUBSTR", 90, false, 4);},
-        peg$c406 = function() {addContinuation(location(), "bif:SUBSTRING", 90, false, 4);},
-        peg$c407 = function() {addContinuation(location(), "bif:SUBSTR", 90, false, 4);},
-        peg$c408 = function() {addContinuation(location(), "REPLACE", 90, false, 4);},
-        peg$c409 = function() {addContinuation(location(), "EXISTS", 90, false, 4);},
-        peg$c410 = function() {addContinuation(location(), "@", 90, false, 4);},
-        peg$c411 = function() {addContinuation(location(), ":", 90, false, 4);},
-        peg$c412 = function() {addContinuation(location(), "?", 90, false, 4);},
-        peg$c413 = function() {addContinuation(location(), "??", 90, false, 4);},
-        peg$c414 = function() {addContinuation(location(), "$", 90, false, 4);},
-        peg$c415 = function() {addContinuation(location(), "'", 90, false, 4);},
-        peg$c416 = function() {addContinuation(location(), '"', 90, false, 4);},
-        peg$c417 = function() {addContinuation(location(), "INV", 90, false, 4);},
-        peg$c418 = function() {addContinuation(location(), "[", 90, false, 4);},
-        peg$c419 = function() {addContinuation(location(), "]", 90, false, 4);},
-        peg$c420 = function() {addContinuation(location(), "=", 90, false, 4); addContinuation(location(), "!=", 90, false, 4);  addContinuation(location(), "<>", 90, false, 4);  addContinuation(location(), "<=", 90, false, 4);  addContinuation(location(), ">=", 90, false, 4);  addContinuation(location(), "<", 90, false, 4); addContinuation(location(), ">", 90, false, 4);},
-        peg$c421 = function() {addContinuation(location(), "LIKE", 90, true, 4);},
-        peg$c422 = function() {addContinuation(location(), ">", 90, false, 4);},
-        peg$c423 = function() {addContinuation(location(), "<", 90, false, 4);},
-        peg$c424 = function() {addContinuation(location(), "%", 90, false, 4);},
-        peg$c425 = function() {addContinuation(location(), "BETWEEN", 90, true, 4);},
-        peg$c426 = function() {addContinuation(location(), "", 1, false, 4);},
-        peg$c427 = function() {addContinuation(location(), "|", 90, false, 4);},
-        peg$c428 = function() {addContinuation(location(), " ", 10, false, 4);},
-        peg$c429 = function() {addContinuation(location(), "`", 10, false, 4);},
-        peg$c430 = function() {getProperties(location(), 91);},
-        peg$c431 = function() {getReferences(location(), 91);},
-        peg$c432 = function() {getAssociations(location(), 91);},
-        peg$c433 = function() {getClasses(location(), 91); getAssociations(location(), 91);},
-        peg$c434 = function() {getAttrSub(location(), 92)},
-        peg$c435 = function() {error(returnContinuation()); return;},
+        peg$c306 = function() {addContinuation(location(), "[ ]", 10, false, 4);},
+        peg$c307 = function() {addContinuation(location(), "[ + ]", 10, false, 4);},
+        peg$c308 = function() {addContinuation(location(), " ", 1, false, 4);},
+        peg$c309 = function() {addContinuation(location(), "{", 10, false, 4);/*}*/},
+        peg$c310 = function() {addContinuation(location(), /*{*/"}", 10, false, 4);},
+        peg$c311 = function() {addContinuation(location(), "..", 10, false, 4);},
+        peg$c312 = function() {addContinuation(location(), ".", 32, false, 4);},
+        peg$c313 = function() {addContinuation(location(), "", 1, false, 4);},
+        peg$c314 = function() {addContinuation(location(), "(select this)", 10, false, 4);},
+        peg$c315 = function() {addContinuation(location(), "(this)", 85, false, 4);},
+        peg$c316 = function() {addContinuation(location(), "||", 10, true, 4); addContinuation(location(), "OR", 10, true, 4);},
+        peg$c317 = function() {addContinuation(location(), "&&", 10, true, 4); addContinuation(location(), "AND", 10, true, 4);},
+        peg$c318 = function() {addContinuation(location(), "IN", 30, true, 4);},
+        peg$c319 = function() {addContinuation(location(), "NOT", 90, false, 4);},
+        peg$c320 = function() {addContinuation(location(), "NOT IN", 30, true, 4);},
+        peg$c321 = function() {addContinuation(location(), "++", 25, true, 4);},
+        peg$c322 = function() {addContinuation(location(), "+", 25, true, 4);},
+        peg$c323 = function() {addContinuation(location(), "-", 25, true, 4);},
+        peg$c324 = function() {addContinuation(location(), "!", 75, false, 4);},
+        peg$c325 = function() {addContinuation(location(), "a", 10, false, 4);},
+        peg$c326 = function() {addContinuation(location(), "*", 25, true, 4);},
+        peg$c327 = function() {addContinuation(location(), "/", 25, false, 4);},
+        peg$c328 = function() {addContinuation(location(), "/", 25, true, 4);},
+        peg$c329 = function() {addContinuation(location(), "true", 10, false, 4);},
+        peg$c330 = function() {addContinuation(location(), "false", 10, false, 4);},
+        peg$c331 = function() {addContinuation(location(), "^^", 10, false, 4);},
+        peg$c332 = function() {addContinuation(location(), "^", 10, false, 4);},
+        peg$c333 = function() {addContinuation(location(), "(", 90, false, 4);},
+        peg$c334 = function() {addContinuation(location(), ")", 10, false, 4);},
+        peg$c335 = function() {addContinuation(location(), "COUNT_DISTINCT", 35, false, 4);},
+        peg$c336 = function() {addContinuation(location(), "DISTINCT", 90, false, 4);},
+        peg$c337 = function() {addContinuation(location(), "COUNT", 35, false, 4);},
+        peg$c338 = function() {addContinuation(location(), "SUM", 35, false, 4);},
+        peg$c339 = function() {addContinuation(location(), "MIN", 35, false, 4);},
+        peg$c340 = function() {addContinuation(location(), "MAX", 35, false, 4);},
+        peg$c341 = function() {addContinuation(location(), "AVG", 35, false, 4);},
+        peg$c342 = function() {addContinuation(location(), "SAMPLE", 35, false, 4);},
+        peg$c343 = function() {addContinuation(location(), "GROUP_CONCAT", 35, false, 4);},
+        peg$c344 = function() {addContinuation(location(), "SEPARATOR", 35, false, 4);},
+        peg$c345 = function() {addContinuation(location(), ";", 10, false, 4);},
+        peg$c346 = function() {addContinuation(location(), "=", 90, false, 4);},
+        peg$c347 = function() {addContinuation(location(), ",", 10, false, 4);},
+        peg$c348 = function() {addContinuation(location(), "STR", 65, false, 4);},
+        peg$c349 = function() {addContinuation(location(), "LANG", 55, false, 4);},
+        peg$c350 = function() {addContinuation(location(), "DATATYPE", 55, false, 4);},
+        peg$c351 = function() {addContinuation(location(), "IRI", 10, false, 4);},
+        peg$c352 = function() {addContinuation(location(), "URI", 10, false, 4);},
+        peg$c353 = function() {addContinuation(location(), "ABS", 10, false, 4);},
+        peg$c354 = function() {addContinuation(location(), "CEIL", 10, false, 4);},
+        peg$c355 = function() {addContinuation(location(), "FLOOR", 10, false, 4);},
+        peg$c356 = function() {addContinuation(location(), "ROUND", 10, false, 4);},
+        peg$c357 = function() {addContinuation(location(), "STRLEN", 10, false, 4);},
+        peg$c358 = function() {addContinuation(location(), "UCASE", 10, false, 4);},
+        peg$c359 = function() {addContinuation(location(), "LCASE", 10, false, 4);},
+        peg$c360 = function() {addContinuation(location(), "ENCODE_FOR_URI", 10, false, 4);},
+        peg$c361 = function() {addContinuation(location(), "YEAR", 45, false, 4);},
+        peg$c362 = function() {addContinuation(location(), "MONTH", 45, false, 4);},
+        peg$c363 = function() {addContinuation(location(), "DAY", 45, false, 4);},
+        peg$c364 = function() {addContinuation(location(), "TIMEZONE", 10, false, 4);},
+        peg$c365 = function() {addContinuation(location(), "TZ", 10, false, 4);},
+        peg$c366 = function() {addContinuation(location(), "MD5", 10, false, 4);},
+        peg$c367 = function() {addContinuation(location(), "SHA1", 10, false, 4);},
+        peg$c368 = function() {addContinuation(location(), "SHA256", 10, false, 4);},
+        peg$c369 = function() {addContinuation(location(), "SHA384", 10, false, 4);},
+        peg$c370 = function() {addContinuation(location(), "SHA512", 10, false, 4);},
+        peg$c371 = function() {addContinuation(location(), "isIRI", 10, false, 4);},
+        peg$c372 = function() {addContinuation(location(), "isURI", 10, false, 4);},
+        peg$c373 = function() {addContinuation(location(), "isBLANK", 10, false, 4);},
+        peg$c374 = function() {addContinuation(location(), "dateTime", 60, false, 4);},
+        peg$c375 = function() {addContinuation(location(), "date", 60, false, 4);},
+        peg$c376 = function() {addContinuation(location(), "isLITERAL", 10, false, 4);},
+        peg$c377 = function() {addContinuation(location(), "isNUMERIC", 10, false, 4);},
+        peg$c378 = function() {addContinuation(location(), "LANGMATCHES", 55, false, 4);},
+        peg$c379 = function() {addContinuation(location(), "CONTAINS", 50, false, 4);},
+        peg$c380 = function() {addContinuation(location(), "STRSTARTS", 10, false, 4);},
+        peg$c381 = function() {addContinuation(location(), "STRENDS", 10, false, 4);},
+        peg$c382 = function() {addContinuation(location(), "STRBEFORE", 10, false, 4);},
+        peg$c383 = function() {addContinuation(location(), "STRAFTER", 10, false, 4);},
+        peg$c384 = function() {addContinuation(location(), "STRLANG", 10, false, 4);},
+        peg$c385 = function() {addContinuation(location(), "STRDT", 10, false, 4);},
+        peg$c386 = function() {addContinuation(location(), "sameTerm", 10, false, 4);},
+        peg$c387 = function() {addContinuation(location(), "days", 40, false, 4);},
+        peg$c388 = function() {addContinuation(location(), "years", 40, false, 4);},
+        peg$c389 = function() {addContinuation(location(), "months", 40, false, 4);},
+        peg$c390 = function() {addContinuation(location(), "hours", 40, false, 4);},
+        peg$c391 = function() {addContinuation(location(), "minutes", 40, false, 4);},
+        peg$c392 = function() {addContinuation(location(), "seconds", 40, false, 4);},
+        peg$c393 = function() {addContinuation(location(), "IF", 70, false, 4);},
+        peg$c394 = function() {addContinuation(location(), "COALESCE", 70, false, 4);},
+        peg$c395 = function() {addContinuation(location(), "BOUND", 80, false, 4);},
+        peg$c396 = function() {addContinuation(location(), "BNODE", 10, false, 4);},
+        peg$c397 = function() {addContinuation(location(), "RAND", 10, false, 4);},
+        peg$c398 = function() {addContinuation(location(), "CONCAT", 55, false, 4);},
+        peg$c399 = function() {addContinuation(location(), "NOW", 10, false, 4);},
+        peg$c400 = function() {addContinuation(location(), "UUID", 10, false, 4);},
+        peg$c401 = function() {addContinuation(location(), "STRUUID", 10, false, 4);},
+        peg$c402 = function() {addContinuation(location(), "REGEX", 50, false, 4);},
+        peg$c403 = function() {addContinuation(location(), "SUBSTRING", 50, false, 4);},
+        peg$c404 = function() {addContinuation(location(), "SUBSTR", 50, false, 4);},
+        peg$c405 = function() {addContinuation(location(), "bif:SUBSTRING", 50, false, 4);},
+        peg$c406 = function() {addContinuation(location(), "bif:SUBSTR", 50, false, 4);},
+        peg$c407 = function() {addContinuation(location(), "REPLACE", 10, false, 4);},
+        peg$c408 = function() {addContinuation(location(), "EXISTS", 90, false, 4);},
+        peg$c409 = function() {addContinuation(location(), "@", 1, false, 4);},
+        peg$c410 = function() {addContinuation(location(), ":", 30, false, 4);},
+        peg$c411 = function() {addContinuation(location(), "?", 1, false, 4);},
+        peg$c412 = function() {addContinuation(location(), "??", 1, false, 4);},
+        peg$c413 = function() {addContinuation(location(), "$", 10, false, 4);},
+        peg$c414 = function() {addContinuation(location(), "'", 10, false, 4);},
+        peg$c415 = function() {addContinuation(location(), '"', 10, false, 4);},
+        peg$c416 = function() {addContinuation(location(), "INV", 85, false, 4);},
+        peg$c417 = function() {addContinuation(location(), "[", 28, false, 4);},
+        peg$c418 = function() {addContinuation(location(), "]", 28, false, 4);},
+        peg$c419 = function() {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);},
+        peg$c420 = function() {addContinuation(location(), "LIKE", 30, true, 4);},
+        peg$c421 = function() {addContinuation(location(), ">", 10, false, 4);},
+        peg$c422 = function() {addContinuation(location(), "<", 10, false, 4);},
+        peg$c423 = function() {addContinuation(location(), "%", 10, false, 4);},
+        peg$c424 = function() {addContinuation(location(), "BETWEEN", 30, true, 4);},
+        peg$c425 = function() {addContinuation(location(), "|", 10, false, 4);},
+        peg$c426 = function() {addContinuation(location(), "`", 1, false, 4);},
+        peg$c427 = function() {getProperties(location(), 91);},
+        peg$c428 = function() {getReferences(location(), 91);},
+        peg$c429 = function() {getAssociations(location(), 91);},
+        peg$c430 = function() {getClasses(location(), 91); getAssociations(location(), 91);},
+        peg$c431 = function() {getAttrSub(location(), 92)},
+        peg$c432 = function() {error(returnContinuation()); return;},
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -16274,7 +16271,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c313();
+        s1 = peg$c312();
       }
       s0 = s1;
 
@@ -16299,7 +16296,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c314();
+        s1 = peg$c313();
       }
       s0 = s1;
 
@@ -16324,7 +16321,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c315();
+        s1 = peg$c314();
       }
       s0 = s1;
 
@@ -16349,7 +16346,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c316();
+        s1 = peg$c315();
       }
       s0 = s1;
 
@@ -16374,7 +16371,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c317();
+        s1 = peg$c316();
       }
       s0 = s1;
 
@@ -16399,7 +16396,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c318();
+        s1 = peg$c317();
       }
       s0 = s1;
 
@@ -16424,7 +16421,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c319();
+        s1 = peg$c318();
       }
       s0 = s1;
 
@@ -16449,7 +16446,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c320();
+        s1 = peg$c319();
       }
       s0 = s1;
 
@@ -16474,7 +16471,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c321();
+        s1 = peg$c320();
       }
       s0 = s1;
 
@@ -16499,7 +16496,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c322();
+        s1 = peg$c321();
       }
       s0 = s1;
 
@@ -16524,7 +16521,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c323();
+        s1 = peg$c322();
       }
       s0 = s1;
 
@@ -16549,7 +16546,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c324();
+        s1 = peg$c323();
       }
       s0 = s1;
 
@@ -16574,7 +16571,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c325();
+        s1 = peg$c324();
       }
       s0 = s1;
 
@@ -16599,7 +16596,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c326();
+        s1 = peg$c325();
       }
       s0 = s1;
 
@@ -16624,7 +16621,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c327();
+        s1 = peg$c326();
       }
       s0 = s1;
 
@@ -16649,7 +16646,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c328();
+        s1 = peg$c327();
       }
       s0 = s1;
 
@@ -16674,7 +16671,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c329();
+        s1 = peg$c328();
       }
       s0 = s1;
 
@@ -16699,7 +16696,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c330();
+        s1 = peg$c329();
       }
       s0 = s1;
 
@@ -16724,7 +16721,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c331();
+        s1 = peg$c330();
       }
       s0 = s1;
 
@@ -16749,7 +16746,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c332();
+        s1 = peg$c331();
       }
       s0 = s1;
 
@@ -16774,7 +16771,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c333();
+        s1 = peg$c332();
       }
       s0 = s1;
 
@@ -16799,7 +16796,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c334();
+        s1 = peg$c333();
       }
       s0 = s1;
 
@@ -16824,7 +16821,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c335();
+        s1 = peg$c334();
       }
       s0 = s1;
 
@@ -16849,7 +16846,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c336();
+        s1 = peg$c335();
       }
       s0 = s1;
 
@@ -16874,7 +16871,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c337();
+        s1 = peg$c336();
       }
       s0 = s1;
 
@@ -16899,7 +16896,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c338();
+        s1 = peg$c337();
       }
       s0 = s1;
 
@@ -16924,7 +16921,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c339();
+        s1 = peg$c338();
       }
       s0 = s1;
 
@@ -16949,7 +16946,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c340();
+        s1 = peg$c339();
       }
       s0 = s1;
 
@@ -16974,7 +16971,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c341();
+        s1 = peg$c340();
       }
       s0 = s1;
 
@@ -16999,7 +16996,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c342();
+        s1 = peg$c341();
       }
       s0 = s1;
 
@@ -17024,7 +17021,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c343();
+        s1 = peg$c342();
       }
       s0 = s1;
 
@@ -17049,7 +17046,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c344();
+        s1 = peg$c343();
       }
       s0 = s1;
 
@@ -17074,7 +17071,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c345();
+        s1 = peg$c344();
       }
       s0 = s1;
 
@@ -17099,7 +17096,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c346();
+        s1 = peg$c345();
       }
       s0 = s1;
 
@@ -17124,7 +17121,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c347();
+        s1 = peg$c346();
       }
       s0 = s1;
 
@@ -17149,7 +17146,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c348();
+        s1 = peg$c347();
       }
       s0 = s1;
 
@@ -17174,7 +17171,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c349();
+        s1 = peg$c348();
       }
       s0 = s1;
 
@@ -17199,7 +17196,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c350();
+        s1 = peg$c349();
       }
       s0 = s1;
 
@@ -17224,7 +17221,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c351();
+        s1 = peg$c350();
       }
       s0 = s1;
 
@@ -17249,7 +17246,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c352();
+        s1 = peg$c351();
       }
       s0 = s1;
 
@@ -17274,7 +17271,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c353();
+        s1 = peg$c352();
       }
       s0 = s1;
 
@@ -17299,7 +17296,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c354();
+        s1 = peg$c353();
       }
       s0 = s1;
 
@@ -17324,7 +17321,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c355();
+        s1 = peg$c354();
       }
       s0 = s1;
 
@@ -17349,7 +17346,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c356();
+        s1 = peg$c355();
       }
       s0 = s1;
 
@@ -17374,7 +17371,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c357();
+        s1 = peg$c356();
       }
       s0 = s1;
 
@@ -17399,7 +17396,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c358();
+        s1 = peg$c357();
       }
       s0 = s1;
 
@@ -17424,7 +17421,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c359();
+        s1 = peg$c358();
       }
       s0 = s1;
 
@@ -17449,7 +17446,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c360();
+        s1 = peg$c359();
       }
       s0 = s1;
 
@@ -17474,7 +17471,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c361();
+        s1 = peg$c360();
       }
       s0 = s1;
 
@@ -17499,7 +17496,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c362();
+        s1 = peg$c361();
       }
       s0 = s1;
 
@@ -17524,7 +17521,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c363();
+        s1 = peg$c362();
       }
       s0 = s1;
 
@@ -17549,7 +17546,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c364();
+        s1 = peg$c363();
       }
       s0 = s1;
 
@@ -17574,7 +17571,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c365();
+        s1 = peg$c364();
       }
       s0 = s1;
 
@@ -17599,7 +17596,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c366();
+        s1 = peg$c365();
       }
       s0 = s1;
 
@@ -17624,7 +17621,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c367();
+        s1 = peg$c366();
       }
       s0 = s1;
 
@@ -17649,7 +17646,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c368();
+        s1 = peg$c367();
       }
       s0 = s1;
 
@@ -17674,7 +17671,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c369();
+        s1 = peg$c368();
       }
       s0 = s1;
 
@@ -17699,7 +17696,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c370();
+        s1 = peg$c369();
       }
       s0 = s1;
 
@@ -17724,7 +17721,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c371();
+        s1 = peg$c370();
       }
       s0 = s1;
 
@@ -17749,7 +17746,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c372();
+        s1 = peg$c371();
       }
       s0 = s1;
 
@@ -17774,7 +17771,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c373();
+        s1 = peg$c372();
       }
       s0 = s1;
 
@@ -17799,7 +17796,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c374();
+        s1 = peg$c373();
       }
       s0 = s1;
 
@@ -17824,7 +17821,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c375();
+        s1 = peg$c374();
       }
       s0 = s1;
 
@@ -17849,7 +17846,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c376();
+        s1 = peg$c375();
       }
       s0 = s1;
 
@@ -17874,7 +17871,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c377();
+        s1 = peg$c376();
       }
       s0 = s1;
 
@@ -17899,7 +17896,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c378();
+        s1 = peg$c377();
       }
       s0 = s1;
 
@@ -17924,7 +17921,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c379();
+        s1 = peg$c378();
       }
       s0 = s1;
 
@@ -17949,7 +17946,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c380();
+        s1 = peg$c379();
       }
       s0 = s1;
 
@@ -17974,7 +17971,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c381();
+        s1 = peg$c380();
       }
       s0 = s1;
 
@@ -17999,7 +17996,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c382();
+        s1 = peg$c381();
       }
       s0 = s1;
 
@@ -18024,7 +18021,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c383();
+        s1 = peg$c382();
       }
       s0 = s1;
 
@@ -18049,7 +18046,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c384();
+        s1 = peg$c383();
       }
       s0 = s1;
 
@@ -18074,7 +18071,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c385();
+        s1 = peg$c384();
       }
       s0 = s1;
 
@@ -18099,7 +18096,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c386();
+        s1 = peg$c385();
       }
       s0 = s1;
 
@@ -18124,7 +18121,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c387();
+        s1 = peg$c386();
       }
       s0 = s1;
 
@@ -18149,7 +18146,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c388();
+        s1 = peg$c387();
       }
       s0 = s1;
 
@@ -18174,7 +18171,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c389();
+        s1 = peg$c388();
       }
       s0 = s1;
 
@@ -18199,7 +18196,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c390();
+        s1 = peg$c389();
       }
       s0 = s1;
 
@@ -18224,7 +18221,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c391();
+        s1 = peg$c390();
       }
       s0 = s1;
 
@@ -18249,7 +18246,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c392();
+        s1 = peg$c391();
       }
       s0 = s1;
 
@@ -18274,7 +18271,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c393();
+        s1 = peg$c392();
       }
       s0 = s1;
 
@@ -18299,7 +18296,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c394();
+        s1 = peg$c393();
       }
       s0 = s1;
 
@@ -18324,7 +18321,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c395();
+        s1 = peg$c394();
       }
       s0 = s1;
 
@@ -18349,7 +18346,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c396();
+        s1 = peg$c395();
       }
       s0 = s1;
 
@@ -18374,7 +18371,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c397();
+        s1 = peg$c396();
       }
       s0 = s1;
 
@@ -18399,7 +18396,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c398();
+        s1 = peg$c397();
       }
       s0 = s1;
 
@@ -18424,7 +18421,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c399();
+        s1 = peg$c398();
       }
       s0 = s1;
 
@@ -18449,7 +18446,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c400();
+        s1 = peg$c399();
       }
       s0 = s1;
 
@@ -18474,7 +18471,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c401();
+        s1 = peg$c400();
       }
       s0 = s1;
 
@@ -18499,7 +18496,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c402();
+        s1 = peg$c401();
       }
       s0 = s1;
 
@@ -18524,7 +18521,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c403();
+        s1 = peg$c402();
       }
       s0 = s1;
 
@@ -18549,7 +18546,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c404();
+        s1 = peg$c403();
       }
       s0 = s1;
 
@@ -18574,7 +18571,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c405();
+        s1 = peg$c404();
       }
       s0 = s1;
 
@@ -18599,7 +18596,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c406();
+        s1 = peg$c405();
       }
       s0 = s1;
 
@@ -18624,7 +18621,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c407();
+        s1 = peg$c406();
       }
       s0 = s1;
 
@@ -18649,7 +18646,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c408();
+        s1 = peg$c407();
       }
       s0 = s1;
 
@@ -18674,7 +18671,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c409();
+        s1 = peg$c408();
       }
       s0 = s1;
 
@@ -18699,7 +18696,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c410();
+        s1 = peg$c409();
       }
       s0 = s1;
 
@@ -18724,7 +18721,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c411();
+        s1 = peg$c410();
       }
       s0 = s1;
 
@@ -18749,7 +18746,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c412();
+        s1 = peg$c411();
       }
       s0 = s1;
 
@@ -18774,7 +18771,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c413();
+        s1 = peg$c412();
       }
       s0 = s1;
 
@@ -18799,7 +18796,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c414();
+        s1 = peg$c413();
       }
       s0 = s1;
 
@@ -18824,7 +18821,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c415();
+        s1 = peg$c414();
       }
       s0 = s1;
 
@@ -18849,7 +18846,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c416();
+        s1 = peg$c415();
       }
       s0 = s1;
 
@@ -18874,7 +18871,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c417();
+        s1 = peg$c416();
       }
       s0 = s1;
 
@@ -18899,7 +18896,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c418();
+        s1 = peg$c417();
       }
       s0 = s1;
 
@@ -18924,7 +18921,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c419();
+        s1 = peg$c418();
       }
       s0 = s1;
 
@@ -18949,7 +18946,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c420();
+        s1 = peg$c419();
       }
       s0 = s1;
 
@@ -18974,7 +18971,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c421();
+        s1 = peg$c420();
       }
       s0 = s1;
 
@@ -18999,7 +18996,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c422();
+        s1 = peg$c421();
       }
       s0 = s1;
 
@@ -19024,7 +19021,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c423();
+        s1 = peg$c422();
       }
       s0 = s1;
 
@@ -19049,7 +19046,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c424();
+        s1 = peg$c423();
       }
       s0 = s1;
 
@@ -19074,7 +19071,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c425();
+        s1 = peg$c424();
       }
       s0 = s1;
 
@@ -19099,7 +19096,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c426();
+        s1 = peg$c313();
       }
       s0 = s1;
 
@@ -19124,7 +19121,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c426();
+        s1 = peg$c313();
       }
       s0 = s1;
 
@@ -19149,7 +19146,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c411();
+        s1 = peg$c410();
       }
       s0 = s1;
 
@@ -19174,7 +19171,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c427();
+        s1 = peg$c425();
       }
       s0 = s1;
 
@@ -19199,7 +19196,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c428();
+        s1 = peg$c308();
       }
       s0 = s1;
 
@@ -19224,7 +19221,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c429();
+        s1 = peg$c426();
       }
       s0 = s1;
 
@@ -19249,7 +19246,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c430();
+        s1 = peg$c427();
       }
       s0 = s1;
 
@@ -19274,7 +19271,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c431();
+        s1 = peg$c428();
       }
       s0 = s1;
 
@@ -19299,7 +19296,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c432();
+        s1 = peg$c429();
       }
       s0 = s1;
 
@@ -19324,7 +19321,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c433();
+        s1 = peg$c430();
       }
       s0 = s1;
 
@@ -19349,7 +19346,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c434();
+        s1 = peg$c431();
       }
       s0 = s1;
 
@@ -19374,7 +19371,7 @@ vq_grammar_completion_parser = (function() {
       s1 = peg$c305;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c435();
+        s1 = peg$c432();
       }
       s0 = s1;
 
@@ -19423,12 +19420,7 @@ vq_grammar_completion_parser = (function() {
     				getPropertyAlias(place, 93);
     			}
     			function getPropertyAlias(place, priority){
-    				/*for(var key in options["symbol_table"]){
-    					for(var k in options["symbol_table"][key]){
-    						var kind = options["symbol_table"][key][k]["kind"];
-    						if(kind == "PROPERTY_ALIAS" || kind == "BIND_ALIAS" || kind == "AGGREGATE_ALIAS") addContinuation(place, key, priority, false, 3);
-    					}
-    				};*/
+
     				var selected_elem_id = Session.get("activeElement");
     				for (var  key in options["symbol_table"]) {	
     					for (var symbol in options["symbol_table"][key]) {
