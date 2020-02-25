@@ -105,9 +105,8 @@ autoCompletionAddCondition = function(e) {
 autoCompletion = function(e) {
 
 	removeMessage();
-	// if (e.ctrlKey && (e.keyCode === 32 || e.keyCode === 0)) {
-		// completionOn = true;
-
+	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
+	if (!completionOn) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
@@ -119,10 +118,9 @@ autoCompletion = function(e) {
 		}else{
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
-			currentFocus = 0;
 			autocomplete(elem, continuations);
 		}
-	// }
+	}
 }
 
 autoCompletionCleanup = function() {
@@ -132,7 +130,7 @@ autoCompletionCleanup = function() {
 }
 
 function keyUpHandler(e){
-	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13){
+	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
 
 			removeMessage();
@@ -145,7 +143,6 @@ function keyUpHandler(e){
 				errorMessage(continuations,  document.activeElement);
 				closeAllLists();
 			}else{
-				currentFocus = 0;
 				autocomplete(document.activeElement, continuations);
 			}
 		}
@@ -181,12 +178,9 @@ function keyDownHandler(e){
 }
 
 function clickHandler(e){
-
 	closeAllLists();
 	var elem = document.activeElement;
 	elem.removeEventListener("keyup", keyUpHandler);
-	currentFocus = 0;
-	// completionOn = false;
 }
 
 function autocomplete(inp, continuations) {
@@ -214,12 +208,13 @@ function autocomplete(inp, continuations) {
 	removeMessage();
 
 	var cursorPosition = inp.selectionStart;
-	//var currentFocus;
-    var a, b, i, val = inp.value;
+
+	var a, b, i, val = inp.value;
+
     /*close any already open lists of autocompleted values*/
     closeAllLists();
-   // currentFocus = 0;
-    /*create a DIV element that will contain the items (values):*/
+
+	/*create a DIV element that will contain the items (values):*/
     a = document.createElement("DIV");
 
 	a.style.display = 'block';
@@ -301,6 +296,7 @@ function closeAllLists(elmnt) {
 	  }
 	}
 	completionOn = false;
+	currentFocus = 0;
 }
 
 function updateInputValue(input, prefix, suggestion) {
