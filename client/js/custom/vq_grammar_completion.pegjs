@@ -624,8 +624,8 @@
 			dot = "" {addContinuation(location(), ".", 32, false, 4);}
 			dot_path = "" {addContinuation(location(), ".", 32, false, 4);}
 			dot_in_br = "" {addContinuation(location(), "", 1, false, 4);}
-			select_this = "" {addContinuation(location(), "(select this)", 10, false, 4);}
-			this_c = "" {addContinuation(location(), "(this)", 85, false, 4);}
+			select_this = "" {if(options.type=="attribute") addContinuation(location(), "(select this)", 10, false, 4); else addContinuation(location(), "", 1, false, 4);}
+			this_c = "" {if(options.type!="attribute") addContinuation(location(), "(this)", 85, false, 4); else addContinuation(location(), "", 1, false, 4);}
 			or = "" {addContinuation(location(), "||", 10, true, 4); addContinuation(location(), "OR", 10, true, 4);}
 			and = "" {addContinuation(location(), "&&", 10, true, 4); addContinuation(location(), "AND", 10, true, 4);}
 			in_c = "" {addContinuation(location(), "IN", 30, true, 4);}

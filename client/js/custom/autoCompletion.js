@@ -439,9 +439,10 @@ function getCompletionTableNew(continuations_to_report, text) {
 
 	var sortable = [];
 	for (var  key in continuations_to_report) {
-		if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
-		else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
-		// sortable.push(continuations_to_report[key]);
+		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
+			if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
+			else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
+		}// sortable.push(continuations_to_report[key]);
 	}
 
 	sortable = sortable.sort(function (a, b) {
@@ -516,7 +517,7 @@ function getContinuations(text, length, continuations) {
 			var uniqueMessages = getCompletionTable(continuations_to_report)
 			var messages = [];
 
-			var messages = "ERROR: in a position " + farthest_pos + ", possible follows are:";
+			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
 			for (var pos in uniqueMessages) {
 				messages = messages+ "\n" + uniqueMessages[pos] + ",";
@@ -610,10 +611,11 @@ function getContinuationsNew(text, length, continuations) {
 			var uniqueMessages = getCompletionTableNew(continuations_to_report, text)
 			var messages = [];
 
-			var messages = "ERROR: in a position " + farthest_pos + ", possible follows are:";
+			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
 			for (var pos in uniqueMessages) {
-				messages = messages+ "\n" + uniqueMessages[pos] + ",";
+				if(uniqueMessages.length-1 > pos)messages = messages+ "\n" + uniqueMessages[pos]["name"] + ",";
+				else messages = messages+ "\n" + uniqueMessages[pos]["name"];
 			}
 			return messages
 		}
