@@ -51,14 +51,40 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	});
 	template.diagramHandle = new ReactiveVar(diagram_handle);
 
+
 	var boxes = [];
 	var lines = [];
+
+/* -------------FindMode Extension ***********************/
+	var isFindMode = Session.get("findMode");
+	if (isFindMode)
+	{
+		var foundElementsjson =  Session.get("json");
+		var dgr_id =  Session.get("activeDiagram");
+		var foundDiag = _.find(foundElementsjson, function(i){return (i._id == dgr_id)});
+		console.log("foundDiag", foundDiag, "json", foundElementsjson, "dgr_id", dgr_id);
+		var diagElements = foundDiag.elements;
+		console.log("diagElements", diagElements);
+	}
+/********************************************** */
 
    	var elem_handle = Elements.find({isInVisible: {$ne: true}}).observeChanges({
 
 		added: function (id, elem) {
-
+		
 			elem["_id"] = id;
+
+			/* -------------FindMode Extension ***********************/
+			if (isFindMode && _.contains(diagElements, id))
+			{
+				var elemStyle = elem.style.elementStyle;
+				elemStyle.strokeWidth = 5;
+				elemStyle.stroke = "rgb(80,203,91)";
+				console.log("Modified elemStyle", elemStyle, "id", id)
+				elem.style.elementStyle = elemStyle;
+				console.log("Modified elem", elem)
+			}
+			/* -------------FindMode Extension ***********************/
 
 			//if initializing, then collecting all the data
 			if (init) {
