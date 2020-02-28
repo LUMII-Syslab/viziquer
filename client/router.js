@@ -264,7 +264,33 @@ Router.map( function () {
       //sets panel item to activate
         Session.set("activePanelItem", "diagrams");
 
-        if (this.params.editMode) {
+        Session.set("findMode", false);
+        if (this.params.editMode == "findMode") {
+          console.log("findMode");
+          Session.set("findMode", true);
+        /*  Utilities.callMeteorMethod("UpdateStyle", {json: Session.get("json"), 
+                                                    diagId: dgr_id}, 
+                                                    function(resp) {console.log("afterUpdate", resp)});
+                                                    box.updateStyle({elementStyle: {shadowBlur: 0}});
+         
+          var foundElementsjson =  Session.get("json");
+          var foundDiag = _.find(foundElementsjson, function(i){return (i._id == dgr_id)});
+          console.log("foundDiag", foundDiag, "json", foundElementsjson);
+          var diagElements = foundDiag.elements;
+          console.log("diagElements", diagElements);
+          _.every(diagElements, function (el) {
+            Elements.update(
+              {_id:el},
+              {$set: {style: {elementStyle: {strokeWidth: 5, stroke: "rgb(80,203,91)"}}}}
+            );
+            console.log("Update for", el);
+            return;
+          });
+          */
+        }
+        else if (this.params.editMode) {
+          console.log("editMode", this.params.editMode);
+
             Session.set("editMode", true);
             Session.set("edited", true);
         }
