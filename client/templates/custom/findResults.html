@@ -1,0 +1,29 @@
+
+<template name="findResultsJson">
+        <div>
+            <pre id="json">{{json1}}</pre>
+        </div>
+    </template>
+
+    <!-- Elīnas kods -->
+<template name="findResult">
+    <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-top:10px;padding-left:2px;">
+        <div>
+            <table>
+                {{#each json2}}
+                <tr>
+             <!--   <td><a href="{{path}}">{{name}}</a></td> <td></td> -->
+            
+                    <td><a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">{{name}}</a></td>
+                    <td>{{elemCount}}</td>
+                </tr>
+                {{else}}
+                <tr><td>no items</td></tr>
+                {{/each}}
+            </table>
+        </div>
+   <!--     <div>{{Potential}}</div>
+        {{> findResultsJson}} -->
+    </div>
+    
+    </template>
