@@ -108,7 +108,7 @@
                     <form style="float:left;">
                         <input type="checkbox" id="show-as-property-path">
                         <span class="custom-checkbox"></span>
-                        <p style="display:inline;">Use property path </p>
+                        <p style="display:inline;">Draw the chain with classes graphycally</p>
                     </form>                    
                     <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect" type="button" class="btn btn-primary">OK</button>
@@ -187,44 +187,6 @@
 
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
                     <div id="settings" style="display:block; overflow: hidden;">
-                        <form>
-                            <label class="label-radio">                                            
-                                <input type="radio" name = "inverse-links" value="none">
-                                <span class="custom-radio"></span>
-                                <p style="display:inline;">Do not include inverse links</p>
-                                </label>
-                            <label class="label-radio">                                            
-                                <input type="radio" name = "inverse-links" value="one">
-                                <span class="custom-radio"></span>
-                                <p style="display:inline;">Show paths with at most 1 inverse link</p>
-                            </label>
-                            <label class="label-radio">                                            
-                                <input type="radio" name = "inverse-links" value="more" checked>
-                                <span class="custom-radio"></span>
-                                <p style="display:inline;">Show paths with any inverse links &ensp;</p>
-                                <div class="help-tip" id="connect-setting-warning">
-                                    <p style="left:-50%; width: 300px;">This can lead to queries with no practical meaning</p>
-                                </div>
-                            </label>
-                        </form> 
-                        <hr style="border: 1px solid lightgrey;">
-                        <label id="max_length_text" for="max_length"><p>Paths length limit:</p> </label>
-                        <input id="max_length" type="number" min="1" pattern="[0-9]" value="{{pathLength.data}}" required>
-                        <span class="validity"></span>
-                        <form style="padding-left: 50px;">
-                            <input type="checkbox" id="default-max-length">
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Use default length limit</p>
-                        </form>
-                        <form style="padding-left: 50px;">
-                            <input type="checkbox" id="great-max-length">
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Allow very long path (length > 5)</p>
-                            <div class="help-tip" id="connect-setting-warning-long-length">
-                                    <p style="left:-50%; width: 300px;">This can lead to slow system response or memory issues.</p>
-                            </div>
-                        </form>
-                        <hr style="border: 1px solid lightgrey;">                                                   
                         <p>Path's direction</p>                        
                         <div class="col-lg-10 elements">                               
                             <form id="direction-settings"> 
@@ -248,7 +210,44 @@
                                 {{/if}}
                             </form>
                         </div>
-                                                 
+                        <hr style="border: 1px solid lightgrey;">
+                        <label id="max_length_text" for="max_length"><p>Path length limit:</p> </label>
+                        <input id="max_length" type="number" min="1" pattern="[0-9]" value="{{pathLength}}" required>
+                        <span class="validity"></span>
+                        <form style="padding-left: 50px;">
+                            <input type="checkbox" id="default-max-length">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Use default length limit</p>
+                        </form>
+                        <form style="padding-left: 50px;">
+                            <input type="checkbox" id="great-max-length">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Allow very long path (length > 5)</p>
+                            <div class="help-tip" id="connect-setting-warning-long-length">
+                                    <p style="left:-50%; width: 300px;">This can slow system response or cause memory issues.</p>
+                            </div>
+                        </form>
+                        <hr style="border: 1px solid lightgrey;">
+                        <form>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="none">
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Exclude inverse links</p>
+                                </label>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="one">
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Show paths with at most 1 inverse link</p>
+                            </label>
+                            <label class="label-radio">                                            
+                                <input type="radio" name = "inverse-links" value="more" checked>
+                                <span class="custom-radio"></span>
+                                <p style="display:inline;">Show paths with any inverse links &ensp;</p>
+                                <div class="help-tip" id="connect-setting-warning">
+                                    <p style="left:-50%; bottom:100%; width: 300px;">This can lead to connections that are difficult to understand</p>
+                                </div>
+                            </label>
+                        </form> 
                     </div>                                                      
                 </div>
 

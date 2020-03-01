@@ -49,8 +49,14 @@ Interpreter.customMethods({
 
 				ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue.data);
-				
+				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				list.sort(function (x, y) {
+				    var n = x.array.length - y.array.length;
+				    if (n !== 0) {
+				        return n;
+				    }
+				    return x.countInverseLinks - y.countInverseLinks;
+				});
 				Template.ConnectClasses.IDS.set(ids);
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set(list);
@@ -63,7 +69,7 @@ Interpreter.customMethods({
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
 
-				$("#show-as-property-path")[0].checked = false;
+				$("#show-as-property-path")[0].checked = true;
 				$("#connect-classes-form").modal("show");			
 			}
 		}		
@@ -78,8 +84,14 @@ Interpreter.customMethods({
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue.data);
-				
+				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				list.sort(function (x, y) {
+				    var n = x.array.length - y.array.length;
+				    if (n !== 0) {
+				        return n;
+				    }
+				    return x.countInverseLinks - y.countInverseLinks;
+				});
 				Template.ConnectClasses.IDS.set(ids);
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set(list);
@@ -91,7 +103,7 @@ Interpreter.customMethods({
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
-				$("#show-as-property-path")[0].checked = true;			
+				$("#show-as-property-path")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("link with classes");
 			}
@@ -106,7 +118,14 @@ Interpreter.customMethods({
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue.data);
+				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				list.sort(function (x, y) {
+				    var n = x.array.length - y.array.length;
+				    if (n !== 0) {
+				        return n;
+				    }
+				    return x.countInverseLinks - y.countInverseLinks;
+				});
 				Template.ConnectClasses.IDS.set(ids);				
 				Template.ConnectClasses.elements.set(usedClasses);							
 				Template.ConnectClasses.linkList.set(list);
@@ -118,7 +137,7 @@ Interpreter.customMethods({
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
-				$("#show-as-property-path")[0].checked = true;			
+				$("#show-as-property-path")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("TEST");
 			}
@@ -334,6 +353,13 @@ Template.ConnectClasses.events({
 				}
 			})
 		}
+		data.sort(function (x, y) {
+		    var n = x.array.length - y.array.length;
+		    if (n !== 0) {
+		        return n;
+		    }
+		    return x.countInverseLinks - y.countInverseLinks;
+		});
 
 		Template.ConnectClasses.linkList.set(data);
 
@@ -364,7 +390,7 @@ Template.ConnectClasses.events({
 		var firstId = "";
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
-		var propertyPath = $("#show-as-property-path").is(':checked'); console.log(propertyPath);
+		var propertyPath = $("#show-as-property-path").is(':checked'); //console.log(propertyPath);
 		if (number < 0 || !number) {
 			$('#chain_text')[0].style.color = "red";
 			$("#connect-classes-form").modal("show");
@@ -380,13 +406,13 @@ Template.ConnectClasses.events({
 		} console.log(firstId); console.log(Template.ConnectClasses.elements.curValue);
 		var currentVQElment = new VQ_Element(firstId);
 		var lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0]; //console.log(170, lastElement);
-		if (propertyPath) {
+		if (!propertyPath) {
 			console.log("TODO property path");
 			var class_name = lastElement.name;
 			var name = ""; //link name
 			_.each(chain, function(e){ //{link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]}
 				if (e.type.indexOf("<=") > -1) {
-					name = name.concat("inv(",e.link, ").");
+					name = name.concat("^",e.link, ".");
 				} else {
 					name = name.concat(e.link, ".");
 				}
@@ -485,7 +511,7 @@ Template.ConnectClasses.events({
 	"click #choose-second-class-button": function(){
 		var nextClassName = $('#classList2').val();
 		var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: nextClassName}];
-		var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue.data);
+		var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 
 		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data;
 		_.each(list, function(a){					
@@ -497,18 +523,25 @@ Template.ConnectClasses.events({
 		});
 
 		Template.ConnectClassesSettings.fromToClass.set({fromName: Template.ConnectClasses.IDS.curValue["name"], fromID: Template.ConnectClasses.IDS.curValue["id"], toName: nextClassName, toID:"no_class_exists"});
+		list.sort(function (x, y) {
+		    var n = x.array.length - y.array.length;
+		    if (n !== 0) {
+		        return n;
+		    }
+		    return x.countInverseLinks - y.countInverseLinks;
+		});
 		Template.ConnectClasses.linkList.set(list);		
 	},
 });
 
 //===========================
-//SETTINGS
+//S E T T I N G S
 //===========================
 Template.ConnectClassesSettings.fromFunction = new ReactiveVar({data: "coll"}); //"coll"(ection), "link", "add"(Link)
 Template.ConnectClassesSettings.fromToClass = new ReactiveVar({fromName: "", fromID: "", toName: "", toID:""});
 Template.ConnectClassesSettings.directionValue = new ReactiveVar({data: 0});
 Template.ConnectClassesSettings.inverseValue = new ReactiveVar({data: "more"}); //"none", "one", "more"
-Template.ConnectClassesSettings.pathLength = new ReactiveVar({data: 3});
+Template.ConnectClassesSettings.pathLength = new ReactiveVar(3);
 Template.ConnectClassesSettings.addLongLinkS = new ReactiveVar({data: false});
 
 Template.ConnectClassesSettings.helpers({
@@ -543,14 +576,14 @@ Template.ConnectClassesSettings.events({
 		//console.log("Settings - OK");
 		//Path's length		
 		if (document.getElementById("default-max-length").checked) {
-			Template.ConnectClassesSettings.pathLength.set({data: 3});
+			Template.ConnectClassesSettings.pathLength.set(3);
 			$('#max_length').val("3");
 		} else {
 			var maxLength = $('#max_length').val();
 			if (!document.getElementById("great-max-length").checked && maxLength > 5) {
-				Template.ConnectClassesSettings.pathLength.set({data: 5});
+				Template.ConnectClassesSettings.pathLength.set(5);
 			} else {				
-				Template.ConnectClassesSettings.pathLength.set({data: maxLength});
+				Template.ConnectClassesSettings.pathLength.set(maxLength);
 			}
 		} 
 
@@ -558,18 +591,28 @@ Template.ConnectClassesSettings.events({
 			//Direction
 			var startElemID = $('input[name=path-radio]:checked').val();
 			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; console.log("inside direction", elementList.fromID, startElemID);
+			var list = [];
 			if (elementList.fromID == startElemID){
 				//console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
-				Template.ConnectClasses.linkList.set(GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue.data))
+				list = GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
 			} else if (elementList.toID == startElemID) {
 				//console.log("oposite order");
 				Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
-				Template.ConnectClasses.linkList.set(GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue.data))		
+				list = GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);		
 			} else {
-				//console.log("unknown order");
+				console.log("unknown order");
+				return;
 			}
-			Template.ConnectClassesSettings.directionValue.set({data: $('input[name=path-radio]:checked').val()});
+			list.sort(function (x, y) {
+			    var n = x.array.length - y.array.length;
+			    if (n !== 0) {
+			        return n;
+			    }
+			    return x.countInverseLinks - y.countInverseLinks;
+			});
+			Template.ConnectClasses.linkList.set(list);
+			Template.ConnectClassesSettings.directionValue.set({data: startElemID});
 		}
 		console.log("Settings - inverse");
 		//Inverse
@@ -583,6 +626,13 @@ Template.ConnectClassesSettings.events({
 			} else {
 				a.show = false;
 			}			
+		});
+		data.sort(function (x, y) {
+		    var n = x.array.length - y.array.length;
+		    if (n !== 0) {
+		        return n;
+		    }
+		    return x.countInverseLinks - y.countInverseLinks;
 		});
 		Template.ConnectClasses.linkList.set(data);
 		data = [];
@@ -617,7 +667,7 @@ function clearConnectClassesInput(){
 	$("#max_length")[0].value = "1";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
-	$("#show-as-property-path")[0].checked = false;
+	$("#show-as-property-path")[0].checked = true;
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
@@ -631,7 +681,7 @@ function clearConnectClassesInput(){
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
 	Template.ConnectClassesSettings.inverseValue.set({data: "more"}); //"none", "one", "more"
-	Template.ConnectClassesSettings.pathLength.set({data: 3});
+	Template.ConnectClassesSettings.pathLength.set(3);
 	Template.ConnectClassesSettings.addLongLinkS.set({data: false});
 
 	Interpreter.destroyErrorMsg();
@@ -733,7 +783,7 @@ function GetChains(ids, maxLength){
 						}
 					})
 
-					if (classNew && !(el["class"] == elemInfo[0]["class"])){							
+					if (classNew){//&& !(el["class"] == elemInfo[0]["class"])							
 						e_elem.push(el);																		
 						if(el["class"] == elemInfo[1]["class"]){
 							linkRezult.push(e_elem);
