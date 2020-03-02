@@ -147,7 +147,7 @@ Interpreter.customMethods({
 
 Template.ConnectClasses.IDS= new ReactiveVar([{name: "no class", id:"0"}]);
 Template.ConnectClasses.linkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1}]);
-Template.ConnectClasses.shortLinkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], number: -1}]);
+// Template.ConnectClasses.shortLinkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], number: -1}]);
 Template.ConnectClasses.elements = new ReactiveVar([{name: "No class", id: 0}]);
 Template.ConnectClasses.addLongLink = new ReactiveVar({data: false});
 Template.ConnectClasses.linkMenu = new ReactiveVar({data: false});
@@ -164,9 +164,9 @@ Template.ConnectClasses.helpers({
 		return Template.ConnectClasses.linkList.get();
 	},
 
-	shortLinkList: function(){
-		return Template.ConnectClasses.shortLinkList.get();
-	},
+	// shortLinkList: function(){
+	// 	return Template.ConnectClasses.shortLinkList.get();
+	// },
 
 	elements: function(){
 		return Template.ConnectClasses.elements.get();
@@ -488,16 +488,16 @@ Template.ConnectClasses.events({
 	},
 
 	"click #option-button": function(){
-		if (Template.ConnectClasses.addLongLink.curValue.data) {
-			console.log("options from AddLink");
-			Template.ConnectClassesSettings.fromFunction.set({data: "add"});			
-		} else if(Template.ConnectClasses.linkMenu.curValue.data) {
-			console.log("options from Link");
-			Template.ConnectClassesSettings.fromFunction.set({data: "link"});
-		} else {
-			console.log("options from collection");
-			Template.ConnectClassesSettings.fromFunction.set({data: "coll"});
-		}
+		// if (Template.ConnectClasses.addLongLink.curValue.data) {
+		// 	console.log("options from AddLink");
+		// 	Template.ConnectClassesSettings.fromFunction.set({data: "add"});			
+		// } else if(Template.ConnectClasses.linkMenu.curValue.data) {
+		// 	console.log("options from Link");
+		// 	Template.ConnectClassesSettings.fromFunction.set({data: "link"});
+		// } else {
+		// 	console.log("options from collection");
+		// 	Template.ConnectClassesSettings.fromFunction.set({data: "coll"});
+		// }
 		// Template.ConnectClasses.addLongLink.set({data: false});
 		// Template.ConnectClasses.linkMenu.set({data: false});
 		if (Template.ConnectClasses.addLongLink.get().data) {
@@ -537,18 +537,18 @@ Template.ConnectClasses.events({
 //===========================
 //S E T T I N G S
 //===========================
-Template.ConnectClassesSettings.fromFunction = new ReactiveVar({data: "coll"}); //"coll"(ection), "link", "add"(Link)
+// Template.ConnectClassesSettings.fromFunction = new ReactiveVar({data: "coll"}); //"coll"(ection), "link", "add"(Link)
 Template.ConnectClassesSettings.fromToClass = new ReactiveVar({fromName: "", fromID: "", toName: "", toID:""});
-Template.ConnectClassesSettings.directionValue = new ReactiveVar({data: 0});
+Template.ConnectClassesSettings.directionValue = new ReactiveVar({data: 0}); //start elem ID
 Template.ConnectClassesSettings.inverseValue = new ReactiveVar({data: "more"}); //"none", "one", "more"
 Template.ConnectClassesSettings.pathLength = new ReactiveVar(3);
 Template.ConnectClassesSettings.addLongLinkS = new ReactiveVar({data: false});
 
 Template.ConnectClassesSettings.helpers({
 
-	fromFunction: function(){
-		return Template.ConnectClassesSettings.fromFunction.get();
-	},
+	// fromFunction: function(){
+	// 	return Template.ConnectClassesSettings.fromFunction.get();
+	// },
 
 	fromToClass: function(){
 		return Template.ConnectClassesSettings.fromToClass.get();
@@ -590,20 +590,20 @@ Template.ConnectClassesSettings.events({
 		if (!Template.ConnectClassesSettings.addLongLinkS.get().data) {
 			//Direction
 			var startElemID = $('input[name=path-radio]:checked').val();
-			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; console.log("inside direction", elementList.fromID, startElemID);
+			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; console.log("inside direction", elementList, startElemID);
 			var list = [];
 			if (elementList.fromID == startElemID){
-				//console.log("original order");
+				console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
 				list = GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
 			} else if (elementList.toID == startElemID) {
-				//console.log("oposite order");
+				console.log("oposite order");
 				Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
 				list = GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);		
 			} else {
 				console.log("unknown order");
 				return;
-			}
+			} console.log(list);
 			list.sort(function (x, y) {
 			    var n = x.array.length - y.array.length;
 			    if (n !== 0) {
@@ -672,12 +672,12 @@ function clearConnectClassesInput(){
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
 	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
-	Template.ConnectClasses.shortLinkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
+	// Template.ConnectClasses.shortLinkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
 	Template.ConnectClasses.elements.set([{name: "No class", id: 0}]);
 	Template.ConnectClasses.addLongLink.set({data: false});
 	// Template.ConnectClasses.test.set({data: false});
 
-	Template.ConnectClassesSettings.fromFunction.set({data: "coll"}); //"coll"(ection), "link", "add"(Link)
+	// Template.ConnectClassesSettings.fromFunction.set({data: "coll"}); //"coll"(ection), "link", "add"(Link)
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
 	Template.ConnectClassesSettings.inverseValue.set({data: "more"}); //"none", "one", "more"
@@ -710,7 +710,7 @@ function GetChains(ids, maxLength){
 			elem = new VQ_Element(id["text"]);
 			elemInfo.push({id: id["text"], class: elem.getName()});
 		}
-	})
+	});
 //Direct links
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
 		if(e["class"] == elemInfo[1]["class"]){
@@ -718,14 +718,24 @@ function GetChains(ids, maxLength){
 		} else{
 			link_chain.push([e]);
 		}
-	})
+	}); //console.log(linkRezult);
 //Inverse direct links
 	_.each(GetLinks(elemInfo[1]["id"]), function(e) {		
 		if(e["class"] == elemInfo[0]["class"]){
-			linkRezult.push([e]);
+			linkRezult.push([{
+					name: e.name, 
+					isUnique: e.isUnique, 
+					prefix: e.prefix, 
+					isDefOnt: e.isDefOnt, 
+					class: elemInfo[1]["class"], 
+					type: "<=", 
+					maxCard: e.maxCard, 
+					short_name: e.short_name, 
+					short_class_name: e.short_class_name
+				}]);
 		}
-	})
-
+	}); //console.log(linkRezult);
+	console.log(elemInfo[1], GetLinks(elemInfo[1]["id"]));
 	var actChain = link_chain;
 	var asocNew = [];	
 	for (var i = 1; i < maxLength; i++){
@@ -807,7 +817,7 @@ function GetChains(ids, maxLength){
 	var i = 0;
 	_.each(linkRezult, function(e){
 		resultChain = [{link: "", class: elemInfo[0]["class"], type: ""}];
-		_.each(e, function(ee){
+		_.each(e, function(ee){ 	
 			if (ee["type"] == "=>") {
 				resultChain.push({link: ee["name"], class: ee["class"], type: "", direction: ee["type"]});
 			} else {
@@ -845,7 +855,7 @@ function GetLinks(start_elem_id){
 			return [{name: "", class: "", type: "=>"}];
 		}
 
-		asc = schema.findClassByName(className).getAllAssociations();
+		asc = schema.findClassByName(className).getAllAssociations(); console.log("585 ", asc);	
 
 		return asc;			
 	}
