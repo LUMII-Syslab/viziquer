@@ -115,6 +115,9 @@ autoCompletion = function(e) {
 
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 			errorMessage(continuations, elem);
+			elem.addEventListener("keyup", keyUpHandler);
+			elem.addEventListener("click", clickHandler);
+			autocomplete(elem, continuations);
 		}else{
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
@@ -130,6 +133,25 @@ autoCompletionCleanup = function() {
 }
 
 function keyUpHandler(e){
+
+	if(e.keyCode === 8){
+		var m = document.getElementById("message");
+		if(m != null) {
+			removeMessage();
+			var text = e.target.value;
+			// var continuations = runCompletion(text, Session.get("activeElement"));
+			var textBefore = text.substring(0, e.target.selectionStart);
+			var continuations = runCompletionNew(textBefore, text, textBefore.length);
+
+			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
+				errorMessage(continuations,  document.activeElement);
+				closeAllLists();
+			}else{
+				autocomplete(document.activeElement, continuations);
+			}
+		}
+	}
+	
 	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
 
@@ -150,6 +172,7 @@ function keyUpHandler(e){
 }
 
 function keyDownHandler(e){
+	
 	if (!completionOn) return; // ???
 	var x = document.getElementById("autocomplete-list");
 	if (x) x = x.getElementsByTagName("div");
@@ -179,8 +202,8 @@ function keyDownHandler(e){
 
 function clickHandler(e){
 	closeAllLists();
-	var elem = document.activeElement;
-	elem.removeEventListener("keyup", keyUpHandler);
+	//var elem = document.activeElement;
+	//elem.removeEventListener("keyup", keyUpHandler);
 }
 
 function autocomplete(inp, continuations) {
@@ -534,6 +557,7 @@ function getContinuations(text, length, continuations) {
 //text - input string
 //length - input string length
 function getContinuationsNew(text, length, continuations) {
+
 	var allSuggestions = []
 	var farthest_pos = -1 //farthest position in continuation table
 	var farthest_pos_prev = -1 // previous farthest position (is used only some nonterminal symbol is started)
@@ -558,7 +582,6 @@ function getContinuationsNew(text, length, continuations) {
 			if (continuations[i] != null) {
 				var varrible = text.substring(i, farthest_pos);
 
-
 				var startedContinuations = [];
 				var wholeWordMatch = false;
 
@@ -568,6 +591,7 @@ function getContinuationsNew(text, length, continuations) {
 
 				for (var pos in continuations[i]) {
 					//if contuniation contains sub string
+					//console.log("WWW", wholeWordMatch, pos, varrible)
 					if (wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
 						prefix = text.substring(0, i);
 						continuations_to_report[pos] = continuations[i][pos];
@@ -598,13 +622,15 @@ function getContinuationsNew(text, length, continuations) {
 
 		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
 		for (var pos in continuations_to_report) {
-			//console.log("pospospos", er, pos);
 			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
-				TermMessages[pos]=continuations_to_report[pos];
+				TermMessages[pos]=continuations_to_report[pos];		
+				if(length>farthest_pos) prefix = text.substring(0, farthest_pos);
 			}
 		}
+		
 		TermMessages = getCompletionTableNew(TermMessages, text)
 		if (TermMessages[0] != null) {
+			
 			return {prefix:prefix, suggestions:TermMessages}
 			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
