@@ -247,6 +247,10 @@
             "procedure": "align_selected_boxes"
           },
           {
+            "item": "Connect Classes",
+            "procedure": "ConnectClasses"
+          },
+          {
             "item": "Execute selection",
             "procedure": "ExecuteSPARQL_from_selection"
           },
@@ -2836,6 +2840,10 @@
             ],
             "readModeKeyStrokes": [],
             "contextMenu": [
+              {
+                "item": "Connect classes",
+                "procedure": "linkConnectClasses"
+              },
               {
                 "item": "Delete",
                 "procedure": "Delete"
