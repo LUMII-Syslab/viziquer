@@ -106,9 +106,9 @@
                                     <span class="custom-radio"></span>
                                     Join Link &ensp;
                                     <div class="help-tip">
-                                        <p>Use to join linked instances of both classes.</p>
+                                        <p>Add linked class information to the joint selection </p>
                                     </div>
-                                    <div class="describe">for joining all instances</div>
+                                    <div class="describe">join linked information from both classes together</div>
                                 </label>
                                 <!-- <br style="line-height: 200%;"> -->
                                 <label class="label-radio">
@@ -116,15 +116,20 @@
                                     <span class="custom-radio"></span>
                                     Subquery Link &ensp;
                                     <div class="help-tip">
-                                        <p>Use for aggregates (count, sum, max, ...) over linked class. <br>Use to check, if a linked class instance exists.</p>
+                                        <p>Use to aggregate (count, sum, max, ...) over linked class elements (or their attributes)
+										that are connected to the source instance. <br>
+										Use to check, if a connected linked class instance exists.</p>
                                     </div>
-                                    <div class="describe">for aggregation or existence check</div>
+                                    <div class="describe">aggregate over linked class elements, check their existence</div>
                                 </label>
 
                                 <div style="margin-left:25px; margin-right: 20px; margin-top:5px;"> <!-- "display:inline;" -->
                                     <input type="checkbox" id="goto-wizard" value="DISPLAY" disabled>
                                     <span class="custom-checkbox"></span>
                                     Use Aggregate wizard
+									<div class="help-tip">
+                                        <p>Helps to create an aggregation variable and display or test it within the main query </p>
+                                    </div>
                                 </div> 
                             </div>
                         </div>                        
