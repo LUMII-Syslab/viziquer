@@ -158,6 +158,9 @@
 				return k;
 		    };
 			function pathOrReference(o) {	
+				
+				
+				
 				var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
 				var propertyName = "";
 				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
@@ -189,6 +192,20 @@
 				}
 				return o;
 			};
+			
+			function ifObjectDataProperty(o){
+				
+				var varibleName;
+				
+				if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
+				else  varibleName = makeVar(o);
+				if(options.schema.resolveLinkByName(varibleName) != null) addContinuation(location(), ".", 99, false, 2, "end");
+				if(resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) addContinuation(location(), ":", 30, false, 2, "end");
+				
+				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
+				
+				return o;
+			}
 			
 			function referenceNames(o) {
 				var classAliasTable = [];
@@ -493,7 +510,8 @@
 
 			PNAME_NS = (PN_PREFIX? colon ":") 
 
-			PNAME_LN = ((PropertyReference? PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
+			PNAME_LN = LName:PNAME_LN2 {return ifObjectDataProperty(LName)} 
+			PNAME_LN2 = ((PropertyReference? PNAME_NS  (Chars_String_variables / (string_c Chars_String_prefix))) Substring  BetweenExpression?  LikeExpression?) 
 
 			PN_PREFIX = string_c Chars_String_prefix
 
@@ -539,7 +557,7 @@
 			STRING_LITERAL1 = quote "'" string_c string quote "'"
 			STRING_LITERAL2 = dubble_quote '"' string_c string dubble_quote '"'
 	
-			QName = Path:(Path / PathBr / QNameReference) // {return pathOrReference(Path)}
+			QName = Path:(Path / PathBr / QNameReference) 
 			
 			////////////////////////////////////////////////////////////////
 			Path = (space PathProperty:(PathAlternative) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?)
@@ -567,9 +585,10 @@
 			
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
-			PNAME_NSP = Prefix:(PN_PREFIX? colon_c':') {return makeVar(Prefix)}
-			PNAME_LNP = (PNAME_NS:PNAME_NSP  LName:( Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
-			LNameP = (LName:(( Chars_String_prefix))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			PNAME_NSP = Prefix:(PN_PREFIX? colon_c ':') {return makeVar(Prefix)}
+			PNAME_LNP = LName:PNAME_LNP2 {return ifObjectDataProperty(LName)}
+			PNAME_LNP2 = (PNAME_NS:PNAME_NSP  LName:( Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
+			LNameP = (LName:(( Chars_String_prefix_LName))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			
 			VERTICAL = vertical_c "|" {return {Alternative:"|"}}
 			PATH_SYMBOL = ((dot_path ".") / (div_path "/")) {return {PathSymbol :"/"}} 
@@ -577,13 +596,14 @@
 			PEPS = (PathEltOrInverse:PathEltOrInverse PATH_SYMBOL)  {return pathOrReference(PathEltOrInverse)}
 
 			QNameReference = QNameA:(QNameC  / QNameA)
-			QNameA = ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix)) Substring:Substring  space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
+			QNameA = ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix_LName)) Substring:Substring  space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
 			QNameC = squere_br_open "[" space ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix))  Substring:Substring space squere_br_close "]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
 			ReferenceDot =  Reference: Reference dot_path "." {return referenceNames(Reference)}
 			Reference= references_c Chars_String:Chars_String {return makeVar(Chars_String)} 
 			
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
+			Chars_String_prefix_LName = LName:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*) {return ifObjectDataProperty(LName)}
 			Chars_String_variables = (squere_br_open "[" variables_c Chars_String_prefix squere_br_close "]")
 			
 																																																			//atributs vai associacija
@@ -591,13 +611,13 @@
 			
 			PathMod = PathMod:((question "?") / (mult "*") / (plus "+"))
 			
-			LNameSimple = (Chars_String_variables / (variables_c Chars_String_prefix))
+			LNameSimple = (Chars_String_variables / (variables_c Chars_String_prefix_LName))
 
 			LNameINV = (PropertyReference? INV: inv_c "INV"i br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LNameINV2 = (PropertyReference? INV: check "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			Substring = (squere_br_open "[" (INTEGER (comma_c "," space INTEGER)?) squere_br_close "]")?
-			LName = PropertyReference? (Chars_String_variables / (variables_c Chars_String_prefix)) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
+			LName = (PropertyReference? LName:(Chars_String_variables / (variables_c Chars_String_prefix_LName)) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) 
 			
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
@@ -622,7 +642,7 @@
             curv_br_close = "" {addContinuation(location(), /*{*/"}", 10, false, 4);}
 			two_dots = "" {addContinuation(location(), "..", 10, false, 4);}
 			dot = "" {addContinuation(location(), ".", 32, false, 4);}
-			dot_path = "" {addContinuation(location(), ".", 32, false, 4);}
+			dot_path = "" {addContinuation(location(), "", 32, false, 4);}
 			dot_in_br = "" {addContinuation(location(), "", 1, false, 4);}
 			select_this = "" {if(options.type=="attribute") addContinuation(location(), "(select this)", 10, false, 4); else addContinuation(location(), "", 1, false, 4);}
 			this_c = "" {if(options.type!="attribute") addContinuation(location(), "(this)", 85, false, 4); else addContinuation(location(), "", 1, false, 4);}
@@ -720,7 +740,7 @@
 			REPLACE_c  = "" {addContinuation(location(), "REPLACE", 10, false, 4);}
 			EXISTS_c = "" {addContinuation(location(), "EXISTS", 90, false, 4);}
 			at = "" {addContinuation(location(), "@", 1, false, 4);}
-			colon = "" {addContinuation(location(), ":", 30, false, 4);}
+			colon = "" {addContinuation(location(), "", 30, false, 4);}
 			question = "" {addContinuation(location(), "?", 1, false, 4);}
 			dubble_question = "" {addContinuation(location(), "??", 1, false, 4);}
 			dollar = "" {addContinuation(location(), "$", 10, false, 4);}
@@ -737,7 +757,7 @@
 			between_c = "" {addContinuation(location(), "BETWEEN", 30, true, 4);}
 			int_c = "" {addContinuation(location(), "", 1, false, 4);}
 			string_c = "" {addContinuation(location(), "", 1, false, 4);}
-			colon_c = "" {addContinuation(location(), ":", 30, false, 4);}
+			colon_c = "" {addContinuation(location(), "", 30, false, 4);}
 			vertical_c = "" {addContinuation(location(), "|", 10, false, 4);}
 			space_c = "" {addContinuation(location(), " ", 1, false, 4);}
 			PropertyReference_c = "" {addContinuation(location(), "`", 1, false, 4);}
