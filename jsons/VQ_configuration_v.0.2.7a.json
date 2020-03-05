@@ -939,6 +939,10 @@
 					{
 						"item": "Filter (Condition) ...",
 						"procedure": "AddCondition"
+					},
+					{
+						"item": "Explain ...",
+						"procedure": "ExplainField"
 					}
                 ]
               },
@@ -953,6 +957,10 @@
 					{
 						"item": "Subquery ...",
 						"procedure": "AddSubquery"
+					},
+					{
+						"item": "Explain ...",
+						"procedure": "ExplainLink"
 					}
                 ]
               },
