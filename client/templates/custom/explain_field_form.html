@@ -15,17 +15,27 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Explain Field</h4>
+                    <h4 class="modal-title">Field Types</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
 
                         <div class="form-group">
-
-                           <p>The quick brown fox jumps over the lazy dog</p>
-
+                           <p><b>Simple (attribute)</b> fields are the "normal" fields typically to be included in the selection.</p>
                         </div>
-							
+						<div class="form-group">
+                           <p><b>Aggregate</b> fields indicate the aggregation (e.g. count, sum) over multiple 
+								elements (instances) of the current class.</p>
+                        </div>	
+						<div class="form-group">
+                           <p><b>Filter (Condition)</b> fields allow introducing filter expressions that constrain the selected 
+							instance and attribute values.</p>
+                        </div>
+						<div class="form-group">
+                           <p>The fields, after their introduction, can be fine tuned (e.g. marking a field as required), 
+								changed or deleted from the
+								property pane to the right of the diagram.</p>
+                        </div>	
                     </form>
 	
                 </div>

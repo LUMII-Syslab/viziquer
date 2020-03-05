@@ -15,17 +15,35 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Explain Link</h4>
+                    <h4 class="modal-title">Link Types</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
 
                         <div class="form-group">
-
-                           <p>The quick brown fox jumps over the lazy dog</p>
-
-                        </div>
+                           <p>Use <b>Simple (join) link</b> to join the information from the current class 
+								with the information in the linked class.
+						   </p>
 							
+                        </div>
+						<div class="form-group">
+							<p>Use <b> Subquery link</b> to aggregate (e.g. count, sum, max, ..) 
+								the information from the linked class for each current class item (instance) separately.<br>
+						   </p>
+						   <p>The aggregated information selected out of the subquery can then be used
+								in the main query part that involves the current class.<br>
+						   </p>
+						   <p>The <b>Subquery</b> with empty selection works as <b>existence check</b>
+								for a linked class instance.
+						   </p>
+                        </div>
+						<div class="form-group">
+                           <p>You can <b>change</b> the link type also from the Add Link dialogue afterwards.<br>
+						   </p>
+						   <p>When the link has been drawn its type can be changed from the link's property pane 
+						   (to the right of the diagram).
+						   </p>
+                        </div>
                     </form>
 	
                 </div>
