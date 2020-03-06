@@ -60,7 +60,7 @@ Template.AddLink.events({
 	"click #ok-add-link": function() {
 
 		//Read user's choise
-		var obj = $('input[name=stack-radio]:checked').closest(".association");
+		var obj = $('input[name=link-list-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
 		var name = obj.attr("name");
@@ -198,9 +198,13 @@ Template.AddLink.events({
 	"click #add-link-type-choice": function() {
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
         if (checkedName === 'JOIN') {
-            //$('#goto-wizard:checked').attr('checked', false);
+            $('#goto-wizard:checked').attr('checked', false);
             $('#goto-wizard').attr('disabled',"disabled");
         } else {
+        	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); console.log("changed", cardValue);
+        	if (cardValue == "") {
+        		confirmSubquery();
+        	}        	
             $('#goto-wizard').removeAttr("disabled");
             $('#goto-wizard').attr('checked', true);
         } 
@@ -399,14 +403,23 @@ Template.AddLink.events({
 		// }
 	},
 
+	"change #link-list-form": function() {
+		var typeName = $('input[name=type-radio]').filter(':checked').val();
+		var cardValue = $('input[name=link-list-radio]:checked').attr("card");
+		console.log("changed", typeName, cardValue);
+		if (typeName == "NESTED" && cardValue == "") {
+			confirmSubquery();
+		}
+	},
+
 });
 
 //++++++++++++
 //Functions
 //++++++++++++
 function clearAddLinkInput(){
-	$('input[name=stack-radio]:checked').attr('checked', false);
-	// var defaultList = document.getElementsByName("stack-radio");
+	$('input[name=link-list-radio]:checked').attr('checked', false);
+	// var defaultList = document.getElementsByName("link-list-radio");
 	// _.each(defaultList, function(e){
 	// 	if (e.value == "++") e.checked = true;
 	// 	else e.checked = false;
@@ -425,6 +438,20 @@ function clearAddLinkInput(){
 	$('input[id=goto-wizard]').attr("disabled","disabled");
 	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
+}
+
+function confirmSubquery(){
+	// var txt;
+	if (confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
+		// txt = "You pressed OK!";
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
+		$('#goto-wizard:checked').attr('checked', false);
+        $('#goto-wizard').attr('disabled',"disabled");
+	} else {
+		// txt = "You pressed Cancel!";		
+	}
+	// console.log(txt);
 }
 
 function getAllAssociations(){

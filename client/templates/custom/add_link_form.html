@@ -144,7 +144,7 @@
                                 {{#if show}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
-                                        <input type="radio" name="stack-radio" value="{{name}}" card={{card}}>
+                                        <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
                                         <span class="custom-radio"></span>
                                         <span style="{{clr}}">{{name}} {{text}} {{type}} {{card}} {{class}} </span>
                                     </label>
@@ -155,7 +155,7 @@
                             {{#each shortList}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
-                                        <input type="radio" name="stack-radio" value="{{name}}" card={{card}}>
+                                        <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
                                         <span class="custom-radio"></span>
                                         <span style="{{clr}}">{{name}} {{text}} {{type}} {{card}} {{class}} </span>
                                     </label>
@@ -200,7 +200,7 @@
             // if (proj) {
             //     if(proj.showCardinalities=="true"){            
             //         $('#link-list-form').change(function(){
-            //             var checkedName = $('input[name=stack-radio]').filter(':checked').attr("card"); //console.log(checkedName);
+            //             var checkedName = $('input[name=link-list-radio]').filter(':checked').attr("card"); //console.log(checkedName);
             //             if (checkedName.indexOf("[*]") == -1){//max cardinality not [*]
             //                 $('input[value=JOIN]').prop('checked', true);
             //                 $('input[value=NESTED]').prop('checked', false);
