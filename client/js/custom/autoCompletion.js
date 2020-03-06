@@ -418,17 +418,22 @@ runCompletionNew = function (text, fullText, cursorPosition){
 			};
 
 		} else {
+			
+			var className = "";
+			
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			var className = compart["input"];
+			if(typeof act_el !== 'undefined'){
+				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+				if(typeof compart !== 'undefined') className = compart["input"];;
+			}
 
 			//var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 		}
 	} catch (com) {
+		//console.log(com);
 		var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));
-		//console.log(c);
 		return c;
 	}
 
