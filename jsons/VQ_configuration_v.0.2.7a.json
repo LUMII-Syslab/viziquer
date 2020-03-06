@@ -926,7 +926,7 @@
             "contextMenu": [
               {
                 "item": "Add Field ...",
-                "procedure": "Foo",
+                "procedure": "AddAttribute",
 				"subMenu": [
 					{
 						"item": "Simple (attribute) ...",
@@ -948,7 +948,7 @@
               },
 			  {
                 "item": "Add Link ...",
-                "procedure": "Foo",
+                "procedure": "AddLink",
 				"subMenu": [
                   	{
 						"item": "Simple (join) ...",
