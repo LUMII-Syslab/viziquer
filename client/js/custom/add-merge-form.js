@@ -3,11 +3,12 @@ Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
-Template.AddMergeValues.aggregation = new ReactiveVar("group_concat");
+Template.AddMergeValues.aggregation = new ReactiveVar("count");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
 //Template.AddMergeValues.hideField = new ReactiveVar("");
 Template.AddMergeValues.e = new ReactiveVar("");
 Template.AddMergeValues.attribute = new ReactiveVar("");
+Template.AddMergeValues.isNotRootClass = new ReactiveVar(false);
 
 Interpreter.customMethods({
 	AddMergeValues: function (e) {
@@ -35,6 +36,28 @@ Interpreter.customMethods({
       	} else card = -1;
 		
 		if(card == -1)document.getElementById("merge-values-wizard-id").style.display = "none";
+		
+		
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){
+			var vq_obj = new VQ_Element(selected_elem_id);
+
+			var parentClass;
+			var links = vq_obj.getLinks();
+			for(var key in links) {
+				if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+					parentClass = new VQ_Element(links[key].link.obj.startElement);
+					links[key].link.setNestingType("SUBQUERY");
+				}
+				if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+					parentClass = new VQ_Element(links[key].link.obj.endElement);
+					links[key].link.setNestingType("SUBQUERY");
+				}
+			}
+			if(typeof parentClass !== 'undefined')Template.AddMergeValues.isNotRootClass.set(true);
+		};
+		
+		
 		
 		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);
@@ -73,6 +96,10 @@ Template.AddMergeValues.helpers({
 	
 	mergeAlias: function() {
 		return Template.AddMergeValues.mergeAlias.get();
+	},
+	
+	isNotRootClass: function() {
+		return Template.AddMergeValues.isNotRootClass.get();
 	},
 
 	selectedCount: function() {
@@ -126,10 +153,7 @@ Template.AddMergeValues.events({
 		var expr = $('input[name=expression-merge]').val();
 		var aggregation = $('option[name=function-name-merge]:selected').val();
 		expr = aggregation + "(" + expr + ")";
-		var displayCase = document.getElementById("merge-display-results").checked;
 		var mergeAliasName = $('input[id=merge-alias-name]').val();
-		var minValue = $('input[id=merge-results-least]').val();
-		var maxValue = $('input[id=merge-results-most]').val();
 		
 		if((typeof mergeType !== 'undefined' && mergeType == "MULTIPLE") || typeof mergeType === 'undefined'){
 			var selected_elem_id = Session.get("activeElement");
@@ -150,6 +174,11 @@ Template.AddMergeValues.events({
 				}
 				
 				if(typeof parentClass !== 'undefined'){
+					
+					var displayCase = document.getElementById("merge-display-results").checked;
+					var minValue = $('input[id=merge-results-least]').val();
+					var maxValue = $('input[id=merge-results-most]').val();
+					
 					if(displayCase) parentClass.addField(mergeAliasName,"",false,false,false);
 					if (minValue != "") parentClass.addCondition(mergeAliasName + ">=" + minValue);
 					if (maxValue != "") parentClass.addCondition(mergeAliasName + "<=" + maxValue);
@@ -192,6 +221,20 @@ Template.AddMergeValues.events({
            document.getElementById("merge-values-wizard-id").style.display = "block";
         } 
 	},
+	
+	"change #merge-function-list": function() {
+		var newFunction = $('option[name=function-name-merge]:selected').val();
+
+		//Set at least/at most
+		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){
+			$('input[id=merge-results-least]').attr('disabled', false);
+			$('input[id=merge-results-most]').attr('disabled', false);
+		} else {
+			$('input[id=merge-results-least]').attr('disabled', true);
+			$('input[id=merge-results-most]').attr('disabled', true);
+		}
+		return;
+	},
 
 });
 
@@ -207,7 +250,7 @@ function parsedExpressionField(expression){
 function clearMergeValuesInput(){
 	var defaultFunctions = document.getElementsByName("function-name-merge");
 	_.each(defaultFunctions, function(e){
-		if (e.value == "group_concat") e.selected = true;
+		if (e.value == "count") e.selected = true;
 		else e.selected = false;
 	});
 

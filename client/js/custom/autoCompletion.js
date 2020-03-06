@@ -117,7 +117,7 @@ autoCompletion = function(e) {
 			errorMessage(continuations, elem);
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
-			autocomplete(elem, continuations);
+			//autocomplete(elem, continuations);
 		}else{
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
