@@ -442,7 +442,8 @@ function clearAddLinkInput(){
 
 function confirmSubquery(){
 	// var txt;
-	if (confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
+	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	if (proj.showCardinalities=="true" && confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
 		// txt = "You pressed OK!";
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
