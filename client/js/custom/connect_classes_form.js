@@ -388,6 +388,7 @@ Template.ConnectClasses.events({
 
 	"click #ok-connect": function(){
 		var firstId = "";
+		var lastElement = "";
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
 		var propertyPath = $("#show-as-property-path").is(':checked'); //console.log(propertyPath);
@@ -398,14 +399,17 @@ Template.ConnectClasses.events({
 			return;
 		}
 		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
-		chain = _.rest(chain); //console.log(chain);
+		chain = _.rest(chain);
 		if (!Template.ConnectClasses.addLongLink.get().data){			
 			firstId = Template.ConnectClasses.elements.curValue[0].id;
+			lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0];
 		} else {
 			firstId = Session.get("activeElement");
-		} console.log(firstId); console.log(Template.ConnectClasses.elements.curValue);
-		var currentVQElment = new VQ_Element(firstId);
-		var lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0]; //console.log(170, lastElement);
+			lastElement = {name: chain[chain.length-1].class, id: "no_class_exists"};
+		} //console.log(firstId); console.log(Template.ConnectClasses.elements.curValue);
+		var currentVQElment = new VQ_Element(firstId);		
+		// console.log(410, lastElement); return;
+
 		if (!propertyPath) {
 			console.log("TODO property path");
 			var class_name = lastElement.name;
@@ -471,7 +475,7 @@ Template.ConnectClasses.events({
 					}
                 }, locLink, true, currentVQElment, nextVQElement);
 			}
-		} else {
+		} else { //draw all classes and links
 			AddNextLink(currentVQElment, chain, lastElement);		
 			if (Template.ConnectClasses.linkMenu.get().data) {
 				var currentLink = new VQ_Element(Template.ConnectClasses.linkID.curValue.data);
@@ -575,7 +579,7 @@ Template.ConnectClassesSettings.events({
 	"click #ok-connect-settings": function(){
 		//console.log("Settings - OK");
 		//Path's length		
-		if (document.getElementById("default-max-length").checked) {
+		if (document.getElementById("default-max-length").checked) {//console.log(582);
 			Template.ConnectClassesSettings.pathLength.set(3);
 			$('#max_length').val("3");
 		} else {
@@ -585,13 +589,14 @@ Template.ConnectClassesSettings.events({
 			} else {				
 				Template.ConnectClassesSettings.pathLength.set(maxLength);
 			}
-		} 
+		}
 
+		var list = [];
 		if (!Template.ConnectClassesSettings.addLongLinkS.get().data) {
 			//Direction
 			var startElemID = $('input[name=path-radio]:checked').val();
 			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; console.log("inside direction", elementList, startElemID);
-			var list = [];
+			
 			if (elementList.fromID == startElemID){
 				console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
@@ -611,9 +616,17 @@ Template.ConnectClassesSettings.events({
 			    }
 			    return x.countInverseLinks - y.countInverseLinks;
 			});
-			Template.ConnectClasses.linkList.set(list);
+			
 			Template.ConnectClassesSettings.directionValue.set({data: startElemID});
+		} else {
+			if ($('#classList2').val()) {
+				var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: $('#classList2').val()}];
+				list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+			} else {
+				list = [{array: [{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1}]
+			}
 		}
+		Template.ConnectClasses.linkList.set(list);
 		console.log("Settings - inverse");
 		//Inverse
 		var inverseCount = $('input[name=inverse-links]:checked').val();
@@ -650,8 +663,11 @@ Template.ConnectClassesSettings.events({
         if (document.getElementById("default-max-length").checked) {
         	$('#max_length').val("3");
             $('#max_length').attr('disabled',"disabled");
+            $('#great-max-length').attr('checked', false);
+            $('#great-max-length').attr('disabled',"disabled");
         } else {
             $('#max_length').removeAttr("disabled");
+            $('#great-max-length').removeAttr("disabled");
         } 
 	},
 });
@@ -735,19 +751,19 @@ function GetChains(ids, maxLength){
 				}]);
 		}
 	}); //console.log(linkRezult);
-	console.log(elemInfo[1], GetLinks(elemInfo[1]["id"]));
+	//console.log(elemInfo[1], GetLinks(elemInfo[1]["id"]));
 	var actChain = link_chain;
 	var asocNew = [];	
 	for (var i = 1; i < maxLength; i++){
 		if(actChain){ 
-			link_chain = actChain;
+			link_chain = actChain; //console.log(799, actChain);
 			actChain = [];
 			asocNew = [];
 
 			_.each(link_chain, function(e){ 
 				asocNew = [];
 				var className = e[i-1]["class"];
-				var allAsoc = schema.findClassByName(className).getAllAssociations();
+				var allAsoc = schema.findClassByName(className).getAllAssociations(); //console.log(766, className);
 				/*[{
 					name: a.localName, 
 					isUnique:a.isUnique, 
@@ -793,7 +809,7 @@ function GetChains(ids, maxLength){
 						}
 					})
 
-					if (classNew){//&& !(el["class"] == elemInfo[0]["class"])							
+					if (classNew && !(el["class"] == elemInfo[0]["class"])){							
 						e_elem.push(el);																		
 						if(el["class"] == elemInfo[1]["class"]){
 							linkRezult.push(e_elem);
@@ -855,7 +871,7 @@ function GetLinks(start_elem_id){
 			return [{name: "", class: "", type: "=>"}];
 		}
 
-		asc = schema.findClassByName(className).getAllAssociations(); console.log("585 ", asc);	
+		asc = schema.findClassByName(className).getAllAssociations(); //console.log("874 ", className, asc);	
 
 		return asc;			
 	}

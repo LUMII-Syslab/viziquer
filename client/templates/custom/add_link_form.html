@@ -10,7 +10,6 @@
     }
 
     div.link-type-part {
-        position: relative;
         float: right;
         background-color: white;
         margin-left: 10px;
@@ -101,11 +100,9 @@
                     <form id="add-link-type-choice" class="form-horizontal" role="form">
                         <div class="form-group">                            
                             <div name="chain">                       
-                                <div>
-								Change Link Type
-								</div>
+                                <p style="color: black;"> Change Link Type </p>
 								<label class="label-radio">                                    
-                                    <input type="radio" name="type-radio" value="JOIN" checked="checked">
+                                    <input type="radio" name="type-radio" value="JOIN">
                                     <span class="custom-radio"></span>
                                     Join Link &ensp;
                                     <div class="help-tip">
@@ -174,7 +171,7 @@
                     </form> 
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer" style="clear: both;">
                     <!-- {{#if testAddLink.data}}  -->
                         <button id="add-long-link" type="button" class="btn btn-default">Connect remote class</button> 
                     <!-- {{/if}} -->

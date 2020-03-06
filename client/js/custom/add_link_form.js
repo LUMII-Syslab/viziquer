@@ -3,20 +3,40 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		Template.AddLink.fullList.set(getAllAssociations());
 		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		Template.AddLink.testAddLink.set({data: false});		
+		Template.AddLink.testAddLink.set({data: false});
+
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="JOIN"]').prop('checked', true);		
 		$("#add-link-form").modal("show");
 	},
 
 	AddLinkTest: function () {
 		Interpreter.destroyErrorMsg();
-		Template.AddLink.fullList.set(getAllAssociations());
+		var asc = [];
+		_.each(getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+		})
+		Template.AddLink.fullList.set(asc);		
 		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: true});		
 		$("#add-link-form").modal("show");
 	},
+
+	AddSubquery: function () {
+		Interpreter.destroyErrorMsg();
+		Template.AddLink.fullList.set(getAllAssociations());
+		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		Template.AddLink.testAddLink.set({data: false});
+
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
+		$('input[id=goto-wizard]').attr('checked', false);
+		$('#goto-wizard').removeAttr("disabled");
+		$("#add-link-form").modal("show");
+	},
 })
 
-Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
+Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: "", show: true}]);
 Template.AddLink.shortList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 Template.AddLink.testAddLink = new ReactiveVar({data: false});
 
@@ -166,6 +186,7 @@ Template.AddLink.events({
 		Template.ConnectClasses.elements.set(data);
 		Template.ConnectClasses.addLongLink.set({data: true});
 		Template.ConnectClasses.linkMenu.set({data: false});
+		Template.ConnectClassesSettings.pathLength.set(3);
 		$("#connect-classes-form").modal("show");
 		// console.log("Connect classes activated");
 		//Hide Add Link 
@@ -207,6 +228,11 @@ Template.AddLink.events({
 			var value = $("#mySearch").val().toLowerCase();
 			if (value == "" || value == " ") {//empty or space - show all elements
 				Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+				// var asc = Template.AddLink.fullList.curValue;
+				// _.each(asc, function(a){
+				// 	asc.show = true;
+				// })
+				// Template.AddLink.fullList.set(asc);	
 			} else if (value.indexOf('.') > -1) {
 				console.log("property path");
 				value = value.split('.');
@@ -228,6 +254,7 @@ Template.AddLink.events({
 				console.log(value);
 
 				var ascList = Template.AddLink.fullList.curValue;
+				var asc = Template.AddLink.fullList.curValue;
 				ascList = ascList.filter(function(e){
 					var hasLink = true;
 					var hasClass = true;
@@ -243,6 +270,7 @@ Template.AddLink.events({
 							hasClass = false;
 						}
 					});
+					// asc[asc.indexOf(e)].show = (hasLink && hasClass);
 					return (hasLink && hasClass);
 				})
 
@@ -264,6 +292,7 @@ Template.AddLink.events({
 							hasValues = false;
 						}
 					});
+					//asc[asc.indexOf(e)].show = hasValues;
 					return hasValues;
 				})			
 				Template.AddLink.shortList.set(ascList);
@@ -274,6 +303,11 @@ Template.AddLink.events({
 			var value = $("#mySearch").val().toLowerCase(); console.log("mySearch read value: ", value);
 			if (value == "" || value == " ") {//empty or space - show all elements
 				Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+				// var asc = Template.AddLink.fullList.curValue;
+				// _.each(asc, function(a){
+				// 	asc.show = true;
+				// })
+				// Template.AddLink.fullList.set(asc);
 				console.log("mySearch empty value or space");
 			} else if (value.indexOf('.') > -1) {
 				console.log("TODO property path");
@@ -281,6 +315,11 @@ Template.AddLink.events({
 				if (value.length > 2){ //More then 1 point is used
 					Template.AddLink.shortList.set([]);
 		        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 point to separate link and class</div>");
+		   //      	var asc = Template.AddLink.fullList.curValue;
+					// _.each(asc, function(a){
+					// 	asc.show = false;
+					// })
+					// Template.AddLink.fullList.set(asc);
 					console.log("Multiple points (.)");
 				} else {
 					console.log("mySearch single point");
@@ -319,6 +358,7 @@ Template.AddLink.events({
 								}
 							});
 						}
+						// asc[asc.indexOf(e)].show = hasValues;
 						return hasValues;
 					})
 					Template.AddLink.shortList.set(ascList);
@@ -341,6 +381,7 @@ Template.AddLink.events({
 							hasValues = false;
 						}
 					});
+					// asc[asc.indexOf(e)].show = hasValues;
 					return hasValues;
 				}); console.log("mySearch filtered list: ", ascList);
 				Template.AddLink.shortList.set(ascList); console.log("mySearch no point finished\n");
@@ -379,7 +420,8 @@ function clearAddLinkInput(){
 	Template.AddLink.fullList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 	Template.AddLink.shortList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 
-	$('input[id=goto-wizard]').attr('checked', false);
+	$('[name=type-radio]').removeAttr('checked');
+	$('input[name=type-radio][value="JOIN"]').attr('checked', true);
 	$('input[id=goto-wizard]').attr("disabled","disabled");
 	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
