@@ -105,7 +105,7 @@ autoCompletion = function(e) {
 
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
-	if (!isAutocompletionActive() && e.keyCode !== 27) {
+	if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
@@ -134,7 +134,7 @@ autoCompletionCleanup = function() {
 isAutocompletionActive = function() {
 	const aList = document.getElementById('autocomplete-list');
 	const active = !!aList;
-	console.log('AC active:', active)
+	// console.log('AC active:', active)
 	return active;
 }
 
