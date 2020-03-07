@@ -1,6 +1,5 @@
 var symbolTable = {};
 var grammarType = "class";
-var completionOn = false;
 
 /*'
 "
@@ -106,7 +105,7 @@ autoCompletion = function(e) {
 
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
-	if (!completionOn) {
+	if (!isAutocompletionActive()) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
@@ -130,6 +129,13 @@ autoCompletionCleanup = function() {
 	// console.log('auto completion cleanup');
 	removeMessage();
 	closeAllLists();
+}
+
+isAutocompletionActive = function() {
+	const aList = document.getElementById('autocomplete-list');
+	const active = !!aList;
+	console.log('AC active:', active)
+	return active;
 }
 
 function keyUpHandler(e){
@@ -172,30 +178,30 @@ function keyUpHandler(e){
 }
 
 function keyDownHandler(e){
-	
-	if (!completionOn) return; // ???
-	var x = document.getElementById("autocomplete-list");
-	if (x) x = x.getElementsByTagName("div");
+
+	if (!isAutocompletionActive()) return;
+	const aList = document.getElementById("autocomplete-list");
+	const listItems = aList.getElementsByTagName("div");
 
 	if (e.keyCode === 40) {//arrow down
 		e.preventDefault();
 		currentFocus++;
-		addActive(x);
+		addActive(listItems);
 	} else if (e.keyCode === 38) { //arrow up
 		e.preventDefault();
 		currentFocus--;
-		addActive(x);
-	} else if (e.keyCode === 13) {//ENTER
+		addActive(listItems);
+	} else if (e.keyCode === 13) { //ENTER
 		e.preventDefault();
 		if (currentFocus === -1) currentFocus = 0;
 		if (currentFocus > -1) {
-			if (x) x[currentFocus].click();
+			if (listItems) listItems[currentFocus].click();
 		}
 	} else if (e.keyCode === 9) { //TAB
 		e.preventDefault();
 		if (currentFocus === -1) currentFocus = 0;
 		if (currentFocus > -1) {
-			if (x) x[currentFocus].click();
+			if (listItems) listItems[currentFocus].click();
 		}
 	}
 }
@@ -259,7 +265,10 @@ function autocomplete(inp, continuations) {
 
     /*append the DIV element as a child of the autocomplete container:*/
     inp.parentNode.appendChild(a);
-	completionOn = true;
+
+	if (typeof continuations === 'string') { // should not happen
+		continuations = { prefix: '', suggestions: [{type: 0, name: 'no suggestions found'}]}
+	}
 
 	let ss = continuations.suggestions;
 	ss.sort((a, b) => b.priority - a.priority);
@@ -318,7 +327,6 @@ function closeAllLists(elmnt) {
         x[i].parentNode.removeChild(x[i]);
 	  }
 	}
-	completionOn = false;
 	currentFocus = 0;
 }
 
@@ -418,9 +426,9 @@ runCompletionNew = function (text, fullText, cursorPosition){
 			};
 
 		} else {
-			
+
 			var className = "";
-			
+
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
@@ -628,14 +636,14 @@ function getContinuationsNew(text, length, continuations) {
 		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
 		for (var pos in continuations_to_report) {
 			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
-				TermMessages[pos]=continuations_to_report[pos];		
+				TermMessages[pos]=continuations_to_report[pos];
 				if(length>farthest_pos) prefix = text.substring(0, farthest_pos);
 			}
 		}
-		
+
 		TermMessages = getCompletionTableNew(TermMessages, text)
 		if (TermMessages[0] != null) {
-			
+
 			return {prefix:prefix, suggestions:TermMessages}
 			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
