@@ -343,6 +343,9 @@ function updateInputValue(input, prefix, suggestion) {
 	input.value = newValue;
 	input.selectionStart = cursorPos;
 	input.selectionEnd = cursorPos;
+
+	input.blur();
+	input.focus();
 }
 
 /*
