@@ -105,7 +105,7 @@ autoCompletion = function(e) {
 
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
-	if (!isAutocompletionActive()) {
+	if (!isAutocompletionActive() && e.keyCode !== 27) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
@@ -157,8 +157,8 @@ function keyUpHandler(e){
 			}
 		}
 	}
-	
-	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9){
+
+	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9 && e.keyCode !== 27){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
 
 			removeMessage();
@@ -203,6 +203,10 @@ function keyDownHandler(e){
 		if (currentFocus > -1) {
 			if (listItems) listItems[currentFocus].click();
 		}
+	} else if (e.keyCode === 27) { //ESC
+		e.preventDefault();
+		closeAllLists();
+		return false;
 	}
 }
 
