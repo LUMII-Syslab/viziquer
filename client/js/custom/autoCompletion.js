@@ -105,7 +105,8 @@ autoCompletion = function(e) {
 
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
-	if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
+	// if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
+	if (isAutocompletionKey(e) && !isAutocompletionActive()) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
@@ -131,11 +132,15 @@ autoCompletionCleanup = function() {
 	closeAllLists();
 }
 
-isAutocompletionActive = function() {
+const isAutocompletionActive = function() {
 	const aList = document.getElementById('autocomplete-list');
 	const active = !!aList;
 	// console.log('AC active:', active)
 	return active;
+}
+
+const isAutocompletionKey = function(e) {
+	return (e.originalEvent.ctrlKey || e.originalEvent.metaKey) && e.originalEvent.code === 'Space';
 }
 
 function keyUpHandler(e){
