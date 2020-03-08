@@ -198,15 +198,16 @@ Template.AddLink.events({
 	"click #add-link-type-choice": function() {
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
         if (checkedName === 'JOIN') {
-            $('#goto-wizard:checked').attr('checked', false);
-            $('#goto-wizard').attr('disabled',"disabled");
+            $('#goto-wizard:checked').prop('checked', false);
+            $('#goto-wizard').prop('disabled',"disabled");
         } else {
         	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); console.log("changed", cardValue);
         	if (cardValue == "") {
         		confirmSubquery();
-        	}        	
-            $('#goto-wizard').removeAttr("disabled");
-            $('#goto-wizard').attr('checked', true);
+        	} else {
+        		$('#goto-wizard').removeAttr("disabled");
+        		$('#goto-wizard').prop('checked', true);
+        	}           
         } 
 	},
 
@@ -447,10 +448,14 @@ function confirmSubquery(){
 		// txt = "You pressed OK!";
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
-		$('#goto-wizard:checked').attr('checked', false);
-        $('#goto-wizard').attr('disabled',"disabled");
+		$('#goto-wizard:checked').prop('checked', false);
+        $('#goto-wizard').prop('disabled',"disabled");
 	} else {
-		// txt = "You pressed Cancel!";		
+		// txt = "You pressed Cancel!";
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
+		$('#goto-wizard').removeAttr("disabled");
+        $('#goto-wizard').prop('checked', true);		
 	}
 	// console.log(txt);
 }
