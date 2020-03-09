@@ -327,101 +327,103 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    				compartment = compart_list[id];
    			}
 
-   			var compart_presentation = compartment.presentation;
-   			var compartments = compartment.compartments
+			if (compartment) {
+				var compart_presentation = compartment.presentation;
+				var compartments = compartment.compartments
 
-   			var element = compartments.element;
-   			var element_presentation = element.presentation;
+				var element = compartments.element;
+				var element_presentation = element.presentation;
 
-   			if (!_.isUndefined(fields["value"])) {
+				if (!_.isUndefined(fields["value"])) {
 
-   				if (compart_presentation) {
-	   				compart_presentation.text(fields["value"]);
-	   			}
+					if (compart_presentation) {
+						compart_presentation.text(fields["value"]);
+					}
 
-   				if (element.type == "Swimlane") {
-   					var swimlane_layer = element_presentation.getLayer();
-   					swimlane_layer.batchDraw();
+					if (element.type == "Swimlane") {
+						var swimlane_layer = element_presentation.getLayer();
+						swimlane_layer.batchDraw();
 
-   					return;
-   				}
+						return;
+					}
 
-   				else {
+					else {
 
-   					if (element.type == "Line") {
-   						compartments.recomputeCompartmentsPosition(compartment);
-   					}
+						if (element.type == "Line") {
+							compartments.recomputeCompartmentsPosition(compartment);
+						}
 
-   					else if (element.type == "Box") {
-   						compartments.recomputeCompartmentsPosition();
-   					}
+						else if (element.type == "Box") {
+							compartments.recomputeCompartmentsPosition();
+						}
 
-		   			//refreshin layer because resizers gets bold after multiple updates
-		   			var parent_layer = element_presentation.getLayer();
-		   			if (parent_layer.name == "DragLayer") {
-		   				parent_layer.batchDraw();
-		   			}
+						//refreshin layer because resizers gets bold after multiple updates
+						var parent_layer = element_presentation.getLayer();
+						if (parent_layer.name == "DragLayer") {
+							parent_layer.batchDraw();
+						}
 
-		   			else {
-		   				element_presentation.draw();	
-		   			}
+						else {
+							element_presentation.draw();	
+						}
 
-		   			return;
-		   		}
-	   		}
-
-   			if (fields["style"]) {
-
-   				if (compart_presentation) {
-	   				compart_presentation.setAttrs(fields["style"]);
-   				}
-
-				if (element.type == "Line") {
-
-	   				if (fields.style.placement) {
-	   					var placement = compartments.getPlacementByName(fields.style.placement);
-
-	   					if (compartment.presentation) {
- 	   						compartment.presentation.moveTo(placement.group);
-	   					}
-
-	   					compartment.placement = placement;
-	   				}
-
-					compartments.recomputeCompartmentsPosition(compartment);
-					element_presentation.getLayer().batchDraw();
+						return;
+					}
 				}
 
-				else if (element.type == "Box") {
-					compartments.recomputeCompartmentsPosition();
+				if (fields["style"]) {
+
+					if (compart_presentation) {
+						compart_presentation.setAttrs(fields["style"]);
+					}
+
+					if (element.type == "Line") {
+
+						if (fields.style.placement) {
+							var placement = compartments.getPlacementByName(fields.style.placement);
+
+							if (compartment.presentation) {
+								compartment.presentation.moveTo(placement.group);
+							}
+
+							compartment.placement = placement;
+						}
+
+						compartments.recomputeCompartmentsPosition(compartment);
+						element_presentation.getLayer().batchDraw();
+					}
+
+					else if (element.type == "Box") {
+						compartments.recomputeCompartmentsPosition();
+						element_presentation.draw();
+					}
+					
+					return;
+				}
+
+				if (fields["index"]) {
+					if (compartments.removeAllRespresentations) {
+						compartments.removeAllRespresentations();
+					}
+
+					var comparts_in = Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetch();
+					compartments.create(comparts_in);
 					element_presentation.draw();
+
+					return;
+				}	   	
+
+				if (fields["swimlane"]) {
+
+					var new_compart = fields["swimlane"];
+					compartment.row = new_compart.row;
+					compartment.column = new_compart.column;
+
+					compartments.reposition_swimlane_compartments();
+					var swimlane_layer = element_presentation.getLayer();
+					swimlane_layer.batchDraw();
 				}
-   				
-   				return;
-   			}
-
-   			if (fields["index"]) {
-   				if (compartments.removeAllRespresentations) {
-   					compartments.removeAllRespresentations();
-   				}
-
-   				var comparts_in = Compartments.find({elementId: element._id}, {sort: {index: 1}}).fetch();
-   				compartments.create(comparts_in);
-   				element_presentation.draw();
-
-   				return;
-   			}	   	
-
-   			if (fields["swimlane"]) {
-
-   				var new_compart = fields["swimlane"];
-   				compartment.row = new_compart.row;
-   				compartment.column = new_compart.column;
-
-   				compartments.reposition_swimlane_compartments();
-   				var swimlane_layer = element_presentation.getLayer();
-   				swimlane_layer.batchDraw();
-   			}
+			}
    		},
 
    		removed: function(id) {

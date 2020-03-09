@@ -340,6 +340,7 @@ function closeAllLists(elmnt) {
 }
 
 function updateInputValue(input, prefix, suggestion) {
+	
 	let selStart = input.selectionStart;
 	let selEnd = input.selectionEnd;
 	let tail = input.value.slice(selEnd);
@@ -351,6 +352,17 @@ function updateInputValue(input, prefix, suggestion) {
 
 	input.blur();
 	input.focus();
+	
+	var act_elem = Session.get("activeElement");	
+	var act_el = Elements.findOne({_id: act_elem});
+	if(typeof act_el !== 'undefined'){
+		var compart_type_id = $(input).closest(".compart-type").attr("id");
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
+		if(typeof compart !== "undefined"){
+			Dialog.updateCompartmentValue(compart_type, newValue, newValue, compart["_id"]);
+		}
+	}
 }
 
 /*
