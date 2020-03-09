@@ -310,32 +310,41 @@ Template.ConnectClasses.events({
 	// },
 
 	"keyup #searchList": function(){
+		$("div[id=errorFieldCC]").remove();
 		var value = $("#searchList").val().toLowerCase(); 
-		//console.log("mySearch: ", value);
+		value = value.trim(); 
+		console.log("mySearch: ", value);
 		var data = Template.ConnectClasses.linkList.curValue;
 		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data; //"none", "one", "more"
-		if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
+		if (value == "") {//empty string
 			_.each(data, function(e){
 				if (inverseCount == "more" || (inverseCount == "one" && e.countInverseLinks < 2) || (inverseCount == "none" && e.countInverseLinks < 1)) {
 					e.show = true;
 				}
 			})			
-		} else {
+		} else if (value.indexOf('.') > -1){
+			value = value.split('.');
+			if (value.length > 2) {
+				console.log("too many points");
+				$(".searchBox").append("<div id='errorFieldCC' style='color:red; margin-top: 5px;'>Please, use only 1 period to separate link and class</div>");
+				return;
+			}
+
+		} else{
 			_.each(data, function(e){
 			//if number of inverse link is ok - check for value				
 				if (inverseCount == "more" || (inverseCount == "one" && e.countInverseLinks < 2) || (inverseCount == "none" && e.countInverseLinks < 1)) {
 					var found = false;
 
-					_.each(e.array, function(a){
-						if (e.array.length == 0) { 
-						// do nothing - the first class is not checked
-						// given classes are not searched for value
-						} else if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ 
-						//except last element - check both class and link
+					_.each(e.array, function(a){ console.log(e.array.indexOf(a), e.array.length - 1);
+						if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ console.log(340, a.link.toLowerCase().indexOf(value), a.class.toLowerCase().indexOf(value));
+						// the first class is not checked
+						// given classes are not searched for value 
+						// except last element - check both class and link
 							if (a.link.toLowerCase().indexOf(value) > -1 || a.class.toLowerCase().indexOf(value) > -1) {
 								found = true;
 							}
-						} else if (e.array.indexOf(a) == e.array.length - 1) {
+						} else if (e.array.indexOf(a) == e.array.length - 1) { console.log(347, a.link.toLowerCase().indexOf(value));
 						//last element - check only link
 							if (a.link.toLowerCase().indexOf(value) > -1) {
 								found = true;
@@ -344,12 +353,13 @@ Template.ConnectClasses.events({
 					});
 					
 					if (found) {
-						e.show = true;
+						data[data.indexOf(e)].show = true;
 					} else {
-						e.show = false;
+						data[data.indexOf(e)].show = false;
 					}
+					console.log(e, found);
 				} else {
-					e.show = false;
+					data[data.indexOf(e)].show = false;
 				}
 			})
 		}
@@ -363,7 +373,7 @@ Template.ConnectClasses.events({
 
 		Template.ConnectClasses.linkList.set(data);
 
-//O L D   V E R S I O N
+	//O L D   V E R S I O N
 		// if (Template.ConnectClasses.test.curValue.data) {
 		// 	if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
 		// 		var data = Template.ConnectClasses.linkList.curValue;			
@@ -726,31 +736,49 @@ function GetChains(ids, maxLength){
 			elem = new VQ_Element(id["text"]);
 			elemInfo.push({id: id["text"], class: elem.getName()});
 		}
-	});
+	}); console.log(GetLinks(elemInfo[0]["id"]));
 //Direct links
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
 		if(e["class"] == elemInfo[1]["class"]){
-			linkRezult.push([e]);
+			linkRezult.push([e]); console.log(e);
 		} else{
 			link_chain.push([e]);
 		}
-	}); //console.log(linkRezult);
+	}); console.log(GetLinks(elemInfo[1]["id"]));
 //Inverse direct links
-	_.each(GetLinks(elemInfo[1]["id"]), function(e) {		
+	_.each(GetLinks(elemInfo[1]["id"]) , function(e) {		
 		if(e["class"] == elemInfo[0]["class"]){
-			linkRezult.push([{
+			var tp = "";
+			if (e.type == "<=") {tp = "=>";} else { tp = "<=";}
+			var newElem = {
 					name: e.name, 
 					isUnique: e.isUnique, 
 					prefix: e.prefix, 
 					isDefOnt: e.isDefOnt, 
 					class: elemInfo[1]["class"], 
-					type: "<=", 
+					type: tp, 
 					maxCard: e.maxCard, 
 					short_name: e.short_name, 
-					short_class_name: e.short_class_name
-				}]);
+					short_class_name: elemInfo[1]["class"]
+				};
+			var exists = false;
+			_.each(linkRezult, function(el){console.log(764, _.isEqual(el[0],newElem), el[0], newElem);
+				if (el[0].name == newElem.name && el[0].class == newElem.class && el[0].type == newElem.type ) {
+					exists = true;
+				}
+			});
+			if (!exists){
+				console.log("new ", newElem);
+				linkRezult.push([newElem]);
+			}
 		}
-	}); //console.log(linkRezult);
+	}); 
+	// console.log(762, " reverse ",linkRezult);
+	// linkRezult = linkRezult.filter(function(e){
+	// 	if (linkRezult.indexOf(e) != linkRezult.lastIndexOf(e)) return false;
+	// 	return true;
+	// });
+	// console.log(767, " filtered ", linkRezult);
 	//console.log(elemInfo[1], GetLinks(elemInfo[1]["id"]));
 	var actChain = link_chain;
 	var asocNew = [];	
@@ -848,6 +876,13 @@ function GetChains(ids, maxLength){
 	if(resultStringArray.length == 0) {
 		resultStringArray.push({array:[{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1});
 	};
+
+	// console.log(861, resultStringArray);
+	// resultStringArray = resultStringArray.filter(function(e){
+	// 	if (resultStringArray.indexOf(e) != resultStringArray.lastIndexOf(e)) return false;
+	// 	return true;
+	// });
+	// console.log(867, resultStringArray);
 
 	return resultStringArray;
 }
