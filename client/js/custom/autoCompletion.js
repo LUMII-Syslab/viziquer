@@ -139,10 +139,18 @@ const isAutocompletionActive = function() {
 	return active;
 }
 
+const AUTOCOMPLETE_EXCLUSIONS = [
+	'Escape',
+	'Tab',
+	'Delete',
+	'Backspace',
+	'CapsLock',
+];
+
 const isAutocompletionKey = function(e) {
 	let ev = e.originalEvent;
 	//return (ev.ctrlKey || ev.metaKey) && ev.code === 'Space';
-	return ev.location === 0 && ev.key !== 'Escape' && ev.key !== 'Tab'; // any "regular" key except Esc, Tab
+	return ev.location === 0 && !AUTOCOMPLETE_EXCLUSIONS.includes(ev.key);
 }
 
 function keyUpHandler(e){
