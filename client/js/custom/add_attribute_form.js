@@ -23,7 +23,7 @@ Template.AddAttribute.helpers({
 			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
 			else attr_list.push({name:"(select this)"});
 			
-			attr_list.push({name:"*"});
+			//attr_list.push({name:"*"});
 						
 			attr_list.push({separator:"line"});
 			
