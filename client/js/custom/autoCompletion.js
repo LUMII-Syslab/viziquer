@@ -140,7 +140,9 @@ const isAutocompletionActive = function() {
 }
 
 const isAutocompletionKey = function(e) {
-	return (e.originalEvent.ctrlKey || e.originalEvent.metaKey) && e.originalEvent.code === 'Space';
+	let ev = e.originalEvent;
+	//return (ev.ctrlKey || ev.metaKey) && ev.code === 'Space';
+	return ev.location === 0 && ev.key !== 'Escape'; // any "regular" key except Esc
 }
 
 function keyUpHandler(e){
@@ -340,7 +342,6 @@ function closeAllLists(elmnt) {
 }
 
 function updateInputValue(input, prefix, suggestion) {
-	
 	let selStart = input.selectionStart;
 	let selEnd = input.selectionEnd;
 	let tail = input.value.slice(selEnd);
@@ -352,8 +353,8 @@ function updateInputValue(input, prefix, suggestion) {
 
 	input.blur();
 	input.focus();
-	
-	var act_elem = Session.get("activeElement");	
+
+	var act_elem = Session.get("activeElement");
 	var act_el = Elements.findOne({_id: act_elem});
 	if(typeof act_el !== 'undefined'){
 		var compart_type_id = $(input).closest(".compart-type").attr("id");
