@@ -142,7 +142,7 @@ const isAutocompletionActive = function() {
 const isAutocompletionKey = function(e) {
 	let ev = e.originalEvent;
 	//return (ev.ctrlKey || ev.metaKey) && ev.code === 'Space';
-	return ev.location === 0 && ev.key !== 'Escape'; // any "regular" key except Esc
+	return ev.location === 0 && ev.key !== 'Escape' && ev.key !== 'Tab'; // any "regular" key except Esc, Tab
 }
 
 function keyUpHandler(e){
