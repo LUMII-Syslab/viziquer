@@ -60,10 +60,8 @@ Interpreter.customMethods({
 				Template.ConnectClasses.IDS.set(ids);
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set(list);
-				// Template.ConnectClasses.shortLinkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: false});
-				// Template.ConnectClasses.test.set({data: false});
 				Template.ConnectClasses.linkID.set({data: "no link"});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
@@ -95,10 +93,8 @@ Interpreter.customMethods({
 				Template.ConnectClasses.IDS.set(ids);
 				Template.ConnectClasses.elements.set(usedClasses);
 				Template.ConnectClasses.linkList.set(list);
-				// Template.ConnectClasses.shortLinkList.set([{array: [{class: "Please choose direction to connect classes"}], number: -1}]);
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
-				// Template.ConnectClasses.test.set({data: false});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
@@ -129,10 +125,8 @@ Interpreter.customMethods({
 				Template.ConnectClasses.IDS.set(ids);				
 				Template.ConnectClasses.elements.set(usedClasses);							
 				Template.ConnectClasses.linkList.set(list);
-				// Template.ConnectClasses.shortLinkList.set(list);
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
-				// Template.ConnectClasses.test.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
@@ -147,12 +141,10 @@ Interpreter.customMethods({
 
 Template.ConnectClasses.IDS= new ReactiveVar([{name: "no class", id:"0"}]);
 Template.ConnectClasses.linkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1}]);
-// Template.ConnectClasses.shortLinkList = new ReactiveVar([{array: [{class: "No connection of given length is found"}], number: -1}]);
 Template.ConnectClasses.elements = new ReactiveVar([{name: "No class", id: 0}]);
 Template.ConnectClasses.addLongLink = new ReactiveVar({data: false});
 Template.ConnectClasses.linkMenu = new ReactiveVar({data: false});
 Template.ConnectClasses.linkID = new ReactiveVar({data: "no link"});
-// Template.ConnectClasses.test = new ReactiveVar({data: false});
 
 Template.ConnectClasses.helpers({
 
@@ -163,10 +155,6 @@ Template.ConnectClasses.helpers({
 	linkList: function(){
 		return Template.ConnectClasses.linkList.get();
 	},
-
-	// shortLinkList: function(){
-	// 	return Template.ConnectClasses.shortLinkList.get();
-	// },
 
 	elements: function(){
 		return Template.ConnectClasses.elements.get();
@@ -180,135 +168,9 @@ Template.ConnectClasses.helpers({
 		return Template.ConnectClasses.linkID.get();
 	},
 
-	// test: function(){
-	// 	return Template.ConnectClasses.test.get();
-	// },
-
 });
 
 Template.ConnectClasses.events({
-//O L D   V E R S I O N (no settings window)
-	// "click #show-settings": function(){
-	// 	var button = $("#show-settings");
-	// 	var elem = $("#settings");
-	// 	if (button.text() == "Hide settings"){
-	// 		button.text("Show settings");
-	// 		elem[0].style.display = "none";
-	// 	} else {
-	// 		button.text("Hide settings");
-	// 		elem[0].style.display = "block";
-	// 	}
-	// },
-
-	// "click #apply-settings": function(){
-	// 	var first = "";
-	// 	var fullList;
-	// 	var isTest = Template.ConnectClasses.test.get().data;
-	// 	var defaultLength = $("#default-max-length").is(':checked'); 
-	// 	var inverseLinks = $('input[name=inverse-links]:checked').val(); 
-	// 	if (!inverseLinks || inverseLinks == "undefined") {inverseLinks = "one"} console.log(isTest, defaultLength, inverseLinks);
-	// 	if (!Template.ConnectClasses.addLongLink.get().data){
-	// 		//check if starting element is selected			
-	// 		first = $('input[name=fc-radio]:checked').val();			
-	// 		if (!first || first == "" || first == undefined) {
-	// 			$('#direction_text')[0].style.color = "red";
-	// 			fullList = [{array: [{class: "Please choose direction to connect classes"}], number: -1}]
-	// 		} else {
-	// 			var maxLength = $("#max_length")[0].value;
-	// 			if (isTest && defaultLength){					
-	// 				$("#max_length")[0].value = "1";
-	// 				maxLength = 1;
-	// 			}			
-	// 			if (maxLength) {
-	// 				$('#direction_text')[0].style.color = "";
-	// 				$('#max_length_text')[0].style.color = "";
-	// 			//check if length is integer
-	// 				if( (maxLength - Math.round(maxLength)) != 0 ) { 
-	// 					Template.ConnectClasses.linkList.set([{array: [{class: "Please choose correct maximum length"}], number: -1}]);
-	// 					$('#max_length_text')[0].style.color = "red";
-	// 					return; 
-	// 				}				
-	// 				var ids = Template.ConnectClasses.IDS.curValue;
-	// 				//sort IDs in the right order top pass to GetChains
-	// 				//from-class at position 0, to-class at possition 1
-	// 				var newIds = [];
-	// 				_.each(ids, function(e){
-	// 					if (e.text == first){
-	// 						newIds[0] = e; 
-	// 					} else {
-	// 						newIds[1] = e;
-	// 					}
-	// 				})
-	// 				ids = newIds; //console.log("ids: ", newIds);
-
-	// 				// Create possible linking chains
-	// 				//{number: i, array:[{link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]}]}
-	// 				fullList = GetChains(ids, maxLength); 				
-	// 			}
-	// 		}
-	// 		Template.ConnectClasses.linkList.set(fullList);
-	// 		var value = $("#searchList").val().toLowerCase();
-	// 		console.log(fullList);
-	// 		if (isTest) {
-	// 			fullList = fullList.filter(function(e){
-	// 					var hasInv = 0;
-	// 					_.each(e.array, function(a){
-	// 						if (a["type"] && (a["type"] != "" && a["type"].indexOf("<=") > -1)) hasInv++;
-	// 					})
-	// 					console.log(inverseLinks, hasInv);
-	// 					if (inverseLinks == "none" && hasInv == 0) return true;
-	// 					if (inverseLinks == "one" && hasInv < 2) return true;
-	// 					if (inverseLinks == "more") return true;
-	// 					return false;
-	// 				});				
-	// 		}
-	// 		console.log(fullList);
-	// 		if (value == "" || value.indexOf(' ') > -1) {
-	// 			Template.ConnectClasses.shortLinkList.set(fullList);
-	// 		} else {
-	// 			Template.ConnectClasses.shortLinkList.set(applySearch(fullList, value));
-	// 		} console.log(Template.ConnectClasses.shortLinkList.curValue);
-	// 	} else {
-	// 		// console.log("159 - from add link");
-	// 		first = Session.get("activeElement");			
-	// 		if (!first || first == "" || first == undefined) {
-	// 			$('#direction_text')[0].style.color = "red";
-	// 			fullList = [{array: [{class: "Please choose class to connect from"}], number: -1}]
-	// 		} else {				
-	// 			var endClassName = $('#classList').val();
-	// 			if (!endClassName || endClassName == "") {
-	// 				$('#direction_text')[0].style.color = "red";
-	// 				fullList = [{array: [{class: "Please choose class to connect to"}], number: -1}]
-	// 			} else {
-	// 				var maxLength = $("#max_length")[0].value;			
-	// 				if (maxLength) {
-	// 					$('#direction_text')[0].style.color = "";
-	// 					$('#max_length_text')[0].style.color = "";
-	// 				//check if length is integer
-	// 					if( (maxLength - Math.round(maxLength)) != 0 ) { 
-	// 						Template.ConnectClasses.linkList.set([{array: [{class: "Please choose correct maximum length"}], number: -1}]);
-	// 						$('#max_length_text')[0].style.color = "red";
-	// 						return; 
-	// 					}				
-	// 					var newIds = [];
-	// 					newIds[0] = {text: first};
-	// 					newIds[1] = {text: "no_class_exists", name: endClassName}					
-
-	// 					// Create possible linking chains
-	// 					fullList = GetChains(newIds, maxLength);									
-	// 				}
-	// 			}
-	// 		}
-	// 		Template.ConnectClasses.linkList.set(fullList);
-	// 		var value = $("#searchList").val().toLowerCase();
-	// 		if (value == "" || value.indexOf(' ') > -1) {
-	// 			Template.ConnectClasses.shortLinkList.set(fullList);
-	// 		} else {
-	// 			Template.ConnectClasses.shortLinkList.set(applySearch(fullList, value));
-	// 		}			
-	// 	}		
-	// },
-
 	"keyup #searchList": function(){
 		$("div[id=errorFieldCC]").remove();
 		var value = $("#searchList").val().toLowerCase(); 
@@ -337,14 +199,14 @@ Template.ConnectClasses.events({
 					var found = false;
 
 					_.each(e.array, function(a){ console.log(e.array.indexOf(a), e.array.length - 1);
-						if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ console.log(340, a.link.toLowerCase().indexOf(value), a.class.toLowerCase().indexOf(value));
 						// the first class is not checked
+						if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ 						
 						// given classes are not searched for value 
 						// except last element - check both class and link
 							if (a.link.toLowerCase().indexOf(value) > -1 || a.class.toLowerCase().indexOf(value) > -1) {
 								found = true;
 							}
-						} else if (e.array.indexOf(a) == e.array.length - 1) { console.log(347, a.link.toLowerCase().indexOf(value));
+						} else if (e.array.indexOf(a) == e.array.length - 1) {
 						//last element - check only link
 							if (a.link.toLowerCase().indexOf(value) > -1) {
 								found = true;
@@ -357,7 +219,6 @@ Template.ConnectClasses.events({
 					} else {
 						data[data.indexOf(e)].show = false;
 					}
-					console.log(e, found);
 				} else {
 					data[data.indexOf(e)].show = false;
 				}
@@ -372,27 +233,6 @@ Template.ConnectClasses.events({
 		});
 
 		Template.ConnectClasses.linkList.set(data);
-
-	//O L D   V E R S I O N
-		// if (Template.ConnectClasses.test.curValue.data) {
-		// 	if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
-		// 		var data = Template.ConnectClasses.linkList.curValue;			
-		// 	} else {
-		// 		var ascList = Template.ConnectClasses.linkList.curValue;
-		// 		ascList = applySearch(ascList, value);
-		// 		//console.log(ascList);
-		// 		Template.ConnectClasses.shortLinkList.set(ascList);
-		// 	}
-		// } else {
-		// 	if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
-		// 		Template.ConnectClasses.shortLinkList.set(Template.ConnectClasses.linkList.curValue);			
-		// 	} else {
-		// 		var ascList = Template.ConnectClasses.linkList.curValue;
-		// 		ascList = applySearch(ascList, value);
-		// 		//console.log(ascList);
-		// 		Template.ConnectClasses.shortLinkList.set(ascList);
-		// 	}
-		// }
 	},
 
 
@@ -405,7 +245,6 @@ Template.ConnectClasses.events({
 		if (number < 0 || !number) {
 			$('#chain_text')[0].style.color = "red";
 			$("#connect-classes-form").modal("show");
-			//console.log("No chain selected"); 
 			return;
 		}
 		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
@@ -416,9 +255,8 @@ Template.ConnectClasses.events({
 		} else {
 			firstId = Session.get("activeElement");
 			lastElement = {name: chain[chain.length-1].class, id: "no_class_exists"};
-		} //console.log(firstId); console.log(Template.ConnectClasses.elements.curValue);
+		} 
 		var currentVQElment = new VQ_Element(firstId);		
-		// console.log(410, lastElement); return;
 
 		if (!propertyPath) {
 			console.log("TODO property path");
@@ -502,18 +340,6 @@ Template.ConnectClasses.events({
 	},
 
 	"click #option-button": function(){
-		// if (Template.ConnectClasses.addLongLink.curValue.data) {
-		// 	console.log("options from AddLink");
-		// 	Template.ConnectClassesSettings.fromFunction.set({data: "add"});			
-		// } else if(Template.ConnectClasses.linkMenu.curValue.data) {
-		// 	console.log("options from Link");
-		// 	Template.ConnectClassesSettings.fromFunction.set({data: "link"});
-		// } else {
-		// 	console.log("options from collection");
-		// 	Template.ConnectClassesSettings.fromFunction.set({data: "coll"});
-		// }
-		// Template.ConnectClasses.addLongLink.set({data: false});
-		// Template.ConnectClasses.linkMenu.set({data: false});
 		if (Template.ConnectClasses.addLongLink.get().data) {
 			Template.ConnectClassesSettings.addLongLinkS.set({data: true});
 		}
@@ -551,7 +377,6 @@ Template.ConnectClasses.events({
 //===========================
 //S E T T I N G S
 //===========================
-// Template.ConnectClassesSettings.fromFunction = new ReactiveVar({data: "coll"}); //"coll"(ection), "link", "add"(Link)
 Template.ConnectClassesSettings.fromToClass = new ReactiveVar({fromName: "", fromID: "", toName: "", toID:""});
 Template.ConnectClassesSettings.directionValue = new ReactiveVar({data: 0}); //start elem ID
 Template.ConnectClassesSettings.inverseValue = new ReactiveVar({data: "more"}); //"none", "one", "more"
@@ -559,10 +384,6 @@ Template.ConnectClassesSettings.pathLength = new ReactiveVar(3);
 Template.ConnectClassesSettings.addLongLinkS = new ReactiveVar({data: false});
 
 Template.ConnectClassesSettings.helpers({
-
-	// fromFunction: function(){
-	// 	return Template.ConnectClassesSettings.fromFunction.get();
-	// },
 
 	fromToClass: function(){
 		return Template.ConnectClassesSettings.fromToClass.get();
@@ -587,9 +408,8 @@ Template.ConnectClassesSettings.helpers({
 
 Template.ConnectClassesSettings.events({
 	"click #ok-connect-settings": function(){
-		//console.log("Settings - OK");
 		//Path's length		
-		if (document.getElementById("default-max-length").checked) {//console.log(582);
+		if (document.getElementById("default-max-length").checked) {
 			Template.ConnectClassesSettings.pathLength.set(3);
 			$('#max_length').val("3");
 		} else {
@@ -642,8 +462,7 @@ Template.ConnectClassesSettings.events({
 		var inverseCount = $('input[name=inverse-links]:checked').val();
 		Template.ConnectClassesSettings.inverseValue.set({data: inverseCount});
 		var data = Template.ConnectClasses.linkList.curValue;
-		_.each(data, function(a){
-			//console.log(a.show, inverseCount, a.countInverseLinks);							
+		_.each(data, function(a){						
 			if (inverseCount == "more" || (inverseCount == "none" && a.countInverseLinks < 1) || (inverseCount == "one" && a.countInverseLinks < 2)) {
 				a.show = true;
 			} else {
@@ -698,12 +517,9 @@ function clearConnectClassesInput(){
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
 	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
-	// Template.ConnectClasses.shortLinkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
 	Template.ConnectClasses.elements.set([{name: "No class", id: 0}]);
 	Template.ConnectClasses.addLongLink.set({data: false});
-	// Template.ConnectClasses.test.set({data: false});
 
-	// Template.ConnectClassesSettings.fromFunction.set({data: "coll"}); //"coll"(ection), "link", "add"(Link)
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
 	Template.ConnectClassesSettings.inverseValue.set({data: "more"}); //"none", "one", "more"
@@ -773,13 +589,7 @@ function GetChains(ids, maxLength){
 			}
 		}
 	}); 
-	// console.log(762, " reverse ",linkRezult);
-	// linkRezult = linkRezult.filter(function(e){
-	// 	if (linkRezult.indexOf(e) != linkRezult.lastIndexOf(e)) return false;
-	// 	return true;
-	// });
-	// console.log(767, " filtered ", linkRezult);
-	//console.log(elemInfo[1], GetLinks(elemInfo[1]["id"]));
+
 	var actChain = link_chain;
 	var asocNew = [];	
 	for (var i = 1; i < maxLength; i++){
@@ -804,25 +614,20 @@ function GetChains(ids, maxLength){
 					short_class_name:a.sourceClass.getElementShortName() || a.targetClass.getElementShortName()
 				}]*/
 				
-				_.each(allAsoc, function(a){//console.log(592, "allAsoc element = ", a);
+				_.each(allAsoc, function(a){
 					var index = -1;
 					var isNew = true;
-					_.each(asocNew, function(as){//console.log(596, "asocNew element = ", as.class, a.class, as.name, a.name, as.type, a.type);
+					_.each(asocNew, function(as){
 						//if association connects same classes AND the same link name (!= (as.type != a.type) => XOR different directions)
 						if (as.class == a.class && as.name == a.name) { 
-							isNew = false;
-							// if (as.type != a.type) index = asocNew.indexOf(as);
+							isNew = false;							
 						}
-					}); //console.log(602, index, index2, isNew);
+					}); 
 					
-					if (isNew) { //console.log(604, "new element");
-						asocNew.push(a); //console.log(605, asoc);
-					} 
-					// else if (a.class != className && a.type == "=>" && index > -1) { console.log(604, "need to change",className, a, index);
-					// 	asocNew[index] = a;
-					// 	console.log(612, asocNew[index]);
-					// }
-				}); //console.log(611, asocNew);
+					if (isNew) {
+						asocNew.push(a);
+					} 					
+				});
 
 				allAsoc = [];
 
@@ -877,13 +682,6 @@ function GetChains(ids, maxLength){
 		resultStringArray.push({array:[{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1});
 	};
 
-	// console.log(861, resultStringArray);
-	// resultStringArray = resultStringArray.filter(function(e){
-	// 	if (resultStringArray.indexOf(e) != resultStringArray.lastIndexOf(e)) return false;
-	// 	return true;
-	// });
-	// console.log(867, resultStringArray);
-
 	return resultStringArray;
 }
 
@@ -906,7 +704,11 @@ function GetLinks(start_elem_id){
 			return [{name: "", class: "", type: "=>"}];
 		}
 
-		asc = schema.findClassByName(className).getAllAssociations(); //console.log("874 ", className, asc);	
+		asc = schema.findClassByName(className).getAllAssociations(); //console.log("712 ", className, asc);
+
+		asc = asc.filter(function(obj, index, self) { 
+			return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+		});	//console.log("716 ", className, asc);
 
 		return asc;			
 	}
@@ -914,7 +716,6 @@ function GetLinks(start_elem_id){
 
 function AddNextLink(currentElement, chain, lastElement){
 	if (chain.length == 0)  {
-		//console.log("end AddNextLink");
 		return;
 	}
 
@@ -931,13 +732,12 @@ function AddNextLink(currentElement, chain, lastElement){
     var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
     var locLink = [];	
 	if (chain[0].class == lastElement.name && !Template.ConnectClasses.addLongLink.get().data) {
-		// console.log(400, "last chain", chain);
 		var lastVQElement = new VQ_Element(lastElement.id);
 		var proj = Projects.findOne({_id: Session.get("activeProject")});			
 		var newPosition = lastVQElement.getCoordinates(); 
 		var coordinates = GetLinkCoordinates(oldPosition, newPosition);
 		lastVQElement.setClassStyle("condition");
-		// console.log(406, currentElement, lastVQElement);		
+				
 		if (chain[0].direction == "=>") {				
         	if (coordinates.bind) {
         		locLink = [coordinates.x1, coordinates.y1, coordinates.x2, coordinates.y1, coordinates.x2, coordinates.y2];
@@ -969,7 +769,7 @@ function AddNextLink(currentElement, chain, lastElement){
 				}
             }, locLink, true, lastVQElement, currentElement);
         }
-	} else { //console.log(454, "chain", chain);
+	} else { 
 		var d = 30; //distance between boxes
 	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
 	    //Link Coordinates
@@ -1005,12 +805,9 @@ function AddNextLink(currentElement, chain, lastElement){
 	            }, locLink, true, cl, currentElement);
 	        }
 	        var newChain = _.rest(chain);
-	        // console.log(490, newChain);
 	        AddNextLink(cl, newChain, lastElement);
 	    }, newPosition);
 	}
-
-    // console.log(492, "end");
 }
 
 function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height: h}
@@ -1038,9 +835,9 @@ function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height
 		y1 = Math.round((Math.max(startElem.y, endElem.y) + Math.min(startElem.y + startElem.height, endElem.y + endElem.height))/2);
 		y2 = y1;
 		bY = false;
-	} //console.log({x1: x1, y1: y1, x2: x2, y2: y2, bind: (bX && bY)});
+	}
 
-	if (!bX) { //console.log(485);
+	if (!bX) {
 		if ((startElem.y + startElem.height) < endElem.y){ console.log(486);
 			y1 = y1 + Math.round(startElem.height/2);
 		} else if (startElem.y > (endElem.y + endElem.height)) { console.log(488);
@@ -1048,13 +845,13 @@ function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height
 		}				
 	}
 
-	if (!bY) {//console.log(493);
+	if (!bY) {
 		if ((startElem.x + startElem.width) < endElem.x){
 			x2 = x2 - Math.round(endElem.width/2);		
 		} else if (startElem.x > (endElem.x + endElem.width)) {
 			x2 = x2 + Math.round(endElem.width/2);
 		}
-	}//console.log({x1: x1, y1: y1, x2: x2, y2: y2, bind: (bX && bY)});
+	}
 	return {x1: x1, y1: y1, x2: x2, y2: y2, bind: (bX && bY)};
 }
 
@@ -1083,7 +880,7 @@ function applySearch(list, value){
 
 function countInverse(list) {			
 	var count = 0;
-	_.each(list, function(a){//console.log(a);
+	_.each(list, function(a){
 		var aDirection = a.direction;
 		if (aDirection && aDirection == "<=") {
 			count++;
