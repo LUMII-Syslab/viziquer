@@ -149,7 +149,9 @@ const AUTOCOMPLETE_EXCLUSIONS = [
 
 const isAutocompletionKey = function(e) {
 	let ev = e.originalEvent;
-	//return (ev.ctrlKey || ev.metaKey) && ev.code === 'Space';
+
+	if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') return true;
+	if (ev.ctrlKey || ev.metaKey) return false;
 	return ev.location === 0 && !AUTOCOMPLETE_EXCLUSIONS.includes(ev.key);
 }
 
@@ -589,9 +591,9 @@ function getContinuations(text, length, continuations) {
 			}
 		}
 		TermMessages = getCompletionTable(TermMessages)
-		
-		
-		
+
+
+
 		if (TermMessages[0] != null) {
 			return TermMessages
 			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
@@ -697,7 +699,7 @@ function getContinuationsNew(text, length, continuations) {
 			var messages = [];
 
 			//console.log("TermMessages", TermMessages, continuations, length, farthest_pos)
-			
+
 			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
 			for (var pos in uniqueMessages) {
