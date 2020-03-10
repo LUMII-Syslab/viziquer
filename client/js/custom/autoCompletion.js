@@ -290,7 +290,8 @@ function autocomplete(inp, continuations) {
 		continuations = { prefix: '', suggestions: []}
 	}
 	if (continuations.suggestions.length === 0) {
-		continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
+		// continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
+		continuations.suggestions.push({type: 0, name: ''});
 	}
 
 	let ss = continuations.suggestions;
