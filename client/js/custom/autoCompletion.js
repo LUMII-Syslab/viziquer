@@ -504,14 +504,24 @@ function getCompletionTable(continuations_to_report) {
 	return uniqueMessages
 }
 
+function removeEmpty(continuations_to_report){
+	var sortable = [];
+	for (var  key in continuations_to_report) {
+		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
+			sortable.push(continuations_to_report[key])
+		}
+	}
+	return sortable
+}
+
 function getCompletionTableNew(continuations_to_report, text) {
 
 	var sortable = [];
 	for (var  key in continuations_to_report) {
-		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
+		//if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
 			if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
 			else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
-		}// sortable.push(continuations_to_report[key]);
+		//}// sortable.push(continuations_to_report[key]);
 	}
 
 	sortable = sortable.sort(function (a, b) {
@@ -579,6 +589,9 @@ function getContinuations(text, length, continuations) {
 			}
 		}
 		TermMessages = getCompletionTable(TermMessages)
+		
+		
+		
 		if (TermMessages[0] != null) {
 			return TermMessages
 			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
@@ -676,13 +689,15 @@ function getContinuationsNew(text, length, continuations) {
 
 		TermMessages = getCompletionTableNew(TermMessages, text)
 		if (TermMessages[0] != null) {
-
+			TermMessages = removeEmpty(TermMessages);
 			return {prefix:prefix, suggestions:TermMessages}
-			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
+		//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
 			var uniqueMessages = getCompletionTableNew(continuations_to_report, text)
 			var messages = [];
 
+			//console.log("TermMessages", TermMessages, continuations, length, farthest_pos)
+			
 			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
 			for (var pos in uniqueMessages) {
@@ -694,7 +709,7 @@ function getContinuationsNew(text, length, continuations) {
 	}
 
 	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
-
+	uniqueMessages = removeEmpty(uniqueMessages);
 	return {prefix:prefix, suggestions:uniqueMessages}
 }
 
