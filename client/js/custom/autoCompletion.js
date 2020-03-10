@@ -210,6 +210,7 @@ function keyDownHandler(e){
 		addActive(listItems);
 	} else if (e.keyCode === 13) { //ENTER
 		e.preventDefault();
+		e.stopPropagation();
 		if (currentFocus === -1) currentFocus = 0;
 		if (currentFocus > -1) {
 			if (listItems) listItems[currentFocus].click();
