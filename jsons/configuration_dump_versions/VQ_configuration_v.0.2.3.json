@@ -247,10 +247,6 @@
             "procedure": "align_selected_boxes"
           },
           {
-            "item": "Connect Classes",
-            "procedure": "ConnectClasses"
-          },
-          {
             "item": "Execute selection",
             "procedure": "ExecuteSPARQL_from_selection"
           },
@@ -925,44 +921,24 @@
             "readModeKeyStrokes": [],
             "contextMenu": [
               {
-                "item": "Add Field ...",
-                "procedure": "AddAttribute",
-				"subMenu": [
-					{
-						"item": "Simple (attribute) ...",
-						"procedure": "AddAttribute"
-					},
-					{
-						"item": "Aggregate ...",
-						"procedure": "AddAggregate"
-					},
-					{
-						"item": "Filter (Condition) ...",
-						"procedure": "AddCondition"
-					},
-					{
-						"item": "Explain ...",
-						"procedure": "ExplainField"
-					}
-                ]
+                "item": "Aggregate ...",
+                "procedure": "AddAggregate"
               },
-			  {
+              {
                 "item": "Add Link ...",
-                "procedure": "AddLink",
-				"subMenu": [
-                  	{
-						"item": "Simple (join) ...",
-						"procedure": "AddLink"
-					},
-					{
-						"item": "Subquery ...",
-						"procedure": "AddSubquery"
-					},
-					{
-						"item": "Explain ...",
-						"procedure": "ExplainLink"
-					}
-                ]
+                "procedure": "AddLink"
+              },
+              {
+                "item": "Add Subquery ...",
+                "procedure": "AddSubquery"
+              },
+              {
+                "item": "Add Attributes ...",
+                "procedure": "AddAttribute"
+              },
+              {
+                "item": "Add Condition ...",
+                "procedure": "AddCondition"
               },
               {
                 "item": "Re-shape Query",
@@ -1370,6 +1346,10 @@
                         "name": "Expression",
                         "extensionPoints": [
                           {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetAttributeNames"
+                          },
+                          {
                             "extensionPoint": "processKeyStroke",
                             "procedure": "attributeAutoCompletion"
                           }
@@ -1381,8 +1361,7 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Expression",
-						"description": "Use Ctrl+Space for text auto-completion"
+                        "label": "Expression"
                       },
                       {
                         "_id": "4727f620bbedd3f1f98bde47",
@@ -1888,7 +1867,8 @@
                         "suffix": null,
                         "defaultValue": null,
                         "inputType": {
-                          "type": "combobox"
+                          "type": "textarea",
+                          "rows": 3
                         },
                         "description": "Use Ctrl+Space for text auto-completion",
                         "subCompartmentTypes": [],
@@ -2849,10 +2829,6 @@
             "readModeKeyStrokes": [],
             "contextMenu": [
               {
-                "item": "Connect classes",
-                "procedure": "linkConnectClasses"
-              },
-              {
                 "item": "Delete",
                 "procedure": "Delete"
               }
@@ -3131,13 +3107,16 @@
                     "procedure": "VQsetAssociationName"
                   },
                   {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": "VQgetAssociationNames"
+                  },
+				  {
                     "extensionPoint": "processKeyStroke",
                     "procedure": "linkAutoCompletion"
                   }
                 ],
                 "dialogTabId": "LH5gP2Peqhnu5rMeB",
-                "label": "Name",
-				"description": "Use Ctrl+Space for text auto-completion"
+                "label": "Name"
               }
             },
             {
