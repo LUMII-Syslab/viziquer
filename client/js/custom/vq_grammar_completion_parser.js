@@ -19737,8 +19737,8 @@ vq_grammar_completion_parser = (function() {
     				
     				if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
     				else  varibleName = makeVar(o);
-    				if(options.schema.resolveLinkByName(varibleName) != null) addContinuation(location(), ".", 99, false, 2, "end");
-    				if(resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) addContinuation(location(), ":", 30, false, 2, "end");
+    				if(options.schema.resolveLinkByName(varibleName) != null) addContinuation(location(), ".", 99, false, 4, "end");
+    				if(resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) addContinuation(location(), ":", 30, false, 4, "end");
     				
     				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
     				
