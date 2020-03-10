@@ -263,6 +263,24 @@ function autocomplete(inp, continuations) {
     /*close any already open lists of autocompleted values*/
     closeAllLists();
 
+	if (typeof continuations === 'string') { // should not happen
+		// continuations = { prefix: '', suggestions: []}
+		return;
+	}
+	if (continuations.suggestions.length === 0) {
+		// continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
+		// continuations.suggestions.push({type: 0, name: ''});
+		return;
+	}
+
+	let ss = continuations.suggestions;
+	let nonLanguageConstruct = ss.find(s => s.type < 4);
+	if (!nonLanguageConstruct) {
+		ss.push({type: 0, name: '', priority: Number.MAX_SAFE_INTEGER});
+	}
+
+	ss.sort((a, b) => b.priority - a.priority);
+
 	/*create a DIV element that will contain the items (values):*/
     a = document.createElement("DIV");
 
@@ -286,16 +304,6 @@ function autocomplete(inp, continuations) {
     /*append the DIV element as a child of the autocomplete container:*/
     inp.parentNode.appendChild(a);
 
-	if (typeof continuations === 'string') { // should not happen
-		continuations = { prefix: '', suggestions: []}
-	}
-	if (continuations.suggestions.length === 0) {
-		// continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
-		continuations.suggestions.push({type: 0, name: ''});
-	}
-
-	let ss = continuations.suggestions;
-	ss.sort((a, b) => b.priority - a.priority);
 	for (let [i, sugg] of ss.entries()) {
         /*create a DIV element for each matching element:*/
 		b = document.createElement("DIV");
