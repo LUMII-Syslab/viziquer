@@ -436,6 +436,7 @@ function clearAddLinkInput(){
 
 	$('[name=type-radio]').removeAttr('checked');
 	$('input[name=type-radio][value="JOIN"]').attr('checked', true);
+	$('input[id=goto-wizard]').attr("checked",false);
 	$('input[id=goto-wizard]').attr("disabled","disabled");
 	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
