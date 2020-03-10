@@ -256,7 +256,6 @@ function autocomplete(inp, continuations) {
 	};
 
 	removeMessage();
-
 	var cursorPosition = inp.selectionStart;
 
 	var a, b, i, val = inp.value;
@@ -288,7 +287,10 @@ function autocomplete(inp, continuations) {
     inp.parentNode.appendChild(a);
 
 	if (typeof continuations === 'string') { // should not happen
-		continuations = { prefix: '', suggestions: [{type: 0, name: 'no suggestions found'}]}
+		continuations = { prefix: '', suggestions: []}
+	}
+	if (continuations.suggestions.length === 0) {
+		continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
 	}
 
 	let ss = continuations.suggestions;
