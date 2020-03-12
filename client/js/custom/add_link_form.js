@@ -1,12 +1,18 @@
 Interpreter.customMethods({
 	AddLink: function () {
 		Interpreter.destroyErrorMsg();
-		Template.AddLink.fullList.set(getAllAssociations());
-		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		var asc = [];
+		_.each(getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+		})
+		Template.AddLink.fullList.set(asc);
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
 
 		$('[name=type-radio]').removeAttr('checked');
-		$('input[name=type-radio][value="JOIN"]').prop('checked', true);		
+		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
+		$('input[id=goto-wizard]').prop("checked",false);
+		$('input[id=goto-wizard]').prop("disabled","disabled");		
 		$("#add-link-form").modal("show");
 	},
 
@@ -17,15 +23,20 @@ Interpreter.customMethods({
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
 		Template.AddLink.fullList.set(asc);		
-		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		Template.AddLink.testAddLink.set({data: true});		
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		Template.AddLink.testAddLink.set({data: true});	
+
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
+		$('input[id=goto-wizard]').prop("checked",false);
+		$('input[id=goto-wizard]').prop("disabled","disabled");	
 		$("#add-link-form").modal("show");
 	},
 
 	AddSubquery: function () {
 		Interpreter.destroyErrorMsg();
 		Template.AddLink.fullList.set(getAllAssociations());
-		Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
 
 		$('[name=type-radio]').removeAttr('checked');
@@ -37,7 +48,7 @@ Interpreter.customMethods({
 })
 
 Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: "", show: true}]);
-Template.AddLink.shortList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
+// Template.AddLink.shortList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 Template.AddLink.testAddLink = new ReactiveVar({data: false});
 
 Template.AddLink.helpers({
@@ -46,9 +57,9 @@ Template.AddLink.helpers({
 		return Template.AddLink.fullList.get();
 	},
 
-	shortList: function(){
-		return Template.AddLink.shortList.get();
-	},
+	// shortList: function(){
+	// 	return Template.AddLink.shortList.get();
+	// },
 
 	testAddLink: function(){
 		return Template.AddLink.testAddLink.get();
@@ -216,118 +227,133 @@ Template.AddLink.events({
 	},
 
 	"keyup #mySearch": function(){
-		if (!Template.AddLink.testAddLink.curValue.data){ console.log("\nmySearch NORMAL action");
-		//1st version
-			// $("div[id=errorField]").remove();
-			// var value = $("#mySearch").val().toLowerCase();
-			// if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
-			// 	Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-			// } else {
-			// 	var ascList = Template.AddLink.fullList.curValue;
-			// 	ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
-			// 		return e.name.toLowerCase().indexOf(value) > -1 || e.class.toLowerCase().indexOf(value) > -1;
-			// 	})
-			// 	Template.AddLink.shortList.set(ascList);
-			// }
-			$("div[id=errorField]").remove();
-			var value = $("#mySearch").val().toLowerCase();
-			if (value == "" || value == " ") {//empty or space - show all elements
-				Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-				// var asc = Template.AddLink.fullList.curValue;
-				// _.each(asc, function(a){
-				// 	asc.show = true;
-				// })
-				// Template.AddLink.fullList.set(asc);	
-			} else if (value.indexOf('.') > -1) {
-				console.log("property path");
-				value = value.split('.');
-				if (value.length > 2) {
-					console.log("too many points");
-					return;
-				}
+	// 	if (!Template.AddLink.testAddLink.curValue.data){ console.log("\nmySearch NORMAL action");
+	// 		$("div[id=errorField]").remove();
+	// 		var value = $("#mySearch").val().toLowerCase();
+	// 		value = value.trim();
+	// 		if (value == "" || value == " ") {//empty or space - show all elements
+	// 			// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+	// //TEST
+	// 			// if (Template.AddLink.testAddLink.curValue.data){
+	// 				var asc = Template.AddLink.fullList.curValue;
+	// 				_.each(asc, function(a){
+	// 					a.show = true;
+	// 				})
+	// 				Template.AddLink.fullList.set(asc);	
+	// 			// }
+	// 		} else if (value.indexOf('.') > -1) {
+	// 			console.log("property path");
+	// 			value = value.split('.');
+	// 			if (value.length > 2) {
+	// 				console.log("too many points");
+	// 				$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 period to separate link and class</div>");
+	// 				return;
+	// 			}
 
-				_.each(value, function(v){
-					console.log(v);
-					if (v.indexOf(' ') > -1 || v.indexOf(',') > -1) {
-						var newV = v.replace(/,/g, ' ').replace(/ {2,}/g, ' ').split(" ");
-						value[value.indexOf(v)] = newV;			
-					} else {
-						value[value.indexOf(v)] = [v];
-					}
-				})
+	// 			_.each(value, function(v){
+	// 				console.log(v);
+	// 				if (v.indexOf(' ') > -1 || v.indexOf(',') > -1) {
+	// 					var newV = v.replace(/,/g, ' ').replace(/ {2,}/g, ' ').split(" ");
+	// 					value[value.indexOf(v)] = newV;			
+	// 				} else {
+	// 					value[value.indexOf(v)] = [v];
+	// 				}
+	// 			})
 
-				console.log(value);
+	// 			console.log(value);
 
-				var ascList = Template.AddLink.fullList.curValue;
-				var asc = Template.AddLink.fullList.curValue;
-				ascList = ascList.filter(function(e){
-					var hasLink = true;
-					var hasClass = true;
+	// 			var ascList = Template.AddLink.fullList.curValue;
+	// 			var asc = Template.AddLink.fullList.curValue;
+	// 			// ascList = ascList.filter(function(e){
+	// 			_.each(ascList, function(e){
+	// 				var hasLink = true;
+	// 				var hasClass = true;
 
-					_.each(value[0], function(v){
-						if (v != "" && e.name.toLowerCase().indexOf(v) == -1) {
-							hasLink = false;
-						}
-					});
+	// 				_.each(value[0], function(v){
+	// 					if (v != "" && e.name.toLowerCase().indexOf(v) == -1) {
+	// 						hasLink = false;
+	// 					}
+	// 				});
 
-					_.each(value[1], function(v){
-						if (v != "" && e.class.toLowerCase().indexOf(v) == -1) {
-							hasClass = false;
-						}
-					});
-					// asc[asc.indexOf(e)].show = (hasLink && hasClass);
-					return (hasLink && hasClass);
-				})
+	// 				_.each(value[1], function(v){
+	// 					if (v != "" && e.class.toLowerCase().indexOf(v) == -1) {
+	// 						hasClass = false;
+	// 					}
+	// 				});
+	// //TEST
+	// 				// if (Template.AddLink.testAddLink.curValue.data){
+	// 					asc[asc.findIndex(elem => _.isEqual(elem,e) )].show = (hasLink && hasClass);
+	// 				// }
+	// 				// return (hasLink && hasClass);
+	// 			})
 
-				Template.AddLink.shortList.set(ascList);	
-			} else {
-				if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
-					value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
-					value = value.split(" ");			
-				} else {
-					value = [value];
-				}
-				value = value.filter(function(e) { return e !== "" });
+	// 			// Template.AddLink.shortList.set(ascList);
+	// //TEST
+	// 			// if (Template.AddLink.testAddLink.curValue.data){
+	// 				Template.AddLink.fullList.set(asc);
+	// 			// }	
+	// 		} else {
+	// 			if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
+	// 				value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
+	// 				value = value.split(" ");			
+	// 			} else {
+	// 				value = [value];
+	// 			}
+	// 			value = value.filter(function(e) { return e !== "" });
 
-				var ascList = Template.AddLink.fullList.curValue;
-				ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
-					var hasValues = true;
-					_.each(value, function(v){ //check if any of searched values is missing
-						if (e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
-							hasValues = false;
-						}
-					});
-					//asc[asc.indexOf(e)].show = hasValues;
-					return hasValues;
-				})			
-				Template.AddLink.shortList.set(ascList);
-			}
-		} else {
-			console.log("\nmySearch TEST action");
+	// 			var ascList = Template.AddLink.fullList.curValue;
+	// 			// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}		
+	// 			_.each(ascList, function(e){		
+	// 				var hasValues = true;
+	// 				_.each(value, function(v){ //check if any of searched values is missing
+	// 					if (e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
+	// 						hasValues = false;
+	// 					}
+	// 				});
+	// //TEST
+	// 				if (Template.AddLink.testAddLink.curValue.data){
+	// 					asc[asc.findIndex(elem => _.isEqual(elem,e) )].show = hasValues;
+	// 				}
+	// 				return hasValues;
+	// 			})			
+	// 			// Template.AddLink.shortList.set(ascList);
+	// //TEST
+	// 			// if (Template.AddLink.testAddLink.curValue.data){
+	// 				Template.AddLink.fullList.set(asc);
+	// 			// }
+	// 		}
+	// 	} else {
+			// console.log("\nmySearch TEST action");
 			$("div[id=errorField]").remove();
 			var value = $("#mySearch").val().toLowerCase(); console.log("mySearch read value: ", value);
+			var asc = Template.AddLink.fullList.curValue;
 			if (value == "" || value == " ") {//empty or space - show all elements
-				Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-				// var asc = Template.AddLink.fullList.curValue;
-				// _.each(asc, function(a){
-				// 	asc.show = true;
-				// })
-				// Template.AddLink.fullList.set(asc);
-				console.log("mySearch empty value or space");
+				// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+	//TEST
+				// if (Template.AddLink.testAddLink.curValue.data){
+					
+					_.each(asc, function(a){
+						a.show = true;
+					})
+					Template.AddLink.fullList.set(asc);
+				// }
+				// console.log("mySearch empty value or space");
 			} else if (value.indexOf('.') > -1) {
-				console.log("TODO property path");
+				// console.log("TODO property path");
 				value = value.split(".");
 				if (value.length > 2){ //More then 1 point is used
-					Template.AddLink.shortList.set([]);
-		        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 point to separate link and class</div>");
-		   //      	var asc = Template.AddLink.fullList.curValue;
-					// _.each(asc, function(a){
-					// 	asc.show = false;
-					// })
-					// Template.AddLink.fullList.set(asc);
+					// Template.AddLink.shortList.set([]);
+		        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 period to separate link and class</div>");
+	//TEST
+		        	// if (Template.AddLink.testAddLink.curValue.data){		        		
+						_.each(asc, function(a){
+							a.show = false;
+						})
+						Template.AddLink.fullList.set(asc);
+					// }
 					console.log("Multiple points (.)");
 				} else {
-					console.log("mySearch single point");
+					// console.log("mySearch single point");
 					$("div[id=errorField]").remove();
 
 					if (value[0].indexOf(' ') > -1 || value[0].indexOf(',') > -1) {
@@ -346,8 +372,10 @@ Template.AddLink.events({
 					}
 					value[1] = value[1].filter(function(e) { return e !== "" });
 
-					var ascList = Template.AddLink.fullList.curValue;
-					ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
+					// var ascList = Template.AddLink.fullList.curValue;
+					// var asc = Template.AddLink.fullList.curValue;
+					// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
+					_.each(asc, function(e){
 						var hasValues = true;
 
 						_.each(value[0], function(v){ //check if any of searched values is missing in link part
@@ -362,14 +390,21 @@ Template.AddLink.events({
 									hasValues = false;
 								}
 							});
-						}
-						// asc[asc.indexOf(e)].show = hasValues;
-						return hasValues;
+						};
+	//TEST
+						// if (Template.AddLink.testAddLink.curValue.data){
+							e.show = hasValues;
+						// }
+						// return hasValues;
 					})
-					Template.AddLink.shortList.set(ascList);
+					// Template.AddLink.shortList.set(ascList);
+	//TEST
+					// if (Template.AddLink.testAddLink.curValue.data){
+						Template.AddLink.fullList.set(asc);
+					// }
 				}
 
-			} else { console.log("mySearch no point");
+			} else { //console.log("mySearch no point");
 				if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
 					value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
 					value = value.split(" ");			
@@ -378,29 +413,27 @@ Template.AddLink.events({
 				}
 				value = value.filter(function(e) { return e !== "" }); console.log("mySearch new value: ", value);
 
-				var ascList = Template.AddLink.fullList.curValue; console.log("mySearch full list: ", ascList);
-				ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
+				// var ascList = Template.AddLink.fullList.curValue; console.log("mySearch full list: ", ascList);
+				// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
+				_.each(asc, function(e){
 					var hasValues = true;
 					_.each(value, function(v){ //check if any of searched values is missing
 						if (e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
 							hasValues = false;
 						}
-					});
-					// asc[asc.indexOf(e)].show = hasValues;
+					}); //console.log(400, e, asc.findIndex(elem => _.isEqual(elem,e) ));//;
+	//TEST
+					// if (Template.AddLink.testAddLink.curValue.data){
+						e.show = hasValues;
+					// }
 					return hasValues;
-				}); console.log("mySearch filtered list: ", ascList);
-				Template.AddLink.shortList.set(ascList); console.log("mySearch no point finished\n");
+				}); //console.log("mySearch filtered list: ", ascList);
+				// Template.AddLink.shortList.set(ascList); console.log("mySearch no point finished\n");
+	//TEST
+				// if (Template.AddLink.testAddLink.curValue.data){
+					Template.AddLink.fullList.set(asc);
+				// }
 			}
-		}
-//Original
-		// if (value == "" || value.indexOf(' ') > -1) {//empty or contains space
-		// 	Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		// } else {
-		// 	var ascList = Template.AddLink.fullList.curValue;
-		// 	ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
-		// 		return e.name.toLowerCase().indexOf(value) > -1 || e.class.toLowerCase().indexOf(value) > -1;
-		// 	})
-		// 	Template.AddLink.shortList.set(ascList);
 		// }
 	},
 
@@ -432,12 +465,12 @@ function clearAddLinkInput(){
 	});
 
 	Template.AddLink.fullList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
-	Template.AddLink.shortList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
+	// Template.AddLink.shortList.set([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 
 	$('[name=type-radio]').removeAttr('checked');
 	$('input[name=type-radio][value="JOIN"]').attr('checked', true);
-	$('input[id=goto-wizard]').attr("checked",false);
-	$('input[id=goto-wizard]').attr("disabled","disabled");
+	$('input[id=goto-wizard]').prop("checked",false);
+	$('input[id=goto-wizard]').prop("disabled","disabled");
 	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
 }
@@ -590,7 +623,11 @@ function getAllAssociations(){
 				else {
       				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""});
       			}
-      		}  		
+      		}
+
+      		asc = asc.filter(function(obj, index, self) { 
+				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+			});  		
 			return asc;
 		}
 }

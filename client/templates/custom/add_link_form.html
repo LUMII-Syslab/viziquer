@@ -97,31 +97,33 @@
                 </div>
    
                 <div class="link-type-part">
-                    <form id="add-link-type-choice" class="form-horizontal" role="form">
+                    <form class="form-horizontal" role="form">
                         <div class="form-group">                            
                             <div name="chain">                       
                                 <p style="color: black;"> Change Link Type </p>
-								<label class="label-radio">                                    
-                                    <input type="radio" name="type-radio" value="JOIN">
-                                    <span class="custom-radio"></span>
-                                    Join Link &ensp;
-                                    <div class="help-tip">
-                                        <p>Add linked class information to the joint selection </p>
-                                    </div>
-                                    <div class="describe">join linked information from both classes together</div>
-                                </label>
-                                <!-- <br style="line-height: 200%;"> -->
-                                <label class="label-radio">
-                                    <input type="radio" name="type-radio" value="NESTED">
-                                    <span class="custom-radio"></span>
-                                    Subquery Link &ensp;
-                                    <div class="help-tip">
-                                        <p>Use to aggregate (count, sum, max, ...) over linked class elements (or their attributes)
-										that are connected to the source instance. <br>
-										Use to check, if a connected linked class instance exists.</p>
-                                    </div>
-                                    <div class="describe">aggregate over linked class elements, check their existence</div>
-                                </label>
+                                <div id="add-link-type-choice">
+    								<label class="label-radio">                                    
+                                        <input type="radio" name="type-radio" value="JOIN">
+                                        <span class="custom-radio"></span>
+                                        Join Link &ensp;
+                                        <div class="help-tip">
+                                            <p>Add linked class information to the joint selection </p>
+                                        </div>
+                                        <div class="describe">join linked information from both classes together</div>
+                                    </label>
+                                    <!-- <br style="line-height: 200%;"> -->
+                                    <label class="label-radio">
+                                        <input type="radio" name="type-radio" value="NESTED">
+                                        <span class="custom-radio"></span>
+                                        Subquery Link &ensp;
+                                        <div class="help-tip">
+                                            <p>Use to aggregate (count, sum, max, ...) over linked class elements (or their attributes)
+    										that are connected to the source instance. <br>
+    										Use to check, if a connected linked class instance exists.</p>
+                                        </div>
+                                        <div class="describe">aggregate over linked class elements, check their existence</div>
+                                    </label>
+                                </div>
 
                                 <div style="margin-left:25px; margin-right: 20px; margin-top:5px;"> <!-- "display:inline;" -->
                                     <input type="checkbox" id="goto-wizard" value="DISPLAY" disabled>
@@ -139,7 +141,7 @@
                 <div class="modal-body" id="mbodyAL">                    
                     <form id="link-list-form" class="form-horizontal" role="form">                        
                         <div class="form-group">
-                        <!-- {{#if testAddLink.data}}                   
+                        <!-- {{#if testAddLink.data}}                    -->
                             {{#each fullList}}
                                 {{#if show}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
@@ -151,7 +153,7 @@
                                 </div>
                                 {{/if}}
                             {{/each}}
-                        {{else}} -->
+                        <!-- {{else}}
                             {{#each shortList}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">
@@ -161,7 +163,7 @@
                                     </label>
                                 </div>
                             {{/each}}
-                        <!-- {{/if}} -->
+                        {{/if}} -->
                         </div>
                         <!-- <div class="form-group">
                             <div class="col-sm-10">
