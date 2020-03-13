@@ -518,24 +518,15 @@ function getCompletionTable(continuations_to_report) {
 	return uniqueMessages
 }
 
-function removeEmpty(continuations_to_report){
-	var sortable = [];
-	for (var  key in continuations_to_report) {
-		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
-			sortable.push(continuations_to_report[key])
-		}
-	}
-	return sortable
-}
 
 function getCompletionTableNew(continuations_to_report, text) {
 
 	var sortable = [];
 	for (var  key in continuations_to_report) {
-		//if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
+		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
 			if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
 			else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
-		//}// sortable.push(continuations_to_report[key]);
+		}// sortable.push(continuations_to_report[key]);
 	}
 
 	sortable = sortable.sort(function (a, b) {
@@ -664,12 +655,11 @@ function getContinuationsNew(text, length, continuations) {
 
 				for (var pos in continuations[i]) {
 					//if contuniation contains sub string
-					//console.log("WWW", wholeWordMatch, pos, varrible)
-					if (wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
+					if (isNaN(varrible.substring(0, 1)) != false && wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
 						prefix = text.substring(0, i);
 						continuations_to_report[pos] = continuations[i][pos];
 						startedContinuations[pos] = continuations[i][pos];
-					} //else if(varrible == pos) wholeWordMatch = true;
+					} 
 					else {
 						//if starts with
 						if (pos.substring(0, varrible.length).toLowerCase() == varrible.toLowerCase() && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
@@ -701,16 +691,13 @@ function getContinuationsNew(text, length, continuations) {
 			}
 		}
 
-		TermMessages = getCompletionTableNew(TermMessages, text)
-		if (TermMessages[0] != null) {
-			TermMessages = removeEmpty(TermMessages);
+		if (Object.keys(TermMessages).length > 0) {
+			TermMessages = getCompletionTableNew(TermMessages, text)
 			return {prefix:prefix, suggestions:TermMessages}
 		//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
 			var uniqueMessages = getCompletionTableNew(continuations_to_report, text)
 			var messages = [];
-
-			//console.log("TermMessages", TermMessages, continuations, length, farthest_pos)
 
 			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
@@ -721,9 +708,7 @@ function getContinuationsNew(text, length, continuations) {
 			return messages
 		}
 	}
-
 	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
-	uniqueMessages = removeEmpty(uniqueMessages);
 	return {prefix:prefix, suggestions:uniqueMessages}
 }
 

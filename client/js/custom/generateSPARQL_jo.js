@@ -1987,7 +1987,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
 
 							var parentClass = "";
-							if(sparqlTable["subClasses"][subclass]["linkTriple"] != null || sparqlTable["subClasses"][subclass]["equalityLink"] == true) {
+
+							// if(sparqlTable["subClasses"][subclass]["linkTriple"] != null || sparqlTable["subClasses"][subclass]["equalityLink"] == true) {
+							if(sparqlTable["isUnion"] == false && sparqlTable["isUnit"] == false) {
 								parentClass = sparqlTable["class"] //+ " ";
 
 								selectResult["groupBy"].unshift(sparqlTable["class"]);
@@ -2445,6 +2447,7 @@ function generateSELECT(sparqlTable, forSingleClass){
 }
 
 function checkIfIsURI(text){
+	if(text == null) return "not_uri";
 	if(text.indexOf("://") != -1) return "full_form";
 	else if(text.indexOf(":") != -1) return "prefix_form";
 	return "not_uri";
