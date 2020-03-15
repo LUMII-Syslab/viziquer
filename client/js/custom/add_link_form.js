@@ -16,6 +16,23 @@ Interpreter.customMethods({
 		$("#add-link-form").modal("show");
 	},
 
+	AddSubquery: function () {
+		Interpreter.destroyErrorMsg();
+		var asc = [];
+		_.each(getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+		})
+		Template.AddLink.fullList.set(asc);
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		Template.AddLink.testAddLink.set({data: false});
+
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
+		$('input[id=goto-wizard]').attr('checked', false);
+		$('#goto-wizard').removeAttr("disabled");
+		$("#add-link-form").modal("show");
+	},
+
 	AddLinkTest: function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
@@ -30,19 +47,6 @@ Interpreter.customMethods({
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
 		$('input[id=goto-wizard]').prop("checked",false);
 		$('input[id=goto-wizard]').prop("disabled","disabled");	
-		$("#add-link-form").modal("show");
-	},
-
-	AddSubquery: function () {
-		Interpreter.destroyErrorMsg();
-		Template.AddLink.fullList.set(getAllAssociations());
-		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		Template.AddLink.testAddLink.set({data: false});
-
-		$('[name=type-radio]').removeAttr('checked');
-		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
-		$('input[id=goto-wizard]').attr('checked', false);
-		$('#goto-wizard').removeAttr("disabled");
 		$("#add-link-form").modal("show");
 	},
 })
@@ -418,7 +422,7 @@ Template.AddLink.events({
 				_.each(asc, function(e){
 					var hasValues = true;
 					_.each(value, function(v){ //check if any of searched values is missing
-						if (e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
+						if (hasValue && e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
 							hasValues = false;
 						}
 					}); //console.log(400, e, asc.findIndex(elem => _.isEqual(elem,e) ));//;
