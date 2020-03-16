@@ -228,39 +228,52 @@ Template.createProjectModal.events({
 
 	'click #create-project': function(e) {
 
-		$("#add-project").modal("hide");
-
 		var project_name_obj = $('#project-name');
 		var icon_name_obj = $("#icon-name");
 		var category_obj = $("#category-name");
 
 		var project_name = project_name_obj.val();
-		var tool_id = $("#tool").find(":selected").attr("id");
-		var icon_name = icon_name_obj.val();
-		var category_name = category_obj.val();
+		
+		if(project_name != ""){
+			
+			document.getElementById("project-name-required").style.display = "none";
+			document.getElementById("project-name").style.borderColor = "#ccc";
+			
+			$("#add-project").modal("hide");
+			
+			var tool_id = $("#tool").find(":selected").attr("id");
+			var icon_name = icon_name_obj.val();
+			var category_name = category_obj.val();
 
-		//console.log(tool_id);
-		//console.log(Services.find().count())
-		//console.log(Services.findOne({toolId: tool_id }));
+			//console.log(tool_id);
+			//console.log(Services.find().count())
+			//console.log(Services.findOne({toolId: tool_id }));
 
-		//resets tools query
-		Session.set("tools", reset_variable());
+			//resets tools query
+			Session.set("tools", reset_variable());
 
-		var list = {name: project_name,
-					icon: icon_name,
-					category: category_name,
-		            toolId: tool_id,
-				};
+			var list = {name: project_name,
+						icon: icon_name,
+						category: category_name,
+						toolId: tool_id,
+					};
 
-		var obj = $('input[name=stack-radio]:checked').closest(".schema");
-		var type = obj.attr("type");
-		if ( type == "schema" )
-			list.schema_link = obj.attr("link")
-		if ( type == "project" )
-			list.project_link = obj.attr("link")	
-		//console.log("Jauna projekta taisīšana");
+			var obj = $('input[name=stack-radio]:checked').closest(".schema");
+			var type = obj.attr("type");
+			if ( type == "schema" )
+				list.schema_link = obj.attr("link")
+			if ( type == "project" )
+				list.project_link = obj.attr("link")	
+			//console.log("Jauna projekta taisīšana");
 
-		Utilities.callMeteorMethod("insertProject", list);
+			Utilities.callMeteorMethod("insertProject", list);
+		} else {
+			
+			console.log(document.getElementById("project-name").style.borderColor)
+			
+			document.getElementById("project-name").style.borderColor = "red";
+			document.getElementById("project-name-required").style.display = "block";
+		}
 	},
 	'click #tool' : function(e){
 		var tool_id = $("#tool").find(":selected").attr("id");

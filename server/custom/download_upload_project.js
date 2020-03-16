@@ -113,6 +113,15 @@ function uploadProject(list) {
 								useDefaultGroupingSeparator: "",
 								useStringLiteralConversion: "",
 								queryEngineType: "",
+								defaultGroupingSeparator: "",
+								directClassMembershipRole: "",
+								indirectClassMembershipRole: "",
+								showCardinalities: "",
+								autoHideDefaultPropertyName: "",
+								showPrefixesForAllNonLocalNames: "",
+								completeRDFBoxesInDatetimeFunctions: "",
+								endpointUsername: "",
+								endpointPassword: "",
 							};
 
 			_.extend(project_data, data.project);
@@ -122,6 +131,15 @@ function uploadProject(list) {
 														useDefaultGroupingSeparator: project_data.useDefaultGroupingSeparator,
 														useStringLiteralConversion: project_data.useStringLiteralConversion,
 														queryEngineType: project_data.queryEngineType,
+														defaultGroupingSeparator: project_data.defaultGroupingSeparator,
+														directClassMembershipRole: project_data.directClassMembershipRole,
+														indirectClassMembershipRole: project_data.indirectClassMembershipRole,
+														showCardinalities: project_data.showCardinalities,
+														autoHideDefaultPropertyName: project_data.autoHideDefaultPropertyName,
+														showPrefixesForAllNonLocalNames: project_data.showPrefixesForAllNonLocalNames,
+														completeRDFBoxesInDatetimeFunctions: project_data.completeRDFBoxesInDatetimeFunctions,
+														endpointUsername: project_data.endpointUsername,
+														endpointPassword: project_data.endpointPassword,
 													}});
 
 
