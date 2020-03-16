@@ -43,6 +43,7 @@ Interpreter.customMethods({
                     console.log("abc", abc);
                 Session.set("json", resp.result);
                 Session.set("PotentialResults", resp.potentialDiagIds);
+                Session.set("ViolatedConstiants", resp.violatedConstraints);
             });    
         };
 
