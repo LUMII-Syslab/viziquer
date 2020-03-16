@@ -1,7 +1,7 @@
 
 <template name="findResultsJson">
         <div>
-            <pre id="json">{{json1}}</pre>
+           {{json1}}
         </div>
     </template>
 
@@ -9,21 +9,62 @@
 <template name="findResult">
     <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-top:10px;padding-left:2px;">
         <div>
+            {{#if json2}}
+            <h2>Find Results</h2>
+        
             <table>
+                <tr> <td><div class="col-sm-12">Diagram</div></td>
+                  <td><div class="col-sm-12">Elements count</div></td>
+                </tr>
                 {{#each json2}}
                 <tr>
              <!--   <td><a href="{{path}}">{{name}}</a></td> <td></td> -->
             
-                    <td><a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">{{name}}</a></td>
-                    <td>{{elemCount}}</td>
+                    <td><div class="col-sm-12"><a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">{{name}}</a> </div></td>
+                    <td><div class="col-sm-12">{{elemCount}}</div></td>
                 </tr>
                 {{else}}
                 <tr><td>no items</td></tr>
                 {{/each}}
             </table>
+            {{/if}}
         </div>
-   <!--     <div>{{Potential}}</div>
-        {{> findResultsJson}} -->
+        <div>
+            {{#if Potential}}
+            <h2>Partial Matches</h2>
+            <table>
+                <tr> <td><div class="col-sm-12">Diagram</div></td>
+               <td><div class="col-sm-12">Elements count</div></td>
+                </tr>
+                {{#each Potential}}
+                <tr>
+             <!--   <td><a href="{{path}}">{{name}}</a></td> <td></td> -->
+            
+                    <td><div class="col-sm-12"><a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">{{name}}</a></div></td>
+                    <td><div class="col-sm-12">{{elemCount}}</div></td>
+                </tr>
+                {{else}}
+                <tr><td>no items</td></tr>
+                {{/each}}
+            </table>
+            {{/if}}
+        </div>
+        <div>
+            {{#if ViolatedConstiants}}
+            <h2>Violated Constraints</h2>
+            <table>
+                {{#each ViolatedConstiants}}
+                           <!--   <td><a href="{{path}}">{{name}}</a></td> <td></td> -->
+            
+                   <!-- <td><a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">{{name}}</a></td>-->
+                   <tr><td id="constraint"><h6>{{regExpression}}</h6></td>
+                    <td><button id="delete" class="delete btn btn-danger btn-xs">Delete Constraint</button></td>
+                </tr>
+                {{/each}}
+            </table>
+            {{/if}}
+        </div>
+        {{> findResultsJson}}
     </div>
     
     </template>
