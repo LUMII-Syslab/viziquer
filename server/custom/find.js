@@ -2,6 +2,7 @@
 var apstaigatie;
 var findResults;
 var atrastasSkeles;
+var constraintViolation;
 
 function createJsonFromDiagIds(diagramidsAAA, list)
 {
@@ -27,7 +28,7 @@ function createJsonFromDiagIds(diagramidsAAA, list)
 				}
 			}
 		);
-	return {result: aka, potentialDiagIds: diagramidsAAA.potentialDiagIds}
+	return {result: aka, potentialDiagIds: diagramidsAAA.potentialDiagIds, violatedConstraints: constraintViolation}
 };
 
 function findByEdgeType(list)
@@ -466,7 +467,37 @@ function processVisitedEdge(_findEdge, _foundEdgeList, _sourceNode, _targetNode)
 
 }
 
-function DiagramsForFindResult()
+function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
+{
+	console.log("processPotentialResults", _potentialDiagIds, _findResultsAAA);
+	PotentialElems= _.filter(_.flatten(_findResultsAAA), function(e) {return _.contains(_potentialDiagIds, e.diagramId)} );
+	console.log(PotentialElems);
+	var aka = _potentialDiagIds.map(
+		function (c) { 
+
+			var diag = Diagrams.findOne({"_id": c});
+			var diagElems = _.filter(PotentialElems, function (a) {return a.diagramId==c});
+			var diagElemIds = diagElems.map(function (c) { return c._id;})
+			console.log("ciklā", c, diag, diagElemIds, diagElems);
+			return {
+				_id: c,
+				name: diag.name,
+				typeId : diag.diagramTypeId,
+				elemCount: _.size(diagElems),
+				projectId: list.projectId,
+				versionId: list.versionId,
+				diagramTypeId: diag.diagramTypeId,
+				diagram: c,
+				path: "http://localhost:3000/project/" + list.projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + list.versionId+"/findMode",
+				elements: diagElemIds,
+				editMode: "findMode"
+			}
+		}
+	);
+	return aka;
+}
+
+function DiagramsForFindResult(list)
 {
 	diagramIds = [];
 	potentialDiagramIds = []
@@ -493,8 +524,10 @@ function DiagramsForFindResult()
 			return matchedElementsIds;
 		}
 		);
+		potentialDiagramIdsWithoutExact =  _.difference(potentialDiagramIds, diagramIds);
+		pr= processPotentialResults(aaa, potentialDiagramIdsWithoutExact, list);
 	return {result: _.filter(_.flatten(aaa), function(e) {return _.contains(diagramIds, e.diagramId)} ),
-	        potentialDiagIds: potentialDiagramIds
+	        potentialDiagIds: pr
 			};
 }
 
@@ -571,8 +604,47 @@ function checkRegExConstraintForElement(_constraint, _element)
 				elementId: _element._id, 
 				compartmentTypeId: _constraint.compartmentTypeId}, 
 		).fetch();
-	return (_.size(com) == 1);
+	if (_.size(com) == 1)
+		{return true;}
+	else
+	{
+		var cv = _.extend(_constraint, {_id:_element._id,
+			_diagramId: _element.diagramId});
+		
+		console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
+		if (constraintViolation)
+			constraintViolation.push(cv);
+		else
+		    constraintViolation = [cv];
+			
+		return false;
+	}
 }
+
+function findMe(list)
+{
+	console.log("Find Me");
+	apstaigatie = [];
+	findResults = [];
+	slices = [];
+	constraintViolation = [];
+
+	notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
+	while (notVisitedEdge)
+	{
+		slices.push(findEdge(notVisitedEdge, list.diagramId));
+		notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
+	}
+	notVisitedNode = getNotVisitedNode(list.diagramId, apstaigatie);
+	while (notVisitedNode)
+	{
+		findNode(notVisitedNode);
+		notVisitedNode = getNotVisitedNode(list.diagramId, apstaigatie);
+	};
+
+	return createJsonFromDiagIds(DiagramsForFindResult(list), list);
+}
+
 
 Meteor.methods({
 
@@ -653,27 +725,14 @@ Meteor.methods({
 	    // 	list.diagramId - diagram
 		//  list.projectId - active project id
 		//  list.versionId - active version id 
-
-		console.log("Find Me");
-		apstaigatie = [];
-		findResults = [];
-		slices = [];
-
-		notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
-		while (notVisitedEdge)
-		{
-			slices.push(findEdge(notVisitedEdge, list.diagramId));
-			notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
-		}
-		notVisitedNode = getNotVisitedNode(list.diagramId, apstaigatie);
-		while (notVisitedNode)
-		{
-			findNode(notVisitedNode);
-			notVisitedNode = getNotVisitedNode(list.diagramId, apstaigatie);
-		};
-
-		return createJsonFromDiagIds(DiagramsForFindResult(), list);
+		return findMe(list);
 	},
+
+	RemoveConstraintAndFind: function(list){
+		Compartments.remove(list.compartmentId);
+		return findMe(list);
+	},
+
 	UpdateStyle: function(list){
 		var foundElementsjson =  list.json;
 		var foundDiag = _.find(foundElementsjson, function(i){return (i._id == list.diagId)});
