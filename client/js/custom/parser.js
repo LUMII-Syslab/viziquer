@@ -1164,7 +1164,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		//PathFull
 		if(key  == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"] !== 'undefined'){
 			var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
-			console.log("PathProperty",path["isPath"], expressionTable[key]["PathProperty"])
+			// console.log("PathProperty",path["isPath"], expressionTable[key]["PathProperty"])
 			if(path["isPath"] != true){
 				var clId;
 					for(var k in idTable){

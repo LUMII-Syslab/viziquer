@@ -1593,7 +1593,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		
 		if(typeof condLink["identification"]["parsed_exp"]["PathProperty"] !== 'undefined' && condLink["identification"]["localName"] != "=="){
 			var path = getPathFullGrammar(condLink["identification"]["parsed_exp"]);
-			console.log(path);
+			// console.log(path);
 			if(path["messages"].length > 0){
 				messages = messages.concat(path["messages"]);
 			} else {

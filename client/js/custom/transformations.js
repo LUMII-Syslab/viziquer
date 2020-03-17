@@ -604,7 +604,7 @@ Interpreter.customMethods({
 	VQsetSubQueryInverseLink: function() {
 		//arrow ->compartments->Inverse Link->extensions->after Update
 		//params: (compartType, compartId)
-		console.log("SSSAAASSS");
+		// console.log("SSSAAASSS");
 		var ct = CompartmentTypes.findOne({name: "Inverse Link"});
 		var ctn = CompartmentTypes.findOne({name: "Name", elementTypeId: Session.get("activeElementType")});
 		var act_elem = Session.get("activeElement");
@@ -672,12 +672,12 @@ Interpreter.customMethods({
 
 	VQsetIndirectClassMembershipDefaultValue: function(params) {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		console.log("A1");
+		// console.log("A1");
 		if (proj && proj.indirectClassMembershipRole) {
-       console.log("A2");
+       // console.log("A2");
 			 return "true";
 		} else {
-       console.log("A3");
+       // console.log("A3");
 			 return "false";
 		 };
 	},
@@ -889,7 +889,7 @@ Interpreter.customMethods({
 		var selected_elem_id = Session.get("activeElement");
 		
 		var tempSymbolTable = generateSymbolTable();
-		console.log("group by", tempSymbolTable);
+		// console.log("group by", tempSymbolTable);
 		var symbolTable = tempSymbolTable["symbolTable"];
 
 
