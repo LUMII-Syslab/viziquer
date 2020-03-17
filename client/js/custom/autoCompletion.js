@@ -53,45 +53,51 @@ var currentFocus = 0;
 
 
 generateSymbolTableAC = function() {
-	var editor = Interpreter.editor;
-	var elem = _.keys(editor.getSelectedElements());
-	var abstractQueryTable = {}
+	if(isAutocompletionActive()==false){
+		
+		var editor = Interpreter.editor;
+		var elem = _.keys(editor.getSelectedElements());
+		var abstractQueryTable = {}
 
-	// now we should find the connected classes ...
-    if (elem) {
-       var selected_elem = new VQ_Element(elem[0]);
-       var visited_elems = {};
+		// now we should find the connected classes ...
+		if (elem) {
+		   var selected_elem = new VQ_Element(elem[0]);
+		   var visited_elems = {};
 
-       function GetComponentIds(vq_elem) {
-           visited_elems[vq_elem._id()]=true;
-           _.each(vq_elem.getLinks(),function(link) {
-               if (!visited_elems[link.link._id()]) {
-                 visited_elems[link.link._id()]=true;
-                 var next_el = null;
-                 if (link.start) {
-                   next_el=link.link.getStartElement();
-                 } else {
-                   next_el=link.link.getEndElement();
-                 };
-                 if (!visited_elems[next_el._id()]) {
-                    GetComponentIds(next_el);
-                 };
-               };
-           });
-       };
+		   function GetComponentIds(vq_elem) {
+			   visited_elems[vq_elem._id()]=true;
+			   _.each(vq_elem.getLinks(),function(link) {
+				   if (!visited_elems[link.link._id()]) {
+					 visited_elems[link.link._id()]=true;
+					 var next_el = null;
+					 if (link.start) {
+					   next_el=link.link.getStartElement();
+					 } else {
+					   next_el=link.link.getEndElement();
+					 };
+					 if (!visited_elems[next_el._id()]) {
+						GetComponentIds(next_el);
+					 };
+				   };
+			   });
+		   };
 
-       GetComponentIds(selected_elem);
+		   GetComponentIds(selected_elem);
 
-       var elem_ids = _.keys(visited_elems);
-       var queries = genAbstractQueryForElementList(elem_ids, null);
-	    _.each(queries,function(q) {
-		abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-       })
-    } else {
-      // nothing selected
-    }
-
-	return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+		   var elem_ids = _.keys(visited_elems);
+		   var queries = genAbstractQueryForElementList(elem_ids, null);
+			_.each(queries,function(q) {
+			abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+		   })
+		} else {
+		  // nothing selected
+		}
+		// console.log("SymbolTable", abstractQueryTable["symbolTable"][Session.get("activeElement")]);
+		
+		return abstractQueryTable["symbolTable"][Session.get("activeElement")];
+	} else {
+		return symbolTable;
+	}
   }
 
 autoCompletionAddCondition = function(e) {
@@ -658,7 +664,7 @@ function getContinuationsNew(text, length, continuations) {
 					if (isNaN(varrible.substring(0, 1)) != false && wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
 						prefix = text.substring(0, i);
 						continuations_to_report[pos] = continuations[i][pos];
-						startedContinuations[pos] = continuations[i][pos];
+						startedContinuations["'"+pos+"'"] = continuations[i][pos];
 					} 
 					else {
 						//if starts with
@@ -686,7 +692,7 @@ function getContinuationsNew(text, length, continuations) {
 		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
 		for (var pos in continuations_to_report) {
 			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
-				TermMessages[pos]=continuations_to_report[pos];
+				TermMessages["'"+pos+"'"]=continuations_to_report[pos];
 				if(length>farthest_pos) prefix = text.substring(0, farthest_pos);
 			}
 		}
@@ -732,4 +738,18 @@ function errorMessage(message, elem){
 function removeMessage(){
 	var m = document.getElementById("message");
 	if(m != null) m.parentNode.removeChild(m);
+}
+
+function chechCompartmentChange(){
+	var input = document.activeElement;
+	var act_elem = Session.get("activeElement");
+	var act_el = Elements.findOne({_id: act_elem});
+	if(typeof act_el !== 'undefined'){
+		var compart_type_id = $(input).closest(".compart-type").attr("id");
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
+		if(typeof compart !== "undefined"){
+			console.log("compart", compart)
+		}
+	}
 }
