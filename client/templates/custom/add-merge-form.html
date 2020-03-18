@@ -109,18 +109,43 @@
 						<input type="text" name="expression-merge" value="{{expression}}">
 					</div>
 					<div class="merge-values-list">                       
-                        <form class="function-radio-list">
+                        <form id="radio-function-form" class="function-radio-list">
                             <p>Functions: </p>
-                            <select name="merge-function-list" id="merge-function-list">
-                                <option name="function-name-merge" value="count" {{selectedCount}}>count</option>
-                                <option name="function-name-merge" value="count_distinct" {{selectedDistinct}}>count_distinct</option>
-                                <option name="function-name-merge" value="sum" {{selectedSum}}>sum</option>
-                                <option name="function-name-merge" value="avg" {{selectedAvg}}>avg</option>
-                                <option name="function-name-merge" value="max" {{selectedMax}}>max</option>
-                                <option name="function-name-merge" value="min"  {{selectedMin}}>min</option>
-                                <option name="function-name-merge" value="sample" {{selectedSample}}>sample</option>
-                                <option name="function-name-merge" value="group_concat" {{selectedConcat}}>group_concat</option>
-                            </select> 							
+
+							<label class="label-radio-functions">
+								<input type="radio" name="radio-function" value="count" {{selectedCount}}>
+								<span class="custom-radio"></span>
+								count &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="count_distinct" {{selectedDistinct}}>
+								<span class="custom-radio"></span>
+								count_distinct &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="sum" {{selectedSum}}>
+								<span class="custom-radio"></span>
+								sum &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="avg" {{selectedAvg}}>
+								<span class="custom-radio"></span>
+								avg &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="max" {{selectedMax}}>
+								<span class="custom-radio"></span>
+								max &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="min" {{selectedMin}}>
+								<span class="custom-radio"></span>
+								min &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="sample" {{selectedSample}}>
+								<span class="custom-radio"></span>
+								sample &ensp;
+								<br/>
+								<input type="radio" name="radio-function" value="group_concat" {{selectedConcat}}>
+								<span class="custom-radio"></span>
+								group_concat &ensp;
+							</label>
+							
                         </form>                                          
                     </div>
 					{{#if isMultiple}}

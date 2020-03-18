@@ -103,42 +103,42 @@ Template.AddMergeValues.helpers({
 	},
 
 	selectedCount: function() {
-		if(Template.AddMergeValues.aggregation.get() == "count") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "count") return "checked";
 		return "";
 	},
 
 	selectedDistinct: function() {
-		if(Template.AddMergeValues.aggregation.get() == "count_distinct") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "count_distinct") return "checked";
 		return "";
 	},
 
 	selectedSum: function() {
-		if(Template.AddMergeValues.aggregation.get() == "sum") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "sum") return "checked";
 		return "";
 	},
 
 	selectedAvg: function() {
-		if(Template.AddMergeValues.aggregation.get() == "avg") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "avg") return "checked";
 		return "";
 	},
 
 	selectedMax: function() {
-		if(Template.AddMergeValues.aggregation.get() == "max") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "max") return "checked";
 		return "";
 	},
 
 	selectedMin: function() {
-		if(Template.AddMergeValues.aggregation.get() == "min") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "min") return "checked";
 		return "";
 	},
 
 	selectedSample: function() {
-		if(Template.AddMergeValues.aggregation.get() == "sample") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "sample") return "checked";
 		return "";
 	},
 
 	selectedConcat: function() {
-		if(Template.AddMergeValues.aggregation.get() == "group_concat") return "selected";
+		if(Template.AddMergeValues.aggregation.get() == "group_concat") return "checked";
 		return "";
 	},
 });
@@ -151,7 +151,8 @@ Template.AddMergeValues.events({
 
 		// var alias = Template.AddMergeValues.alias.get();
 		var expr = $('input[name=expression-merge]').val();
-		var aggregation = $('option[name=function-name-merge]:selected').val();
+		// var aggregation = $('option[name=function-name-merge]:selected').val();
+		var aggregation = $('input[name=radio-function]:checked').val();
 		expr = aggregation + "(" + expr + ")";
 		var mergeAliasName = $('input[id=merge-alias-name]').val();
 		
@@ -222,11 +223,13 @@ Template.AddMergeValues.events({
         } 
 	},
 	
-	"change #merge-function-list": function() {
-		var newFunction = $('option[name=function-name-merge]:selected').val();
-
+	"change #radio-function-form": function() {
+		// var newFunction = $('option[name=function-name-merge]:selected').val();
+		var newFunction = $('input[name=radio-function]:checked').val();
+		
 		//Set at least/at most
 		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){
+			console.log("OOOOOOOOOOOOO", newFunction);
 			$('input[id=merge-results-least]').attr('disabled', false);
 			$('input[id=merge-results-most]').attr('disabled', false);
 		} else {
@@ -248,10 +251,10 @@ function parsedExpressionField(expression){
 }
 
 function clearMergeValuesInput(){
-	var defaultFunctions = document.getElementsByName("function-name-merge");
+	var defaultFunctions = document.getElementsByName("radio-function");
 	_.each(defaultFunctions, function(e){
-		if (e.value == "count") e.selected = true;
-		else e.selected = false;
+		if (e.value == "count") e.checked = true;
+		else e.checked = false;
 	});
 
 	var defaultRadio = document.getElementsByName("type-radio-merge");
