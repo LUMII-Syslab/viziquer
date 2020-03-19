@@ -1,4 +1,5 @@
 Interpreter.customMethods({
+//From selection
 	ConnectClasses: function () {
 		Interpreter.destroyErrorMsg();
 	//check fo only 2 classes
@@ -63,17 +64,20 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: false});
 				Template.ConnectClasses.linkID.set({data: "no link"});
+				Template.ConnectClasses.gotoAggregateWizard.set("disabled");
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
 
-				$("#show-as-property-path")[0].checked = true;
+				$("#not-show-as-property-path")[0].checked = true;
+				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
 				$("#connect-classes-form").modal("show");			
 			}
 		}		
 		
 	},
 
+//From Link
 	linkConnectClasses: function () {		
 		var link = new VQ_Element(Session.get("activeElement"));
 		if (link && link.isLink()) {
@@ -96,10 +100,12 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
+				Template.ConnectClasses.gotoAggregateWizard.set("enabled");
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
-				$("#show-as-property-path")[0].checked = false;			
+				$("#not-show-as-property-path")[0].checked = false;
+				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("link with classes");
 			}
@@ -128,10 +134,12 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
+				Template.ConnectClasses.gotoAggregateWizard.set("disabled");
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
-				$("#show-as-property-path")[0].checked = false;			
+				$("#not-show-as-property-path")[0].checked = false;
+				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("TEST");
 			}
@@ -145,6 +153,7 @@ Template.ConnectClasses.elements = new ReactiveVar([{name: "No class", id: 0}]);
 Template.ConnectClasses.addLongLink = new ReactiveVar({data: false});
 Template.ConnectClasses.linkMenu = new ReactiveVar({data: false});
 Template.ConnectClasses.linkID = new ReactiveVar({data: "no link"});
+Template.ConnectClasses.gotoAggregateWizard = new ReactiveVar("enabled");
 
 Template.ConnectClasses.helpers({
 
@@ -166,6 +175,10 @@ Template.ConnectClasses.helpers({
 
 	linkID: function(){
 		return Template.ConnectClasses.linkID.get();
+	},
+
+	gotoAggregateWizard: function(){
+		return Template.ConnectClasses.gotoAggregateWizard.get();
 	},
 
 });
@@ -241,7 +254,8 @@ Template.ConnectClasses.events({
 		var lastElement = "";
 		//test selected chain
 		var number = $('input[name=stack-radio]:checked').val();
-		var propertyPath = $("#show-as-property-path").is(':checked'); //console.log(propertyPath);
+		var noPropertyPath = $("#not-show-as-property-path").is(':checked'); //console.log(noPropertyPath);
+		var checkedAggregateWizard = $("#connect-classes-goto-aggregate-wizard").is(':checked');
 		if (number < 0 || !number) {
 			$('#chain_text')[0].style.color = "red";
 			$("#connect-classes-form").modal("show");
@@ -258,8 +272,9 @@ Template.ConnectClasses.events({
 		} 
 		var currentVQElment = new VQ_Element(firstId);		
 
-		if (!propertyPath) {
-			console.log("TODO property path");
+	//Property path - 1 link notation
+		if (!noPropertyPath) {
+			//console.log("TODO property path");
 			var class_name = lastElement.name;
 			var name = ""; //link name
 			_.each(chain, function(e){ //{link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]}
@@ -270,7 +285,7 @@ Template.ConnectClasses.events({
 				}
 			});
 			name = name.slice(0,-1);
-			console.log(class_name, name);
+			//console.log(class_name, name);
 
 			if (Template.ConnectClasses.addLongLink.get().data){			
 				var d = 30; //distance between boxes
@@ -290,16 +305,24 @@ Template.ConnectClasses.events({
 	                Create_VQ_Element(function(lnk) {
 	                    lnk.setName(name);
 	                    lnk.setLinkType("REQUIRED");
-	                    lnk.setNestingType("PLAIN");						
+	                    if (checkedAggregateWizard)	{
+							lnk.setNestingType("SUBQUERY");
+						} else {
+	                    	lnk.setNestingType("PLAIN");
+	                    }						
 						if (proj && proj.autoHideDefaultPropertyName=="true") { 
 							lnk.hideDefaultLinkName(true);
 							lnk.setHideDefaultLinkName("true");
 						}
 	                }, locLink, true, currentVQElment, cl);
+	                Template.AggregateWizard.endClassId.set(cl.obj._id);
 	            }, newPosition);
 			} else if (Template.ConnectClasses.linkMenu.get().data) {
-				var lnk = new VQ_Element(Template.ConnectClasses.linkID.get().data);
-				lnk.setName(name);				
+				var lnk = new VQ_Element(Template.ConnectClasses.linkID.get().data);				
+				lnk.setName(name);
+				if (checkedAggregateWizard)	{
+					lnk.setNestingType("SUBQUERY");
+				}			
 			} else {				
 				var nextVQElement = new VQ_Element(lastElement.id);
 				
@@ -316,14 +339,56 @@ Template.ConnectClasses.events({
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
                     lnk.setName(name);
                     lnk.setLinkType("REQUIRED");
-                    lnk.setNestingType("PLAIN");						
+                    if (checkedAggregateWizard)	{
+						lnk.setNestingType("SUBQUERY");
+					} else {
+                    	lnk.setNestingType("PLAIN");
+                    }						
 					if (proj && proj.autoHideDefaultPropertyName=="true") { 
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
-					}
+					}					
                 }, locLink, true, currentVQElment, nextVQElement);
 			}
-		} else { //draw all classes and links
+			//Aggregate wizard settings			
+			if (checkedAggregateWizard) { 
+				//console.log(342, lastElement);
+				//
+				Template.AggregateWizard.startClassId.set(firstId);
+				if (Template.AggregateWizard.endClassId.get().indexOf("No end") > -1) {
+					Template.AggregateWizard.endClassId.set(lastElement.id);
+				}
+				//Fields
+				var attr_list = [{attribute: ""}];
+				var schema = new VQ_Schema();
+
+				if (schema.classExist(class_name)) {
+					var klass = schema.findClassByName(lastElement.name);
+
+					_.each(klass.getAllAttributes(), function(att){
+						attr_list.push({attribute: att["name"]});
+					})
+					attr_list = _.sortBy(attr_list, "attribute");
+				}
+				attr_list = attr_list.filter(function(obj, index, self) { 
+					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
+				});
+				console.log(attr_list);
+				Template.AggregateWizard.attList.set(attr_list);
+
+				//Alias name
+				if (class_name) {
+					Interpreter.destroyErrorMsg();
+					Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+					Template.AggregateWizard.showDisplay.set("block");
+					$("#aggregate-wizard-form").modal("show");
+				} else {
+					//alert("No class selected - wizard may work unproperly");
+					Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+				}
+			}
+		} else { 
+	//draw all classes and links
 			AddNextLink(currentVQElment, chain, lastElement);		
 			if (Template.ConnectClasses.linkMenu.get().data) {
 				var currentLink = new VQ_Element(Template.ConnectClasses.linkID.curValue.data);
@@ -371,6 +436,16 @@ Template.ConnectClasses.events({
 		    return x.countInverseLinks - y.countInverseLinks;
 		});
 		Template.ConnectClasses.linkList.set(list);		
+	},
+
+	"click #not-show-as-property-path": function(){
+		var checked = $("#not-show-as-property-path").is(':checked'); console.log(checked);
+		if (checked) {
+			$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
+			Template.ConnectClasses.gotoAggregateWizard.set("disabled");			
+		} else {
+			Template.ConnectClasses.gotoAggregateWizard.set("enabled");
+		}			
 	},
 });
 
@@ -512,13 +587,15 @@ function clearConnectClassesInput(){
 	$("#max_length")[0].value = "1";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
-	$("#show-as-property-path")[0].checked = true;
+	$("#not-show-as-property-path")[0].checked = false;
+	$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
 	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
 	Template.ConnectClasses.elements.set([{name: "No class", id: 0}]);
 	Template.ConnectClasses.addLongLink.set({data: false});
+	Template.ConnectClasses.gotoAggregateWizard.set("enabled");
 
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
@@ -552,7 +629,7 @@ function GetChains(ids, maxLength){
 			elem = new VQ_Element(id["text"]);
 			elemInfo.push({id: id["text"], class: elem.getName()});
 		}
-	}); console.log(GetLinks(elemInfo[0]["id"]));
+	}); //console.log(GetLinks(elemInfo[0]["id"]));
 //Direct links
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
 		if(e["class"] == elemInfo[1]["class"]){
@@ -560,7 +637,7 @@ function GetChains(ids, maxLength){
 		} else{
 			link_chain.push([e]);
 		}
-	}); console.log(GetLinks(elemInfo[1]["id"]));
+	}); //console.log(GetLinks(elemInfo[1]["id"]));
 //Inverse direct links
 	_.each(GetLinks(elemInfo[1]["id"]) , function(e) {		
 		if(e["class"] == elemInfo[0]["class"]){
@@ -578,13 +655,13 @@ function GetChains(ids, maxLength){
 					short_class_name: elemInfo[1]["class"]
 				};
 			var exists = false;
-			_.each(linkRezult, function(el){console.log(764, _.isEqual(el[0],newElem), el[0], newElem);
-				if (el[0].name == newElem.name && el[0].class == newElem.class && el[0].type == newElem.type ) {
+			_.each(linkRezult, function(el){//console.log(764, _.isEqual(el[0],newElem), el[0], newElem);
+				if (!exists && el[0].name == newElem.name && el[0].class == newElem.class && el[0].type == newElem.type ) {
 					exists = true;
 				}
 			});
 			if (!exists){
-				console.log("new ", newElem);
+				// console.log("new ", newElem);
 				linkRezult.push([newElem]);
 			}
 		}
@@ -614,7 +691,7 @@ function GetChains(ids, maxLength){
 					short_class_name:a.sourceClass.getElementShortName() || a.targetClass.getElementShortName()
 				}]*/
 				
-				_.each(allAsoc, function(a){
+				_.each(allAsoc, function(a){ //console.log(a.maxCard);
 					var index = -1;
 					var isNew = true;
 					_.each(asocNew, function(as){
@@ -622,7 +699,14 @@ function GetChains(ids, maxLength){
 						if (as.class == a.class && as.name == a.name) { 
 							isNew = false;							
 						}
-					}); 
+					});
+
+					// if (i > 1 && isNew && e[i-1]["name"] == a.name && e[i-1]["type"] != a.type && a.maxCard == 1) {
+					// 	if (e[i-2]["class"] == a.class ) {
+					// 		console.log("maxCard == 1 vor inverse link from", e[i-2]["class"], "\n", e[i-1], "\n", a);
+					// 		isNew = false;
+					// 	}
+					// }  
 					
 					if (isNew) {
 						asocNew.push(a);
@@ -688,19 +772,22 @@ function GetChains(ids, maxLength){
 function GetLinks(start_elem_id){
 	if (Elements.findOne({_id: start_elem_id})){ 
 		var asc = [];
-		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
-		if (!compart_type) {
-			return [{name: "", class: "", type: "=>"}];
-		}
+		// var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: Elements.findOne({_id: start_elem_id})["elementTypeId"]});
+		// if (!compart_type) {
+		// 	return [{name: "", class: "", type: "=>"}];
+		// }
 
-		var act_comp = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start_elem_id});
-		if (!act_comp) {
-			return [{name: "", class: "", type: "=>"}];
-		}
+		// var act_comp = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start_elem_id});
+		// if (!act_comp) {
+		// 	return [{name: "", class: "", type: "=>"}];
+		// }
 
-		var className = act_comp["input"];
+		var elem = new VQ_Element(start_elem_id);
+		var className = elem.getName();
+
+		// var className = act_comp["input"];
 		var schema = new VQ_Schema();
-		if (!schema.classExist(className)) {
+		if (className == null || !schema.classExist(className)) {
 			return [{name: "", class: "", type: "=>"}];
 		}
 

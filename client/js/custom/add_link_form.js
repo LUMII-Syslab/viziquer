@@ -161,6 +161,9 @@ Template.AddLink.events({
 					})
 					attr_list = _.sortBy(attr_list, "attribute");
 				}
+				attr_list = attr_list.filter(function(obj, index, self) { 
+					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
+				});
 				// console.log(attr_list);
 				Template.AggregateWizard.attList.set(attr_list);
 
@@ -202,6 +205,10 @@ Template.AddLink.events({
 		Template.ConnectClasses.addLongLink.set({data: true});
 		Template.ConnectClasses.linkMenu.set({data: false});
 		Template.ConnectClassesSettings.pathLength.set(3);
+		if ($('input[name=type-radio]').filter(':checked').val() == "NESTED") {
+			Template.ConnectClasses.gotoAggregateWizard.set("checked");
+		}
+
 		$("#connect-classes-form").modal("show");
 		// console.log("Connect classes activated");
 		//Hide Add Link 
@@ -216,7 +223,7 @@ Template.AddLink.events({
             $('#goto-wizard:checked').prop('checked', false);
             $('#goto-wizard').prop('disabled',"disabled");
         } else {
-        	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); console.log("changed", cardValue);
+        	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); //console.log("changed", cardValue);
         	if (cardValue == "") {
         		confirmSubquery();
         	} else {

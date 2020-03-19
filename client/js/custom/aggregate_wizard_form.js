@@ -117,6 +117,9 @@ Template.AggregateWizard.events({
 
 			newAttrList = _.sortBy(newAttrList, "attribute");
 		}
+		newAttrList = newAttrList.filter(function(obj, index, self) { 
+			return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
+		});
 		//console.log(attr_list);
 		Template.AggregateWizard.attList.set(newAttrList);
 
@@ -189,10 +192,10 @@ function clearAggregateInput(){
 
 	defaultFieldList();
 	Template.AggregateWizard.showDisplay.set("none");
-	Template.AggregateWizard.defaultAlias.set("N_count");
+	Template.AggregateWizard.defaultAlias.set("No_class");
 	Template.AggregateWizard.attList.set([{attribute: "No_attribute"}]);
 	Template.AggregateWizard.startClassId.set("No start id");
-	Template.AggregateWizard.endClassId.set("No end id");
+	Template.AggregateWizard.endClassId.set("No end");
 	Template.AggregateWizard.linkId.set("No link");
 	$('input[id=display-results]:checked').attr('checked', false);
 	document.getElementById("results_least").value = "";
