@@ -64,7 +64,7 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: false});
 				Template.ConnectClasses.linkID.set({data: "no link"});
-				Template.ConnectClasses.gotoAggregateWizard.set("disabled");
+				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
@@ -100,12 +100,12 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
-				Template.ConnectClasses.gotoAggregateWizard.set("enabled");
+				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
 				$("#not-show-as-property-path")[0].checked = false;
-				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
+				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("link with classes");
 			}
@@ -134,12 +134,12 @@ Interpreter.customMethods({
 				Template.ConnectClasses.addLongLink.set({data: false});
 				Template.ConnectClasses.linkMenu.set({data: true});
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
-				Template.ConnectClasses.gotoAggregateWizard.set("disabled");
+				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
 				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
 
 				$("#not-show-as-property-path")[0].checked = false;
-				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
+				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
 				console.log("TEST");
 			}
@@ -153,7 +153,7 @@ Template.ConnectClasses.elements = new ReactiveVar([{name: "No class", id: 0}]);
 Template.ConnectClasses.addLongLink = new ReactiveVar({data: false});
 Template.ConnectClasses.linkMenu = new ReactiveVar({data: false});
 Template.ConnectClasses.linkID = new ReactiveVar({data: "no link"});
-Template.ConnectClasses.gotoAggregateWizard = new ReactiveVar("enabled");
+Template.ConnectClasses.gotoSubquery = new ReactiveVar({isChecked: false, gotoWizard: ""});
 
 Template.ConnectClasses.helpers({
 
@@ -177,8 +177,8 @@ Template.ConnectClasses.helpers({
 		return Template.ConnectClasses.linkID.get();
 	},
 
-	gotoAggregateWizard: function(){
-		return Template.ConnectClasses.gotoAggregateWizard.get();
+	gotoSubquery: function(){
+		return Template.ConnectClasses.gotoSubquery.get();
 	},
 
 });
@@ -261,6 +261,7 @@ Template.ConnectClasses.events({
 			$("#connect-classes-form").modal("show");
 			return;
 		}
+		
 		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
 		chain = _.rest(chain);
 		if (!Template.ConnectClasses.addLongLink.get().data){			
@@ -274,6 +275,12 @@ Template.ConnectClasses.events({
 
 	//Property path - 1 link notation
 		if (!noPropertyPath) {
+			var nesting = "";
+			if (Template.ConnectClasses.gotoSubquery.get().isChecked){
+				nesting = "SUBQUERY";
+			} else {
+				nesting = "PLAIN";
+			}
 			//console.log("TODO property path");
 			var class_name = lastElement.name;
 			var name = ""; //link name
@@ -304,12 +311,8 @@ Template.ConnectClasses.events({
                 	locLink = [coordX, coordY, coordX, newPosition.y];                 
 	                Create_VQ_Element(function(lnk) {
 	                    lnk.setName(name);
-	                    lnk.setLinkType("REQUIRED");
-	                    if (checkedAggregateWizard)	{
-							lnk.setNestingType("SUBQUERY");
-						} else {
-	                    	lnk.setNestingType("PLAIN");
-	                    }						
+	                    lnk.setLinkType("REQUIRED");	                    
+	                    lnk.setNestingType(nesting);						
 						if (proj && proj.autoHideDefaultPropertyName=="true") { 
 							lnk.hideDefaultLinkName(true);
 							lnk.setHideDefaultLinkName("true");
@@ -320,9 +323,7 @@ Template.ConnectClasses.events({
 			} else if (Template.ConnectClasses.linkMenu.get().data) {
 				var lnk = new VQ_Element(Template.ConnectClasses.linkID.get().data);				
 				lnk.setName(name);
-				if (checkedAggregateWizard)	{
-					lnk.setNestingType("SUBQUERY");
-				}			
+				lnk.setNestingType(nesting);			
 			} else {				
 				var nextVQElement = new VQ_Element(lastElement.id);
 				
@@ -338,12 +339,8 @@ Template.ConnectClasses.events({
 				Create_VQ_Element(function(lnk) {
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
                     lnk.setName(name);
-                    lnk.setLinkType("REQUIRED");
-                    if (checkedAggregateWizard)	{
-						lnk.setNestingType("SUBQUERY");
-					} else {
-                    	lnk.setNestingType("PLAIN");
-                    }						
+                    lnk.setLinkType("REQUIRED");                   
+                    lnk.setNestingType(nesting);						
 					if (proj && proj.autoHideDefaultPropertyName=="true") { 
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
@@ -389,7 +386,7 @@ Template.ConnectClasses.events({
 			}
 		} else { 
 	//draw all classes and links
-			AddNextLink(currentVQElment, chain, lastElement);		
+			AddNextLink(currentVQElment, chain, lastElement, Template.ConnectClasses.gotoSubquery.get().isChecked, currentVQElment, Template.ConnectClasses.addLongLink.get().data);		
 			if (Template.ConnectClasses.linkMenu.get().data) {
 				var currentLink = new VQ_Element(Template.ConnectClasses.linkID.curValue.data);
 				currentLink.deleteElement();
@@ -439,12 +436,15 @@ Template.ConnectClasses.events({
 	},
 
 	"click #not-show-as-property-path": function(){
-		var checked = $("#not-show-as-property-path").is(':checked'); console.log(checked);
-		if (checked) {
-			$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
-			Template.ConnectClasses.gotoAggregateWizard.set("disabled");			
-		} else {
-			Template.ConnectClasses.gotoAggregateWizard.set("enabled");
+		var settings = Template.ConnectClasses.gotoSubquery.get();		
+		if (settings.isChecked) {
+			var checked = $("#not-show-as-property-path").is(':checked'); //console.log(checked);			
+			if (checked) {
+				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
+				Template.ConnectClasses.gotoSubquery.set({isChecked: settings.isChecked, gotoWizard: "disabled"});			
+			} else {
+				Template.ConnectClasses.gotoSubquery.set({isChecked: settings.isChecked, gotoWizard: "enabled"});
+			}
 		}			
 	},
 });
@@ -588,14 +588,14 @@ function clearConnectClassesInput(){
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
 	$("#not-show-as-property-path")[0].checked = false;
-	$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
+	if (Template.ConnectClasses.gotoSubquery.get().isChecked) $("#connect-classes-goto-aggregate-wizard")[0].checked = false;
 	$("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
 	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
 	Template.ConnectClasses.elements.set([{name: "No class", id: 0}]);
 	Template.ConnectClasses.addLongLink.set({data: false});
-	Template.ConnectClasses.gotoAggregateWizard.set("enabled");
+	Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
@@ -633,7 +633,7 @@ function GetChains(ids, maxLength){
 //Direct links
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
 		if(e["class"] == elemInfo[1]["class"]){
-			linkRezult.push([e]); console.log(e);
+			linkRezult.push([e]); //console.log(e);
 		} else{
 			link_chain.push([e]);
 		}
@@ -801,7 +801,7 @@ function GetLinks(start_elem_id){
 	}
 }
 
-function AddNextLink(currentElement, chain, lastElement){
+function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
 	if (chain.length == 0)  {
 		return;
 	}
@@ -816,9 +816,17 @@ function AddNextLink(currentElement, chain, lastElement){
 		return;
 	}
 
+	var nesting = "";
+	if (needSubquery && currentElement.getName() == subqueryFromElement.getName()){
+		nesting = "SUBQUERY";
+		needSubquery = false;
+	} else {
+		nesting = "PLAIN";
+	}
+	
     var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
     var locLink = [];	
-	if (chain[0].class == lastElement.name && !Template.ConnectClasses.addLongLink.get().data) {
+	if (chain[0].class == lastElement.name && !longLink) {
 		var lastVQElement = new VQ_Element(lastElement.id);
 		var proj = Projects.findOne({_id: Session.get("activeProject")});			
 		var newPosition = lastVQElement.getCoordinates(); 
@@ -834,7 +842,7 @@ function AddNextLink(currentElement, chain, lastElement){
             Create_VQ_Element(function(lnk) {
                 lnk.setName(chain[0].link);
                 lnk.setLinkType("REQUIRED");
-                lnk.setNestingType("PLAIN");
+                lnk.setNestingType(nesting);
 				if (proj && proj.autoHideDefaultPropertyName=="true") { 
 					lnk.hideDefaultLinkName(true);
 					lnk.setHideDefaultLinkName("true");
@@ -849,7 +857,7 @@ function AddNextLink(currentElement, chain, lastElement){
         	Create_VQ_Element(function(lnk) {
                 lnk.setName(chain[0].link);
                 lnk.setLinkType("REQUIRED");
-                lnk.setNestingType("PLAIN");
+                lnk.setNestingType(nesting);
 				if (proj && proj.autoHideDefaultPropertyName=="true") {
 					lnk.hideDefaultLinkName(true);
 					lnk.setHideDefaultLinkName("true");
@@ -873,7 +881,7 @@ function AddNextLink(currentElement, chain, lastElement){
 	            Create_VQ_Element(function(lnk) {
 	                lnk.setName(chain[0].link);
 	                lnk.setLinkType("REQUIRED");
-	                lnk.setNestingType("PLAIN");
+	                lnk.setNestingType(nesting);
 					if (proj && proj.autoHideDefaultPropertyName=="true") { 
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
@@ -884,15 +892,15 @@ function AddNextLink(currentElement, chain, lastElement){
 	        	Create_VQ_Element(function(lnk) {
 	                lnk.setName(chain[0].link);
 	                lnk.setLinkType("REQUIRED");
-	                lnk.setNestingType("PLAIN");
+	                lnk.setNestingType(nesting);
 					if (proj && proj.autoHideDefaultPropertyName=="true") {
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
 					}
 	            }, locLink, true, cl, currentElement);
 	        }
-	        var newChain = _.rest(chain);
-	        AddNextLink(cl, newChain, lastElement);
+	        var newChain = _.rest(chain); //console.log(cl, lastElement);
+	        AddNextLink(cl, newChain, lastElement, needSubquery, subqueryFromElement, longLink);
 	    }, newPosition);
 	}
 }

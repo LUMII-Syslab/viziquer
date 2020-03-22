@@ -59,7 +59,11 @@
         <div class="modal-dialog" style="width:50%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Connect Classes</h4>
+                    {{#if gotoSubquery.isChecked}}
+                        <h4 class="modal-title">Connect Classes with subquery</h4>
+                    {{else}}
+                        <h4 class="modal-title">Connect Classes</h4>
+                    {{/if}}
                 </div>
                 <div class="modal-body" style="overflow-y: auto; overflow-x: hidden;">
                     {{#if addLongLink.data}}
@@ -111,11 +115,13 @@
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Draw the chain with classes graphically</p>
                         </div>
-                        <div style="position: relative; left: 2px; padding-top: 5px;">
-                            <input type="checkbox" id="connect-classes-goto-aggregate-wizard" {{gotoAggregateWizard}}>
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Use Aggregate wizard for subquery link</p>
-                        </div>
+                        {{#if gotoSubquery.isChecked}}
+                            <div style="position: relative; left: 2px; padding-top: 5px;">
+                                <input type="checkbox" id="connect-classes-goto-aggregate-wizard" {{gotoSubquery.gotoWizard}}>
+                                <span class="custom-checkbox"></span>
+                                <p style="display:inline;">Use Aggregate wizard for subquery link</p>
+                            </div>
+                        {{/if}}                        
                     </form>                    
                     <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect" type="button" class="btn btn-primary">OK</button>

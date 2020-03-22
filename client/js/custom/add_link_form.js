@@ -205,9 +205,19 @@ Template.AddLink.events({
 		Template.ConnectClasses.addLongLink.set({data: true});
 		Template.ConnectClasses.linkMenu.set({data: false});
 		Template.ConnectClassesSettings.pathLength.set(3);
+
+		var subquerySettings = {};
 		if ($('input[name=type-radio]').filter(':checked').val() == "NESTED") {
-			Template.ConnectClasses.gotoAggregateWizard.set("checked");
+			subquerySettings.isChecked = true;
+		} else {
+			subquerySettings.isChecked = false;
 		}
+		if ($('#goto-wizard').is(':checked')) {
+			subquerySettings.gotoWizard = "checked";
+		} else {
+			subquerySettings.gotoWizard = "";
+		}
+		Template.ConnectClasses.gotoSubquery.set(subquerySettings);
 
 		$("#connect-classes-form").modal("show");
 		// console.log("Connect classes activated");
