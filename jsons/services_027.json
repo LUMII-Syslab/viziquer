@@ -1,0 +1,38 @@
+{
+	"schemas": [
+	{
+		"caption": "Mini unversity schema",
+		"name": "Mini_unversity",
+		"link": "http://viziquer.lumii.lv/schemas/mini_univ.json",
+		"description": "Example mini-university data schema"
+	},
+	{
+		"caption": "Scholarly data schema",
+		"name": "Scholarly_data",
+		"link": "http://viziquer.lumii.lv/schema-store/schemas/Scholarly.json",
+		"description": "Scholarly data schema in ViziQuer"
+	}
+	],
+	"projects": [
+	{
+		"caption": "Mini-University example project",
+		"name": "Mini_unversity",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/Ver_027/MiniUniv_027.json",
+		"description": "Example mini-university project (with data schema, connection information and query examples)"
+	},
+	{
+		"caption": "Scholarly Data example project",
+		"name": "Scholarly_data",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/Ver_027/Scholarly_027.json",
+		"decsription": "Example project to access the scholarly data endpoint (cf. http://scholarlydata.org)"
+	},
+	{
+		"caption": "Hospital example project",
+		"name": "Hospital_example",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/Ver_027/Hospital_027.json",
+		"decsription": "Example empty Hospital data project"
+	}
+	]
+}
+
+
