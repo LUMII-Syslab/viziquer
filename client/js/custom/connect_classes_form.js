@@ -634,8 +634,10 @@ function GetChains(ids, maxLength){
 	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
 		if(e["class"] == elemInfo[1]["class"]){
 			linkRezult.push([e]); //console.log(e);
-		} else{
-			link_chain.push([e]);
+		} else if (e["class"] == elemInfo[0]["class"]) {
+			//console.log("same class");
+		} else {
+			link_chain.push([e]); 
 		}
 	}); //console.log(GetLinks(elemInfo[1]["id"]));
 //Inverse direct links
@@ -783,7 +785,21 @@ function GetLinks(start_elem_id){
 		// }
 
 		var elem = new VQ_Element(start_elem_id);
-		var className = elem.getName();
+		var className = "";
+		// if (elem.isUnion() && !elem.isRoot()) { // [ + ] element, that has link to upper class 
+		// 	if (elem.getLinkToRoot()){
+		// 		var element = elem.getLinkToRoot().link.getElements();
+		// 		if (elem.getLinkToRoot().start) {
+		// 			var newStartClass = new VQ_Element(element.start.obj._id);						
+  //   				className = newStartClass.getName();
+  //   			} else {
+  //   				var newStartClass = new VQ_Element(element.end.obj._id);						
+  //   				className = newStartClass.getName();
+  //   			}						
+		// 	}					
+		// } else {
+			className = elem.getName();
+		// }
 
 		// var className = act_comp["input"];
 		var schema = new VQ_Schema();
