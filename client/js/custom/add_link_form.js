@@ -33,6 +33,42 @@ Interpreter.customMethods({
 		$("#add-link-form").modal("show");
 	},
 
+	AddUnion: function () {
+		//console.log("AddUnion");
+		var currentVQElment = new VQ_Element(Session.get("activeElement"));
+		if (!currentVQElment.isClass()){
+			console.log("Selected element is not a class");
+			return;
+		}
+		var d = 30; //distance between boxes
+        var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
+        var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size {x: x, y: y1, width: w, height: h}
+        newPosition.width = 75;
+        newPosition.height = 50;
+        //Link Coordinates
+        var coordX = newPosition.x + Math.round(newPosition.width/2);
+        var coordY = oldPosition.y + oldPosition.height;
+        var locLink = [];
+        
+        Create_VQ_Element(function(cl){
+            cl.setName("[ + ]");
+            var proj = Projects.findOne({_id: Session.get("activeProject")});
+            cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+            cl.setClassStyle("condition");	                
+        	locLink = [coordX, coordY, coordX, newPosition.y];                 
+            Create_VQ_Element(function(lnk) {
+                lnk.setName("++");
+                lnk.setLinkType("REQUIRED");	                    
+                lnk.setNestingType("PLAIN");						
+				if (proj && proj.autoHideDefaultPropertyName=="true") { 
+					lnk.hideDefaultLinkName(true);
+					lnk.setHideDefaultLinkName("true");
+				}
+            }, locLink, true, currentVQElment, cl);
+            Template.AggregateWizard.endClassId.set(cl.obj._id);
+        }, newPosition);
+	},
+
 	AddLinkTest: function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
