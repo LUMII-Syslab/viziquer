@@ -28,7 +28,18 @@ function createJsonFromDiagIds(diagramidsAAA, list)
 				}
 			}
 		);
-	return {result: aka, potentialDiagIds: diagramidsAAA.potentialDiagIds, violatedConstraints: constraintViolation}
+		var groups = _.groupBy(constraintViolation, function(c) { return c.compartmentId + '#' + c.regExpression;});
+		
+		var constraintsGrouped = _.map(groups, function(group){
+			return {
+				compartmentId: group[0].compartmentId,
+				regExpression: group[0].regExpression,
+				count:  _.size(group),
+				diagrams: _.pluck(group, '_diagramId')
+			}
+		});
+
+	return {result: aka, potentialDiagIds: diagramidsAAA.potentialDiagIds, violatedConstraints: constraintsGrouped}
 };
 
 function findByEdgeType(list)
