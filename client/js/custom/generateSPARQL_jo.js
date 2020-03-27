@@ -2108,8 +2108,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable){
 							}
 						}
 
-					} else {
+					} else if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == true){
 						whereInfo.push("MINUS{" + temp.join("\n")+ "}");
+					} else {
+						whereInfo.push(temp.join("\n"));
 					}
 				}
 			}
@@ -2311,8 +2313,10 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						subQuery = subQuery + "}";
 
 						whereInfo.push(subQuery);
-					} else {
+					} else if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == true){
 						whereInfo.push("MINUS{" + temp.join("\n")+ "}");
+					} else {
+						whereInfo.push(temp.join("\n"));
 					}
 				}
 			}
@@ -2333,8 +2337,10 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}}";
 			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
 		}
-		else if(sparqlTable["linkType"] == "NOT") returnValue = "MINUS{FILTER NOT EXISTS{" + returnValue + "}}";
-		else returnValue = "FILTER(EXISTS{" + returnValue + "})";
+		else if(sparqlTable["linkType"] == "NOT") {
+			if(sparqlTable["isGlobalSubQuery"] == true)returnValue = "MINUS{FILTER NOT EXISTS{" + returnValue + "}}";
+			else returnValue = "FILTER NOT EXISTS{" + returnValue + "}";
+		}
 	}
 	return {"result":returnValue, "messages":messages};
 }
