@@ -50,6 +50,46 @@ Interpreter.customMethods({
 
 				ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
+
+				if (startClass.isUnion() && !startClass.isRoot()) { // [ + ] element, that has link to upper class 
+					if (startClass.getLinkToRoot()){
+						var element = startClass.getLinkToRoot().link.getElements();
+						var newStartClass = "";
+						if (startClass.getLinkToRoot().start) {
+							var newStartClass = new VQ_Element(element.start.obj._id);
+		    			} else {
+		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    			}
+		    			if (newStartClass.obj["_id"] != endClass.obj["_id"]) {
+			    			usedClasses[0].name = newStartClass.getName();
+			    		} else {
+			    			console.log("[ + ] connection to root");
+			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
+			    			return;
+			    		}					
+					}					
+				}
+
+				if (endClass.isUnion() && !endClass.isRoot()) { // [ + ] element, that has link to upper class 
+					if (endClass.getLinkToRoot()){
+						var element = endClass.getLinkToRoot().link.getElements();
+						var newStartClass = "";
+						if (endClass.getLinkToRoot().start) {
+							var newStartClass = new VQ_Element(element.start.obj._id);
+		    			} else {
+		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    			}
+		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    				usedClasses[1].name = newStartClass.getName();
+		    			} else {
+			    			console.log("[ + ] connection to root");
+			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
+			    			return;
+			    		}
+					}					
+				}
+
+				
 				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
@@ -66,7 +106,7 @@ Interpreter.customMethods({
 				Template.ConnectClasses.linkID.set({data: "no link"});
 				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
-				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
+				Template.ConnectClassesSettings.fromToClass.set({fromName: usedClasses[0].name, fromID: usedClasses[0].id, toName: usedClasses[1].name, toID: usedClasses[1].id});
 
 
 				$("#not-show-as-property-path")[0].checked = true;
@@ -78,7 +118,8 @@ Interpreter.customMethods({
 	},
 
 //From Link
-	linkConnectClasses: function () {		
+	linkConnectClasses: function () {
+		Interpreter.destroyErrorMsg();		
 		var link = new VQ_Element(Session.get("activeElement"));
 		if (link && link.isLink()) {
 			var startClass = link.getStartElement();
@@ -86,6 +127,44 @@ Interpreter.customMethods({
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
+				if (startClass.isUnion() && !startClass.isRoot()) { // [ + ] element, that has link to upper class 
+					if (startClass.getLinkToRoot()){
+						var element = startClass.getLinkToRoot().link.getElements();
+						var newStartClass = "";
+						if (startClass.getLinkToRoot().start) {
+							var newStartClass = new VQ_Element(element.start.obj._id);
+		    			} else {
+		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    			}
+		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    				usedClasses[0].name = newStartClass.getName();
+		    			} else {
+			    			console.log("[ + ] connection to root");
+			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
+			    			return;
+			    		}					
+					}					
+				}
+
+				if (endClass.isUnion() && !endClass.isRoot()) { // [ + ] element, that has link to upper class 
+					if (endClass.getLinkToRoot()){
+						var element = endClass.getLinkToRoot().link.getElements();
+						var newStartClass = "";
+						if (endClass.getLinkToRoot().start) {
+							var newStartClass = new VQ_Element(element.start.obj._id);
+		    			} else {
+		    				var newStartClass = new VQ_Element(element.end.obj._id);
+		    			}
+		    			if (newStartClass.obj["_id"] != startClass.obj["_id"]) {
+		    				usedClasses[1].name = newStartClass.getName();
+		    			} else {
+			    			console.log("[ + ] connection to root");
+			    			Interpreter.showErrorMsg("It is not allowed to connect [ + ] with its root this way.", -3);
+			    			return;
+			    		}					
+					}					
+				}
+
 				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
@@ -102,7 +181,7 @@ Interpreter.customMethods({
 				Template.ConnectClasses.linkID.set({data: link.obj["_id"]});
 				Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
-				Template.ConnectClassesSettings.fromToClass.set({fromName: startClass.getName(), fromID: startClass.obj["_id"], toName: endClass.getName(), toID: endClass.obj["_id"]});
+				Template.ConnectClassesSettings.fromToClass.set({fromName: usedClasses[0].name, fromID: usedClasses[0].id, toName: usedClasses[1].name, toID: usedClasses[1].id});
 
 				$("#not-show-as-property-path")[0].checked = false;
 				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
@@ -113,6 +192,7 @@ Interpreter.customMethods({
 	},
 
 	test_linkConnectClasses: function () {
+		Interpreter.destroyErrorMsg();
 		var link = new VQ_Element(Session.get("activeElement"));
 		if (link && link.isLink()) {
 			var startClass = link.getStartElement();
@@ -185,7 +265,7 @@ Template.ConnectClasses.helpers({
 
 Template.ConnectClasses.events({
 	"keyup #searchList": function(){
-		$("div[id=errorFieldCC]").remove();
+		$('#chain_text')[0].style.color = "";
 		var value = $("#searchList").val().toLowerCase(); 
 		value = value.trim(); 
 		console.log("mySearch: ", value);
@@ -411,6 +491,7 @@ Template.ConnectClasses.events({
 	},
 
 	"click #choose-second-class-button": function(){
+		$('#chain_text')[0].style.color = "";
 		var nextClassName = $('#classList2').val();
 		var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: nextClassName}];
 		var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
@@ -446,6 +527,10 @@ Template.ConnectClasses.events({
 				Template.ConnectClasses.gotoSubquery.set({isChecked: settings.isChecked, gotoWizard: "enabled"});
 			}
 		}			
+	},
+
+	"click #chain-list": function() {
+		$('#chain_text')[0].style.color = "";
 	},
 });
 
@@ -627,7 +712,22 @@ function GetChains(ids, maxLength){
 			elemInfo.push({id: id["text"], class: id["name"]});
 		}else {
 			elem = new VQ_Element(id["text"]);
-			elemInfo.push({id: id["text"], class: elem.getName()});
+			if (elem.isUnion() && !elem.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
+				if (elem.getLinkToRoot()){
+					var element = elem.getLinkToRoot().link.getElements();
+					var newStartClass = "";
+					if (elem.getLinkToRoot().start) {
+						var newStartClass = new VQ_Element(element.start.obj._id);
+	    			} else {
+	    				var newStartClass = new VQ_Element(element.end.obj._id);
+	    			} console.log(newStartClass.getName());
+	    			elemInfo.push({id: id["text"], class: newStartClass.getName()});	    									
+				}					
+			} else {
+				elemInfo.push({id: id["text"], class: elem.getName()});
+
+			}
+			//elemInfo.push({id: id["text"], class: elem.getName()});
 		}
 	}); //console.log(GetLinks(elemInfo[0]["id"]));
 //Direct links
@@ -786,20 +886,20 @@ function GetLinks(start_elem_id){
 
 		var elem = new VQ_Element(start_elem_id);
 		var className = "";
-		// if (elem.isUnion() && !elem.isRoot()) { // [ + ] element, that has link to upper class 
-		// 	if (elem.getLinkToRoot()){
-		// 		var element = elem.getLinkToRoot().link.getElements();
-		// 		if (elem.getLinkToRoot().start) {
-		// 			var newStartClass = new VQ_Element(element.start.obj._id);						
-  //   				className = newStartClass.getName();
-  //   			} else {
-  //   				var newStartClass = new VQ_Element(element.end.obj._id);						
-  //   				className = newStartClass.getName();
-  //   			}						
-		// 	}					
-		// } else {
+		if (elem.isUnion() && !elem.isRoot()) { // [ + ] element, that has link to upper class 
+			if (elem.getLinkToRoot()){
+				var element = elem.getLinkToRoot().link.getElements();
+				if (elem.getLinkToRoot().start) {
+					var newStartClass = new VQ_Element(element.start.obj._id);						
+    				className = newStartClass.getName();
+    			} else {
+    				var newStartClass = new VQ_Element(element.end.obj._id);						
+    				className = newStartClass.getName();
+    			}						
+			}					
+		} else {
 			className = elem.getName();
-		// }
+		}
 
 		// var className = act_comp["input"];
 		var schema = new VQ_Schema();

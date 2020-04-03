@@ -236,7 +236,21 @@ Template.AddLink.events({
 			count++;
 		});
 		var activeClass = new VQ_Element(Session.get("activeElement"));
-		Template.ConnectClasses.IDS.set({name: activeClass.getName(), id: activeClass.obj["_id"]});
+		if (activeClass.isUnion() && !activeClass.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
+			if (activeClass.getLinkToRoot()){
+				var element = activeClass.getLinkToRoot().link.getElements();
+				var newStartClass = "";
+				if (activeClass.getLinkToRoot().start) {
+					var newStartClass = new VQ_Element(element.start.obj._id);
+    			} else {
+    				var newStartClass = new VQ_Element(element.end.obj._id);
+    			} console.log(newStartClass.getName());
+    			Template.ConnectClasses.IDS.set({name: newStartClass.getName(), id: activeClass.obj["_id"]});						
+			}					
+		} else {
+			Template.ConnectClasses.IDS.set({name: activeClass.getName(), id: activeClass.obj["_id"]});
+		}
+		//Template.ConnectClasses.IDS.set({name: activeClass.getName(), id: activeClass.obj["_id"]});
 		Template.ConnectClasses.elements.set(data);
 		Template.ConnectClasses.addLongLink.set({data: true});
 		Template.ConnectClasses.linkMenu.set({data: false});
