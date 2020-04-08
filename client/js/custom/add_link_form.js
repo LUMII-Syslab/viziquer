@@ -600,11 +600,10 @@ function getAllAssociations(){
 			if (schema.classExist(className)) {
 				
 				var allAssociations = schema.findClassByName(className).getAllAssociations();
-
-				//remove duplicates
-				allAssociations = allAssociations.filter(function(obj, index, self) { 
-					return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-				});
+				//remove duplicates - moved to getAllAssociations()
+				//allAssociations = allAssociations.filter(function(obj, index, self) { 
+				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+				//});
 				_.each(allAssociations, function(e){
 					var cardinality = "";
 					var colorLetters = ""; 				
