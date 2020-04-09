@@ -1634,7 +1634,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					if(expressionTable[key]['iri']['PrefixedName']['var']['name'].toLowerCase().startsWith("xsd:") == true) prefixTable["xsd:"] = "<http://www.w3.org/2001/XMLSchema#>";
 				}
 				if (typeof expressionTable[key]['iri']['IRIREF'] !== 'undefined'){
-					SPARQLstring = SPARQLstring + expressionTable[key]['iri']['IRIREF'];
+					SPARQLstring = SPARQLstring + "^^" + expressionTable[key]['iri']['IRIREF'];
 				}
 			}
 					
@@ -2454,12 +2454,17 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 					
+					console.log("left", left);
+					console.log("right", right);
+					
 					//property = 5
 					//propety = "string"
 					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
 					((((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME") 
 					    || typeof left["Path"] !== 'undefined' 
-						|| typeof left["Reference"] !== 'undefined') && typeof right["var"] === 'undefined' 
+						|| typeof left["Reference"] !== 'undefined'
+						|| (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined')
+						) && typeof right["var"] === 'undefined' 
 						&& typeof right["Path"] === 'undefined' 
 						&& typeof right["Reference"] === 'undefined'
 						)
@@ -2469,8 +2474,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& typeof left["var"] === 'undefined' 
 						&& typeof left["Path"] === 'undefined' 
 						&& typeof left["Reference"] === 'undefined'
-						))
-					){
+						)
+					)){
 						
 						var tripleTableTemp = tripleTable;
 						tripleTable = [];
@@ -2698,7 +2703,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
 				if(parseType == "attribute"){
 					SPARQLstring = pe
-					attributeFilter = "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"] + "')";
+					attributeFilter = "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"].substring(1) + "')";
 				}				
 			}else if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "langmatchesShortMultiple"){
 				attributeFilter = true;

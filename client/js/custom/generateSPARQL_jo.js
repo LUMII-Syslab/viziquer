@@ -967,6 +967,18 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 
 	var instance = idTable[clazz["identification"]["_id"]];
+	
+	if(instance.indexOf(":") != -1) {
+		var prefix = instance.substring(0, instance.indexOf(":"));
+
+		for (var p in knownPrefixes) {
+			if(knownPrefixes[p][0] == prefix) {
+				prefixTable[prefix+":"] = "<"+knownPrefixes[p][1]+">";
+				break;
+			}
+		}
+		
+	}
 
 	var sparqlTable = {};
 	sparqlTable["class"] = "?" + instance; // unique class name
@@ -1016,6 +1028,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
 
 		var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
+		
 		for (var prefix in resultClass["prefixTable"]) {
 			if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 		}
