@@ -489,7 +489,7 @@ Template.AddLink.events({
 				_.each(asc, function(e){
 					var hasValues = true;
 					_.each(value, function(v){ //check if any of searched values is missing
-						if (hasValue && e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
+						if (hasValues && e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
 							hasValues = false;
 						}
 					}); //console.log(400, e, asc.findIndex(elem => _.isEqual(elem,e) ));//;
