@@ -710,19 +710,29 @@ Interpreter.customMethods({
 			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
 			var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
 				return _.find(all_sub_super_of_end, function(c) {
-					return c.localName == a.class
+					return c.localName == a.class && a.type == "=>"
 				})
 			});
+
+			if(possible_assoc_list.length == 0){
+				possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+					return _.find(all_sub_super_of_end, function(c) {
+						return c.localName == a.class
+					})
+				});
+			}
 
 			name_list = _.map(possible_assoc_list, function(assoc) {
 				var assoc_name = assoc["short_name"];
 				
 				if (assoc["type"] == "<=") {
-					assoc_name = "inv("+assoc_name+")";
+					assoc_name = "^"+assoc_name;
 				};
 				return assoc_name;
 			});
 		}
+
+		console.log("name_list", name_list)
 
 		if(name_list.length == 1) return name_list[0];
 		

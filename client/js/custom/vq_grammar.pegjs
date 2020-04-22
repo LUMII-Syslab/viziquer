@@ -488,7 +488,8 @@
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			StringQuotes = STRING_LITERAL1  / STRING_LITERAL2
 			STRING_LITERAL1 = "'" string "'"
-			STRING_LITERAL2 = '"' string '"'
+			STRING_LITERAL2 = doubleQuotes string:string doubleQuotes
+			doubleQuotes = ('"'/ '“' / '”') {return '"'}
 			QName = Path:(Path / PathBr)  {return pathOrReference(Path)}
 
 
@@ -550,7 +551,7 @@
 			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
-			likeString1 = ('"' start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? '"') {return {string: makeVar(string), start:start, end:end}}
+			likeString1 = (('"'/ '“' / '”') start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? ('"'/ '“' / '”')) {return {string: makeVar(string), start:start, end:end}}
 			likeString2 = ("'" start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? "'") {return {string: makeVar(string), start:start, end:end}}
 
 			BetweenExpression = ('BETWEEN'i space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}

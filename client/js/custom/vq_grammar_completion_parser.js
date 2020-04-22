@@ -455,7 +455,7 @@ vq_grammar_completion_parser = (function() {
         peg$c415 = function() {addContinuation(location(), "$", 10, false, 4);},
         peg$c416 = function() {addContinuation(location(), "'", 10, false, 4);},
         peg$c417 = function() {addContinuation(location(), '"', 10, false, 4);},
-        peg$c418 = function() {addContinuation(location(), "INV", 85, false, 4);},
+        peg$c418 = function() {addContinuation(location(), "", 85, false, 4);},
         peg$c419 = function() {addContinuation(location(), "[", 28, false, 4);},
         peg$c420 = function() {addContinuation(location(), "]", 28, false, 4);},
         peg$c421 = function() {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);},
@@ -19596,7 +19596,7 @@ vq_grammar_completion_parser = (function() {
     					var propName= prop[key]["short_name"];
     					if(prop[key]["type"] == "<=") {
     						addContinuation(place, "^" + propName, priority, false, 2)
-    						addContinuation(place, "INV(" + propName + ")", priority, false, 2)
+    						// addContinuation(place, "INV(" + propName + ")", priority, false, 2)
     					}
     					else addContinuation(place, propName, priority, false, 2);
     				}
@@ -19722,7 +19722,7 @@ vq_grammar_completion_parser = (function() {
     							var propName= prop[key]["short_name"];
     							if(prop[key]["type"] == "<=") {
     								addContinuation(location(), "^" + propName, 100, false, 2, "end")
-    								addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
+    								// addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
     							}
     							else addContinuation(location(), propName, 100, false, 2, "end");
     						}

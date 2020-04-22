@@ -58,7 +58,7 @@
 					var propName= prop[key]["short_name"];
 					if(prop[key]["type"] == "<=") {
 						addContinuation(place, "^" + propName, priority, false, 2)
-						addContinuation(place, "INV(" + propName + ")", priority, false, 2)
+						// addContinuation(place, "INV(" + propName + ")", priority, false, 2)
 					}
 					else addContinuation(place, propName, priority, false, 2);
 				}
@@ -184,7 +184,7 @@
 							var propName= prop[key]["short_name"];
 							if(prop[key]["type"] == "<=") {
 								addContinuation(location(), "^" + propName, 100, false, 2, "end")
-								addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
+								// addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
 							}
 							else addContinuation(location(), propName, 100, false, 2, "end");
 						}
@@ -746,7 +746,7 @@
 			dollar = "" {addContinuation(location(), "$", 10, false, 4);}
 			quote = "" {addContinuation(location(), "'", 10, false, 4);}
 			dubble_quote = "" {addContinuation(location(), '"', 10, false, 4);}
-			inv_c = "" {addContinuation(location(), "INV", 85, false, 4);}
+			inv_c = "" {addContinuation(location(), "", 85, false, 4);}
 			squere_br_open = "" {addContinuation(location(), "[", 28, false, 4);}
 			squere_br_close = "" {addContinuation(location(), "]", 28, false, 4);}
 			relations = "" {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);}

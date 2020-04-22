@@ -2064,11 +2064,11 @@ VQ_Element.prototype = {
   getName: function() {
     // Since we need inv(name) also in the input, we should extract the name in this case
     var name = this.getCompartmentValue("Name");
-    if (name && name.substring(0,4)=="inv(") {
-        return name.substring(4,name.length-1);
-    } else {
+    // if (name && name.substring(0,4)=="inv(") {
+        // return name.substring(4,name.length-1);
+    // } else {
         return name;
-    }
+    // }
   },
   // --> string
   getInstanceAlias: function() {

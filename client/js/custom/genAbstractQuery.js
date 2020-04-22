@@ -274,31 +274,33 @@ resolveTypesAndBuildSymbolTable = function (query) {
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
   function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
-   try {
-	  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
-	 // console.log("parse_obj", parse_obj);
-    } catch (e) {
-      // TODO: error handling
-     // console.log(e)
-    }
-
-	if(parse_obj.startsWith("[") == false && parse_obj.endsWith("]") == false){
-		parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
-		parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
-	 }
-
-	if(parse_obj != "[*sub]"){
-		try {
-		  var parsed_exp = vq_grammar_parser.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
-		  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
-		  exp_obj.parsed_exp = parsed_exp;
+   if(typeof parse_obj !== 'undefined'){
+	   try {
+		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+		 // console.log("parse_obj", parse_obj);
 		} catch (e) {
 		  // TODO: error handling
-		  console.log(e)
-		} finally {
-		  //nothing
-		};
-	}
+		 // console.log(e)
+		}
+
+		if(parse_obj.startsWith("[") == false && parse_obj.endsWith("]") == false){
+			parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
+			parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
+		 }
+
+		if(parse_obj != "[*sub]"){
+			try {
+			  var parsed_exp = vq_grammar_parser.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+			  exp_obj.parsed_exp = parsed_exp;
+			} catch (e) {
+			  // TODO: error handling
+			  console.log(e)
+			} finally {
+			  //nothing
+			};
+	   }
+   }
   };
 
   // String, ObjectId, String, IdObject -->

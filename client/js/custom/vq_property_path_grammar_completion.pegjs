@@ -46,7 +46,7 @@
 						var propName= prop[key]["short_name"];
 						if(prop[key]["type"] == "<=") {
 							addContinuation(location(), "^" + propName, 100, 2, "end")
-							addContinuation(location(), "INV(" + propName + ")", 100, 2, "end")
+							//addContinuation(location(), "INV(" + propName + ")", 100, 2, "end")
 						}
 						else addContinuation(location(), propName, 100, 2, "end");
 					}
@@ -80,7 +80,8 @@
 						
 						// var assoc_name = all_assoc_from_start[role]["name"];
 						if (all_assoc_from_start[role]["type"] == "<=") {
-							assoc_name = "inv("+assoc_name+")";
+							// assoc_name = "inv("+assoc_name+")";
+							assoc_name = "^"+assoc_name;
 						};
 						addContinuation(place, assoc_name, 99, 2);
 					}
@@ -95,7 +96,8 @@
 						for (var role in possible_assoc_list) {
 							var assoc_name = possible_assoc_list[role]["short_name"];
 							if (possible_assoc_list[role]["type"] == "<=") {
-								assoc_name = "inv("+assoc_name+")";
+								// assoc_name = "inv("+assoc_name+")";
+								assoc_name = "^"+assoc_name;
 							};
 							addContinuation(place, assoc_name, 100, 2);
 						}
@@ -225,7 +227,7 @@
 			plusplus = "" {addContinuation(location(), "++", 50, 4);}
 			equalequal = "" {addContinuation(location(), "==", 50, 4);}
 			check = "" {addContinuation(location(), "^", 50, 4);}
-			inv_c = "" {addContinuation(location(), "inv", 50, 4);}
+			inv_c = "" {addContinuation(location(), "", 50, 4);}
 			br_open = "" {addContinuation(location(), "(", 50, 4);}
 			br_close = "" {addContinuation(location(), ")", 50, 4);}
 			exclamation = "" {addContinuation(location(), "!", 50, 4);}
