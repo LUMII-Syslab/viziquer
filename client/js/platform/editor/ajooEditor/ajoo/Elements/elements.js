@@ -85,6 +85,41 @@ AElements = function(editor) {
                 return new ADocument(editor);
             },
 
+            Document2: function() {
+                return new A2Document(editor);
+            },
+
+            CALData: function() {
+                return new ACALData(editor);
+            },
+
+            CALInputData: function() {
+                return new ACALInputData(editor);
+            },
+
+            CALOutputData: function() {
+                return new ACALOutputData(editor);
+            },
+
+            AutomataAcceptingState: function() {
+                return new AAutomataAcceptingState(editor);
+            },
+            AutomataAcceptingInitialState: function() {
+                return new AAutomataAcceptingInitialState(editor);
+            },
+
+            AutomataInitialState: function() {
+                return new AAutomataInitialState(editor);
+            },
+
+            SandClock: function() {
+                return new ASandClock(editor);
+            },
+
+            AcceptEvent: function() {
+                return new AAcceptEvent(editor);
+            },
+
             TwitterBird: function() {
                 return new TwitterBird(editor);
             },
