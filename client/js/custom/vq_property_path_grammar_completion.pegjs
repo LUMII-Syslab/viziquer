@@ -226,7 +226,7 @@
 			PathEltOrInverse_c = "" {getAssociations(location(), 90, 4);}
 			plusplus = "" {addContinuation(location(), "++", 50, 4);}
 			equalequal = "" {addContinuation(location(), "==", 50, 4);}
-			check = "" {addContinuation(location(), "^", 50, 4);}
+			check = "" {addContinuation(location(), "", 50, 4);}
 			inv_c = "" {addContinuation(location(), "", 50, 4);}
 			br_open = "" {addContinuation(location(), "(", 50, 4);}
 			br_close = "" {addContinuation(location(), ")", 50, 4);}

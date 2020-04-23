@@ -662,7 +662,7 @@
 			true_c = "" {addContinuation(location(), "true", 10, false, 4);}
 			false_c = "" {addContinuation(location(), "false", 10, false, 4);}
 			double_check = "" {addContinuation(location(), "^^", 10, false, 4);}
-			check = "" {addContinuation(location(), "^", 10, false, 4);}
+			check = "" {addContinuation(location(), "", 10, false, 4);}
 			br_open = "" {addContinuation(location(), "(", 90, false, 4);}
 			br_close = "" {addContinuation(location(), ")", 10, false, 4);}
 			count_distinct_c = "" {if(options.type=="attribute") addContinuation(location(), "COUNT_DISTINCT", 35, false, 4); else addContinuation(location(), "", 1, false, 4);}

@@ -770,14 +770,21 @@ function generateSPARQLtext(abstractQueryTable){
 
 			 //SELECT DISTINCT
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0){
-				var groupBySelectDistinct = [];
-				if(rootClass["aggregations"].length > 0) groupBySelectDistinct = groupByTemp;
-				var groupBySelectDistinct = groupBySelectDistinct.concat(selectResult["innerDistinct"]);
-				groupBySelectDistinct = groupBySelectDistinct.filter(function (el, i, arr) {
-					return arr.indexOf(el) === i;
+				messages.push({
+						"type" : "Warning",
+						"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+						"listOfElementId" : [rootClass["identification"]["_id"]],
+						"isBlocking" : false
 				});
+				
+				// var groupBySelectDistinct = [];
+				// if(rootClass["aggregations"].length > 0) groupBySelectDistinct = groupByTemp;
+				// var groupBySelectDistinct = groupBySelectDistinct.concat(selectResult["innerDistinct"]);
+				// groupBySelectDistinct = groupBySelectDistinct.filter(function (el, i, arr) {
+					// return arr.indexOf(el) === i;
+				// });
 
-				 SPARQL_text = SPARQL_text + "{SELECT DISTINCT " +groupBySelectDistinct.join(" ") + " WHERE{\n";
+				 // SPARQL_text = SPARQL_text + "{SELECT DISTINCT " +groupBySelectDistinct.join(" ") + " WHERE{\n";
 			 }
 
 			  //HAVING
@@ -814,7 +821,7 @@ function generateSPARQLtext(abstractQueryTable){
 			});
 
 			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval)  + "\n}";
-			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
+			 // if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
 
 			 var groupBy = groupByTemp.join(" ");
@@ -2125,14 +2132,21 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							
 							//SELECT DISTINCT
 							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) {
-								var selectDistinct = selectResult["groupBy"];
-								selectDistinct = selectDistinct.concat(selectResult["innerDistinct"]);
-								selectDistinct = selectDistinct.filter(function (el, i, arr) {
-									return arr.indexOf(el) === i;
-								});
+								// var selectDistinct = selectResult["groupBy"];
+								// selectDistinct = selectDistinct.concat(selectResult["innerDistinct"]);
+								// selectDistinct = selectDistinct.filter(function (el, i, arr) {
+									// return arr.indexOf(el) === i;
+								// });
 								
-								subQuery = subQuery +SPARQL_interval+"SELECT DISTINCT " + selectDistinct.join(" ") + " WHERE{\n";
-								SPARQL_interval_sub_temp = SPARQL_interval+"  ";
+								// subQuery = subQuery +SPARQL_interval+"SELECT DISTINCT " + selectDistinct.join(" ") + " WHERE{\n";
+								// SPARQL_interval_sub_temp = SPARQL_interval+"  ";
+								
+								messages.push({
+									"type" : "Warning",
+									"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+									// "listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+									"isBlocking" : false
+								});
 							}
 
 
@@ -2141,7 +2155,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							if(groupBy != "") groupBy = "\n"+SPARQL_interval+"GROUP BY " + groupBy;
 
-							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
+							// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 							if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
 
@@ -2351,7 +2365,15 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						});
 
 						//SELECT DISTINCT
-						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + SPARQL_interval+"SELECT DISTINCT "+parentClassInstance + " " + inner.join(" ") + " WHERE{\n";
+						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) {
+							// subQuery = subQuery + SPARQL_interval+"SELECT DISTINCT "+parentClassInstance + " " + inner.join(" ") + " WHERE{\n";
+							messages.push({
+								"type" : "Warning",
+								"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+								// "listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
+								"isBlocking" : false
+							});
+						}
 
 						//union parent triple
 						if(parentClassTriple != null) subQuery = subQuery + SPARQL_interval+parentClassTriple + "\n";
@@ -2365,7 +2387,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						var groupBy = selectResult["groupBy"].join(" ");
 						if(groupBy != "") groupBy = SPARQL_interval+"\nGROUP BY " + groupBy;
 
-						if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
+						// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
 

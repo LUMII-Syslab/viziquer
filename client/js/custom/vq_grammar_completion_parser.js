@@ -371,7 +371,7 @@ vq_grammar_completion_parser = (function() {
         peg$c331 = function() {addContinuation(location(), "true", 10, false, 4);},
         peg$c332 = function() {addContinuation(location(), "false", 10, false, 4);},
         peg$c333 = function() {addContinuation(location(), "^^", 10, false, 4);},
-        peg$c334 = function() {addContinuation(location(), "^", 10, false, 4);},
+        peg$c334 = function() {addContinuation(location(), "", 10, false, 4);},
         peg$c335 = function() {addContinuation(location(), "(", 90, false, 4);},
         peg$c336 = function() {addContinuation(location(), ")", 10, false, 4);},
         peg$c337 = function() {if(options.type=="attribute") addContinuation(location(), "COUNT_DISTINCT", 35, false, 4); else addContinuation(location(), "", 1, false, 4);},
