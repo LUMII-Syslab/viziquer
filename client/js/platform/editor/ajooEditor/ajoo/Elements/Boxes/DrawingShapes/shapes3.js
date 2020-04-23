@@ -195,6 +195,314 @@ ADocument.prototype.compartmentArea = function() {
 }
 
 
+//CALData
+ACALData = function(editor) {
+	SVGShape.call(this, editor);
+
+	this.shapesData = [{name: "CALData",
+						path: "M 0 0 100 50 0 100 Z M 0 0 H 100 V 100 H 0 H 100 V 0",
+						originalWidth: 100,
+						originalHeight: 100,
+					}];
+}
+
+ACALData.prototype = Object.create(SVGShape.prototype);
+ACALData.prototype.constructor = ACALData;
+
+ACALData.prototype.compartmentArea = function() {
+	return ASquare.prototype.compartmentArea.call(this);
+}
+
+//CALInputData
+ACALInputData = function(editor) {
+	SVGShape.call(this, editor);
+
+	this.shapesData = [{name: "CALInputData",
+						path: "M 0 0 H 20 V 100 L 0 100 Z M 20 0 L 120 50 M 120 50 20 100 Z H 120 M 120 0 V 100 M 120 100 L 0 100",
+						originalWidth: 120,
+						originalHeight: 100,
+					}];
+}
+
+ACALInputData.prototype = Object.create(SVGShape.prototype);
+ACALInputData.prototype.constructor = ACALInputData;
+
+ACALInputData.prototype.compartmentArea = function() {
+	return ARectangle.prototype.compartmentArea.call(this);
+}
+
+//CALOutputData
+ACALOutputData = function(editor) {
+	SVGShape.call(this, editor);
+
+	this.shapesData = [{name: "CALOutputData",
+						path: "M 100 0 H 120 V 100 H 100 Z M 0 0 L 100 50 M 100 50 0 100 M 0 100 L 0 0 M 0 0 H 100 M 0 100 H 100",
+						originalWidth: 120,
+						originalHeight: 100,
+					}];
+}
+
+ACALOutputData.prototype = Object.create(SVGShape.prototype);
+ACALOutputData.prototype.constructor = ACALOutputData;
+
+ACALOutputData.prototype.compartmentArea = function() {
+	return ARectangle.prototype.compartmentArea.call(this);
+}
+
+//----------Elīna piemēri --------------
+
+//SandClock //Timer
+ASandClock = function(editor) {
+	SVGShape.call(this, editor);
+
+	var path = "M 0 0 H 40 L 20 25 L 40 50 H 0 L 20 25 Z";
+
+	this.shapesData = [{name: "SandClock",
+						path: path,
+						originalWidth: 40,
+						originalHeight: 50,
+					}];	
+}
+
+ASandClock.prototype = Object.create(SVGShape.prototype);
+ASandClock.prototype.constructor = ASandClock;
+ASandClock.prototype.updateShapeSize = function(res) {
+
+	console.log(res);
+	/* var size = box.getSize();
+	var width = size["width"];
+	var height = size["height"];
+	console.log ("Sand Clock resize" , height, width, res);
+	var height = height - (heigt % 5);
+	size["height"] = height;
+	size["width"] = height *4 / 5;
+	console.log ("Sand Clock new size" , size["height"], size["width"], res); */
+}
+
+//AcceptEvent //Accept Event Action
+AAcceptEvent = function(editor) {
+	SVGShape.call(this, editor);
+
+	var path = "M 0 0 H 100 V 70 H 0 L 20 35 L 0 0 Z";
+
+	this.shapesData = [{name: "AcceptEvent",
+						path: path,
+						originalWidth: 100,
+						originalHeight: 70,
+					}];	
+}
+
+AAcceptEvent.prototype = Object.create(SVGShape.prototype);
+AAcceptEvent.prototype.constructor = AAcceptEvent;
+
+//AutomataAcceptingState
+AAutomataAcceptingState = function(editor) {
+	ACircle.call(this, editor);
+}
+
+AAutomataAcceptingState.prototype = Object.create(ACircle.prototype);
+AAutomataAcceptingState.prototype.constructor = AAutomataAcceptingState;
+
+AAutomataAcceptingState.prototype.createShape = function(prop_list) {
+
+	var fill = prop_list["fill"];
+
+	//outter circle
+	prop_list["fill"] = "white";
+	var outer_circle = new Konva.Circle(prop_list);
+		outer_circle["name"] = "Circle";
+		outer_circle["allowed"] = {stroke: true,
+									strokeWidth: true,
+									dash: true,
+								};
+
+	//inner circle
+	prop_list["fill"] = fill;
+	
+	var inner_circle = new Konva.Circle(prop_list);
+		inner_circle["name"] = "Inner";
+
+		inner_circle["denied"] = {stroke: true,
+									strokeWidth: true,
+									dash: true,
+								};
+
+	return {element: [outer_circle, inner_circle]};
+}
+
+AAutomataAcceptingState.prototype.updateShapeSize = function(res) {
+
+	var box = this;
+	var shapes = box.shapes;
+
+	var outer_circle = shapes[0];
+
+	outer_circle.radius(res["radius"]);
+	outer_circle.x(res["centerX"]);
+	outer_circle.y(res["centerY"]);
+
+	var inner_circle = shapes[1];
+
+	inner_circle.radius(res["radius"] * 0.6);
+	inner_circle.x(res["centerX"]);
+	inner_circle.y(res["centerY"]);
+}
+
+AAutomataAcceptingState.prototype.updateShapeStyle = function(style) {
+	BPMNShape.prototype.updateShapesStyle.call(this, style);
+}
+
+//AutomataAcceptingInitialState
+AAutomataAcceptingInitialState = function(editor) {
+	ACircle.call(this, editor);
+}
+
+AAutomataAcceptingInitialState.prototype = Object.create(ACircle.prototype);
+AAutomataAcceptingInitialState.prototype.constructor = AAutomataAcceptingInitialState;
+
+AAutomataAcceptingInitialState.prototype.createShape = function(prop_list) {
+
+	var fill = prop_list["fill"];
+
+	//outter circle
+	prop_list["fill"] = "white";
+	var outer_circle = new Konva.Circle(prop_list);
+		outer_circle["name"] = "Circle";
+		outer_circle["allowed"] = {stroke: true,
+									strokeWidth: true,
+									dash: true,
+								};
+
+	//inner circle
+	prop_list["fill"] = fill;
+	
+	var inner_circle = new Konva.Circle(prop_list);
+		inner_circle["name"] = "Inner";
+
+		inner_circle["denied"] = {stroke: true,
+									strokeWidth: true,
+									dash: true,
+								};
+	console.log("prop_list", prop_list);
+	prop_list["points"] = [0, outer_circle.y, 20, outer_circle.y];
+	var arrow_line1 = new Konva.Line(prop_list);
+	arrow_line1["name"] = "Inner";
+	prop_list["points"] = [10, outer_circle.y-10, 20, outer_circle.y];
+	var arrow_line2 = new Konva.Line(prop_list);
+	arrow_line2["name"] = "Inner";
+	prop_list["points"] = [10, outer_circle.y+10, 20, outer_circle.y];
+	var arrow_line3 = new Konva.Line(prop_list);
+	arrow_line3	["name"] = "Inner";
+
+	return {element: [outer_circle, inner_circle, arrow_line1, arrow_line2, arrow_line3]};
+}
+
+AAutomataAcceptingInitialState.prototype.updateShapeSize = function(res) {
+
+	var box = this;
+	var shapes = box.shapes;
+
+	var outer_circle = shapes[0];
+
+	outer_circle.radius(res["radius"]);
+	outer_circle.x(res["centerX"]);
+	outer_circle.y(res["centerY"]);
+
+	var inner_circle = shapes[1];
+
+	inner_circle.radius(res["radius"] * 0.6);
+	inner_circle.x(res["centerX"]);
+	inner_circle.y(res["centerY"]);
+
+	var arrow_line1 = shapes[2];
+	arrow_line1.points( [-20, res["centerY"], 0, res["centerY"]])
+	var arrow_line2 = shapes[3];
+	arrow_line2.points( [-10, res["centerY"]-10, 0, res["centerY"]])
+	var arrow_line3 = shapes[4];
+	arrow_line3.points( [-10, res["centerY"]+10, 0, res["centerY"]])
+}
+
+AAutomataAcceptingInitialState.prototype.updateShapeStyle = function(style) {
+	BPMNShape.prototype.updateShapesStyle.call(this, style);
+}
+
+//AutomataInitialState not accepting
+AAutomataInitialState = function(editor) {
+	ACircle.call(this, editor);
+}
+
+AAutomataInitialState.prototype = Object.create(ACircle.prototype);
+AAutomataInitialState.prototype.constructor = AAutomataInitialState;
+
+AAutomataInitialState.prototype.createShape = function(prop_list) {
+
+
+	var outer_circle = new Konva.Circle(prop_list);
+		outer_circle["name"] = "Circle";
+		outer_circle["allowed"] = {stroke: true,
+									strokeWidth: true,
+									dash: true,
+								};
+
+	prop_list["points"] = [-20, outer_circle.y, 0, outer_circle.y];
+	var arrow_line1 = new Konva.Line(prop_list);
+	arrow_line1["name"] = "Inner";
+	prop_list["points"] = [-10, outer_circle.y-10, 0, outer_circle.y];
+	var arrow_line2 = new Konva.Line(prop_list);
+	arrow_line2["name"] = "Inner";
+	prop_list["points"] = [-10, outer_circle.y+10, 0, outer_circle.y];
+	var arrow_line3 = new Konva.Line(prop_list);
+	arrow_line3	["name"] = "Inner";
+
+	return {element: [outer_circle, arrow_line1, arrow_line2, arrow_line3]};
+}
+
+AAutomataInitialState.prototype.updateShapeSize = function(res) {
+
+	var box = this;
+	var shapes = box.shapes;
+
+	var outer_circle = shapes[0];
+
+	outer_circle.radius(res["radius"]);
+	outer_circle.x(res["centerX"]);
+	outer_circle.y(res["centerY"]);
+
+
+	var arrow_line1 = shapes[1];
+	arrow_line1.points( [-20, res["centerY"], 0, res["centerY"]])
+	var arrow_line2 = shapes[2];
+	arrow_line2.points( [-10, res["centerY"]-10, 0, res["centerY"]])
+	var arrow_line3 = shapes[3];
+	arrow_line3.points( [-10, res["centerY"]+10, 0, res["centerY"]])
+}
+
+AAutomataInitialState.prototype.updateShapeStyle = function(style) {
+	BPMNShape.prototype.updateShapesStyle.call(this, style);
+}
+
+//-----------------------
+
+
+//Document
+A2Document = function(editor) {
+	SVGShape.call(this, editor);
+
+	this.shapesData = [{name: "Document2",
+						path: "M0 0 L0 60 C15,80 45,40 60,40 L60 0 Z",
+						originalWidth: 60,
+						originalHeight: 65,
+					}];
+}
+
+A2Document.prototype = Object.create(SVGShape.prototype);
+A2Document.prototype.constructor = A2Document;
+
+A2Document.prototype.compartmentArea = function() {
+	return ARectangle.prototype.compartmentArea.call(this);
+}
+
+
 //Note
 Note = function(editor) {
 	SVGShape.call(this, editor);
