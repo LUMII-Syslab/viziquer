@@ -301,6 +301,7 @@ function checkClassForTree(schema_class, prefix) {
 function makeTreeNodeLocalName(class_name, class_name2 = null) {
 	function getShortName (cl) { return (cl.ontology.isDefault ? cl.localName : cl.ontology.prefix.concat(":",cl.localName));};
 	var pre = "";
+	var pre2 = "A=";
 	var schema_class = schema.findClassByName(class_name);
 	var local_name = "";
 	if (!class_name2)
@@ -313,10 +314,18 @@ function makeTreeNodeLocalName(class_name, class_name2 = null) {
 		pre = pre.concat("V");
 	if ( _.size(schema_class.subClasses) > 0 )
 		pre = pre.concat("A");
+	if ( schema.treeMode.ShowSubClassCount > 0 && _.size(schema_class.allSubClasses) >  schema.treeMode.ShowSubClassCount)
+		pre2 = pre2.concat(_.size(schema_class.allSubClasses));  
 	//if (pre != "")  // !!! Tās tās manas dekorācijas
 	//	local_name = local_name.concat("  (", pre,")")
 	if ( schema_class.instanceCount > 0)
-		local_name = local_name.concat("  (", schema_class.instanceCount,")");	
+		if ( pre2 == "A=")
+			local_name = local_name.concat("  (", schema_class.instanceCount,")");	
+		else
+			local_name = local_name.concat("  (", schema_class.instanceCount," ",pre2,")");	
+	else
+		if ( pre2 != "A=")
+			local_name = local_name.concat("  (", pre2,")");	
 	
 	return local_name;
 }
@@ -435,6 +444,7 @@ function makeSubTree(classes, deep) {
 }
 
 var druka = false;
+var startTime = null;
 VQ_Schema_copy = null; 	
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
@@ -477,7 +487,8 @@ VQ_Schema = function ( data = {}, tt = 0) {
 	   return;	
    }
    
-   var startTime = Date.now();
+   //var startTime = Date.now();
+   startTime = Date.now();
    this.projectID = Session.get("activeProject");
    this.Elements = {};	
    this.Classes = {};
@@ -770,10 +781,14 @@ VQ_Schema.prototype = {
 			schema.addOntology(new VQ_ontology(ont.namespace, ont.prefix));
 		})
 		
+		// ***************************** dbpedia.org *********************************************
 		_.each(data.Classes, function(cl){
-		  schema.addClass( new VQ_Class(cl));
+			if (data.SchemaName == "http://dbpedia.org/ontology/" && cl.localName == "Thing" || data.SchemaName == "http://dbpedia.org/ontology/" && cl.namespace == data.SchemaName)
+				schema.addClass( new VQ_Class(cl));
+			if (data.SchemaName != "http://dbpedia.org/ontology/")	
+				schema.addClass( new VQ_Class(cl));
 		})
-	
+
 	  // !!!! Mēdz būt virsklašu sarakstos virsklases ieliktas, kuru nav shēmā 
 	  // Te sanāk stīvēšanās par to ko skaitīt un ko neskaitīt
 		//top_classes = _.filter(this.Classes, function (cl) { return _.size(cl.originalSuperClasses) == 0 && !cl.isAbstract  } );
@@ -805,7 +820,6 @@ VQ_Schema.prototype = {
 			})
 			cl.originalSuperClasses = superClasses;
 		})	
-
 	
 		_.each(this.Classes, function (cl){
 			_.each(schema.Classes, function (c){ c.isVisited = false})
@@ -813,11 +827,10 @@ VQ_Schema.prototype = {
 			_.each(schema.Classes, function (c){ c.isVisited = false})
 			cl.originalAllSubClasses = collectOriginalClasses(cl, "originalAllSubClasses", "originalSubClasses");
 		})
-		
-		this.makeTreeMode();
 
+		this.makeTreeMode();
 		this.getCycles();
-		
+	
 		_.each(this.Classes, function (cl){
 			if (cl.isAbstract && cl.localName != " ") {
 				for (i = 1; i < _.size(cl.cycle); i++) { 
@@ -828,13 +841,13 @@ VQ_Schema.prototype = {
 				cl.ontologies[cl.ontology.dprefix] = 1;
 			}
 		})
-				
+		
 		function setInfo(cl,sc,key){
 			var s_class = schema.findClassByName(sc); 
 			var ID = s_class.getID(); 
 			cl[key][ID] = s_class; 			
 		};
-
+   
 		if ( _.size(schema.Cycles) == 0 )   
 		{
 			_.each(this.Classes, function(cl){
@@ -1087,6 +1100,14 @@ VQ_Schema.prototype = {
 	else 
 		schema.treeMode = { CompressLevel:2, RemoveLevel:-1, OwlRemoveLevel:-1, MaxDeep:6}; 
 	 
+	if (schema.Data.treeMode && schema.Data.treeMode.RemoveLevel) 
+		schema.treeMode.RemoveLevel = parseInt(schema.Data.treeMode.RemoveLevel);
+	if (schema.Data.treeMode && schema.Data.treeMode.MaxDeep) 
+		schema.treeMode.MaxDeep = parseInt(schema.Data.treeMode.MaxDeep);
+	if (schema.Data.treeMode && schema.Data.treeMode.ShowSubClassCount) 
+		schema.treeMode.ShowSubClassCount = parseInt(schema.Data.treeMode.ShowSubClassCount);
+	else 
+		schema.treeMode.ShowSubClassCount = 0;
 	//schema.treeMode = { CompressLevel:1, RemoveLevel:-1, MaxDeep:6};  // !!!! Testam   
   },
   makeSchemaTree: function() {
@@ -1098,12 +1119,13 @@ VQ_Schema.prototype = {
 	var classificators =  _.filter(schema.Classes, function (cl){ 
 		var isGood = (_.size(cl.superClasses) == 1 && (_.toArray(cl.superClasses)[0].getClassName() == "rdfs:Resource" || _.toArray(cl.superClasses)[0].getClassName() == "owl:Thing" ) ? true:false);
 		return (( _.size(cl.superClasses) == 0 || isGood ) && 
-		         _.size(cl.subClasses) == 0 && cl.instanceCount < schema.treeMode.RemoveLevel && cl.localName != " "); 
+		         _.size(cl.subClasses) == 0 && cl.instanceCount < schema.treeMode.RemoveLevel && cl.instanceCount != 0 && cl.localName != " "); 
 	});
 	
 	_.each(classificators, function(cl){cl.isClassificator = true;})
 
 	var good_classes = _.filter(schema.Classes, function(cl) { return cl.instanceCount >= schema.treeMode.RemoveLevel &&  cl.localName != " "; });
+	
 	good_classes = _.union(good_classes,classificators);
 	
 	_.each(schema.Ontologies, function(ont) { ont.classCount = 0});
@@ -1119,6 +1141,7 @@ VQ_Schema.prototype = {
 			return {name:cl.getClassName(), tr_name:makeTreeNodeLocalName(cl.getClassName()), parent_list:[], prefix:cl.ontology.dprefix, prefix2:cl.ontology.prefix, orderNum:2}; });
 		top_classes_list = _.sortBy(top_classes_list, function(t){ return t.name;});
 		top_classes_list = _.sortBy(top_classes_list, function(t){ return t.prefix2;});
+
 		schema.Tree = makeSubTree(top_classes_list, 1);
 	}
 	else {
@@ -1228,7 +1251,6 @@ VQ_Schema.prototype = {
 			}			
 		}
 	})
-	
 	
 	_.each(schema.Cycles, function(cycle){
 		var cycle_classes = [];
@@ -1355,6 +1377,7 @@ VQ_Schema.prototype = {
 
 	//console.log(schema.OwlFormat)
   },
+  
   printClasses: function(){
   	var newLine = "";
 	var rezult = [];
@@ -1367,7 +1390,7 @@ VQ_Schema.prototype = {
 				vk = "Thing";
 			else
 				vk = "Other";
-			rezult = _.union(rezult,newLine.concat(c.localName,";",c.ontology.isDefault,";",
+			rezult = _.union(rezult,newLine.concat(c.localName,";",c.ontology.isDefault,";",c.instanceCount,";",
 		     c.ontology.dprefix,";",_.size(c.inAssoc),";",_.size(c.outAssoc),";",_.size(c.properties),";",vk,";",
 			 _.size(c.superClasses),";",_.size(c.allSuperClasses),";",_.size(c.subClasses),";",_.size(c.allSubClasses),";",c.fullName));
 		}
@@ -1398,6 +1421,176 @@ VQ_Schema.prototype = {
 	link.href = URL.createObjectURL(new Blob([owl_list.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 	document.body.appendChild(link);
 	link.click();
+  },
+  FindInstancesCount: function(){
+ 	_.each(schema.Classes, function(c){
+		if (!c.isAbstract )
+		{
+			var sparql = "SELECT (COUNT(?CC) AS ?AA) WHERE{ ?CC a <"+ c.fullName + ">}"
+			schema.FindInstanceCount(c,sparql);
+		} 	
+	});
+  },
+  FindInstanceCount: function(class_data, sparql) {
+
+  var paging_info = null;
+  var graph_iri = "";
+  var endpoint = "http://185.23.162.167:8833/sparql";
+
+  var proj = Projects.findOne({_id: Session.get("activeProject")});
+
+  if (proj && proj.endpoint) {
+    if (proj.uri) {graph_iri = proj.uri;}
+    endpoint = proj.endpoint;
+  } else {
+    Interpreter.showErrorMsg("Project endpoint not properly configured", -3);
+    return;
+  };
+
+  var list = {projectId: Session.get("activeProject"),
+              versionId: Session.get("versionId"),
+              options: {
+                        params: {
+                               params: {
+                                     "default-graph-uri": graph_iri,
+                                      query: sparql,
+                               },
+                        },
+						endPoint: endpoint,
+						endpointUsername: proj.endpointUsername,
+						endpointPassword: proj.endpointPassword,
+                        paging_info: paging_info
+              },
+           };
+	Utilities.callMeteorMethod("executeSparql", list, function(res) {
+    if (res.status == 200) {
+        var fields = _.map(res.result.sparql.head[0].variable, function(v) {
+            return v["$"].name;
+          });
+
+          var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
+             var csv_row = {};
+             _.forEach(fields, function(field) {
+               var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
+               var obj = {};
+               if (result_item_attr) {
+                 if (result_item_attr.literal) {
+                   if (result_item_attr.literal[0]._) {
+                      obj[field] = result_item_attr.literal[0]._;
+                   } else {
+                      obj[field] = result_item_attr.literal[0];
+                   };
+
+                 } else {
+                   if (result_item_attr.uri) {
+                     obj[field] = result_item_attr.uri[0];
+                   } else {
+                     obj[field] = null;
+                   };
+                 };
+               } else {
+                 obj[field] = undefined;
+               };
+               _.extend(csv_row,obj);
+             });
+            return csv_row;
+          });
+		  console.log(csv_table[0]["AA"]);
+		  class_data.instanceCount = csv_table[0]["AA"];
+    } 
+  });
+  },
+  FindAttrCount: function(attr_data, class_info) {
+
+  var sparql = [];
+  	//_.each(attr_data, function(attr){
+	//	sparql = _.union(sparql,["{ SELECT \""+attr.name+"\" AS ?NN (COUNT(?Cl) AS ?AA) WHERE{ ?Cl a :"+class_info.localName+". ?Cl :"+attr.name+" ?attr.}}"]);
+	//})
+	var attr = null;
+	for (i = 0; i < 50; i++) 
+	{
+		attr = attr_data[i];
+		sparql = _.union(sparql,["{ SELECT \""+attr.name+"\" AS ?NN (COUNT(?Cl) AS ?AA) WHERE{ ?Cl a :"+class_info.localName+". ?Cl :"+attr.name+" ?attr.}}"]);
+	}
+	sparql = sparql.join("\r\n UNION \r\n")
+	sparql = "PREFIX : <"+ class_info.ontology.namespace+"> SELECT * WHERE { " + sparql;
+	sparql = sparql + "\r\n}";
+	console.log(sparql);
+
+  var paging_info = null;
+  var graph_iri = "";
+  var endpoint = "http://185.23.162.167:8833/sparql";
+
+  var proj = Projects.findOne({_id: Session.get("activeProject")});
+
+  if (proj && proj.endpoint) {
+    if (proj.uri) {graph_iri = proj.uri;}
+    endpoint = proj.endpoint;
+  } else {
+    Interpreter.showErrorMsg("Project endpoint not properly configured", -3);
+    return;
+  };
+
+  var list = {projectId: Session.get("activeProject"),
+              versionId: Session.get("versionId"),
+              options: {
+                        params: {
+                               params: {
+                                     "default-graph-uri": graph_iri,
+                                      query: sparql,
+                               },
+                        },
+						endPoint: endpoint,
+						endpointUsername: proj.endpointUsername,
+						endpointPassword: proj.endpointPassword,
+                        paging_info: paging_info
+              },
+           };
+	Utilities.callMeteorMethod("executeSparql", list, function(res) {
+    if (res.status == 200) {
+        var fields = _.map(res.result.sparql.head[0].variable, function(v) {
+            return v["$"].name;
+          });
+
+          var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
+             var csv_row = {};
+             _.forEach(fields, function(field) {
+               var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
+               var obj = {};
+               if (result_item_attr) {
+                 if (result_item_attr.literal) {
+                   if (result_item_attr.literal[0]._) {
+                      obj[field] = result_item_attr.literal[0]._;
+                   } else {
+                      obj[field] = result_item_attr.literal[0];
+                   };
+
+                 } else {
+                   if (result_item_attr.uri) {
+                     obj[field] = result_item_attr.uri[0];
+                   } else {
+                     obj[field] = null;
+                   };
+                 };
+               } else {
+                 obj[field] = undefined;
+               };
+               _.extend(csv_row,obj);
+             });
+            return csv_row;
+          });
+		  
+		  console.log("******************************");
+		  console.log(csv_table);
+		  //var ii = 0
+		  //_.each(attr_data, function(attr){
+			//	attr.instanceCount = csv_table[ii]["AA"]
+			//	ii = ii + 1;
+		  //});
+		  //console.log("******************************");
+		  //console.log(attr_data);
+    } 
+  });
   }
  }
 
@@ -1476,7 +1669,7 @@ VQ_Elem = function (elemInfo, elemType){
 	else uri = schema.namespace;
 
 	if (elemInfo.instanceCount)
-		this.instanceCount = elemInfo.instanceCount;
+		this.instanceCount = parseInt(elemInfo.instanceCount);
 	else 
 		this.instanceCount = -1
 	
@@ -1650,6 +1843,14 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	attributes = attributes.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
 			});
+
+	//var class_info = this;
+	//_.each(attributes, function(attr){
+	//	var sparql = "PREFIX : <"+class_info.ontology.namespace+"> SELECT  (COUNT(?Cl) AS ?AA) WHERE{ ?Cl a :"+class_info.localName+". ?Cl :"+ attr.name+" ?attr.}";
+	//	console.log(sparql)
+	//	schema.FindInstanceCount(attr,sparql);	
+	//})
+	// **** VQ_Schema_copy.FindAttrCount(attributes,this);
 	this.allAttributes = attributes;
 	return attributes;
   };
