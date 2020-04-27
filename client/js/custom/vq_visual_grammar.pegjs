@@ -20,7 +20,7 @@
 	StringQuotes = StringQuotes:(STRING_LITERAL1  / STRING_LITERAL2) {return {value:makeVar(StringQuotes), type:"string"}}
 	STRING_LITERAL1 = "'" string "'"
 	STRING_LITERAL2 = '"' string '"'
-	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$])+)
+	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+)
 	
 	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer";
 	BooleanIRI = "http://www.w3.org/2001/XMLSchema#boolean";
