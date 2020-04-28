@@ -61,10 +61,15 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	{
 		var foundElementsjson =  Session.get("json");
 		var dgr_id =  Session.get("activeDiagram");
-		var foundDiag = _.find(foundElementsjson, function(i){return (i._id == dgr_id)});
-		console.log("foundDiag", foundDiag, "json", foundElementsjson, "dgr_id", dgr_id);
-		var diagElements = foundDiag.elements;
-		console.log("diagElements", diagElements);
+		if (foundElementsjson && dgr_id)
+		{
+			var foundDiag = _.find(foundElementsjson, function(i){return (i._id == dgr_id)});
+			if (foundDiag)
+			{
+				var diagElements = foundDiag.elements;
+				console.log("diagElements", diagElements);
+			}
+		}
 	}
 /********************************************** */
 
@@ -75,12 +80,12 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 			elem["_id"] = id;
 
 			/* -------------FindMode Extension ***********************/
-			if (isFindMode && _.contains(diagElements, id))
+			if (isFindMode && diagElements && _.contains(diagElements, id))
 			{
 				var elemStyle = elem.style.elementStyle;
 				elemStyle.strokeWidth = 5;
 				elemStyle.stroke = "rgb(80,203,91)";
-				console.log("Modified elemStyle", elemStyle, "id", id)
+			//	console.log("Modified elemStyle", elemStyle, "id", id)
 				elem.style.elementStyle = elemStyle;
 				console.log("Modified elem", elem)
 			}
