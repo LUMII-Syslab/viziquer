@@ -28,20 +28,22 @@
       <div class="row" style="display:{{plain.showDiagram}}" >
 
           {{#with diagram_type}}
+          
               <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;">
                   <div class="row">
                     <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;">
-
                         {{> diagramEditor}}
 
-                    </div>
+                     </div>
                   </div>
                   <div class="row">
                       {{> findResult}}
-                  </div>
+                  </div> 
+                  {{#if isQuery}}
                   <div class="row">
-                      {{> sparqlForm}}
-                  </div>
+                    {{> sparqlForm}}
+                 </div>
+                 {{/if}}
               </div>
 
 
@@ -63,10 +65,7 @@
       {{/each}}
 
       {{> AddLink}}
-     <!--  {{> AddLinkTest}} -->
-      {{> AddSubquery}}
-      {{> ConnectClasses}}
-      {{> ConnectClassesSettings}}
+      {{> AddLinkTest}}
       {{> AggregateWizard}}
       {{> AddAttribute}}
       {{> AddAggregate}}
@@ -76,7 +75,6 @@
 
 </template>
 <!-- End of diagram template -->
-
 
 <template name="sparqlForm">
 
