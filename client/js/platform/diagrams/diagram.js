@@ -109,9 +109,14 @@ Template.diagramTemplate.helpers({
 	//Vai VIZIQUER jautājums noteiks vai rādīt VIZIQUER logu
 	isQuery: function() {
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-		var type_name = diagram_type.name;
-		if (type_name == "Query")
-			return true;
+		if (diagram_type) 
+		{
+			var type_name = diagram_type.name;
+	
+			if (type_name == "Query")
+				return true;
+			else return false;
+		}
 		else return false;
 	},
 
