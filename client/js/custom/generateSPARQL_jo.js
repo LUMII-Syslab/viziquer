@@ -2017,7 +2017,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval)
-
+					
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "NOT") unionResult["result"] = "FILTER NOT EXISTS{\n" + unionResult["result"] + "\n}";
@@ -2310,6 +2310,7 @@ function findSubQueryMainClass(referenceTable, subQueryMainClass){
 function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable, SPARQL_interval){
 	var whereInfo = [];
 	var unionsubSELECTstaterents = [];
+	var unionGroupStaterents = [];
 	var messages = [];
 
 	if(generateUpperSelect == true || sparqlTable["isSubQuery"] == true || sparqlTable["isGlobalSubQuery"] == true || sparqlTable["linkType"] == "NOT") SPARQL_interval = SPARQL_interval+"  ";
@@ -2323,16 +2324,18 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
 				//console.log("QQQQQQQQQQQQQQQ", selectResult, parentClassInstance);
 				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval);
+
 				var temp = wheresubInfo["triples"];
 				temp = temp.concat(wheresubInfo["filters"]);
 				temp = temp.concat(wheresubInfo["links"]);
 				messages = messages.concat(wheresubInfo["messages"]);
 
 				var tempSelect = selectResult["select"];
+				
 				tempSelect= tempSelect.concat(selectResult["aggregate"]);
 				tempSelect= tempSelect.concat(unionSELECT["select"]);
 				tempSelect= tempSelect.concat(unionSELECT["aggregate"]);
-
+				unionGroupStaterents = unionGroupStaterents.concat(selectResult["groupBy"])
 
 				if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
 					var subQuery = "{\n";
@@ -2385,12 +2388,16 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						subQuery = subQuery + SPARQL_interval+temp.join("\n"+SPARQL_interval)  + "}";
 
 						var groupBy = selectResult["groupBy"].join(" ");
-						if(groupBy != "") groupBy = SPARQL_interval+"\nGROUP BY " + groupBy;
-
+						if(parentClassInstance != null){
+							groupBy = groupBy + " "+ parentClassInstance;
+						}
+						if(groupBy != "") groupBy = "\n"+SPARQL_interval+"GROUP BY " + groupBy;
+						
 						// if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + "}";
 
 						if(sparqlTable["subClasses"][subclass]["agregationInside"] == true) subQuery = subQuery + groupBy;
 
+						
 						//ORDER BY
 
 						if (orderBy["orders"] != "") subQuery = subQuery + SPARQL_interval+"\nORDER BY " + orderBy["orders"];
@@ -2437,6 +2444,9 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	unionsubSELECTstaterents = unionsubSELECTstaterents.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
+	unionGroupStaterents = unionGroupStaterents.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
 
 	var returnValue = whereInfo.join("\n"+SPARQL_interval.substring(2)+"UNION\n"+SPARQL_interval.substring(2));
 	if(generateUpperSelect == true) returnValue = "SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n" + returnValue + "}\n" + SPARQL_interval.substring(2);
@@ -2445,9 +2455,14 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 		if(unionsubSELECTstaterents.length > 0) {
 			if(parentClassInstance != null){
 				unionsubSELECTstaterents.push(parentClassInstance);
+				unionGroupStaterents.push(parentClassInstance);
 			}
-			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n"+SPARQL_interval.substring(2) + returnValue + "}\n"+SPARQL_interval.substring(4)+"}";
+			returnValue = "{SELECT " + unionsubSELECTstaterents.join(" ") + " WHERE{\n"+SPARQL_interval.substring(2) + returnValue + "}";
+			
+			if(sparqlTable["agregationInside"]== true) returnValue = returnValue + "\n"+SPARQL_interval.substring(2)+"GROUP BY " + unionGroupStaterents.join(" ");
+			returnValue = returnValue + "\n"+SPARQL_interval.substring(4)+"}";
 			if(sparqlTable["linkType"] == "OPTIONAL") returnValue = "OPTIONAL" + returnValue;
+
 		}
 		else if(sparqlTable["linkType"] == "NOT") {
 			if(sparqlTable["isGlobalSubQuery"] == true)returnValue = "MINUS{FILTER NOT EXISTS{" + returnValue + "}}";

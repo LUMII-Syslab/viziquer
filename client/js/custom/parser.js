@@ -2454,9 +2454,6 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 					
-					console.log("left", left);
-					console.log("right", right);
-					
 					//property = 5
 					//propety = "string"
 					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
@@ -2979,7 +2976,7 @@ countCardinality = function(str_expr, context){
 	  } else return -1
     } catch (e) {
       console.log(e)
-    } 
+    }
 	
 	return -1;
 }
