@@ -19,7 +19,7 @@ Interpreter.customMethods({
 		var variableList = getAllVariablesInQuery(parsedQuery, schema);
 
 		var abstractTable = generateAbstractTable(parsedQuery, [], variableList);
-		//console.log(abstractTable);
+		console.log(abstractTable);
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
 		var classesTable = abstractTable["classesTable"];
 
@@ -28,6 +28,7 @@ Interpreter.customMethods({
 		classesTable = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"]);
 
 		classesTable["orderings"] = abstractTable["orderTable"];
+		classesTable["groupings"] = abstractTable["groupTable"];
 		if(typeof parsedQuery["limit"] !== 'undefined') classesTable["limit"] =  parsedQuery["limit"];
 		if(typeof parsedQuery["offset"] !== 'undefined') classesTable["offset"] =  parsedQuery["offset"];
 		if(typeof parsedQuery["distinct"] !== 'undefined') classesTable["distinct"] =  parsedQuery["distinct"];
@@ -66,6 +67,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 	var linkTable = [];
 	var orderTable = [];
 	var bindTable = [];
+	var groupTable = [];
 
 	//where
 	var where = parsedQuery["where"];
@@ -138,6 +140,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 			else if(typeof variableList[variables[key]] !== 'undefined'){
 				
 				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];
+	
 				if(typeof bindTable[parsedAttribute] === 'undefined'){
 					var attributeInfo = {
 						"alias":"",
@@ -146,6 +149,20 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 						"isInternal":false,
 						"groupValues":false,
 						"exp":parsedAttribute
+					}
+
+					for (var clazz in classesTable){
+						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+						break;
+					}
+				} else if(variableList["?"+parsedAttribute] != "seen") {
+					var attributeInfo = {
+						"alias":bindTable[parsedAttribute]["alias"],
+						"identification":null,
+						"requireValues":false,
+						"isInternal":false,
+						"groupValues":false,
+						"exp":bindTable[parsedAttribute]["exp"]
 					}
 
 					for (var clazz in classesTable){
@@ -164,31 +181,70 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 				var distinct = "";
 				if(expression["distinct"] == true)distinct = "DISTINCT ";
 				
-				var aggregateExpression = vq_visual_grammar.parse(expression["expression"])["value"];
-				var aggregationExp = expression["aggregation"] + "(" +distinct + aggregateExpression +")";
-
-				//aggregate on class
-				if(typeof classesTable[expression["expression"]] !== 'undefined'){
-					if(expression["aggregation"].toLowerCase() == "count") {
-						if(distinct == "") aggregationExp = "count(.)";
-						else  aggregationExp = "count_distinct(.)";
-					}
-					var aggregateInfo = {
-						"exp":aggregationExp,
-						"alias":alias
-					}
-					classesTable[expression["expression"]] = addAggrigateToClass(classesTable[expression["expression"]], aggregateInfo);
-				}
-				//aggregate on attribute
-				else if(typeof attributeTable[aggregateExpression] !== 'undefined') {
-					if(attributeTable[aggregateExpression]["alias"] == "" && typeof attributeTable[aggregateExpression]["exp"] !== 'undefined') aggregationExp = expression["aggregation"] + "(" +distinct + attributeTable[aggregateExpression]["exp"] +")";
+				var aggregateExpression;
+				
+				//agregate on expression
+				if(typeof expression["expression"] == "object"){
+					var temp = parseSPARQLjsStructureWhere(expression["expression"], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
+					aggregateExpression = temp.viziQuerExpr.exprString;
 					
+					aggregationExp = expression["aggregation"] + "(" +distinct + aggregateExpression +")";
+						
 					var aggregateInfo = {
 						"exp":aggregationExp,
 						"alias":alias
 					}
-					classesTable[attributeTable[aggregateExpression]["class"]] = addAggrigateToClass(classesTable[attributeTable[aggregateExpression]["class"]], aggregateInfo);
-					if((attributeTable[aggregateExpression]["identification"]!= null && attributeTable[aggregateExpression]["alias"] == attributeTable[aggregateExpression]["identification"]["localName"]) || attributeTable[aggregateExpression]["alias"] == "")attributeTable[aggregateExpression]["seen"] = true;
+					var aggrClass;
+					for(var attr in temp["viziQuerExpr"]["exprVariables"]){
+						var attribute = temp["viziQuerExpr"]["exprVariables"][attr];
+						var inSameClass = false;
+						if(attr == 0){
+							// classesTable[attributeTable[attribute]["class"]] = addAggrigateToClass(classesTable[attributeTable[attribute]["class"]], aggregateInfo);
+							for (var clazz in classesTable){
+								if(clazz == attributeTable[attribute]["class"])inSameClass = true;
+								classesTable[clazz] = addAggrigateToClass(classesTable[clazz], aggregateInfo);
+								break;
+							}
+						}
+						if(((attributeTable[attribute]["identification"]!= null && attributeTable[attribute]["alias"] == attributeTable[attribute]["identification"]["localName"]) || attributeTable[attribute]["alias"] == "") && inSameClass == true)attributeTable[attribute]["seen"] = true;
+					}
+					
+				} else {
+					aggregateExpression = vq_visual_grammar.parse(expression["expression"])["value"];
+					var aggregationExp = expression["aggregation"] + "(" +distinct + aggregateExpression +")";
+
+					//aggregate on class
+					if(typeof classesTable[expression["expression"]] !== 'undefined'){
+						if(expression["aggregation"].toLowerCase() == "count") {
+							if(distinct == "") aggregationExp = "count(.)";
+							else  aggregationExp = "count_distinct(.)";
+						}
+						var aggregateInfo = {
+							"exp":aggregationExp,
+							"alias":alias
+						}
+
+						classesTable[expression["expression"]] = addAggrigateToClass(classesTable[expression["expression"]], aggregateInfo);
+					}
+					//aggregate on attribute
+					else if(typeof attributeTable[aggregateExpression] !== 'undefined') {
+						if(attributeTable[aggregateExpression]["alias"] == "" && typeof attributeTable[aggregateExpression]["exp"] !== 'undefined') aggregationExp = expression["aggregation"] + "(" +distinct + attributeTable[aggregateExpression]["exp"] +")";
+						
+						var aggregateInfo = {
+							"exp":aggregationExp,
+							"alias":alias
+						}
+
+						var inSameClass = false;
+						
+						// classesTable[attributeTable[aggregateExpression]["class"]] = addAggrigateToClass(classesTable[attributeTable[aggregateExpression]["class"]], aggregateInfo);
+						for (var clazz in classesTable){
+								classesTable[clazz] = addAggrigateToClass(classesTable[clazz], aggregateInfo);
+								if(clazz == attributeTable[aggregateExpression]["class"])inSameClass = true;
+								break;
+							}
+						if(((attributeTable[aggregateExpression]["identification"]!= null && attributeTable[aggregateExpression]["alias"] == attributeTable[aggregateExpression]["identification"]["localName"]) || attributeTable[aggregateExpression]["alias"] == "" ) && inSameClass == true)attributeTable[aggregateExpression]["seen"] = true;
+					}
 				}
 			}
 			//operation
@@ -214,6 +270,23 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 			classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
 		}
 	}
+	
+	//group
+	var group = parsedQuery["group"];
+	for(var key in group){
+		var exp = vq_visual_grammar.parse(group[key]["expression"])["value"];
+		if(typeof classesTable[group[key]["expression"]] !== 'undefined') classesTable[group[key]["expression"]]["groupByThis"] = true;
+		else {
+			var inSelect = false;
+			for(var k in variables){
+				if(typeof variables[k] === 'string' && variables[k] == group[key]["expression"]){
+					inSelect = true;
+				}
+			}
+			if(inSelect == false) groupTable.push(exp); 
+		}
+
+	}
 
 	//console.log("classesTable", classesTable);
 	//console.log("filterTable", filterTable);
@@ -222,7 +295,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList){
 	//console.log("orderTable", orderTable);
 	//console.log("bindTable", bindTable);
 
-	return {classesTable:classesTable, filterTable:filterTable, attributeTable:attributeTable, linkTable:linkTable, orderTable:orderTable};
+	return {classesTable:classesTable, filterTable:filterTable, attributeTable:attributeTable, linkTable:linkTable, orderTable:orderTable, groupTable:groupTable};
 }
 
 function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList, patternType, bindTable, unionSubject){
@@ -625,9 +698,35 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 						}
 		bindTable[where["variable"].substring(1)] = attributeInfo;
 		
-		if(viziQuerExpr["exprString"] != "")classesTable[attributeTable[viziQuerExpr["exprVariables"][0]]["class"]] = addAttributeToClass(classesTable[attributeTable[viziQuerExpr["exprVariables"][0]]["class"]], attributeInfo);
+		if(viziQuerExpr["exprString"] != "" && typeof attributeTable[viziQuerExpr["exprVariables"][0]] !== 'undefined'){
+			classesTable[attributeTable[viziQuerExpr["exprVariables"][0]]["class"]] = addAttributeToClass(classesTable[attributeTable[viziQuerExpr["exprVariables"][0]]["class"]], attributeInfo);
+			variableList[where["variable"]] = "seen";
+		}
 	}
-	
+	if(where["type"] == "functionCall"){
+		var functionName = "<"+where["function"]+">"
+		var ignoreFunction = false;
+		if(where["function"] == "http://www.w3.org/2001/XMLSchema#dateTime" || where["function"] == "http://www.w3.org/2001/XMLSchema#date" || where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
+		//if(where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") functionName = "xsd:decimal";
+		if(ignoreFunction == false) viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + functionName + "(";
+		var args = [];
+			
+		for(var arg in where["args"]){
+			if(typeof where["args"][arg] == 'string') {
+				var arg1 = generateArgument(where["args"][arg]);
+				if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
+				args.push(arg1["value"]);
+			}
+			else if(typeof where["args"][arg] == 'object'){
+				var temp = parseSPARQLjsStructureWhere(where["args"][arg], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, patternType, bindTable, unionSubject);
+				bindTable = temp["bindTable"];
+				args.push(temp["viziQuerExpr"]["exprString"]);
+				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
+			}
+		}
+		viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + args.join(", ");
+		if(ignoreFunction == false) viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")";
+	}
 	if(where["type"] == "operation"){
 		//realtion or atithmetic
 		if(checkIfRelation(where["operator"]) != -1 || chechIfArithmetic(where["operator"]) != -1){
@@ -662,6 +761,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 		}
 		//one argumentFunctions
 		else if(checkIfOneArgunemtFunctuion(where["operator"]) != -1){
+			
 			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + where["operator"] + "(";
 
 			if(typeof where["args"][0] == 'string') {
@@ -676,7 +776,6 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			}
 			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + ")";
-
 		}
 		//two argumentFunctions
 		else if(checkIfTwoArgunemtFunctuion(where["operator"]) != -1){
@@ -814,10 +913,13 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 							if( patterns[pattern]["type"] == "bgp"){
 								var triples = patterns[pattern]["triples"];
 								var temp = generateTypebgp(triples, classesTable, attributeTable, linkTable, bgptype, allClasses, unionSubject);
-								// console.log("OOOOOOOOOOOOOOO", patterns[pattern], temp)
+								for(var attr in temp["attributeTableAdded"]){
+									var addedAttribute = temp["attributeTableAdded"][attr];
+									var schema = new VQ_Schema();
+									if(typeof attributeTable[addedAttribute] !== 'undefined' && (schema.resolveLinkByName(addedAttribute) != null) || schema.resolveAttributeByName(null, addedAttribute) != null) attributeTable[addedAttribute]["seen"] = true;
+								}
 							} else{
 								var temp = parseSPARQLjsStructureWhere(patterns[pattern], classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList, patternType, bindTable, unionSubject);
-								
 							}
 							
 						}
@@ -931,7 +1033,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 		}
 	}
 	if(where["type"] == "group" && typeof where["patterns"][0]["queryType"] != "undefined"){
-
+		
 		var abstractTable = generateAbstractTable(where["patterns"][0], classesTable, variableList);
 
 		//find links outside subquery
@@ -951,6 +1053,7 @@ function parseSPARQLjsStructureWhere(where, classesTable, filterTable, attribute
 
 
 		abstractTable["classesTable"][subSelectMainClass]["orderings"] = abstractTable["orderTable"];
+		abstractTable["classesTable"][subSelectMainClass]["groupings"] = abstractTable["groupings"];
 		if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
 		if(typeof where["patterns"][0]["offset"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
 		if(typeof where["patterns"][0]["distinct"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["distinct"] =  where["patterns"][0]["distinct"];
@@ -1584,6 +1687,17 @@ function visualizeQuery(clazz, parentClass){
 			// console.log("  expression = ", expression);
 			// console.log("  isDescending = ", isDescending);
 
+		})
+		
+		if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
+		
+		//groupBy
+		_.each(clazz["groupings"],function(group) {
+			var expression = group["exp"];
+			var isDescending = group["isDescending"];
+
+			//add group to class
+			classBox.addGrouping(group);
 		})
 
 		//distinct
