@@ -378,8 +378,11 @@ Template.ConnectClasses.events({
 				var d = 30; //distance between boxes
 	            var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
 	            var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size
+	            if (currentVQElment.getName() == "[ + ]") {
+			    	newPosition.width = 12*class_name.length;
+			    }
 	            //Link Coordinates
-	            var coordX = newPosition.x + Math.round(newPosition.width/2);
+	            var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	            var coordY = oldPosition.y + oldPosition.height;
 	            var locLink = [];
 	            
@@ -982,9 +985,13 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
         }
 	} else { 
 		var d = 30; //distance between boxes
-	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
+	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size	    
+	    if (currentElement.getName() == "[ + ]") {
+	    	//newPosition.width = 75;
+	    	newPosition.width = 12*chain[0].class.length;;
+	    }
 	    //Link Coordinates
-	    var coordX = newPosition.x + Math.round(newPosition.width/2);
+	    var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	    var coordY = oldPosition.y + oldPosition.height;		
 		//link_name, class_name, line_direct
 	    Create_VQ_Element(function(cl){
