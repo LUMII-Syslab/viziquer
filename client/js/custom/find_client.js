@@ -35,8 +35,9 @@ Interpreter.customMethods({
               Utilities.callMeteorMethod(serverMethodName, list, function(resp) {
                   console.log("resp", resp.result);
                   var abc = _.map(resp.result, function(item) { 
-                    _.extend(item, {versionId: Session.get("versionId"),
-                                projectId:  Session.get("activeProject"),
+                    _.extend(item, {
+                        //versionId: Session.get("versionId"),
+                         //       projectId:  Session.get("activeProject"),
                                 diagramTypeId: item.typeId
                 } )  
                     return item;                  })
