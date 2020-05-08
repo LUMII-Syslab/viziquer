@@ -12,17 +12,18 @@ function createJsonFromDiagIds(diagramidsAAA, list)
 			function (c) { 
 				var diag = Diagrams.findOne({"_id": c});
 				var diagElems = _.filter(diagramids, function (a) {return a.diagramId==c});
+				var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 				var diagElemIds = diagElems.map(function (c) { return c._id;})
 				return {
 					_id: c,
 					name: diag.name,
 					typeId : diag.diagramTypeId,
 					elemCount: _.size(diagElems),
-					projectId: list.projectId,
-					versionId: list.versionId,
+					projectId: projectId,
+					versionId: diag.versionId,
 					diagramTypeId: diag.diagramTypeId,
 					diagram: c,
-					path: "http://localhost:3000/project/" + list.projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + list.versionId+"/findMode",
+					path: "http://localhost:3000/project/" + projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + diag.versionId+"/findMode",
 					elements: diagElemIds,
 					editMode: "findMode"
 				}
@@ -487,6 +488,7 @@ function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
 		function (c) { 
 
 			var diag = Diagrams.findOne({"_id": c});
+			var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 			var diagElems = _.filter(PotentialElems, function (a) {return a.diagramId==c});
 			var diagElemIds = diagElems.map(function (c) { return c._id;})
 			console.log("ciklā", c, diag, diagElemIds, diagElems);
@@ -495,11 +497,11 @@ function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
 				name: diag.name,
 				typeId : diag.diagramTypeId,
 				elemCount: _.size(diagElems),
-				projectId: list.projectId,
-				versionId: list.versionId,
+				projectId: projectId,
+				versionId: diag.versionId,
 				diagramTypeId: diag.diagramTypeId,
 				diagram: c,
-				path: "http://localhost:3000/project/" + list.projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + list.versionId+"/findMode",
+				path: "http://localhost:3000/project/" + projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + diag.versionId+"/findMode",
 				elements: diagElemIds,
 				editMode: "findMode"
 			}
@@ -665,6 +667,7 @@ Meteor.methods({
 		return _.uniq(_.pluck(diagramids.fetch(), "diagramId")).map(
 			function (c) {
 				var diag = Diagrams.findOne({ "_id": c });
+				var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 				var diagElems = _.filter(diagramids.fetch(), function (a) { return a.diagramId == c });
 				var diagElemIds = diagElems.map(function (c) { return c._id; })
 				return {
@@ -672,7 +675,7 @@ Meteor.methods({
 					name: diag.name,
 					typeId: diag.diagramTypeId,
 					elemCount: _.size(diagElems),
-					path: "http://localhost:3000/project/" + list.projectId + "/diagram/" + c + "/type/" + diag.diagramTypeId + "/version/" + list.versionId,
+					path: "http://localhost:3000/project/" + projectId + "/diagram/" + c + "/type/" + diag.diagramTypeId + "/version/" + diag.versionId,
 					elements: diagElemIds
 				}
 			}
@@ -694,6 +697,7 @@ Meteor.methods({
 			.map(
 			function (c) { 
 				var diag = Diagrams.findOne({"_id": c});
+				var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 				var diagElems = _.filter(diagramids, function (a) {return a.diagramId==c});
 				var diagElemIds = diagElems.map(function (c) { return c._id;})
 
@@ -702,11 +706,11 @@ Meteor.methods({
 					name: diag.name,
 					diagramTypeId: diag.diagramTypeId,
 					typeId: diag.diagramTypeId,
-					projectId: list.projectId,
-					versionId: list.versionId,
+					projectId: projectId,
+					versionId: diag.versionId,
 					elemCount: _.size(diagElemIds),
 					diagram: c,
-					path: "http://localhost:3000/project/" + list.projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + list.versionId,
+					path: "http://localhost:3000/project/" + projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + diag.versionId,
 					elements: diagElemIds,
 					editMode: "findMode"
 			}
