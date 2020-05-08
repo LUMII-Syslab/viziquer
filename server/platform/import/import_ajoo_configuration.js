@@ -286,19 +286,22 @@ ImportAjooConfiguration.prototype = {
 		});
 	},
 
+	//Elina modified, elem_type is list of BoxTypes or LineTypes from json
+	//uses self.obj_type_map dictionary jsonIds to DB Ids
+	//et.object.superTypeIds in json are replaced with corresponding element Ids in DB
 	importSuperTypes: function(elem_type) {
 		var self = this;
+		_.each(elem_type, function (et){
+			var super_types = _.map(et.object.superTypeIds, function(super_type_id) {
+				return self.obj_type_map[super_type_id];
+				});
 
-		var super_types = _.map(elem_type.superTypeIds, function(super_type_id) {
-								return self.obj_type_map[super_type_id];
-							});
-
-		if (_.size(super_types)) {
-
-			var elem_id = box_type.object._id;
-			ElementTypes.update({_id: elem_id}, {superTypeIds: super_types});
-		}
-
+			if (_.size(super_types)) {
+				var elem_id_json = et.object._id;
+				var elem_id=self.obj_type_map[elem_id_json]
+				ElementTypes.update({_id: elem_id}, {$set:{superTypeIds: super_types}});
+			}
+		});
 	},
 
 	importDiagrams: function(diagrams) {
