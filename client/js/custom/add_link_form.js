@@ -144,10 +144,13 @@ Template.AddLink.events({
             var d = 30; //distance between boxes
             var oldPosition = currentElement.getCoordinates(); //Old class coordinates and size
             var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
-            if (currentElement.getName() == "[ + ]") {
+            var nameLength = 12*class_name.length + 2*(class_name.match(/[A-Z]/g) || []).length;
+            if (nameLength < 75) nameLength = 75; //default minimal width
+            if (nameLength > 512) nameLength = 512; //default maximal width
+            if (newPosition.width < nameLength) {
 		    	//newPosition.width = 75;
-		    	newPosition.width = 12*class_name.length;
-		    }		    
+		    	newPosition.width = nameLength;
+		    }    
             //Link Coordinates
             var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
             var coordY = oldPosition.y + oldPosition.height;            
