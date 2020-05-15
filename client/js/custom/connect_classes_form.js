@@ -110,7 +110,7 @@ Interpreter.customMethods({
 
 
 				$("#not-show-as-property-path")[0].checked = true;
-				$("#connect-classes-goto-aggregate-wizard")[0].checked = false;
+				if (Template.ConnectClasses.gotoSubquery.get().isChecked) $("#connect-classes-goto-aggregate-wizard")[0].checked = false;
 				$("#connect-classes-form").modal("show");			
 			}
 		}		
@@ -221,7 +221,7 @@ Interpreter.customMethods({
 				$("#not-show-as-property-path")[0].checked = false;
 				// $("#connect-classes-goto-aggregate-wizard")[0].checked = false;			
 				$("#connect-classes-form").modal("show");
-				console.log("TEST");
+				//console.log("TEST");
 			}
 		}
 	},		
@@ -268,7 +268,7 @@ Template.ConnectClasses.events({
 		$('#chain_text')[0].style.color = "";
 		var value = $("#searchList").val().toLowerCase(); 
 		value = value.trim(); 
-		console.log("mySearch: ", value);
+		//console.log("mySearch: ", value);
 		var data = Template.ConnectClasses.linkList.curValue;
 		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data; //"none", "one", "more"
 		if (value == "") {//empty string
@@ -291,7 +291,7 @@ Template.ConnectClasses.events({
 				if (inverseCount == "more" || (inverseCount == "one" && e.countInverseLinks < 2) || (inverseCount == "none" && e.countInverseLinks < 1)) {
 					var found = false;
 
-					_.each(e.array, function(a){ console.log(e.array.indexOf(a), e.array.length - 1);
+					_.each(e.array, function(a){ //console.log(e.array.indexOf(a), e.array.length - 1);
 						// the first class is not checked
 						if (e.array.indexOf(a) > 0 && e.array.indexOf(a) != e.array.length - 1){ 						
 						// given classes are not searched for value 
@@ -377,9 +377,16 @@ Template.ConnectClasses.events({
 			if (Template.ConnectClasses.addLongLink.get().data){			
 				var d = 30; //distance between boxes
 	            var oldPosition = currentVQElment.getCoordinates(); //Old class coordinates and size
-	            var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size
+	            var newPosition = currentVQElment.getNewLocation(d); //New class coordinates and size  
+	            var nameLength = 12*class_name.length  + 2*(class_name.match(/[A-Z]/g) || []).length;        
+			    if (nameLength < 75) nameLength = 75; //default minimal width
+	            if (nameLength > 512) nameLength = 512; //default maximal width
+	            if (newPosition.width < nameLength) {
+			    	//newPosition.width = 75;
+			    	newPosition.width = nameLength;
+			    }
 	            //Link Coordinates
-	            var coordX = newPosition.x + Math.round(newPosition.width/2);
+	            var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	            var coordY = oldPosition.y + oldPosition.height;
 	            var locLink = [];
 	            
@@ -414,7 +421,7 @@ Template.ConnectClasses.events({
 	            				oldPosition.x + Math.round(oldPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
 	            				newPosition.x + Math.round(newPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
 	            				newPosition.x + Math.round(newPosition.width/2), newPosition.y + newPosition.height]; 
-	            console.log(oldPosition, newPosition, locLink);
+	            //console.log(oldPosition, newPosition, locLink);
 
 				Create_VQ_Element(function(lnk) {
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -450,7 +457,7 @@ Template.ConnectClasses.events({
 				attr_list = attr_list.filter(function(obj, index, self) { 
 					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
 				});
-				console.log(attr_list);
+				//console.log(attr_list);
 				Template.AggregateWizard.attList.set(attr_list);
 
 				//Alias name
@@ -585,20 +592,20 @@ Template.ConnectClassesSettings.events({
 		if (!Template.ConnectClassesSettings.addLongLinkS.get().data) {
 			//Direction
 			var startElemID = $('input[name=path-radio]:checked').val();
-			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; console.log("inside direction", elementList, startElemID);
+			var elementList = Template.ConnectClassesSettings.fromToClass.curValue; //console.log("inside direction", elementList, startElemID);
 			
 			if (elementList.fromID == startElemID){
-				console.log("original order");
+				//console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
 				list = GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
 			} else if (elementList.toID == startElemID) {
-				console.log("oposite order");
+				//console.log("oposite order");
 				Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
 				list = GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);		
 			} else {
 				console.log("unknown order");
 				return;
-			} console.log(list);
+			} //console.log(list);
 			list.sort(function (x, y) {
 			    var n = x.array.length - y.array.length;
 			    if (n !== 0) {
@@ -617,7 +624,7 @@ Template.ConnectClassesSettings.events({
 			}
 		}
 		Template.ConnectClasses.linkList.set(list);
-		console.log("Settings - inverse");
+		//console.log("Settings - inverse");
 		//Inverse
 		var inverseCount = $('input[name=inverse-links]:checked').val();
 		Template.ConnectClassesSettings.inverseValue.set({data: inverseCount});
@@ -669,7 +676,7 @@ Template.ConnectClassesSettings.events({
 function clearConnectClassesInput(){
 	$("#show-settings").text("Hide settings");
 	$("#settings")[0].style.display = "block";
-	$("#max_length")[0].value = "1";
+	//$("#max_length")[0].value = "3";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
 	$("#not-show-as-property-path")[0].checked = false;
@@ -682,10 +689,17 @@ function clearConnectClassesInput(){
 	Template.ConnectClasses.addLongLink.set({data: false});
 	Template.ConnectClasses.gotoSubquery.set({isChecked: false, gotoWizard: ""});
 
+	var defaultRadio = document.getElementsByName("path-radio");
+	_.each(defaultRadio, function(e){
+		if (e.value == Template.ConnectClassesSettings.fromToClass.curValue.fromID) e.checked = true;
+		else e.checked = false;
+	});
+
 	Template.ConnectClassesSettings.fromToClass.set({fromName: "", fromID: "", toName: "", toID:""});
 	Template.ConnectClassesSettings.directionValue.set({data: 0});
 	Template.ConnectClassesSettings.inverseValue.set({data: "more"}); //"none", "one", "more"
 	Template.ConnectClassesSettings.pathLength.set(3);
+	$("#max_length")[0].value = Template.ConnectClassesSettings.pathLength.curValue;
 	Template.ConnectClassesSettings.addLongLinkS.set({data: false});
 
 	Interpreter.destroyErrorMsg();
@@ -712,7 +726,7 @@ function GetChains(ids, maxLength){
 			elemInfo.push({id: id["text"], class: id["name"]});
 		}else {
 			elem = new VQ_Element(id["text"]);
-			if (elem.isUnion() && !elem.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
+			if (elem.isUnion() && !elem.isRoot()) { //console.log(239);// [ + ] element, that has link to upper class 
 				if (elem.getLinkToRoot()){
 					var element = elem.getLinkToRoot().link.getElements();
 					var newStartClass = "";
@@ -720,7 +734,7 @@ function GetChains(ids, maxLength){
 						var newStartClass = new VQ_Element(element.start.obj._id);
 	    			} else {
 	    				var newStartClass = new VQ_Element(element.end.obj._id);
-	    			} console.log(newStartClass.getName());
+	    			} //console.log(newStartClass.getName());
 	    			elemInfo.push({id: id["text"], class: newStartClass.getName()});	    									
 				}					
 			} else {
@@ -983,8 +997,15 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	} else { 
 		var d = 30; //distance between boxes
 	    var newPosition = currentElement.getNewLocation(d); //New class coordinates and size
+	    var nameLength = 12*chain[0].class.length + 2*(chain[0].class.match(/[A-Z]/g) || []).length;	    
+	    if (nameLength < 75) nameLength = 75; //default minimal width
+        if (nameLength > 512) nameLength = 512; //default maximal width
+        if (newPosition.width < nameLength) {
+	    	//newPosition.width = 75;
+	    	newPosition.width = nameLength;
+	    }
 	    //Link Coordinates
-	    var coordX = newPosition.x + Math.round(newPosition.width/2);
+	    var coordX = oldPosition.x + Math.round(Math.min(oldPosition.width, newPosition.width)/2);
 	    var coordY = oldPosition.y + oldPosition.height;		
 		//link_name, class_name, line_direct
 	    Create_VQ_Element(function(cl){
@@ -1049,9 +1070,9 @@ function GetLinkCoordinates(startElem, endElem){ //{x: x, y: y, width: w, height
 	}
 
 	if (!bX) {
-		if ((startElem.y + startElem.height) < endElem.y){ console.log(486);
+		if ((startElem.y + startElem.height) < endElem.y){ //console.log(486);
 			y1 = y1 + Math.round(startElem.height/2);
-		} else if (startElem.y > (endElem.y + endElem.height)) { console.log(488);
+		} else if (startElem.y > (endElem.y + endElem.height)) { //console.log(488);
 			y1 = y1 - Math.round(startElem.height/2);
 		}				
 	}
