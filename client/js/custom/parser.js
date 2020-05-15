@@ -1708,8 +1708,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					var VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 					
-					if((typeof VarL["NumericLiteral"] !== 'undefined' && typeof VarR["var"] !== 'undefined' && (VarR["var"]['kind'] == "CLASS_NAME" || VarR["var"]['kind'] == "CLASS_ALIAS"))
-						|| (typeof VarR["NumericLiteral"] !== 'undefined' && typeof VarL["var"] !== 'undefined' && (VarL["var"]['kind'] == "CLASS_NAME" || VarL["var"]['kind'] == "CLASS_ALIAS"))){
+					if((typeof VarL["NumericLiteral"] !== 'undefined' && typeof VarR["var"] !== 'undefined' && VarR["var"]['kind'] == "CLASS_NAME")
+						|| (typeof VarR["NumericLiteral"] !== 'undefined' && typeof VarL["var"] !== 'undefined' && VarL["var"]['kind'] == "CLASS_NAME")){
 							var clId;
 							 for(var k in idTable){
 								if (idTable[k] == className) {
