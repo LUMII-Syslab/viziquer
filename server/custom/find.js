@@ -7,10 +7,11 @@ var constraintViolation;
 function createJsonFromDiagIds(diagramidsAAA, list)
 {
 	diagramids = diagramidsAAA.result;
-	console.log("createJsonFromDiagIds", diagramids, diagramidsAAA.potentialDiagIds);
+//	console.log("createJsonFromDiagIds", diagramids, diagramidsAAA.potentialDiagIds);
 	var aka = _.uniq(_.pluck(diagramids, "diagramId")).map(
 			function (c) { 
 				var diag = Diagrams.findOne({"_id": c});
+//				console.log("Test Version", diag);
 				var diagElems = _.filter(diagramids, function (a) {return a.diagramId==c});
 				var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 				var diagElemIds = diagElems.map(function (c) { return c._id;})
@@ -142,7 +143,7 @@ function findEdge (_findEdge, _findDiagramId)
 		targettype = targetFindElem.elementTypeId;
 		sourceConstraints = findConstraintsForElement(sourceFindElem);
 		targetConstraints = findConstraintsForElement(targetFindElem);
-		//filtrē pēc tipiem
+		//filtrē pēc tipiems
 		edgesWithSourceTargetType = _.filter(edgeswithType,
 			function(e) 
 			{
@@ -479,11 +480,11 @@ function processVisitedEdge(_findEdge, _foundEdgeList, _sourceNode, _targetNode)
 
 }
 
-function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
+function processPotentialResults(_findResultsAAA, _potentialDiagIds)
 {
-	console.log("processPotentialResults", _potentialDiagIds, _findResultsAAA);
+//	console.log("processPotentialResults", _potentialDiagIds, _findResultsAAA);
 	PotentialElems= _.filter(_.flatten(_findResultsAAA), function(e) {return _.contains(_potentialDiagIds, e.diagramId)} );
-	console.log(PotentialElems);
+//	console.log(PotentialElems);
 	var aka = _potentialDiagIds.map(
 		function (c) { 
 
@@ -491,7 +492,7 @@ function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
 			var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
 			var diagElems = _.filter(PotentialElems, function (a) {return a.diagramId==c});
 			var diagElemIds = diagElems.map(function (c) { return c._id;})
-			console.log("ciklā", c, diag, diagElemIds, diagElems);
+//			console.log("ciklā", c, diag, diagElemIds, diagElems);
 			return {
 				_id: c,
 				name: diag.name,
@@ -510,12 +511,12 @@ function processPotentialResults(_findResultsAAA, _potentialDiagIds, list)
 	return aka;
 }
 
-function DiagramsForFindResult(list)
+function DiagramsForFindResult()
 {
 	diagramIds = [];
 	potentialDiagramIds = []
 	first = true;
-	console.log("DiagramsForFindResult", findResults)
+//	console.log("DiagramsForFindResult", findResults)
 	aaa =  findResults.map(
 		function(fr)
 		{
@@ -538,9 +539,9 @@ function DiagramsForFindResult(list)
 		}
 		);
 		potentialDiagramIdsWithoutExact =  _.difference(potentialDiagramIds, diagramIds);
-		pr= processPotentialResults(aaa, potentialDiagramIdsWithoutExact, list);
-	return {result: _.filter(_.flatten(aaa), function(e) {return _.contains(diagramIds, e.diagramId)} ),
-	        potentialDiagIds: pr
+		return {
+			result: _.filter(_.flatten(aaa), function(e) {return _.contains(diagramIds, e.diagramId)} ),
+	        potentialDiagIds: processPotentialResults(aaa, potentialDiagramIdsWithoutExact)
 			};
 }
 
@@ -624,7 +625,7 @@ function checkRegExConstraintForElement(_constraint, _element)
 		var cv = _.extend(_constraint, {_id:_element._id,
 			_diagramId: _element.diagramId});
 		
-		console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
+//		console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
 		if (constraintViolation)
 			constraintViolation.push(cv);
 		else
@@ -636,16 +637,15 @@ function checkRegExConstraintForElement(_constraint, _element)
 
 function findMe(list)
 {
-	console.log("Find Me");
+//	console.log("Find Me");
 	apstaigatie = [];
 	findResults = [];
-	slices = [];
 	constraintViolation = [];
 
 	notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
 	while (notVisitedEdge)
 	{
-		slices.push(findEdge(notVisitedEdge, list.diagramId));
+		findEdge(notVisitedEdge, list.diagramId);
 		notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
 	}
 	notVisitedNode = getNotVisitedNode(list.diagramId, apstaigatie);
@@ -751,15 +751,15 @@ Meteor.methods({
 	UpdateStyle: function(list){
 		var foundElementsjson =  list.json;
 		var foundDiag = _.find(foundElementsjson, function(i){return (i._id == list.diagId)});
-		console.log("foundDiag", foundDiag, "json", foundElementsjson);
+	//	console.log("foundDiag", foundDiag, "json", foundElementsjson);
 		var diagElements = foundDiag.elements;
-		console.log("diagElements", diagElements);
+	//	console.log("diagElements", diagElements);
 		_.every(diagElements, function (el) {
 		  Elements.update(
 			{_id:el},
 			{$set: {style: {elementStyle: {strokeWidth: 5, stroke: "rgb(80,203,91)"}}}}
 		  );
-		  console.log("Update for", el);
+	//	  console.log("Update for", el);
 		  return list.json;
 		});
 	}
