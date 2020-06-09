@@ -86,7 +86,6 @@ ImportAjooConfiguration.prototype = {
 			self.importDiagramTypeDialogTypes(diagram_type);
 			self.importDiagramTypeCompartmentTypes(diagram_type.compartmentTypes);
 
-			console.log("callImportSuperTypes");
 			self.importSuperTypes(diagram_type_in.boxTypes);
 			self.importSuperTypes(diagram_type_in.lineTypes);
 		});
