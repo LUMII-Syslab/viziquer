@@ -9,6 +9,11 @@ Template.findResult.helpers({
 		return Session.get("json");
 	},
 
+	diagramCount: function()
+	{
+		return Session.get("json").length;
+	},
+
 	Potential: function() {
 		return Session.get("PotentialResults");
 	},

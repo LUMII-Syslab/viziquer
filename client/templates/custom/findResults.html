@@ -11,10 +11,10 @@
         <div>
             {{#if json2}}
             <h2>Find Results</h2>
-        
+            <div class="col-sm-12">Diagrams matched: {{diagramCount}}</div>
             <table>
                 <tr> <td><div class="col-sm-12">Diagram</div></td>
-                  <td><div class="col-sm-12">Elements count</div></td>
+                  <td><div class="col-sm-12">Matched elements count</div></td>
                 </tr>
                 {{#each json2}}
                 <tr>
@@ -51,7 +51,7 @@
         </div>
         <div>
             {{#if ViolatedConstiants}}
-            <h2>Violated Constraints</h2>
+            <h2>Constraints you may remove</h2>
             <table>
                 {{#each ViolatedConstiants}}
                            <!--   <td><a href="{{path}}">{{name}}</a></td> <td></td> -->
