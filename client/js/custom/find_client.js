@@ -33,15 +33,16 @@ Interpreter.customMethods({
          {   
             console.log("CallServerFind", serverMethodName, list);
               Utilities.callMeteorMethod(serverMethodName, list, function(resp) {
-                  console.log("resp", resp.result);
+         /*         console.log("resp", resp.result);
                   var abc = _.map(resp.result, function(item) { 
+
                     _.extend(item, {
                         //versionId: Session.get("versionId"),
                          //       projectId:  Session.get("activeProject"),
                                 diagramTypeId: item.typeId
                 } )  
                     return item;                  })
-                    console.log("abc", abc);
+                    console.log("abc", abc);*/
                 Session.set("json", resp.result);
                 Session.set("PotentialResults", resp.potentialDiagIds);
                 Session.set("ViolatedConstiants", resp.violatedConstraints);
