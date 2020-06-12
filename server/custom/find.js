@@ -4,31 +4,33 @@ var findResults;
 var atrastasSkeles;
 var constraintViolation;
 
-function createJsonFromDiagIds(diagramidsAAA, list)
+function createJsonFromDiagIds(diagramidsAAA)
 {
 	diagramids = diagramidsAAA.result;
-//	console.log("createJsonFromDiagIds", diagramids, diagramidsAAA.potentialDiagIds);
+//	console.log("createJsonFromDiagIds", diagramids);
 	var aka = _.uniq(_.pluck(diagramids, "diagramId")).map(
 			function (c) { 
-				var diag = Diagrams.findOne({"_id": c});
-//				console.log("Test Version", diag);
+				var diag = Diagrams.findOne({"_id": c}, {name:1, diagramTypeId:1, versionId:1});
 				var diagElems = _.filter(diagramids, function (a) {return a.diagramId==c});
-				var projectId = Versions.findOne({"_id": diag.versionId}).projectId;
-				var diagElemIds = diagElems.map(function (c) { return c._id;})
-				return {
-					_id: c,
-					name: diag.name,
-					typeId : diag.diagramTypeId,
-					elemCount: _.size(diagElems),
-					projectId: projectId,
-					versionId: diag.versionId,
-					diagramTypeId: diag.diagramTypeId,
-					diagram: c,
-					path: "http://localhost:3000/project/" + projectId + "/diagram/"+c+"/type/"+diag.diagramTypeId+"/version/" + diag.versionId+"/findMode",
-					elements: diagElemIds,
-					editMode: "findMode"
+				vers= Versions.findOne({_id: diag.versionId});
+				if (vers)
+				{
+					var pId = vers.projectId;
+					if (pId)
+					{ 
+						_.extend(diag, {"projectId": pId})
+					}
 				}
-			}
+				else
+				{
+					console.log("Error no version for diagram: ", diag._id);
+				}
+				_.extend(diag, {elements: _.pluck(diagElems, '_id'),
+						editMode: "findMode",
+						elemCount: _.size(diagElems)
+					})
+				return diag;
+				}
 		);
 		var groups = _.groupBy(constraintViolation, function(c) { return c.compartmentId + '#' + c.regExpression;});
 		
@@ -43,6 +45,7 @@ function createJsonFromDiagIds(diagramidsAAA, list)
 
 	return {result: aka, potentialDiagIds: diagramidsAAA.potentialDiagIds, violatedConstraints: constraintsGrouped}
 };
+
 
 function findByEdgeType(list)
 {
@@ -351,6 +354,7 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 		else
 		{
 			//apstaigāts tikai source, jāpievieno edge un target
+		//	console.log("apstaigāts tikai source, jāpievieno edge un target");
 			sourceNode = Elements.findOne({_id: _edge.startElement});
 			targetNode = Elements.findOne({_id: _edge.endElement});
 			var atrastais=[];
@@ -359,6 +363,7 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 				edgesForNodeWithType =_.filter(findOutgoingEdgesWithType(n._id, _edge.elementTypeId),
 						function(e) {
 							targetNodeForEdge = Elements.findOne({_id: e.endElement, elementTypeId: targetNode.elementTypeId});
+						//	console.log("targetNodeForEdge",targetNodeForEdge);
 							if (targetNodeForEdge) 
 							{
 								return true;
@@ -368,11 +373,13 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 								return false
 							}
 						})
+			//	console.log("edgesForNodeWithType", edgesForNodeWithType)
 				if (edgesForNodeWithType)
 				{
-					atrastais.concat(edgesForNodeWithType);
+					atrastais = atrastais.concat(edgesForNodeWithType);
 				}
 			});
+			//console.log("atrastais", atrastais);
 			_slice = addEdgeAndTargetToSlice(_slice, atrastais, _edge);
 			processVisitedEdge(_edge, atrastais, null, targetNode);
 			if (_slice)
@@ -385,6 +392,7 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 	{
 		if (_.contains(apstaigatie, _edge.endElement))
 		{
+		    //	console.log("apstaigāts tikai target, jāpievieno edge un source");
 			//apstaigāts tikai target, jāpievieno edge un source
 			sourceNode = Elements.findOne({_id: _edge.startElement});
 			targetNode = Elements.findOne({_id: _edge.endElement});
@@ -426,9 +434,10 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 function findNode (_findNode)
 {
 	var nodeList = Elements.find(
-			{elementTypeId: _findNode.elemTypeId, diagramId: {$ne: _findNode.diagramId}}, 
+			{elementTypeId: _findNode.elementTypeId, diagramId: {$ne: _findNode.diagramId}}, 
 			{fields: {diagramId:1}})
 		.fetch();
+//	console.log("Node list", nodeList);
 	nodeList2 = checkConstraintsForElementList(_findNode, nodeList);
 	processVisitedNode(_findNode, nodeList2)
 	return true;
