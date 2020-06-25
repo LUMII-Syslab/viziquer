@@ -2425,6 +2425,14 @@ VQ_Element.prototype = {
   setOffset: function(offset) {
     this.setCompartmentValueAuto("Skip rows", offset)
   },
+  // --> string
+  getComment: function() {
+    return this.getCompartmentValue("Comment");
+  },
+  // string -->
+  setComment: function(comment) {
+    this.setCompartmentValueAuto("Comment", comment)
+  },
   // --> [{exp:string}]
   // returns an array of conditions' expressions
   getConditions: function() {

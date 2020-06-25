@@ -207,7 +207,7 @@ function createTriples(tripleTable, tripleType){
 // alias - given variable alias
 function setVariableName(varName, alias, variableData, generateNewName){
 	// console.log("----------------------------------------");
-	 // console.log(varName, alias, variableData, generateNewName);
+	// console.log(varName, alias, variableData, generateNewName);
 	// console.log("expressionLevelNames", expressionLevelNames);
 	// console.log("variableNamesClass", variableNamesClass);
 	// console.log("variableNamesAll", variableNamesAll);
@@ -1270,7 +1270,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						}
 						else{
 							var variable = setVariableName(variableStructure["var"]["name"], alias, variableStructure["var"])
-												
+							
 							variableTable.push("?" + variable);
 							if(generateTriples == true && variableStructure["var"]['type'] != null && path != null) {
 								var inFilter = false;
@@ -1707,7 +1707,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				if(typeof expressionTable[key]["Relation"]!== 'undefined') {
 					var VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
-					
+
 					if((typeof VarL["NumericLiteral"] !== 'undefined' && typeof VarR["var"] !== 'undefined' && VarR["var"]['kind'] == "CLASS_NAME")
 						|| (typeof VarR["NumericLiteral"] !== 'undefined' && typeof VarL["var"] !== 'undefined' && VarL["var"]['kind'] == "CLASS_NAME")){
 							var clId;
@@ -1962,6 +1962,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionL"]) == false)
 						{
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+							
 							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
@@ -1991,6 +1992,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& isFunctionExpr(expressionTable[key]["NumericExpressionR"]) == false)
 						{
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionR"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
+				
 							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&
 							typeof path["variable"]["var"] !== 'undefined' &&
@@ -2510,7 +2512,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 								}
 								else SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";//?????????????????? ExpressionList
 							}
-							if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+							if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') {
+								expressionLevelNames = [];
+								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation); 
+							}
 							if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
 								if(alias!=null)SPARQLstring =  "?" +alias + SPARQLstring;
 								else SPARQLstring =  "?" +className + SPARQLstring;

@@ -760,7 +760,7 @@ function generateSPARQLtext(abstractQueryTable){
 
 			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable);
 
-			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership);
+			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes);
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
 
@@ -1625,7 +1625,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 				//GROUP BY
 
-				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"]);
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
@@ -1817,7 +1817,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
-function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership){
+function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes){
 	var messages = [];
 	//var orderTable = [];
 	var groupTripleTable = [];
