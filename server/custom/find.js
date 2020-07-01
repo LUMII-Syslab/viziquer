@@ -624,7 +624,7 @@ function checkRegExConstraintForElement(_constraint, _element)
 		var cv = _.extend(_constraint, {_id:_element._id,
 			_diagramId: _element.diagramId});
 		
-		console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
+		// console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
 		if (constraintViolation)
 			constraintViolation.push(cv);
 		else
@@ -742,7 +742,27 @@ Meteor.methods({
 		//  list.versionId - active version id 
 		return findMe(list);
 	},
-
+	findNode: function(node){
+		findNode(node);
+		return _.map(findResults, function(fr){
+			_.each(fr.matchedElements, function(me){
+				_.extend(me,{diagramName: Diagrams.findOne({_id: me.diagramId}).name})
+			})
+			return fr.matchedElements;
+			
+		})
+	},
+	findEdge: function(edges, diagId){
+		_.each(edges, function(edge){
+			findEdge(edge,diagId);
+		})
+		return _.map(findResults, function(fr){
+			_.each(fr.matchedElements, function(me){
+				_.extend(me, {diagramName: Diagrams.findOne({_id: me.diagramId}).name})
+			})
+			return fr.matchedElements;
+		})
+	},
 	RemoveConstraintAndFind: function(list){
 		Compartments.remove(list.compartmentId);
 		return findMe(list);
