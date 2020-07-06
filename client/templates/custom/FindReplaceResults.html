@@ -1,0 +1,23 @@
+<template name="replaceResults">
+    <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-top:10px;padding-left:2px;">
+        <div>
+            {{ #if ResultsJson }}
+            <h2 style="display: inline;">Find Results</h2>
+            <table>
+                <tr><td><div class="col-sm-12">Diagram</div></td>
+                    <td><div class="col-sm-12">Action</div></td>
+                </tr>
+                {{ #each ResultsJson }}
+                <tr>
+
+                    <td><div class="col-sm-12">{{name}} </div></td>
+                    <td><button id="replace" class="replace btn btn-success btn-xs">Replace</button></td>
+                </tr>
+                {{ else }}
+                <h2 style="display: inline;">No Results</h2>
+                {{ /each }}
+            </table>
+            {{ /if }}
+        </div>
+    </div>
+</template>

@@ -297,12 +297,18 @@ function FindMatchForDiagram(_diagId, _findEdges){
     _findEdges.forEach(e => {e.visited = false}); 
     return true;
 }
+function createJsonResult(res){
+    _.each(res, function(diag){
+        _.extend(diag, {name: Diagrams.findOne({_id: diag.diagramId}).name})
+    })
+    return res;
+}
 function FindDiags(diagId){
     if( apstaigatieFind.length == 0) console.log('tukšs grafs');
     else if (apstaigatieFind.length == 1){// jāmeklē tikai viens elements, virsotne
         findResults = Meteor.call('findNode', _.first(apstaigatieFind));
         
-        console.log('atrastie rezultati pie vienas virsotnes',findResults);
+        console.dir(findResults, { depth: null });
     } 
     else{
         let Edges = _.filter(apstaigatieFind,function(element){
@@ -315,7 +321,7 @@ function FindDiags(diagId){
            tipam un papildus jāpārbauda constraints. ja kādā no soļiem neizdodas kaut ko artrast, filtrējam nost doto diagrammu un ejam pie nākošās 
         */
        findResults = Meteor.call('findEdge', Edges, diagId);
-       console.log('atrastie fragmenti no edge', findResults);
+       // console.dir(findResults, { depth: null });
        /*
         foundEdges      = findEdges(_.first(Edges),true);// meklējam pirmo rezultātu kopu, lai sašaurināt meklēšanas diapazonu
         foundDiagsId    = _.uniq(_.pluck(foundEdges,'diagramId'));
@@ -341,29 +347,7 @@ function TraverseDiag(diagParamList){
         foundElem = getNotVisitedItems();
     }
     FindDiags(diagParamList.diagramId);
-    
-    foundDiagsId = [];/* neaizmirsti par šo konteineru arī!
-    let foundDiags = findResults.map(
-        function(fr){
-            MatchedElementsId = fr.MatchedElements.map(
-                function(me){ return {diagramID: me.diagramId} }
-            )
-            currentDiagIds = _.pluck(MatchedElementsId,'diagramID')
-            if( _.size(foundDiagsId) == 0) foundDiagsId = currentDiagIds;
-            else foundDiagsId = _.intersection(foundDiagsId,currentDiagIds);
-            return MatchedElementsId;
-        }
-    )
-    if (typeof foundDiagsId === 'undefined'){
-        console.log('findResults is undefined');
-        return;
-    }
-    else{
-        _.each(foundDiagsId, function(diagId){
-            let countElem = _.countBy()???
-        })
-        // return foundDiags;
-    }*/
+    return createJsonResult(findResults);
 }
 Meteor.methods({
     findDiags: function(diagParamList){

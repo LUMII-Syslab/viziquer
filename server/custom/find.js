@@ -744,13 +744,33 @@ Meteor.methods({
 	},
 	findNode: function(node){
 		findNode(node);
-		return _.map(findResults, function(fr){
-			_.each(fr.matchedElements, function(me){
-				_.extend(me,{diagramName: Diagrams.findOne({_id: me.diagramId}).name})
+		let res = _.map(findResults, function(fr){
+			let matches =  _.map(fr.matchedElements, function(me){
+				return{
+					diagramName: 	Diagrams.findOne({_id: me.diagramId}).name,
+					diagramId:		me.diagramId,
+					elementId:		me._id,
+					findElementId:	node._id
+				}
 			})
-			return fr.matchedElements;
-			
+			return matches;	
 		})
+		res = _.groupBy(_.first(res), 'diagramId');
+		let diagrams = _.keys(res)
+		let MatchCollection = [];
+		_.each(diagrams, function(diagram){
+			let obj = 
+			{
+				diagramId: 	diagram,
+				matches: _.map(res[diagram], function(match){
+					return{
+						elements: { elementId: match.elementId, findElementId: match.findElementId }
+					}
+				})
+			}
+			MatchCollection.push(obj);
+		})
+		return MatchCollection;
 	},
 	findEdge: function(edges, diagId){
 		_.each(edges, function(edge){
