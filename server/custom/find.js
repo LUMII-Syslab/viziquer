@@ -168,7 +168,13 @@ function findEdge (_findEdge, _findDiagramId)
 		slice = sliceKeyByIndex(slice, 1);
 		slice = processRelatedNode(sourceFindElem, _findDiagramId, slice);
 		slice = sliceKeyByIndex(slice, 2);	
-		return processRelatedNode(targetFindElem, _findDiagramId, slice);
+		slice = processRelatedNode(targetFindElem, _findDiagramId, slice);
+	//	console.log("---Atrastas skeles", JSON.stringify(atrastasSkeles));
+	//	atrastasSkeles.forEach(element => {console.log("--skele", element.findEdge._id, JSON.stringify(element.skeles, null, "  "))});
+		atrastasSkeles.forEach(element => {console.log("--skeles", element.findEdge._id); 
+			element.skeles.forEach(sk => {console.log("    elementi sk", sk.length, "pirmais ID", sk[0].match, sk[0].diagram)})});
+
+		return slice;
 	}
 	else
 	{
@@ -198,6 +204,40 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 	// on se.key.Id equals e.startElement.Id
 	// select new SliceElement(se, e, _patternElement.endElement,
 	// 	InsertMode.EdgeTarget);
+	console.log("addEdgeAndTargetToSlice");
+	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
+	lastElem = atrastasSkeles.pop();
+	currentSkeles = lastElem.skeles;
+//	console.log("currentSkeles", currentSkeles);
+	derigasSekeles = uniqueMatches.map( function(nem) 
+		{
+		var skeles = _.filter(currentSkeles, function (sk)
+			{
+				return _.some(sk, s => s.match == nem.startElement && s.find==_findEdge.startElement);
+			});
+		if (!skeles) {return null;}
+		else { 
+		//	console.log("*******Skeles", nem._id, skeles);
+			return skeles.map(function (s)
+							{ 
+								e = _.clone(s);
+								e.push({match: nem._id, find:_findEdge._id, type: "edge"});
+								e.push({match: nem.endElement, find:_findEdge.endElement, type: "node"});
+								return e;
+							}
+				);
+		}
+	});
+	derigasSekeles= _.flatten(_.filter(derigasSekeles, function (s) {if (!s) {return false;} else {return true} }),true);
+	lastElem.skeles = derigasSekeles;
+	if (!atrastasSkeles)
+	{
+		atrastasSkeles = [{lastElem}];
+	}
+	else
+	{
+		atrastasSkeles.push(lastElem);
+	}
 
 	return _.compact(_.flatten(_slice.map( 
 		function(se)
@@ -229,6 +269,39 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 {
+	console.log("addEdgeAndSourceToSlice");
+	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
+	lastElem = atrastasSkeles.pop();
+	currentSkeles = lastElem.skeles;
+	derigasSekeles = uniqueMatches.map( function(nem) 
+		{
+		var skeles = _.filter(currentSkeles, function (sk)
+			{
+				return _.some(sk, s => s.match == nem.endElement && s.find==_findEdge.endElement);
+			});
+		if (!skeles) {return null;}
+		else { 
+			return skeles.map(function (s)
+							{ 
+								e = _.clone(s);
+								e.push({match: nem._id, find:_findEdge._id, type: "edge"});
+								e.push({match: nem.startElement, find:_findEdge.startElement, type: "node"});
+							    return e;
+							});
+		}
+	});
+
+	derigasSekeles= _.flatten(_.filter(derigasSekeles, function (s) {if (!s) {return false;} else {return true} }),true);
+	lastElem.skeles = derigasSekeles;
+	if (!atrastasSkeles)
+	{
+		atrastasSkeles = [{lastElem}];
+	}
+	else
+	{
+		atrastasSkeles.push(lastElem);
+	}
+
 	// //from se in Aslice
 	// join e in edges
 	// on se.key.Id equals e.endElement.Id
@@ -263,12 +336,47 @@ function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeToSlice(_slice, _newEdgeMatches, _findEdge)
 {
+	console.log("addEdgeToSlice");
 	// from se in Aslice
 	// join e in edges
 	// on se.key.Id equals e.startElement.Id
 	// select new SliceElement(se, e, _patternElement.endElement,
 	// 	InsertMode.EdgeTarget);
-
+	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
+	lastElem = atrastasSkeles.pop();
+	currentSkeles = lastElem.skeles;
+	derigasSekeles = uniqueMatches.map( function(nem)
+		{
+		skeles = _.filter(currentSkeles, function (sk)
+			{
+				var a = _.some(sk, function(s) {return s.match == nem.startElement && s.find==_findEdge.startElement});
+				var b = _.some(sk, function(s) {return s.match == nem.endElement && s.find==_findEdge.endElement});
+				return a && b; 
+			});
+	//	console.log("---skele", skele, nem._id, nem.startElement, nem.endElement);
+		if (!skeles) {return null;}
+		else { 
+			return skeles.map(function (s)
+							{ 
+								e = _.clone(s);
+								e.push({match: nem._id, find:_findEdge._id, type: "edge"});
+								return e;
+							});
+		}
+	}
+);
+	//teorētiski var atgriezt masīvu no vairākām šķēlēm, ja šo šķautni var pielikt vairākās vai nevienu, ja nekā nav.
+	//tāpēc izfiltrējam drazu un flatten, lai nebūtu masīvi masīvā, shallow, jo tikai vienu līmeni jānoņem
+	derigasSekeles= _.flatten(_.filter(derigasSekeles, function (s) {if (!s) {return false;} else {return true} }),true);
+	lastElem.skeles = derigasSekeles;
+	if (!atrastasSkeles)
+	{
+		atrastasSkeles = [{lastElem}];
+	}
+	else
+	{
+	atrastasSkeles.push(lastElem);
+	}
 	return _.compact(_.flatten(_slice.map( 
 		function(se)
 			{
@@ -299,7 +407,7 @@ function addEdgeToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function createSlice(_findEdge, _newEdgeMatches)
 {
-	return _newEdgeMatches.map( function(e)
+	slice = _newEdgeMatches.map( function(e)
 				{
 					var elems  = [e._id, e.startElement, e.endElement];
                     return   {   keyId: e._id,
@@ -308,6 +416,18 @@ function createSlice(_findEdge, _newEdgeMatches)
                         patternElement: _findEdge
 					};
 				});
+	sk = _newEdgeMatches.map( function(e) {
+		return [{match:e._id, find:_findEdge._id, type: "edge", diagram:e.diagramId}, 
+			{match: e.startElement, find:_findEdge.startElement, type: "node"},
+			{match: e.endElement, find: _findEdge.endElement, type: "node"}]
+	})
+	if (!atrastasSkeles)
+	{	atrastasSkeles = [{findEdge: _findEdge, skeles: sk}];}
+	else
+	{
+		atrastasSkeles.push({findEdge: _findEdge, skeles: sk});
+	}
+	return slice;
 }
 
 function sliceKeyByIndex(_slice, _index)
@@ -650,6 +770,7 @@ function findMe(list)
 	apstaigatie = [];
 	findResults = [];
 	constraintViolation = [];
+	atrastasSkeles = [];
 
 	notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
 	while (notVisitedEdge)
