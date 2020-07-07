@@ -6,12 +6,30 @@
             <table>
                 <tr><td><div class="col-sm-12">Diagram</div></td>
                     <td><div class="col-sm-12">Action</div></td>
+                    <td class="match"><div class="col-sm-12">Select match for diagram</div></td>
                 </tr>
                 {{ #each ResultsJson }}
                 <tr>
 
                     <td><div class="col-sm-12">{{name}} </div></td>
-                    <td><button id="replace" class="replace btn btn-success btn-xs">Replace</button></td>
+                    <td><button id="replaceAll" class="replace btn btn-success btn-xs">Replace all occurences</button></td>
+                    <td id="{{diagramId}}">
+                        <table>
+                            <tr>
+                                <td>Match</td>
+                                <td>Action</td>
+                            </tr>
+                            {{ #each matches }}
+                            
+                            <tr>
+                                <td> {{elements.elementId}} </td>
+                                <td><button id="selectMatch" class="btn btn-success btn-xs">Replace match</button>
+                                    <button id="highlightMatch" class="btn btn-warning btn-xs">Highlight match</button></td>
+                            </tr>
+                            
+                            {{ /each }}
+                        </table>
+                    </td>
                 </tr>
                 {{ else }}
                 <h2 style="display: inline;">No Results</h2>

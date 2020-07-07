@@ -54,7 +54,7 @@ function getRelatedEdges(_boxId){// pluck edge idus
         [
             {$or: [ {startElement:_boxId}, {endElement: _boxId} ]},
             {_id: {$nin: Elem_edges}},
-            {elementTypeId: {$ne: FindReplaceLineType}}
+            {elementTypeId: {$ne: FindReplaceLineType}}// šeit jāpievieno arī replace speciāllīnijas tips
         ]
     });
 }
