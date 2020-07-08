@@ -330,18 +330,41 @@ function replaceSingleNode(matchElements){
     let ReplaceElement  = Elements.findOne({_id: ReplaceLine.endElement});
     let diagToReplaceIn = Elements.findOne({_id: matchElements.elementId}).diagramId;
     let NewReplaceElement = {
-    diagramId      : diagToReplaceIn,
-    diagramTypeId: ReplaceElement.diagramTypeId,
-    elementTypeId: ReplaceElement.elementTypeId,
-    style: ReplaceElement.style,
-    styleId :ReplaceElement.styleId,
-    type: ReplaceElement.type,
-    location: ReplaceElement.location,
-    projectId: ReplaceElement.projectId,
-    versionId: ReplaceElement.versionId
+    diagramId       : diagToReplaceIn,
+    diagramTypeId   : ReplaceElement.diagramTypeId,
+    elementTypeId   : ReplaceElement.elementTypeId,
+    style           : ReplaceElement.style,
+    styleId         : ReplaceElement.styleId,
+    type            : ReplaceElement.type,
+    location        : ReplaceElement.location,
+    projectId       : ReplaceElement.projectId,
+    versionId       : ReplaceElement.versionId
     }
-    let id = Elements.insert(NewReplaceElement);
-    let testElem = Elements.findOne({_id: id});
+    let id          = Elements.insert(NewReplaceElement);
+    let testElem    = Elements.findOne({_id: id});
+    let RelatedOldNodeEdges = Elements.find({
+        $and:
+        [
+            {$or: [{startElement: matchElements.elementId},{endElement: matchElements.elementId}]}
+        ]
+    }).fetch();// atlasām saistītās šķautnes
+    console.log('Related edges', RelatedOldNodeEdges)
+    _.each(RelatedOldNodeEdges, function(edge){// kabinām klāt jaunai virsotnei
+        if(edge.startElement == matchElements.elementId){ // exception handling???
+            Elements.update(
+                {_id: edge._id},
+                {$set: {startElement: id}}
+                )
+        }
+        else if(edge.endElement == matchElements.elementId){
+            Elements.update(
+                {_id: edge._id},
+                {$set: {endElement: id}}
+                )
+        }
+    })
+    console.log('Compartments deletion', Compartments.remove({elementId: matchElements.elementId}));
+    console.log('Element deletion', Elements.remove({_id: matchElements.elementId}));
     console.log('new replace element',testElem);
     
 }
