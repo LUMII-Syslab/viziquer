@@ -6,6 +6,18 @@ Template.replaceResults.helpers({
 });
 Template.replaceResults.events({
     'click .replace': function(){
-        Session.set("currentMatches",this.matches);
+        //replace all occurences
+        console.log("replace all matches")
+    },
+    'click #selectMatch': function(){
+        // replace selected occurence
+        console.log("replace selected match", this.elements)
+        Utilities.callMeteorMethod("replaceOneNode",this.elements, function(response){
+            
+        })
+    },
+    'click #highlightMatch': function(){
+        // highlight selected match
+        console.log("highlight match", this)
     }
 })

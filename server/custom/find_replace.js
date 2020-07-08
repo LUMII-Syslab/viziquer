@@ -1,47 +1,35 @@
 var apstaigatieFind;
-var apstaigatieReplace;
-var FindReplaceLineType;
+var FindLineType;
+var ReplaceLineType;
 var findResults;
 var foundDiagsId;
 
-function getStartElem(diagParamList, mode){// iegūstam starta elementu Find vai replace grafam, atkarīgi no mode
+function getStartElem(diagParamList, diagramType){// iegūstam starta elementu Find vai replace grafam, atkarīgi no mode
     var elementToFind;
-        BoxTypeId       = ElementTypes.findOne({name: "CommentBox"})._id;  // iegūstam komentārbloku tipa id (jābūt TNwkqh6ogu3D4Nb5p)
-        DiagramBoxes    = Elements.find({diagramId: diagParamList.diagramId, elementTypeId: BoxTypeId}).fetch();
+        CommentBoxType  = ElementTypes.findOne({name:"CommentBox",diagramTypeId: diagramType})._id;
+        // iegūstam komentārbloku tipa id 
+        DiagramBox      = Elements.findOne({diagramId: diagParamList.diagramId, elementTypeId: CommentBoxType});
         // papildinām katru komentārkastes objektu ar īpašību value (no compartments dokumenta)
-        CompartmentType = CompartmentTypes.findOne({name: "Type",elementTypeId: BoxTypeId})._id; // atrodam vajadzīgo compartment tipu komentārbokšiem
-        DiagramBoxes.forEach(item => {
-            _.extend(item,{
+        CompartmentType = CompartmentTypes.findOne({name: "Type",elementTypeId: CommentBoxType})._id; // atrodam vajadzīgo compartment tipu komentārbokšiem
+            _.extend(DiagramBox,{
                 value: Compartments.findOne({
-                    elementId: item._id, 
-                    elementTypeId: item.elementTypeId,
+                    elementId: DiagramBox._id, 
+                    elementTypeId: DiagramBox.elementTypeId,
                     diagramId: diagParamList.diagramId,
                     compartmentTypeId: CompartmentType})
                     .value
             });
+        FindLineType = ElementTypes.findOne({name: "FindLine", diagramTypeId: diagramType})._id; // speciāllīnijas tipa id
+        ReplaceLineType = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: diagramType})._id;// ja tādas speciāllīnijas definīcijā nav, tad metīs kļūdu
+        SpecialLines        = Elements.find({diagramId: diagParamList.diagramId, elementTypeId: FindLineType}).fetch(); // iegūstam līniju masīvu
+        SpecialLines.forEach(item =>{
+            if(DiagramBox.value == "Find"){
+                console.log('found Box')
+                elementToFind       = Elements.findOne({_id: item.startElement});
+            }
+            else console.log('not found such box')
         });
-        FindReplaceLineType = ElementTypes.findOne({name: "FindReplaceType"})._id; // speciāllīnijas tipa id
-        SpecialLines        = Elements.find({diagramId: diagParamList.diagramId, elementTypeId: FindReplaceLineType}).fetch(); // iegūstam līniju masīvu
-    switch (mode){
-        case "F":
-            SpecialLines.forEach(item =>{
-                Box = _.findWhere(DiagramBoxes,{_id: item.endElement}); // katrai speclīnijai meklējam kasti, uz kuru norāda endElement lauks
-                if(Box.value == "Find"){
-                    elementToFind       = Elements.findOne({_id: item.startElement});
-                }
-            });
-            break;    
-        case "R":
-            SpecialLines.forEach(item =>{
-                Box = _.findWhere(DiagramBoxes,{_id: item.endElement}); // katrai speclīnijai meklējam kasti, uz kuru norāda endElement lauks
-                if(Box.value == "Replace"){
-                    elementToFind       = Elements.findOne({_id: item.startElement});
-                }
-            });
-            break;
-        default:
-            break;
-    }
+            
     return elementToFind;
 }
 function getElementType(_elemTypeId){
@@ -54,7 +42,7 @@ function getRelatedEdges(_boxId){// pluck edge idus
         [
             {$or: [ {startElement:_boxId}, {endElement: _boxId} ]},
             {_id: {$nin: Elem_edges}},
-            {elementTypeId: {$ne: FindReplaceLineType}}// šeit jāpievieno arī replace speciāllīnijas tips
+            {elementTypeId: {$nin: [FindLineType,ReplaceLineType]}}// šeit jāpievieno arī replace speciāllīnijas tips
         ]
     });
 }
@@ -89,6 +77,7 @@ function getNotVisitedItems(){// šeit parametrā var ielikt mode parametru, lai
     }
     else return false;
 }
+/*
 function findConstraintsForElem(elem){
     return Compartments.find({ elementId: elem._id }).fetch().map(
 		function (e) {
@@ -153,7 +142,7 @@ function pushFindResult(Node, foundNodesWithConstraints){ // skat processVisited
     
     if (findResults) findResults.push(FindElement);
     else findResults = [FindElement];
-}/*
+}
 function findNode(Node){
     var foundNodes = Elements.find(
         {
@@ -169,7 +158,7 @@ function findNode(Node){
 
     if( typeof foundNodesWithConstraints === 'undefined'){ console.log('No results has been found (undefined)'); return; }
     else pushFindResult(Node,foundNodesWithConstraints);
-}*/
+}
 function findEdgesWithConstraints(_edge, _edges, foundDiagsId){
     _edges          = checkConstraintsForElementList(_edge, _edges);
     StartFindElem   = Elements.findOne({_id: _edge.startElement});
@@ -296,7 +285,7 @@ function FindMatchForDiagram(_diagId, _findEdges){
     }
     _findEdges.forEach(e => {e.visited = false}); 
     return true;
-}
+}*/
 function createJsonResult(res){
     _.each(res, function(diag){
         _.extend(diag, {name: Diagrams.findOne({_id: diag.diagramId}).name})
@@ -315,31 +304,16 @@ function FindDiags(diagId){
             return !_.has(element, 'visited');
         });
         _.each(Edges,function(e){_.extend(e,{visited: false})})
-        /* Kad ir piedabūta pirmā rezultātu kopa ar diagrammu idiem, katrai diagrammai apstaigājam meklējamo fragmentu
-           Katrā diagrammā sākam no pirmās atrastās šķautnes, atrodam visas šķautnes meklējamā fragmentā, kas ir piesaistītas dotās šķautnes
-           galiem, atceroties vai nu tas bija start vai end, mēģinām atrast kārtējā diagrammā attiecīgās šķautnes, balstoties uz to, kādam galam jābūt
-           tipam un papildus jāpārbauda constraints. ja kādā no soļiem neizdodas kaut ko artrast, filtrējam nost doto diagrammu un ejam pie nākošās 
-        */
+        
        findResults = Meteor.call('findEdge', Edges, diagId);
-       // console.dir(findResults, { depth: null });
-       /*
-        foundEdges      = findEdges(_.first(Edges),true);// meklējam pirmo rezultātu kopu, lai sašaurināt meklēšanas diapazonu
-        foundDiagsId    = _.uniq(_.pluck(foundEdges,'diagramId'));
-        foundDiagsId    = _.filter(foundDiagsId, function(diagramId){
-            return  FindMatchForDiagram(diagramId, Edges);
-        })
-        console.log('Found diags names:');
-        _.each(foundDiagsId, function(diagId){
-            let name = Diagrams.findOne({_id: diagId}).name;
-            console.log(name);
-        }) */
+       
     }
 }
 function TraverseDiag(diagParamList){
     apstaigatieFind     = [];
-    apstaigatieReplace  = [];
-    StartFindElem       = getStartElem(diagParamList, "F");   // F - atrodam Find starta elementu
-    StartReplaceElem    = getStartElem(diagParamList, "R");// R - atrodam Replace starta elementu
+    diagramTypeId       = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
+    StartFindElem       = getStartElem(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
+
     _.extend(StartFindElem,{visited: false});
     apstaigatieFind.push(StartFindElem);
     var foundElem = getNotVisitedItems();
@@ -349,9 +323,35 @@ function TraverseDiag(diagParamList){
     FindDiags(diagParamList.diagramId);
     return createJsonResult(findResults);
 }
+/** Aizvietošanas funkcijas **/
+function replaceSingleNode(matchElements){
+    let FindDiagramId   = Elements.findOne({_id: matchElements.findElementId}).diagramId; // diagramma, kurā meklēsim aizvietotājelementu
+    let ReplaceLine     = Elements.findOne({elementTypeId: ReplaceLineType, diagramId: FindDiagramId});
+    let ReplaceElement  = Elements.findOne({_id: ReplaceLine.endElement});
+    let diagToReplaceIn = Elements.findOne({_id: matchElements.elementId}).diagramId;
+    let NewReplaceElement = {
+    diagramId      : diagToReplaceIn,
+    diagramTypeId: ReplaceElement.diagramTypeId,
+    elementTypeId: ReplaceElement.elementTypeId,
+    style: ReplaceElement.style,
+    styleId :ReplaceElement.styleId,
+    type: ReplaceElement.type,
+    location: ReplaceElement.location,
+    projectId: ReplaceElement.projectId,
+    versionId: ReplaceElement.versionId
+    }
+    let id = Elements.insert(NewReplaceElement);
+    let testElem = Elements.findOne({_id: id});
+    console.log('new replace element',testElem);
+    
+}
 Meteor.methods({
     findDiags: function(diagParamList){
         console.log(`Diagram id: ${diagParamList.diagramId}`);
         return TraverseDiag(diagParamList);
+    },
+    replaceOneNode: function(matchElements){
+        replaceSingleNode(matchElements)
+        return;
     }
 })
