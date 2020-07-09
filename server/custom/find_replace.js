@@ -24,7 +24,6 @@ function getStartElem(diagParamList, diagramType){// iegūstam starta elementu F
         SpecialLines        = Elements.find({diagramId: diagParamList.diagramId, elementTypeId: FindLineType}).fetch(); // iegūstam līniju masīvu
         SpecialLines.forEach(item =>{
             if(DiagramBox.value == "Find"){
-                console.log('found Box')
                 elementToFind       = Elements.findOne({_id: item.startElement});
             }
             else console.log('not found such box')
@@ -349,20 +348,23 @@ function replaceSingleNode(matchElements){
         ]
     }).fetch();// atlasām saistītās šķautnes
     console.log('Related edges', RelatedOldNodeEdges)
-    _.each(RelatedOldNodeEdges, function(edge){// kabinām klāt jaunai virsotnei
-        if(edge.startElement == matchElements.elementId){ // exception handling???
-            Elements.update(
-                {_id: edge._id},
-                {$set: {startElement: id}}
-                )
-        }
-        else if(edge.endElement == matchElements.elementId){
-            Elements.update(
-                {_id: edge._id},
-                {$set: {endElement: id}}
-                )
-        }
-    })
+    if( RelatedOldNodeEdges){
+        _.each(RelatedOldNodeEdges, function(edge){// kabinām klāt jaunai virsotnei
+            if(edge.startElement == matchElements.elementId){ // exception handling???
+                Elements.update(
+                    {_id: edge._id},
+                    {$set: {startElement: id}}
+                    )
+            }
+            else if(edge.endElement == matchElements.elementId){
+                Elements.update(
+                    {_id: edge._id},
+                    {$set: {endElement: id}}
+                    )
+            }
+        })
+    }
+    
     console.log('Compartments deletion', Compartments.remove({elementId: matchElements.elementId}));
     console.log('Element deletion', Elements.remove({_id: matchElements.elementId}));
     console.log('new replace element',testElem);
@@ -376,5 +378,11 @@ Meteor.methods({
     replaceOneNode: function(matchElements){
         replaceSingleNode(matchElements)
         return;
+    },
+    replaceOneNodeManyOccurences: function(matches){
+        _.each(matches, function(match){
+            replaceSingleNode(match.elements)
+            return
+        })
     }
 })

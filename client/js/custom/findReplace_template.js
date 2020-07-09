@@ -8,6 +8,9 @@ Template.replaceResults.events({
     'click .replace': function(){
         //replace all occurences
         console.log("replace all matches")
+        Utilities.callMeteorMethod("replaceOneNodeManyOccurences",this.matches, function(response){
+            
+        })
     },
     'click #selectMatch': function(){
         // replace selected occurence
