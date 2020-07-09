@@ -8,6 +8,10 @@ Template.findResult.helpers({
 	json2: function() {
 		return Session.get("json");
 	},
+	json2_count: function() { // helpers skaitam
+		var objects = Session.get("json");
+		return objects.length; // atgriežam masīva lielumu, kas atbilst atrasto diagramu skaitam
+		},
 
 	diagramCount: function()
 	{

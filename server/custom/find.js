@@ -755,6 +755,7 @@ function checkRegExConstraintForElement(_constraint, _element)
 			_diagramId: _element.diagramId});
 		
 //		console.log("ConstraintNotSatisfied", cv, _constraint, _element._id);
+
 		if (constraintViolation)
 			constraintViolation.push(cv);
 		else
@@ -872,7 +873,47 @@ Meteor.methods({
 		//  list.versionId - active version id 
 		return findMe(list);
 	},
-
+	findNode: function(node){
+		findNode(node);
+		let res = _.map(findResults, function(fr){
+			let matches =  _.map(fr.matchedElements, function(me){
+				return{
+					diagramName: 	Diagrams.findOne({_id: me.diagramId}).name,
+					diagramId:		me.diagramId,
+					elementId:		me._id,
+					findElementId:	node._id
+				}
+			})
+			return matches;	
+		})
+		res = _.groupBy(_.first(res), 'diagramId');
+		let diagrams = _.keys(res)
+		let MatchCollection = [];
+		_.each(diagrams, function(diagram){
+			let obj = 
+			{
+				diagramId: 	diagram,
+				matches: _.map(res[diagram], function(match){
+					return{
+						elements: { elementId: match.elementId, findElementId: match.findElementId }
+					}
+				})
+			}
+			MatchCollection.push(obj);
+		})
+		return MatchCollection;
+	},
+	findEdge: function(edges, diagId){
+		_.each(edges, function(edge){
+			findEdge(edge,diagId);
+		})
+		return _.map(findResults, function(fr){
+			_.each(fr.matchedElements, function(me){
+				_.extend(me, {diagramName: Diagrams.findOne({_id: me.diagramId}).name})
+			})
+			return fr.matchedElements;
+		})
+	},
 	RemoveConstraintAndFind: function(list){
 		Compartments.remove(list.compartmentId);
 		return findMe(list);

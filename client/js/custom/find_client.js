@@ -67,7 +67,20 @@ Interpreter.customMethods({
         }
     },
 
-    TestNew: function() {
-    },
+    Replace: function(){
+        function getDiagramParams(diagID){ // Aktivās diagrammas parametri
+            return { diagramId: diagID, projectId: Session.get("activeProject"), versionId: Session.get("versionId")};
+        };
+        function CallServerFind(serverMethodName, diagParamList){
+            console.log("CallServerFind", serverMethodName, diagParamList);
+            Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
+                Session.set("ResultsJson", response)
+            });
+        };
+        console.log("Aktīvais elements: ", Session.get("activeElement"));
+        CallServerFind("findDiags", getDiagramParams(Session.get("activeDiagram")));
+        let results = Session.get("ResultsJson")
+        console.log(results)
+    }
 
 })
