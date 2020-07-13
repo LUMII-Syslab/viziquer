@@ -3,6 +3,7 @@ var apstaigatie;
 var findResults;
 var atrastasSkeles;
 var constraintViolation;
+var ReplaceLineType;
 
 function createJsonFromDiagIds(diagramidsAAA)
 {
@@ -81,11 +82,16 @@ function getNotVisitedEdge (_diagramId, _visitedElements)
 
 function getNotVisitedEdgeListForNode(_node)
 {
+	if(typeof ReplaceLineType === 'undefined' ){
+		// ja speciāllīnijas tips nav zināms
+		ReplaceLineType = ReplaceLineType = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: _node.diagramTypeId})._id;
+	}
 	return allEdges = Elements.find(
 		{$and:
 			[
 				{$or: [{startElement: _node._id}, {endElement: _node._id} ]},
-				{_id: {$nin: apstaigatie}}
+				{_id: {$nin: apstaigatie}},
+				{elementTypeId: {$ne: ReplaceLineType}} // papildus nosacījums par speciāllīniju
 			]
 		})
 	
@@ -171,9 +177,9 @@ function findEdge (_findEdge, _findDiagramId)
 		slice = processRelatedNode(targetFindElem, _findDiagramId, slice);
 	//	console.log("---Atrastas skeles", JSON.stringify(atrastasSkeles));
 	//	atrastasSkeles.forEach(element => {console.log("--skele", element.findEdge._id, JSON.stringify(element.skeles, null, "  "))});
-		atrastasSkeles.forEach(element => {console.log("--skeles", element.findEdge._id); 
-			element.skeles.forEach(sk => {console.log("    elementi sk", sk.length, "pirmais ID", sk[0].match, sk[0].diagram)})});
-
+	//	atrastasSkeles.forEach(element => {console.log("--skeles", element.findEdge._id); 
+	//		element.skeles.forEach(sk => {console.log("    elementi sk", sk.length, "pirmais ID", sk[0].match, sk[0].diagram)})});
+	//		console.dir(atrastasSkeles, { depth: null });
 		return slice;
 	}
 	else
@@ -893,6 +899,7 @@ Meteor.methods({
 			let obj = 
 			{
 				diagramId: 	diagram,
+				name:		Diagrams.findOne({_id: diagram}).name,
 				matches: _.map(res[diagram], function(match){
 					return{
 						elements: { elementId: match.elementId, findElementId: match.findElementId }
@@ -903,16 +910,31 @@ Meteor.methods({
 		})
 		return MatchCollection;
 	},
-	findEdge: function(edges, diagId){
-		_.each(edges, function(edge){
-			findEdge(edge,diagId);
+	findEdge: function(edge, diagId){
+		findEdge(edge, diagId);
+		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram})
+		let diagrams 		= _.keys(groupedMatches);
+		let MatchCollection = [];
+		_.each(diagrams, function(diagram){
+			let obj = 
+			{
+				diagramId: 	diagram,
+				name:		Diagrams.findOne({_id: diagram}).name,
+				matches:	_.map(groupedMatches[diagram], function(match){
+					return {
+						elements: _.map(match, function(element){
+							return{
+								elementId: element.match,
+								findElementId: element.find,
+								type: element.type
+							}
+						})
+					}
+				})
+			}
+			MatchCollection.push(obj);
 		})
-		return _.map(findResults, function(fr){
-			_.each(fr.matchedElements, function(me){
-				_.extend(me, {diagramName: Diagrams.findOne({_id: me.diagramId}).name})
-			})
-			return fr.matchedElements;
-		})
+		return MatchCollection;
 	},
 	RemoveConstraintAndFind: function(list){
 		Compartments.remove(list.compartmentId);

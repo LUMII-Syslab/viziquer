@@ -4,20 +4,33 @@ Template.replaceResults.helpers({
         return Session.get("ResultsJson");
     }
 });
+Template.registerHelper('incremented', function(index){
+    return ++index;
+})
 Template.replaceResults.events({
     'click .replace': function(){
         //replace all occurences
         console.log("replace all matches")
-        Utilities.callMeteorMethod("replaceOneNodeManyOccurences",this.matches, function(response){
+        if( _.size(_.first(this.matches).elements) > 1){
+            console.log('not implemented case')
+        }
+        else{
+            Utilities.callMeteorMethod("replaceOneNodeManyOccurences",this.matches, function(response){
             
-        })
+            })
+        }
     },
     'click #selectMatch': function(){
         // replace selected occurence
         console.log("replace selected match", this.elements)
-        Utilities.callMeteorMethod("replaceOneNode",this.elements, function(response){
+        if(_.size(this.elements) > 1){
+            console.log('not implemented case')
+        }
+        else{
+            Utilities.callMeteorMethod("replaceOneNode",this.elements, function(response){
             
-        })
+            })
+        }
     },
     'click #highlightMatch': function(){
         // highlight selected match
