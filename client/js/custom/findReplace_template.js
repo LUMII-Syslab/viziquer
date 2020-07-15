@@ -24,10 +24,10 @@ Template.replaceResults.events({
         // replace selected occurence
         console.log("replace selected match", this.elements)
         if(_.size(this.elements) > 1){
-            console.log('not implemented case')
+            console.log('not implemented case, size', _.size(this.elements))
         }
         else{
-            Utilities.callMeteorMethod("replaceOneNode",this.elements, function(response){
+            Utilities.callMeteorMethod("replaceOneNode",_.first(this.elements), function(response){
             
             })
         }

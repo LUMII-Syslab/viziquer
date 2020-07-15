@@ -880,6 +880,7 @@ Meteor.methods({
 		return findMe(list);
 	},
 	findNode: function(node){
+		findResults = [];
 		findNode(node);
 		let res = _.map(findResults, function(fr){
 			let matches =  _.map(fr.matchedElements, function(me){
@@ -902,7 +903,7 @@ Meteor.methods({
 				name:		Diagrams.findOne({_id: diagram}).name,
 				matches: _.map(res[diagram], function(match){
 					return{
-						elements: { elementId: match.elementId, findElementId: match.findElementId }
+						elements:[{ elementId: match.elementId, findElementId: match.findElementId }] 
 					}
 				})
 			}
@@ -911,6 +912,7 @@ Meteor.methods({
 		return MatchCollection;
 	},
 	findEdge: function(edge, diagId){
+		findResults = [];
 		findEdge(edge, diagId);
 		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram})
 		let diagrams 		= _.keys(groupedMatches);
