@@ -24,7 +24,9 @@ Template.replaceResults.events({
         // replace selected occurence
         console.log("replace selected match", this.elements)
         if(_.size(this.elements) > 1){
-            console.log('not implemented case, size', _.size(this.elements))
+            Utilities.callMeteorMethod("replaceComplexStructure",this.elements, function(response){
+
+            })
         }
         else{
             Utilities.callMeteorMethod("replaceOneNode",_.first(this.elements), function(response){
