@@ -2,6 +2,7 @@ let ReplaceLineType;
 let DeleteBoxType;
 let findResults;
 let apstaigatieReplace;
+let createdBoxes;
 
 function getStartElem(diagParamList, diagramType){// iegūstam pirmo elementu no speciāllīnijas
     let elementToFind;
@@ -35,8 +36,8 @@ function FindDiagMatches(diagParamList){
         let Edges = getEdges(StartFindElem._id);
         if( Edges && _.size(Edges) > 0){
             findResults = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId);
-            console.log('Found matches by edge:')
-            console.dir(findResults, { depth: null })
+            // console.log('Found matches by edge:')
+            // console.dir(findResults, { depth: null })
         }
         else{
             findResults = Meteor.call('findNode', StartFindElem);
@@ -80,30 +81,65 @@ function deleteOldElementAndCompartments(elementId){ // dzēšam nost Elementu u
     Compartments.remove({elementId: elementId});
     Elements.remove({_id: elementId});
 }
-function createCompartments(oldElementId, newElementId){
-    let oldElemCompartments = Compartments.find({elementId: oldElementId}).fetch();
-    if( _.size(oldElemCompartments) > 0){
-        let newElementTypeId = Elements.findOne({_id: newElementId}).elementTypeId;
-        _.each(oldElemCompartments, function(compartment){
-            let oldCompartmentType = CompartmentTypes.findOne({_id: compartment.compartmentTypeId});
-            let newElemCompartmentType = CompartmentTypes.findOne({
-                elementTypeId:  newElementTypeId,
-                name:           oldCompartmentType.name,
-                inputType:      {type: oldCompartmentType.inputType.type, inputType: oldCompartmentType.inputType.inputType}    
-            })._id;
-            if(newElemCompartmentType){
-                console.log('old compartment:',Compartments.findOne({_id: compartment._id}));
-                delete compartment._id;
-                compartment.elementId = newElementId;
-                compartment.diagramId = Elements.findOne({_id: newElementId}).diagramId;
-                compartment.elementTypeId = Elements.findOne({_id: newElementId}).elementTypeId;
-                compartment.compartmentTypeId = CompartmentTypes.findOne({elementTypeId: compartment.elementTypeId})._id;
-                compartment._id = Compartments.insert(compartment);
-                console.log('new compartment:', Compartments.findOne({_id: compartment._id}))
-            }
+function getCompartmentValues(compartmentType, ElementList){
+    let compartmentValues = {
+        input   : "",
+        value   : "",
+        valueLC : ""
+    };
+    let FoundCompartments = Compartments.find({
+        $and:
+        [
+            {elementId: {$in: ElementList}},
+            // pēc compartment input tipa???
+        ]
+    }).fetch();
+    if( FoundCompartments ){
+        console.log('FOUND COMPARTMENTS', FoundCompartments);
+        _.each(FoundCompartments, function(compartment){
+            
+            compartmentValues.input += compartment.input + " ";
+            compartmentValues.value += compartment.value + " ";
+            compartmentValues.valueLC += compartment.valueLC + " "; 
+        })
+        compartmentValues.input.trim();
+        compartmentValues.value.trim();
+        compartmentValues.valueLC.trim();
+        return compartmentValues; 
+    }
+    else console.log('compartments not found')
+}
+function createCompartments(oldElementsList, newElementId){
+    let newElementTypeId = getElementTypeId(newElementId);
+    _.each(oldElementsList, function(oldElementId){// divas reizes dara vienu un to pašu
+        let oldElemCompartments = Compartments.find({elementId: oldElementId}).fetch();
+        if( _.size(oldElemCompartments) > 0){
+            
+            _.each(oldElemCompartments, function(compartment){
+                let oldCompartmentType = CompartmentTypes.findOne({_id: compartment.compartmentTypeId});
+                let newElemCompartmentType = CompartmentTypes.findOne({
+                    elementTypeId:  newElementTypeId,
+                    name:           oldCompartmentType.name,
+                    inputType:      {type: oldCompartmentType.inputType.type, inputType: oldCompartmentType.inputType.inputType}    
+                })._id;
+                if(newElemCompartmentType){
+                    let compartmentValues = getCompartmentValues(oldCompartmentType, oldElementsList);
+                    console.log('found compartments values', compartmentValues)
+                    delete compartment._id;
+                    compartment.elementId           = newElementId;
+                    compartment.diagramId           = Elements.findOne({_id: newElementId}).diagramId;
+                    compartment.elementTypeId       = Elements.findOne({_id: newElementId}).elementTypeId;
+                    compartment.compartmentTypeId   = CompartmentTypes.findOne({elementTypeId: compartment.elementTypeId})._id;
+                    compartment.input               = compartmentValues.input;
+                    compartment.value               = compartmentValues.value;
+                    compartment.valueLC             = compartmentValues.valueLC;
+                    compartment._id = Compartments.insert(compartment);
+                    console.log('new compartment:', Compartments.findOne({_id: compartment._id}))
+                }
         })
     }
     else console.log('copartments not found')
+    })
 }
 function deleteElementEdges(elementId){
     let RelatedEdges = FindRelatedEdges(elementId);
@@ -141,28 +177,7 @@ function createEdge(edge, diagId, startElement, endElement){
         versionId       : edge.versionId,
     }
 }
-function replaceSingleNode(matchElement){ // tiek izsaukts, kad ir tikai viens elements meklējamā pusē
-    if(matchElement){
-        let FindDiagramId   = Elements.findOne({_id: matchElement.findElementId}).diagramId; // diagramma, kurā meklēsim aizvietotājelementu
-        let ReplaceLine     = Elements.findOne({elementTypeId: ReplaceLineType, diagramId: FindDiagramId});
-        let ReplaceElement  = Elements.findOne({_id: ReplaceLine.endElement});
-        let diagToReplaceIn = Elements.findOne({_id: matchElement.elementId}).diagramId;
-        if(ReplaceElement.elementTypeId == DeleteBoxType){
-            deleteElementEdges(matchElement.elementId);
-            deleteOldElementAndCompartments(matchElement.elementId);
-        }
-        else{
-            let NewReplaceElement = createBox(diagToReplaceIn, ReplaceElement);
-            let id          = Elements.insert(NewReplaceElement);// jaunā elementa ids
-            let RelatedOldNodeEdges = FindRelatedEdges(matchElement.elementId);
 
-            switchEdgesFromOldToNewElement(matchElement.elementId, id, RelatedOldNodeEdges);
-            createCompartments(matchElement.elementId,id);
-            deleteOldElementAndCompartments(matchElement.elementId);
-        }
-    }
-    else console.log('match Elements not found');
-}
 function pushEdgeNodes(edge){
     let FindSource = _.findWhere(apstaigatieReplace,{_id: edge.startElement});
     let FindTarget = _.findWhere(apstaigatieReplace,{_id: edge.endElement});
@@ -203,46 +218,49 @@ function replaceStruct(match){
 
         _.each(endElements, function(endElement){
             let endElementTypeId = getElementTypeId(endElement);
-            if( !(typeof endElementTypeId === 'undefined') && endElementTypeId == DeleteBoxType){
-                // ejot cauri speciāllīnijām, atrodam elementus, kurus ir jāizdzēš
-                _.each(ReplaceLines[endElement], function(ReplaceLine){
-                    // jādzēš korekti match elementi, kurš tieši???
-                })
-                endElements = _.without(endElements, endElement)
-            }
-            else{
+            if( !(typeof endElementTypeId === 'undefined') && endElementTypeId != DeleteBoxType){
+                // ejot cauri speciāllīnijām, atrodam elementus, kurus ir jāaizvieto
                 let FirstReplaceElement = Elements.findOne(endElement);
                 _.extend(FirstReplaceElement, {visited: false});
                 apstaigatieReplace = [FirstReplaceElement];
                 let found = getNotVisitedItems();
                 while(found) { found = getNotVisitedItems() }
-                if(_.size(apstaigatieReplace) == 1){
-                    
-                }
-                else if ( _.size(apstaigatieReplace) > 1){
-                    let createdBoxes = _.filter(apstaigatieReplace, function(apst){ return _.has(apst, "visited") });
-                    createdBoxes = _.groupBy(_.map(createdBoxes, function(box){ return {local: box._id, inserted: undefined} }), 'local');
-                    console.log(createdBoxes);
-                     // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
-                    _.each(apstaigatieReplace, function(element){
-                        if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
-                            let start = createdBoxes[element.startElement]
-                            let end   = createdBoxes[element.endElement];
-                            if(typeof start.inserted === 'undefined'){
-                                let startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
-                                createdBoxes[element.startElement].inserted    = Elements.insert(startbox);
-                            }
-                            if(typeof end.inserted === 'undefined'){
-                                let endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
-                                createdBoxes[element.endElement].inserted      = Elements.insert(endbox);
-                            }
-                            let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
-                            let NewEdgeId = Elements.insert(newEdge);
+                createdBoxes = _.filter(apstaigatieReplace, function(apst){ return _.has(apst, "visited") });
+                createdBoxes = _.groupBy(_.map(createdBoxes, function(box){ return {local: box._id, inserted: undefined} }), 'local');
+                // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
+                _.each(apstaigatieReplace, function(element){
+                    if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
+                        let start = createdBoxes[element.startElement];
+                        let end   = createdBoxes[element.endElement];
+                        if(typeof start.inserted === 'undefined'){
+                            let startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
+                            _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
                         }
-                    })
-                }
+                        if(typeof end.inserted === 'undefined'){
+                            let endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
+                            _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
+                        }
+                        let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
+                        let NewEdgeId = Elements.insert(newEdge);
+                    }
+                    else { // ja visited īpašība ir, vedojam šo pašu virsotni
+                        let box = createdBoxes[element._id];
+                        if(typeof box.inserted === 'undefined'){
+                            let NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
+                            _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
+                        }
+                    }
+                });
+                let startFindElements = _.pluck(ReplaceLines[endElement], 'startElement');
+                let startElements = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
+                startElements = _.pluck(startElements, 'elementId');
+                
+                let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
+                _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
+                createCompartments(startElements, createdEndElement);
+                _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
             }
-        })
+        });
     }
     else console.log('match not found/undefined')
 }
@@ -251,17 +269,13 @@ Meteor.methods({
         console.log(`Diagram id: ${diagParamList.diagramId}`);
         return FindDiagMatches(diagParamList);
     },
-    replaceOneNode: function(matchElements){
-        replaceSingleNode(matchElements)
-        return;
-    },
     replaceOneNodeManyOccurences: function(matches){
         _.each(matches, function(match){
-            replaceSingleNode(_.first(match.elements))
+            // vēl jātiek galā ar vienu
             return
         })
     },
-    replaceComplexStructure: function(match){
+    replaceStructure: function(match){
         replaceStruct(match)
         return;
     }

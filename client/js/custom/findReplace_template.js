@@ -22,17 +22,11 @@ Template.replaceResults.events({
     },
     'click #selectMatch': function(){
         // replace selected occurence
-        console.log("replace selected match", this.elements)
-        if(_.size(this.elements) > 1){
-            Utilities.callMeteorMethod("replaceComplexStructure",this.elements, function(response){
+        console.log("replace selected match", this.elements);
+            Utilities.callMeteorMethod("replaceStructure",this.elements, function(response){
 
             })
-        }
-        else{
-            Utilities.callMeteorMethod("replaceOneNode",_.first(this.elements), function(response){
-            
-            })
-        }
+        
     },
     'click #highlightMatch': function(){
         // highlight selected match
