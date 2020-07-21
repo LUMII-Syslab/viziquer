@@ -223,8 +223,9 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			var isNotJoinedClass = false;
 			var definedInJoinClass = null;
 			for(var key in symbolTable[classID][varName]){
-				if(symbolTable[classID][varName][key]["context"] != classID && typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] != null) isNotJoinedClass = true;
-				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] == null) {
+				if(symbolTable[classID][varName][key]["context"] != classID && typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"] != null && symbolTable[classID][varName][key]["type"]["parentType"] != null) isNotJoinedClass = true;
+				
+				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"] != null && symbolTable[classID][varName][key]["type"]["parentType"] == null) {
 					parentTypeIsNull = true;
 				}
 				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' 
