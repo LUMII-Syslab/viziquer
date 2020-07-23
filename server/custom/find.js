@@ -163,9 +163,11 @@ function findEdge (_findEdge, _findDiagramId)
 				}
 			})
 			//edge, kam korekti source target virsotņu tipi
+//		console.log("PIRMS processVisitedEdge", _findEdge, sourceFindElem, targetFindElem);
 		processVisitedEdge(_findEdge, edgesWithSourceTargetType, sourceFindElem, targetFindElem);
 		slice = createSlice(_findEdge, edgesWithSourceTargetType);
 		slice = sliceKeyByIndex(slice, 1);
+//		console.log("source, target", sourceFindElem, targetFindElem);
 		slice = processRelatedNode(sourceFindElem, _findDiagramId, slice);
 		slice = sliceKeyByIndex(slice, 2);	
 		slice = processRelatedNode(targetFindElem, _findDiagramId, slice);
@@ -204,7 +206,7 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 	// on se.key.Id equals e.startElement.Id
 	// select new SliceElement(se, e, _patternElement.endElement,
 	// 	InsertMode.EdgeTarget);
-	console.log("addEdgeAndTargetToSlice");
+//	console.log("addEdgeAndTargetToSlice");
 	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
 	lastElem = atrastasSkeles.pop();
 	currentSkeles = lastElem.skeles;
@@ -269,7 +271,7 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 {
-	console.log("addEdgeAndSourceToSlice");
+//	console.log("addEdgeAndSourceToSlice");
 	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
 	lastElem = atrastasSkeles.pop();
 	currentSkeles = lastElem.skeles;
@@ -336,7 +338,7 @@ function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeToSlice(_slice, _newEdgeMatches, _findEdge)
 {
-	console.log("addEdgeToSlice");
+//	console.log("addEdgeToSlice");
 	// from se in Aslice
 	// join e in edges
 	// on se.key.Id equals e.startElement.Id
@@ -465,7 +467,11 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 							})
 				if (edgesForNodeWithType)
 				{
-					atrastais = atrastais.concat(edgesForNodeWithType);
+					edgeswithType = checkConstraintsForElementList(_edge, edgesForNodeWithType);
+					if (edgeswithType)
+					{
+						atrastais = atrastais.concat(edgeswithType);
+					}
 				}
 			});
 			_slice = addEdgeToSlice(_slice, atrastais, _edge);
@@ -496,7 +502,11 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 			//	console.log("edgesForNodeWithType", edgesForNodeWithType)
 				if (edgesForNodeWithType)
 				{
-					atrastais = atrastais.concat(edgesForNodeWithType);
+					edgeswithType = checkConstraintsForElementList(_edge, edgesForNodeWithType);
+					if (edgeswithType)
+					{
+						atrastais = atrastais.concat(edgeswithType);
+					}
 				}
 			});
 			//console.log("atrastais", atrastais);
@@ -532,7 +542,11 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 						})
 				if (edgesForNodeWithType)
 				{
-					atrastais = atrastais.concat(edgesForNodeWithType);
+					edgeswithType = checkConstraintsForElementList(_edge, edgesForNodeWithType);
+					if (edgeswithType)
+					{
+						atrastais = atrastais.concat(edgeswithType);
+					}
 				}
 			});
 			_slice = addEdgeAndSourceToSlice(_slice, atrastais, _edge);
