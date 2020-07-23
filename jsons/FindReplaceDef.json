@@ -276,7 +276,6 @@
             "versionId": "7FPDTwmxQ6jSzEcS3",
             "diagramTypeId": "enbhigrCdxozatKd8",
             "diagramId": "G6AQYPXJQw3bdpQ2d",
-<<<<<<< HEAD
             "index": 0,
             "noRepresentation": true,
             "tabIndex": 1,
@@ -317,22 +316,10 @@
         {
           "object": {
             "_id": "3puba4H8KfhQXYNdq",
-=======
-            "elementTypeIds": [
-              "RPbHtxSDtYnMNY6o8"
-            ],
-            "name": "Shape D",
-            "type": "Box",
-            "index": 13
-          },
-          {
-            "_id": "taTdSeojXYzZr3Mx4",
->>>>>>> Replace
             "toolId": "Ac9rSRFgKY93dSwKD",
             "versionId": "7FPDTwmxQ6jSzEcS3",
             "diagramTypeId": "enbhigrCdxozatKd8",
             "diagramId": "G6AQYPXJQw3bdpQ2d",
-<<<<<<< HEAD
             "index": 1,
             "noRepresentation": false,
             "tabIndex": 2,
@@ -387,22 +374,10 @@
         {
           "object": {
             "_id": "p8z96q9Pxg64GrZp2",
-=======
-            "elementTypeIds": [
-              "WWEhCuNSY3dedf2By"
-            ],
-            "name": "DSL Edge",
-            "type": "Line",
-            "index": 14
-          },
-          {
-            "_id": "T9wWLepjHphi2agts",
->>>>>>> Replace
             "toolId": "Ac9rSRFgKY93dSwKD",
             "versionId": "7FPDTwmxQ6jSzEcS3",
             "diagramTypeId": "enbhigrCdxozatKd8",
             "diagramId": "G6AQYPXJQw3bdpQ2d",
-<<<<<<< HEAD
             "elementId": "9nS4xeqC5kCgQfAuL",
             "superTypeIds": [],
             "type": "Box",
@@ -450,68 +425,6 @@
               {
                 "id": "2a38a7960f551d82cebecee7",
                 "name": "Default",
-=======
-            "elementTypeIds": [
-              "kXEiDTR5AyfiHGRu7"
-            ],
-            "name": "Note",
-            "type": "Box",
-            "index": 15
-          }
-        ]
-      }
-    ],
-    "presentations": [
-      {
-        "object": {
-          "_id": "G6AQYPXJQw3bdpQ2d",
-          "name": "FindReplaceDemo",
-          "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-          "toolId": "Ac9rSRFgKY93dSwKD",
-          "versionId": "7FPDTwmxQ6jSzEcS3",
-          "style": {
-            "fillPriority": "color",
-            "fill": "#fff",
-            "fillLinearGradientStartPointX": 0.5,
-            "fillLinearGradientStartPointY": 0,
-            "fillLinearGradientEndPointX": 0.5,
-            "fillLinearGradientEndPointY": 1,
-            "fillLinearGradientColorStops": [
-              0,
-              "white",
-              1,
-              "black"
-            ],
-            "fillRadialGradientStartPointX": 0.5,
-            "fillRadialGradientStartPointY": 0.5,
-            "fillRadialGradientEndPointX": 0.5,
-            "fillRadialGradientEndPointY": 0.5,
-            "fillRadialGradientStartRadius": 0,
-            "fillRadialGradientEndRadius": 1,
-            "fillRadialGradientColorStops": [
-              0,
-              "white",
-              1,
-              "black"
-            ]
-          },
-          "createdAt": "2020-06-30T09:29:06.903Z",
-          "createdBy": "BAMXWdyeQP8JcfjTv",
-          "editorType": "ajooEditor",
-          "imageUrl": "data:image/jpeg;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//9k=",
-          "parentDiagrams": [],
-          "allowedGroups": [],
-          "seenCount": 3
-        },
-        "boxes": [
-          {
-            "object": {
-              "_id": "9nS4xeqC5kCgQfAuL",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "rgb(91,155,213)",
                   "fillPriority": "color",
@@ -549,7 +462,6 @@
                   "dash": [],
                   "shape": "RoundRectangle"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "FindReplaceElement",
@@ -626,67 +538,6 @@
               {
                 "id": "1eccf17c82b416024eda3ab8",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 471,
-                "y": 65,
-                "width": 95,
-                "height": 43
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 6,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "MzeAtiEeFNkgXZHec",
-                  "elementId": "9nS4xeqC5kCgQfAuL",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "FindReplaceElement",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "FindReplaceElement",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "sJF5zwDC7PJJMsLT4",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "#ff0000",
                   "fillPriority": "color",
@@ -724,7 +575,6 @@
                   "dash": [],
                   "shape": "BPMNCancel"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "RemoveElement",
@@ -801,67 +651,6 @@
               {
                 "id": "b7cebdaa51772cab2aa31b8d",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 633,
-                "y": 123,
-                "width": 79,
-                "height": 44
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 8,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "x8ZRQDHxv8fYTTmSg",
-                  "elementId": "sJF5zwDC7PJJMsLT4",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "RemoveElement",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "RemoveElement",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "rgb(91,155,213)",
                   "fillPriority": "color",
@@ -899,7 +688,6 @@
                   "dash": [],
                   "shape": "RoundRectangle"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "DSLElement",
@@ -976,67 +764,6 @@
               {
                 "id": "626ca3c111f95cd7dfe6fcc0",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 325,
-                "y": 157,
-                "width": 104,
-                "height": 49
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 9,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "X8mEzQyShQviemsgQ",
-                  "elementId": "nS3dcwfJ2fuhFS55s",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "DSLElement",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "DSLElement",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "2at7JLaeLwRzMu26W",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "rgb(91,155,213)",
                   "fillPriority": "color",
@@ -1074,7 +801,6 @@
                   "dash": [],
                   "shape": "RoundRectangle"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "Shape A",
@@ -1215,67 +941,6 @@
               {
                 "id": "370ba2ee202911049dd08cb9",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 175,
-                "y": 241,
-                "width": 69,
-                "height": 52
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 10,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "gTEQ4vvxQy58sLxLw",
-                  "elementId": "2at7JLaeLwRzMu26W",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "Shape A",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "Shape A",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "zFaM8WmxwTHiY7JsJ",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "#e296e3",
                   "fillPriority": "color",
@@ -1313,7 +978,6 @@
                   "dash": [],
                   "shape": "Ellipse"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "Shape B",
@@ -1454,67 +1118,6 @@
               {
                 "id": "29167a922a1c2c1d1cb88ba7",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 344,
-                "y": 261,
-                "width": 56,
-                "height": 54
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 11,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "488Ngf5wwfq2mPNf7",
-                  "elementId": "zFaM8WmxwTHiY7JsJ",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "Shape B",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "Shape B",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "jLXdn9QjroPjjDfzQ",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "#e0f273",
                   "fillPriority": "color",
@@ -1552,7 +1155,6 @@
                   "dash": [],
                   "shape": "Rectangle"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "Shape C",
@@ -1692,67 +1294,6 @@
               {
                 "id": "61158f4f1bc2c932fa9d0908",
                 "name": "Default",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 519,
-                "y": 271,
-                "width": 50,
-                "height": 40
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 12,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "8pRBCsLycBzLKKtCg",
-                  "elementId": "jLXdn9QjroPjjDfzQ",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "Shape C",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "Shape C",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "78MY3wbGiaT3nH3YS",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
->>>>>>> Replace
                 "elementStyle": {
                   "fill": "#30bd47",
                   "fillPriority": "color",
@@ -1790,7 +1331,6 @@
                   "dash": [],
                   "shape": "Triangle"
                 }
-<<<<<<< HEAD
               }
             ],
             "name": "Shape D",
@@ -1933,69 +1473,6 @@
                 "name": "Default",
                 "elementStyle": {
                   "fill": "#ffffff",
-=======
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 153,
-                "y": 129,
-                "width": 65,
-                "height": 68
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 13,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "iwdxFnktsyy8cLsy7",
-                  "elementId": "78MY3wbGiaT3nH3YS",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "Shape D",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "Shape D",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          },
-          {
-            "object": {
-              "_id": "QN8LhTQmg2t2en7WQ",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "vfTbrvyCJvEq5bFbn",
-              "style": {
-                "elementStyle": {
-                  "fill": "#ebcdbc",
->>>>>>> Replace
                   "fillPriority": "color",
                   "fillLinearGradientStartPointX": 0.5,
                   "fillLinearGradientStartPointY": 0,
@@ -2029,7 +1506,6 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [],
-<<<<<<< HEAD
                   "shape": "Note"
                 }
               },
@@ -2062,88 +1538,6 @@
                     "black"
                   ],
                   "stroke": "rgb(65,113,156)",
-=======
-                  "shape": "Note"
-                }
-              },
-              "styleId": "3df7ea0d160b544d929d5afb",
-              "type": "Box",
-              "location": {
-                "x": 702,
-                "y": 211,
-                "width": 142,
-                "height": 90
-              },
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewBox",
-                "editorType": "ajooEditor",
-                "index": 15,
-                "data": {
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": [
-              {
-                "object": {
-                  "_id": "JGjrABMJbJEtENBK8",
-                  "elementId": "QN8LhTQmg2t2en7WQ",
-                  "diagramId": "G6AQYPXJQw3bdpQ2d",
-                  "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-                  "elementTypeId": "vfTbrvyCJvEq5bFbn",
-                  "versionId": "7FPDTwmxQ6jSzEcS3",
-                  "compartmentTypeId": "bLr6RJqT8ywF5Hiof",
-                  "input": "Note",
-                  "index": 1,
-                  "styleId": "1e0fdec87f67801ebb0f3080",
-                  "style": {
-                    "align": "center",
-                    "fill": "white",
-                    "padding": 0,
-                    "placement": "start-left",
-                    "visible": true,
-                    "fontSize": 14,
-                    "fontStyle": "normal",
-                    "fontFamily": "Arial",
-                    "fontVariant": "normal"
-                  },
-                  "isObjectRepresentation": true,
-                  "value": "Note",
-                  "valueLC": "box",
-                  "toolId": "Ac9rSRFgKY93dSwKD"
-                }
-              }
-            ]
-          }
-        ],
-        "lines": [
-          {
-            "object": {
-              "_id": "QCDfD6Saa5H4Htkez",
-              "startElement": "9nS4xeqC5kCgQfAuL",
-              "endElement": "9nS4xeqC5kCgQfAuL",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "rmmDohxTFPzyu9gLb",
-              "style": {
-                "elementStyle": {
-                  "stroke": "#008000",
-                  "strokeWidth": 3,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-                  "fill": "rgb(65,113,156)",
-                  "fillPriority": "color",
-                  "stroke": "#008000",
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -2153,24 +1547,6 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [],
-                  "radius": 7,
-                  "shape": "Circle"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(65,113,156)",
-                  "fillPriority": "color",
-                  "stroke": "#008000",
->>>>>>> Replace
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-<<<<<<< HEAD
                   "shape": "RoundRectangle"
                 }
               }
@@ -2377,53 +1753,6 @@
                 "elementStyle": {
                   "stroke": "#008000",
                   "strokeWidth": 3,
-=======
-                  "radius": 12,
-                  "shape": "Arrow"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "69ef428e28f1444c01678350",
-              "type": "Line",
-              "points": [
-                471,
-                86.5,
-                451,
-                86.5,
-                451,
-                27,
-                518.5,
-                27,
-                518.5,
-                65
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewLine",
-                "editorType": "ajooEditor",
-                "index": 7,
-                "data": {
-                  "startElementTypeId": "p8z96q9Pxg64GrZp2",
-                  "endElementTypeId": "p8z96q9Pxg64GrZp2",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "rgT5bxGxEXpbY3pnF",
-              "startElement": "sJF5zwDC7PJJMsLT4",
-              "endElement": "9nS4xeqC5kCgQfAuL",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
                   "shadowOpacity": 1,
@@ -2434,96 +1763,9 @@
                   "dash": []
                 },
                 "startShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                633,
-                163,
-                599.5,
-                163,
-                599.5,
-                86,
-                566,
-                86
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "p8z96q9Pxg64GrZp2",
-                  "startElementTypeId": "F5mQnAC6t7eHrjYzS",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "qeCJc8X4utZNfKNFh",
-              "startElement": "nS3dcwfJ2fuhFS55s",
-              "endElement": "9nS4xeqC5kCgQfAuL",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
->>>>>>> Replace
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-<<<<<<< HEAD
                   "fill": "rgb(65,113,156)",
                   "fillPriority": "color",
                   "stroke": "#008000",
-=======
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
->>>>>>> Replace
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -2534,21 +1776,12 @@
                   "opacity": 1,
                   "dash": [],
                   "radius": 7,
-<<<<<<< HEAD
                   "shape": "Circle"
                 },
                 "endShapeStyle": {
                   "fill": "rgb(65,113,156)",
                   "fillPriority": "color",
                   "stroke": "#008000",
-=======
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
->>>>>>> Replace
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -2559,7 +1792,6 @@
                   "opacity": 1,
                   "dash": [],
                   "radius": 12,
-<<<<<<< HEAD
                   "shape": "Arrow"
                 }
               }
@@ -2627,46 +1859,6 @@
                 "elementStyle": {
                   "stroke": "#000000",
                   "strokeWidth": 2,
-=======
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                429,
-                168,
-                518.5,
-                168,
-                518.5,
-                108
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "p8z96q9Pxg64GrZp2",
-                  "startElementTypeId": "LASK6khoDM62KHFBX",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "nPSXnrjpXzYGtiFFL",
-              "startElement": "jLXdn9QjroPjjDfzQ",
-              "endElement": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
                   "shadowOpacity": 1,
@@ -2677,9 +1869,9 @@
                   "dash": []
                 },
                 "startShapeStyle": {
-                  "fill": "rgb(92,71,118)",
+                  "fill": "rgb(65,113,156)",
                   "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
+                  "stroke": "#000000",
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -2693,80 +1885,9 @@
                   "shape": "None"
                 },
                 "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                519,
-                296,
-                452,
-                296,
-                452,
-                201,
-                428.8321595661992,
-                201
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "LASK6khoDM62KHFBX",
-                  "startElementTypeId": "qEQuyhyjzYwtZGPiu",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "eSHSryFDPSsfGk8Nv",
-              "startElement": "zFaM8WmxwTHiY7JsJ",
-              "endElement": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
->>>>>>> Replace
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-<<<<<<< HEAD
                   "fill": "rgb(65,113,156)",
                   "fillPriority": "color",
                   "stroke": "#000000",
-=======
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
->>>>>>> Replace
                   "strokeWidth": 1,
                   "shadowColor": "red",
                   "shadowBlur": 0,
@@ -2776,29 +1897,6 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-<<<<<<< HEAD
-                  "fill": "rgb(65,113,156)",
-                  "fillPriority": "color",
-                  "stroke": "#000000",
-=======
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
->>>>>>> Replace
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-<<<<<<< HEAD
                   "radius": 12,
                   "shape": "None"
                 }
@@ -4465,353 +3563,3 @@
     }
   ]
 }
-=======
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                370,
-                261,
-                370,
-                206
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "LASK6khoDM62KHFBX",
-                  "startElementTypeId": "d42zBrZCuknTajcMw",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "mSwLDR6sYC2mHfBTY",
-              "startElement": "2at7JLaeLwRzMu26W",
-              "endElement": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                225,
-                241,
-                225,
-                201,
-                325.1678404338008,
-                201
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "LASK6khoDM62KHFBX",
-                  "startElementTypeId": "Q7gjPHWpFth5JCuZu",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "en2M4hyzvZn63Xcvg",
-              "startElement": "78MY3wbGiaT3nH3YS",
-              "endElement": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                184.1769145362398,
-                132,
-                221.5,
-                132,
-                221.5,
-                188,
-                325,
-                188
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "LASK6khoDM62KHFBX",
-                  "startElementTypeId": "RPbHtxSDtYnMNY6o8",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "2AGRtcC8xqJTS5cfJ",
-              "startElement": "nS3dcwfJ2fuhFS55s",
-              "endElement": "nS3dcwfJ2fuhFS55s",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "rmmDohxTFPzyu9gLb",
-              "style": {
-                "elementStyle": {
-                  "stroke": "#000000",
-                  "strokeWidth": 2,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-                  "fill": "rgb(65,113,156)",
-                  "fillPriority": "color",
-                  "stroke": "#000000",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(65,113,156)",
-                  "fillPriority": "color",
-                  "stroke": "#000000",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "None"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "69ef428e28f1444c01678350",
-              "type": "Line",
-              "points": [
-                382,
-                157,
-                382,
-                137,
-                345,
-                137,
-                345,
-                157
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "NewLine",
-                "editorType": "ajooEditor",
-                "index": 14,
-                "data": {
-                  "startElementTypeId": "LASK6khoDM62KHFBX",
-                  "endElementTypeId": "LASK6khoDM62KHFBX",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          },
-          {
-            "object": {
-              "_id": "49uj8QSxuhZsY9tNg",
-              "startElement": "QN8LhTQmg2t2en7WQ",
-              "endElement": "9nS4xeqC5kCgQfAuL",
-              "diagramId": "G6AQYPXJQw3bdpQ2d",
-              "diagramTypeId": "pyr2D7CLTqT6j8jiD",
-              "elementTypeId": "tJ78r9LzZPpphvpxs",
-              "style": {
-                "elementStyle": {
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": []
-                },
-                "startShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 7,
-                  "shape": "None"
-                },
-                "endShapeStyle": {
-                  "fill": "rgb(92,71,118)",
-                  "fillPriority": "color",
-                  "stroke": "rgb(92,71,118)",
-                  "strokeWidth": 1,
-                  "shadowColor": "red",
-                  "shadowBlur": 0,
-                  "shadowOpacity": 1,
-                  "shadowOffsetX": 0,
-                  "shadowOffsetY": 0,
-                  "tension": 0,
-                  "opacity": 1,
-                  "dash": [],
-                  "radius": 12,
-                  "shape": "Triangle"
-                },
-                "lineType": "Orthogonal"
-              },
-              "styleId": "07e8c619fa43b4fd2bb5f0bd",
-              "type": "Line",
-              "points": [
-                702,
-                262,
-                552,
-                262,
-                552,
-                108
-              ],
-              "toolId": "Ac9rSRFgKY93dSwKD",
-              "versionId": "7FPDTwmxQ6jSzEcS3",
-              "data": {
-                "type": "Specialization",
-                "data": {
-                  "endElementTypeId": "p8z96q9Pxg64GrZp2",
-                  "startElementTypeId": "kXEiDTR5AyfiHGRu7",
-                  "diagramTypeId": "enbhigrCdxozatKd8"
-                }
-              }
-            },
-            "compartments": []
-          }
-        ]
-      }
-    ]
-  }
->>>>>>> Replace
