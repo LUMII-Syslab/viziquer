@@ -1,0 +1,1516 @@
+{
+  "types": [
+    {
+      "object": {
+        "_id": "cnBeuQH66HXLu2QEz",
+        "extensionPoints": [
+          {
+            "extensionPoint": "beforeCreateDiagram"
+          },
+          {
+            "extensionPoint": "afterCreateDiagram"
+          },
+          {
+            "extensionPoint": "createDiagram",
+            "procedure": "CreateDiagram"
+          },
+          {
+            "extensionPoint": "beforeDeleteCollection"
+          },
+          {
+            "extensionPoint": "afterDeleteCollection"
+          },
+          {
+            "extensionPoint": "deleteCollection",
+            "procedure": "DeleteElementsCollection"
+          },
+          {
+            "extensionPoint": "beforeCopyCollection"
+          },
+          {
+            "extensionPoint": "afterCopyCollection"
+          },
+          {
+            "extensionPoint": "copyCollection",
+            "procedure": "CopyCollection"
+          },
+          {
+            "extensionPoint": "dynamicCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicReadModeCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicNoCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "dynamicReadModeNoCollectionContextMenu"
+          },
+          {
+            "extensionPoint": "cutCollection",
+            "procedure": "CutCollection"
+          },
+          {
+            "extensionPoint": "pasteCollection",
+            "procedure": "PasteCollection"
+          },
+          {
+            "extensionPoint": "beforeDeleteDiagram"
+          },
+          {
+            "extensionPoint": "afterDeleteDiagram"
+          },
+          {
+            "extensionPoint": "deleteDiagram",
+            "procedure": "DeleteDiagramObject"
+          },
+          {
+            "extensionPoint": "updateDiagram",
+            "procedure": "UpdateDiagram"
+          },
+          {
+            "extensionPoint": "changeCollectionPosition",
+            "procedure": "ChangeCollectionPosition"
+          },
+          {
+            "extensionPoint": "canvasToImage",
+            "procedure": "CanvasToImage"
+          }
+        ],
+        "toolbar": [
+          {
+            "id": "18bee05e6dd207b1535f039c",
+            "name": "Toggle Grid",
+            "procedure": "ToggleGrid",
+            "icon": "fa-th"
+          },
+          {
+            "id": "bd8c7aef2deb81e63d12e194",
+            "name": "Zoom out",
+            "procedure": "ZoomingOut",
+            "icon": "fa-minus"
+          },
+          {
+            "id": "ef3d2b946911f4aa62dc624c",
+            "name": "Zoom in",
+            "procedure": "ZoomingIn",
+            "icon": "fa-plus"
+          },
+          {
+            "id": "4251ac4aaf9c1f1cfe428828",
+            "name": "Action history",
+            "procedure": "ShowDiagramLog",
+            "icon": "fa-history"
+          },
+          {
+            "id": "1b5f4af541b1b212446d8664",
+            "name": "Diagram settings",
+            "procedure": "ShowDiagramSettings",
+            "icon": "fa-gear"
+          },
+          {
+            "id": "6386bcbf1dd50854b04eeadc",
+            "name": "Permissions",
+            "procedure": "Permissions",
+            "icon": "fa-lock"
+          },
+          {
+            "id": "54d6cd0f19af03728cb7259f",
+            "name": "Delete",
+            "procedure": "DeleteDiagram",
+            "icon": "fa-trash-o"
+          }
+        ],
+        "readModeToolbar": [
+          {
+            "id": "ba38b4b4dc6e8db7d125e3d2",
+            "name": "Zoom out",
+            "procedure": "ZoomingOut",
+            "icon": "fa-minus",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "abd98fec943e248dd5c67bf9",
+            "name": "Zoom in",
+            "procedure": "ZoomingIn",
+            "icon": "fa-plus",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "3b42ab08106c94a0a3bc26fe",
+            "name": "Action history",
+            "procedure": "ShowDiagramLog",
+            "icon": "fa-history",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "83fabcfb704ce7c3281ef497",
+            "name": "Diagram settings",
+            "procedure": "ShowDiagramSettings",
+            "icon": "fa-gear",
+            "isInEditableVersion": false,
+            "isForAdminOnly": false
+          },
+          {
+            "id": "1b9f9d466574ddcf8897eb65",
+            "name": "Permissions",
+            "procedure": "Permissions",
+            "icon": "fa-lock",
+            "isInEditableVersion": false,
+            "isForAdminOnly": true
+          }
+        ],
+        "globalKeyStrokes": [
+          {
+            "keyStroke": "Ctrl A",
+            "procedure": "SelectAll"
+          }
+        ],
+        "noCollectionKeyStrokes": [
+          {
+            "keyStroke": "Ctrl V",
+            "procedure": "Paste"
+          }
+        ],
+        "readModeNoCollectionKeyStrokes": [],
+        "collectionKeyStrokes": [
+          {
+            "keyStroke": "Ctrl X",
+            "procedure": "Cut"
+          },
+          {
+            "keyStroke": "Ctrl C",
+            "procedure": "Copy"
+          },
+          {
+            "keyStroke": "Delete",
+            "procedure": "DeleteCollection"
+          }
+        ],
+        "readModeCollectionKeyStrokes": [],
+        "noCollectionContextMenu": [
+          {
+            "item": "Paste",
+            "procedure": "Paste"
+          }
+        ],
+        "readModeNoCollectionContextMenu": [],
+        "collectionContextMenu": [
+          {
+            "item": "Cut",
+            "procedure": "Cut"
+          },
+          {
+            "item": "Copy",
+            "procedure": "Copy"
+          },
+          {
+            "item": "Delete",
+            "procedure": "DeleteCollection"
+          }
+        ],
+        "readModeCollectionContextMenu": [],
+        "selectionStyle": {
+          "fill": "grey",
+          "opacity": 0.4,
+          "stroke": "black",
+          "strokeWidth": 0.6
+        },
+        "size": {
+          "diagramSize": 9,
+          "dialogSize": 3
+        },
+        "versionId": "uR5S9gtjAFR4hd6sW",
+        "toolId": "2NuzpyYbnexBqt3Kx",
+        "createdAt": "2020-07-21T10:03:52.082Z",
+        "createdBy": "dX7pnQSHRmjcCj7Ye",
+        "diagramId": "zoEqCcpRMEJcYaqtE",
+        "style": {
+          "fillPriority": "color",
+          "fill": "#fff",
+          "fillLinearGradientStartPointX": 0.5,
+          "fillLinearGradientStartPointY": 0,
+          "fillLinearGradientEndPointX": 0.5,
+          "fillLinearGradientEndPointY": 1,
+          "fillLinearGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ],
+          "fillRadialGradientStartPointX": 0.5,
+          "fillRadialGradientStartPointY": 0.5,
+          "fillRadialGradientEndPointX": 0.5,
+          "fillRadialGradientEndPointY": 0.5,
+          "fillRadialGradientStartRadius": 0,
+          "fillRadialGradientEndRadius": 1,
+          "fillRadialGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ]
+        },
+        "name": "ClassDiagram",
+        "editorType": "ajooEditor"
+      },
+      "dialog": [
+        {
+          "_id": "wu379xERry8pEH8fJ",
+          "toolId": "2NuzpyYbnexBqt3Kx",
+          "versionId": "uR5S9gtjAFR4hd6sW",
+          "diagramTypeId": "cnBeuQH66HXLu2QEz",
+          "diagramId": "zoEqCcpRMEJcYaqtE",
+          "name": "Diagram",
+          "index": 1
+        }
+      ],
+      "compartmentTypes": [
+        {
+          "object": {
+            "_id": "3ZhQtvJ4PsXTbg5kh",
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "diagramTypeId": "cnBeuQH66HXLu2QEz",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "index": 0,
+            "noRepresentation": true,
+            "tabIndex": 1,
+            "dialogTabId": "wu379xERry8pEH8fJ",
+            "name": "NewCompartment",
+            "isObjectRepresentation": false,
+            "inputType": {
+              "type": "input",
+              "inputType": "text"
+            },
+            "extensionPoints": [
+              {
+                "extensionPoint": "beforeUpdate"
+              },
+              {
+                "extensionPoint": "update",
+                "procedure": "UpdateCompartment"
+              },
+              {
+                "extensionPoint": "afterUpdate"
+              },
+              {
+                "extensionPoint": "dynamicPrefix"
+              },
+              {
+                "extensionPoint": "dynamicSuffix"
+              },
+              {
+                "extensionPoint": "dynamicDefaultValue"
+              },
+              {
+                "extensionPoint": "dynamicDropDown"
+              }
+            ],
+            "label": "NewCompartment"
+          }
+        }
+      ],
+      "boxTypes": [
+        {
+          "object": {
+            "_id": "T3tRXzaDfSvz3m3HG",
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "diagramTypeId": "cnBeuQH66HXLu2QEz",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "elementId": "ARyLbJQhgonfTssTC",
+            "superTypeIds": [],
+            "type": "Box",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Ctrl C",
+                "procedure": "Copy"
+              },
+              {
+                "keyStroke": "Ctrl X",
+                "procedure": "Cut"
+              },
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Cut",
+                "procedure": "Cut"
+              },
+              {
+                "item": "Copy",
+                "procedure": "Copy"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "styles": [
+              {
+                "id": "04d641d4ce7a6568ce03a50a",
+                "name": "Default",
+                "elementStyle": {
+                  "fill": "#ecf0be",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              }
+            ],
+            "name": "Class",
+            "isAbstract": false,
+            "targetDiagramTypeId": "cnBeuQH66HXLu2QEz"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "mCJyzuEx2g8C8mK7C",
+                "toolId": "2NuzpyYbnexBqt3Kx",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "elementTypeId": "T3tRXzaDfSvz3m3HG",
+                "elementId": "ARyLbJQhgonfTssTC",
+                "index": 0,
+                "noRepresentation": true,
+                "tabIndex": 1,
+                "dialogTabId": "5m6dzxx67YbhA4GxP",
+                "name": "Name",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "675019195c78d0a1e3dbaf7e",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "Name"
+              }
+            },
+            {
+              "object": {
+                "_id": "SrePzsEaaM4PbFpmQ",
+                "toolId": "2NuzpyYbnexBqt3Kx",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "elementTypeId": "T3tRXzaDfSvz3m3HG",
+                "elementId": "ARyLbJQhgonfTssTC",
+                "index": 1,
+                "noRepresentation": false,
+                "tabIndex": 2,
+                "dialogTabId": "5m6dzxx67YbhA4GxP",
+                "name": "Attributes",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "textarea",
+                  "rows": 5
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "82919e959b4f61352cbd8ab5",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 10,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "Attributes"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "5m6dzxx67YbhA4GxP",
+              "toolId": "2NuzpyYbnexBqt3Kx",
+              "versionId": "uR5S9gtjAFR4hd6sW",
+              "diagramTypeId": "cnBeuQH66HXLu2QEz",
+              "diagramId": "zoEqCcpRMEJcYaqtE",
+              "elementTypeId": "T3tRXzaDfSvz3m3HG",
+              "name": "Main",
+              "index": 1
+            }
+          ]
+        }
+      ],
+      "lineTypes": [
+        {
+          "object": {
+            "_id": "QuL2ofurvLP59gtcW",
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "diagramTypeId": "cnBeuQH66HXLu2QEz",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "elementId": "rLsJn7J2Bx6Fz3u9A",
+            "superTypeIds": [],
+            "type": "Line",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "name": "Association",
+            "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "styles": [
+              {
+                "id": "a2f8981a42e848fc02b1fad7",
+                "name": "Default",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": []
+                },
+                "startShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 7,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 12,
+                  "shape": "None"
+                }
+              }
+            ],
+            "direction": "BiDirectional",
+            "isAbstract": false,
+            "targetDiagramTypeId": "cnBeuQH66HXLu2QEz",
+            "lineType": "Orthogonal"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "BtmCfexzEPHzooEtG",
+                "toolId": "2NuzpyYbnexBqt3Kx",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "elementTypeId": "QuL2ofurvLP59gtcW",
+                "elementId": "rLsJn7J2Bx6Fz3u9A",
+                "index": 0,
+                "noRepresentation": true,
+                "tabIndex": 1,
+                "dialogTabId": "FRfpASZ9GLfPNK4Ki",
+                "name": "startRole",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "ef39202ebbda3711ddf14dd4",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-right",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "startRole"
+              }
+            },
+            {
+              "object": {
+                "_id": "mnpCwBxLqe5Y4Zbo4",
+                "toolId": "2NuzpyYbnexBqt3Kx",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "elementTypeId": "QuL2ofurvLP59gtcW",
+                "elementId": "rLsJn7J2Bx6Fz3u9A",
+                "index": 1,
+                "noRepresentation": false,
+                "tabIndex": 2,
+                "dialogTabId": "FRfpASZ9GLfPNK4Ki",
+                "name": "endRole",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "551dde63f22401c93bc11d25",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "end-right",
+                      "visible": true,
+                      "fontSize": 12,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "endRole"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "FRfpASZ9GLfPNK4Ki",
+              "toolId": "2NuzpyYbnexBqt3Kx",
+              "versionId": "uR5S9gtjAFR4hd6sW",
+              "diagramTypeId": "cnBeuQH66HXLu2QEz",
+              "diagramId": "zoEqCcpRMEJcYaqtE",
+              "elementTypeId": "QuL2ofurvLP59gtcW",
+              "name": "Main",
+              "index": 1
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "Zne9dBjbrTG36KiZh",
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "diagramTypeId": "cnBeuQH66HXLu2QEz",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "elementId": "3Zku9x6LuBnwDRkiW",
+            "superTypeIds": [],
+            "type": "Line",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "name": "Inheritnce",
+            "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "styles": [
+              {
+                "id": "f29ff0c29de024a636ae9952",
+                "name": "Default",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": []
+                },
+                "startShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 7,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#ffffff",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 12,
+                  "shape": "Triangle"
+                }
+              }
+            ],
+            "direction": "Directional",
+            "isAbstract": false,
+            "targetDiagramTypeId": "cnBeuQH66HXLu2QEz",
+            "lineType": "Orthogonal"
+          },
+          "compartmentTypes": [],
+          "dialog": [
+            {
+              "_id": "EgCW7zS6bpizdQyco",
+              "toolId": "2NuzpyYbnexBqt3Kx",
+              "versionId": "uR5S9gtjAFR4hd6sW",
+              "diagramTypeId": "cnBeuQH66HXLu2QEz",
+              "diagramId": "zoEqCcpRMEJcYaqtE",
+              "elementTypeId": "Zne9dBjbrTG36KiZh",
+              "name": "Main",
+              "index": 1
+            }
+          ]
+        },
+        {
+          "object": {
+            "_id": "jAQryx2CfWMwFpAYr",
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "diagramTypeId": "cnBeuQH66HXLu2QEz",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "elementId": "FPW52iwpD4gg8mSrY",
+            "superTypeIds": [],
+            "type": "Line",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "name": "Containment",
+            "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+            "styles": [
+              {
+                "id": "95cbec41ff003a18d413d905",
+                "name": "Default",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": []
+                },
+                "startShapeStyle": {
+                  "fill": "rgb(65,113,156)",
+                  "fillPriority": "color",
+                  "stroke": "rgb(65,113,156)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 7,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#00000",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 12,
+                  "shape": "Diamond"
+                }
+              }
+            ],
+            "direction": "Directional",
+            "isAbstract": false,
+            "targetDiagramTypeId": "cnBeuQH66HXLu2QEz",
+            "lineType": "Orthogonal"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "jA8uJmGqMTKA3xetY",
+                "toolId": "2NuzpyYbnexBqt3Kx",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "elementTypeId": "jAQryx2CfWMwFpAYr",
+                "elementId": "FPW52iwpD4gg8mSrY",
+                "index": 0,
+                "noRepresentation": true,
+                "tabIndex": 1,
+                "dialogTabId": "5DirtxpdWQj73xErj",
+                "name": "startRole",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "input",
+                  "inputType": "text"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "4f02d380c123ed7965b5e549",
+                    "style": {
+                      "align": "center",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-right",
+                      "visible": true,
+                      "fontSize": 17,
+                      "fontStyle": "normal",
+                      "fontFamily": "Arial",
+                      "fontVariant": "normal"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "label": "startRole"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "5DirtxpdWQj73xErj",
+              "toolId": "2NuzpyYbnexBqt3Kx",
+              "versionId": "uR5S9gtjAFR4hd6sW",
+              "diagramTypeId": "cnBeuQH66HXLu2QEz",
+              "diagramId": "zoEqCcpRMEJcYaqtE",
+              "elementTypeId": "jAQryx2CfWMwFpAYr",
+              "name": "Main",
+              "index": 1
+            }
+          ]
+        }
+      ],
+      "paletteButtons": [
+        {
+          "_id": "ouRsyrF8bF9qXf2kt",
+          "toolId": "2NuzpyYbnexBqt3Kx",
+          "versionId": "uR5S9gtjAFR4hd6sW",
+          "diagramTypeId": "cnBeuQH66HXLu2QEz",
+          "diagramId": "zoEqCcpRMEJcYaqtE",
+          "elementTypeIds": [
+            "T3tRXzaDfSvz3m3HG"
+          ],
+          "name": "Class",
+          "type": "Box",
+          "index": 6
+        },
+        {
+          "_id": "caddBFhzZPqXo6gAs",
+          "toolId": "2NuzpyYbnexBqt3Kx",
+          "versionId": "uR5S9gtjAFR4hd6sW",
+          "diagramTypeId": "cnBeuQH66HXLu2QEz",
+          "diagramId": "zoEqCcpRMEJcYaqtE",
+          "elementTypeIds": [
+            "QuL2ofurvLP59gtcW"
+          ],
+          "name": "Association",
+          "type": "Line",
+          "index": 7
+        },
+        {
+          "_id": "f2oqaxRhJYB7sBb9m",
+          "toolId": "2NuzpyYbnexBqt3Kx",
+          "versionId": "uR5S9gtjAFR4hd6sW",
+          "diagramTypeId": "cnBeuQH66HXLu2QEz",
+          "diagramId": "zoEqCcpRMEJcYaqtE",
+          "elementTypeIds": [
+            "Zne9dBjbrTG36KiZh"
+          ],
+          "name": "Inheritnce",
+          "type": "Line",
+          "index": 8
+        },
+        {
+          "_id": "6Eqpu4Dd2Ks8yuY53",
+          "toolId": "2NuzpyYbnexBqt3Kx",
+          "versionId": "uR5S9gtjAFR4hd6sW",
+          "diagramTypeId": "cnBeuQH66HXLu2QEz",
+          "diagramId": "zoEqCcpRMEJcYaqtE",
+          "elementTypeIds": [
+            "jAQryx2CfWMwFpAYr"
+          ],
+          "name": "Containment",
+          "type": "Line",
+          "index": 9
+        }
+      ]
+    }
+  ],
+  "presentations": [
+    {
+      "object": {
+        "_id": "zoEqCcpRMEJcYaqtE",
+        "name": "ClassDiagram",
+        "diagramTypeId": "Xqrn94goLNLXT6xfo",
+        "toolId": "2NuzpyYbnexBqt3Kx",
+        "versionId": "uR5S9gtjAFR4hd6sW",
+        "style": {
+          "fillPriority": "color",
+          "fill": "#fff",
+          "fillLinearGradientStartPointX": 0.5,
+          "fillLinearGradientStartPointY": 0,
+          "fillLinearGradientEndPointX": 0.5,
+          "fillLinearGradientEndPointY": 1,
+          "fillLinearGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ],
+          "fillRadialGradientStartPointX": 0.5,
+          "fillRadialGradientStartPointY": 0.5,
+          "fillRadialGradientEndPointX": 0.5,
+          "fillRadialGradientEndPointY": 0.5,
+          "fillRadialGradientStartRadius": 0,
+          "fillRadialGradientEndRadius": 1,
+          "fillRadialGradientColorStops": [
+            0,
+            "white",
+            1,
+            "black"
+          ]
+        },
+        "createdAt": "2020-07-21T10:03:52.082Z",
+        "createdBy": "dX7pnQSHRmjcCj7Ye",
+        "editorType": "ajooEditor",
+        "imageUrl": "data:image/jpeg;base64,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",
+        "parentDiagrams": [],
+        "allowedGroups": [],
+        "seenCount": 6
+      },
+      "boxes": [
+        {
+          "object": {
+            "_id": "ARyLbJQhgonfTssTC",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "diagramTypeId": "Xqrn94goLNLXT6xfo",
+            "elementTypeId": "M8P5W8jf2HYAdyzc5",
+            "style": {
+              "elementStyle": {
+                "fill": "#ecf0be",
+                "fillPriority": "color",
+                "fillLinearGradientStartPointX": 0.5,
+                "fillLinearGradientStartPointY": 0,
+                "fillLinearGradientEndPointX": 0.5,
+                "fillLinearGradientEndPointY": 1,
+                "fillLinearGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "fillRadialGradientStartPointX": 0.5,
+                "fillRadialGradientStartPointY": 0.5,
+                "fillRadialGradientEndPointX": 0.5,
+                "fillRadialGradientEndPointY": 0.5,
+                "fillRadialGradientStartRadius": 0,
+                "fillRadialGradientEndRadius": 1,
+                "fillRadialGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "shape": "Rectangle"
+              }
+            },
+            "styleId": "737826a849e9cfef3b1fd316",
+            "type": "Box",
+            "location": {
+              "x": 165,
+              "y": 89,
+              "width": 189,
+              "height": 110
+            },
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "data": {
+              "type": "NewBox",
+              "editorType": "ajooEditor",
+              "index": 6,
+              "data": {
+                "diagramTypeId": "cnBeuQH66HXLu2QEz"
+              }
+            }
+          },
+          "compartments": [
+            {
+              "object": {
+                "_id": "Sf4RTAzgMyLvob6Yd",
+                "elementId": "ARyLbJQhgonfTssTC",
+                "diagramId": "zoEqCcpRMEJcYaqtE",
+                "diagramTypeId": "Xqrn94goLNLXT6xfo",
+                "elementTypeId": "M8P5W8jf2HYAdyzc5",
+                "versionId": "uR5S9gtjAFR4hd6sW",
+                "compartmentTypeId": "Kpoy6rFNydkWM9XYJ",
+                "input": "Class",
+                "index": 1,
+                "styleId": "68dbcd8ce0eaca109b77394d",
+                "style": {
+                  "align": "center",
+                  "fill": "white",
+                  "padding": 0,
+                  "placement": "start-left",
+                  "visible": true,
+                  "fontSize": 14,
+                  "fontStyle": "normal",
+                  "fontFamily": "Arial",
+                  "fontVariant": "normal"
+                },
+                "isObjectRepresentation": true,
+                "value": "Class",
+                "valueLC": "box",
+                "toolId": "2NuzpyYbnexBqt3Kx"
+              }
+            }
+          ]
+        }
+      ],
+      "lines": [
+        {
+          "object": {
+            "_id": "rLsJn7J2Bx6Fz3u9A",
+            "startElement": "ARyLbJQhgonfTssTC",
+            "endElement": "ARyLbJQhgonfTssTC",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "diagramTypeId": "Xqrn94goLNLXT6xfo",
+            "elementTypeId": "dycaRwotxyRd6yb7G",
+            "style": {
+              "elementStyle": {
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": []
+              },
+              "startShapeStyle": {
+                "fill": "rgb(65,113,156)",
+                "fillPriority": "color",
+                "stroke": "rgb(65,113,156)",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 7,
+                "shape": "None"
+              },
+              "endShapeStyle": {
+                "fill": "rgb(65,113,156)",
+                "fillPriority": "color",
+                "stroke": "rgb(65,113,156)",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 12,
+                "shape": "None"
+              },
+              "lineType": "Orthogonal"
+            },
+            "styleId": "f7e71b6b2b718f8f0f389ec5",
+            "type": "Line",
+            "points": [
+              165,
+              91,
+              145,
+              91,
+              145,
+              158,
+              165,
+              158
+            ],
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "data": {
+              "type": "NewLine",
+              "editorType": "ajooEditor",
+              "index": 7,
+              "data": {
+                "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz"
+              }
+            }
+          },
+          "compartments": []
+        },
+        {
+          "object": {
+            "_id": "3Zku9x6LuBnwDRkiW",
+            "startElement": "ARyLbJQhgonfTssTC",
+            "endElement": "ARyLbJQhgonfTssTC",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "diagramTypeId": "Xqrn94goLNLXT6xfo",
+            "elementTypeId": "dycaRwotxyRd6yb7G",
+            "style": {
+              "elementStyle": {
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": []
+              },
+              "startShapeStyle": {
+                "fill": "rgb(65,113,156)",
+                "fillPriority": "color",
+                "stroke": "rgb(65,113,156)",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 7,
+                "shape": "None"
+              },
+              "endShapeStyle": {
+                "fill": "#ffffff",
+                "fillPriority": "color",
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 12,
+                "shape": "Triangle"
+              },
+              "lineType": "Orthogonal"
+            },
+            "styleId": "f7e71b6b2b718f8f0f389ec5",
+            "type": "Line",
+            "points": [
+              229,
+              199,
+              229,
+              276,
+              341,
+              276,
+              341,
+              199
+            ],
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "data": {
+              "type": "NewLine",
+              "editorType": "ajooEditor",
+              "index": 8,
+              "data": {
+                "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz"
+              }
+            }
+          },
+          "compartments": []
+        },
+        {
+          "object": {
+            "_id": "FPW52iwpD4gg8mSrY",
+            "startElement": "ARyLbJQhgonfTssTC",
+            "endElement": "ARyLbJQhgonfTssTC",
+            "diagramId": "zoEqCcpRMEJcYaqtE",
+            "diagramTypeId": "Xqrn94goLNLXT6xfo",
+            "elementTypeId": "dycaRwotxyRd6yb7G",
+            "style": {
+              "elementStyle": {
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": []
+              },
+              "startShapeStyle": {
+                "fill": "rgb(65,113,156)",
+                "fillPriority": "color",
+                "stroke": "rgb(65,113,156)",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 7,
+                "shape": "None"
+              },
+              "endShapeStyle": {
+                "fill": "#00000",
+                "fillPriority": "color",
+                "stroke": "#000000",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "radius": 12,
+                "shape": "Diamond"
+              },
+              "lineType": "Orthogonal"
+            },
+            "styleId": "f7e71b6b2b718f8f0f389ec5",
+            "type": "Line",
+            "points": [
+              259.5,
+              89,
+              259.5,
+              42,
+              449,
+              42,
+              449,
+              144,
+              354,
+              144
+            ],
+            "toolId": "2NuzpyYbnexBqt3Kx",
+            "versionId": "uR5S9gtjAFR4hd6sW",
+            "data": {
+              "type": "NewLine",
+              "editorType": "ajooEditor",
+              "index": 9,
+              "data": {
+                "startElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "endElementTypeId": "T3tRXzaDfSvz3m3HG",
+                "diagramTypeId": "cnBeuQH66HXLu2QEz"
+              }
+            }
+          },
+          "compartments": []
+        }
+      ]
+    }
+  ]
+}
