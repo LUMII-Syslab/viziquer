@@ -11,7 +11,13 @@ Meteor.methods({
 		_import.importDiagrams(data.presentations);
 		_import.importDiagramTypes(data.types);
 	},
-
+	// separate method for find/replace element import
+	importFindReplaceElements: function(list) {
+		let _import = new ImportAjooConfiguration(list.toolId, list.versionId);
+		let data = list.data;
+		_import.importFindReplaceDiagramElements(_.first(data.presentations), list.diagramId);
+		_import.importFindReplaceDiagramElementTypes(_.first(data.types), list.diagramTypeId);
+	},
 
 	addConfiguratorExportButtonInToolbar: function() {
 
@@ -89,6 +95,26 @@ ImportAjooConfiguration.prototype = {
 			self.importSuperTypes(diagram_type_in.boxTypes);
 			self.importSuperTypes(diagram_type_in.lineTypes);
 		});
+	},
+	// separate function to import find/replace element types in currently opened diagram in configurator
+	importFindReplaceDiagramElementTypes: function(diagram_type, diagramTypeId) {
+		let self 			= this;
+		let diagramType 	= JSON.parse(JSON.stringify(diagram_type));
+		let object 			= diagramType.object;
+		let diagram_type_id = object._id;
+
+		self.obj_type_map[diagram_type_id] = diagramTypeId;
+
+		self.importBoxTypes(diagramType.boxTypes);
+		self.importLineTypes(diagramType.lineTypes);
+
+		self.importPaletteButtons(diagramType.paletteButtons);
+
+		self.importDiagramTypeDialogTypes(diagramType);
+		self.importDiagramTypeCompartmentTypes(diagramType.compartmentTypes);
+
+		self.importSuperTypes(diagram_type.boxTypes);
+		self.importSuperTypes(diagram_type.lineTypes);
 	},
 
 	importBoxTypes: function(box_types) {
@@ -324,6 +350,16 @@ ImportAjooConfiguration.prototype = {
 			self.importBoxes(diagram.boxes);
 			self.importLines(diagram.lines);
 		});
+	},
+	importFindReplaceDiagramElements: function(diagram, diagramId) {// paramaters: _.first(list.data.presentations), list.diagramId
+		let self 		= this;
+		let object 		= diagram.object;
+		let diagram_id 	= object._id;
+
+		self.obj_type_map[diagram_id] = diagramId;
+
+		self.importBoxes(diagram.boxes);
+		self.importLines(diagram.lines);
 	},
 
 	importBoxes: function(boxes) {

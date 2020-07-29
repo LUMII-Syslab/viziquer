@@ -90,8 +90,7 @@ function getCompartmentValues(compartmentType, ElementList){
     let FoundCompartments = Compartments.find({
         $and:
         [
-            {elementId: {$in: ElementList}},
-            // pēc compartment input tipa???
+            {elementId: {$in: ElementList}}
         ]
     }).fetch();
     if( FoundCompartments ){
@@ -111,19 +110,24 @@ function getCompartmentValues(compartmentType, ElementList){
 }
 function createCompartments(oldElementsList, newElementId){
     let newElementTypeId = getElementTypeId(newElementId);
-    _.each(oldElementsList, function(oldElementId){// divas reizes dara vienu un to pašu
-        let oldElemCompartments = Compartments.find({elementId: oldElementId}).fetch();
+    
+        let oldElemCompartments = Compartments.find(
+            {$and:
+            [
+                {elementId: {$in: oldElementsList}}
+            ]}).fetch();
         if( _.size(oldElemCompartments) > 0){
             
-            _.each(oldElemCompartments, function(compartment){
+            // _.each(oldElemCompartments, function(compartment){
+                let compartment = _.first(oldElemCompartments);
                 let oldCompartmentType = CompartmentTypes.findOne({_id: compartment.compartmentTypeId});
                 let newElemCompartmentType = CompartmentTypes.findOne({
                     elementTypeId:  newElementTypeId,
                     name:           oldCompartmentType.name,
-                    inputType:      {type: oldCompartmentType.inputType.type, inputType: oldCompartmentType.inputType.inputType}    
+                    inputType:      {type: oldCompartmentType.inputType.type, inputType: oldCompartmentType.inputType.inputType}   
                 })._id;
                 if(newElemCompartmentType){
-                    let compartmentValues = getCompartmentValues(oldCompartmentType, oldElementsList);
+                    let compartmentValues = getCompartmentValues(newElemCompartmentType, oldElementsList);
                     console.log('found compartments values', compartmentValues)
                     delete compartment._id;
                     compartment.elementId           = newElementId;
@@ -136,10 +140,9 @@ function createCompartments(oldElementsList, newElementId){
                     compartment._id = Compartments.insert(compartment);
                     console.log('new compartment:', Compartments.findOne({_id: compartment._id}))
                 }
-        })
-    }
-    else console.log('copartments not found')
-    })
+            // })
+        }
+        else console.log('copartments not found')
 }
 function deleteElementEdges(elementId){
     let RelatedEdges = FindRelatedEdges(elementId);
@@ -230,8 +233,8 @@ function replaceStruct(match){
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
                 _.each(apstaigatieReplace, function(element){
                     if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
-                        let start = createdBoxes[element.startElement];
-                        let end   = createdBoxes[element.endElement];
+                        let start = _.first(createdBoxes[element.startElement]);
+                        let end   = _.first(createdBoxes[element.endElement]);
                         if(typeof start.inserted === 'undefined'){
                             let startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
@@ -240,6 +243,7 @@ function replaceStruct(match){
                             let endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
                         }
+                        console.log('created boxes',createdBoxes)
                         let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                         let NewEdgeId = Elements.insert(newEdge);
                     }
