@@ -28,7 +28,8 @@ Interpreter.methods({
 					diagramId: Session.get("activeDiagram"),
 					diagramTypeId: DiagramTypes.findOne({diagramId: Session.get("activeDiagram")})._id,
 	                data: null,
-	                };
+					};
+					console.log(list)
 		Utilities.callMeteorMethod("EnableReplace",list, function(response){
             
 		})

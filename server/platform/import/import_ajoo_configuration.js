@@ -15,8 +15,8 @@ Meteor.methods({
 	importFindReplaceElements: function(list) {
 		let _import = new ImportAjooConfiguration(list.toolId, list.versionId);
 		let data = list.data;
-		_import.importFindReplaceDiagramElements(_.first(data.presentations), list.diagramId);
-		_import.importFindReplaceDiagramElementTypes(_.first(data.types), list.diagramTypeId);
+		_import.importFindReplaceDiagramElements(_.first(list.data.presentations), list.diagramId);
+		_import.importFindReplaceDiagramElementTypes(_.first(list.data.types), list.diagramTypeId);
 	},
 
 	addConfiguratorExportButtonInToolbar: function() {
