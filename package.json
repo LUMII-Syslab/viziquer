@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
-    "bcrypt": "^3.0.8",
+    "bcrypt": ">=5.0.0",    
     "json2csv": "^4.5.4",
     "meteor-node-stubs": "^0.4.1",
     "sparqljs": "^2.2.3",
