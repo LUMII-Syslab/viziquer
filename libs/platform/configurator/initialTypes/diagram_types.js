@@ -63,7 +63,7 @@ build_initial_diagram_type = function(list, editor_type) {
 
 		list["toolbar"] = [
 			{id: generate_id(), name: "Toggle Grid", procedure: "ToggleGrid", icon: "fa-th"},
-
+			{id: generate_id(), name: "EnableReplace", procedure: "EnableReplace", icon: "fa-random"},
 			{id: generate_id(), name: "Zoom out", procedure: "ZoomingOut", icon: "fa-minus"},	
 			{id: generate_id(), name: "Zoom in", procedure: "ZoomingIn", icon: "fa-plus"},
 

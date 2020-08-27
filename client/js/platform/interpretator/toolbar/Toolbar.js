@@ -22,6 +22,19 @@ Interpreter.methods({
 		}
 	},
 
+	EnableReplace: function() {
+		let list = {toolId: Session.get("toolId"),
+					versionId: Session.get("toolVersionId"),
+					diagramId: Session.get("activeDiagram"),
+					diagramTypeId: DiagramTypes.findOne({diagramId: Session.get("activeDiagram")})._id,
+	                data: null,
+					};
+					console.log(list)
+		Utilities.callMeteorMethod("EnableReplace",list, function(response){
+            
+		})
+	},
+
 	ShowDiagramSettings: function() {
 		$("#diagram-settings-form").modal("show");
 	},

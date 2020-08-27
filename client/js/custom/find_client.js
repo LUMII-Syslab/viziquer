@@ -79,8 +79,6 @@ Interpreter.customMethods({
         };
         console.log("Aktīvais elements: ", Session.get("activeElement"));
         CallServerFind("findDiags", getDiagramParams(Session.get("activeDiagram")));
-        let results = Session.get("ResultsJson")
-        console.log(results)
     }
 
 })
