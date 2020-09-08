@@ -81,68 +81,85 @@ function deleteOldElementAndCompartments(elementId){ // dzēšam nost Elementu u
     Compartments.remove({elementId: elementId});
     Elements.remove({_id: elementId});
 }
-function getCompartmentValues(compartmentType, ElementList){
-    let compartmentValues = {
-        input   : "",
-        value   : "",
-        valueLC : ""
-    };
-    let FoundCompartments = Compartments.find({
-        $and:
-        [
-            {elementId: {$in: ElementList}}
-        ]
-    }).fetch();
-    if( FoundCompartments ){
-        console.log('FOUND COMPARTMENTS', FoundCompartments);
-        _.each(FoundCompartments, function(compartment){
-            
-            compartmentValues.input += compartment.input + " ";
-            compartmentValues.value += compartment.value + " ";
-            compartmentValues.valueLC += compartment.valueLC + " "; 
-        })
-        compartmentValues.input.trim();
-        compartmentValues.value.trim();
-        compartmentValues.valueLC.trim();
-        return compartmentValues; 
-    }
-    else console.log('compartments not found')
-}
 function createCompartments(oldElementsList, newElementId){
-    let newElementTypeId = getElementTypeId(newElementId);
-    
-        let oldElemCompartments = Compartments.find(
-            {$and:
-            [
-                {elementId: {$in: oldElementsList}}
-            ]}).fetch();
-        if( _.size(oldElemCompartments) > 0){
-            
-            // _.each(oldElemCompartments, function(compartment){
-                let compartment = _.first(oldElemCompartments);
-                let oldCompartmentType = CompartmentTypes.findOne({_id: compartment.compartmentTypeId});
-                let newElemCompartmentType = CompartmentTypes.findOne({
-                    elementTypeId:  newElementTypeId,
-                    name:           oldCompartmentType.name,
-                    inputType:      {type: oldCompartmentType.inputType.type, inputType: oldCompartmentType.inputType.inputType}   
-                })._id;
-                if(newElemCompartmentType){
-                    let compartmentValues = getCompartmentValues(newElemCompartmentType, oldElementsList);
-                    console.log('found compartments values', compartmentValues)
-                    delete compartment._id;
-                    compartment.elementId           = newElementId;
-                    compartment.diagramId           = Elements.findOne({_id: newElementId}).diagramId;
-                    compartment.elementTypeId       = Elements.findOne({_id: newElementId}).elementTypeId;
-                    compartment.compartmentTypeId   = CompartmentTypes.findOne({elementTypeId: compartment.elementTypeId})._id;
-                    compartment.input               = compartmentValues.input;
-                    compartment.value               = compartmentValues.value;
-                    compartment.valueLC             = compartmentValues.valueLC;
-                    compartment._id = Compartments.insert(compartment);
-                    console.log('new compartment:', Compartments.findOne({_id: compartment._id}))
+     let newElementTypeId = getElementTypeId(newElementId);
+    _.each(oldElementsList, function(oldElementId){
+        let oldElementCompartments = Compartments.find({elementId: oldElementId}).fetch();
+        if(_.size(oldElementCompartments)){
+
+            _.each(oldElementCompartments, function(oldElementCompartment){
+                let compartmentType             = CompartmentTypes.findOne({_id: oldElementCompartment.compartmentTypeId});// old Compartment type
+                let NewElementCompartmentType   = CompartmentTypes.findOne({
+                    elementTypeId: newElementTypeId, 
+                    name: compartmentType.name,
+                    inputType: compartmentType.inputType
+                });
+                if( NewElementCompartmentType ){
+                    // ja tips ir atrasts, tad veidojam kopiju no vecā compartments, ar to nav jābūt problēmu,
+                    // un ievietojam jaunu Compartment dbāzē, uzmanīgi ar elementId, elementTypeId, compartmentTypeId utt
+                    let NewElementCompartment = Compartments.findOne({elementId: newElementId, compartmentTypeId: NewElementCompartmentType._id});
+                    if( typeof NewElementCompartment === 'undefined'){// ja vēl nav atribūta ar atrasto atribūta tipu pie jaunā elementa, tad veidojam jaunu atribūtu
+                        NewElementCompartment                   = oldElementCompartment;
+                        NewElementCompartment._id               = undefined;
+                        NewElementCompartment.elementId         = newElementId;
+                        NewElementCompartment.elementTypeId     = newElementTypeId;
+                        NewElementCompartment.compartmentTypeId = NewElementCompartmentType._id;
+
+                        console.log('compartment insertion:',Compartments.insert(NewElementCompartment));
+                    }
+                    else console.log('compartment with such type already exists');
                 }
-            // })
+                else console.log('Compartment type not found');
+            });
         }
-        else console.log('copartments not found')
+    });
+        
+}
+function parseCompartmentExpressions(startElements, endElementId, createdEndElementId){ // looking for expression which starts with @ symbol
+    let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
+    
+    _.each(EndElementCompartments, function(EndElemCompartment){
+        if(_.first(EndElemCompartment.value) == '@'){
+            let CompartmentNameInExpression = EndElemCompartment.value.substring(1);
+           
+           _.each(startElements, function(startElement){
+                let StartElementCompartments = Compartments.find({elementId: startElement}).fetch();
+                _.each(StartElementCompartments, function(startElementCompartment){
+                    let compartmentTypeName = CompartmentTypes.findOne({_id:startElementCompartment.compartmentTypeId}).name;
+                    
+                    if( compartmentTypeName == CompartmentNameInExpression){
+                        let CreatedElementCompartment = Compartments.findOne({_elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
+                        if(_.size(CreatedElementCompartment)){// if compartment was copied from source node, then we update compartment value
+                        console.log('Updating created compartment:', Compartments.update(
+                            {_elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
+                            {$set: {value: startElementCompartment.value, valueLC: startElementCompartment.valueLC, input: startElementCompartment.input}}
+                            ));
+                        }
+                        else{// otherwise create new one
+                            let newCompartment = {
+                                _id:                    undefined,
+                                projectId:              startElementCompartment.projectId,
+                                elementId:              createdEndElementId,
+                                diagramId:              startElementCompartment.diagramId,
+                                diagramTypeId:          startElementCompartment.diagramTypeId,
+                                elementTypeId:          EndElemCompartment.elementTypeId,
+                                versionId:              EndElemCompartment.versionId,
+                                compartmentTypeId:      EndElemCompartment.compartmentTypeId,
+                                input:                  startElementCompartment.input,
+                                value:                  startElementCompartment.value,
+                                index:                  EndElemCompartment.index,
+                                isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
+                                styleId:                EndElemCompartment.styleId,
+                                style:                  EndElemCompartment.style,
+                                valueLC:                startElementCompartment.valueLC
+                            }
+                            newCompartment._id = Compartments.insert(newCompartment);
+                        }
+                    }
+                });
+            });
+        }
+    });
 }
 function deleteElementEdges(elementId){
     let RelatedEdges = FindRelatedEdges(elementId);
@@ -217,6 +234,7 @@ function replaceStruct(match){
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
         let endElements     = _.keys(ReplaceLines);
+        console.log('element to find digramID: ', _.first(match).elementId);
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
 
         _.each(endElements, function(endElement){
@@ -261,7 +279,8 @@ function replaceStruct(match){
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
-                createCompartments(startElements, createdEndElement);
+                createCompartments(startElements, createdEndElement); // commented out for testing purposes
+                parseCompartmentExpressions(startElements,endElement ,createdEndElement);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
             }
         });
