@@ -1,6 +1,6 @@
 let ReplaceLineType;
 let DeleteBoxType;
-let findResults;
+//let findResults;
 let apstaigatieReplace;
 let createdBoxes;
 
@@ -30,19 +30,16 @@ function getEdges(_boxId){
 
 function FindDiagMatches(diagParamList){
     
-    diagramTypeId   = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
-    StartFindElem   = getStartElem(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
+    let diagramTypeId   = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
+    let StartFindElem   = getStartElem(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
+    let findResults     = [];
     if(StartFindElem){
         let Edges = getEdges(StartFindElem._id);
         if( Edges && _.size(Edges) > 0){
             findResults = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId);
-            // console.log('Found matches by edge:')
-            // console.dir(findResults, { depth: null })
         }
         else{
             findResults = Meteor.call('findNode', StartFindElem);
-            /* console.log('Found matches by node')
-            console.dir(findResults, { depth: null }); */
         }
         return findResults;
     }
@@ -115,49 +112,86 @@ function createCompartments(oldElementsList, newElementId){
     });
         
 }
+function ConcatenateResults(ResultArray){
+    let result = "";
+    for(let i = 0; i < ResultArray.length; i++){
+        result = result.concat(ResultArray[i]);
+    }
+    return result;
+}
+function findCompartValueBySpecLine(Expression, startElements){// line.atr
+    Expression          = Expression.trim();
+    let SpecLineName    = Expression.substring(0,Expression.indexOf("."));
+    let CompartmentName = Expression.substring( Expression.indexOf(".")+1 );
+    let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
+    let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
+    if(SpecLine){
+        let startElement = Elements.findOne({_id: SpecLine.elementId}).startElement;
+        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]));
+    }
+    else console.log('not found spec line');
+}
+function findCompartValueByName(CompartmentName, startElements){
+    CompartmentName = CompartmentName.trim();
+    let value = "";
+    for(let i = 0; i < startElements.length; i++){
+        let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
+
+        for(let j = 0; j < StartElementCompartments.length; j++){
+            let CompartmentType = CompartmentTypes.findOne({_id: StartElementCompartments[j].compartmentTypeId});
+            if(CompartmentName == CompartmentType.name){
+                value = StartElementCompartments[i].value;
+                break;
+            }
+        }
+        if(value.length) break;
+    }
+    return value;
+}
+function extractCompartmentValues(Expression, startElements){
+    let partsOfCompartment  = Expression.split("+");
+    let ResultArray         = _.map(partsOfCompartment, function(resultItem){
+        if(resultItem.includes("@") && resultItem.includes(".")){ return findCompartValueBySpecLine(resultItem.substring(1),startElements)}
+        else if(resultItem.includes("@")) { return findCompartValueByName(resultItem.substring(1), startElements) }
+        else return resultItem;
+    });
+    return ConcatenateResults(ResultArray);
+}
 function parseCompartmentExpressions(startElements, endElementId, createdEndElementId){ // looking for expression which starts with @ symbol
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
     
     _.each(EndElementCompartments, function(EndElemCompartment){
-        if(_.first(EndElemCompartment.value) == '@'){
-            let CompartmentNameInExpression = EndElemCompartment.value.substring(1);
-           
-           _.each(startElements, function(startElement){
-                let StartElementCompartments = Compartments.find({elementId: startElement}).fetch();
-                _.each(StartElementCompartments, function(startElementCompartment){
-                    let compartmentTypeName = CompartmentTypes.findOne({_id:startElementCompartment.compartmentTypeId}).name;
-                    
-                    if( compartmentTypeName == CompartmentNameInExpression){
-                        let CreatedElementCompartment = Compartments.findOne({_elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
-                        if(_.size(CreatedElementCompartment)){// if compartment was copied from source node, then we update compartment value
-                        console.log('Updating created compartment:', Compartments.update(
-                            {_elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
-                            {$set: {value: startElementCompartment.value, valueLC: startElementCompartment.valueLC, input: startElementCompartment.input}}
-                            ));
-                        }
-                        else{// otherwise create new one
-                            let newCompartment = {
-                                _id:                    undefined,
-                                projectId:              startElementCompartment.projectId,
-                                elementId:              createdEndElementId,
-                                diagramId:              startElementCompartment.diagramId,
-                                diagramTypeId:          startElementCompartment.diagramTypeId,
-                                elementTypeId:          EndElemCompartment.elementTypeId,
-                                versionId:              EndElemCompartment.versionId,
-                                compartmentTypeId:      EndElemCompartment.compartmentTypeId,
-                                input:                  startElementCompartment.input,
-                                value:                  startElementCompartment.value,
-                                index:                  EndElemCompartment.index,
-                                isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
-                                styleId:                EndElemCompartment.styleId,
-                                style:                  EndElemCompartment.style,
-                                valueLC:                startElementCompartment.valueLC
-                            }
-                            newCompartment._id = Compartments.insert(newCompartment);
-                        }
+        if(EndElemCompartment.value.includes("@")){
+            let ExpressionResult    = extractCompartmentValues(EndElemCompartment.value, startElements);
+            if(ExpressionResult.length){
+                let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
+                if(typeof ExistingCompartment === 'undefined'){
+                    let newCompartment = {
+                        _id:                    undefined,
+                        projectId:              EndElemCompartment.projectId,
+                        elementId:              createdEndElementId,
+                        diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
+                        diagramTypeId:          EndElemCompartment.diagramTypeId,
+                        elementTypeId:          EndElemCompartment.elementTypeId,
+                        versionId:              EndElemCompartment.versionId,
+                        compartmentTypeId:      EndElemCompartment.compartmentTypeId,
+                        input:                  ExpressionResult,
+                        value:                  ExpressionResult,
+                        index:                  EndElemCompartment.index,
+                        isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
+                        styleId:                EndElemCompartment.styleId,
+                        style:                  EndElemCompartment.style,
+                        valueLC:                ExpressionResult.toLowerCase()
                     }
-                });
-            });
+                    newCompartment._id = Compartments.insert(newCompartment);
+                }
+                else{ // smthing wrong with Expression Result
+                    console.log('Updating created compartment:', Compartments.update(
+                        {elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
+                        {$set: {value: ExpressionResult, valueLC: ExpressionResult.toLowerCase(), input: ExpressionResult}}
+                        ));
+                }
+            }
         }
     });
 }
@@ -234,7 +268,6 @@ function replaceStruct(match){
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
         let endElements     = _.keys(ReplaceLines);
-        console.log('element to find digramID: ', _.first(match).elementId);
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
 
         _.each(endElements, function(endElement){
@@ -279,8 +312,8 @@ function replaceStruct(match){
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
-                createCompartments(startElements, createdEndElement); // commented out for testing purposes
-                parseCompartmentExpressions(startElements,endElement ,createdEndElement);
+                createCompartments(startElements, createdEndElement); 
+                parseCompartmentExpressions(startFindElements,endElement ,createdEndElement);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
             }
         });
