@@ -120,11 +120,11 @@ function ConcatenateResults(ResultArray){
     return result;
 }
 function findCompartValueBySpecLine(Expression, startElements){// line.atr
-    Expression          = Expression.trim();
     let SpecLineName    = Expression.substring(0,Expression.indexOf("."));
     let CompartmentName = Expression.substring( Expression.indexOf(".")+1 );
     let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
     let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
+    console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
     if(SpecLine){
         let startElement = Elements.findOne({_id: SpecLine.elementId}).startElement;
         return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]));
@@ -132,29 +132,37 @@ function findCompartValueBySpecLine(Expression, startElements){// line.atr
     else console.log('not found spec line');
 }
 function findCompartValueByName(CompartmentName, startElements){
-    CompartmentName = CompartmentName.trim();
     let value = "";
     for(let i = 0; i < startElements.length; i++){
         let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
-
         for(let j = 0; j < StartElementCompartments.length; j++){
             let CompartmentType = CompartmentTypes.findOne({_id: StartElementCompartments[j].compartmentTypeId});
+            console.log(`CompartmentName ${CompartmentName}! CompartmentType.name ${CompartmentType.name}!`);
             if(CompartmentName == CompartmentType.name){
-                value = StartElementCompartments[i].value;
+                console.log('compartment type name matched')
+                value = StartElementCompartments[j].value;
                 break;
             }
         }
-        if(value.length) break;
+        console.log('value:', value)
+        if(value != "") break;
     }
     return value;
 }
 function extractCompartmentValues(Expression, startElements){
     let partsOfCompartment  = Expression.split("+");
     let ResultArray         = _.map(partsOfCompartment, function(resultItem){
-        if(resultItem.includes("@") && resultItem.includes(".")){ return findCompartValueBySpecLine(resultItem.substring(1),startElements)}
-        else if(resultItem.includes("@")) { return findCompartValueByName(resultItem.substring(1), startElements) }
+        if(resultItem.includes("@") && resultItem.includes(".")){
+            resultItem = resultItem.trim();
+            return findCompartValueBySpecLine(resultItem.substring(resultItem.indexOf("@")+1),startElements)
+        }
+        else if(resultItem.includes("@")) {
+             resultItem = resultItem.trim();
+            return findCompartValueByName(resultItem.substring(resultItem.indexOf("@")+1), startElements) 
+        }
         else return resultItem;
     });
+    console.log("ResultArray:", ResultArray);
     return ConcatenateResults(ResultArray);
 }
 function parseCompartmentExpressions(startElements, endElementId, createdEndElementId){ // looking for expression which starts with @ symbol
