@@ -69,7 +69,46 @@ Template.configuratorRibbon.events({
 //removes tooltip on mouse leave
     'mouseleave .btn-ribbon' : function(e, templ) {
     	Dialog.destroyTooltip(e);
-    },	
+	},
+	// import users functionality for testing purposes
+	'click #import-users' : function(e) {
+		$("#import-users-form").modal("show");
+	},
+	'click #import-users-ok' : function(e) {
+		$("#import-users-form").modal("hide");
+	},
+	
+	'change #import-users-file' : function (event) {
+		const files  = event.currentTarget.files;
+		
+		_.each(files, function (file) {
+
+			let reader = new FileReader();
+
+			reader.onload = function (evt) {
+				let contents = evt.target.result;
+				let lines = contents.split('\n');
+				
+				for(let i = 1; i < lines.length - 1; i++){
+					let Columns = lines[i].split(",");
+					
+					let userObj = {name: Columns[0], surname: Columns[1], password: "testPassword", email: Columns[3]};
+					console.log(userObj);
+					Meteor.call("makeUser", userObj, function(err) {
+						if (err) {
+							console.log("Error in makeUser callback");
+							console.log(err);
+						}
+						else {
+							console.log(`user ${Columns[0]} is signed up successfully`);
+						}
+					});
+				}
+			}
+		reader.readAsText(file);
+		});
+		
+	},
 });
 
 Template.addToolForm.events({

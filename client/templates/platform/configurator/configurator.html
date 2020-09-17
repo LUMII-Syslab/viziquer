@@ -34,7 +34,32 @@
         <span class="ribbon-button-alignment pull-right">
 
             <button id="add-tool" class="btn btn-ribbon" data-title="Add tool"><i class="fa fa-plus"></i></button>
-
+            <!-- button for importing users from file-->
+            <button id="import-users" data-toggle="modal" data-target="add-tool-form" class="btn btn-ribbon" data-title="Import users"><i class="fa fa-arrow-up"></i></button>
+            <div id="import-users-form" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Import Users</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="tool-name" class="col-sm-1 control-label">Select users csv file</label>
+                                    <div class="col-sm-10">
+                                        <input id="import-users-file" type="file" class="form-control" accept=".csv" multiple>
+                                    </div>
+                                </div>
+                            </form>  
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button id="import-users-ok" type="button" class="btn btn-primary">Import</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </span>
     </div>
     <!-- END RIBBON -->
@@ -46,7 +71,7 @@
 
 <template name="addToolForm">
 <!-- Modal for new diagram -->
-    <div id="add-tool-form" class="modal fade">
+    <div id="add-tool-form" class="modal fade" role="dialog" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -73,5 +98,4 @@
 <!-- End of modal -->
 
 </template>
-
 
