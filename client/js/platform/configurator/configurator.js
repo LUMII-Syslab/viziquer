@@ -86,14 +86,16 @@ Template.configuratorRibbon.events({
 			let reader = new FileReader();
 
 			reader.onload = function (evt) {
-				let contents = evt.target.result;
-				let lines = contents.split('\n');
-				
+				let contents 	= evt.target.result;
+				let lines 		= contents.split('\n');
+				let line 		= lines[0].split(',');
+				let ProjectId 	= line[4].trim()
 				for(let i = 1; i < lines.length - 1; i++){
 					let Columns = lines[i].split(",");
 					
-					let userObj = {name: Columns[0], surname: Columns[1], password: "testPassword", email: Columns[3]};
-					console.log(userObj);
+					let userObj 	= {name: Columns[0], surname: Columns[1], password: Columns[0], email: Columns[3].trim()};
+					let userInvite 	= { email: userObj.email, role: "Reader", projectId: ProjectId};
+					
 					Meteor.call("makeUser", userObj, function(err) {
 						if (err) {
 							console.log("Error in makeUser callback");
@@ -103,6 +105,7 @@ Template.configuratorRibbon.events({
 							console.log(`user ${Columns[0]} is signed up successfully`);
 						}
 					});
+					Utilities.callMeteorMethod("enrollUser", userInvite);
 				}
 			}
 		reader.readAsText(file);
