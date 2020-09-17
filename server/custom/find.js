@@ -4,6 +4,7 @@ var findResults;
 var atrastasSkeles;
 var constraintViolation;
 var ReplaceLineType;
+var myDiagrams;
 
 function createJsonFromDiagIds(diagramidsAAA)
 {
@@ -64,6 +65,28 @@ function findByEdgeType(list)
 			return false;
 	});
 };
+
+function findDiagramsForUser(_diagramId, _userID)
+{
+//	console.log("findDiagramsForUser");
+	var projects = ProjectsUsers.find({"userSystemId":_userID},{projectId:1, _id:0}).map(function(p){return p.projectId;});
+//	console.log(projects);
+	var versions = Versions.find({projectId: {$in: projects}}).map(function(v){return v._id;});
+//	console.log(versions);
+	var diagType = Diagrams.findOne({"_id":_diagramId}).diagramTypeId;
+//	console.log(diagType);
+	//der tās diagrammas, kas ir projektā, kur lietotājam ir tiesības, kam ir pareizais tips un kas nav meklēšanas diagramma
+	var diags = Diagrams.find({$and:
+		[
+		{diagramTypeId: diagType},
+		{versionId: {$in: versions }},
+		{_id: {$ne: _diagramId}}
+		]
+		}).map(function(d){return d._id;});
+
+//	console.log(diags);
+	return diags;
+}
 
 ///NO .NET
 function getNotVisitedEdge (_diagramId, _visitedElements)
@@ -138,7 +161,7 @@ function findIncomingEdgesWithType(_elementId, _elementTypeId)
 function findEdge (_findEdge, _findDiagramId)
 {
 	var edgeswithType =Elements.find(
-			{elementTypeId: _findEdge.elementTypeId, diagramId: {$ne: _findDiagramId}},
+			{elementTypeId: _findEdge.elementTypeId, diagramId: {$in: myDiagrams}},
 			{fields: {diagramId:1, startElement:1, endElement:1}}).fetch();
 	
 	if (edgeswithType || edgeswithType.length > 0)
@@ -574,7 +597,7 @@ function processRelatedEdge(_edge, _findDiagramId, _slice)
 function findNode (_findNode)
 {
 	var nodeList = Elements.find(
-			{elementTypeId: _findNode.elementTypeId, diagramId: {$ne: _findNode.diagramId}}, 
+			{elementTypeId: _findNode.elementTypeId, diagramId: {$in: myDiagrams}}, 
 			{fields: {diagramId:1}})
 		.fetch();
 //	console.log("Node list", nodeList);
@@ -836,9 +859,15 @@ Meteor.methods({
 	//līdzīgi findByElementType, bet ņem vērā Node property Constraints
 	findByNode: function(list)
 	{
+		var elem = Elements.findOne({_id: list.element});
+		var MyDiags = findDiagramsForUser (elem.diagramId, list.userSystemId);
+		console.log("MyDiags", MyDiags);
 		var atrastie = checkConstraintsForElementList(
-			Elements.findOne({_id: list.element}), 
-			Elements.find({elementTypeId: list.elemTypeId}, {fields: {diagramId:1}}).fetch());
+			elem, 
+			Elements.find({$and: 
+				[{elementTypeId: list.elemTypeId}, 
+				{diagramId: {$in: MyDiags}}
+			]}, {fields: {diagramId:1}}).fetch());
 
 		var diagramids = _.map(atrastie, 
 			function (a) {return {_id: a._id, diagramId: a.diagramId}}	);
@@ -891,6 +920,7 @@ Meteor.methods({
 	    // 	list.diagramId - diagram
 		//  list.projectId - active project id
 		//  list.versionId - active version id 
+		myDiagrams = findDiagramsForUser(list.diagramId, list.userSystemId);
 		return findMe(list);
 	},
 	findNode: function(node){

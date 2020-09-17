@@ -9,7 +9,7 @@ Interpreter.customMethods({
    
         function GetNodeParams(elem)
         {
-               return { elemTypeId: elem.elementTypeId, element: elem._id, projectId: Session.get("activeProject"), versionId: Session.get("versionId")};
+               return { elemTypeId: elem.elementTypeId, element: elem._id, projectId: Session.get("activeProject"), versionId: Session.get("versionId"), userSystemId: Session.get("userSystemId")};
         };
 
         function GetEdgeParams(elem)
@@ -20,13 +20,14 @@ Interpreter.customMethods({
                 sourceNodeTypeId: Elements.findOne({_id: elem.startElement}).elementTypeId,
                 targetNodeTypeId: Elements.findOne({_id: elem.endElement}).elementTypeId,
                 projectId: Session.get("activeProject"),
-                versionId: Session.get("versionId")};
+                versionId: Session.get("versionId"),
+                userSystemId: Session.get("userSystemId")};
         };
 
         function GetDiagParams(diagId)
         {
             console.log("GetDiagParams", diagId, Session.get("activeProject"), Session.get("versionId") );
-            return { diagramId: diagId, projectId: Session.get("activeProject"), versionId: Session.get("versionId")};
+            return { diagramId: diagId, projectId: Session.get("activeProject"), versionId: Session.get("versionId"), userSystemId: Session.get("userSystemId")};
         };
 
         function CallServerFind(serverMethodName, list)
