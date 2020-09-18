@@ -1,25 +1,19 @@
 Meteor.methods({
     EnableReplace: function(list) {
-        
-        let ExtensionJSON = {};
-        let fs = Npm.require('fs');
-        
-        fs.readFile('/Viziquer/viziquer/jsons/FindReplaceExtension.json', 'utf8', function (err, data) {
-        if (err) {
-            console.log('Error: ' + err);
-            return;
-        }
-
-        data = JSON.parse(data);
+        let data
+    if(Meteor.isServer){
+        data = JSON.parse(Assets.getText('FindReplaceExtension.json'));
         list.data = data;
-    });
+    }
+
     let SpecLineType = ElementTypes.findOne({name: "Specialization"})._id;
+    /*
     let SpecializationLines = Elements.find({ elementTypeId: SpecLineType, diagramId: list.diagramId}).fetch();
     let EndElem         = _.uniq(_.pluck(SpecializationLines,'endElement'));
     let StartElem       = _.uniq(_.pluck(SpecializationLines,'startElement'));
-    let SuperBoxes      = _.difference(EndElem, StartElem);
-    if(!_.size(SuperBoxes)) SuperBoxes = _.pluck(Elements.find({diagramId:list.diagramId}).fetch(),'_id');// ja speciāllīniju nav vispār, bet ir tikai elementi
-    // find and check find replace elementTypes in current configuration diagram
+    */
+    let SuperBoxes      = _.pluck(ElementTypes.find({diagramId: list.diagramId, superTypeIds: {$size: 0}}).fetch(),'elementId');
+    if(!_.size(SuperBoxes)){ console.log('superBoxes not found'); return;}
     let FindReplaceElement = ElementTypes.findOne({name: "FindReplaceElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     let RemoveElement      = ElementTypes.findOne({name: "RemoveElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     let FindReplaceLink    = ElementTypes.findOne({name: "FindReplaceLink", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
@@ -27,23 +21,41 @@ Meteor.methods({
         typeof FindReplaceLink    === 'undefined' &&
         typeof RemoveElement      === 'undefined'){
             Meteor.call("importFindReplaceElements", list);
-        }
+            let FindReplaceElem = Compartments.findOne({value: "FindReplaceElement", diagramId: list.diagramId}).elementId;
+            let FRElem = Elements.findOne({_id:FindReplaceElem});
+            let FREType = ElementTypes.findOne({elementId: FRElem._id})._id;
+    
+            if(FindReplaceElem){
+                _.each(SuperBoxes, function(box){
+                let BOX = Elements.findOne({_id: box});
+                createSpecializationLink(FRElem, BOX, list,SpecLineType);
+                insertReplaceButtonInToolbar(list.diagramId);
+                console.log(ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FREType]}}))
+                });
+            }
+            else console.log("FindReplaceElement not found")
+    }
     else console.log("FindReplace are already enabled");
     
-    let FindReplaceElem = Compartments.findOne({value: "FindReplaceElement", diagramId: list.diagramId}).elementId;
-    let FRElem = Elements.findOne({_id:FindReplaceElem});
-    let FREType = ElementTypes.findOne({elementId: FRElem._id})._id;
-    
-    if( FindReplaceElem){
-        _.each(SuperBoxes, function(box){
-            let BOX = Elements.findOne({_id: box});
-            createSpecializationLink(FRElem, BOX, list,SpecLineType);
-            console.log(ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FREType]}}))
-        });
-    }
-    else console.log("FindReplaceElement not found")
     }
 });
+function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
+    let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
+    if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
+    else{
+        console.log(DiagramTypes.update({_id: DiagramTypeId}, 
+            {
+                $push: {toolbar: { 
+                    id : generate_id(),
+                    icon : "fa-bars",
+                    name : "replace",
+                    procedure : "Replace"
+                    }
+                }
+            }
+        ));
+    }
+}
 function createSpecializationLink(FindReplaceElement, superBox, list, specLineTypeId) {
 
     let newSpecLineObj = {
