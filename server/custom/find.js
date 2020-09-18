@@ -105,10 +105,7 @@ function getNotVisitedEdge (_diagramId, _visitedElements)
 
 function getNotVisitedEdgeListForNode(_node)
 {
-	if(typeof ReplaceLineType === 'undefined' ){
-		// ja speciāllīnijas tips nav zināms
-		ReplaceLineType = ReplaceLineType = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: _node.diagramTypeId})._id;
-	}
+
 	return allEdges = Elements.find(
 		{$and:
 			[
@@ -815,6 +812,14 @@ function findMe(list)
 	findResults = [];
 	constraintViolation = [];
 	atrastasSkeles = [];
+
+	var dt  = Diagrams.findOne({_id:list.diagramId}).diagramTypeId
+	ReplaceLineTypeObj = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: dt});
+	if (ReplaceLineTypeObj)
+		{
+			console.log("ReplaceLineTypeObj", ReplaceLineTypeObj);
+			ReplaceLineType = ReplaceLineTypeObj._id;
+		}
 
 	notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
 	while (notVisitedEdge)
