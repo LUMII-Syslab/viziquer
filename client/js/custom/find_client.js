@@ -16,7 +16,7 @@ Interpreter.customMethods({
         {
             return {
                 edgeTypeId: elem.elementTypeId,
-                element:elem.id,
+                element:elem._id,
                 sourceNodeTypeId: Elements.findOne({_id: elem.startElement}).elementTypeId,
                 targetNodeTypeId: Elements.findOne({_id: elem.endElement}).elementTypeId,
                 projectId: Session.get("activeProject"),

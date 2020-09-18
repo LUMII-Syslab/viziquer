@@ -51,8 +51,12 @@ function createJsonFromDiagIds(diagramidsAAA)
 
 function findByEdgeType(list)
 {
+	var elem = Elements.findOne({_id: list.element});
+	console.log("findByEdgeType", list);
+	MyDiags = findDiagramsForUser (elem.diagramId, list.userSystemId);
+	console.log("findByEdgeType", MyDiags);
 	return edgeswithSourceTargetTypes = _.filter(
-		Elements.find({ elementTypeId: list.edgeTypeId }, { fields: { diagramId: 1, startElement: 1, endElement: 1 } }).fetch(), 
+		Elements.find({elementTypeId:list.edgeTypeId, diagramId: {$in: MyDiags}}, { fields: { diagramId: 1, startElement: 1, endElement: 1 } }).fetch(), 
 		function (e){
 			var start = Elements.findOne({_id: e.startElement});
 			currentSourceElemType = start.elementTypeId;
