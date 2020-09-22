@@ -119,9 +119,8 @@ function ConcatenateResults(ResultArray){
     }
     return result;
 }
-function findCompartValueBySpecLine(Expression, startElements){// line.atr
-    let SpecLineName    = Expression.substring(0,Expression.indexOf("."));
-    let CompartmentName = Expression.substring( Expression.indexOf(".")+1 );
+function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements){// line.atr
+    
     let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
     let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
     console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
@@ -149,18 +148,19 @@ function findCompartValueByName(CompartmentName, startElements){
     }
     return value;
 }
-function extractCompartmentValues(Expression, startElements){
-    let partsOfCompartment  = Expression.split("+");
-    let ResultArray         = _.map(partsOfCompartment, function(resultItem){
-        if(resultItem.includes("@") && resultItem.includes(".")){
-            resultItem = resultItem.trim();
-            return findCompartValueBySpecLine(resultItem.substring(resultItem.indexOf("@")+1),startElements)
+function extractCompartmentValues(ParsedResultArray, startElements){
+
+    let ResultArray         = _.map(ParsedResultArray, function(resultItem){
+        switch(resultItem.type){
+            case "LineWithAttribute":
+                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements);
+            case "Attribute":
+                return findCompartValueByName(resultItem.AttributeName, startElements);
+            case "StringConstant":
+                return resultItem.Value;
+            default: 
+                return "";
         }
-        else if(resultItem.includes("@")) {
-             resultItem = resultItem.trim();
-            return findCompartValueByName(resultItem.substring(resultItem.indexOf("@")+1), startElements) 
-        }
-        else return resultItem;
     });
     console.log("ResultArray:", ResultArray);
     return ConcatenateResults(ResultArray);
@@ -169,38 +169,48 @@ function parseCompartmentExpressions(startElements, endElementId, createdEndElem
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
     
     _.each(EndElementCompartments, function(EndElemCompartment){
-        if(EndElemCompartment.value.includes("@")){
-            let ExpressionResult    = extractCompartmentValues(EndElemCompartment.value, startElements);
-            if(ExpressionResult.length){
-                let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
-                if(typeof ExistingCompartment === 'undefined'){
-                    let newCompartment = {
-                        _id:                    undefined,
-                        projectId:              EndElemCompartment.projectId,
-                        elementId:              createdEndElementId,
-                        diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
-                        diagramTypeId:          EndElemCompartment.diagramTypeId,
-                        elementTypeId:          EndElemCompartment.elementTypeId,
-                        versionId:              EndElemCompartment.versionId,
-                        compartmentTypeId:      EndElemCompartment.compartmentTypeId,
-                        input:                  ExpressionResult,
-                        value:                  ExpressionResult,
-                        index:                  EndElemCompartment.index,
-                        isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
-                        styleId:                EndElemCompartment.styleId,
-                        style:                  EndElemCompartment.style,
-                        valueLC:                ExpressionResult.toLowerCase()
-                    }
-                    newCompartment._id = Compartments.insert(newCompartment);
+            let parsedResultArray;
+            const cmpType = CompartmentTypes.findOne({_id: EndElemCompartment.compartmentTypeId});
+            
+            if(cmpType.inputType.type == "input"){
+                try{
+                    parsedResultArray = Compartments_exp_grammar.parse(EndElemCompartment.value,{});
                 }
-                else{ // smthing wrong with Expression Result
-                    console.log('Updating created compartment:', Compartments.update(
-                        {elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
-                        {$set: {value: ExpressionResult, valueLC: ExpressionResult.toLowerCase(), input: ExpressionResult}}
-                        ));
+                catch(error){
+                    console.log('Parse error', error);
+                }
+                console.log('parsed output', parsedResultArray);
+                let ExpressionResult    = extractCompartmentValues(parsedResultArray, startElements);
+                if(ExpressionResult.length){
+                    let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
+                    if(typeof ExistingCompartment === 'undefined'){
+                        let newCompartment = {
+                            _id:                    undefined,
+                            projectId:              EndElemCompartment.projectId,
+                            elementId:              createdEndElementId,
+                            diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
+                            diagramTypeId:          EndElemCompartment.diagramTypeId,
+                            elementTypeId:          EndElemCompartment.elementTypeId,
+                            versionId:              EndElemCompartment.versionId,
+                            compartmentTypeId:      EndElemCompartment.compartmentTypeId,
+                            input:                  ExpressionResult,
+                            value:                  ExpressionResult,
+                            index:                  EndElemCompartment.index,
+                            isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
+                            styleId:                EndElemCompartment.styleId,
+                            style:                  EndElemCompartment.style,
+                            valueLC:                ExpressionResult.toLowerCase()
+                        }
+                        newCompartment._id = Compartments.insert(newCompartment);
+                    }
+                    else{ // smthing wrong with Expression Result
+                        console.log('Updating created compartment:', Compartments.update(
+                            {elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
+                            {$set: {value: ExpressionResult, valueLC: ExpressionResult.toLowerCase(), input: ExpressionResult}}
+                            ));
+                    }
                 }
             }
-        }
     });
 }
 function deleteElementEdges(elementId){
