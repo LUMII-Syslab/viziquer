@@ -363,6 +363,8 @@ function replaceStruct(match){
                 let startFindElements = _.pluck(ReplaceLines[endElement], 'startElement');
                 console.log('match',match);
                 let startElements = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
+                // problēma pie startElements, ja gribam pievienot šķautni, match meklēs tikai pēc viena no speciālšķautņu end elementa
+                // tāpēc nav iespējams padzēst, iekopēt comp no veciem elementiem.
                 startElements = _.pluck(startElements, 'elementId');
                 console.log('startFindElements',startFindElements);
                 console.log('startElements',startElements);
@@ -371,6 +373,13 @@ function replaceStruct(match){
                 createCompartments(startElements, createdEndElement); 
                 parseCompartmentExpressions(startFindElements,endElement ,createdEndElement);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
+            }
+            if(endElementTypeId == DeleteBoxType){
+                let DeleteFindElements  = _.pluck(ReplaceLines[endElement], 'startElement');
+                let DeleteElements      = _.filter(match, function(element){ return _.contains(DeleteFindElements, element.findElementId)});
+                _.each(DeleteElements, function(de){ 
+                    deleteOldElementAndCompartments(de.elementId);
+                });
             }
         });
     }
