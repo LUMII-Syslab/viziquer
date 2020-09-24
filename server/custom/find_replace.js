@@ -56,6 +56,17 @@ function FindRelatedEdges(elementId){
         ]
     }).fetch();// atlasām saistītās šķautnes
 }
+function FindEdgeBySourceAndTarget(soureId, targetId){
+    return ( Elements.findOne({
+        startElement: soureId,
+        endElement: targetId
+    })  || 
+    Elements.findOne({
+        startElement: targetId,
+        endElement: soureId
+    })
+    );
+}
 function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNodeEdges){
     if( RelatedOldNodeEdges){
         _.each(RelatedOldNodeEdges, function(edge){// kabinām klāt jaunai virsotnei
@@ -76,6 +87,7 @@ function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNod
 }
 function deleteOldElementAndCompartments(elementId){ // dzēšam nost Elementu un tā Compartments
     Compartments.remove({elementId: elementId});
+    console.log('element removal');
     Elements.remove({_id: elementId});
 }
 function createCompartments(oldElementsList, newElementId){
@@ -222,6 +234,7 @@ function deleteElementEdges(elementId){
     }
 }
 function createBox(diagToReplaceIn, ReplaceElement){
+    console.log('creating new box');
     return NewReplaceElement = {
     diagramId       : diagToReplaceIn,
     diagramTypeId   : ReplaceElement.diagramTypeId,
@@ -287,6 +300,7 @@ function replaceStruct(match){
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
         let endElements     = _.keys(ReplaceLines);
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
+        let InsertedTracker = [];
 
         _.each(endElements, function(endElement){
             let endElementTypeId = getElementTypeId(endElement);
@@ -297,37 +311,61 @@ function replaceStruct(match){
                 apstaigatieReplace = [FirstReplaceElement];
                 let found = getNotVisitedItems();
                 while(found) { found = getNotVisitedItems() }
+
                 createdBoxes = _.filter(apstaigatieReplace, function(apst){ return _.has(apst, "visited") });
-                createdBoxes = _.groupBy(_.map(createdBoxes, function(box){ return {local: box._id, inserted: undefined} }), 'local');
+                createdBoxes = _.groupBy(_.map(createdBoxes, function(box){
+                    let insertedBox = _.findWhere(InsertedTracker, {localId: box._id});
+                    if(typeof insertedBox === 'undefined') return {local: box._id, inserted: undefined}
+                    else return {local: box._id, inserted: insertedBox.inserted}
+                
+                }), 'local');
+
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
+                console.log('created boxes before', createdBoxes);
+                console.log('inserted tracker before: ', InsertedTracker);
                 _.each(apstaigatieReplace, function(element){
                     if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
                         let start = _.first(createdBoxes[element.startElement]);
                         let end   = _.first(createdBoxes[element.endElement]);
+                        console.log('start', start);
+                        console.log('end', end);
                         if(typeof start.inserted === 'undefined'){
                             let startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
                         }
+                        else console.log('found start eleemnt');
                         if(typeof end.inserted === 'undefined'){
                             let endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
                         }
-                        console.log('created boxes',createdBoxes)
-                        let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
-                        let NewEdgeId = Elements.insert(newEdge);
+                        else console.log('found end eleemnt');
+                        if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
+                            let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
+                            let NewEdgeId = Elements.insert(newEdge);
+                        }
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
-                        let box = createdBoxes[element._id];
+                        let box = _.first(createdBoxes[element._id]);
+                        console.log('box',box);
                         if(typeof box.inserted === 'undefined'){
                             let NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
                             _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
                         }
                     }
                 });
+                InsertedTracker = _.map(apstaigatieReplace, function(apstaigatais){
+                    if(createdBoxes[apstaigatais._id]){
+                        return {localId: apstaigatais._id, inserted: _.first(createdBoxes[apstaigatais._id]).inserted}
+                    }
+                });
+                console.log('createdBoxes after', createdBoxes);
+                console.log('inserted tracker after', InsertedTracker);
                 let startFindElements = _.pluck(ReplaceLines[endElement], 'startElement');
+                console.log('match',match);
                 let startElements = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
                 startElements = _.pluck(startElements, 'elementId');
-                
+                console.log('startFindElements',startFindElements);
+                console.log('startElements',startElements);
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 createCompartments(startElements, createdEndElement); 
