@@ -22,11 +22,12 @@ Template.replaceResults.events({
     },
     'click #selectMatch': function(){
         // replace selected occurence
-        console.log("replace selected match", this.elements);
-            Utilities.callMeteorMethod("replaceStructure",this.elements, function(response){
-
-            })
+        console.log("replace selected match");
         
+        Utilities.callMeteorMethod("replaceStructure",this, function(response){
+
+        })
+       
     },
     'click #highlightMatch': function(){
         // highlight selected match

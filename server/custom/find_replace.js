@@ -4,17 +4,20 @@ let DeleteBoxType;
 let apstaigatieReplace;
 let createdBoxes;
 
-function getStartElem(diagParamList, diagramType){// iegūstam pirmo elementu no speciāllīnijas
-    let elementToFind;
-    ReplaceLineType = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: diagramType})._id;// ja tādas speciāllīnijas definīcijā nav, tad metīs kļūdu
-    DeleteBoxType   = ElementTypes.findOne({name: "RemoveElement", diagramTypeId: diagramType})._id;
-    let ReplaceLine = Elements.findOne({elementTypeId: ReplaceLineType, diagramId: diagParamList.diagramId});
-    if( ReplaceLine ){
-        elementToFind = Elements.findOne({_id: ReplaceLine.startElement})
+function getStartElements(diagParamList, diagramType){// iegūstam starta elementus no visām speciāllīnijām
+    let elementsToFind  = [];
+    ReplaceLineType     = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: diagramType})._id;// ja tādas speciāllīnijas definīcijā nav, tad metīs kļūdu
+    DeleteBoxType       = ElementTypes.findOne({name: "RemoveElement", diagramTypeId: diagramType})._id;
+    let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: diagParamList.diagramId}).fetch();
+    if( ReplaceLines ){
+        _.each(ReplaceLines, function(ReplaceLine){
+            let elementToFind = Elements.findOne({_id: ReplaceLine.startElement});
+            elementsToFind.push(elementToFind);
+        })
     }
     else console.log('Replace line not found');
     
-    return elementToFind;
+    return elementsToFind;
 }
 function getElementTypeId(elementId){ return Elements.findOne({_id: elementId}).elementTypeId; }
 function getEdges(_boxId){
@@ -27,23 +30,66 @@ function getEdges(_boxId){
         ]
     }).fetch();
 }
-
+function cartesianProductOf(listOfMatches) {
+    return _.reduce(listOfMatches, function(a, b) {// a un b ir iteratori, kas iterē pa diviem blakus esošiem masīviem masīvā
+        return _.flatten(_.map(a, function(x) {
+            return _.map(b, function(y) {
+                return x.concat([y]);// konkatenējam katru x elementu no a masīva ar katru y elementu no b masīva
+            });// tādā veidā iegūstot dekarta reizinājumu
+        }), true);// true ir tam, lai rezultāts ir divdimensionāls masīvs
+    }, [ [] ]);
+}// paņemts no https://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
 function FindDiagMatches(diagParamList){
     
-    let diagramTypeId   = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
-    let StartFindElem   = getStartElem(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
-    let findResults     = [];
-    if(StartFindElem){
-        let Edges = getEdges(StartFindElem._id);
-        if( Edges && _.size(Edges) > 0){
-            findResults = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId);
-        }
-        else{
-            findResults = Meteor.call('findNode', StartFindElem);
-        }
-        return findResults;
+    let diagramTypeId       = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
+    let StartFindElements   = getStartElements(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
+    let findResults         = [];// sagrupētie pēc diagramId
+    let Results             = [];// satur katrai diagrammai atrasto fragmentu dekarta reizinājumu
+    if(StartFindElements){
+        _.each(StartFindElements, function(startFindElement){
+            let Edges = getEdges(startFindElement._id);
+            if( Edges && _.size(Edges) > 0){
+                let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId);
+                findResults.push(findResult);
+            }
+            else{
+                let findResult = Meteor.call('findNode', startFindElement);
+                findResults.push(findResult);
+            }
+        });
+        let startFindElementsIds = _.pluck(StartFindElements,'_id');
+
+        findResults = _.flatten(findResults);
+        findResults = _.groupBy(findResults,'diagramId');
+        let diagrams = _.keys(findResults);
+        _.each(diagrams, function(diagram){
+            let currentDiagramMatches = [];
+            _.each(findResults[diagram], function(diagramItem){
+                currentDiagramMatches.push(diagramItem.matches);
+            });
+            let resultObj = {
+                diagramId: diagram,
+                name: _.first(findResults[diagram]).name,
+                matches: cartesianProductOf(currentDiagramMatches)
+            }
+            Results.push(resultObj);
+        });
+        Results = _.filter(Results, function(result){
+            let uniqueFindElements = _.uniq(_.flatten(_.map(result.matches, function(match){
+                return _.map(match, function(elements){
+                    return _.map(elements.elements, function(element){
+                        return element.findElementId;
+                    })
+                })
+            })));
+            
+            return _.every(startFindElementsIds, function(startFindElementsId){
+                return _.contains(uniqueFindElements, startFindElementsId);
+            });
+        });
+        return Results;
     }
-    else console.log('Start element not found')
+    else console.log('Start elements not found')
 
 }
 /** Aizvietošanas funkcijas **/
@@ -397,7 +443,12 @@ Meteor.methods({
         })
     },
     replaceStructure: function(match){
-        replaceStruct(match)
+        let FormatedMatch = _.flatten(_.map(match, function(MatchItem){
+            return _.map(MatchItem.elements, function(elementPair){
+                return elementPair;
+            })
+        }));
+        replaceStruct(FormatedMatch);
         return;
     }
 })
