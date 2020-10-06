@@ -903,7 +903,7 @@ Meteor.methods({
 				name:		Diagrams.findOne({_id: diagram}).name,
 				matches: _.map(res[diagram], function(match){
 					return{
-						elements:[{ elementId: match.elementId, findElementId: match.findElementId }] 
+						elements:[{ elementId: match.elementId, findElementId: match.findElementId }]
 					}
 				})
 			}

@@ -34,7 +34,8 @@ function cartesianProductOf(listOfMatches) {
     return _.reduce(listOfMatches, function(a, b) {// a un b ir iteratori, kas iterē pa diviem blakus esošiem masīviem masīvā
         return _.flatten(_.map(a, function(x) {
             return _.map(b, function(y) {
-                return x.concat([y]);// konkatenējam katru x elementu no a masīva ar katru y elementu no b masīva
+                return x.concat([y]);
+               // konkatenējam katru x elementu no a masīva ar katru y elementu no b masīva
             });// tādā veidā iegūstot dekarta reizinājumu
         }), true);// true ir tam, lai rezultāts ir divdimensionāls masīvs
     }, [ [] ]);
@@ -67,16 +68,24 @@ function FindDiagMatches(diagParamList){
             _.each(findResults[diagram], function(diagramItem){
                 currentDiagramMatches.push(diagramItem.matches);
             });
+            let cartesianProductOfMatches = cartesianProductOf(currentDiagramMatches);
+            cartesianProductOfMatches = _.map(cartesianProductOfMatches, function(match){
+                return {
+                    match: match,
+                    status: 'new',
+                    id: generate_id()
+                }
+            });
             let resultObj = {
                 diagramId: diagram,
                 name: _.first(findResults[diagram]).name,
-                matches: cartesianProductOf(currentDiagramMatches)
+                matches: cartesianProductOfMatches
             }
             Results.push(resultObj);
         });
         Results = _.filter(Results, function(result){
             let uniqueFindElements = _.uniq(_.flatten(_.map(result.matches, function(match){
-                return _.map(match, function(elements){
+                return _.map(match.match, function(elements){
                     return _.map(elements.elements, function(element){
                         return element.findElementId;
                     })
@@ -87,6 +96,7 @@ function FindDiagMatches(diagParamList){
                 return _.contains(uniqueFindElements, startFindElementsId);
             });
         });
+        console.dir(Results,{depth: null});
         return Results;
     }
     else console.log('Start elements not found')
@@ -132,9 +142,10 @@ function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNod
     }
 }
 function deleteOldElementAndCompartments(elementId){ // dzēšam nost Elementu un tā Compartments
-    Compartments.remove({elementId: elementId});
-    console.log('element removal');
-    Elements.remove({_id: elementId});
+    console.log( 'Compartments removal', Compartments.remove({elementId: elementId}) );
+    console.log('element removal', elementId);
+    console.log( 'Eleemnt removal', Elements.remove({_id: elementId}) );
+    
 }
 function createCompartments(oldElementsList, newElementId){
      let newElementTypeId = getElementTypeId(newElementId);
@@ -341,6 +352,7 @@ function getNotVisitedItems() { // ciklojas
 }
 function replaceStruct(match){
     if(match){
+        console.log('match',match);
         let FindDiagram     = Elements.findOne({_id: _.first(match).findElementId}).diagramId;
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
@@ -423,8 +435,11 @@ function replaceStruct(match){
             if(endElementTypeId == DeleteBoxType){
                 let DeleteFindElements  = _.pluck(ReplaceLines[endElement], 'startElement');
                 let DeleteElements      = _.filter(match, function(element){ return _.contains(DeleteFindElements, element.findElementId)});
-                _.each(DeleteElements, function(de){ 
-                    deleteOldElementAndCompartments(de.elementId);
+                _.each(DeleteElements, function(de){
+                    const DeleteElement = Elements.findOne({_id: de.elementId});
+                    if(DeleteElement){
+                        deleteOldElementAndCompartments(DeleteElement._id);
+                    }
                 });
             }
         });
@@ -443,7 +458,7 @@ Meteor.methods({
         })
     },
     replaceStructure: function(match){
-        let FormatedMatch = _.flatten(_.map(match, function(MatchItem){
+        let FormatedMatch = _.flatten(_.map(match.match, function(MatchItem){
             return _.map(MatchItem.elements, function(elementPair){
                 return elementPair;
             })

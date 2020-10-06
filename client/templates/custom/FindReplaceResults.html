@@ -23,8 +23,20 @@
                             
                             <tr>
                                 <td>Match N0 {{incremented @index }} </td>
-                                <td><button id="selectMatch" class="btn btn-success btn-xs">Replace match</button>
-                                    <button id="highlightMatch" class="btn btn-warning btn-xs">Highlight match</button></td>
+                                <td>
+                                    {{ #if isNewMatch this.status}}
+                                    <button id="selectMatch" class="btn btn-success btn-xs">Replace match</button>
+                                    <button id="highlightMatch" class="btn btn-warning btn-xs">Highlight match</button>
+                                    {{ /if }}
+                                    {{ #if isUsedMatch this.status}}
+                                    <button id="selectMatch" class="btn btn-success btn-xs" disabled>Used</button>
+                                    {{ /if }}
+                                    {{ #if isConflictingMatch this.status}}
+                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
+                                        <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Conflicting</button>
+                                    </span>
+                                    {{ /if }}
+                                </td>
                             </tr>
                             
                             {{ /each }}
