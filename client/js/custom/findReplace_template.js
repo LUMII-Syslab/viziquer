@@ -19,14 +19,15 @@ Template.registerHelper('incremented', function(index){
 Template.replaceResults.events({
     'click .replace': function(){
         //replace all occurences
-        console.log("replace all matches")
-        if( _.size(_.first(this.matches).elements) > 1){
-            console.log('not implemented case')
-        }
-        else{
-            Utilities.callMeteorMethod("replaceOneNodeManyOccurences",this.matches, function(response){
+        console.log("replace all matches");
+        const CurrentDiagramId = this.diagramId;
+        if( !(typeof this === 'undefined') || _.size(this) ) {
             
-            })
+            Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', this, function(response){
+                let ResultsJson = Session.get('ResultsJson');
+                ResultsJson     = updateSession(ResultsJson,CurrentDiagramId, response);
+                Session.set('ResultsJson', ResultsJson);
+            }); 
         }
     },
     'click #selectMatch': function(){
@@ -48,15 +49,30 @@ Template.replaceResults.events({
         });
         UpdateStatus = markConflictingMatches(UpdateStatus, elementsToLookup);
         Session.set('ResultsJson', UpdateStatus);
-        /*
-        Utilities.callMeteorMethod("replaceStructure",this, function(response){
+        
+        Utilities.callMeteorMethod("replaceSingleOccurence",this, function(response){
 
-        })
-       */
+        });
     },
-    'click #highlightMatch': function(){
+    'click #highlightMatch': function() {
         // highlight selected match
         console.log("highlight match", this)
+    },
+    'click #clearResults' : function() {
+        Session.set('ResultsJson', [] );
+    },
+    'click #replaceInAllDiagrams' : function(){
+        let Results = Session.get('ResultsJson');
+        if( _.size(Results) ){
+            _.each(Results, function(ResultItem){
+                const CurrentDiagramId = ResultItem.diagramId;
+                Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(response){
+                    let ResultsJson = Session.get('ResultsJson');
+                    ResultsJson = updateSession(ResultsJson, CurrentDiagramId, response);
+                    Session.set('ResultsJson', ResultsJson);
+                }); 
+            })
+        }
     }
 })
 function markConflictingMatches(ResultsJson, elementsToLookup){
@@ -71,6 +87,22 @@ function markConflictingMatches(ResultsJson, elementsToLookup){
                 if(foundConflictingMatch) match.status = 'conflicting';
             }
         })
+    });
+    return ResultsJson;
+}
+function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam sesijas datus ResultsJson
+    _.each(ResultsJson, function(diagramItem){
+                    
+        if(diagramItem.diagramId == CurrentDiagramId){
+            
+            _.each(diagramItem.matches, function(match){
+                let responseItem = _.findWhere(response, {matchId: match.id});
+                
+                if(responseItem){
+                    match.status = responseItem.status;
+                }
+            })
+        }
     });
     return ResultsJson;
 }

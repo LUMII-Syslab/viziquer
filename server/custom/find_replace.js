@@ -446,23 +446,60 @@ function replaceStruct(match){
     }
     else console.log('match not found/undefined')
 }
+function formatMatch(match){
+    let FormatedMatch = _.flatten(_.map(match.match, function(MatchItem){
+        return _.map(MatchItem.elements, function(elementPair){
+            return elementPair;
+        })
+    }));
+    return FormatedMatch;
+}
+function markConflictingMatches(matches, elementsToLookup) {
+    _.each(matches, function(match){
+        if(match.status == 'new'){
+            let foundConflictingMatch = _.some(match.match, function(matchItem){
+                return _.some(matchItem.elements, function(elementPair){
+                    return _.contains(elementsToLookup, elementPair.elementId);
+                }); // ja atrodam kaut vienu elementu, kas bija aizvietojamo elementu sarakstā, tad nomarķējam šo matchu kā konfiktējošu
+            });
+            if(foundConflictingMatch) match.status = 'conflicting';
+        }
+    });
+    return matches;
+}
 Meteor.methods({
     findDiags: function(diagParamList){
         console.log(`Diagram id: ${diagParamList.diagramId}`);
         return FindDiagMatches(diagParamList);
     },
-    replaceOneNodeManyOccurences: function(matches){
-        _.each(matches, function(match){
-            // vēl jātiek galā ar vienu
-            return
-        })
+    replaceAllOccurencesInDiagram: function(diagramMatchData){
+        let responseResults = [];
+        _.each(diagramMatchData.matches, function(match){
+            if(match.status == 'new'){
+                let FormatedMatch   = formatMatch(match);
+                match.status        = 'used';
+
+                let respObj = { matchId: match.id, status: match.status};
+                responseResults.push(respObj);
+
+                replaceStruct(FormatedMatch);
+                let elementsToLookup = _.flatten(_.map(match.match, function(matchItem){
+                    return _.map(matchItem.elements, function(element){
+                        return element.elementId;
+                    })
+                }));
+                diagramMatchData.matches = markConflictingMatches(diagramMatchData.matches, elementsToLookup);
+            }
+            else{
+                let respObj = { matchId: match.id, status: match.status};
+                responseResults.push(respObj);
+            }
+        });
+        return responseResults;// responseResults satur matchu idus un to attiecigo statusu, lai var piefikset to, kuri bia
+        // aizvietoti un kuri ir konfliktejosi matchi
     },
-    replaceStructure: function(match){
-        let FormatedMatch = _.flatten(_.map(match.match, function(MatchItem){
-            return _.map(MatchItem.elements, function(elementPair){
-                return elementPair;
-            })
-        }));
+    replaceSingleOccurence: function(match){
+        let FormatedMatch = formatMatch(match)
         replaceStruct(FormatedMatch);
         return;
     }

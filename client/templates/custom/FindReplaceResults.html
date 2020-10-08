@@ -3,6 +3,8 @@
         <div>
             {{ #if ResultsJson }}
             <h2 style="display: inline;">Find Results</h2>
+            <button style="display: inline;" type="button" class="btn btn-danger btn-lg" id="clearResults">Clear results</button>
+            <button style="display: inline;" type="button" class="btn btn-info btn-lg" id="replaceInAllDiagrams">Replace all</button>
             <table>
                 <tr><td><div class="col-sm-12">Diagram</div></td>
                     <td><div class="col-sm-12">Action</div></td>
@@ -12,31 +14,36 @@
                 <tr>
 
                     <td><div class="col-sm-12">{{name}} </div></td>
-                    <td><button id="replaceAll" class="replace btn btn-success btn-xs">Replace all occurences</button></td>
+                    <td><button id="replaceAll" class="replace btn btn-success btn-sm">Replace all occurences</button></td>
                     <td id="{{diagramId}}">
                         <table>
                             <tr>
                                 <td>Match</td>
                                 <td>Action</td>
+                                <td></td>
                             </tr>
                             {{ #each matches }}
                             
                             <tr>
-                                <td>Match N0 {{incremented @index }} </td>
+                                <td>  Match N0 {{incremented @index }}   </td>
                                 <td>
                                     {{ #if isNewMatch this.status}}
-                                    <button id="selectMatch" class="btn btn-success btn-xs">Replace match</button>
-                                    <button id="highlightMatch" class="btn btn-warning btn-xs">Highlight match</button>
+                                    <button type="button" id="selectMatch" class="btn btn-success btn-block">Replace match</button>
                                     {{ /if }}
                                     {{ #if isUsedMatch this.status}}
-                                    <button id="selectMatch" class="btn btn-success btn-xs" disabled>Used</button>
+                                    <button type="button" class="btn btn-success btn-block" disabled>Used</button>
                                     {{ /if }}
                                     {{ #if isConflictingMatch this.status}}
-                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
-                                        <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Conflicting</button>
+                                    <span tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
+                                        <button class="btn btn-success btn-block" style="pointer-events: none;" type="button" disabled>Conflicting</button>
                                     </span>
                                     {{ /if }}
                                 </td>
+                                {{ #if isNewMatch this.status}}
+                                <td>
+                                    <button type="button" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</button>
+                                </td>  
+                                {{ /if }}
                             </tr>
                             
                             {{ /each }}
