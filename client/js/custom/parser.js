@@ -206,13 +206,13 @@ function createTriples(tripleTable, tripleType){
 // varName - given variable
 // alias - given variable alias
 function setVariableName(varName, alias, variableData, generateNewName){
-	// console.log("----------------------------------------");
-	// console.log(varName, alias, variableData, generateNewName);
+	console.log("----------------------------------------");
+	console.log(varName, alias, variableData, generateNewName);
 	// console.log("expressionLevelNames", expressionLevelNames);
 	// console.log("variableNamesClass", variableNamesClass);
 	// console.log("variableNamesAll", variableNamesAll);
 	// console.log("rrrrrrrrr", typeof variableNamesClass[varName]);
-	// console.log("----------------------------------------");
+	console.log("----------------------------------------");
 	// console.log("     ");
 	//console.log("eeeeeeeeeeeee", attributesNames, classID, symbolTable[classID][varName])
 	var isPropertyFromSubQuery = null;
@@ -367,8 +367,8 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							// console.log("4444", attributesNames[varName], symbolTable[classID][varName])
 							var count = 0;
 							if(typeof  attributesNames[varName] !== 'undefined'){
-								// console.log("4a")
-								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"].replace(/-/g, '_');
+								// console.log("4a", classID, varName, attributesNames, typeof(attributesNames[varName]));
+								if(typeof attributesNames[varName] !== "function" && typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"].replace(/-/g, '_');
 								count = attributesNames[varName]["counter"];
 							}
 							
@@ -463,7 +463,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						if(variableNamesClass[varName]["nameIsTaken"] != true){
 							var count = 0;
 							if(typeof  attributesNames[varName] !== 'undefined'){
-								if(typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
+								if(typeof attributesNames[varName] !== "function" && typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
 								count = attributesNames[varName]["counter"];
 							}
 							if(count<variableNamesClass[varName]["counter"])count = variableNamesClass[varName]["counter"]
@@ -1685,6 +1685,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 				}
 			// }
+			
+			console.log("SPARQLstring, SPARQLstring, SPARQLstring", expressionTable)
 			visited = 1
 		}
 		

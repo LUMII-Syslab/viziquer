@@ -732,7 +732,7 @@ Interpreter.customMethods({
 			});
 		}
 
-		console.log("name_list", name_list)
+		// console.log("name_list", name_list)
 
 		if(name_list.length == 1) return name_list[0];
 		
@@ -981,8 +981,13 @@ Interpreter.customMethods({
 
 	visualizeSPARQL: function() {
 		var query_text = yasqe3.getValue();
-		console.log("query_text", query_text);
-		Interpreter.customExtensionPoints.generateVisualQuery(query_text)
+		// console.log("query_text", query_text);
+		var queries = query_text.split("--------------------------------------------\n");
+		var x = 10;
+		for(var query in queries){
+			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x);
+			x = x+210;
+		}
 	},
 
 	setIsVisibleFalse: function() {
