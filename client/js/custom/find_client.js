@@ -74,7 +74,7 @@ Interpreter.customMethods({
         function CallServerFind(serverMethodName, diagParamList){
             console.log("CallServerFind", serverMethodName, diagParamList);
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
-                Session.set("ResultsJson", response)
+                Session.set("ResultsJson", response);
             });
         };
         CallServerFind("findDiags", getDiagramParams(Session.get("activeDiagram")));

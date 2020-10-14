@@ -14,7 +14,10 @@
                 <tr>
 
                     <td><div class="col-sm-12">{{name}} </div></td>
-                    <td><button id="replaceAll" class="replace btn btn-success btn-sm">Replace all occurences</button></td>
+                    <td>
+                        <button id="replaceAll" class="replace btn btn-success btn-sm">Replace all occurences</button>
+                        <a id="highlightAll" class="btn btn-warning btn-block" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Highlight All</a>
+                    </td>
                     <td id="{{diagramId}}">
                         <table>
                             <tr>
@@ -41,13 +44,13 @@
                                 </td>
                                 {{ #if isNewMatch this.status}}
                                 <td>
-                                    <button type="button" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</button>
+                                    <a href="{{pathFor 'diagram'}}" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</a>
                                 </td>  
                                 {{ /if }}
                             </tr>
                             
                             {{ /each }}
-                        </table>
+                        </table> 
                     </td>
                 </tr>
                 {{ else }}

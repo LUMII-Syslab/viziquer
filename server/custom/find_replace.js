@@ -63,28 +63,58 @@ function FindDiagMatches(diagParamList){
         findResults = _.flatten(findResults);
         findResults = _.groupBy(findResults,'diagramId');
         let diagrams = _.keys(findResults);
+
         _.each(diagrams, function(diagram){
             let currentDiagramMatches = [];
             _.each(findResults[diagram], function(diagramItem){
                 currentDiagramMatches.push(diagramItem.matches);
             });
-            let cartesianProductOfMatches = cartesianProductOf(currentDiagramMatches);
-            cartesianProductOfMatches = _.map(cartesianProductOfMatches, function(match){
+
+            let diag                        = Diagrams.findOne({_id: diagram});
+            let ProjectId                   = Versions.findOne({_id: diag.versionId}).projectId;
+            let cartesianProductOfMatches   = cartesianProductOf(currentDiagramMatches);
+
+            cartesianProductOfMatches       = _.map(cartesianProductOfMatches, function(match){
                 return {
-                    match: match,
-                    status: 'new',
-                    id: generate_id()
+                    match:          match,
+                    status:         'new',
+                    id:             generate_id(),
+                    projectId:      ProjectId,
+                    versionId:      diag.versionId,
+                    _id:            diagram,
+                    diagramTypeId:  diag.diagramTypeId,
+                    elements:       _.flatten(_.map(match, function(matchItem){
+
+                        return _.map(matchItem.elements, function(elementPair){
+                            return elementPair.elementId;
+                        })
+                    })),
+                    editMode:       "findMode"
                 }
             });
             let resultObj = {
-                diagramId: diagram,
-                name: _.first(findResults[diagram]).name,
-                matches: cartesianProductOfMatches
+                _id:            diagram,
+                name:           _.first(findResults[diagram]).name,
+                matches:        cartesianProductOfMatches,
+                editMode:       "findMode",
+                projectId:      ProjectId,
+                versionId:      diag.versionId,
+                diagramTypeId:  diag.diagramTypeId,
+                elements:       _.uniq(_.flatten(_.map(cartesianProductOfMatches, function(match){
+
+                    return _.map(match.match, function(matchItem){
+                        return _.map(matchItem.elements, function(elementPair){
+                            return elementPair.elementId;
+                        })
+                    })
+                    
+                })))
             }
             Results.push(resultObj);
         });
         Results = _.filter(Results, function(result){
             let uniqueFindElements = _.uniq(_.flatten(_.map(result.matches, function(match){
+
                 return _.map(match.match, function(elements){
                     return _.map(elements.elements, function(element){
                         return element.findElementId;
@@ -95,7 +125,7 @@ function FindDiagMatches(diagParamList){
             return _.every(startFindElementsIds, function(startFindElementsId){
                 return _.contains(uniqueFindElements, startFindElementsId);
             });
-        });
+        }); 
         console.dir(Results,{depth: null});
         return Results;
     }

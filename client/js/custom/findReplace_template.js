@@ -56,7 +56,13 @@ Template.replaceResults.events({
     },
     'click #highlightMatch': function() {
         // highlight selected match
-        console.log("highlight match", this)
+        console.log("highlight match", this),
+        Session.set('json', [this]);
+    },
+    'click #highlightAll' : function() {
+        console.log('highlight all',this);
+        Session.set('json', [this] );
+        console.log('template json', Session.get('json'));
     },
     'click #clearResults' : function() {
         Session.set('ResultsJson', [] );
