@@ -57,11 +57,11 @@ Template.replaceResults.events({
     'click #highlightMatch': function() {
         // highlight selected match
         console.log("highlight match", this),
-        Session.set('json', [this]);
+        Session.set('foundMatchElements', [this]);
     },
     'click #highlightAll' : function() {
-        console.log('highlight all',this);
-        Session.set('json', [this] );
+        console.log('highlight all', this );
+        Session.set('foundMatchElements', [this] );
         console.log('template json', Session.get('json'));
     },
     'click #clearResults' : function() {
@@ -72,7 +72,9 @@ Template.replaceResults.events({
         if( _.size(Results) ){
             _.each(Results, function(ResultItem){
                 const CurrentDiagramId = ResultItem.diagramId;
+                
                 Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(response){
+
                     let ResultsJson = Session.get('ResultsJson');
                     ResultsJson = updateSession(ResultsJson, CurrentDiagramId, response);
                     Session.set('ResultsJson', ResultsJson);
