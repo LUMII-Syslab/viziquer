@@ -56,13 +56,11 @@ Template.replaceResults.events({
     },
     'click #highlightMatch': function() {
         // highlight selected match
-        console.log("highlight match", this),
+        console.log('match: ',this);
         Session.set('foundMatchElements', [this]);
     },
     'click #highlightAll' : function() {
-        console.log('highlight all', this );
         Session.set('foundMatchElements', [this] );
-        console.log('template json', Session.get('json'));
     },
     'click #clearResults' : function() {
         Session.set('ResultsJson', [] );
