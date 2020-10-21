@@ -1,5 +1,19 @@
 Interpreter.customMethods({
 
+    Layout: function()
+    {
+        let ll = new IMCSDiagramLayout;
+        console.log (ll);
+        let diag = Session.get("activeDiagram");
+        elem = Elements.findOne({type: "Box", diagramId: diag});
+        loc = elem.location;
+        console.log(loc);
+        ll.addBox(1,loc.x, loc.y, loc.width, loc.height);
+        let res = ll.arrangeIncrementally();
+        console.log(res);
+
+    },
+
     Find: function()
     {
         function GetActiveElement()
