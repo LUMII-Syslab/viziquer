@@ -532,5 +532,45 @@ Meteor.methods({
         let FormatedMatch = formatMatch(match)
         replaceStruct(FormatedMatch);
         return;
-    }
+    },
+    updateLayout: function(list) {
+        let Boxes           = _.where(list.IdDict, {type: "box"});
+        let Lines           = _.where(list.IdDict, {type: "line"});
+        let layoutResult    = list.layoutResult;
+        _.each(Boxes, function(Box){
+            let newElementLocation = layoutResult.boxes[Box.intId];
+            try{
+                Elements.update({_id: Box.stringId}, 
+                    {
+                        $set: {"location.x":        newElementLocation.x,
+                               "location.y":        newElementLocation.y,
+                               "location.width":    newElementLocation.width,
+                               "location.height":   newElementLocation.height
+                            }
+                    })
+            }
+            catch(error){
+                console.error();
+            }
+        });
+        _.each(Lines, function(Line){
+            let linePoints = layoutResult.lines[Line.intId];
+            let pointsArray = [];
+            _.each(linePoints, function(point){
+                pointsArray.push(point.x);
+                pointsArray.push(point.y);
+            });
+            if(_.size(pointsArray)){
+                try{
+                    Elements.update({_id: Line.stringId},{
+                        $set: {points: pointsArray}
+                    })
+                }
+                catch(error){
+                    console.log(error);
+                }
+            }
+        });
+        
+    },
 })
