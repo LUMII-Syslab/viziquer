@@ -51,7 +51,7 @@ Template.replaceResults.events({
         Session.set('ResultsJson', UpdateStatus);
         
         Utilities.callMeteorMethod("replaceSingleOccurence",this, function(response){
-
+            LayoutElements(Session.get('activeDiagram'));
         });
     },
     'click #highlightMatch': function() {
