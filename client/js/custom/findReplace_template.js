@@ -27,7 +27,8 @@ Template.replaceResults.events({
                 let ResultsJson = Session.get('ResultsJson');
                 ResultsJson     = updateSession(ResultsJson,CurrentDiagramId, response);
                 Session.set('ResultsJson', ResultsJson);
-            }); 
+            });
+            LayoutElements(CurrentDiagramId);
         }
     },
     'click #selectMatch': function(){
@@ -77,6 +78,7 @@ Template.replaceResults.events({
                     ResultsJson = updateSession(ResultsJson, CurrentDiagramId, response);
                     Session.set('ResultsJson', ResultsJson);
                 }); 
+                LayoutElements(CurrentDiagramId);
             })
         }
     }
