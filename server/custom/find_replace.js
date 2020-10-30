@@ -126,7 +126,7 @@ function FindDiagMatches(diagParamList){
                 return _.contains(uniqueFindElements, startFindElementsId);
             });
         }); 
-        console.dir(Results,{depth: null});
+        // console.dir(Results,{depth: null});
         return Results;
     }
     else console.log('Start elements not found')
@@ -320,8 +320,10 @@ function deleteElementEdges(elementId){
         })
     }
 }
-function createBox(diagToReplaceIn, ReplaceElement){
-    console.log('creating new box');
+function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
+    let Location;
+    if(typeof location === 'undefined'){ Location = ReplaceElement.location; console.log('creating new box');}
+    else { Location = location; console.log('creating box with specified location'); }
     return NewReplaceElement = {
     diagramId       : diagToReplaceIn,
     diagramTypeId   : ReplaceElement.diagramTypeId,
@@ -329,7 +331,7 @@ function createBox(diagToReplaceIn, ReplaceElement){
     style           : ReplaceElement.style,
     styleId         : ReplaceElement.styleId,
     type            : ReplaceElement.type,
-    location        : ReplaceElement.location,
+    location        : Location,
     projectId       : ReplaceElement.projectId,
     versionId       : ReplaceElement.versionId
     }
@@ -380,9 +382,16 @@ function getNotVisitedItems() { // ciklojas
     }
     else return false;
 }
+// function getStartElementsLocation(startElements, ReplaceLines){
+//     console.log('ReplaceLines', ReplaceLines);
+//     console.log('start elements',startElements);
+//     let StartElementLocations = _.map(startElements, function(startElement){
+
+//     })
+// }
 function replaceStruct(match){
     if(match){
-        console.log('match',match);
+        // console.log('match',match);
         let FindDiagram     = Elements.findOne({_id: _.first(match).findElementId}).diagramId;
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
@@ -391,7 +400,10 @@ function replaceStruct(match){
         let InsertedTracker = [];
 
         _.each(endElements, function(endElement){
-            let endElementTypeId = getElementTypeId(endElement);
+            let endElementTypeId    = getElementTypeId(endElement);
+            let startFindElements   = _.pluck(ReplaceLines[endElement], 'startElement');
+            let startElements       = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
+            // getStartElementsLocation(startElements,ReplaceLines);
             if( !(typeof endElementTypeId === 'undefined') && endElementTypeId != DeleteBoxType){
                 // ejot cauri speciāllīnijām, atrodam elementus, kurus ir jāaizvieto
                 let FirstReplaceElement = Elements.findOne(endElement);
@@ -415,18 +427,60 @@ function replaceStruct(match){
                     if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
                         let start = _.first(createdBoxes[element.startElement]);
                         let end   = _.first(createdBoxes[element.endElement]);
-                        console.log('start', start);
-                        console.log('end', end);
+                        let StartLocation = undefined;
+                        let EndLocation = undefined;
+
                         if(typeof start.inserted === 'undefined'){
-                            let startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
+                            let startbox;
+                            if (start.local == endElement){ 
+                                // ja elements ir speciāllīnijas labajā galā, tad mēģinām uzradīt tam aizvietojamo elementu tajā pašā vietā, kur bija vecais
+                                console.log('start equals to endEleemnt');
+                                let startElementLocationId =  _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
+                                StartLocation = Elements.findOne({_id: startElementLocationId}).location;
+                                console.log("STARTLOCATOIN", StartLocation);
+                            }
+                            else if(_.contains(endElements, start.local) && start.local != endElement){
+                                console.log('start not equals to endElement, but is in endElements');
+                                // ja dotais uzradamais elements nav vienāds ar doto endElement, bet ir vienāds ar kādu citu end Elements, tad tam arī jāvedo cita location
+                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == start.local});
+                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
+                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
+                                StartLocation = Elements.findOne({_id: startElement}).location;
+                            } else console.log('neither in start');
+                            if(StartLocation) {startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}), StartLocation);
+                            console.log("STARTLOCATION", StartLocation);}
+                            else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
+                                console.log('NO START LOCATION');}
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
                         }
-                        else console.log('found start eleemnt');
+                        else {
+                            console.log('found start eleemnt');
+                        }
                         if(typeof end.inserted === 'undefined'){
-                            let endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
+                            let endbox;
+                            if(end.local == endElement) {
+                                console.log('end equals to endElement');
+                                let endElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
+                                EndLocation = Elements.findOne({_id: endElementLocationId}).location;
+                            }
+                            else if(_.contains(endElements, end.local) && end.local != endElement){
+                                console.log('end equals not equals, but is in endElements');
+                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == end.local});
+                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
+                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
+                                EndLocation = Elements.findOne({_id: startElement}).location;
+                                console.log('FoundEndElement', FoundEndElement);console.log('startFindElem',startFindElement);console.log('startElement',startElement);
+                                console.log('endlocation',EndLocation);
+                            } else console.log('neither in end');
+                            if(EndLocation) {endbox  = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}), EndLocation);
+                                console.log('ENDLOCATION', EndLocation);}
+                            else {endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
+                                console.log('no LOCATION');}
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
                         }
-                        else console.log('found end eleemnt');
+                        else{
+                            console.log('found end eleemnt');
+                        }
                         if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                             let NewEdgeId = Elements.insert(newEdge);
@@ -434,9 +488,22 @@ function replaceStruct(match){
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
                         let box = _.first(createdBoxes[element._id]);
-                        console.log('box',box);
+                        let BoxLocation = undefined;
                         if(typeof box.inserted === 'undefined'){
-                            let NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
+                            let NewBox;
+                            if(box.local == endElement) {
+                                let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
+                                BoxLocation = Elements.findOne({_id: boxElementLocationId}).location;
+                                console.log('box Location', BoxLocation);
+                            }
+                            else if(_.contains(endElements, box.local) && box.local != endElement){
+                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == box.local});
+                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
+                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
+                                BoxLocation = Elements.findOne({_id: startElement}).location;
+                            }
+                            if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
+                            else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
                             _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
                         }
                     }
@@ -448,12 +515,9 @@ function replaceStruct(match){
                 });
                 console.log('createdBoxes after', createdBoxes);
                 console.log('inserted tracker after', InsertedTracker);
-                let startFindElements = _.pluck(ReplaceLines[endElement], 'startElement');
-                console.log('match',match);
-                let startElements = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
-                // problēma pie startElements, ja gribam pievienot šķautni, match meklēs tikai pēc viena no speciālšķautņu end elementa
-                // tāpēc nav iespējams padzēst, iekopēt comp no veciem elementiem.
-                startElements = _.pluck(startElements, 'elementId');
+                startElements       = _.pluck(startElements, 'elementId');
+                // console.log('match',match);
+                
                 console.log('startFindElements',startFindElements);
                 console.log('startElements',startElements);
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
