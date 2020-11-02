@@ -7,12 +7,7 @@ Meteor.methods({
     }
 
     let SpecLineType = ElementTypes.findOne({name: "Specialization"})._id;
-    /*
-    let SpecializationLines = Elements.find({ elementTypeId: SpecLineType, diagramId: list.diagramId}).fetch();
-    let EndElem         = _.uniq(_.pluck(SpecializationLines,'endElement'));
-    let StartElem       = _.uniq(_.pluck(SpecializationLines,'startElement'));
-    */
-    let SuperBoxes      = _.pluck(ElementTypes.find({diagramId: list.diagramId, superTypeIds: {$size: 0}}).fetch(),'elementId');
+    let SuperBoxes      = _.pluck(ElementTypes.find({diagramId: list.diagramId, type:"Box", superTypeIds: {$size: 0}}).fetch(),'elementId');
     if(!_.size(SuperBoxes)){ console.log('superBoxes not found'); return;}
     let FindReplaceElement = ElementTypes.findOne({name: "FindReplaceElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     let RemoveElement      = ElementTypes.findOne({name: "RemoveElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
@@ -29,9 +24,9 @@ Meteor.methods({
                 _.each(SuperBoxes, function(box){
                 let BOX = Elements.findOne({_id: box});
                 createSpecializationLink(FRElem, BOX, list,SpecLineType);
-                insertReplaceButtonInToolbar(list.diagramId);
                 console.log(ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FREType]}}))
                 });
+                insertReplaceButtonInToolbar(list.diagramId);
             }
             else console.log("FindReplaceElement not found")
     }
@@ -113,7 +108,7 @@ function createSpecializationLink(FindReplaceElement, superBox, list, specLineTy
         },
         styleId : "46b11d5d2e84faf863f83ec4",
         type : "Line",
-        points: [superBox.location.x, superBox.location.y, 
+        points: [superBox.location.x, superBox.location.y, FindReplaceElement.location.x, superBox.location.y,
         FindReplaceElement.location.x, FindReplaceElement.location.y],
         toolId: list.toolId,
         versionId: list.versionId,
