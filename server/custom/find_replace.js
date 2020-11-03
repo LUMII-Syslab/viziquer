@@ -339,7 +339,7 @@ function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
 function createEdge(edge, diagId, startElement, endElement){
     const StartElement = Elements.findOne({_id:startElement});
     const EndElement   = Elements.findOne({_id: endElement});
-    const newPoints = [
+    const newPoints    = [
         StartElement.location.x, 
         StartElement.location.y, 
         EndElement.location.x, 

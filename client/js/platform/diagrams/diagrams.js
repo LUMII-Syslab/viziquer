@@ -691,37 +691,42 @@ Template.uploadProject.events({
 
 		var url_value = $("#import-projecturl").val();
 		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
+		let timesToUpload = parseInt($("#import-count").val());
+		
+		if (isNaN(timesToUpload) || timesToUpload < 1 || timesToUpload == null) timesToUpload = 1;
+		console.log("IMPORT TIMES: ", timesToUpload);
+		console.log('type of timesToUpload', typeof timesToUpload);
+		for(let i = 0; i < timesToUpload; i++){
+			if (url_value) {
+				VQ_Schema_copy = null;
+				list.url = url_value;
+				Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+			}
+			else if (url_value_from_list) {
+				VQ_Schema_copy = null;
+				list.url = url_value_from_list;
+				Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+			}
+			else {
+				var fileList = $("#projectfileList")[0].files;
+				_.each(fileList, function(file) {
 
-		if (url_value) {
-			VQ_Schema_copy = null;
-			list.url = url_value;
-			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+					var reader = new FileReader();
+
+					reader.onload = function(event) {
+						var diagrams = JSON.parse(reader.result)
+						list.data = diagrams;
+						VQ_Schema_copy = null;
+						Utilities.callMeteorMethod("uploadProjectData", list);
+					}
+
+					reader.onerror = function(error) {
+						console.error("Error: ", error);
+					}
+					reader.readAsText(file);
+				});
+			}
 		}
-		else if (url_value_from_list) {
-			VQ_Schema_copy = null;
-			list.url = url_value_from_list;
-			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
-		}
-		else {
-			var fileList = $("#projectfileList")[0].files;
-			_.each(fileList, function(file) {
-
-				var reader = new FileReader();
-
-				reader.onload = function(event) {
-					var diagrams = JSON.parse(reader.result)
-					list.data = diagrams;
-					VQ_Schema_copy = null;
-					Utilities.callMeteorMethod("uploadProjectData", list);
-				}
-
-				reader.onerror = function(error) {
-					console.error("Error: ", error);
-				}
-				reader.readAsText(file);
-			});
-		}
-
 	},
 
 });
