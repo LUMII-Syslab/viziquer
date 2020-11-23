@@ -219,7 +219,7 @@
             "procedure": "ExecuteSPARQL_from_diagram"
           },
           {
-            "item": "visualizeSPARQL",
+            "item": "Visualize SPARQL",
             "procedure": "visualizeSPARQL"
           }
         ],
