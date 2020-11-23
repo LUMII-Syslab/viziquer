@@ -217,6 +217,10 @@
           {
             "item": "Execute SPARQL",
             "procedure": "ExecuteSPARQL_from_diagram"
+          },
+          {
+            "item": "visualizeSPARQL",
+            "procedure": "visualizeSPARQL"
           }
         ],
         "readModeNoCollectionContextMenu": [
