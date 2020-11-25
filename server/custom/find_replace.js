@@ -507,10 +507,10 @@ function replaceStruct(match){
                                 console.log('box Location', BoxLocation);
                             }
                             else if(_.contains(endElements, box.local) && box.local != endElement){
-                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == box.local});
-                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
-                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
-                                BoxLocation = Elements.findOne({_id: startElement}).location;
+                                let FoundEndElement     = _.find(endElements, function(endElement){return endElement == box.local});
+                                let startFindElement    = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
+                                let startElement        = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
+                                BoxLocation             = Elements.findOne({_id: startElement}).location;
                             }
                             if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
                             else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
