@@ -433,6 +433,7 @@ function replaceStruct(match){
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
                 console.log('created boxes before', createdBoxes);
                 console.log('inserted tracker before: ', InsertedTracker);
+                let apstaigatieReplaceId = _.pluck(apstaigatieReplace,'_id');
                 _.each(apstaigatieReplace, function(element){
                     if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
                         let start = _.first(createdBoxes[element.startElement]);
@@ -462,6 +463,7 @@ function replaceStruct(match){
                             else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
                                 console.log('NO START LOCATION');}
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
+                            if(!_.contains(endElements, start.local)) parseCompartmentExpressions(apstaigatieReplaceId, start.local, start.inserted);
                         }
                         else {
                             console.log('found start eleemnt');
@@ -487,6 +489,7 @@ function replaceStruct(match){
                             else {endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
                                 console.log('no LOCATION');}
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
+                            if(!_.contains(endElements, end.local)) parseCompartmentExpressions(apstaigatieReplaceId, end.local, end.inserted);
                         }
                         else{
                             console.log('found end eleemnt');
@@ -494,6 +497,7 @@ function replaceStruct(match){
                         if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                             let NewEdgeId = Elements.insert(newEdge);
+                            parseCompartmentExpressions(apstaigatieReplaceId, element._id, NewEdgeId);
                         }
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
@@ -515,6 +519,7 @@ function replaceStruct(match){
                             if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
                             else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
                             _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
+                            if(!_.contains(endElements, box.local)) parseCompartmentExpressions(apstaigatieReplaceId, box.local, box.inserted);
                         }
                     }
                 });
