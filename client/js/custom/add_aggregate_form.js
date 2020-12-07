@@ -2,22 +2,26 @@ Interpreter.customMethods({
 	AddAggregate: function () {
 
 		$("#add-aggregate-form").modal("show");
-		$('#aggregate-alias').val('');
+		$('#alias-name-aggr').val('');
 		$('#aggregate-expression').val('');
-	//	$('input[name=stack-checkbox-req]').attr('checked',false);
+		$('input[name=aggr-count]').attr('checked',true);
 	}
 })
 
 
-Template.AddAggregate.helpers({
 
-	aggregates: function() {
+///////////////////////////////////////////////////////////////
+Template.AddAggregate.attList = new ReactiveVar([{attribute: "No_attribute"}]);
+
+Template.AddAggregate.helpers({
+		
+	attList: function() {
 
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
-			//attr_list.push({separator:"line"});
+			attr_list.push({attribute:"."});
 
 			var vq_obj = new VQ_Element(selected_elem_id);
 
@@ -28,11 +32,7 @@ Template.AddAggregate.helpers({
 				var klass = schema.findClassByName(class_name);
 
 				_.each(klass.getAllAttributes(), function(att){
-					attr_list.push({aggregate:"avg("+att["name"]+")"});
-					attr_list.push({aggregate:"min("+att["name"]+")"});
-					attr_list.push({aggregate:"max("+att["name"]+")"});
-					attr_list.push({aggregate:"sum("+att["name"]+")"});
-					attr_list.push({aggregate:"group_concat("+att["name"]+",',')"});
+					attr_list.push({attribute: att["name"]});
 				})
 
 				var tempSymbolTable = generateSymbolTable();
@@ -40,42 +40,180 @@ Template.AddAggregate.helpers({
 				for (var  key in symbolTable) {	
 					for (var symbol in symbolTable[key]) {
 						if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
-							attr_list.push({aggregate:"avg("+key+")"});
-							attr_list.push({aggregate:"min("+key+")"});
-							attr_list.push({aggregate:"max("+key+")"});
-							attr_list.push({aggregate:"sum("+key+")"});
-							attr_list.push({aggregate:"group_concat("+key+",',')"});
+							attr_list.push({attribute: key});
 						} else{
 							var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
 							if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
-								attr_list.push({aggregate:"avg("+key+")"});
-								attr_list.push({aggregate:"min("+key+")"});
-								attr_list.push({aggregate:"max("+key+")"});
-								attr_list.push({aggregate:"sum("+key+")"});
-								attr_list.push({aggregate:"group_concat("+key+",',')"});
+								attr_list.push({attribute: key});
 							}
 						}
 					}	
 				}
 
-				attr_list = _.sortBy(attr_list, "aggregate");
+				attr_list = _.sortBy(attr_list, "attribute");
 		 	 	attr_list = _.uniq(attr_list, false, function(item) {
-		 	 		return item["aggregate"];
+		 	 		return item["attribute"];
 		 	 	});
 			};
 
-			attr_list = _.union([{aggregate:"count(.)"},{aggregate:"count_distinct(.)"}], attr_list);
+			// attr_list = _.union([{aggregate:"count(.)"},{aggregate:"count_distinct(.)"}], attr_list);
 			return attr_list;
 
 		};
 
 		return [];
 	},
+	
+});
 
+Template.AddAggregate.events({
+	"click #ok-add-aggregate": function() {
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		//Read user's choise
+		  var vq_obj = new VQ_Element(selected_elem_id);
+			var alias = $('input[id=alias-name-aggr]').val();
+			var expr = $('input[name=aggr-list-radio]:checked').val();		
+			var distinct = $('input[id=distinct-aggr-check-box]:checked').val();
+				
+			var fld = $('option[name=field-name-aggr]:selected').val();
+			if (fld == "") {
+				expr = expr.concat("(.)");
+			} else {
+				if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT ", fld, ")");
+				else expr = expr.concat("(", fld, ")");
+			}
+			vq_obj.addAggregateField(expr,alias);
+		}
 
+		clearAggregateInput();
+		return;
+	},
+
+	"click #cancel-add-aggregate": function() {
+		clearAggregateInput();
+		return;
+	},
+
+	"change #aggr-count": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-count_distinct": function() {
+		document.getElementById("distinct-aggr").style.display = "none";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-sum": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-avg": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-max": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-min": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-sample": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
+	"change #aggr-group_concat": function() {
+		document.getElementById("distinct-aggr").style.display = "block";
+		// onAggregationChange();
+		return;
+	},
 });
 
 
+function clearAggregateInput(){
+
+	document.getElementById("aggr-count").checked=true;
+	document.getElementById("distinct-aggr-check-box").checked=false;
+	
+	defaultFieldList();
+
+	Template.AddAggregate.attList.set([{attribute: "No_attribute"}]);
+}
+
+function defaultFieldList(){
+	var defaultFunctions = document.getElementsByName("field-name-aggr");
+	_.each(defaultFunctions, function(e){
+		if (e.value == "") e.selected = true;
+		else e.selected = false;
+	});
+}
+
+function onAggregationChange(){
+	
+		var newFunction = $('input[name=aggr-list-radio]:checked').val()
+		//Select suitable atributes for Field form
+		defaultFieldList();
+			
+		var attr_list = [];
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+
+			var vq_obj = new VQ_Element(selected_elem_id);
+
+			var class_name = vq_obj.getName();
+			var schema = new VQ_Schema();
+
+			if (schema.classExist(class_name)) {
+				var klass = schema.findClassByName(class_name);
+
+				_.each(klass.getAllAttributes(), function(att){
+					var attrType = schema.resolveAttributeByName(class_name, att["name"]).type;
+					if (newFunction == "sum" || newFunction == "avg") {
+						if (attrType == "xsd:integer" || attrType == "xsd:decimal" || attrType == "xsd:double"
+							|| attrType == "xsd:float" || attrType == "xsd:int" || attrType == "xsd:long"
+							|| attrType == "xsd:short") {
+							attr_list.push({attribute: att["name"]})
+						}
+					} else {
+						attr_list.push({attribute: att["name"]});
+					}
+				})
+
+				var tempSymbolTable = generateSymbolTable();
+				var symbolTable = tempSymbolTable["symbolTable"];
+				for (var  key in symbolTable) {	
+					for (var symbol in symbolTable[key]) {
+						if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
+							attr_list.push({attribute: key});
+						} else{
+							var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+							if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
+								attr_list.push({attribute: key});
+							}
+						}
+					}	
+				}
+
+				attr_list = _.sortBy(attr_list, "attribute");
+		 	 	attr_list = _.uniq(attr_list, false, function(item) {
+		 	 		return item["attribute"];
+		 	 	});
+			};
+		};
+
+		Template.AddAggregate.attList.set(attr_list);
+
+}
+///////////////////////////////////////////////////////////////
+/*
 Template.AddAggregate.events({
 
 	"click #ok-add-aggregate": function(e) {
@@ -100,3 +238,4 @@ Template.AddAggregate.events({
 	},
 
 });
+*/

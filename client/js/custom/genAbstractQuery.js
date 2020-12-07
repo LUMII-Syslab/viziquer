@@ -62,6 +62,9 @@ resolveTypesAndBuildSymbolTable = function (query) {
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
+	if(obj_class.identification.localName != null) obj_class.identification.localName = obj_class.identification.localName.trim();
+	if(obj_class.identification.localName == "") obj_class.identification.localName = null;
+
     if (obj_class.instanceAlias) {
       my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName), context:obj_class.identification._id});
     };
