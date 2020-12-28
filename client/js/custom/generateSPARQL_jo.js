@@ -986,7 +986,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		}
 		
 	}
-
+ 
 	var sparqlTable = {};
 	sparqlTable["class"] = "?" + instance; // unique class name
 	sparqlTable["isSimpleClassName"] = true; // if class name is simple name = true, if class name contains expression = false
@@ -1355,7 +1355,14 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				//aggregateTriples only in main class or subselect main class
 				if(rootClassId == idTable[clazz["identification"]["_id"]] || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) {
 					sparqlTable["agregationInside"] = true;
-					sparqlTable["aggregateTriples"].push(getTriple(result, alias, field["requireValues"], false));
+					var triple = getTriple(result, alias, field["requireValues"], false);
+					if(field["requireValues"] != true){
+						for(var t in triple["triple"]){
+							triple["triple"][t] = "OPTIONAL{" + triple["triple"][t] + "}";
+						}
+					}
+					// if(field["requireValues"] != true) triple = "OPTIONAL{" + triple "}";
+					sparqlTable["aggregateTriples"].push(triple);
 					//MAIN SELECT agregate variables
 					if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
 
@@ -1363,7 +1370,6 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
 					}
 					
-					console.log("yyyyyyy", result)
 				} else {
 					//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
 					messages.push({
@@ -1389,7 +1395,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		} else { 
 			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 			messages = messages.concat(result["messages"]);
-			//console.log("FILTER", result);
+			console.log("FILTER", result);
 			for (var reference in result["referenceCandidateTable"]){
 				if(typeof result["referenceCandidateTable"][reference] === 'string')sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])
 			};
@@ -1972,7 +1978,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	for (var expression in sparqlTable["aggregateTriples"]){
 		if(typeof sparqlTable["aggregateTriples"][expression] === 'object'){
 			for (var triple in sparqlTable["aggregateTriples"][expression]["triple"]){
-				if(typeof sparqlTable["aggregateTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push("OPTIONAL{" + sparqlTable["aggregateTriples"][expression]["triple"][triple] + "}");
+				if(typeof sparqlTable["aggregateTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push(sparqlTable["aggregateTriples"][expression]["triple"][triple]);
 			}
 		}
 	}

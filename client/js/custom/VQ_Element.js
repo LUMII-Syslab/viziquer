@@ -2467,13 +2467,15 @@ VQ_Element.prototype = {
   getAggregateFields: function() {
     return this.getMultiCompartmentSubCompartmentValues("Aggregates",
     [{title:"exp",name:"Expression"},
-    {title:"alias",name:"Field Name"}]);
+    {title:"alias",name:"Field Name"},
+	{title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}}]);
   },
   // string, string -->
-  addAggregateField: function(exp,alias) {
+  addAggregateField: function(exp,alias,requireValues) {
     this.addCompartmentSubCompartments("Aggregates",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
+	  {name:"Require Values",value:this.boolToString(requireValues)},
     ])
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]

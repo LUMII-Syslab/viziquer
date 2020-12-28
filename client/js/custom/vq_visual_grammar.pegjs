@@ -5,9 +5,10 @@
 	Main = (Var / NumberValue / BooleanLiteral / RDFLiteral / StringQuotes  / IRIREFName)
 	//Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 	space = ((" ")*) {return }
-	Var = (VAR1 / VAR2) 
+	Var = (VAR_All / VAR1 / VAR2) 
 	VAR1 = "?" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
 	VAR2 = "$" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
+	VAR_All = "*" {return {value:"*", type:"varName"}}
 	VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 	
 	NumberValue = Number:Number "^^" iri:IntegerIRI {return {value:makeVar(Number), type:"number"}}
@@ -20,7 +21,7 @@
 	StringQuotes = StringQuotes:(STRING_LITERAL1  / STRING_LITERAL2) {return {value:makeVar(StringQuotes), type:"string"}}
 	STRING_LITERAL1 = "'" string "'"
 	STRING_LITERAL2 = '"' string '"'
-	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+)
+	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()] / "[" / "]")+)
 	
 	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer";
 	BooleanIRI = "http://www.w3.org/2001/XMLSchema#boolean";
@@ -37,7 +38,7 @@
 	
 	LANGTAG = "@" string
 	
-	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "(" / ")" / "/" / "-" / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
+	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "%" / "(" / ")" / "/" / "-" / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
 	
 	iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 	//IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])* ">") {return makeVar(IRIREF)}

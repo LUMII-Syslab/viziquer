@@ -186,7 +186,7 @@ Template.AddMergeValues.events({
 					
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
-				vq_obj.addAggregateField(expr,mergeAliasName);
+				vq_obj.addAggregateField(expr,mergeAliasName,false);
 				//Template.AddMergeValues.hideField.get().prop("checked", true);
 				Template.AddMergeValues.expressionField.get().val("");
 				Template.AddMergeValues.aliasField.get().val("");

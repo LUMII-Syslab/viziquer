@@ -41,7 +41,11 @@ Template.AggregateWizard.events({
 		var expr = $('input[name=aggregate-list-radio]:checked').val();
 		
 		var distinct = $('input[id=distinct-aggregate-check-box]:checked').val();
-			
+		var required = $('input[id=require-aggregate-check-box]:checked').val();	
+		
+		if(typeof required !== "undefined" && required == "on") required = true;
+		else required = false;
+	
 		var fld = $('option[name=field-name]:selected').val();
 		if (fld == "") {
 			expr = expr.concat("(.)");
@@ -50,7 +54,7 @@ Template.AggregateWizard.events({
 			else expr = expr.concat("(", fld, ")");
 		}
 		//console.log(alias + " " + expr);
-		vq_end_obj.addAggregateField(expr,alias);
+		vq_end_obj.addAggregateField(expr,alias,required);
 
 		if (Template.AggregateWizard.linkId.curValue != "No link") {
 			var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
@@ -173,6 +177,7 @@ function clearAggregateInput(){
 	// });
 	document.getElementById("aggregate-count").checked=true;
 	document.getElementById("distinct-aggregate-check-box").checked=false;
+	document.getElementById("require-aggregate-check-box").checked=false;
 	
 	defaultFieldList();
 	Template.AggregateWizard.showDisplay.set("none");
@@ -229,6 +234,21 @@ function onAggregationChange(){
 
 			newAttrList = _.sortBy(newAttrList, "attribute");
 		}
+		var tempSymbolTable = generateSymbolTable();
+		var symbolTable = tempSymbolTable["symbolTable"];
+		for (var  key in symbolTable) {	
+			for (var symbol in symbolTable[key]) {
+				if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
+					newAttrList.push({attribute: key});
+				} else{
+					var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
+						newAttrList.push({attribute: key});
+					}
+				}
+			}	
+		}
+		newAttrList = _.sortBy(newAttrList, "attribute");
 		newAttrList = newAttrList.filter(function(obj, index, self) { 
 			return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
 		});
