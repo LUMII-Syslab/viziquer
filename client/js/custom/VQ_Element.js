@@ -2200,7 +2200,7 @@ VQ_Element.prototype = {
       var comp_type_id = comp_type["_id"];
       var compartments = Compartments.find({elementId: this._id(), compartmentTypeId: comp_type_id});
       return compartments.map(function(c) {
-        var res = { fulltext:c["input"] };
+        var res = { fulltext:c["input"], _id:c["_id"] };
         if (c.subCompartments) {
         if (c.subCompartments[compartment_name]) {
           if (c.subCompartments[compartment_name][compartment_name]) {
@@ -2215,6 +2215,7 @@ VQ_Element.prototype = {
               });
           }
         }}
+
         return res;
       })
     };

@@ -1261,8 +1261,6 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 	if(clazz["aggregations"].length > 1){
 		_.each(clazz["aggregations"],function(field) {
-			 console.log("AAAAAAAAAAAAAAAAAAAAAAAA", field["parsed_exp"], parseAggregationMultiple(field["parsed_exp"]))
-			
 			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"]);
 			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
 				isMultipleAllowedAggregation = true;

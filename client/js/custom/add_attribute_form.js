@@ -1,13 +1,16 @@
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
+Template.AddAttribute.existingAttributes = new ReactiveVar([{name: "No_attribute"}]);
 
 Interpreter.customMethods({
 	AddAttribute: function () {
 		
 		Template.AddAttribute.attrList.set(getAttributes());
 		Template.AddAttribute.linkList.set(getAssociations());
+		Template.AddAttribute.existingAttributes.set(getExistingAttributes());
 		$("#add-attribute-form").modal("show");
 		$('input[name=stack-checkbox]').attr('checked',false);
+		$('button[name=required-attribute]').html('\&nbsp;');
 		$("#class-associations")[0].style.display = "none";
 		$("#mySearch-attribute")[0].value = "";
 	}
@@ -25,7 +28,7 @@ Template.AddAttribute.helpers({
 	},
 	
 	existingAttributes: function() {
-		return getExistingAttributes();
+		return Template.AddAttribute.existingAttributes.get();
 	},
 	showLabels: function() {
 		if(getExistingAttributes().length > 0) return true;
@@ -43,7 +46,34 @@ Template.AddAttribute.events({
 		//Read user's choise
 		  var vq_obj = new VQ_Element(selected_elem_id);
 		  
-		  var x = document.getElementsByName("add-attribute");
+		  var field_list = vq_obj.getFields();
+		  // var x = document.getElementsByName("add-attribute");
+		  var x = document.getElementsByClassName("information");
+		  for(var existingDiagramField in field_list){
+			var fieldFound = false;
+			for(var existingField in x){
+				if(typeof x[existingField] === "object"){
+					if(x[existingField].getAttribute("name") == field_list[existingDiagramField]["_id"]){
+						if(x[existingField].parentNode.style.display != "none"){
+							fieldFound = true;
+							
+							console.log("aaaaa", x[existingField]);
+							
+							break;
+						} else x[existingField].parentNode.style.display = "table-row";
+					}
+				}
+				
+			}
+			if(fieldFound == false){
+				var list = {compartmentId: field_list[existingDiagramField]["_id"],
+					projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+				};
+
+				Utilities.callMeteorMethod("removeCompartment", list);
+			}
+		  }
 		  
 		  var checkboxes = $('input[name=stack-checkbox]:checked').closest(".attribute");
 		  checkboxes.each(function () {
@@ -56,7 +86,16 @@ Template.AddAttribute.events({
 			vq_obj.addField(name,null,required,false,false);
 		  });
 		};
+		
+		return;
 
+	},
+	
+	"click #cancel-add-attribute": function(e) {
+		var x = document.getElementsByClassName("resp-table-row");
+		for(var attr in x){
+			if(typeof x[attr] === "object" && x[attr].style.display == "none") x[attr].style.display = "table-row";
+		}
 		return;
 
 	},
@@ -76,27 +115,15 @@ Template.AddAttribute.events({
 	},
 	
 	"click #required-existing-attribute": function(e) {
-		
+		var labelText = e.target.parentNode.childNodes[3].textContent;
 		if(e.target.innerHTML == "+") {
-			e.target.innerHTML = '-';
+			e.target.innerHTML = '\&nbsp;';
+			e.target.parentNode.childNodes[3].textContent=labelText.substring(3);
 		}
 		else {
 			e.target.innerHTML = "+";
+			e.target.parentNode.childNodes[3].textContent="{+} " + labelText;
 		}
-
-		return;
-
-	},
-	
-	"click #required-existing-attribute2": function(e) {
-		
-		if(e.target.innerHTML == "{+}") {
-			e.target.innerHTML = '';
-		}
-		else {
-			e.target.innerHTML = "{+}";
-		}
-
 		return;
 
 	},
@@ -124,10 +151,31 @@ Template.AddAttribute.events({
 
 	},
 	
-	"click #attribute-extra-button": function(e) {
+	"click #hide-checkbox": function(e) {
 
-		if($(e.target).closest(".attribute").children('label[name="attrbute-exist-extra"]')[0].style.display != "block") $(e.target).closest(".attribute").children('label[name="attrbute-exist-extra"]')[0].style.display = "block";
-		else $(e.target).closest(".attribute").children('label[name="attrbute-exist-extra"]')[0].style.display = "none";
+		// if(e.target.checked == false) {
+			// $(e.target.parentElement).children('button[name="required-attribute"]').prop("innerHTML", '\&nbsp;');
+		// }else {
+			
+		// }
+		console.log("IIIIII", $(e.target.parentElement.parentElement).children('label[name="add-attribute"]'))
+		return;
+
+	},
+	
+	"click #attribute-delete-button": function(e) {
+		
+		$(e.target).closest(".attribute")[0].style.display = "none";
+		// $(e.target).closest(".attribute").remove();
+		
+		return;
+
+	},
+	
+	"click #attribute-extra-button": function(e) {
+		
+		if($(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display != "block") $(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display = "block";
+		else $(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display = "none";
 		return;
 
 	},
@@ -256,25 +304,24 @@ function getAssociations(){
 function getExistingAttributes(){
 	var selected_elem_id = Session.get("activeElement");
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-		var vq_obj = new VQ_Element(selected_elem_id);		
+		var vq_obj = new VQ_Element(selected_elem_id);
 		var field_list = vq_obj.getFields().map(function(f) {
-			var r = "-";
-			var r2 = "";
+			
+			var r = " ";
 			if(f.requireValues == true) {
 				r = "+";
-				r2 = "{+}";
 			}
-			var fulltext = f.exp;
+			var fulltext = f.fulltext;
 			var hide = "";
 			var hideBox = "";
-			if(typeof f.alias !== 'undefined' && f.alias != "") fulltext = f.alias + "<-" + fulltext;
+			// if(typeof f.alias !== 'undefined' && f.alias != "") fulltext = f.alias + "<-" + fulltext;
 			if(f.isInternal == true) {
-				fulltext = "{hide} " + fulltext;
+				// fulltext = "{hide} " + fulltext;
 				hide = "{hide}";
 				hideBox = "checked";
 			}
 			
-			return {name:f.exp, required: r, required2: r2, fulltext:fulltext, alias:f.alias, hideCheckBox:hideBox, hideButton:hide}});
+			return {name:f.exp, required: r, fulltext:fulltext, alias:f.alias, hideCheckBox:hideBox, id:f._id}});
 		return field_list;
 	}
 	return [];
