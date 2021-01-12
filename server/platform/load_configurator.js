@@ -126,11 +126,12 @@ function build_ajoo_configurator_diagram_type(user_id, tool_id, version_id) {
 					name: "Delete",
 					procedure: "DeleteDiagram",
 					icon: "fa-trash-o"},
-
+					// ielādējoties pirmo reizi, tiks ielādēta arī EnableReplace poga konfiguratoram
 					{id: generate_id(),
 					name: "EnableReplace",
 					procedure: "EnableReplace",
 					icon: "fa-random"},
+					// -----
 			],
 
 			readModeToolbar: [

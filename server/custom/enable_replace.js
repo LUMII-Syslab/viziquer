@@ -4,34 +4,36 @@ Meteor.methods({
     if(Meteor.isServer){
         data = JSON.parse(Assets.getText('FindReplaceExtension.json'));
         list.data = data;
-    }
+    }// KSBA DSL sintakses elementi JSON formātā
 
     let SpecLineType = ElementTypes.findOne({name: "Specialization"})._id;
     let SuperBoxes      = _.pluck(ElementTypes.find({diagramId: list.diagramId, type:"Box", superTypeIds: {$size: 0}}).fetch(),'elementId');
-    if(!_.size(SuperBoxes)){ console.log('superBoxes not found'); return;}
+    if(!_.size(SuperBoxes)){ 
+        return {msg: "DSL syntax diagram is empty"} // ja nav neviena SuperBox, tad diagramma ir tukša
+    }
     let FindReplaceElement = ElementTypes.findOne({name: "FindReplaceElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     let RemoveElement      = ElementTypes.findOne({name: "RemoveElement", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     let FindReplaceLink    = ElementTypes.findOne({name: "FindReplaceLink", diagramId: list.diagramId, diagramTypeId: list.diagramTypeId});
     if( typeof FindReplaceElement === 'undefined' && 
         typeof FindReplaceLink    === 'undefined' &&
         typeof RemoveElement      === 'undefined'){
-            Meteor.call("importFindReplaceElements", list);
-            let FindReplaceElem = Compartments.findOne({value: "FindReplaceElement", diagramId: list.diagramId}).elementId;
-            let FRElem = Elements.findOne({_id:FindReplaceElem});
-            let FREType = ElementTypes.findOne({elementId: FRElem._id})._id;
-    
-            if(FindReplaceElem){
+            Meteor.call("importFindReplaceElements", list); // Impotē KSBA DSL Elementus DSL sintakses diagrammā
+            let FindReplaceElementId    = Compartments.findOne({value: "FindReplaceElement", diagramId: list.diagramId}).elementId;
+            let FindReplaceElement      = Elements.findOne({_id:FindReplaceElementId});
+            let FindReplaceElementType  = ElementTypes.findOne({elementId: FindReplaceElement._id})._id;
+            // ar katru no SuperBoxes ir jāizveido specializācijas līnija ar FindReplaceElement, lai iespējotu KSBA
+            if(FindReplaceElementId){
                 _.each(SuperBoxes, function(box){
                 let BOX = Elements.findOne({_id: box});
-                createSpecializationLink(FRElem, BOX, list,SpecLineType);
-                console.log(ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FREType]}}))
+                createSpecializationLink(FindReplaceElement, BOX, list,SpecLineType);
+                ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FindReplaceElementType]}});
                 });
-                insertReplaceButtonInToolbar(list.diagramId);
+                insertReplaceButtonInToolbar(list.diagramId);// pievieno pogas diagrammu rīka panelī
+                insertLayoutButtonInToolbar(list.diagramId);
             }
-            else console.log("FindReplaceElement not found")
     }
-    else console.log("FindReplace are already enabled");
-    
+    else return {msg: "Replace has been already enabled"};
+    // Ja KSBA jau bija iespējots, tad izvada atbilstošu paziņojumu
     }
 });
 function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
@@ -42,9 +44,26 @@ function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts E
             {
                 $push: {toolbar: { 
                     id : generate_id(),
-                    icon : "fa-bars",
-                    name : "replace",
+                    icon : "fa-search",
+                    name : "Find",
                     procedure : "Replace"
+                    }
+                }
+            }
+        ));
+    }
+}
+function insertLayoutButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
+    let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
+    if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
+    else{
+        console.log(DiagramTypes.update({_id: DiagramTypeId}, 
+            {
+                $push: {toolbar: { 
+                    id : generate_id(),
+                    icon : "fa-arrow-up",
+                    name : "Layout",
+                    procedure : "LayoutElements"
                     }
                 }
             }

@@ -1,8 +1,9 @@
 LayoutElements = (ActiveDiagramId) => {
-    let IdDict = [];
+    let IdDict = []; // konteiners id vārdnīcai
         if(ActiveDiagramId){
             let DiagramBoxes = Elements.find({diagramId: ActiveDiagramId, type: 'Box'}).fetch();
-            if(DiagramBoxes){
+            // meklē elementus aktivajā diagrammā
+            if(_.size(DiagramBoxes) > 0){
                 let IdStartNum  = 1;
                 let layout      = new IMCSDiagramLayout;
 
@@ -20,7 +21,7 @@ LayoutElements = (ActiveDiagramId) => {
                         let IdPair          = {stringId: diagramLine._id, intId: IdStartNum, type: "line"};
                         let startElement    = _.findWhere(IdDict, {stringId: diagramLine.startElement});
                         let endElement      = _.findWhere(IdDict, {stringId: diagramLine.endElement});
-
+                        // katrai atrastai līnijai diagrammā tiek atrasti tās sākuma un beigu elementi un pievienoti layout 
                         if(startElement && endElement) layout.addLine(IdStartNum, startElement.intId, endElement.intId, diagramLine.points);
 
                         IdDict.push(IdPair);
@@ -28,12 +29,12 @@ LayoutElements = (ActiveDiagramId) => {
                     });
                 }
                 let result = layout.arrangeIncrementally();
-                console.log('layout result',result);
+                // izkārto inkrementāli, jeb ņemot vērā esošo izkārtojumu
                 let list = {IdDict: IdDict, layoutResult: result};
-                
+                // izsauc servera metodi izkārtojuma atjaunināšanai
                 Utilities.callMeteorMethod('updateLayout',list, function(response){
 
                 });  
-            } // else no boxes were found
+            } else alert("Diagram has no elements");
         }
 }

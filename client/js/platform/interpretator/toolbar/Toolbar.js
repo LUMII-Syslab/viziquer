@@ -21,7 +21,7 @@ Interpreter.methods({
 			editor.showGrid();
 		}
 	},
-
+// Dmitrija kods
 	EnableReplace: function() {
 		let list = {toolId: Session.get("toolId"),
 					versionId: Session.get("toolVersionId"),
@@ -31,10 +31,10 @@ Interpreter.methods({
 					};
 					console.log(list)
 		Utilities.callMeteorMethod("EnableReplace",list, function(response){
-            
+            if(_.has(response, "msg")) alert(response.msg); // izvada paziņojumus, ja tādi ir
 		})
 	},
-
+	// !
 	ShowDiagramSettings: function() {
 		$("#diagram-settings-form").modal("show");
 	},

@@ -1,7 +1,13 @@
 Template.replaceResults.helpers({
-
+    // helperi templates datiem
     ResultsJson: function() {
         return Session.get("ResultsJson");
+    },
+    ExpErrors: function(){
+        return Session.get("ExpErrors")
+    },
+    DiagramErrorMessage: function() {
+        return Session.get("DiagramErrorMsg");
     },
     isNewMatch: function(status) {
         return status == 'new'
@@ -20,66 +26,37 @@ Template.replaceResults.events({
     'click .replace': function(){
         //replace all occurences
         console.log("replace all matches");
-        const CurrentDiagramId = this.diagramId;
+        const CurrentDiagramId = this._id;
+        console.log("Current diag id", CurrentDiagramId);
         if( !(typeof this === 'undefined') || _.size(this) ) {
-            
-            Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', this, function(response){
-                let ResultsJson = Session.get('ResultsJson');
-                ResultsJson     = updateSession(ResultsJson,CurrentDiagramId, response);
-                Session.set('ResultsJson', ResultsJson);
-            });
-            LayoutElements(CurrentDiagramId);
+            ReplaceAllOccurences(CurrentDiagramId, this);
         }
     },
     'click #selectMatch': function(){
         // replace selected occurence
         console.log("replace selected match");
-        let matchId = this.id;
-        console.log("match",this);
-        let elementsToLookup = _.flatten(_.map(this.match, function(matchItem){
-            return _.map(matchItem.elements, function(element){
-                return element.elementId;
-            })
-        }));// elementi, kurus jāmeklē citos matchos, lai pārbaudītu ka match nav konfiktējošs
-        
-        let UpdateStatus = Session.get('ResultsJson');
-        _.each(UpdateStatus, function(diagramItems){
-            _.each(diagramItems.matches, function(match){
-                if(match.id == matchId) match.status = 'used';
-            })
-        });
-        UpdateStatus = markConflictingMatches(UpdateStatus, elementsToLookup);
-        Session.set('ResultsJson', UpdateStatus);
-        
-        Utilities.callMeteorMethod("replaceSingleOccurence",this, function(response){
-            // LayoutElements(Session.get('activeDiagram'));
-        });
+        replaceSingleMatch(this._id, this);
     },
     'click #highlightMatch': function() {
         // highlight selected match
         console.log('match: ',this);
-        Session.set('foundMatchElements', [this]);
+        HighlightMatch(this._id,[this]);
     },
     'click #highlightAll' : function() {
-        Session.set('foundMatchElements', [this] );
+        // Session.set('foundMatchElements', [this] );
+        HighlightMatch(this._id, [this]);
     },
     'click #clearResults' : function() {
+        // clear all tables and messages
         Session.set('ResultsJson', [] );
+        Session.set("DiagramErrorMsg", []);
+        Session.set("ExpErrors", []);
     },
     'click #replaceInAllDiagrams' : function(){
         let Results = Session.get('ResultsJson');
+        let NotFoundDiagrams = [];
         if( _.size(Results) ){
-            _.each(Results, function(ResultItem){
-                const CurrentDiagramId = ResultItem.diagramId;
-                
-                Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(response){
-
-                    let ResultsJson = Session.get('ResultsJson');
-                    ResultsJson = updateSession(ResultsJson, CurrentDiagramId, response);
-                    Session.set('ResultsJson', ResultsJson);
-                }); 
-                LayoutElements(CurrentDiagramId);
-            })
+            ReplaceInAllDiagrams(Results);
         }
     }
 })
@@ -100,8 +77,8 @@ function markConflictingMatches(ResultsJson, elementsToLookup){
 }
 function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam sesijas datus ResultsJson
     _.each(ResultsJson, function(diagramItem){
-                    
-        if(diagramItem.diagramId == CurrentDiagramId){
+        console.log("updating session");
+        if(diagramItem._id == CurrentDiagramId){
             
             _.each(diagramItem.matches, function(match){
                 let responseItem = _.findWhere(response, {matchId: match.id});
@@ -113,4 +90,88 @@ function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam s
         }
     });
     return ResultsJson;
+}
+function HighlightMatch(diagramId, match){
+    Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
+        Session.set("DiagramErrorMsg","");
+        if(response) Session.set('foundMatchElements', match);
+        else{
+            Session.set('foundMatchElements', []);
+            Session.set("DiagramErrorMsg","Diagram does not exist");
+            history.go(-1);
+        }
+    });
+}
+function replaceSingleMatch(diagramId, list){
+    Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
+        Session.set("DiagramErrorMsg",""); // Sessijas dati diagrammas paziņojumam
+        if(response) {
+            let matchId = list.id;
+            let elementsToLookup = _.flatten(_.map(list.match, function(matchItem){
+                return _.map(matchItem.elements, function(element){
+                    return element.elementId;
+                })
+            }));// elementi, kurus jāmeklē citos fragmentos, lai samarķētu konfliktējošos 
+            
+            let UpdateStatus = Session.get('ResultsJson');
+            _.each(UpdateStatus, function(diagramItems){
+                _.each(diagramItems.matches, function(match){
+                    if(match.id == matchId) match.status = 'used'; // maina izmantotā fragmenta statusu
+                })
+            });
+            UpdateStatus = markConflictingMatches(UpdateStatus, elementsToLookup);
+            Session.set('ResultsJson', UpdateStatus);
+            
+            Utilities.callMeteorMethod("replaceSingleOccurence",list, function(response){
+                LayoutElements(Session.get('activeDiagram')); // izkārto diagrammas elementus
+            });
+        }
+        else { // Ja diagrammas nav, jāuzstāda atbilstošs paziņojums
+            Session.set("DiagramErrorMsg","Diagram does not exist");
+        }
+    });
+}
+function ReplaceAllOccurences(diagramId, list){
+    Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
+        Session.set("DiagramErrorMsg","");
+        if(response) {
+            Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', list, function(ReplaceResponse){
+                let ResultsJson = Session.get('ResultsJson');
+                console.log("ResultsJson before", ResultsJson);
+                console.log("Replace response",ReplaceResponse);
+                ResultsJson     = updateSession(ResultsJson,diagramId, ReplaceResponse);
+                console.log("ResultsJson after update", ResultsJson);
+                Session.set('ResultsJson', ResultsJson);
+            });
+            LayoutElements(diagramId);
+        }
+        else{
+            Session.set("DiagramErrorMsg","Diagram does not exist");
+        }
+    });
+}
+function ReplaceInAllDiagrams(Results){
+    
+    Session.set("DiagramErrorMsg","");
+    let NotFoundDiagrams = [];
+    _.each(Results, function(ResultItem){
+        const CurrentDiagramId = ResultItem._id;
+        
+        Utilities.callMeteorMethod("checkDiagramExistance", CurrentDiagramId,function(response){
+            
+            if(response){
+                Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(ReplaceResponse){
+
+                    let ResultsJson = Session.get('ResultsJson');
+                    ResultsJson = updateSession(ResultsJson, CurrentDiagramId, ReplaceResponse);
+                    Session.set('ResultsJson', ResultsJson);
+                }); 
+                LayoutElements(CurrentDiagramId);
+            }
+            else{
+                NotFoundDiagrams.push(ResultItem.name);
+                Session.set("DiagramErrorMsg", "Diagrams: " + NotFoundDiagrams.join() + " do not exist");
+            }
+        });
+    })
 }

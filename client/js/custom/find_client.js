@@ -72,14 +72,25 @@ Interpreter.customMethods({
         }
     },
 
-    Replace: function(){
+    Replace: function(){ // meklēšanas pogas metode
         function getDiagramParams(diagID){ // Aktivās diagrammas parametri
             return { diagramId: diagID, projectId: Session.get("activeProject"), versionId: Session.get("versionId")};
         };
         function CallServerFind(serverMethodName, diagParamList){
             console.log("CallServerFind", serverMethodName, diagParamList);
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
-                Session.set("ResultsJson", response);
+                Session.set("DiagramErrorMsg", "");
+                Session.set("ExpErrors", []);
+                
+                if(_.has(response, "msg")){
+                    Session.set("DiagramErrorMsg", response.msg);
+                }
+                else if(_.has(response, "expressionErrors")){
+                    Session.set("ExpErrors", response.expressionErrors);
+                    Session.set("ResultsJson", response.result);
+                    if(_.size(response.result) == 0) Session.set("DiagramErrorMsg", "No results");
+                }
+                
             });
         };
         CallServerFind("findDiags", getDiagramParams(Session.get("activeDiagram")));

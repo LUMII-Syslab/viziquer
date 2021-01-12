@@ -879,6 +879,7 @@ Meteor.methods({
 		//  list.versionId - active version id 
 		return findMe(list);
 	},
+	// Dmtirija kods
 	findNode: function(node){
 		findResults = [];
 		findNode(node);
@@ -939,6 +940,7 @@ Meteor.methods({
 		})
 		return MatchCollection;
 	},
+	// Dmitrija koda beigas
 	RemoveConstraintAndFind: function(list){
 		Compartments.remove(list.compartmentId);
 		return findMe(list);
