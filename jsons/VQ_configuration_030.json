@@ -1403,7 +1403,7 @@
                       },
                       {
                         "_id": "4727f620bbedd3f1f98bde47",
-                        "index": 4,
+                        "index": 6,
                         "name": "Require Values",
                         "extensionPoints": [
                           {
@@ -1436,9 +1436,9 @@
                       },
                       {
                         "_id": "d6e2cda95d0c78943ea28f0c",
-                        "index": 6,
+                        "index": 4,
                         "name": "IsInternal",
-                        "label": "Hide",
+                        "label": "Helper",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -1450,7 +1450,7 @@
                               "compartmentStyle": "NoStyle",
                               "elementStyle": "NoStyle",
                               "input": "true",
-                              "value": "{hide} "
+                              "value": "{h} "
                             },
                             {
                               "compartmentStyle": "NoStyle",
