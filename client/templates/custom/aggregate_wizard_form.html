@@ -106,12 +106,18 @@
 									
                         <form>
                             <p>Field (if applicable)</p>
-                            <select name="field-list" id="field-list" style="width:100%">
-                                <!-- <option name="field-name" value="" selected></option> -->
-                                {{#each attList}}
-                                    <option name="field-name" value="{{attribute}}">{{attribute}}</option>
+                            <input type="text" name="field-list" id="field-list" style="width:100%" list="field-list-datalist">
+							<datalist id="field-list-datalist" class="datalist">
+							 {{#each attList}}
+                                    <option name="field-name" input="{{attribute}}">{{attribute}}</option>
                                 {{/each}}
-                            </select>
+							</datalist>
+							<!-- <select name="field-list" id="field-list" style="width:100%"> -->
+                                <!-- <option name="field-name" value="" selected></option> -->
+                                <!-- {{#each attList}} -->
+                                    <!-- <option name="field-name" value="{{attribute}}">{{attribute}}</option> -->
+                                <!-- {{/each}} -->
+                            <!-- </select> -->
                         </form>
 					
 						<form id="distinct-aggregate">

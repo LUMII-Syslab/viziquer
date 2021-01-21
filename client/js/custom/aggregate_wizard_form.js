@@ -47,6 +47,7 @@ Template.AggregateWizard.events({
 		else required = false;
 	
 		var fld = $('option[name=field-name]:selected').val();
+		var fld = document.getElementById('field-list').value;
 		if (fld == "") {
 			expr = expr.concat("(.)");
 		} else {
@@ -142,7 +143,8 @@ Template.AggregateWizard.events({
 		var alias = $('input[id=alias-name]').val();
 		// var newFunction = $('option[name=function-name]:selected').val();
 		var newFunction = $('input[name=aggregate-list-radio]:checked').val()
-		var fieldName = $('option[name=field-name]:selected').val();
+		// var fieldName = $('option[name=field-name]:selected').val();
+		var fieldName = document.getElementById('field-list').value;
 		var cName = vq_start_obj.getName();
 		//console.log(cName.charAt(0), fieldName.length);
 		var functionArray = Template.AggregateWizard.attList.curValue;
@@ -204,7 +206,8 @@ function onAggregationChange(){
 		var alias = $('input[id=alias-name]').val();
 		// var newFunction = $('option[name=function-name]:selected').val();
 		var newFunction = $('input[name=aggregate-list-radio]:checked').val()
-		var fieldName = $('option[name=field-name]:selected').val();
+		// var fieldName = $('option[name=field-name]:selected').val();
+		var fieldName = document.getElementById('field-list').value;
 		var cName = vq_obj.getName();
 		//console.log(cName.charAt(0), fieldName.length);
 

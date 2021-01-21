@@ -35,7 +35,8 @@ Template.AddAggregate.events({
 			if(typeof required !== "undefined" && required == "on") required = true;
 			else required = false;
 			
-			var fld = $('option[name=field-name-aggr]:selected').val();
+			// var fld = $('option[name=field-name-aggr]:selected').val();
+			var fld = document.getElementById('field-list-aggr').value;
 			if (fld == "") {
 				expr = expr.concat("(.)");
 			} else {

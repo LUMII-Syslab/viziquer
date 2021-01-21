@@ -85,11 +85,17 @@
 									
                         <form>
                             <p>Field (if applicable)</p>
-                            <select name="field-list-aggr" id="field-list-aggr" style="width:100%">
-                                {{#each attList}}
-                                    <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option>
+							<input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist">
+							<datalist id="field-list-aggr-datalist" class="datalist">
+							 {{#each attList}}
+                                    <option name="field-name-aggr" input="{{attribute}}">{{attribute}}</option>
                                 {{/each}}
-                            </select>
+							</datalist>
+                            <!-- <select name="field-list-aggr" id="field-list-aggr" style="width:100%"> -->
+                                <!-- {{#each attList}} -->
+                                    <!-- <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option> -->
+                                <!-- {{/each}} -->
+                            <!-- </select> -->
                         </form>
 					
 						<form id="distinct-aggr">
