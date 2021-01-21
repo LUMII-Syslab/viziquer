@@ -106,6 +106,11 @@ autoCompletionAddCondition = function(e) {
 	autoCompletion(e);
 }
 
+autoCompletionAddAttribute = function(e) {
+	grammarType = "attribute"
+	symbolTable = generateSymbolTableAC();
+	autoCompletion(e);
+},
 
 autoCompletion = function(e) {
 

@@ -1,6 +1,6 @@
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
-Template.AddAttribute.existingAttributes = new ReactiveVar([{name: "No_attribute"}]);
+Template.AddAttribute.existingAttributeList = new ReactiveVar([{name: "No_attribute"}]);
 
 Template.AddNewAttribute.alias = new ReactiveVar("");
 Template.AddNewAttribute.expression = new ReactiveVar("");
@@ -13,7 +13,7 @@ Interpreter.customMethods({
 		
 		Template.AddAttribute.attrList.set(getAttributes());
 		Template.AddAttribute.linkList.set(getAssociations());
-		Template.AddAttribute.existingAttributes.set(getExistingAttributes());
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		$("#add-attribute-form").modal("show");
 		$('input[name=stack-checkbox]').attr('checked',false);
 		$('button[name=required-attribute]').html('\&nbsp;');
@@ -34,7 +34,7 @@ Template.AddAttribute.helpers({
 	},
 	
 	existingAttributes: function() {
-		return Template.AddAttribute.existingAttributes.get();
+		return Template.AddAttribute.existingAttributeList.get();
 	},
 	showLabels: function() {
 		if(getExistingAttributes().length > 0) return true;
@@ -51,43 +51,18 @@ Template.AddAttribute.events({
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
 		  var vq_obj = new VQ_Element(selected_elem_id);
-		  console.log("v1", vq_obj, selected_elem_id )
-		  // var field_list = vq_obj.getFields();
-		  // var x = document.getElementsByName("add-attribute");
-		  // var x = document.getElementsByClassName("information");
-		  // for(var existingDiagramField in field_list){
-			// var fieldFound = false;
-			// for(var existingField in x){
-				// if(typeof x[existingField] === "object"){
-					// if(x[existingField].getAttribute("name") == field_list[existingDiagramField]["_id"]){
-						// if(x[existingField].parentNode.style.display != "none"){
-							// fieldFound = true;
-							// break;
-						// } else x[existingField].parentNode.style.display = "table-row";
-					// }
-				// }
-				
-			// }
-			// if(fieldFound == false){
-				// var list = {compartmentId: field_list[existingDiagramField]["_id"],
-					// projectId: Session.get("activeProject"),
-					// versionId: Session.get("versionId"),
-				// };
-
-				// Utilities.callMeteorMethod("removeCompartment", list);
-			// }
-		  // }
-		  
-		  
+ 
 		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
 		  buttonn.each(function () {
 		    
-			var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
-			if(required.startsWith("fa fa-plus")) required = true;
-			else required = false;
-			
-			var name = $(this).attr("name");
-			vq_obj.addField(name,null,required,false,false);
+			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
+				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
+				if(required.startsWith("fa fa-plus")) required = true;
+				else required = false;
+				
+				var name = $(this).attr("name");
+				vq_obj.addField(name,null,required,false,false);
+			}
 		  });
 		};
 		
@@ -95,24 +70,43 @@ Template.AddAttribute.events({
 
 	},
 	
-	"click #cancel-add-attribute": function(e) {
-		var x = document.getElementsByClassName("resp-table-row");
-		for(var attr in x){
-			if(typeof x[attr] === "object" && x[attr].style.display == "none") x[attr].style.display = "table-row";
-		}
-		return;
+	"click #cancel-save-attribute": function(e) {
 
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+		//Read user's choise
+		  var vq_obj = new VQ_Element(selected_elem_id);
+		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
+		  buttonn.each(function () {
+		    
+			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
+				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
+				if(required.startsWith("fa fa-plus")) required = true;
+				else required = false;
+				
+				var name = $(this).attr("name");
+				vq_obj.addField(name,null,required,false,false);
+			}
+		  });
+		};
+		
+		Template.AddAttribute.attrList.set(getAttributes());
+		Template.AddAttribute.linkList.set(getAssociations());
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		
+		return;
 	},
 	
 	"click #required-attribute": function(e) {
-		console.log($(e.target).attr('name'));
-
+		var attributeName = $(e.target).closest(".attribute")[0].getAttribute("name")
 		if(e.target.className == "button button-required") {
 			e.target.className = "fa fa-check button button-required";
 			$(e.target).attr('name', "required-attribute-to-add");
 		}
 		else if(e.target.className == "fa fa-check button button-required") {
-			e.target.className = "fa fa-plus button button-required";
+			if(attributeName == "(select this)"){
+				e.target.className = "button button-required";
+			} else e.target.className = "fa fa-plus button button-required";
 			$(e.target).attr('name', "required-attribute-to-add");
 		}
 		else if(e.target.className == "fa fa-plus button button-required"){
@@ -121,123 +115,121 @@ Template.AddAttribute.events({
 		}
 		
 		return;
-
 	},
 	
 	"click #required-existing-attribute": function(e) {
-	
+		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
 		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
 		if(labelText.startsWith("{+}")) {
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
+			fullText = labelText.substring(4);
+			// $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "");
 		}else if(labelText.startsWith("{h} {+}")) {
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = "{h} "+labelText.substring(7);
+			fullText = "{h} "+labelText.substring(7);
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "");
 		}else if(labelText.startsWith("{h}")){
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = "{h} {+} "+labelText.substring(3);
+			fullText = "{h} {+} "+labelText.substring(3);
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "checked");
 		}else {
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = "{+} "+labelText;
+			fullText = "{+} "+labelText;
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "checked");
 		}
+		
+		var act_elem = Session.get("activeElement");
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+		if(typeof act_el !== 'undefined'){
+				
+			var requireValues = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues");	
+			var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+			var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+
+			// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				
+			if(requireValues=="checked"){
+				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
+				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "true";
+			} else {
+				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "";
+				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "false";
+			}
+	
+			Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
+		}
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		return;
 	},
 	
 	"click #attribute-helper-button": function(e) {
+
+		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
 		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
 		if(labelText.startsWith("{+}")){
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = "{h} "+labelText;
+			fullText = "{h} "+labelText;
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "checked");
 		}else if(labelText.startsWith("{h} {+}")) {
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
+			fullText = labelText.substring(4);
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "");
 		}else if(labelText.startsWith("{h}")){
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
+			fullText = labelText.substring(4);
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "");
 		}else {
-			$(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = "{h} "+labelText;
+			fullText = "{h} "+labelText;
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "checked");
 		}
 		
-		// var act_elem = Session.get("activeElement");
-			// var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-			// if(typeof act_el !== 'undefined'){
-				// var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-				// var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-				// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-
-				// compart.subCompartments["Attributes"]["Attributes"]["Expression"]["value"] = expression;
-				// compart.subCompartments["Attributes"]["Attributes"]["Expression"]["input"] = expression;
-				// if(alias!="" || alias!=null)compart.subCompartments["Attributes"]["Attributes"]["Field Name"]["value"] = alias+"<-";
-				// compart.subCompartments["Attributes"]["Attributes"]["Field Name"]["input"] = alias;
-				// if(helper==true)compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "{h} ";
-				// compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = helper.toString() ;
-				// if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
-				// compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = requireValues.toString() ;
+		var act_elem = Session.get("activeElement");
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+		if(typeof act_el !== 'undefined'){
 				
-				// Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
-			// }
-		return;
-	},
+			var helper = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper");
 	
-	"click #hide-existing-attribute": function(e) {
-		
-		if(e.target.innerHTML == "{hide}") {
-			e.target.innerHTML = '';
-		}
-		else {
-			e.target.innerHTML = "{hide}";
-		}
+			var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+			var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 
-		return;
-
-	},
+			// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+			var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				
+			if(helper=="checked"){
+				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "{h} ";
+				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "true";
+			} else {
+				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "";
+				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "false";
+			}
 	
-	"click #input-checkbox": function(e) {
-
-		if(e.target.checked == false) {
-			$(e.target.parentElement).children('button[name="required-attribute"]').prop("innerHTML", '\&nbsp;');
+			Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 		}
 		
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		
+		return;
+	},
+	
+	"click #attribute-move-button": function(e) {
+		var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+		// console.log("TTTTTTTTTT", e, compart);
+		
 		return;
 
 	},
 	
-	"click #hide-checkbox": function(e) {
-
-		// if(e.target.checked == false) {
-			// $(e.target.parentElement).children('button[name="required-attribute"]').prop("innerHTML", '\&nbsp;');
-		// }else {
-			
-		// }
-		console.log("IIIIII", $(e.target.parentElement.parentElement).children('label[name="add-attribute"]'))
-		return;
-
-	},
 	
 	"click #attribute-delete-button": function(e) {
-		
-		// console.log($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));
-		
-		$(e.target).closest(".attribute")[0].style.display = "none";
-		
-		
+			
 		var list = {compartmentId: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"),
 					projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 				};
 
 				Utilities.callMeteorMethod("removeCompartment", list);
-		// $(e.target).closest(".attribute")[0].remove();
 		
-		return;
-
-	},
-	
-	"click #attribute-extra-button": function(e) {
+		var attr_list = getAttributes();
+		var link_list = getAssociations();
+		Template.AddAttribute.attrList.set(attr_list);
+		Template.AddAttribute.linkList.set(link_list);
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		
-		if($(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display != "block") $(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display = "block";
-		else $(e.target).closest(".attribute").children(".information").children('label[name="attrbute-exist-extra"]')[0].style.display = "none";
 		return;
 
 	},
@@ -262,6 +254,14 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.requireValues.set("");
 		Template.AddNewAttribute.helper.set("");
 		Template.AddNewAttribute.attributeid.set("newAttribute");
+		
+		console.log("alias", Template.AddNewAttribute.alias)
+		console.log("alias", Template.AddNewAttribute.alias)
+		console.log("expression", Template.AddNewAttribute.expression)
+		console.log("requireValues", Template.AddNewAttribute.requireValues)
+		console.log("helper", Template.AddNewAttribute.helper)
+		console.log("attributeid", Template.AddNewAttribute.attributeid)
+		
 		$("#add-new-attribute-form").modal("show");
 		return;
 	},
@@ -273,6 +273,14 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.requireValues.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues"));
 		Template.AddNewAttribute.helper.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper"));		
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
+		
+		console.log("alias", Template.AddNewAttribute.alias)
+		console.log("alias", Template.AddNewAttribute.alias)
+		console.log("expression", Template.AddNewAttribute.expression)
+		console.log("requireValues", Template.AddNewAttribute.requireValues)
+		console.log("helper", Template.AddNewAttribute.helper)
+		console.log("attributeid", Template.AddNewAttribute.attributeid)
+		
 		$("#add-new-attribute-form").modal("show");
 		return;
 	},
@@ -305,7 +313,7 @@ Template.AddNewAttribute.helpers({
 Template.AddNewAttribute.events({
 
 	"click #ok-add-new-attribute": function(e, t) {
-		console.log("eee", e, t);
+
 		var alias = document.getElementById("add-new-attribute-alias").value;
 		var expression = document.getElementById("add-new-attribute-expression").value;
 		var requireValues = document.getElementById("add-new-attribute-requireValues").checked ;
@@ -318,28 +326,12 @@ Template.AddNewAttribute.events({
 		
 		console.log(alias, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"))
 		if($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
-			
-			console.log(document.getElementById("resp-table-body"));
-			str = '<div class="resp-table-row attribute">'+
-									'<div style="display: table-cell;" class="table-body-cell information" name="newAttribute" alias="'+alias+'" expression="'+expression+'" requireValues="'+requireValues+'" helper="'+helper+'">'+
-										'<label class="label-checkbox" name="add-attribute">'+
-											'<span>'+fullText+'</span>'+
-										'</label>'+
-									'</div>'+
-									'<div style="display: table-cell;" class="table-body-cell">'+
-										'<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>'+
-										'<a class="btn btn-xs btn-default"><i id="attribute-helper-button" class="fa">h</i></a>'+
-										'<a class="btn btn-xs btn-default"><i id="required-existing-attribute" class="fa fa-plus"></i></a>'+
-										'<a class="btn btn-xs btn-info up-multi-field"><i id="attribute-muve-button" class="fa fa-arrow-up"></i></a>'+
-										'<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>'+
-									'</div>'+
-								'</div>'
-			document.getElementById("resp-table-body").insertAdjacentHTML( 'beforeend', str );
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				var vq_obj = new VQ_Element(selected_elem_id);
 				vq_obj.addField(expression,alias,requireValues,false,helper);
 			};
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		} else {
 			var attribute = document.getElementsByName($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"))[0];
 			attribute.setAttribute("alias", alias);
@@ -371,9 +363,31 @@ Template.AddNewAttribute.events({
 	},
 	
 	"click #cancel-add-new-attribute": function(e) {
+		Template.AddNewAttribute.alias.set("");
+		Template.AddNewAttribute.expression.set("");
+		Template.AddNewAttribute.requireValues.set("");
+		Template.AddNewAttribute.helper.set("");
+		
+		document.getElementById("add-new-attribute-alias").value = "";
+		document.getElementById("add-new-attribute-expression").value = "";
+		document.getElementById("add-new-attribute-requireValues").checked = false;
+		document.getElementById("add-new-attribute-helper").checked = false;
 		
 		return;
 
+	},
+	
+	"keydown #add-new-attribute-expression": function(e) {
+		autoCompletionAddAttribute(e);
+		return;
+	},
+	
+	"hidden.bs.modal #add-new-attribute-form": function(e) {
+		autoCompletionCleanup();
+		Template.AddNewAttribute.alias.set("");
+		Template.AddNewAttribute.expression.set("");
+		Template.AddNewAttribute.requireValues.set("");
+		Template.AddNewAttribute.helper.set("");
 	},
 });
 
@@ -428,10 +442,18 @@ function getAttributes(){
 			var field_list = vq_obj.getFields();
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
+				var buttonClassName = "button button-required";
 				for(var field in field_list){
-					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {disabled = true; break;}
+					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
+						disabled = true; 
+						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
+						else buttonClassName = "fa fa-check button button-required";
+						break;
+					}
 				}
 				attr.disabled = disabled;
+				attr.buttonClassName = buttonClassName;
+				attr.buttonName = "required-attribute";
 				return attr;
 			});
 			return attr_list;
@@ -471,10 +493,18 @@ function getAssociations(){
 			var field_list = vq_obj.getFields();
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
+				var buttonClassName = "button button-required";
 				for(var field in field_list){
-					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {disabled = true; break;}
+					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
+						disabled = true; 
+						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
+						else buttonClassName = "fa fa-check button button-required";
+						break;
+					}
 				}
 				attr.disabled = disabled;
+				attr.buttonClassName = buttonClassName;
+				attr.buttonName = "required-attribute";
 				return attr;
 			});
 			return attr_list;
@@ -487,6 +517,7 @@ function getExistingAttributes(){
 	var selected_elem_id = Session.get("activeElement");
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		var vq_obj = new VQ_Element(selected_elem_id);
+			
 		var field_list = vq_obj.getFields().map(function(f) {
 			var al = f.alias;
 			if(al==null) al="";
