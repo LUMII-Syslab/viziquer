@@ -10,6 +10,7 @@ Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
 
   generateVisualQuery: function(text, xx){
+	   // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, function(parsedQuery) {
 		x = xx;
 		y = 10;
@@ -19,6 +20,8 @@ Interpreter.customMethods({
 		
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = getAllVariablesInQuery(parsedQuery, schema);
+		
+		// console.log("variableList", variableList);
 
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = generateAbstractTable(parsedQuery, [], variableList, []);
@@ -44,9 +47,11 @@ Interpreter.customMethods({
 		if(typeof parsedQuery["distinct"] !== 'undefined') classesTable["distinct"] =  parsedQuery["distinct"];
 
 		
+		// console.log("whereTriplesVaribles", whereTriplesVaribles);
 		// Visualize query based on tree structure
 		visualizeQuery(classesTable, null);
 			// */	
+		// console.log("classesTable", classesTable, abstractTable);
 		
 
 	  });
@@ -84,8 +89,8 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 	var where = parsedQuery["where"];
 	
 	// Create a list of nodes in a current query scope 
-	var nodeList = collectNodeList(where);
-	// console.log("NNNNNNNN", nodeList);
+	var tempN = collectNodeList(where);
+	var nodeList = tempN["nodeList"];
 	
 	// For every structure in query WHERE part, create abstract tables’ instances. First triples, then the rest.
 	for(var key in where){
@@ -130,13 +135,42 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 	}
 	//select
 	var variables = parsedQuery["variables"];
+	var starInSelect = false;
+	for(var key in variables){
+		if(typeof variables[key] === 'string' && variables[key] == "*"){
+			starInSelect = true;
+			break;
+			
+		}
+	}
+	if(starInSelect == true){
+		variables = variables.concat(tempN["selectStarList"]);
+		variables = variables.filter(function (el, i, arr) {
+			return arr.indexOf(el) === i && el !== "*";
+		});
+	}
+	
 	for(var key in variables){
 		if(typeof variables[key] === 'string'){
 
+			var isVariable = false;
+			for(var link in linkTable){
+				if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
+					console.log("dsdsdsdsd", linkTable[link])
+					isVariable = true;
+					if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
+						linkTable[link]["linkIdentification"]["localName"] = linkTable[link]["linkIdentification"]["localName"].substring(1);
+						linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
+					}
+					break;
+				}
+			}
+			
 			//check kind (Class, reference or Property)
 			//class
 			var classes = findByVariableName(classesTable, variables[key]);
 			if(Object.keys(classes).length > 0){
+
 				//add class as attribute
 				var parsedClass = vq_visual_grammar.parse(variables[key])["value"]
 				var attributeInfo = {
@@ -151,23 +185,28 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			}
 			//reference
 			else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined'){	
+				
 				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];
 	
 				if(typeof bindTable[parsedAttribute] === 'undefined'){
-					var attributeInfo = {
-						"alias":"",
-						"identification":null,
-						"requireValues":false,
-						"isInternal":false,
-						"groupValues":false,
-						"exp":parsedAttribute
-					}
 
-					for (var clazz in classesTable){
-						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-						break;
+					if(isVariable == false){
+						var attributeInfo = {
+							"alias":"",
+							"identification":null,
+							"requireValues":false,
+							"isInternal":false,
+							"groupValues":false,
+							"exp":parsedAttribute
+						}
+
+						for (var clazz in classesTable){
+							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+							break;
+						}
 					}
 				} else if(variableList["?"+parsedAttribute] != "seen") {
+	
 					var attributeInfo = {
 						"alias":bindTable[parsedAttribute]["alias"],
 						"identification":null,
@@ -186,6 +225,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 
 			//property
 			if(typeof attributeTable[vq_visual_grammar.parse(variables[key])["value"]] !== 'undefined') {
+
 				// add attribute
 				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
 				var attributes = findByVariableName(attributeTable, parsedAttribute);
@@ -371,17 +411,31 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 	for(var attribute in attributeTable){
 		if(attributeTable[attribute]["seen"] != true){
 			var attributeInfoTemp = attributeTable[attribute];
-			var exp = attributeInfoTemp["exp"];
-			if(typeof exp === 'undefined') exp = attributeInfoTemp["identification"]["short_name"];
-			var attributeInfo = {
-					"alias":attributeInfoTemp["alias"],
-					"identification":attributeInfoTemp["identification"],
-					"requireValues":attributeInfoTemp["requireValues"],
-					"isInternal":true,
-					"groupValues":false,
-					"exp":exp
-			} 
-			classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
+			
+			var found = false;
+			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["maxCardinality"] == 1 && attributeInfoTemp["alias"] != ""){
+				for(var condition in classesTable[attributeTable[attribute]["class"]]["conditions"]){
+					if(classesTable[attributeTable[attribute]["class"]]["conditions"][condition].includes(attributeInfoTemp["alias"])) found = true;
+					classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
+				}
+				for(var aggregation in classesTable[attributeTable[attribute]["class"]]["aggregations"]){
+					if(classesTable[attributeTable[attribute]["class"]]["aggregations"][aggregation]["exp"].includes(attributeInfoTemp["alias"])) found = true;
+					classesTable[attributeTable[attribute]["class"]]["aggregations"][aggregation]["exp"] = classesTable[attributeTable[attribute]["class"]]["aggregations"][aggregation]["exp"].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
+				}
+			}
+			if(found == false){
+				var exp = attributeInfoTemp["exp"];
+				if(typeof exp === 'undefined') exp = attributeInfoTemp["identification"]["short_name"];
+				var attributeInfo = {
+						"alias":attributeInfoTemp["alias"],
+						"identification":attributeInfoTemp["identification"],
+						"requireValues":attributeInfoTemp["requireValues"],
+						"isInternal":true,
+						"groupValues":false,
+						"exp":exp
+				} 
+				classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
+			}
 		}
 	}
 	
@@ -632,7 +686,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 	if(where["type"] == "filter"){
 		
 		var temp = parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, patternType, bindTable, checkIfOrAndInFilter(where["expression"], generateOnlyExpression));
-
+		
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
 		filterTable = temp["filterTable"];
@@ -851,7 +905,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 								var patterns = where["patterns"][pattern]["patterns"][p]["expression"]["args"][0]["patterns"];
 						}
 
-						var temp  = collectNodeList(patterns);
+						var temp  = collectNodeList(patterns)["nodeList"];
 						for(var node in temp){
 							nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 						}
@@ -922,7 +976,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 							linktype = "NOT";
 					} else if(where["patterns"][pattern]["type"] == 'bgp') patterns = {0:where["patterns"][pattern]};
 					
-					var temp  = collectNodeList(patterns);
+					var temp  = collectNodeList(patterns)["nodeList"];
 					for(var node in temp){
 						nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 					}
@@ -1068,8 +1122,8 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 				var arg1 = generateArgument(where["args"][0]);
 				if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
 				var argValue = arg1["value"];
-				if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
-				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;
+				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
+				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;	
 			}
 			else if(typeof where["args"][0] == 'object'){	
 				var temp = parseSPARQLjsStructureWhere(where["args"][0], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, patternType, bindTable, generateOnlyExpression);
@@ -1087,7 +1141,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 				var arg2 = generateArgument(where["args"][1]);
 				if(arg2["type"] == "varName") viziQuerExpr["exprVariables"].push(arg2["value"]);
 				var argValue = arg2["value"];
-				if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
+				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;
 			}
 			else if(typeof where["args"][1] == 'object'){
@@ -1199,7 +1253,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 			
 			if(where["args"].length == 1 && where["args"][0]["type"] == "bgp" && where["args"][0]["triples"].length == 1){
 				
-				var temp  = collectNodeList(where["args"]);
+				var temp  = collectNodeList(where["args"])["nodeList"];
 				for(var node in temp){
 					nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 				}
@@ -1257,7 +1311,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 						var patterns =  where["args"][arg]["patterns"];
 						var tempClassTable = [];
 						for(var pattern in patterns){
-							var temp  = collectNodeList(patterns);
+							var temp  = collectNodeList(patterns)["nodeList"];
 							for(var node in temp){
 								nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 							}
@@ -1287,7 +1341,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 							}
 						}
 					} else{
-						var temp  = collectNodeList(where["args"]);
+						var temp  = collectNodeList(where["args"])["nodeList"];
 						for(var node in temp){
 							nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 						}
@@ -1304,7 +1358,8 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 				}
 			}
 
-			// console.log("NOT EXISTS", nodeLitsTemp, nodeList, linkTableAdded, classTableAdded);
+			// console.log("NOT EXISTS", nodeLitsTemp, nodeList, linkTable, linkTableAdded, classTableAdded);
+			
 
 			for(link in linkTableAdded){
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
@@ -1331,7 +1386,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 		else if(where["operator"] == "exists"){
 			var nodeLitsTemp = [];
 			if(where["args"].length == 1 && where["args"][0]["type"] == "bgp" && where["args"][0]["triples"].length == 1){
-				var temp  = collectNodeList(where["args"]);
+				var temp  = collectNodeList(where["args"])["nodeList"];
 				for(var node in temp){
 					nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 				}
@@ -1388,7 +1443,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 				for(var arg in where["args"]){
 					if(where["args"][arg]["type"] == 'group'){
 						var patterns =  where["args"][arg]["patterns"];
-						var temp  = collectNodeList(patterns);
+						var temp  = collectNodeList(patterns)["nodeList"];
 						
 						for(var node in temp){
 							nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
@@ -1440,7 +1495,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 							}
 						}
 					} else{ 
-						var temp  = collectNodeList(where["args"]);
+						var temp  = collectNodeList(where["args"])["nodeList"];
 						for(var node in temp){
 							nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 						}
@@ -1761,7 +1816,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 		var parenNodeLitsTemp;
 		if(patterns.length > 1){
 			parenNodeLitsTemp = nodeList;
-			var temp  = collectNodeList(patterns, true);
+			var temp  = collectNodeList(patterns, true)["nodeList"];
 			for(var node in temp){
 				nodeLitsTemp[node] = concatNodeListInstance(nodeLitsTemp, node, temp[node]);
 			}
@@ -1881,6 +1936,7 @@ function concatNodeListInstance(nodeList, nodeName, nodeInstance){
 // Create a list of nodes in a current query scope 
 function collectNodeList(whereAll, propUnderOptional){
   var nodeList = [];
+  var selectStarList = [];
   for(var key in whereAll){
 	var where = whereAll[key];
 	//type=bgp
@@ -1888,6 +1944,10 @@ function collectNodeList(whereAll, propUnderOptional){
 		var triples = where["triples"];
 		var schema = new VQ_Schema();
 		for(var triple in triples){
+			if(vq_visual_grammar.parse(triples[triple]["subject"])["type"] == "varName") selectStarList.push(triples[triple]["subject"]);
+			if(vq_visual_grammar.parse(triples[triple]["object"])["type"] == "varName") selectStarList.push(triples[triple]["object"]);
+			if(typeof triples[triple]["predicate"] === "string" && vq_visual_grammar.parse(triples[triple]["predicate"])["type"] == "varName") selectStarList.push(triples[triple]["predicate"]);
+
 			//class definitions
 			if(triples[triple]["predicate"] == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
 				nodeList[triples[triple]["subject"]] = createNodeListInstance(nodeList, triples[triple]["subject"]);
@@ -1944,12 +2004,14 @@ function collectNodeList(whereAll, propUnderOptional){
 			if(typeof patterns[pattern]["type"] !== 'undefined' && patterns[pattern]["type"] != "bgp") optionalDataPropAsObjectProp = true;
 		}
 		var temp = collectNodeList(patterns, optionalDataPropAsObjectProp);
-		for(var node in temp){
-			nodeList[node] = concatNodeListInstance(nodeList, node, temp[node]);
+		var tempNode = temp["nodeList"];
+		for(var node in tempNode){
+			nodeList[node] = concatNodeListInstance(nodeList, node, tempNode[node]);
 		}
+		selectStarList = selectStarList.concat(temp["selectStarList"]);
 	}
   }
-  return nodeList
+  return {"nodeList":nodeList, "selectStarList":selectStarList}
 }
 
 function findAttributeInAttributeTable(attributeTable, parsedVariableName, variableName, identification){
@@ -2534,6 +2596,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 									"linkType":linkType,
 									"isSubQuery":false,
 									"isGlobalSubQuery":false,
+									"isVariable":true,
 								}
 								linkTable.push(link);
 								linkTableAdded.push(link);
@@ -2546,6 +2609,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 						if(linkResolved == null){
 							var predicateParsed = vq_visual_grammar.parse(triples[triple]["predicate"])["value"];
 							var linkName = generateInstanceAlias(schema, predicateParsed);
+						
 							linkResolved = {
 								"short_name":linkName,
 								"localName":linkName,
@@ -2651,12 +2715,10 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 					//property path
 					if(typeof triples[triple]["predicate"]["type"] !== "undefined" && triples[triple]["predicate"]["type"] == "path"){
 						
-						
-						
 						var alias = "";
-						var pathText = [];
+
 						if(triples[triple]["predicate"]["pathType"] == "/"){
-							
+							var pathText = [];
 							var last_element = triples[triple]["predicate"]["items"][triples[triple]["predicate"]["items"].length - 1];
 							if(typeof last_element === "object" && typeof last_element["items"][0] !== "undefined")  last_element = last_element["items"][0];
 							//link
@@ -2837,7 +2899,80 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 									}
 								}
 							}
-						}	
+						} else if(triples[triple]["predicate"]["pathType"] == "+" || triples[triple]["predicate"]["pathType"] == "*" || triples[triple]["predicate"]["pathType"] == "?" || triples[triple]["predicate"]["pathType"] == "!"){
+							var propertyPathText = "";
+							for(var item in triples[triple]["predicate"]["items"]){
+								var temp = generatePropertyPath(schema, triple, triples[triple]["predicate"]["items"][item], linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList);
+								propertyPathText = propertyPathText + temp;
+							}
+							if(triples[triple]["predicate"]["pathType"] == "!") propertyPathText = triples[triple]["predicate"]["pathType"] + propertyPathText;
+							else propertyPathText = propertyPathText + triples[triple]["predicate"]["pathType"];
+							
+							var linkType = "REQUIRED";
+							if(bgptype == "optional") linkType = "OPTIONAL"; 
+							linkResolved = {
+								"short_name":propertyPathText,
+								"localName":propertyPathText,
+								"notInSchema": "true"
+							}
+							// for every object usage in nodeList, for elery subject usage in nodeList - create link
+							if(typeof nodeList[triples[triple]["object"]] !== 'undefined'){
+								var objectClasses = nodeList[triples[triple]["object"]]["uses"];
+								for(var oclass in objectClasses){
+									var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
+									for(var sclass in subjectClasses){
+										var link = {
+											"linkIdentification":linkResolved,
+											"object":oclass,
+											"subject":sclass,
+											"isVisited":false,
+											"linkType":linkType,
+											"isSubQuery":false,
+											"isGlobalSubQuery":false,
+										}
+										linkTable.push(link);
+										linkTableAdded.push(link);
+									}
+								}
+							}
+						} else if(triples[triple]["predicate"]["pathType"] == "|"){
+							var propertyPathText = "";
+							var propertyPathArray = [];
+							for(var item in triples[triple]["predicate"]["items"]){
+								var temp = generatePropertyPath(schema, triple, triples[triple]["predicate"]["items"][item], linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList);
+								propertyPathArray.push(temp)
+							}
+							propertyPathText = propertyPathText + "("+propertyPathArray.join(" | ") + ")";
+
+							var linkType = "REQUIRED";
+							if(bgptype == "optional") linkType = "OPTIONAL"; 
+							linkResolved = {
+								"short_name":propertyPathText,
+								"localName":propertyPathText,
+								"notInSchema": "true"
+							}
+							// for every object usage in nodeList, for elery subject usage in nodeList - create link
+							if(typeof nodeList[triples[triple]["object"]] !== 'undefined'){
+								var objectClasses = nodeList[triples[triple]["object"]]["uses"];
+								for(var oclass in objectClasses){
+									var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
+									for(var sclass in subjectClasses){
+										var link = {
+											"linkIdentification":linkResolved,
+											"object":oclass,
+											"subject":sclass,
+											"isVisited":false,
+											"linkType":linkType,
+											"isSubQuery":false,
+											"isGlobalSubQuery":false,
+										}
+										linkTable.push(link);
+										linkTableAdded.push(link);
+									}
+								}
+							}
+						}
+						
 					}
 				}
 			}
@@ -2845,6 +2980,93 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 	}
 
 	return {classesTable:classesTable, attributeTable:attributeTable, linkTable:linkTable, linkTableAdded:linkTableAdded, classTableAdded:classTableAdded, attributeTableAdded:attributeTableAdded, filterTable:filterTable, nodeList:nodeList};
+}
+
+function generatePropertyPath(schema, triple, predicate, linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList){
+	var propertyPathText = "";
+	
+	if(typeof predicate === "string"){
+		var linkResolved = schema.resolveLinkByName(predicate);
+		if(linkResolved != null){
+			propertyPathText = propertyPathText + buildPathElement(linkResolved);
+		} else {
+			var predicateParsed = vq_visual_grammar.parse(predicate)["value"];
+			var linkName = generateInstanceAlias(schema, predicateParsed);
+			propertyPathText = propertyPathText + linkName;
+		}
+	} else if(predicate["pathType"] == "/"){
+		var pathText = [];
+		for(var item in predicate["items"]){
+			if(typeof predicate["items"][item] == "string"){
+				var linkResolved = schema.resolveLinkByName(predicate["items"][item]);
+				if(linkResolved != null) pathText.push(buildPathElement(linkResolved));
+				else {
+					var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
+					if(linkResolved != null) pathText.push(buildPathElement(linkResolved));
+					else {
+						var predicateParsed = vq_visual_grammar.parse(predicate)["value"];
+						var linkName = generateInstanceAlias(schema, predicateParsed);
+						pathText.push(linkName);
+					}
+				}
+			} 
+			// ^
+			else if(predicate["items"][item]["type"] == "path" && predicate["items"][item]["pathType"] == "^"){
+				var linkResolved = schema.resolveLinkByName(predicate["items"][item]["items"][0]);
+				if(linkResolved != null) pathText.push("^" + buildPathElement(linkResolved));
+				else {
+					var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
+					if(linkResolved != null) pathText.push("^" + buildPathElement(linkResolved));
+					else {
+						var predicateParsed = vq_visual_grammar.parse(predicate)["value"];
+						var linkName = generateInstanceAlias(schema, predicateParsed);
+						pathText.push("^"+linkName);
+					}
+				}
+			}
+		}
+		propertyPathText = propertyPathText + pathText.join(".")
+	
+	} else if(predicate["pathType"] == "^"){
+		for(var item in predicate["items"]){
+			if(typeof predicate["items"][item] == "string"){
+				var linkResolved = schema.resolveLinkByName(predicate["items"][item]);
+				if(linkResolved != null) propertyPathText = propertyPathText + "^" + buildPathElement(linkResolved);
+				else {
+					var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
+					if(linkResolved != null) propertyPathText = propertyPathText + "^" + buildPathElement(linkResolved);
+					else {
+						var predicateParsed = vq_visual_grammar.parse(predicate)["value"];
+						var linkName = generateInstanceAlias(schema, predicateParsed);
+						propertyPathText = propertyPathText + "^" + linkName;
+					}
+				}
+			} 
+			else {
+				for(var i in predicate["items"][item]){
+					var temp = generatePropertyPath(schema, triple, predicate["items"][item][i], linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList);
+					propertyPathText = propertyPathText + temp;
+				}
+			}
+		}
+	} else if(predicate["pathType"] == "+" || predicate["pathType"] == "*" || predicate["pathType"] == "?" || predicate["pathType"] == "!"){
+		for(var item in predicate["items"]){
+			var temp = generatePropertyPath(schema, triple, predicate["items"][item], linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList);
+			propertyPathText = propertyPathText + temp;
+		}
+		if(predicate["pathType"] == "!") propertyPathText = predicate["pathType"] + propertyPathText;
+		else propertyPathText = propertyPathText + predicate["pathType"];
+	} else if(predicate["pathType"] == "|"){
+		var propertyPathArray = [];
+		for(var item in predicate["items"]){
+			var temp = generatePropertyPath(schema, triple, predicate["items"][item], linkTable, linkTableAdded, attributeTable, attributeTableAdded, bgptype, nodeList);
+			propertyPathArray.push(temp);
+		}
+		propertyPathText = propertyPathText + "("+propertyPathArray.join(" | ") + ")";
+	}
+	
+	return propertyPathText;
+	
 }
 
 function generateTypeFilter(expression){
@@ -2937,6 +3159,8 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 				&& typeof childerenClass["children"] === 'undefined'
 				&& (typeof childerenClass["fields"] === 'undefined' || (childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)"))
 				&& typeof childerenClass["aggregations"] === 'undefined'
+				&& linkTable[linkName]["linkIdentification"]["short_name"].indexOf(")*") === -1
+				&& linkTable[linkName]["linkIdentification"]["short_name"].indexOf("|") === -1
 				){
 					var exp = linkTable[linkName]["linkIdentification"]["short_name"];
 					if(exp.startsWith("http://") || exp.startsWith("https://")) exp = "<" +exp+ ">";
@@ -3386,7 +3610,6 @@ function getWhereTriplesVaribles(where){
 			// console.log(where[key]);
 			var triples = where[key]["triples"];
 			for(var triple in triples){
-				console.log(triples[triple]["subject"], triples[triple]["object"]);
 				
 				var subject = vq_visual_grammar.parse(triples[triple]["subject"]);
 				var object = vq_visual_grammar.parse(triples[triple]["object"]);

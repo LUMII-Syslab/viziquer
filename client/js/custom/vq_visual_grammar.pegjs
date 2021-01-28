@@ -22,7 +22,7 @@
 	STRING_LITERAL1 = "'" stringEmpty "'"
 	STRING_LITERAL2 = '"' stringEmpty '"'
 	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()] / "[" / "]")+)
-	stringEmpty = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()] / "[" / "]")*)
+	stringEmpty = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()&] / "[" / "]")*)
 	
 	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer";
 	BooleanIRI = "http://www.w3.org/2001/XMLSchema#boolean";
