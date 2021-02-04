@@ -105,27 +105,25 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
 						
-						<div class="form-group" id="resp-table">
-							<div id="resp-table-body">
-								 {{#each existingAttributes}}
-								<div class="resp-table-row attribute">
-									<div class="table-body-cell information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}">
-										<label class="label-checkbox" name="add-attribute">
-											<span>{{fulltext}}</span>
-										</label>	
-									</div>
-									<div class="table-body-cell">
-										<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>
-										<a class="btn btn-xs btn-default"><i id="attribute-helper-button" class="fa">h</i></a>
-										<a class="btn btn-xs btn-default"><i id="required-existing-attribute" class="fa fa-plus"></i></a>
-										<a class="btn btn-xs btn-info up-multi-field"><i id="attribute-move-button" class="fa fa-arrow-up"></i></a>
-										<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>
-									</div>
-								</div>
-								{{/each}}
-							</div>
+						<div class="form-group">
+							<table class="table table-striped" style="margin-bottom:0px;margin-left:10px;margin-right:10px;width:95%;">
+									<tbody>
+										{{#each existingAttributes}}
+											<tr class="attribute">
+												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}">{{fulltext}}</td>
+												<td class="pull-right">
+													<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>
+													<a class="btn btn-xs btn-default"><i id="attribute-helper-button" class="fa">h</i></a>
+													<a class="btn btn-xs btn-default"><i id="required-existing-attribute" class="fa fa-plus"></i></a>
+													<a class="btn btn-xs btn-info up-multi-field"><i id="attribute-move-button" class="fa fa-arrow-up"></i></a>
+													<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>
+												</td>
+											</tr>
+										{{/each}}
+										
+									</tbody>
+								</table>
 						</div>
-						
 						<div class="searchBox" id="searchBox-attribute">                                        
 							<input class="form-control" id="mySearch-attribute" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
 							&ensp;
@@ -183,7 +181,7 @@
                         <p>???</p>
 					</div>
                     <button id="cancel-add-attribute" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="cancel-save-attribute" type="button" class="btn btn-default">Save</button>
+                    <button id="save-add-attribute" type="button" class="btn btn-default">Save</button>
                     <button id="ok-add-attribute" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->

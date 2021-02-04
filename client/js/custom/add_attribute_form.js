@@ -58,8 +58,8 @@ Template.AddAttribute.events({
 			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
 				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
 				if(required.startsWith("fa fa-plus")) required = true;
-				else required = false;
-				
+				else if(required.startsWith("fa fa-check")) required = false;
+				else return;
 				var name = $(this).attr("name");
 				vq_obj.addField(name,null,required,false,false);
 			}
@@ -70,7 +70,7 @@ Template.AddAttribute.events({
 
 	},
 	
-	"click #cancel-save-attribute": function(e) {
+	"click #save-add-attribute": function(e) {
 
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -82,7 +82,8 @@ Template.AddAttribute.events({
 			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
 				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
 				if(required.startsWith("fa fa-plus")) required = true;
-				else required = false;
+				else if(required.startsWith("fa fa-check")) required = false;
+				else return;
 				
 				var name = $(this).attr("name");
 				vq_obj.addField(name,null,required,false,false);
@@ -118,8 +119,8 @@ Template.AddAttribute.events({
 	},
 	
 	"click #required-existing-attribute": function(e) {
-		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
-		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
+		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
+		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
 		if(labelText.startsWith("{+}")) {
 			fullText = labelText.substring(4);
 			// $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
@@ -135,6 +136,8 @@ Template.AddAttribute.events({
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "checked");
 		}
 		
+		
+		
 		var act_elem = Session.get("activeElement");
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 		if(typeof act_el !== 'undefined'){
@@ -142,9 +145,9 @@ Template.AddAttribute.events({
 			var requireValues = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues");	
 			var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 			var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-
 			// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+			
 				
 			if(requireValues=="checked"){
 				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
@@ -155,15 +158,16 @@ Template.AddAttribute.events({
 			}
 	
 			Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
+			console.log("RRRRRRRRRRRRR", compart, compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));
 		}
+		//$(e.target).closest(".attribute")[0].childNodes[1].textContent = fullText;
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		return;
 	},
 	
 	"click #attribute-helper-button": function(e) {
-
-		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
-		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent;
+		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
+		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
 		if(labelText.startsWith("{+}")){
 			fullText = "{h} "+labelText;
 			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "checked");
@@ -338,7 +342,7 @@ Template.AddNewAttribute.events({
 			attribute.setAttribute("expression", expression);
 			attribute.setAttribute("requireValues", requireValues);
 			attribute.setAttribute("helper", helper);
-			attribute.childNodes[1].childNodes[1].textContent = fullText;
+			attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
