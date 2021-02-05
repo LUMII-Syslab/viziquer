@@ -129,7 +129,7 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
     } // ja nav pārklājumu, tad atgriež masīvu ar kļūdaino izt. paziņojumiem
 }
 function FindDiagMatches(diagParamList){
-    
+    console.log("findDiags");
     let diagramTypeId       = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
     let StartFindElements   = getStartElements(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
     let findResults         = [];// sagrupētie pēc diagramId
@@ -138,6 +138,7 @@ function FindDiagMatches(diagParamList){
         let queryCheck = checkQuery(diagParamList.diagramId, diagramTypeId);
         if(queryCheck){  // pirms meklēt fragmentus, jāpārbauda pieprasījums
             // katrai speclīnijas jāmeklē savs fragments
+            console.log('query check ok');
             _.each(StartFindElements, function(startFindElement){
                 let Edges = getEdges(startFindElement._id);
                 if( Edges && _.size(Edges) > 0){
@@ -154,7 +155,7 @@ function FindDiagMatches(diagParamList){
             findResults = _.flatten(findResults);
             findResults = _.groupBy(findResults,'diagramId'); 
             let diagrams = _.keys(findResults);
-
+            console.log('findResults');
             _.each(diagrams, function(diagram){
                 let currentDiagramMatches = [];
                 _.each(findResults[diagram], function(diagramItem){
@@ -221,6 +222,7 @@ function FindDiagMatches(diagParamList){
             // nofiltrē tos matchus, kuri neietver visus meklējamo elementu idus,
             // katram matcha vienumam ir struktūra {elementId, findElementId}
             // elementId ir atrastais un findElementId ir tam atbisltošais meklējamais elements pierpasījuma diagrmmā
+            console.log('return ok');
             return {result: Results, expressionErrors: queryCheck}
         
         } else return {msg: "Find fragment elements and Replace fragment elements are overlapping"}

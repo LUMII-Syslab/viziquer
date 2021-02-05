@@ -35,7 +35,9 @@ Template.replaceResults.events({
     'click #selectMatch': function(){
         // replace selected occurence
         console.log("replace selected match");
+        console.time('ReplaceSingleAlt');
         replaceSingleMatch(this._id, this);
+        console.timeEnd('ReplaceSingleAlt');
     },
     'click #highlightMatch': function() {
         // highlight selected match
@@ -77,7 +79,6 @@ function markConflictingMatches(ResultsJson, elementsToLookup){
 }
 function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam sesijas datus ResultsJson
     _.each(ResultsJson, function(diagramItem){
-        console.log("updating session");
         if(diagramItem._id == CurrentDiagramId){
             
             _.each(diagramItem.matches, function(match){
@@ -103,6 +104,8 @@ function HighlightMatch(diagramId, match){
     });
 }
 function replaceSingleMatch(diagramId, list){
+    console.time('SingleMatch_replace');
+
     Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
         Session.set("DiagramErrorMsg",""); // Sessijas dati diagrammas paziņojumam
         if(response) {
@@ -125,6 +128,7 @@ function replaceSingleMatch(diagramId, list){
             Utilities.callMeteorMethod("replaceSingleOccurence",list, function(response){
                 LayoutElements(Session.get('activeDiagram')); // izkārto diagrammas elementus
             });
+            console.timeEnd('SingleMatch_replace');
         }
         else { // Ja diagrammas nav, jāuzstāda atbilstošs paziņojums
             Session.set("DiagramErrorMsg","Diagram does not exist");
@@ -151,12 +155,15 @@ function ReplaceAllOccurences(diagramId, list){
     });
 }
 function ReplaceInAllDiagrams(Results){
-    
+    // console.time('AllMatches_replace_time');
+    let ResultsSize = _.size(Results);
     Session.set("DiagramErrorMsg","");
     let NotFoundDiagrams = [];
+    let prefSum = 0;
     _.each(Results, function(ResultItem){
+        let t0 = performance.now();
         const CurrentDiagramId = ResultItem._id;
-        
+        console.time('Replace_All_by_one');
         Utilities.callMeteorMethod("checkDiagramExistance", CurrentDiagramId,function(response){
             
             if(response){
@@ -172,6 +179,12 @@ function ReplaceInAllDiagrams(Results){
                 NotFoundDiagrams.push(ResultItem.name);
                 Session.set("DiagramErrorMsg", "Diagrams: " + NotFoundDiagrams.join() + " do not exist");
             }
+            console.timeEnd('Replace_All_by_one');
+            let t1 = performance.now()
+            prefSum += t1-t0;
+            // console.log("perfPart: ", `${prefSum} ms`);
+            if(ResultItem._id == Results[ResultsSize-1]._id) console.log("Time to replace all matches: ", `${prefSum} ms`);
         });
-    })
+    }); 
+    // console.timeEnd('AllMatches_replace_time');
 }

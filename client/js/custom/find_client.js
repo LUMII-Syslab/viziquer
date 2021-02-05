@@ -77,7 +77,8 @@ Interpreter.customMethods({
             return { diagramId: diagID, projectId: Session.get("activeProject"), versionId: Session.get("versionId")};
         };
         function CallServerFind(serverMethodName, diagParamList){
-            console.log("CallServerFind", serverMethodName, diagParamList);
+            
+            console.time('Find_time');
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
                 Session.set("DiagramErrorMsg", "");
                 Session.set("ExpErrors", []);
@@ -88,6 +89,8 @@ Interpreter.customMethods({
                 else if(_.has(response, "expressionErrors")){
                     Session.set("ExpErrors", response.expressionErrors);
                     Session.set("ResultsJson", response.result);
+                    console.log('resp', response);
+                    console.timeEnd('Find_time');
                     if(_.size(response.result) == 0) Session.set("DiagramErrorMsg", "No results");
                 }
                 

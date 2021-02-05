@@ -29,7 +29,7 @@ Interpreter.methods({
 					diagramTypeId: DiagramTypes.findOne({diagramId: Session.get("activeDiagram")})._id,
 	                data: null,
 					};
-					console.log(list)
+					
 		Utilities.callMeteorMethod("EnableReplace",list, function(response){
             if(_.has(response, "msg")) alert(response.msg); // izvada paziņojumus, ja tādi ir
 		})

@@ -35,6 +35,6 @@ LayoutElements = (ActiveDiagramId) => {
                 Utilities.callMeteorMethod('updateLayout',list, function(response){
 
                 });  
-            } else alert("Diagram has no elements");
+            } 
         }
 }
