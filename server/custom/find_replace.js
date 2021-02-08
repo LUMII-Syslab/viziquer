@@ -106,7 +106,7 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
                             const CompType = CompartmentTypes.findOne({_id: compartment.compartmentTypeId});
                             if(CompType.inputType.type == "input"){
                                 try{
-                                    let parsedResultArray = Compartments_exp_grammar.parse(compartment.value,{});
+                                    let parsedResultArray = Compartments_exp_grammar.parse(compartment.input,{});
                                 }
                                 catch(error){
                                     let message = createErrorMessage(error);
@@ -358,53 +358,66 @@ function extractCompartmentValues(ParsedResultArray, startElements){
     console.log("ResultArray:", ResultArray);
     return ConcatenateResults(ResultArray);
 }
+/* functions for getting cmp type prefix and sufix */
+function getPrefix(compartmentType){
+    return (_.has(compartmentType, "prefix")) ? compartmentType.prefix : "";
+}
+function getSuffix(compartmentType){
+    return (_.has(compartmentType, "suffix")) ? compartmentType.suffix : "";
+}
+/*  */
 function parseCompartmentExpressions(startElements, endElementId, createdEndElementId){ // looking for expression which starts with @ symbol
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
-    
-    _.each(EndElementCompartments, function(EndElemCompartment){
-            let parsedResultArray;
-            const cmpType = CompartmentTypes.findOne({_id: EndElemCompartment.compartmentTypeId});
-            
-            if(cmpType.inputType.type == "input"){
-                try{
-                    parsedResultArray = Compartments_exp_grammar.parse(EndElemCompartment.value,{});
-                }
-                catch(error){
-                    console.log('Parse error', error);
-                }
+    const CompartmentCount = _.size(EndElementCompartments);
+    console.log("Cmp count", CompartmentCount);
+    if(CompartmentCount){
+        _.each(EndElementCompartments, function(EndElemCompartment){
+                let parsedResultArray;
+                const cmpType = CompartmentTypes.findOne({_id: EndElemCompartment.compartmentTypeId});
                 
-                let ExpressionResult    = extractCompartmentValues(parsedResultArray, startElements);
-                if(ExpressionResult.length){
-                    let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
-                    if(typeof ExistingCompartment === 'undefined'){
-                        let newCompartment = {
-                            _id:                    undefined,
-                            projectId:              EndElemCompartment.projectId,
-                            elementId:              createdEndElementId,
-                            diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
-                            diagramTypeId:          EndElemCompartment.diagramTypeId,
-                            elementTypeId:          EndElemCompartment.elementTypeId,
-                            versionId:              EndElemCompartment.versionId,
-                            compartmentTypeId:      EndElemCompartment.compartmentTypeId,
-                            input:                  ExpressionResult,
-                            value:                  ExpressionResult,
-                            index:                  EndElemCompartment.index,
-                            isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
-                            styleId:                EndElemCompartment.styleId,
-                            style:                  EndElemCompartment.style,
-                            valueLC:                ExpressionResult.toLowerCase()
-                        }
-                        newCompartment._id = Compartments.insert(newCompartment);
+                if(cmpType.inputType.type == "input"){
+                    try{
+                        parsedResultArray = Compartments_exp_grammar.parse(EndElemCompartment.input,{}); // labouts no value uz input
                     }
-                    else{ // atjauno atribūta vērtību, ja tur jau bija iekopēta cita 
-                        console.log('Updating created compartment:', Compartments.update(
-                            {elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
-                            {$set: {value: ExpressionResult, valueLC: ExpressionResult.toLowerCase(), input: ExpressionResult}}
-                            ));
+                    catch(error){
+                        console.log('Parse error', error);
+                    }
+                    
+                    let ExpressionResult    = extractCompartmentValues(parsedResultArray, startElements);
+                    
+                    if(ExpressionResult.length){
+                        let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
+                        let value = getPrefix(cmpType) + ExpressionResult + getSuffix(cmpType); console.log("value", value)
+                        if(typeof ExistingCompartment === 'undefined'){
+                            let newCompartment = {
+                                _id:                    undefined,
+                                projectId:              EndElemCompartment.projectId,
+                                elementId:              createdEndElementId,
+                                diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
+                                diagramTypeId:          EndElemCompartment.diagramTypeId,
+                                elementTypeId:          EndElemCompartment.elementTypeId,
+                                versionId:              EndElemCompartment.versionId,
+                                compartmentTypeId:      EndElemCompartment.compartmentTypeId,
+                                input:                  ExpressionResult,
+                                value:                  value,
+                                index:                  EndElemCompartment.index,
+                                isObjectRepresentation: EndElemCompartment.isObjectRepresentation,
+                                styleId:                EndElemCompartment.styleId,
+                                style:                  EndElemCompartment.style,
+                                valueLC:                value.toLowerCase()
+                            }
+                            newCompartment._id = Compartments.insert(newCompartment);
+                        }
+                        else{ // atjauno atribūta vērtību, ja tur jau bija iekopēta cita 
+                            console.log('Updating created compartment:', Compartments.update(
+                                {elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId},
+                                {$set: {value: value, valueLC: value.toLowerCase(), input: ExpressionResult}}
+                                ));
+                        }
                     }
                 }
-            }
-    });
+        });
+    }
 }
 function deleteElementEdges(elementId){
     let RelatedEdges = FindRelatedEdges(elementId);
@@ -488,7 +501,7 @@ function getNotVisitedItems() {
 }
 function replaceStruct(match){
     if(match){
-
+        console.time('replaceStructBefore_parse_time');
         let FindDiagram     = Elements.findOne({_id: _.first(match).findElementId}).diagramId;
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
@@ -621,8 +634,11 @@ function replaceStruct(match){
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 createCompartments(startElements, createdEndElement); 
+                console.timeEnd('replaceStructBefore_parse_time');
+                console.time('parse_and_delete_time');
                 parseCompartmentExpressions(startFindElements,endElement ,createdEndElement);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
+                console.timeEnd('parse_and_delete_time');
             }
             if(endElementTypeId == DeleteBoxType){
                 // ja speclīnijas beigās ir speciālais dzēšanas elements, tad aizvietošanas vietā ir dzēšana
@@ -664,6 +680,33 @@ Meteor.methods({
     findDiags: function(diagParamList){
         console.log(`Diagram id: ${diagParamList.diagramId}`);
         return FindDiagMatches(diagParamList);
+    },
+    replaceInAllDiagrams: function(diagramsMatchData){
+        let response = [];
+        _.each(diagramsMatchData, function(diagramMatchData){
+            _.each(diagramMatchData.matches, function(match){
+                if(match.status == 'new'){
+                    let FormatedMatch   = formatMatch(match);
+                    match.status        = 'used';
+    
+                    let respObj = { matchId: match.id, status: match.status};
+                    response.push(respObj);
+    
+                    replaceStruct(FormatedMatch);
+                    let elementsToLookup = _.flatten(_.map(match.match, function(matchItem){
+                        return _.map(matchItem.elements, function(element){
+                            return element.elementId;
+                        })
+                    }));
+                    diagramMatchData.matches = markConflictingMatches(diagramMatchData.matches, elementsToLookup);
+                }
+                else{
+                    let respObj = { matchId: match.id, status: match.status};
+                    response.push(respObj);
+                }
+            });
+        });
+        return response;
     },
     replaceAllOccurencesInDiagram: function(diagramMatchData){
         let responseResults = [];

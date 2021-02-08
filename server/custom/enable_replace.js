@@ -30,12 +30,34 @@ Meteor.methods({
                 });
                 insertReplaceButtonInToolbar(list.diagramId);// pievieno pogas diagrammu rīka panelī
                 insertLayoutButtonInToolbar(list.diagramId);
+                // insertToolbarButton(list.diagram, "fa-search", "Find", "Replace");
+                // insertToolbarButton(list.diagram, "fa-arrow-up", "Layout", "LayoutElements");
             }
     }
     else return {msg: "Replace has been already enabled"};
     // Ja KSBA jau bija iespējots, tad izvada atbilstošu paziņojumu
     }
 });
+/*
+function insertToolbarButton(diagramId, icon, name, procedure){
+    // function for diagram toolbar insert, has never been called
+    let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
+    if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
+    else{
+        console.log(DiagramTypes.update({_id: DiagramTypeId}, 
+            {
+                $push: {toolbar: { 
+                    id : generate_id(),
+                    icon : icon,
+                    name : name,
+                    procedure : procedure
+                    }
+                }
+            }
+        ));
+    }
+}
+*/
 function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
     let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
     if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
@@ -127,8 +149,13 @@ function createSpecializationLink(FindReplaceElement, superBox, list, specLineTy
         },
         styleId : "46b11d5d2e84faf863f83ec4",
         type : "Line",
-        points: [superBox.location.x, superBox.location.y, FindReplaceElement.location.x, superBox.location.y,
-        FindReplaceElement.location.x, FindReplaceElement.location.y],
+        points: [   superBox.location.x, 
+                    superBox.location.y, 
+                    FindReplaceElement.location.x, 
+                    superBox.location.y,
+                    FindReplaceElement.location.x,
+                    FindReplaceElement.location.y
+                ],
         toolId: list.toolId,
         versionId: list.versionId,
         data: {

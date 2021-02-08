@@ -95,6 +95,7 @@ function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam s
 function HighlightMatch(diagramId, match){
     Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
         Session.set("DiagramErrorMsg","");
+        Session.set('foundMatchElements', []);
         if(response) Session.set('foundMatchElements', match);
         else{
             Session.set('foundMatchElements', []);
@@ -154,37 +155,52 @@ function ReplaceAllOccurences(diagramId, list){
         }
     });
 }
-function ReplaceInAllDiagrams(Results){
-    // console.time('AllMatches_replace_time');
-    let ResultsSize = _.size(Results);
-    Session.set("DiagramErrorMsg","");
-    let NotFoundDiagrams = [];
-    let prefSum = 0;
-    _.each(Results, function(ResultItem){
-        let t0 = performance.now();
-        const CurrentDiagramId = ResultItem._id;
-        console.time('Replace_All_by_one');
-        Utilities.callMeteorMethod("checkDiagramExistance", CurrentDiagramId,function(response){
+// function ReplaceInAllDiagrams(Results){
+//     // console.time('AllMatches_replace_time');
+//     Session.set("DiagramErrorMsg","");
+//     let NotFoundDiagrams = [];
+//     _.each(Results, function(ResultItem){
+//         let t0 = performance.now();
+//         const CurrentDiagramId = ResultItem._id;
+//         console.time('Replace_All_by_one');
+//         Utilities.callMeteorMethod("checkDiagramExistance", CurrentDiagramId,function(response){
             
-            if(response){
-                Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(ReplaceResponse){
+//             if(response){
+//                 Utilities.callMeteorMethod('replaceAllOccurencesInDiagram', ResultItem, function(ReplaceResponse){
 
-                    let ResultsJson = Session.get('ResultsJson');
-                    ResultsJson = updateSession(ResultsJson, CurrentDiagramId, ReplaceResponse);
-                    Session.set('ResultsJson', ResultsJson);
-                }); 
-                LayoutElements(CurrentDiagramId);
-            }
-            else{
-                NotFoundDiagrams.push(ResultItem.name);
-                Session.set("DiagramErrorMsg", "Diagrams: " + NotFoundDiagrams.join() + " do not exist");
-            }
-            console.timeEnd('Replace_All_by_one');
-            let t1 = performance.now()
-            prefSum += t1-t0;
-            // console.log("perfPart: ", `${prefSum} ms`);
-            if(ResultItem._id == Results[ResultsSize-1]._id) console.log("Time to replace all matches: ", `${prefSum} ms`);
-        });
+//                     let ResultsJson = Session.get('ResultsJson');
+//                     ResultsJson = updateSession(ResultsJson, CurrentDiagramId, ReplaceResponse);
+//                     Session.set('ResultsJson', ResultsJson);
+//                 }); 
+//                 LayoutElements(CurrentDiagramId);
+//             }
+//             else{
+//                 NotFoundDiagrams.push(ResultItem.name);
+//                 Session.set("DiagramErrorMsg", "Diagrams: " + NotFoundDiagrams.join() + " do not exist");
+//             }
+//             console.timeEnd('Replace_All_by_one');
+//             let t1 = performance.now()
+//             prefSum += t1-t0;
+//             // console.log("perfPart: ", `${prefSum} ms`);
+//             if(ResultItem._id == Results[ResultsSize-1]._id) console.log("Time to replace all matches: ", `${prefSum} ms`);
+//         });
+//     }); 
+//     // console.timeEnd('AllMatches_replace_time');
+// }
+function ReplaceInAllDiagrams(Results){
+    Session.set("DiagramErrorMsg", "");
+    console.time('replaceAll_time');
+    Utilities.callMeteorMethod('replaceInAllDiagrams', Results, function(ReplaceResponse){
+        console.timeEnd('replaceAll_time')
+        let ResultsJson = Session.get('ResultsJson');
+        console.time('update_session_and_layout');
+        console.log("Replace response", ReplaceResponse);
+        _.each(Results, function(result){
+            const CurrentDiagramId = result._id;
+            ResultsJson = updateSession(ResultsJson, CurrentDiagramId, ReplaceResponse);
+            Session.set('ResultsJson', ResultsJson);
+            LayoutElements(CurrentDiagramId);
+        })
+        console.timeEnd('update_session_and_layout');
     }); 
-    // console.timeEnd('AllMatches_replace_time');
 }

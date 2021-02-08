@@ -915,7 +915,9 @@ Meteor.methods({
 	findEdge: function(edge, diagId){
 		findResults = [];
 		atrastasSkeles = [];
+		console.log('before find edge');
 		findEdge(edge, diagId);
+		console.log('after find Edge');
 		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram})
 		let diagrams 		= _.keys(groupedMatches);
 		let MatchCollection = [];
