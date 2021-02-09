@@ -499,16 +499,38 @@ function getNotVisitedItems() {
     }
     else return false;
 }
+function FindLinesToDelete(ReplaceLines, match){
+    let startElements       = _.pluck(ReplaceLines, "startElement");
+    let foundEdgesToDelete  = [];
+    _.each(startElements, function(startElement){
+        let RelatedEdges = FindRelatedEdges(startElement);
+        if(RelatedEdges){
+            _.each(RelatedEdges, function(edge){
+                if(startElement != edge.startElement && _.contains(startElements, edge.startElement)){
+                    let matchedEdge = _.findWhere(match, {findElementId: edge._id});
+                    foundEdgesToDelete.push(matchedEdge.elementId);
+                } 
+                // ja dotais aizvietošanas elements nav dotās līnijas sākuma elements, tad dotais aizvietošanas elements ir endElement un ir jāpārbauda
+                // dotās līnijas startElement. un otrādi
+                else if(startElement != edge.endElement && _.contains(startElements, edge.endElement)) {
+                    let matchedEdge = _.findWhere(match, {findElementId: edge._id});
+                    foundEdgesToDelete.push(matchedEdge.elementId);
+                } 
+            });
+        }
+    });
+    return foundEdgesToDelete;
+}
 function replaceStruct(match){
     if(match){
-        console.time('replaceStructBefore_parse_time');
         let FindDiagram     = Elements.findOne({_id: _.first(match).findElementId}).diagramId;
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
+        console.log("match ", match);
+        let LinesToDelete   = FindLinesToDelete(ReplaceLines,match); // atrodam līnijas, kuras jādzēš
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
         let endElements     = _.keys(ReplaceLines);
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
         let InsertedTracker = [];
-
         _.each(endElements, function(endElement){
             let endElementTypeId    = getElementTypeId(endElement);
             let startFindElements   = _.pluck(ReplaceLines[endElement], 'startElement');
@@ -632,13 +654,12 @@ function replaceStruct(match){
                 startElements       = _.pluck(startElements, 'elementId');
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
+                _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
+                // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
                 createCompartments(startElements, createdEndElement); 
-                console.timeEnd('replaceStructBefore_parse_time');
-                console.time('parse_and_delete_time');
                 parseCompartmentExpressions(startFindElements,endElement ,createdEndElement);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
-                console.timeEnd('parse_and_delete_time');
             }
             if(endElementTypeId == DeleteBoxType){
                 // ja speclīnijas beigās ir speciālais dzēšanas elements, tad aizvietošanas vietā ir dzēšana
