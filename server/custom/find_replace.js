@@ -519,7 +519,7 @@ function FindLinesToDelete(ReplaceLines, match){
             });
         }
     });
-    return foundEdgesToDelete;
+    return _.uniq(foundEdgesToDelete);
 }
 function replaceStruct(match){
     if(match){
@@ -545,12 +545,16 @@ function replaceStruct(match){
                 while(found) { found = getNotVisitedItems() }
 
                 createdBoxes = _.filter(apstaigatieReplace, function(apst){ return _.has(apst, "visited") });
-                createdBoxes = _.groupBy(_.map(createdBoxes, function(box){
+                console.log("InsertedTracker before createdBoxes container", InsertedTracker);
+                InsertedTracker = _.compact(InsertedTracker);
+                createdBoxes = _.map(createdBoxes, function(box){
+                    console.log("InsertedTracker in map", InsertedTracker);
                     let insertedBox = _.findWhere(InsertedTracker, {localId: box._id});
                     if(typeof insertedBox === 'undefined') return {local: box._id, inserted: undefined}
                     else return {local: box._id, inserted: insertedBox.inserted}
                 
-                }), 'local');
+                }); console.log("createdBoxes after map", createdBoxes);
+                createdBoxes = _.groupBy(createdBoxes, 'local');
 
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
                 console.log('created boxes before', createdBoxes);
@@ -650,7 +654,8 @@ function replaceStruct(match){
                         return {localId: apstaigatais._id, inserted: _.first(createdBoxes[apstaigatais._id]).inserted}
                     }
                 });
-                
+                InsertedTracker = _.compact(InsertedTracker);
+                console.log("InsertedTracker",InsertedTracker);
                 startElements       = _.pluck(startElements, 'elementId');
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
