@@ -113,8 +113,8 @@
 												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}">{{fulltext}}</td>
 												<td class="pull-right">
 													<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>
-													<a class="btn btn-xs btn-default"><i id="attribute-helper-button" class="fa">h</i></a>
-													<a class="btn btn-xs btn-default"><i id="required-existing-attribute" class="fa fa-plus"></i></a>
+													<a class="btn btn-xs btn-default" {{disabled}}><i id="attribute-helper-button" class="fa" >helper</i></a>
+													<a class="btn btn-xs btn-default" {{disabled}}><i id="required-existing-attribute" class="fa fa-plus" ></i></a>
 													<a class="btn btn-xs btn-info up-multi-field"><i id="attribute-move-button" class="fa fa-arrow-up"></i></a>
 													<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>
 												</td>
@@ -127,12 +127,13 @@
 						<div class="searchBox" id="searchBox-attribute">                                        
 							<input class="form-control" id="mySearch-attribute" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
 							&ensp;
-							<!-- <button type="button" id="attribute-new-button">New</button> -->
 							<a id="attribute-new-button" class="btn btn-xs btn-success button-new"><i>New</i></a>
-							<hr>
+							
 						</div>
                         <div class="form-group">
-
+							<div class="col-lg-10 attribute">
+                                      <hr>
+                                  </div>
                             {{#each attributes}}
 
                                 {{#if separator}}
@@ -142,7 +143,7 @@
                                 {{else}}
                                 <div class="col-lg-10 attribute" name="{{name}}" >
                                     <label class="label-checkbox" name="add-attribute">
-                                        <button id="required-attribute" name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
+                                        <button name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
                                         {{name}}
                                     </label>
                                 </div>
@@ -154,14 +155,14 @@
 							
                     </form>
 					
-					 <button onclick="showAssociations()">[+]</button>
-					 <form class="form-horizontal" role="form">
-						<div class="form-group-associations"  id="class-associations" style="display: none">
+					<button onclick="showAssociations()">[+]</button>
+					<form class="form-horizontal" role="form">
+						<div class="form-group-associations form-group"  id="class-associations" style="display: none">
 
                             {{#each associations}}
                                 <div class="col-lg-10 attribute" name="{{name}}" >
                                     <label class="label-checkbox" name="add-attribute">
-                                        <button id="required-attribute" name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
+                                        <button name="{{buttonName}}" type="button" class="{{buttonClassName}}" disabled="{{disabled}}"></button>
                                         {{name}}
                                     </label>
                                 </div>
@@ -228,14 +229,14 @@ function showAssociations() {
 						</div>
 						<div class="form-group compart-type" style="margin-bottom:10px;">
 							<label class="label-checkbox">					
-								<input id="add-new-attribute-requireValues" type="checkbox" class="dialog-checkbox input-sm" {{requireValues}}>
+								<input id="add-new-attribute-requireValues" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{requireValues}}>
 								<span class="custom-checkbox"></span>
 								Require Values
 							</label>
 						</div>
 						<div class="form-group compart-type" style="margin-bottom:10px;">
 							<label class="label-checkbox">
-								<input id="add-new-attribute-helper" type="checkbox" class="dialog-checkbox input-sm" {{helper}}>
+								<input id="add-new-attribute-helper" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{helper}}>
 								<span class="custom-checkbox"></span>
 								Helper
 							</label>

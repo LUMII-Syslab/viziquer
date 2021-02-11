@@ -2449,18 +2449,26 @@ VQ_Element.prototype = {
     return this.getMultiCompartmentSubCompartmentValues("Attributes",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
+    {title:"Prefixes",name:"Prefixes"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
   },
   // string,string,bool,bool,bool -->
   addField: function(exp,alias,requireValues,groupValues,isInternal) {
-    this.addCompartmentSubCompartments("Attributes",[
+    
+	var prefixesValue = "";
+	if(isInternal == true) prefixesValue = "h";
+	if(requireValues == true) prefixesValue = prefixesValue + "+";
+	if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+	
+	this.addCompartmentSubCompartments("Attributes",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
       {name:"Require Values",value:this.boolToString(requireValues)},
       {name:"GroupValues",value:this.boolToString(groupValues)},
-      {name:"IsInternal",value:this.boolToString(isInternal)}
+      {name:"IsInternal",value:this.boolToString(isInternal)},
+      {name:"Prefixes",value:prefixesValue,input:prefixesValue}
     ])
   },
 	// --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]

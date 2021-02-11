@@ -7,6 +7,7 @@ Template.AddNewAttribute.expression = new ReactiveVar("");
 Template.AddNewAttribute.requireValues = new ReactiveVar("false");
 Template.AddNewAttribute.helper = new ReactiveVar("false");
 Template.AddNewAttribute.attributeid = new ReactiveVar("");
+Template.AddNewAttribute.selectThis = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddAttribute: function () {
@@ -67,7 +68,6 @@ Template.AddAttribute.events({
 		};
 		
 		return;
-
 	},
 	
 	"click #save-add-attribute": function(e) {
@@ -98,7 +98,7 @@ Template.AddAttribute.events({
 		return;
 	},
 	
-	"click #required-attribute": function(e) {
+	"click .button-required": function(e) {
 		var attributeName = $(e.target).closest(".attribute")[0].getAttribute("name")
 		if(e.target.className == "button button-required") {
 			e.target.className = "fa fa-check button button-required";
@@ -119,103 +119,118 @@ Template.AddAttribute.events({
 	},
 	
 	"click #required-existing-attribute": function(e) {
-		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
-		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
-		if(labelText.startsWith("{+}")) {
-			fullText = labelText.substring(4);
-			// $(e.target).closest(".attribute")[0].childNodes[1].childNodes[1].childNodes[1].textContent = labelText.substring(4);
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "");
-		}else if(labelText.startsWith("{h} {+}")) {
-			fullText = "{h} "+labelText.substring(7);
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "");
-		}else if(labelText.startsWith("{h}")){
-			fullText = "{h} {+} "+labelText.substring(3);
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "checked");
-		}else {
-			fullText = "{+} "+labelText;
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("requireValues", "checked");
-		}
-		
-		
-		
-		var act_elem = Session.get("activeElement");
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-		if(typeof act_el !== 'undefined'){
-				
-			var requireValues = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues");	
-			var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-			var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-			// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
+			var act_elem = Session.get("activeElement");
+			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			if(typeof act_el !== 'undefined'){
+				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
 			
+				var prefixesValue = "";
 				
-			if(requireValues=="checked"){
-				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
-				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "true";
-			} else {
-				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "";
-				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "false";
+				if(attributeInformation.getAttribute("helper") == "checked") prefixesValue = "h";
+				if(attributeInformation.getAttribute("requireValues") != "checked") {
+					prefixesValue = prefixesValue +  "+";
+					compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "true";
+					attributeInformation.setAttribute("requireValues", "checked")
+				} else {
+					attributeInformation.setAttribute("requireValues", "")
+					compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = "false";
+				}
+				
+				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+				
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;	
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;	
+				
+				var fullText = prefixesValue;
+				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
+				fullText = fullText + attributeInformation.getAttribute("expression");
+				
+				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+				
+				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
-	
-			Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
-			console.log("RRRRRRRRRRRRR", compart, compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
-		//$(e.target).closest(".attribute")[0].childNodes[1].textContent = fullText;
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		return;
 	},
 	
 	"click #attribute-helper-button": function(e) {
-		var fullText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
-		var labelText = $(e.target).closest(".attribute")[0].childNodes[1].textContent;
-		if(labelText.startsWith("{+}")){
-			fullText = "{h} "+labelText;
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "checked");
-		}else if(labelText.startsWith("{h} {+}")) {
-			fullText = labelText.substring(4);
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "");
-		}else if(labelText.startsWith("{h}")){
-			fullText = labelText.substring(4);
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "");
-		}else {
-			fullText = "{h} "+labelText;
-			$(e.target).closest(".attribute")[0].childNodes[1].setAttribute("helper", "checked");
-		}
-		
-		var act_elem = Session.get("activeElement");
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-		if(typeof act_el !== 'undefined'){
+		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
+			var act_elem = Session.get("activeElement");
+			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			if(typeof act_el !== 'undefined'){
+				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
+			
+				var prefixesValue = "";
 				
-			var helper = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper");
-	
-			var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-			var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
-
-			// var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
+				if(attributeInformation.getAttribute("helper") != "checked") {
+					prefixesValue = "h";
+					compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "true";
+					attributeInformation.setAttribute("helper", "checked")
+				} else {
+					attributeInformation.setAttribute("helper", "")
+					compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "false";
+				}
+				if(attributeInformation.getAttribute("requireValues") == "checked") {
+					prefixesValue = prefixesValue +  "+";
+				}
 				
-			if(helper=="checked"){
-				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "{h} ";
-				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "true";
-			} else {
-				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "";
-				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "false";
+				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+				
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;	
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;	
+				
+				var fullText = prefixesValue;
+				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
+				fullText = fullText + attributeInformation.getAttribute("expression");
+				
+				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+				
+				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
-	
-			Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
-		
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
-		
 		return;
 	},
 	
+	
+	
 	"click #attribute-move-button": function(e) {
-		var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
-		// console.log("TTTTTTTTTT", e, compart);
-		
-		return;
+		var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
 
+		var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+		var compart_id = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name");
+
+		var index = -1;
+		var current_compart = {};
+
+		for (var i=0;i<compartments.length;i++) {
+			var compart = compartments[i];
+			if (compart._id == compart_id) {
+				current_compart = compart;
+				index = i;
+				break;
+			}
+		}
+		
+		var prev_index = index - 1;
+		if (prev_index >= 0) {
+			var prev_compart = compartments[prev_index];
+			var list = {projectId: Session.get("activeProject"),
+						elementId: Session.get("activeElement"),
+						prevCompartment: {id: prev_compart._id, index: prev_compart.index,},
+						currentCompartment: {id: current_compart._id, index: current_compart.index,},
+					};
+			Utilities.callMeteorMethod("swapCompartments", list);
+		}
+		
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		return;
 	},
 	
 	
@@ -226,7 +241,7 @@ Template.AddAttribute.events({
 					versionId: Session.get("versionId"),
 				};
 
-				Utilities.callMeteorMethod("removeCompartment", list);
+		Utilities.callMeteorMethod("removeCompartment", list);
 		
 		var attr_list = getAttributes();
 		var link_list = getAssociations();
@@ -235,7 +250,6 @@ Template.AddAttribute.events({
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		
 		return;
-
 	},
 	
 	"keyup #mySearch-attribute": function(){
@@ -257,15 +271,9 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.expression.set("");
 		Template.AddNewAttribute.requireValues.set("");
 		Template.AddNewAttribute.helper.set("");
+		Template.AddNewAttribute.selectThis.set("");
 		Template.AddNewAttribute.attributeid.set("newAttribute");
-		
-		console.log("alias", Template.AddNewAttribute.alias)
-		console.log("alias", Template.AddNewAttribute.alias)
-		console.log("expression", Template.AddNewAttribute.expression)
-		console.log("requireValues", Template.AddNewAttribute.requireValues)
-		console.log("helper", Template.AddNewAttribute.helper)
-		console.log("attributeid", Template.AddNewAttribute.attributeid)
-		
+
 		$("#add-new-attribute-form").modal("show");
 		return;
 	},
@@ -277,14 +285,9 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.requireValues.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues"));
 		Template.AddNewAttribute.helper.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper"));		
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
-		
-		console.log("alias", Template.AddNewAttribute.alias)
-		console.log("alias", Template.AddNewAttribute.alias)
-		console.log("expression", Template.AddNewAttribute.expression)
-		console.log("requireValues", Template.AddNewAttribute.requireValues)
-		console.log("helper", Template.AddNewAttribute.helper)
-		console.log("attributeid", Template.AddNewAttribute.attributeid)
-		
+		var selectThis = "";
+		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") == "(select this)")selectThis = "disabled";
+		Template.AddNewAttribute.selectThis.set(selectThis);		
 		$("#add-new-attribute-form").modal("show");
 		return;
 	},
@@ -312,6 +315,10 @@ Template.AddNewAttribute.helpers({
 		return Template.AddNewAttribute.attributeid.get();
 	},
 	
+	selectThis: function() {
+		return Template.AddNewAttribute.selectThis.get();
+	},
+	
 });
 
 Template.AddNewAttribute.events({
@@ -323,12 +330,16 @@ Template.AddNewAttribute.events({
 		var requireValues = document.getElementById("add-new-attribute-requireValues").checked ;
 		var helper = document.getElementById("add-new-attribute-helper").checked ;
 		var fullText = "";
-		if(helper == true) fullText = "{h} ";
-		if(requireValues == true) fullText = fullText + "{+} ";
+		
+		var prefixesValue = "";
+		if(helper == true) prefixesValue = "h";
+		if(requireValues == true) prefixesValue = prefixesValue + "+";
+		if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+		
+		fullText = prefixesValue;
 		if(alias != null && alias != "") fullText = fullText + alias + "<-";
 		fullText = fullText + expression;
-		
-		console.log(alias, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"))
+
 		if($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -342,7 +353,7 @@ Template.AddNewAttribute.events({
 			attribute.setAttribute("expression", expression);
 			attribute.setAttribute("requireValues", requireValues);
 			attribute.setAttribute("helper", helper);
-			attribute.textContent = fullText;
+			// attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
@@ -355,13 +366,15 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["input"] = expression;
 				if(alias!="" || alias!=null)compart.subCompartments["Attributes"]["Attributes"]["Field Name"]["value"] = alias+"<-";
 				compart.subCompartments["Attributes"]["Attributes"]["Field Name"]["input"] = alias;
-				if(helper==true)compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "{h} ";
+				// if(helper==true)compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["value"] = "{h} ";
 				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = helper.toString() ;
-				if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
+				// if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
 				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = requireValues.toString() ;
-				
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
+				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
 			}
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
 		return;
 	},
@@ -521,22 +534,44 @@ function getExistingAttributes(){
 	var selected_elem_id = Session.get("activeElement");
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		var vq_obj = new VQ_Element(selected_elem_id);
-			
-		var field_list = vq_obj.getFields().map(function(f) {
+		
+		var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
+		var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+
+		var field_list = [];
+		
+		var fieldListTemp = vq_obj.getFields();
+		for(var compartment in compartments){
+			for(var field in fieldListTemp){
+				if(fieldListTemp[field]["_id"] == compartments[compartment]["_id"]) {
+					field_list.push(fieldListTemp[field]);
+					break;
+				}
+			}
+		}
+		
+		var field_list = field_list.map(function(f) {
+		// var field_list = vq_obj.getFields().map(function(f) {
 			var al = f.alias;
 			if(al==null) al="";
 			var r = "";
 			if(f.requireValues == true) {
 				r = "checked";
 			}
-			var fulltext = f.fulltext;
+			var fulltext = f.Prefixes;
+			if(typeof fulltext == "undefined") fulltext = "";
+			// var fulltext = f.fulltext;
 			var hide = "false";
-			// if(typeof f.alias !== 'undefined' && f.alias != "") fulltext = f.alias + "<-" + fulltext;
+			if(typeof f.alias !== 'undefined' && f.alias != "") fulltext = fulltext + f.alias + "<-";
+			fulltext = fulltext + f.exp;
 			if(f.isInternal == true) {
 				hide = "checked";
 			}
 			
-			return {name:f.exp, requireValues: r, fulltext:fulltext, al:al, hel:hide, id:f._id}});
+			var disabled = "";
+			if(f.exp == "(select this)") disabled = "disabled";
+			
+			return {name:f.exp, requireValues: r, fulltext:fulltext, al:al, hel:hide, id:f._id, disabled:disabled}});
 		return field_list;
 	}
 	return [];

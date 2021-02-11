@@ -195,14 +195,27 @@ Template.show_multi_field_form.events({
 
 		var multi_field = form.find(".multi-field");
 		var res = Dialog.buildSubCompartmentTree(multi_field, compart_type, sub_compart_tree);
-
-		var src_id = form.attr("compartmentId");
-
+		
 		var input = res;
 		var value = input;
+		
+		if(typeof sub_compart_tree["Attributes"] !== "undefined"){
+			var prefixesValue = "";
+	
+			if(sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
+			if(sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
+			if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+			
+			sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
+			sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
+			value = prefixesValue + value;
+		}
+		
+		var src_id = form.attr("compartmentId");
 
 		var elem_style;
 		var compart_style;
+		
 
 		Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 	},
