@@ -313,22 +313,31 @@ function createCompartments(oldElementsList, newElementId){
 function ConcatenateResults(ResultArray){
     return ResultArray.join("");
 }
-function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements){// line.atr
+function splitCompartmentvalue(value, parserdArray){
+    let SplittedCompartment = value.split(parserdArray.delimiter);
+    let size = SplittedCompartment.length;
+    if(parserdArray.index > size - 1) return "";
+    else return SplittedCompartment[parserdArray.index];
+}
+function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements, parserdArray = {} ){// line.atr
     
     let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
     let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
     console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
     if(SpecLine){
         let startElement = Elements.findOne({_id: SpecLine.elementId}).startElement;
-        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement])); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
+        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]), parserdArray); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
     }
     else console.log('not found spec line');
 }
-function findCompartValueByName(CompartmentName, startElements){
+function findCompartValueByName(CompartmentName, startElements, parserdArray = {} ){
     let value = "";
-    for(let i = 0; i < startElements.length; i++){
+    let size = startElements.length;
+    for(let i = 0; i < size; i++){
         let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
-        for(let j = 0; j < StartElementCompartments.length; j++){
+        let startElemCompSize = StartElementCompartments.length;
+
+        for(let j = 0; j < startElemCompSize; j++){
             let CompartmentType = CompartmentTypes.findOne({_id: StartElementCompartments[j].compartmentTypeId});
             
             if(CompartmentName == CompartmentType.name){
@@ -339,6 +348,7 @@ function findCompartValueByName(CompartmentName, startElements){
         }
         if(value != "") break;
     }
+    if( value != "" && parserdArray.type == "Split") value = splitCompartmentvalue(value, parserdArray);
     return value;
 }
 function extractCompartmentValues(ParsedResultArray, startElements){
@@ -351,6 +361,8 @@ function extractCompartmentValues(ParsedResultArray, startElements){
                 return findCompartValueByName(resultItem.AttributeName, startElements);
             case "StringConstant":
                 return resultItem.Value;
+            case "Split":
+                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements, resultItem);
             default: 
                 return "";
         }
