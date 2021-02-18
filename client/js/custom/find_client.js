@@ -4,7 +4,13 @@ Interpreter.customMethods({
         let ActiveDiagramId = Session.get('activeDiagram');
         (ActiveDiagramId !== undefined)? LayoutElements(ActiveDiagramId) : console.log('no active diagram found');
     },
-
+    TooglePalette: function(){
+        let ReplacePaletteButtons = PaletteButtons.find({diagramTypeId: Session.get("diagramType"), name: {$in: ["RemoveElement","FindReplaceLink"]}}).fetch();
+        _.each(ReplacePaletteButtons, function(PaletteButton){
+            let button = document.getElementById(PaletteButton._id);
+            // piekļūt DOM elementam iespēju neatradu, kaut kā jāmanipulē ar PaletteButtons koleciju
+        });
+    },
     Find: function()
     {
         function GetActiveElement()

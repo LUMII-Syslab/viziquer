@@ -28,17 +28,18 @@ Meteor.methods({
                 createSpecializationLink(FindReplaceElement, BOX, list,SpecLineType);
                 ElementTypes.update({elementId: BOX._id}, {$set:{superTypeIds: [FindReplaceElementType]}});
                 });
-                insertReplaceButtonInToolbar(list.diagramId);// pievieno pogas diagrammu rīka panelī
-                insertLayoutButtonInToolbar(list.diagramId);
-                // insertToolbarButton(list.diagram, "fa-search", "Find", "Replace");
-                // insertToolbarButton(list.diagram, "fa-arrow-up", "Layout", "LayoutElements");
+                // insertReplaceButtonInToolbar(list.diagramId);// pievieno pogas diagrammu rīka panelī
+                // insertLayoutButtonInToolbar(list.diagramId);
+                insertToolbarButton(list.diagramId, "fa-search", "Find", "Replace");
+                insertToolbarButton(list.diagramId, "fa-arrow-up", "Layout", "LayoutElements");
+                insertToolbarButton(list.diagramId, "fa-eye-slash", "TooglePalette","TooglePalette");
             }
     }
     else return {msg: "Replace has been already enabled"};
     // Ja KSBA jau bija iespējots, tad izvada atbilstošu paziņojumu
     }
 });
-/*
+
 function insertToolbarButton(diagramId, icon, name, procedure){
     // function for diagram toolbar insert, has never been called
     let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
@@ -57,41 +58,41 @@ function insertToolbarButton(diagramId, icon, name, procedure){
         ));
     }
 }
-*/
-function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
-    let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
-    if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
-    else{
-        console.log(DiagramTypes.update({_id: DiagramTypeId}, 
-            {
-                $push: {toolbar: { 
-                    id : generate_id(),
-                    icon : "fa-search",
-                    name : "Find",
-                    procedure : "Replace"
-                    }
-                }
-            }
-        ));
-    }
-}
-function insertLayoutButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
-    let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
-    if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
-    else{
-        console.log(DiagramTypes.update({_id: DiagramTypeId}, 
-            {
-                $push: {toolbar: { 
-                    id : generate_id(),
-                    icon : "fa-arrow-up",
-                    name : "Layout",
-                    procedure : "LayoutElements"
-                    }
-                }
-            }
-        ));
-    }
-}
+
+// function insertReplaceButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
+//     let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
+//     if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
+//     else{
+//         console.log(DiagramTypes.update({_id: DiagramTypeId}, 
+//             {
+//                 $push: {toolbar: { 
+//                     id : generate_id(),
+//                     icon : "fa-search",
+//                     name : "Find",
+//                     procedure : "Replace"
+//                     }
+//                 }
+//             }
+//         ));
+//     }
+// }
+// function insertLayoutButtonInToolbar(diagramId){ // def's diagram Id. Inserts EnableReplace button in configuration diagram toolbar
+//     let DiagramTypeId = DiagramTypes.findOne({diagramId: diagramId})._id; // current def diagram type id
+//     if( typeof DiagramTypeId === 'undefined') console.log('Diagram type not found');
+//     else{
+//         console.log(DiagramTypes.update({_id: DiagramTypeId}, 
+//             {
+//                 $push: {toolbar: { 
+//                     id : generate_id(),
+//                     icon : "fa-arrow-up",
+//                     name : "Layout",
+//                     procedure : "LayoutElements"
+//                     }
+//                 }
+//             }
+//         ));
+//     }
+// }
 function createSpecializationLink(FindReplaceElement, superBox, list, specLineTypeId) {
 
     let newSpecLineObj = {

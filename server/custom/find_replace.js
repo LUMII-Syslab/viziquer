@@ -319,20 +319,23 @@ function splitCompartmentvalue(value, parserdArray){
     if(parserdArray.index > size - 1) return "";
     else return SplittedCompartment[parserdArray.index];
 }
-function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements, parserdArray = {} ){// line.atr
+function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements, parserdArray = {}, match ){// line.atr
     
     let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
     let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
     console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
     if(SpecLine){
         let startElement = Elements.findOne({_id: SpecLine.elementId}).startElement;
-        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]), parserdArray); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
+        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]), parserdArray, match); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
     }
     else console.log('not found spec line');
 }
-function findCompartValueByName(CompartmentName, startElements, parserdArray = {} ){
+function findCompartValueByName(CompartmentName, startElements, parserdArray = {} , match){
     let value = "";
     let size = startElements.length;
+    startElements = _.map(startElements, function(startElement){
+        return _.findWhere(match, {findElementId: startElement}).elementId;
+    });
     for(let i = 0; i < size; i++){
         let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
         let startElemCompSize = StartElementCompartments.length;
@@ -351,18 +354,18 @@ function findCompartValueByName(CompartmentName, startElements, parserdArray = {
     if( value != "" && parserdArray.type == "Split") value = splitCompartmentvalue(value, parserdArray);
     return value;
 }
-function extractCompartmentValues(ParsedResultArray, startElements){
+function extractCompartmentValues(ParsedResultArray, startElements, match){
     // izrēķina atribūta vērtību atkarībā no izteiksmes locekļa tipa
     let ResultArray         = _.map(ParsedResultArray, function(resultItem){
         switch(resultItem.type){
             case "LineWithAttribute":
-                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements);
+                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements,{}, match);
             case "Attribute":
-                return findCompartValueByName(resultItem.AttributeName, startElements);
+                return findCompartValueByName(resultItem.AttributeName, startElements, match);
             case "StringConstant":
                 return resultItem.Value;
             case "Split":
-                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements, resultItem);
+                return findCompartValueBySpecLine(resultItem.LineName, resultItem.AttributeName,startElements, resultItem, match);
             default: 
                 return "";
         }
@@ -378,7 +381,7 @@ function getSuffix(compartmentType){
     return (_.has(compartmentType, "suffix")) ? compartmentType.suffix : "";
 }
 /*  */
-function parseCompartmentExpressions(startElements, endElementId, createdEndElementId){ // looking for expression which starts with @ symbol
+function parseCompartmentExpressions(startElements, endElementId, createdEndElementId, match){ // looking for expression which starts with @ symbol
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
     const CompartmentCount = _.size(EndElementCompartments);
     console.log("Cmp count", CompartmentCount);
@@ -395,7 +398,7 @@ function parseCompartmentExpressions(startElements, endElementId, createdEndElem
                         console.log('Parse error', error);
                     }
                     
-                    let ExpressionResult    = extractCompartmentValues(parsedResultArray, startElements);
+                    let ExpressionResult    = extractCompartmentValues(parsedResultArray, startElements, match);
                     
                     if(ExpressionResult.length){
                         let ExistingCompartment = Compartments.findOne({elementId: createdEndElementId, compartmentTypeId: EndElemCompartment.compartmentTypeId});
@@ -601,7 +604,7 @@ function replaceStruct(match){
                             else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
                                 console.log('NO START LOCATION');}
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
-                            if(!_.contains(endElements, start.local)) parseCompartmentExpressions(startFindElements, start.local, start.inserted);
+                            if(!_.contains(endElements, start.local)) parseCompartmentExpressions(startFindElements, start.local, start.inserted, match);
                         }
                         else {
                             console.log('found start eleemnt');
@@ -627,7 +630,7 @@ function replaceStruct(match){
                             else {endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
                                 console.log('no LOCATION');}
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
-                            if(!_.contains(endElements, end.local)) parseCompartmentExpressions(startFindElements, end.local, end.inserted);
+                            if(!_.contains(endElements, end.local)) parseCompartmentExpressions(startFindElements, end.local, end.inserted, match);
                         }
                         else{
                             console.log('found end eleemnt');
@@ -635,7 +638,7 @@ function replaceStruct(match){
                         if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                             let NewEdgeId = Elements.insert(newEdge);
-                            parseCompartmentExpressions(startFindElements, element._id, NewEdgeId);
+                            parseCompartmentExpressions(startFindElements, element._id, NewEdgeId, match);
                         }
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
@@ -657,7 +660,7 @@ function replaceStruct(match){
                             if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
                             else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
                             _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
-                            if(!_.contains(endElements, box.local)) parseCompartmentExpressions(startFindElements, box.local, box.inserted);
+                            if(!_.contains(endElements, box.local)) parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
                         }
                     }
                 });
@@ -675,7 +678,7 @@ function replaceStruct(match){
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
                 createCompartments(startElements, createdEndElement); 
-                parseCompartmentExpressions(startFindElements,endElement ,createdEndElement);
+                parseCompartmentExpressions(startFindElements,endElement ,createdEndElement,match);
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
             }
             if(endElementTypeId == DeleteBoxType){
