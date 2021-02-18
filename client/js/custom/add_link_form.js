@@ -215,6 +215,8 @@ Template.AddLink.events({
 					Interpreter.destroyErrorMsg();
 					Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
 					Template.AggregateWizard.showDisplay.set("block");
+					Template.AggregateWizard.fromAddLink.set(true);
+					
 					$("#aggregate-wizard-form").modal("show");
 				} else {
 					//alert("No class selected - wizard may work unproperly");

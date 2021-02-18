@@ -11,7 +11,7 @@ Template.AddNewAttribute.selectThis = new ReactiveVar("");
 
 Interpreter.customMethods({
 	AddAttribute: function () {
-		
+		// attribute-to-add
 		Template.AddAttribute.attrList.set(getAttributes());
 		Template.AddAttribute.linkList.set(getAssociations());
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
@@ -374,8 +374,19 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
 			}
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());		
 		}
+		
+		Template.AddNewAttribute.alias.set("");
+		Template.AddNewAttribute.expression.set("");
+		Template.AddNewAttribute.requireValues.set("");
+		Template.AddNewAttribute.helper.set("");
+			
+		document.getElementById("add-new-attribute-alias").value = "";
+		document.getElementById("add-new-attribute-expression").value = "";
+		document.getElementById("add-new-attribute-requireValues").checked = false;
+		document.getElementById("add-new-attribute-helper").checked = false;
+		
 		return;
 	},
 	
@@ -419,8 +430,6 @@ function getAttributes(){
 			// if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) attr_list.push({name:"(select this)"});
 			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
 			else attr_list.push({name:"(select this)"});
-			
-			//attr_list.push({name:"*"});
 						
 			attr_list.push({separator:"line"});
 			
@@ -470,9 +479,11 @@ function getAttributes(){
 				}
 				attr.disabled = disabled;
 				attr.buttonClassName = buttonClassName;
+	
 				attr.buttonName = "required-attribute";
 				return attr;
 			});
+			
 			return attr_list;
 
 		}
@@ -535,23 +546,23 @@ function getExistingAttributes(){
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		var vq_obj = new VQ_Element(selected_elem_id);
 		
-		var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
-		var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+		// var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
+		// var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
 
-		var field_list = [];
+		// var field_list = [];
 		
-		var fieldListTemp = vq_obj.getFields();
-		for(var compartment in compartments){
-			for(var field in fieldListTemp){
-				if(fieldListTemp[field]["_id"] == compartments[compartment]["_id"]) {
-					field_list.push(fieldListTemp[field]);
-					break;
-				}
-			}
-		}
+		// var fieldListTemp = vq_obj.getFields();
+		// for(var compartment in compartments){
+			// for(var field in fieldListTemp){
+				// if(fieldListTemp[field]["_id"] == compartments[compartment]["_id"]) {
+					// field_list.push(fieldListTemp[field]);
+					// break;
+				// }
+			// }
+		// }
 		
-		var field_list = field_list.map(function(f) {
-		// var field_list = vq_obj.getFields().map(function(f) {
+		// var field_list = field_list.map(function(f) {
+		var field_list = vq_obj.getFields().map(function(f) {
 			var al = f.alias;
 			if(al==null) al="";
 			var r = "";

@@ -186,7 +186,12 @@ Template.AddMergeValues.events({
 					
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
-				vq_obj.addAggregateField(expr,mergeAliasName,false);
+				
+				var requireValues = $('input[id=distinct-merge-check-box]').val();
+				if(requireValues == "on") requireValues = true;
+				else requireValues = false;
+
+				vq_obj.addAggregateField(expr,mergeAliasName,requireValues);
 				//Template.AddMergeValues.hideField.get().prop("checked", true);
 				Template.AddMergeValues.expressionField.get().val("");
 				Template.AddMergeValues.aliasField.get().val("");
@@ -226,10 +231,15 @@ Template.AddMergeValues.events({
 	"change #radio-function-form": function() {
 		// var newFunction = $('option[name=function-name-merge]:selected').val();
 		var newFunction = $('input[name=radio-function]:checked').val();
+
+		if(newFunction == "count_distinct"){
+			document.getElementById("distinct-merge").style.display = "none";
+		} else {
+			document.getElementById("distinct-merge").style.display = "block";
+		}
 		
 		//Set at least/at most
 		if (newFunction == "count" || newFunction == "sum" || newFunction == "avg" || newFunction == "count_distinct"){
-			console.log("OOOOOOOOOOOOO", newFunction);
 			$('input[id=merge-results-least]').attr('disabled', false);
 			$('input[id=merge-results-most]').attr('disabled', false);
 		} else {

@@ -2446,13 +2446,30 @@ VQ_Element.prototype = {
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
   getFields: function() {
-    return this.getMultiCompartmentSubCompartmentValues("Attributes",
+    var field_list =  this.getMultiCompartmentSubCompartmentValues("Attributes",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
     {title:"Prefixes",name:"Prefixes"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
+	
+	
+	var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
+	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+
+	var compratmentList = [];
+		
+	for(var compartment in compartments){
+		for(var field in field_list){
+			if(field_list[field]["_id"] == compartments[compartment]["_id"]) {
+				compratmentList.push(field_list[field]);
+				break;
+			}
+		}
+	}
+	
+	return compratmentList;
   },
   // string,string,bool,bool,bool -->
   addField: function(exp,alias,requireValues,groupValues,isInternal) {

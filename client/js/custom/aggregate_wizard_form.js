@@ -4,6 +4,14 @@ Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
 Template.AggregateWizard.endClassId = new ReactiveVar("No end");
 Template.AggregateWizard.linkId = new ReactiveVar("No link");
 Template.AggregateWizard.showDisplay = new ReactiveVar("none");
+Template.AggregateWizard.aggregation = new ReactiveVar("count");
+Template.AggregateWizard.expression = new ReactiveVar("");
+Template.AggregateWizard.require = new ReactiveVar("");
+Template.AggregateWizard.distinct = new ReactiveVar("");
+Template.AggregateWizard.fromAddLink = new ReactiveVar(true);
+Template.AggregateWizard.expressionField = new ReactiveVar("");
+Template.AggregateWizard.aliasField = new ReactiveVar("");
+Template.AggregateWizard.requireField = new ReactiveVar("");
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
@@ -30,11 +38,63 @@ Template.AggregateWizard.helpers({
 	showDisplay: function(){
 		return Template.AggregateWizard.showDisplay.get();
 	},
+	
+	selectedCount: function() {
+		if(Template.AggregateWizard.aggregation.get() == "count") return "checked";
+		return "";
+	},
+	
+	expression: function() {
+		return Template.AggregateWizard.expression.get();
+	},
+	
+	require: function() {
+		return Template.AggregateWizard.require.get();
+	},
+	
+	distinct: function() {
+		return Template.AggregateWizard.distinct.get();
+	},
+
+	selectedDistinct: function() {
+		if(Template.AggregateWizard.aggregation.get() == "count_distinct") return "checked";
+		return "";
+	},
+
+	selectedSum: function() {
+		if(Template.AggregateWizard.aggregation.get() == "sum") return "checked";
+		return "";
+	},
+
+	selectedAvg: function() {
+		if(Template.AggregateWizard.aggregation.get() == "avg") return "checked";
+		return "";
+	},
+
+	selectedMax: function() {
+		if(Template.AggregateWizard.aggregation.get() == "max") return "checked";
+		return "";
+	},
+
+	selectedMin: function() {
+		if(Template.AggregateWizard.aggregation.get() == "min") return "checked";
+		return "";
+	},
+
+	selectedSample: function() {
+		if(Template.AggregateWizard.aggregation.get() == "sample") return "checked";
+		return "";
+	},
+
+	selectedConcat: function() {
+		if(Template.AggregateWizard.aggregation.get() == "group_concat") return "checked";
+		return "";
+	},
 });
 
 Template.AggregateWizard.events({
-	"click #ok-aggregate-wizard": function() {
-		var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+	"click #ok-aggregate-wizard": function() {	
+		
 		var alias = $('input[id=alias-name]').val();
 		// var expr = $('option[name=function-name]:selected').val()
 		
@@ -54,37 +114,45 @@ Template.AggregateWizard.events({
 			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT ", fld, ")");
 			else expr = expr.concat("(", fld, ")");
 		}
-		//console.log(alias + " " + expr);
-		vq_end_obj.addAggregateField(expr,alias,required);
+			
+		if(Template.AggregateWizard.fromAddLink.get() == true){
+		
+			var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+			//console.log(alias + " " + expr);
+			vq_end_obj.addAggregateField(expr,alias,required);
 
-		if (Template.AggregateWizard.linkId.curValue != "No link") {
-			var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
-			if (vq_link_obj.isLink()) {
-				vq_link_obj.setNestingType("SUBQUERY");
+			if (Template.AggregateWizard.linkId.curValue != "No link") {
+				var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
+				if (vq_link_obj.isLink()) {
+					vq_link_obj.setNestingType("SUBQUERY");
+				}
 			}
-		}
 
-		var displayCase = document.getElementById("display-results").checked;
-		var minValue = $('input[id=results_least]').val();
-		var maxValue = $('input[id=results-most]').val();
-		//console.log(displayCase, minValue, maxValue);
-		if (displayCase || (minValue != "") || (maxValue != "")) {
-			console.log("display or min/max");
-			var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
-			if (alias == null || alias == "") {
-				var cName = vq_start_obj.getName();
-				// var newFunction = $('option[name=function-name]:selected').val();
-				var newFunction = $('input[name=aggregate-list-radio]:checked').val()
-				alias = cName.charAt(0) + "_" + newFunction;
+			var displayCase = document.getElementById("display-results").checked;
+			var minValue = $('input[id=results_least]').val();
+			var maxValue = $('input[id=results-most]').val();
+			//console.log(displayCase, minValue, maxValue);
+			if (displayCase || (minValue != "") || (maxValue != "")) {
+				// console.log("display or min/max");
+				var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
+				if (alias == null || alias == "") {
+					var cName = vq_start_obj.getName();
+					// var newFunction = $('option[name=function-name]:selected').val();
+					var newFunction = $('input[name=aggregate-list-radio]:checked').val()
+					alias = cName.charAt(0) + "_" + newFunction;
+				}
+				//addField: function(exp,alias,requireValues,groupValues,isInternal)
+				if (displayCase) vq_start_obj.addField(alias,);
+				if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
+				if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
+			} else {
+				//console.log("no display or min/max");
 			}
-			//addField: function(exp,alias,requireValues,groupValues,isInternal)
-			if (displayCase) vq_start_obj.addField(alias,);
-			if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
-			if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
 		} else {
-			//console.log("no display or min/max");
+			Template.AggregateWizard.expressionField.get().val(expr);
+			Template.AggregateWizard.aliasField.get().val(alias);
+			Template.AggregateWizard.requireField.get()[0].checked = required;
 		}
-
 		clearAggregateInput();
 		return;
 	},
@@ -161,15 +229,6 @@ Template.AggregateWizard.events({
 	},
 });
 
-//++++++++++++
-//Functions
-//++++++++++++
-// Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
-// Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
-// Template.AggregateWizard.startClassId = new ReactiveVar("No start id");
-// Template.AggregateWizard.endClassId = new ReactiveVar("No end");
-// Template.AggregateWizard.linkId = new ReactiveVar("No link");
-// Template.AggregateWizard.showDisplay = new ReactiveVar("none");
 
 function clearAggregateInput(){
 	// var defaultFunctions = document.getElementsByName("function-name");
@@ -188,9 +247,18 @@ function clearAggregateInput(){
 	Template.AggregateWizard.startClassId.set("No start id");
 	Template.AggregateWizard.endClassId.set("No end");
 	Template.AggregateWizard.linkId.set("No link");
+	Template.AggregateWizard.aggregation.set("count");
+	Template.AggregateWizard.expression.set("");
+	Template.AggregateWizard.require.set("");
+	Template.AggregateWizard.distinct.set("");
+	Template.AggregateWizard.fromAddLink.set(true);
+	Template.AggregateWizard.expressionField.set("");
+	Template.AggregateWizard.aliasField.set("");
+	Template.AggregateWizard.requireField.set("");
 	$('input[id=display-results]:checked').attr('checked', false);
 	document.getElementById("results_least").value = "";
 	document.getElementById("results-most").value = "";
+	document.getElementById("field-list").value = "";
 }
 
 function defaultFieldList(){
@@ -283,3 +351,4 @@ function onAggregationChange(){
 			$('input[id=results-most]').attr('disabled', true);
 		}
 }
+

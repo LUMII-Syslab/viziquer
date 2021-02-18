@@ -5,6 +5,10 @@
         overflow-y: auto;
         max-height: 60vh;
     }
+	
+	.label-aggregate {
+		  padding-top:0px;
+	}
 </style>
 
 	<!-- Modal for new document -->
@@ -18,64 +22,50 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
-                          <!-- <div class="form-group"> -->
-                              <!-- <label for="aggregate-alias" class="col-sm-3 control-label">Result name (alias)</label> -->
-                              <!-- <div class="col-sm-9"> -->
-                                  <!-- <input id="aggregate-alias" type="text" class="form-control" value=""> -->
-                              <!-- </div> -->
-                          <!-- </div> -->
-                          <!-- <div class="form-group"> -->
-                              <!-- <label for="aggregate-expression" class="col-sm-3 control-label">Expression</label> -->
-                              <!-- <div class="col-sm-9"> -->
-                                  <!-- <input class="form-control dialog-combobox aggragates-data-list input-sm" list="aggragates-data-list" id="aggregate-expression" value=""> -->
-                                    <!-- <datalist id="aggragates-data-list" class="datalist"> -->
-                                    <!-- {{#each aggregates}} -->
-                                          <!-- <option mappedvalue="{{aggregate}}" input="{{aggregate}}">{{aggregate}}</option> -->
-                                    <!-- {{/each}} -->
-                                  <!-- </datalist> -->
-                              <!-- </div> -->
-                          <!-- </div> -->
-						  
-						  
+
+						  <form>
+                            <p>Result name (alias): </p>
+                            <input type="text" id="alias-name-aggr"><br>
+                        </form>
 						  
 						  <form class="function-radio-list">
-                            <p>Functions: </p>							
-                                    <label class="label-radio">
+                            <p>Function: </p>							
+                                    <label class="label-radio label-aggregate">
                                         <input id="aggr-count" type="radio" name="aggr-list-radio" value="count" checked="true">
                                         <span class="custom-radio"></span>
                                         <span>count</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-count_distinct" type="radio" name="aggr-list-radio" value="count_distinct">
                                         <span class="custom-radio"></span>
                                         <span>count_distinct</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-sum" type="radio" name="aggr-list-radio" value="sum">
                                         <span class="custom-radio"></span>
                                         <span>sum</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-avg" type="radio" name="aggr-list-radio" value="avg">
                                         <span class="custom-radio"></span>
                                         <span>avg</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-max" type="radio" name="aggr-list-radio" value="max">
                                         <span class="custom-radio"></span>
                                         <span>max</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-min" type="radio" name="aggr-list-radio" value="min">
                                         <span class="custom-radio"></span>
                                         <span>min</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-sample" type="radio" name="aggr-list-radio" value="sample">
                                         <span class="custom-radio"></span>
                                         <span>sample</span>
                                     </label>
-									<label class="label-radio">
+									<label class="label-radio label-aggregate">
                                         <input id="aggr-group_concat" type="radio" name="aggr-list-radio" value="group_concat">
                                         <span class="custom-radio"></span>
                                         <span>group_concat</span>
@@ -84,7 +74,7 @@
                         </form>      
 									
                         <form>
-                            <p>Field (if applicable)</p>
+                            <p>Field name/expression (leave blank to count/sample instances)</p>
 							<input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist">
 							<datalist id="field-list-aggr-datalist" class="datalist">
 							 {{#each attList}}
@@ -101,25 +91,20 @@
 						<form id="distinct-aggr">
                             <input type="checkbox" id="distinct-aggr-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct</p>
+                            <p style="display:inline;">Distinct values</p>
                         </form>
 						 
-						<form>
-                            <p>Result name (alias): </p>
-                            <input type="text" id="alias-name-aggr"><br>
-                        </form>
+						
 	
 						<form id="require-aggr">
                             <input type="checkbox" id="require-aggr-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Require Values</p>
+                            <p style="display:inline;">Require field/expression values</p>
                         </form>
 						  
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning yellow-button" style="position:relative;float:left;" 
-                            onclick="startAggegateWizard()" data-dismiss="modal">Aggregate wizard</button>
                     <button id="cancel-add-aggregate" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-aggregate" type="button" class="btn btn-primary" data-dismiss="modal">Aggregate</button>
                 </div>
@@ -127,90 +112,5 @@
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
-    <script>
-      function startAggegateWizard(){
-        Interpreter.destroyErrorMsg();        
-        var attr_list = [{attribute: ""}];
-        var schema = new VQ_Schema();
-        var classId = Session.get("activeElement");
-        Template.AggregateWizard.endClassId.set(classId);
-
-
-        console.log("classId ", classId)
-
-
-        if (classId) {
-            var classObj = new VQ_Element(classId);
-            if (classObj && classObj.isClass()) {
-              //Display/at least/at most visibility
-              if(classObj.isRoot()) {
-                Template.AggregateWizard.showDisplay.set("none");
-                Template.AggregateWizard.startClassId.set(classId);
-              }else {
-                var classUp = classObj.getLinkToRoot();
-                Template.AggregateWizard.showDisplay.set("block");
-                Template.AggregateWizard.linkId.set(classUp.link.obj._id);
-                //console.log("root id = ", getRootId(classObj.obj._id));
-                //Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
-                if (classUp.start) {
-                  Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
-                } else {
-                  Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
-                }
-              }
-
-                //Attribute generation
-                var class_name = classObj.getName();
-                if (schema.classExist(class_name)) {
-                    var klass = schema.findClassByName(class_name);
-
-                    _.each(klass.getAllAttributes(), function(att){
-                        attr_list.push({attribute: att["name"]});
-                    })
-                    attr_list = _.sortBy(attr_list, "attribute");
-                } else {
-                  Interpreter.showErrorMsg("No such class", -3);
-                  return;
-                }
-                // console.log(attr_list);
-                Template.AggregateWizard.attList.set(attr_list);
-
-                //Alias name
-                if (class_name) {
-                  var userAlias = $('#aggregate-alias').val();
-                  if (userAlias !="") {
-                    Template.AggregateWizard.defaultAlias.set(userAlias);                    
-                  } else {
-                    Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
-                  }
-                  $("#aggregate-wizard-form").modal("show");
-                } else {
-                  Interpreter.showErrorMsg("No class name is given", -3);
-                  return;
-                }
-            } else {
-              Interpreter.showErrorMsg("Class doesn't exist", -3);
-              return;
-            }
-        }
-
-        /*function getRootId (elId){
-          var classObj = new VQ_Element(elId); console.log(classObj);
-          if (!classObj.isClass()) {return 0;}
-          if (classObj.isRoot()){
-            return elId;
-          } else {
-            if (classObj.getLinkToRoot()){
-              var elements = classObj.getLinkToRoot().link.getElements(); 
-              if (classObj.getLinkToRoot().start) {
-                return getRootId(elements.start.obj._id);
-              } else {
-                return getRootId(elements.end.obj._id);
-              }
-            }
-          }
-        }*/
-      }
-    </script>
 
 </template>

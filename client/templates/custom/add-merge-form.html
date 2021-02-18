@@ -31,7 +31,7 @@
 		}
 
         p {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             padding-top: 5px;
             padding-bottom: : 0px;
@@ -110,7 +110,7 @@
 					</div>
 					<div class="merge-values-list">                       
                         <form id="radio-function-form" class="function-radio-list">
-                            <p>Functions: </p>
+                            <p>Function: </p>
 
 							<label class="label-radio-functions">
 								<input type="radio" name="radio-function" value="count" {{selectedCount}}>
@@ -155,6 +155,12 @@
                          <form>
                             <p>Result name (alias): </p>
                             <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                        </form>
+						
+						<form id="distinct-merge">
+                            <input type="checkbox" id="distinct-merge-check-box">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Distinct values</p>
                         </form>
                         
 						{{#if isNotRootClass}}
@@ -211,6 +217,12 @@
                         <form>
                             <p>Result name (alias): </p>
                             <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                        </form>
+						
+						<form id="distinct-merge">
+                            <input type="checkbox" id="distinct-merge-check-box">
+                            <span class="custom-checkbox"></span>
+                            <p style="display:inline;">Distinct values</p>
                         </form>
 						
 						{{#if isNotRootClass}}

@@ -1628,7 +1628,7 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Expression"
+                        "label": "Aggregate expression"
                       },
 					  {
                         "_id": "8wsdml2b9w15pzt75s1mjgtj",
@@ -1661,7 +1661,7 @@
                           ]
                         },
                         "subCompartmentTypes": [],
-                        "label": "Require Values"
+                        "label": "Require field/expression values"
                       }
                     ]
                   }

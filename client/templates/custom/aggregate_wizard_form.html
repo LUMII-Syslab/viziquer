@@ -2,11 +2,12 @@
     <style>
         div.wizard-list {
             margin-top: 5px;
-            margin-left: 20px;                        
+            margin-left: 20px;
+			font-size: 12px;
         }
 
         p {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             padding-top: 5px;
             padding-bottom: : 0px;
@@ -36,6 +37,10 @@
 		form {
 		  margin-bottom: 10px;
 		}
+		
+		.label-aggregate {
+		  padding-top:0px;
+		}
     </style>
     <!-- Modal for new document -->
     <div id="aggregate-wizard-form" class="modal fade" onload="getDefaultName()">
@@ -48,56 +53,51 @@
                 </div>
                 <div class="modal-bodyFC">                
                     <div class="wizard-list">                       
-                        <form class="function-radio-list">
-                            <p>Functions: </p>
-                            <!-- <select name="function-list" id="aggregate-wizard-function-list" style="width:100%"> -->
-                                <!-- <option name="function-name" value="count" selected>count</option> -->
-                                <!-- <option name="function-name" value="count_distinct">count_distinct</option> -->
-                                <!-- <option name="function-name" value="sum">sum</option> -->
-                                <!-- <option name="function-name" value="avg">avg</option> -->
-                                <!-- <option name="function-name" value="max">max</option> -->
-                                <!-- <option name="function-name" value="min">min</option> -->
-                                <!-- <option name="function-name" value="sample">sample</option> -->
-                                <!-- <option name="function-name" value="group_concat">group_concat</option> -->
-                            <!-- </select>        -->
+                        <form>
+                            <p>Result name (alias): </p>
+                            <input type="text" id="alias-name" value="{{defaultAlias}}"><br>
+                        </form>
+						
+						<form class="function-radio-list">
+                            <p>Function: </p>
 							
-                                    <label class="label-radio">
-                                        <input id="aggregate-count" type="radio" name="aggregate-list-radio" value="count" checked="true">
+                                    <label class="label-radio label-aggregate">
+                                        <input id="aggregate-count" type="radio" name="aggregate-list-radio" value="count" {{selectedCount}}>
                                         <span class="custom-radio"></span>
                                         <span>count</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-count_distinct" type="radio" name="aggregate-list-radio" value="count_distinct">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-count_distinct" type="radio" name="aggregate-list-radio" value="count_distinct" {{selectedDistinct}}>
                                         <span class="custom-radio"></span>
                                         <span>count_distinct</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-sum" type="radio" name="aggregate-list-radio" value="sum">
+									<label class="label-radio label-aggregate" style="padding-top:0px">
+                                        <input id="aggregate-sum" type="radio" name="aggregate-list-radio" value="sum" {{selectedSum}}>
                                         <span class="custom-radio"></span>
                                         <span>sum</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-avg" type="radio" name="aggregate-list-radio" value="avg">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-avg" type="radio" name="aggregate-list-radio" value="avg" {{selectedAvg}}>
                                         <span class="custom-radio"></span>
                                         <span>avg</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-max" type="radio" name="aggregate-list-radio" value="max">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-max" type="radio" name="aggregate-list-radio" value="max" {{selectedMax}}>
                                         <span class="custom-radio"></span>
                                         <span>max</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-min" type="radio" name="aggregate-list-radio" value="min">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-min" type="radio" name="aggregate-list-radio" value="min" {{selectedMin}}>
                                         <span class="custom-radio"></span>
                                         <span>min</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-sample" type="radio" name="aggregate-list-radio" value="sample">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-sample" type="radio" name="aggregate-list-radio" value="sample" {{selectedSample}}>
                                         <span class="custom-radio"></span>
                                         <span>sample</span>
                                     </label>
-									<label class="label-radio">
-                                        <input id="aggregate-group_concat" type="radio" name="aggregate-list-radio" value="group_concat">
+									<label class="label-radio label-aggregate">
+                                        <input id="aggregate-group_concat" type="radio" name="aggregate-list-radio" value="group_concat" {{selectedConcat}}>
                                         <span class="custom-radio"></span>
                                         <span>group_concat</span>
                                     </label>
@@ -105,36 +105,28 @@
                         </form>      
 									
                         <form>
-                            <p>Field (if applicable)</p>
-                            <input type="text" name="field-list" id="field-list" style="width:100%" list="field-list-datalist">
+                            <p>Field name/expression (leave blank to count/sample instances)</p>
+                            <input type="text" name="field-list" id="field-list" style="width:100%" list="field-list-datalist" value={{expression}}>
 							<datalist id="field-list-datalist" class="datalist">
 							 {{#each attList}}
-                                    <option name="field-name" input="{{attribute}}">{{attribute}}</option>
+                                    <option {{selectedOption}} name="field-name" input="{{attribute}}">{{attribute}}</option>
                                 {{/each}}
 							</datalist>
-							<!-- <select name="field-list" id="field-list" style="width:100%"> -->
-                                <!-- <option name="field-name" value="" selected></option> -->
-                                <!-- {{#each attList}} -->
-                                    <!-- <option name="field-name" value="{{attribute}}">{{attribute}}</option> -->
-                                <!-- {{/each}} -->
-                            <!-- </select> -->
+							
                         </form>
 					
 						<form id="distinct-aggregate">
-                            <input type="checkbox" id="distinct-aggregate-check-box">
+                            <input type="checkbox" id="distinct-aggregate-check-box" {{distinct}}>
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct</p>
+                            <p style="display:inline;">Distinct values</p>
                         </form>
 						
-                         <form>
-                            <p>Result name (alias): </p>
-                            <input type="text" id="alias-name" value="{{defaultAlias}}"><br>
-                        </form>
+                       
 						
 						<form id="require-aggregate">
-                            <input type="checkbox" id="require-aggregate-check-box">
+                            <input type="checkbox" id="require-aggregate-check-box" {{require}}>
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Require Values</p>
+                            <p style="display:inline;">Require field/expression values</p>
                         </form>
                         
                         <hr>

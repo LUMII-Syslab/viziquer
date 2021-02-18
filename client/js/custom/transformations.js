@@ -57,6 +57,14 @@ Interpreter.customMethods({
 		   elem.setCompartmentValue("Distinct", "", "");
 		 }
  	},
+	
+	VQsetAttributePrefixHelper: function(a,b,c,d) {
+		console.log("fffffffffffffffffffffffffff", a,b,c,d)
+ 	},
+	
+	VQsetAttributePrefixRequire: function() {
+		 console.log("fffffffffffffffffffffffffff", a,b,c,d)
+ 	},
 
 	TogglePlainMode: function() {
 
@@ -1003,41 +1011,66 @@ Interpreter.customMethods({
 		return true;
 	},
 
+
 	AggregateWizard: function(e) {
 // Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 // Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 // Template.AggregateWizard.endClassId = new ReactiveVar("No end");
 
-		console.log("AggregateWizard", e);
-
 		var parent = $(e.target).closest(".compart-type");
-		console.log("parent ", parent)
-
 		var parent_id = parent.attr("id");
-		console.log("parent_id ", parent_id)
-
 		var compart_type = CompartmentTypes.findOne({_id: parent_id});
-		console.log("compart_type", compart_type)
 
 		// more elegant selection for subCompartmentTypes needed
 		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
 											return sub_compart_type.name == "Expression";
 										});
-
-
-		var exression_id = expression_compart_type._id
-		console.log("exression_id ", exression_id)
-
+		var exression_id = expression_compart_type._id;
 		var expression_value = parent.find("." + exression_id).val();
-		console.log("expression_value", expression_value)
+		
+		 Template.AggregateWizard.expressionField.set(getAggregatedField(e, "Expression"))
+		 Template.AggregateWizard.aliasField.set(getAggregatedField(e, "Field Name"))
+		 Template.AggregateWizard.requireField.set(getAggregatedField(e, "Require Values"))
 
+		var require_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+											return sub_compart_type.name == "Require Values";
+										});
+		var require_id = require_compart_type._id;
+		var require_value = parent.find("." + require_id)[0].checked;
+		if(require_value == true) require_value = "checked";
+		else require_value = "";
+			
+		Template.AggregateWizard.require.set(require_value);
+		
+        var classId = Session.get("activeElement");
+        Template.AggregateWizard.endClassId.set(classId);
+		
+		var aggregations = {count:1, count_distinct:1, min:1, max:1, avg:1, sum:1, sample:1, group_concat:1}
 
+		if(expression_value !== null && expression_value != "" &&
+		expression_value.slice(-1) == ")" && expression_value.indexOf("(") !=-1
+		&& typeof aggregations[expression_value.substring(0, expression_value.indexOf("(")).toLowerCase()] !== "undefined"){
+			
+			var aggregation = expression_value.substring(0, expression_value.indexOf("(")).toLowerCase();
+			var expression = expression_value.substring(expression_value.indexOf("(")+1, expression_value.length-1);
+			
+			if(expression.toLowerCase().startsWith("distinct ")){
+				Template.AggregateWizard.distinct.set("checked");
+				expression = expression.substring(9);
+			} else Template.AggregateWizard.distinct.set("");
+			
+			Template.AggregateWizard.aggregation.set(aggregation);
+			Template.AggregateWizard.expression.set(expression);
+		} else if (expression_value === null || expression_value == ""){
+			Template.AggregateWizard.aggregation.set("count");
+			Template.AggregateWizard.expression.set("");
+		} else {
+			classId = null;
+		}
+		
 		Interpreter.destroyErrorMsg();
 		var attr_list = [{attribute: ""}];
         var schema = new VQ_Schema();
-        var classId = Session.get("activeElement");
-        Template.AggregateWizard.endClassId.set(classId);
-
 
         if (classId) {
             var classObj = new VQ_Element(classId);
@@ -1065,7 +1098,7 @@ Interpreter.customMethods({
                     var klass = schema.findClassByName(class_name);
 
                     _.each(klass.getAllAttributes(), function(att){
-                        attr_list.push({attribute: att["name"]});
+						attr_list.push({attribute: att["name"]});
                     })
 					
 					var selected_elem_id = Session.get("activeElement");
@@ -1076,7 +1109,7 @@ Interpreter.customMethods({
 						for (var symbol in symbolTable[key]) {
 							// if(symbolTable[key][symbol]["context"] == selected_elem_id){
 							if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){		
-								attr_list.push({attribute: key});
+								attr_list.push({attribute: key, });
 							}else{
 								var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
 								if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) attr_list.push({attribute: key});
@@ -1098,16 +1131,22 @@ Interpreter.customMethods({
                 	var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
                   	if (userAlias !="") {
                     	Template.AggregateWizard.defaultAlias.set(userAlias);                    
-                 	} else {                    
-                    	Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+                 	} else {
+						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
+						else Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+						
                     }
+					Template.AggregateWizard.fromAddLink.set(false); 
                     $("#aggregate-wizard-form").modal("show");
                 } else {
                 	Interpreter.showErrorMsg("No class name is given", -3);
                 	return;
                 }
             }
-        }        
+        }  else {
+			Interpreter.showErrorMsg("Aggregate expression too complex for wizard (the wizard supports only aggregate(expression) form)", -3);
+		}
+		
     },
 
 	isMergeValuesWizardAvailable: function() {
@@ -1248,6 +1287,24 @@ Interpreter.customMethods({
 
 	
 });
+
+
+getAggregatedField = function(e, fieldName){
+		var parent = $(e.target).closest(".compart-type");
+		var parent_id = parent.attr("id");
+		var compart_type = CompartmentTypes.findOne({_id: parent_id});
+
+		// more elegant selection for subCompartmentTypes needed
+		var expression_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+											return sub_compart_type.name == fieldName;
+										});
+
+		var exression_id = expression_compart_type._id
+
+		var expression_value = parent.find("." + exression_id).val();
+
+		return parent.find("." + exression_id);
+}
 
 findAttributeInAbstractTable = function(context, clazz, fieldValue){
 	var fieldInContext = {};
