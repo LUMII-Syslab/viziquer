@@ -128,12 +128,35 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
         else return ExpressionErrors; 
     } // ja nav pārklājumu, tad atgriež masīvu ar kļūdaino izt. paziņojumiem
 }
+function checkDuplicates(findResult, findElementsIds){
+    let duplicate = {};
+    let findElements = _.uniq(_.flatten(_.map(findResult[0].matches, function(match){
+        return _.map(match.elements, function(element){
+            return element.findElementId;
+        })
+    })));
+    // console.log("findElements",findElements);
+    // console.log("findElementsIds", findElementsIds);
+    duplicate["found"] = _.every(findElements, function(findElement){ return _.contains(findElementsIds, findElement)});
+    
+    if(_.size(findElementsIds) == 0){
+        findElementsIds = findElements;
+    }
+    else{
+        _.each(findElements, function(findElement){
+            if(!_.contains(findElementsIds, findElement) ) findElementsIds.push(findElement);
+        });
+    }    
+    duplicate["findElementsIds"] = findElementsIds;
+    return duplicate;
+}
 function FindDiagMatches(diagParamList){
     console.log("findDiags");
     let diagramTypeId       = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
     let StartFindElements   = getStartElements(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
     let findResults         = [];// sagrupētie pēc diagramId
     let Results             = [];// satur katrai diagrammai atrasto fragmentu dekarta reizinājumu
+    let findElementIds      = [];// glabās meklējamo fragmentu idus, lai pārbaudītu kārtējo matchu uz unikalitāti
     if( _.size(StartFindElements) > 0 ){
         let queryCheck = checkQuery(diagParamList.diagramId, diagramTypeId);
         if(queryCheck){  // pirms meklēt fragmentus, jāpārbauda pieprasījums
@@ -143,7 +166,9 @@ function FindDiagMatches(diagParamList){
                 let Edges = getEdges(startFindElement._id);
                 if( Edges && _.size(Edges) > 0){
                     let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId);
-                    findResults.push(findResult);
+                    let duplicate = checkDuplicates(findResult, findElementIds);
+                    if( duplicate.found == false ) findResults.push(findResult);
+                    findElementIds = duplicate.findElementsIds;
                 } // ja ir atrastas šķautnes, tad meklē pēc šķautnes
                 else{
                     let findResult = Meteor.call('findNode', startFindElement);
@@ -151,7 +176,8 @@ function FindDiagMatches(diagParamList){
                 } // ja nav, tad meklē pēc virsotnes
             });
             let startFindElementsIds = _.pluck(StartFindElements,'_id');
-
+            // console.log("Find results before grouping");
+            // console.dir(findResults, {depth: null});
             findResults = _.flatten(findResults);
             findResults = _.groupBy(findResults,'diagramId'); 
             let diagrams = _.keys(findResults);
@@ -223,6 +249,8 @@ function FindDiagMatches(diagParamList){
             // katram matcha vienumam ir struktūra {elementId, findElementId}
             // elementId ir atrastais un findElementId ir tam atbisltošais meklējamais elements pierpasījuma diagrmmā
             console.log('return ok');
+            // console.log("Find Results after grouping and Cartesian product");
+            // console.dir(Results, {depth: null});
             return {result: Results, expressionErrors: queryCheck}
         
         } else return {msg: "Find fragment elements and Replace fragment elements are overlapping"}
