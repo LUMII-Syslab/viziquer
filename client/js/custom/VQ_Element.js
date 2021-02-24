@@ -2454,9 +2454,8 @@ VQ_Element.prototype = {
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
 	
-	
-	var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
-	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
+	var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: this.obj.elementTypeId})["_id"];
+	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: this.obj._id, }, {sort: {index: 1}}).fetch();
 
 	var compratmentList = [];
 		
@@ -2516,7 +2515,9 @@ VQ_Element.prototype = {
   },
   // string, bool -->
   addOrdering: function(exp,isDescending) {
-    this.addCompartmentSubCompartments("OrderBy",[
+    console.log("OOOOOOOOOO", exp,isDescending)
+	
+	this.addCompartmentSubCompartments("OrderBy",[
       {name:"Name",value:exp},
       {name:"Desc",value:this.boolToString(isDescending)},
     ])
