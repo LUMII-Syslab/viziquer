@@ -619,6 +619,7 @@ Template.importOntology.events({
 										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
 									if ( cp.TargetClass )
 										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
+									cp_new.instanceCount = cp.instanceCount
 									classpairs.push(cp_new);
 								});
 								el.ClassPairs = classpairs;
