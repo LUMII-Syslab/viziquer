@@ -589,7 +589,10 @@ function getAllAssociations(){
 			// 	if (e.max) hasCardinalities = true;
 			// })
 
-			var className = startElement.getName(); 
+			var className = startElement.getName();
+			
+			if(className === null) className= "";
+			
 			var schema = new VQ_Schema();
 			var proj = Projects.findOne({_id: Session.get("activeProject")});
 
