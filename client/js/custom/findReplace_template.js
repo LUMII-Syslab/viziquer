@@ -34,10 +34,10 @@ Template.replaceResults.events({
     },
     'click #selectMatch': function(){
         // replace selected occurence
-        console.log("replace selected match");
-        console.time('ReplaceSingleAlt');
+        console.log("replace single selected match");
+        
         replaceSingleMatch(this._id, this);
-        console.timeEnd('ReplaceSingleAlt');
+        
     },
     'click #highlightMatch': function() {
         // highlight selected match
