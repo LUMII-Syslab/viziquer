@@ -205,10 +205,11 @@ Template.show_multi_field_form.events({
 			if(sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
 			if(sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
 			if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
-			
-			sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
-			sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
-			value = prefixesValue + value;
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Prefixes"] !== "undefined"){
+				sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
+				sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
+				value = prefixesValue + value;
+			}
 		}
 		
 		var src_id = form.attr("compartmentId");

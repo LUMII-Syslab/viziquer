@@ -664,6 +664,7 @@ function findEmptyPrefix(prefixTable){
 // generate SPARQL query text
 // abstractQueryTable - abstract query sintex table
 function generateSPARQLtext(abstractQueryTable){
+	console.log("abstractQueryTable", abstractQueryTable)
 		 var messages = [];
 
 		 var rootClass = abstractQueryTable["root"];
@@ -1744,8 +1745,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable){
 
 	//console.log("orderings", orderings)
-	//console.log("fieldNames", fieldNames)
-	// console.log("symbolTable", symbolTable)
+	// console.log("fieldNames", fieldNames)
+	 // console.log("symbolTable", symbolTable)
 
 	var messages = [];
 	var orderTable = [];
@@ -1754,12 +1755,22 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	_.each(orderings,function(order) {
 		if(order["exp"] != null && order["exp"].replace(" ", "") !=""){
 			if(order["exp"].startsWith("?")){
-				messages.push({
-					"type" : "Warning",
-					"message" : "Order by field can not contain new explicit variables (e.g. " + order["exp"] + "). Use the form without ? (e.g. " + order["exp"].substring(1) + ") to refer to variable introduced elsewhere.",
-					"listOfElementId":[rootClass_id],
-					"isBlocking" : true
-				});
+				if(typeof fieldNames[order["exp"].substring(1)] !== "undefined"){
+					var descendingStart = "";
+					var descendingEnd = "";
+					if(order["isDescending"] == true) {
+						descendingStart = "DESC("
+						descendingEnd = ")"
+					}
+					orderTable.push(descendingStart +  order["exp"] + descendingEnd + " ");
+				} else {
+					messages.push({
+						"type" : "Warning",
+						"message" : "Order by field can not contain new explicit variables (e.g. " + order["exp"] + "). Use the form without ? (e.g. " + order["exp"].substring(1) + ") to refer to variable introduced elsewhere.",
+						"listOfElementId":[rootClass_id],
+						"isBlocking" : true
+					});
+				}
 			} else {
 				var descendingStart = "";
 				var descendingEnd = "";
@@ -1802,7 +1813,6 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
 				} else {
-					
 					if(typeof order["parsed_exp"] === 'undefined'){
 						messages.push({
 							"type" : "Error",
@@ -1818,6 +1828,17 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 orderGroupBy.push(result["exp"]);
 							 orderTripleTable.push(result["triples"]);
 						 } else {
+							 descendingStart = "(";
+							 descendingEnd = ")";
+							 if(order["isDescending"] == true) {
+								descendingStart = "DESC("
+								descendingEnd = ")"
+							 }
+							 
+							 orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
+							 //orderGroupBy.push(result["exp"]);
+							 orderTripleTable.push(result["triples"]);
+							 console.log("ccccccccc", result)
 							 messages.push({
 								"type" : "Warning",
 								"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
@@ -2039,7 +2060,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
 					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval)
-					
+
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "NOT") unionResult["result"] = "FILTER NOT EXISTS{\n" + unionResult["result"] + "\n}";
@@ -2336,6 +2357,10 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 	var messages = [];
 	var isSubSelect = false;
 	
+	var unionSelectResult = generateSELECT(sparqlTable, false);
+	unionsubSELECTstaterents= unionsubSELECTstaterents.concat(unionSelectResult["select"]);
+	unionsubSELECTstaterents= unionsubSELECTstaterents.concat(unionSelectResult["aggregate"]);
+	
 	// console.log("sparqlTable",sparqlTable);
 	
 	if(generateUpperSelect == true || sparqlTable["isSubQuery"] == true || sparqlTable["isGlobalSubQuery"] == true || sparqlTable["linkType"] == "NOT") SPARQL_interval = SPARQL_interval+"  ";
@@ -2508,6 +2533,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 		
 		// SPARQL_interval = SPARQL_interval + "  ";
 		if(unionsubSELECTstaterents.length > 0 || isSubSelect == true) {
+
 			if(parentClassInstance != null){
 				unionsubSELECTstaterents.push(parentClassInstance);
 				unionGroupStaterents.push(parentClassInstance);

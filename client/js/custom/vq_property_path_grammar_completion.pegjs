@@ -37,8 +37,10 @@
 				var targetSourceClass = "targetClass";
 				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 				
-				for (var k in options.schema.findAssociationByName(propertyName).schemaRole) {
-					var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[k][""+targetSourceClass+""]["localName"];
+				var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
+				
+				for(var classPair in schemaAssociationClassPairs){
+					var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
 					
 					var prop = options.schema.findClassByName(targetClass).getAllAssociations();
 					

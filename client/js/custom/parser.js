@@ -375,15 +375,15 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							
 							var nameIsTaken = true;
 							
-							if(typeof symbolTable[classID] !== 'undefined'){
-								for(var key in symbolTable[classID][varName]){
-									if(symbolTable[classID][varName][key]["context"] == classID){
-										if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] == null){
-											nameIsTaken = false;
-										}
-									}
-								}
-							}
+							// if(typeof symbolTable[classID] !== 'undefined'){
+								// for(var key in symbolTable[classID][varName]){
+									// if(symbolTable[classID][varName][key]["context"] == classID){
+										// if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"]["parentType"] == null){
+											// nameIsTaken = false;
+										// }
+									// }
+								// }
+							// }
 							
 							var tempIsVar = false;
 							if(parseType == "attribute" || parseType == "class") tempIsVar = true;
@@ -2537,7 +2537,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						}
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
-						visited = 1;
+						visited = 1;						
 					}
 					
 					if(visited != 1){

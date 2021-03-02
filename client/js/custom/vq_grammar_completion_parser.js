@@ -19697,8 +19697,6 @@ vq_grammar_completion_parser = (function() {
     		    };
     			function pathOrReference(o) {	
     				
-    				
-    				
     				var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
     				var propertyName = "";
     				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
@@ -19708,25 +19706,27 @@ vq_grammar_completion_parser = (function() {
     				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
     				
     				if(typeof options.schema.findAssociationByName(propertyName) !== 'undefined'){
-    					for (var key in options.schema.findAssociationByName(propertyName).schemaRole) {
-    						var targetClass = options.schema.findAssociationByName(propertyName).schemaRole[key][""+targetSourceClass+""]["localName"];
-    						var prop = options.schema.findClassByName(targetClass).getAllAttributes();
-    						
-    						for(var key in prop){
-    							addContinuation(location(), prop[key]["name"], 100, false, 1, "end");
-    						}
-    						
-    						prop = options.schema.findClassByName(targetClass).getAllAssociations();
-    						
-    						for(var key in prop){
-    							var propName= prop[key]["short_name"];
-    							if(prop[key]["type"] == "<=") {
-    								addContinuation(location(), "^" + propName, 100, false, 2, "end")
-    								// addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
-    							}
-    							else addContinuation(location(), propName, 100, false, 2, "end");
-    						}
-    					}
+						var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
+						for(var classPair in schemaAssociationClassPairs){
+								
+							var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
+							var prop = options.schema.findClassByName(targetClass).getAllAttributes();
+								
+							for(var key in prop){
+								addContinuation(location(), prop[key]["name"], 100, false, 1, "end");
+							}
+								
+							prop = options.schema.findClassByName(targetClass).getAllAssociations();
+								
+							for(var key in prop){
+								var propName= prop[key]["short_name"];
+								if(prop[key]["type"] == "<=") {
+									addContinuation(location(), "^" + propName, 100, false, 2, "end")
+									// addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
+								}
+								else addContinuation(location(), propName, 100, false, 2, "end");
+							}
+						}
     				}
     				return o;
     			};
