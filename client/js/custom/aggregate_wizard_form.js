@@ -214,6 +214,7 @@ Template.AggregateWizard.events({
 		// var fieldName = $('option[name=field-name]:selected').val();
 		var fieldName = document.getElementById('field-list').value;
 		var cName = vq_start_obj.getName();
+		if(cName == null) cName = "";
 		//console.log(cName.charAt(0), fieldName.length);
 		var functionArray = Template.AggregateWizard.attList.curValue;
 		_.each(functionArray, function(f) {
@@ -329,6 +330,7 @@ function onAggregationChange(){
 		//Set default alias
 		var functionArray = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
 		_.each(functionArray, function(f) {
+			if(cName === null) cName = ""
 			var defaultName = cName.charAt(0) + "_" + f;
 			var defaultFieldName = f + "_" + fieldName;
 			if (alias == defaultName) {

@@ -1127,8 +1127,9 @@ Interpreter.customMethods({
                 Template.AggregateWizard.attList.set(attr_list);
 
                 //Alias name
-                if (class_name) {
-                	var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
+                // if (class_name) {
+                	if (class_name === null) class_name = "";
+					var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
                   	if (userAlias !="") {
                     	Template.AggregateWizard.defaultAlias.set(userAlias);                    
                  	} else {
@@ -1138,10 +1139,10 @@ Interpreter.customMethods({
                     }
 					Template.AggregateWizard.fromAddLink.set(false); 
                     $("#aggregate-wizard-form").modal("show");
-                } else {
-                	Interpreter.showErrorMsg("No class name is given", -3);
-                	return;
-                }
+                // } else {
+                	// Interpreter.showErrorMsg("No class name is given", -3);
+                	// return;
+                // }
             }
         }  else {
 			Interpreter.showErrorMsg("Aggregate expression too complex for wizard (the wizard supports only aggregate(expression) form)", -3);
