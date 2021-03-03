@@ -1058,7 +1058,7 @@ VQ_Schema.prototype = {
 			if (_.size(pp) > 0 )
 				extensionMode = pp[0].value;
 		}
-		// extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
+		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
 		
 		if (extensionMode== "simple")
 		{
@@ -1306,7 +1306,7 @@ VQ_Schema.prototype = {
 			
 			_.each(c.outAssoc, function(link){  
 				var l = [];
-				l = _.union(l,["\tsh:property ["]);
+				l = _.union(l,["\tsh:property ["]);  
 				l = _.union(l,newLine.concat("\t\tsh:path ", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
 				if (!link.targetClass.isAbstract)
 				{
@@ -1317,6 +1317,23 @@ VQ_Schema.prototype = {
 				attr_list = _.union(attr_list,l.join("\r\n"));
 
 			})	
+			
+			_.each(c.inAssoc, function(link){   
+				var l = [];
+				if (link.sourceClass.getElementName() != link.targetClass.getElementName()) 
+				{
+					l = _.union(l,["\tsh:property ["]);
+					l = _.union(l,newLine.concat("\t\tsh:path \"^", link.getElementName(), "\" ;")); 				
+					//l = _.union(l,newLine.concat("\t\tsh:path ^", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
+					if (!link.sourceClass.isAbstract)
+					{
+						l = _.union(l,newLine.concat("\t\tsh:node ", link.sourceClass.getElementName(), " ;"));
+					}
+					l = _.union(l,["\t\]"]);
+				
+					attr_list = _.union(attr_list,l.join("\r\n"));				
+				}
+			})
 			//rezult = _.union(rezult,newLine.concat());  //rezult.join("\r\n.\r\n")
 			cl_list = _.union(cl_list,newLine.concat(sh_cl.join("\r\n"), "\n", attr_list.join(";\r\n")));
    
@@ -1326,7 +1343,8 @@ VQ_Schema.prototype = {
 	var	info = newLine.concat( pref_list.join("\r\n"), "\r\n\r\n" , cl_list.join("\r\n.\r\n"), "\r\n.");
 	
     var link = document.createElement("a"); 
-	var file_name = "shacl.txt";
+	var file_name = _.find(schema.Ontologies, function(o) {return o.isDefault;}).dprefix.concat("_SHACL.txt")
+	//var file_name = "shacl.txt";
 	link.setAttribute("download", file_name);
 	link.href = URL.createObjectURL(new Blob([info], {type: "application/json;charset=utf-8;"}));
 	document.body.appendChild(link);
