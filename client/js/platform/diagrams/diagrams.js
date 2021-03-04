@@ -1028,6 +1028,8 @@ Template.exportOntology.events({
 				schema_full.printOwlFormat(2);
 			if ( choice == "Ch4" )
 				schema_full.printOwlFormat(3);
+			if ( choice == "Ch1a" )
+				schema_full.getSHACL();
 			if ( choice == "Ch1" ) {
 				delete schema_data._id;
 				delete schema_data.projectId;

@@ -250,8 +250,11 @@ var PrefixList =
     "http://www.w3.org/ns/adms#": "adms",
     "http://purl.org/linked-data/sdmx#": "sdmx",
     "http://rdfs.org/sioc/types#": "sioct",
-    "http://www.europeana.eu/schemas/edm/": "edm"
+    "http://www.europeana.eu/schemas/edm/": "edm",
+	"http://rdvocab.info/ElementsGr2/":"rdag2"
   }
+  
+  
   
 function findPrefixFromList(uri) {
   if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
@@ -1044,39 +1047,50 @@ VQ_Schema.prototype = {
 		})
 	})
 	
-	_.each(data.Associations, function(asoc){  //aaa
+	_.each(data.Associations, function(asoc){  
 		var newRole = new VQ_Role(asoc);
 		schema.addRole(newRole);
 		var new_cp = asoc.ClassPairs;
-
-		if (asoc.SourceClassesDetailed)
+		var extensionMode = "none"
+		if (schema.Data && schema.Data.Parameters)  
 		{
-			_.each(asoc.SourceClassesDetailed, function(sc){
-				var add = true		
-				_.each(asoc.ClassPairs, function(cp){
-					if (sc.classFullName == cp.SourceClass && sc.instanceCount <= cp.instanceCount)
-						add = false
-				})
-				if (add)
-					new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.instanceCount})
-			})
+			var pp = _.filter(schema.Data.Parameters, function(p){ return  p.name == "ExtensionMode" });
+			if (_.size(pp) > 0 )
+				extensionMode = pp[0].value;
 		}
-
-		if (asoc.TargetClassesDetailed)
+		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
+		
+		if (extensionMode== "simple")
 		{
-			_.each(asoc.TargetClassesDetailed, function(sc){
-				var add = true		
-				_.each(asoc.ClassPairs, function(cp){
-					if (sc.classFullName == cp.TargetClass && sc.instanceCount <= cp.instanceCount)
-						add = false
+			if (asoc.SourceClassesDetailed)
+			{
+				_.each(asoc.SourceClassesDetailed, function(sc){
+					var add = true		
+					_.each(asoc.ClassPairs, function(cp){
+						if (sc.classFullName == cp.SourceClass && sc.instanceCount <= cp.instanceCount)
+							add = false
+					})
+					if (add)
+						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.instanceCount})
 				})
-				if (add)
-					new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.instanceCount})
-			})
+			}
+
+			if (asoc.TargetClassesDetailed)
+			{
+				_.each(asoc.TargetClassesDetailed, function(sc){
+					var add = true		
+					_.each(asoc.ClassPairs, function(cp){
+						if (sc.classFullName == cp.TargetClass && sc.instanceCount <= cp.instanceCount)
+							add = false
+					})
+					if (add)
+						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.instanceCount})
+				})
+			}
+			console.log("******************************************************")
+			console.log(asoc.ClassPairs)
+			console.log(new_cp)		
 		}
-		console.log("******************************************************")
-		console.log(asoc.ClassPairs)
-		console.log(new_cp)
 		
 		//_.each(asoc.ClassPairs, function(cp){
 		_.each(new_cp, function(cp){
@@ -1259,6 +1273,83 @@ VQ_Schema.prototype = {
 	//console.log(Session)
 	//var tt = JSON.parse(JSON.stringify(schema.Tree,0, 2))
   },  
+  getSHACL: function() {
+    var pref_list = ["@prefix sh: <http://www.w3.org/ns/shacl#> .", "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."];
+	 var newLine = "";
+	
+	_.each(this.Ontologies, function (o){
+		pref_list = _.union( pref_list, newLine.concat("@prefix ", o.dprefix, ": <", o.namespace, "> ."));    
+	})
+	var cl_list = [];  // aaa
+	
+	_.each(schema.Classes, function(c){
+		if (!c.isAbstract )
+		{
+			var c_name = c.getElementName() 
+			var sh_cl = [];
+			
+			sh_cl = _.union(sh_cl,[c_name]);
+			sh_cl = _.union(sh_cl,["\ta sh:NodeShape ;"]);
+			sh_cl = _.union(sh_cl,newLine.concat("\tsh:targetClass ", c_name, " ;"));
+			
+			var attr_list = [];
+			
+			_.each(c.schemaAttribute, function(attr){  
+				var a = [];
+				a = _.union(a,["\tsh:property ["]);
+				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  //attr.name  //table.insert(a, getValOrNil("\t\tsh:maxCount \"", attr.card, "\" ;")) 
+				a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
+				a = _.union(a,["\t\]"]);
+
+				attr_list = _.union(attr_list,a.join("\r\n"));	
+			})	
+			
+			_.each(c.outAssoc, function(link){  
+				var l = [];
+				l = _.union(l,["\tsh:property ["]);  
+				l = _.union(l,newLine.concat("\t\tsh:path ", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
+				if (!link.targetClass.isAbstract)
+				{
+					l = _.union(l,newLine.concat("\t\tsh:node ", link.targetClass.getElementName(), " ;"));
+				}
+				l = _.union(l,["\t\]"]);
+			
+				attr_list = _.union(attr_list,l.join("\r\n"));
+
+			})	
+			
+			_.each(c.inAssoc, function(link){   
+				var l = [];
+				if (link.sourceClass.getElementName() != link.targetClass.getElementName()) 
+				{
+					l = _.union(l,["\tsh:property ["]);
+					l = _.union(l,newLine.concat("\t\tsh:path \"^", link.getElementName(), "\" ;")); 				
+					//l = _.union(l,newLine.concat("\t\tsh:path ^", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
+					if (!link.sourceClass.isAbstract)
+					{
+						l = _.union(l,newLine.concat("\t\tsh:node ", link.sourceClass.getElementName(), " ;"));
+					}
+					l = _.union(l,["\t\]"]);
+				
+					attr_list = _.union(attr_list,l.join("\r\n"));				
+				}
+			})
+			//rezult = _.union(rezult,newLine.concat());  //rezult.join("\r\n.\r\n")
+			cl_list = _.union(cl_list,newLine.concat(sh_cl.join("\r\n"), "\n", attr_list.join(";\r\n")));
+   
+		}
+	})
+	
+	var	info = newLine.concat( pref_list.join("\r\n"), "\r\n\r\n" , cl_list.join("\r\n.\r\n"), "\r\n.");
+	
+    var link = document.createElement("a"); 
+	var file_name = _.find(schema.Ontologies, function(o) {return o.isDefault;}).dprefix.concat("_SHACL.txt")
+	//var file_name = "shacl.txt";
+	link.setAttribute("download", file_name);
+	link.href = URL.createObjectURL(new Blob([info], {type: "application/json;charset=utf-8;"}));
+	document.body.appendChild(link);
+	link.click();
+  },
   getOwlFormat: function() {
 	var newLine = "";
 	
@@ -1445,7 +1536,7 @@ VQ_Schema.prototype = {
 		}
 
 	})
-	var link = document.createElement("a");
+	var link = document.createElement("a"); 
 	var file_name = "rr.csv";
 	link.setAttribute("download", file_name);
 	link.href = URL.createObjectURL(new Blob([rezult.join("\r\n")], {type: "application/json;charset=utf-8;"}));
@@ -1871,9 +1962,10 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 		else	
 			assoc = _.union(assoc, sc.getAssociations());
 	})
-	assoc = _.sortBy(assoc, "name");
+	assoc = _.sortBy(assoc, "name");  
 	assoc = assoc.filter(function(obj, index, self) { 
-					return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+					return index === self.findIndex(function(t) { return t['short_name'] === obj['short_name'] &&  t['type'] === obj['type'] &&  
+											t['class'] === obj['class']  && t['short_class_name'] === obj['short_class_name']});
 				});
 	this.allAssociations = assoc;
 	console.log(this.allAssociations)
@@ -1899,7 +1991,7 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	})
 	attributes = _.sortBy(attributes, function(a) { return a.name}); 
 	attributes = attributes.filter(function(obj, index, self) { 
-				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
+				return index === self.findIndex(function(t) { return t['short_name'] === obj['short_name'] });
 			});
 
 	//var class_info = this;
