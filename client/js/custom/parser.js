@@ -122,6 +122,8 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, vnc, vna
 		return arr.indexOf(el) === i;
 	});
 	
+	
+	
 	// if in filter expression is used variable name, then put filter inside EXISTS
 	//console.log("applyExistsToFilter", applyExistsToFilter, tripleTable);
 	if(applyExistsToFilter != null && applyExistsToFilter == true){
@@ -131,7 +133,8 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, vnc, vna
 		
 		// if OpenLink Virtuoso && classTr != null && classTr != ""
 		if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO" && classTr != null && classTr != "") uniqueTriples.unshift(classTr);
-		result = "EXISTS{" + uniqueTriplesFilter.join("\n") + "\nFILTER(" + result + ")}";
+		if(typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == "true") uniqueTriples = uniqueTriples.concat(uniqueTriplesFilter);
+		else result = "EXISTS{" + uniqueTriplesFilter.join("\n") + "\nFILTER(" + result + ")}";
 		// uniqueTriples = [];
 	}
 	

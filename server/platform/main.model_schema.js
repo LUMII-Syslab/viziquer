@@ -238,6 +238,12 @@ Schemas.Projects = new SimpleSchema({
  			 optional: true,
  	    },
 		
+		simpleConditionImplementation: {
+ 			 type: String,
+ 			 label: "Projects.simpleConditionImplementation",
+ 			 optional: true,
+ 	    },
+		
 	    autoHideDefaultPropertyName: {
  			 type: String,
  			 label: "Projects.autoHideDefaultPropertyName",

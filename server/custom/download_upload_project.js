@@ -120,6 +120,7 @@ function uploadProject(list) {
 								autoHideDefaultPropertyName: "",
 								showPrefixesForAllNonLocalNames: "",
 								completeRDFBoxesInDatetimeFunctions: "",
+								simpleConditionImplementation: "",
 								endpointUsername: "",
 								endpointPassword: "",
 							};
@@ -135,6 +136,7 @@ function uploadProject(list) {
 														directClassMembershipRole: project_data.directClassMembershipRole,
 														indirectClassMembershipRole: project_data.indirectClassMembershipRole,
 														showCardinalities: project_data.showCardinalities,
+														simpleConditionImplementation: project_data.simpleConditionImplementation,
 														autoHideDefaultPropertyName: project_data.autoHideDefaultPropertyName,
 														showPrefixesForAllNonLocalNames: project_data.showPrefixesForAllNonLocalNames,
 														completeRDFBoxesInDatetimeFunctions: project_data.completeRDFBoxesInDatetimeFunctions,

@@ -63,6 +63,8 @@ Template.AddAttribute.events({
 				else return;
 				var name = $(this).attr("name");
 				vq_obj.addField(name,null,required,false,false);
+	
+				$(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].className = "button button-required";
 			}
 		  });
 		};
@@ -94,6 +96,16 @@ Template.AddAttribute.events({
 		Template.AddAttribute.attrList.set(getAttributes());
 		Template.AddAttribute.linkList.set(getAssociations());
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		
+		return;
+	},
+	
+	"click #cancel-add-attribute": function(e) {
+
+		 var buttonn = $('button[name=required-attribute-to-add]');
+		 buttonn.each(function () {
+			$(this)[0].className = "button button-required";
+		  });
 		
 		return;
 	},

@@ -763,6 +763,7 @@ Template.ontologySettings.events({
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
 					showCardinalities: $("#show-cardinalities").is(":checked"),
+					simpleConditionImplementation: $("#simple-condition-implementation").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
@@ -801,6 +802,7 @@ Template.ontologySettings.events({
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
+		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="false");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
@@ -913,6 +915,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.showCardinalities=="true");
+		}
+	},
+	simpleConditionImplementation: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.simpleConditionImplementation=="true");
 		}
 	},
 	autoHideDefaultPropertyName: function() {

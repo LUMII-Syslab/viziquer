@@ -292,7 +292,7 @@ function onAggregationChange(){
 		if (schema.classExist(cName)){
 			var klass = schema.findClassByName(cName);
 			_.each(klass.getAllAttributes(), function(att){
-				var attrType = schema.resolveAttributeByName(cName, att["name"]).type;
+				var attrType = schema.resolveAttributeByName(cName, att["short_name"]).type;
 				if (newFunction == "sum" || newFunction == "avg") {
 					if (attrType == "xsd:integer" || attrType == "xsd:decimal" || attrType == "xsd:double"
 						|| attrType == "xsd:float" || attrType == "xsd:int" || attrType == "xsd:long"

@@ -659,6 +659,9 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
           if (proj.useDefaultGroupingSeparator=="true") {
             proj_params.defaultGroupingSeparator = proj.defaultGroupingSeparator;
           };
+		  if (proj.simpleConditionImplementation=="true") {
+            proj_params.simpleConditionImplementation = proj.simpleConditionImplementation;
+          };
           if (proj.directClassMembershipRole) {
             proj_params.directClassMembershipRole = proj.directClassMembershipRole;
           };
