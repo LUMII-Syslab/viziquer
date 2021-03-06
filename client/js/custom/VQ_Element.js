@@ -1087,9 +1087,9 @@ VQ_Schema.prototype = {
 						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.instanceCount})
 				})
 			}
-			console.log("******************************************************")
-			console.log(asoc.ClassPairs)
-			console.log(new_cp)		
+			//console.log("*********************", asoc.localName ,"*********************************")
+			//console.log(asoc.ClassPairs)
+			//console.log(new_cp)		
 		}
 		
 		//_.each(asoc.ClassPairs, function(cp){
@@ -1276,7 +1276,6 @@ VQ_Schema.prototype = {
   getSHACL: function() {
     var pref_list = ["@prefix sh: <http://www.w3.org/ns/shacl#> .", "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."];
 	 var newLine = "";
-	
 	_.each(this.Ontologies, function (o){
 		pref_list = _.union( pref_list, newLine.concat("@prefix ", o.dprefix, ": <", o.namespace, "> ."));    
 	})
@@ -1304,39 +1303,81 @@ VQ_Schema.prototype = {
 				attr_list = _.union(attr_list,a.join("\r\n"));	
 			})	
 			
-			_.each(c.outAssoc, function(link){  
-				var l = [];
-				l = _.union(l,["\tsh:property ["]);  
-				l = _.union(l,newLine.concat("\t\tsh:path ", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
-				if (!link.targetClass.isAbstract)
-				{
-					l = _.union(l,newLine.concat("\t\tsh:node ", link.targetClass.getElementName(), " ;"));
-				}
+			//sh:property [
+			//	sh:path edm:realizes ;
+			//	sh:nodeKind sh:IRI ;
+			//];
+			//sh:property [
+			//	sh:path terms:proxyFor ;
+			//	sh:or ( [sh:node edm:ProvidedCHO ] [ sh:node edm:EuropeanaAggregation ] ) ;
+			//];
+			//sh:property [
+			//	sh:path terms:proxyIn ;
+			//	sh:node edm:EuropeanaAggregation ;
+			//];
+			
+			function make_property(v1, v2){
+				var l = [];	
+				l = _.union(l,["\tsh:property ["]);  // Vēl kardinalitāti varētu vajadzēt
+				l = _.union(l,v1); 
+				l = _.union(l,v2); 
 				l = _.union(l,["\t\]"]);
-			
-				attr_list = _.union(attr_list,l.join("\r\n"));
-
-			})	
-			
-			_.each(c.inAssoc, function(link){   
-				var l = [];
-				if (link.sourceClass.getElementName() != link.targetClass.getElementName()) 
-				{
-					l = _.union(l,["\tsh:property ["]);
-					l = _.union(l,newLine.concat("\t\tsh:path \"^", link.getElementName(), "\" ;")); 				
-					//l = _.union(l,newLine.concat("\t\tsh:path ^", link.getElementName(), " ;"));  //	table.insert(l, getValOrNil("\t\tsh:maxCount \"", link.card, "\" ;")) 
-					if (!link.sourceClass.isAbstract)
+				return l.join("\r\n")
+			}
+			function transfom_assoc(assoc, v1_pref, v1_suf, class_poz, type){ 
+				var attr_list = [];
+				var link_names = {};
+				_.each(assoc, function(link){ 
+					if (!link_names[link.fullName])
 					{
-						l = _.union(l,newLine.concat("\t\tsh:node ", link.sourceClass.getElementName(), " ;"));
+						link_names[link.fullName] = 1;
+						var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName;});  
+						var l = [];	
+						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf);
+						var v2 = "";
+						if (_.size(link_list) == 1 && (type == "out" || ( type == "in" && link.isSymmetric != true)))
+						{
+							if (!link[class_poz].isAbstract)
+								v2 = newLine.concat("\t\tsh:node ", link[class_poz].getElementName(), " ;");
+							else
+								v2 = ["\t\tsh:nodeKind sh:IRI ;"];  
+						}
+						else if (_.size(link_list) > 1 )
+						{
+							var link_list2 = _.filter(link_list, function(o) {return o[class_poz].localName != " ";});
+							var tuksais = _.filter(link_list, function(o) {return o[class_poz].localName == " ";});
+							var inst_c = 0;
+							var cl_list = "";
+							_.each(link_list2, function(o){ inst_c = inst_c + o.instanceCount; cl_list = cl_list.concat("[sh:node ",o[class_poz].getElementName()," ] ") })
+							if ( _.size(tuksais) > 0 && tuksais[0].instanceCount != inst_c)
+								link_list2 = [];
+							
+							if (_.size(link_list2) ==  1 )
+								v2 = newLine.concat("\t\tsh:node ", link_list2[0][class_poz].getElementName(), " ;");
+							else if (_.size(link_list2) > 1 )
+								v2 = newLine.concat("\t\tsh:or ( ", cl_list, ") ;");
+							else
+								v2 = ["\t\tsh:nodeKind sh:IRI ;"]; 
+						}
+						if ( v2 != "")
+						{
+							l = make_property(v1, v2);
+							attr_list = _.union(attr_list,l);
+						}
 					}
-					l = _.union(l,["\t\]"]);
-				
-					attr_list = _.union(attr_list,l.join("\r\n"));				
-				}
-			})
-			//rezult = _.union(rezult,newLine.concat());  //rezult.join("\r\n.\r\n")
+
+				})				
+				return attr_list;
+			}
+						
+			var link_names = {};
+	
+			attr_list = _.union(attr_list,transfom_assoc(c.outAssoc, "\t\tsh:path ", " ;", "targetClass", "out"));
+			attr_list = _.union(attr_list,transfom_assoc(c.inAssoc, "\t\tsh:path \"^", "\" ;", "sourceClass", "in"));
+			
+			//if (link.sourceClass.getElementName() != link.targetClass.getElementName()) // Uz šo jāpaskatās, varbūt vairs nebūs būtiski (tas bija pretējam virzienam, lai nav uz sevi divas reizes)
 			cl_list = _.union(cl_list,newLine.concat(sh_cl.join("\r\n"), "\n", attr_list.join(";\r\n")));
-   
+ 
 		}
 	})
 	
@@ -1344,7 +1385,7 @@ VQ_Schema.prototype = {
 	
     var link = document.createElement("a"); 
 	var file_name = _.find(schema.Ontologies, function(o) {return o.isDefault;}).dprefix.concat("_SHACL.txt")
-	//var file_name = "shacl.txt";
+
 	link.setAttribute("download", file_name);
 	link.href = URL.createObjectURL(new Blob([info], {type: "application/json;charset=utf-8;"}));
 	document.body.appendChild(link);
@@ -1755,7 +1796,11 @@ VQ_ontology = function (URI, prefix) {
   this.instanceCount = 0;
   p = "";
   this.namesAreUnique = true;
-  if (prefix) p = prefix;
+  if (prefix) 
+  {
+    prefix = prefix.replace(":","");
+    p = prefix;
+  }
   else {
     p = findPrefixFromList(URI)
     if ( p == null )
@@ -1881,7 +1926,7 @@ VQ_Class = function (classInfo, isAbstract = false){
 	this.isInTree = false;
 	this.isVisited = false;
 	this.allAttributes = [];
-	this.allAssociations = []
+	this.allAssociations = []  
 	
 	var named_elements = {};
 	named_elements = _.extend(_.extend(_.extend(named_elements,schema.Classes),schema.Attributes),schema.Associations);
@@ -1924,7 +1969,7 @@ VQ_Class.prototype.tree_path = null;
 VQ_Class.prototype.isInTree = null;
 VQ_Class.prototype.isVisited = null;
 VQ_Class.prototype.allAttributes = null;
-VQ_Class.prototype.allAssociations = null;
+VQ_Class.prototype.allAssociations = null; 
 VQ_Class.prototype.getAssociations = function() {
 	var out_assoc =  _.map(this.outAssoc, function (a) {
 				var maxCard = a.maxCardinality;

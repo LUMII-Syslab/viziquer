@@ -624,7 +624,13 @@ Template.importOntology.events({
 								});
 								el.ClassPairs = classpairs;
 							});
-
+							if (data.ExtensionMode)
+							{
+								if (data.Parameters)
+									data.Parameters.push({name:"ExtensionMode",value:data.ExtensionMode})
+								else
+									data.Parameters = [{name:"ExtensionMode",value:data.ExtensionMode}];
+							}
 							VQ_Schema_copy = null;
 							list.data = data;
 
