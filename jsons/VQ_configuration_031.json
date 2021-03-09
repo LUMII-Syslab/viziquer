@@ -3190,10 +3190,6 @@
                     "procedure": "VQsetSubQueryNameSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue",
-                    "procedure": "VQsetAssociationName"
-                  },
-                  {
                     "extensionPoint": "processKeyStroke",
                     "procedure": "linkAutoCompletion"
                   }

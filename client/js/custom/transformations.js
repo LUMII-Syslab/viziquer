@@ -589,10 +589,14 @@ Interpreter.customMethods({
 	},
 
 	VQafterCreateLink: function(params) {
-		console.log("VQafterCreateLink");
+		var linkName = VQsetAssociationName(params["startElement"], params["endElement"])
+		console.log("VQafterCreateLink", params, linkName);
 		//console.log(params);
 		Interpreter.destroyErrorMsg();
 		var link = new VQ_Element(params["_id"]);
+		
+		link.setName(linkName);
+		
 		link.setLinkType("REQUIRED");		 
 		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
 		 	link.getEndElement().setClassStyle("condition");
@@ -699,53 +703,7 @@ Interpreter.customMethods({
 		};
 	},
 	
-	VQsetAssociationName: function(start, end) {
-		var name_list = [];
-		var start_class = Elements.findOne({_id: start});
-		var end_class = Elements.findOne({_id: end});
-
-		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
-		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
-		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: end_class["elementTypeId"]});
-		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
-		var schema = new VQ_Schema();
-
-		if (typeof compart !== "undefined" && typeof compart_end !== "undefined" && schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
-			var start_class = schema.findClassByName(compart["input"]);
-			var end_class = schema.findClassByName(compart_end["input"]);
-				
-			var all_assoc_from_start = start_class.getAllAssociations();
-			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-			var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-				return _.find(all_sub_super_of_end, function(c) {
-					return c.localName == a.class && a.type == "=>"
-				})
-			});
-
-			if(possible_assoc_list.length == 0){
-				possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-					return _.find(all_sub_super_of_end, function(c) {
-						return c.localName == a.class
-					})
-				});
-			}
-
-			name_list = _.map(possible_assoc_list, function(assoc) {
-				var assoc_name = assoc["short_name"];
-				
-				if (assoc["type"] == "<=") {
-					assoc_name = "^"+assoc_name;
-				};
-				return assoc_name;
-			});
-		}
-
-		// console.log("name_list", name_list)
-
-		if(name_list.length == 1) return name_list[0];
-		
-		return ""
-	},
+	
 	
 	VQgetAssociationNames: function() {
 		//arrow ->compartments->extensions-> dynamic drop down
@@ -1288,6 +1246,58 @@ Interpreter.customMethods({
 
 	
 });
+
+VQsetAssociationName = function(start, end) {
+		var start_element = new VQ_Element(start);
+		var end_element = new VQ_Element(end);
+		
+		var name_list = [];
+		
+		var start_class = Elements.findOne({_id: start});
+		var end_class = Elements.findOne({_id: end});
+
+		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
+		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
+		var compart_type_end = CompartmentTypes.findOne({name: "Name", elementTypeId: end_class["elementTypeId"]});
+		var compart_end = Compartments.findOne({compartmentTypeId: compart_type_end["_id"], elementId: end});
+		var schema = new VQ_Schema();
+
+		if (typeof compart !== "undefined" && typeof compart_end !== "undefined" && schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
+			var start_class = schema.findClassByName(compart["input"]);
+			var end_class = schema.findClassByName(compart_end["input"]);
+				
+			var all_assoc_from_start = start_class.getAllAssociations();
+			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+			var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+				return _.find(all_sub_super_of_end, function(c) {
+					return c.localName == a.class && a.type == "=>"
+				})
+			});
+
+			if(possible_assoc_list.length == 0){
+				possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+					return _.find(all_sub_super_of_end, function(c) {
+						return c.localName == a.class
+					})
+				});
+			}
+
+			name_list = _.map(possible_assoc_list, function(assoc) {
+				var assoc_name = assoc["short_name"];
+				
+				if (assoc["type"] == "<=") {
+					assoc_name = "^"+assoc_name;
+				};
+				return assoc_name;
+			});
+		}
+
+		console.log("name_list", name_list)
+
+		if(name_list.length == 1) return name_list[0];
+		
+		return ""
+}
 
 
 getAggregatedField = function(e, fieldName){
