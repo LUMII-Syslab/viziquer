@@ -2,6 +2,7 @@ Interpreter.customMethods({
 	AddLink: function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
+		
 		_.each(getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
@@ -612,6 +613,7 @@ function getAllAssociations(){
 			if (schema.classExist(className)) {
 				
 				var allAssociations = schema.findClassByName(className).getAllAssociations();
+
 				//remove duplicates - moved to getAllAssociations()
 				//allAssociations = allAssociations.filter(function(obj, index, self) { 
 				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
@@ -658,11 +660,9 @@ function getAllAssociations(){
 					if(e.type == "=>") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
 					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
 					
-					if (e.class == className) //Link to itself
-						if (e.type == "=>")
-							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
-						else
-							asc.push({name: e.name, class: e.short_class_name, type: "=>", card: cardinality, clr: colorLetters});
+					if (e.class == className && e.type == "=>"){ //Link to itself
+						ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
+					}
 				});
 			}
 
