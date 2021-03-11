@@ -132,7 +132,7 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, vnc, vna
 		});
 		
 		// if OpenLink Virtuoso && classTr != null && classTr != ""
-		if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO" && classTr != null && classTr != "") uniqueTriples.unshift(classTr);
+		if((typeof parameterTable["queryEngineType"] === 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO") && classTr != null && classTr != "") uniqueTriples.unshift(classTr);
 		if(typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == "true") uniqueTriples = uniqueTriples.concat(uniqueTriplesFilter);
 		else result = "EXISTS{" + uniqueTriplesFilter.join("\n") + "\nFILTER(" + result + ")}";
 		// uniqueTriples = [];
@@ -1778,7 +1778,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				if(visited != 1){
 					var Usestringliteralconversion = parameterTable["useStringLiteralConversion"];
 					//Parameter useStringLiteralConversion
-					if(typeof Usestringliteralconversion !== 'undefined' && Usestringliteralconversion == "SIMPLE" && typeof expressionTable[key]["Relation"]!== 'undefined' && (expressionTable[key]["Relation"] == "=" || expressionTable[key]["Relation"] == "!=" || expressionTable[key]["Relation"] == "<>")) {
+					if((typeof Usestringliteralconversion === 'undefined' || Usestringliteralconversion == "SIMPLE") && typeof expressionTable[key]["Relation"]!== 'undefined' && (expressionTable[key]["Relation"] == "=" || expressionTable[key]["Relation"] == "!=" || expressionTable[key]["Relation"] == "<>")) {
 						var relation = expressionTable[key]["Relation"];
 						if(relation == "<>") relation = "!=";
 						if (typeof expressionTable[key]["NumericExpressionL"]!== 'undefined' && typeof expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined'
@@ -2670,7 +2670,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						var sl = generateExpression({PrimaryExpression : left}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						var sr = generateExpression({PrimaryExpression : right}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
-						if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
+						if(typeof parameterTable["queryEngineType"]=== 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO"){
 							var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
 							var dateTimeArray = ["xsd:dateTime", "XSD_DATE_TIME", "xsd_date"];
 							if(isDateVar(left, dateArray, symbolTable[classID]) == true && isDateVar(right, dateArray, symbolTable[classID]) == true){
@@ -2838,7 +2838,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				}
 				if (typeof expressionTable[key]["FunctionTime"]!== 'undefined') {
 					isTimeFunction = true;
-					if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO"){
+					if(typeof parameterTable["queryEngineType"] === 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO"){
 					// if lQuery("Onto#Parameter[name='SPARQL engine type']"):attr("value") == "OpenLink Virtuoso" then
 						var fun = expressionTable[key]["FunctionTime"].toLowerCase();
 						var sl = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpressionL"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
@@ -2893,7 +2893,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		    isExpression = true
 			var substr = "SUBSTR(";
 
-			if(typeof parameterTable["queryEngineType"] !== 'undefined' && parameterTable["queryEngineType"] == "VIRTUOSO")	substr = "bif:substring(";
+			if(typeof parameterTable["queryEngineType"] === 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO")	substr = "bif:substring(";
 		    
 			var expr1 = generateExpression({Expression1 : expressionTable[key]["Expression1"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 		    var expr2 = generateExpression({Expression2 : expressionTable[key]["Expression2"]}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
