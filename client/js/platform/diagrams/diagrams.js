@@ -1003,7 +1003,7 @@ Template.exportOntology.helpers({
 			var list = {projectId: Session.get("activeProject")};
 
 			if (VQ_Schema_copy && VQ_Schema_copy.projectID == Session.get("activeProject")) {
-				console.log("Ir jau pareizā shēma gatava")
+				//console.log("Ir jau pareizā shēma gatava")
 				parameters.label = "Schema contains " + _.size(VQ_Schema_copy.Data.Classes) + " classes."
 			}
 		}

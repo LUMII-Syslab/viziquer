@@ -266,7 +266,7 @@ function findUriFromList(prefix) {
 			if (val == prefix)
 				rez = key;
 	})
-	console.log(rez);
+	//console.log(rez);
 	return rez;
 }
 function findCardinality(card, type) {
@@ -452,7 +452,7 @@ VQ_Schema_copy = null;
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
-   druka = true;
+   druka = false;
    if (_.size(data) > 0 )  VQ_Schema_copy = null;
    
    var isData = false;
@@ -1034,7 +1034,11 @@ VQ_Schema.prototype = {
 			if (atr.SourceClassesDetailed)
 			{
 				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
-				newSchAttr.instanceCount = det.instanceCount
+				newSchAttr.instanceCount = det.instanceCount  
+				if ( det.objectTripleCount )
+					newSchAttr.objectTripleCount = det.objectTripleCount; 
+				else
+					newSchAttr.objectTripleCount = 0;
 			}
 			schema.addSchemaAttribute(newSchAttr);
 			schema.addSchemaProperty(newSchAttr);
@@ -1297,7 +1301,10 @@ VQ_Schema.prototype = {
 				var a = [];
 				a = _.union(a,["\tsh:property ["]);
 				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  //attr.name  //table.insert(a, getValOrNil("\t\tsh:maxCount \"", attr.card, "\" ;")) 
-				a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
+				if ( attr.objectTripleCount == 0 )
+					a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
+				else
+					a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
 				a = _.union(a,["\t\]"]);
 
 				attr_list = _.union(attr_list,a.join("\r\n"));	
@@ -1856,6 +1863,11 @@ VQ_Elem = function (elemInfo, elemType){
 	else 
 		this.instanceCount = -1
 	
+	if (elemInfo.objectTripleCount != null)
+		this.objectTripleCount = parseInt(elemInfo.objectTripleCount);
+	else 
+		this.objectTripleCount = -1;
+	
 	var ontology = schema.ontologyExist(uri);
 	if (ontology) { this.ontology = ontology }
 	else {
@@ -1881,6 +1893,7 @@ VQ_Elem.prototype = {
   ontology: null,
   isUnique: null,
   instanceCount: null,
+  objectTripleCount: null,
   triplesMaps: null,
   getID: function() { return this.ID },
   getElemInfo: function() {
@@ -2013,7 +2026,7 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 											t['class'] === obj['class']  && t['short_class_name'] === obj['short_class_name']});
 				});
 	this.allAssociations = assoc;
-	console.log(this.allAssociations)
+	if (druka) console.log(this.allAssociations)
 	return assoc;
   };
 VQ_Class.prototype.getAttributes = function() {  
@@ -2024,7 +2037,7 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	if (druka)  console.log("Funkcijas izsaukums - getAllAttributes" + " " + this.localName); 
 	if (_.size(this.allAttributes) > 0)
 	{
-		console.log(this.allAttributes)
+		if (druka) console.log(this.allAttributes)
 		return this.allAttributes;
 	}
 	var attributes = this.getAttributes(); 
@@ -2047,7 +2060,7 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	//})
 	// **** VQ_Schema_copy.FindAttrCount(attributes,this);
 	this.allAttributes = attributes;
-	console.log(this.allAttributes)
+	if (druka) console.log(this.allAttributes)
 	return attributes;
   };
 VQ_Class.prototype.addSubClass = function(subClass) {
