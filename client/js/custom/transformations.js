@@ -578,13 +578,13 @@ Interpreter.customMethods({
 				// To merge two queries, use a query class (orange) at least at one link end.", -3);
 				return false;
 			}
-		} else if (startLink.isRoot() && !endLink.isRoot() && !(endLink.getLinkToRoot() === undefined)){
-			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
-			return false;
-		} else if (!startLink.isRoot() && endLink.isRoot() && !(startLink.getLinkToRoot() === undefined)){
-			Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
-			return false;
-		}		 
+		} //else if (startLink.isRoot() && !endLink.isRoot() && !(endLink.getLinkToRoot() === undefined)){
+		//	Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
+		//	return false;
+		//} else if (!startLink.isRoot() && endLink.isRoot() && !(startLink.getLinkToRoot() === undefined)){
+		//	Interpreter.showErrorMsg("Can't connect 2 queries this way to avoid two main classes in a query.");
+		//	return false;
+		//}		 
 		return true;
 	},
 
