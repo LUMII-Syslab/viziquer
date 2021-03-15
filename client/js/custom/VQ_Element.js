@@ -1031,7 +1031,7 @@ VQ_Schema.prototype = {
 			//var scClass = schema.findClassByNameAndCycle(sc);
 			var scClass = schema.findClassByName(sc);
 			var newSchAttr = new VQ_SchemaAttribute(atr);
-			if (atr.SourceClassesDetailed)
+			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
 			{
 				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
 				newSchAttr.instanceCount = det.instanceCount  
@@ -1066,7 +1066,7 @@ VQ_Schema.prototype = {
 		
 		if (extensionMode== "simple")
 		{
-			if (asoc.SourceClassesDetailed)
+			if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
 			{
 				_.each(asoc.SourceClassesDetailed, function(sc){
 					var add = true		
@@ -1079,7 +1079,7 @@ VQ_Schema.prototype = {
 				})
 			}
 
-			if (asoc.TargetClassesDetailed)
+			if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed) > 0)
 			{
 				_.each(asoc.TargetClassesDetailed, function(sc){
 					var add = true		
