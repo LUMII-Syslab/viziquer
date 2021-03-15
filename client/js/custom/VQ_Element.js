@@ -2010,7 +2010,7 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 	if (druka)  console.log("Funkcijas izsaukums - getAllAssociations" + " " + this.localName);
 	if (_.size(this.allAssociations) > 0)
 	{
-		console.log(this.allAssociations)
+		if (druka) console.log(this.allAssociations)
 		return this.allAssociations;
 	}
 	var assoc = this.getAssociations();  
