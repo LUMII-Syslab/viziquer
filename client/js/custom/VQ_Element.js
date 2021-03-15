@@ -1031,7 +1031,7 @@ VQ_Schema.prototype = {
 			//var scClass = schema.findClassByNameAndCycle(sc);
 			var scClass = schema.findClassByName(sc);
 			var newSchAttr = new VQ_SchemaAttribute(atr);
-			if (atr.SourceClassesDetailed)
+			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
 			{
 				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
 				newSchAttr.instanceCount = det.instanceCount  
@@ -1066,7 +1066,7 @@ VQ_Schema.prototype = {
 		
 		if (extensionMode== "simple")
 		{
-			if (asoc.SourceClassesDetailed)
+			if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
 			{
 				_.each(asoc.SourceClassesDetailed, function(sc){
 					var add = true		
@@ -1079,7 +1079,7 @@ VQ_Schema.prototype = {
 				})
 			}
 
-			if (asoc.TargetClassesDetailed)
+			if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed) > 0)
 			{
 				_.each(asoc.TargetClassesDetailed, function(sc){
 					var add = true		
@@ -1283,7 +1283,7 @@ VQ_Schema.prototype = {
 	_.each(this.Ontologies, function (o){
 		pref_list = _.union( pref_list, newLine.concat("@prefix ", o.dprefix, ": <", o.namespace, "> ."));    
 	})
-	var cl_list = [];  // aaa
+	var cl_list = [];  
 	
 	_.each(schema.Classes, function(c){
 		if (!c.isAbstract )
@@ -1301,7 +1301,7 @@ VQ_Schema.prototype = {
 				var a = [];
 				a = _.union(a,["\tsh:property ["]);
 				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  //attr.name  //table.insert(a, getValOrNil("\t\tsh:maxCount \"", attr.card, "\" ;")) 
-				if ( attr.objectTripleCount == 0 )
+				if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
 					a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
 				else
 					a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
@@ -1381,6 +1381,12 @@ VQ_Schema.prototype = {
 	
 			attr_list = _.union(attr_list,transfom_assoc(c.outAssoc, "\t\tsh:path ", " ;", "targetClass", "out"));
 			attr_list = _.union(attr_list,transfom_assoc(c.inAssoc, "\t\tsh:path \"^", "\" ;", "sourceClass", "in"));
+			
+			if (_.size(c.superClasses) > 0 )
+			{         
+				var superClasses  = _.map(c.superClasses, function(sc) {  return sc.getElementName();  }).join(" ");
+				attr_list = _.union(attr_list,newLine.concat("\tsh:and (\n", "\t\t", superClasses , "\n\t)"));
+			}
 			
 			//if (link.sourceClass.getElementName() != link.targetClass.getElementName()) // Uz šo jāpaskatās, varbūt vairs nebūs būtiski (tas bija pretējam virzienam, lai nav uz sevi divas reizes)
 			cl_list = _.union(cl_list,newLine.concat(sh_cl.join("\r\n"), "\n", attr_list.join(";\r\n")));
@@ -2010,7 +2016,7 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 	if (druka)  console.log("Funkcijas izsaukums - getAllAssociations" + " " + this.localName);
 	if (_.size(this.allAssociations) > 0)
 	{
-		console.log(this.allAssociations)
+		if (druka) console.log(this.allAssociations)
 		return this.allAssociations;
 	}
 	var assoc = this.getAssociations();  
