@@ -1301,7 +1301,7 @@ VQ_Schema.prototype = {
 				var a = [];
 				a = _.union(a,["\tsh:property ["]);
 				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  //attr.name  //table.insert(a, getValOrNil("\t\tsh:maxCount \"", attr.card, "\" ;")) 
-				if ( attr.objectTripleCount == 0 )
+				if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
 					a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
 				else
 					a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
