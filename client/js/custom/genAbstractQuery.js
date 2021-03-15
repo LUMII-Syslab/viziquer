@@ -67,6 +67,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     if (obj_class.instanceAlias) {
       my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName), context:obj_class.identification._id});
+	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
@@ -119,7 +120,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
         } else if (f.exp=="(*sub)") {
            obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
         } else if (f.alias) {
-              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+             my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
         } else {
           // field without alias? We should somehow identify it
           // obj_id + exp
@@ -180,7 +181,12 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
 
        if (obj_class.linkType !== "NOT") {
-         my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
+         my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+             clone_ca = _.clone(ca);
+             clone_ca["upByOptional"] = true;
+             parents_scope_table.CLASS_ALIAS.push(clone_ca)
+         });
+		 my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
@@ -534,27 +540,35 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
     // TODO: Otherwise an error
     // TODO: Optimize!!!
     var genConditionalLink = function(link) {
-     if (_.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
+	 if (_.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
        if (link.start) {
           if (visited[link.link.getStartElement()._id()]) {
             // if path exists - create link json
             if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
-              return { identification: { _id: link.link._id(), localName: link.link.getName() },
-                        //If link is inverse, then we got it right
-                        isInverse: !link.link.isInverse(),
-                        isNot: link.link.getType()=="NOT",
-                        target: visited[link.link.getStartElement()._id()]
-              };
+			  if(link.link.isConditional()){
+				  return { identification: { _id: link.link._id(), localName: link.link.getName() },
+							//If link is inverse, then we got it right
+							isInverse: !link.link.isInverse(),
+							isNot: link.link.getType()=="NOT",
+							target: visited[link.link.getStartElement()._id()]
+				  };
+			  } else {
+				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+			  }
             } else {
               // if reverse path exists - register link json
               if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
-                condition_links.push({ from: link.link.getStartElement()._id(),
+				if(link.link.isConditional()){
+					condition_links.push({ from: link.link.getStartElement()._id(),
                                        link_info: {
                                           identification: { _id: link.link._id(), localName: link.link.getName() },
                                           isInverse: link.link.isInverse(),
                                           isNot: link.link.getType()=="NOT",
                                           target: visited[link.link.getEndElement()._id()] }
                                      });
+				} else {
+				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				}
               } else {
                 // no path ERROR
               };
@@ -564,21 +578,29 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
           if (visited[link.link.getEndElement()._id()]) {
               // if path exists - create link json
               if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
-                return { identification: { _id: link.link._id(), localName: link.link.getName() },
+				if(link.link.isConditional()){
+					return { identification: { _id: link.link._id(), localName: link.link.getName() },
                           isInverse: link.link.isInverse(),
                           isNot: link.link.getType()=="NOT",
                           target: visited[link.link.getEndElement()._id()]
-                };
+					};
+				}else {
+				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				}
               } else {
                 // if reverse path exists - register link json
                 if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
-                  condition_links.push({ from: link.link.getEndElement()._id(),
+				  if(link.link.isConditional()){
+					condition_links.push({ from: link.link.getEndElement()._id(),
                                          link_info: {
                                             identification: { _id: link.link._id(), localName: link.link.getName() },
                                             isInverse: !link.link.isInverse(),
                                             isNot: link.link.getType()=="NOT",
                                             target: visited[link.link.getStartElement()._id()] }
                                        });
+				  } else {
+					  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				  }
                 } else {
                   // no path ERROR
                 };

@@ -103,7 +103,7 @@ function clearAggregateInput(){
 	document.getElementById("aggr-count").checked=true;
 	document.getElementById("distinct-aggr-check-box").checked=false;
 	document.getElementById("require-aggr-check-box").checked=false;
-	
+	document.getElementById('field-list-aggr').value = "";
 	
 	defaultFieldList();
 

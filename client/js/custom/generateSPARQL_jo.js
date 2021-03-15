@@ -732,6 +732,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 tempSelect = tempSelect.concat(selectResult["aggregate"]);
 
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ");
+			  
 			 tempSelect= tempSelect.concat(whereInfo["subSelectResult"]);
 			 
 			 // remove duplicates
@@ -776,9 +777,9 @@ function generateSPARQLtext(abstractQueryTable){
 			 if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0){
 				messages.push({
 						"type" : "Warning",
-						"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+						"message" : "Select distinct not available for values included in aggregate functions. To aggregate over distinct values, include distinct modifier inside the aggregate function (or select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)).",
 						"listOfElementId" : [rootClass["identification"]["_id"]],
-						"isBlocking" : false
+						"isBlocking" : true
 				});
 				
 				// var groupBySelectDistinct = [];
@@ -1272,7 +1273,12 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 	if(clazz["aggregations"].length > 1){
 		_.each(clazz["aggregations"],function(field) {
+			
+			
 			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"]);
+			
+			
+			
 			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
 				isMultipleAllowedAggregation = true;
 				_.each(clazz["aggregations"],function(field2) {
@@ -1317,13 +1323,18 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					"isBlocking" : true
 				});
 			} else {
-				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
-				messages = messages.concat(result["messages"]);
-				//console.log("RRRRRRRRRRRR", result);
+				var result;
+				
+				if(clazz["isUnit"] != true){
+				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+				
 				counter = result["counter"];
 				for (var attrname in result["variableNamesClass"]) {
 					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+				}} else {
+					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				}
+				messages = messages.concat(result["messages"]);
 				for (var prefix in result["prefixTable"]) {
 					if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
 				}
@@ -1459,7 +1470,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 
 		var temp = forAbstractQueryTable(attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
-		
+
 		messages = messages.concat(temp["messages"]);
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
@@ -2080,7 +2091,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 				}else {
 					//sub selects
 					var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
-
+					
 					if(sparqlTable["getSubQueryResults"] == true) {
 						subSelectResult = subSelectResult.concat(selectResult["select"]);
 						subSelectResult = subSelectResult.concat(selectResult["aggregateAliases"]);
@@ -2114,9 +2125,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 							var subQuery = "{SELECT " ;
 
-							//DISTINCT
-							if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
-
+							//DISTINCT	
+							if(sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
+							else if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
 							var parentClass = "";
 
 							// if(sparqlTable["subClasses"][subclass]["linkTriple"] != null || sparqlTable["subClasses"][subclass]["equalityLink"] == true) {
@@ -2186,9 +2197,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								
 								messages.push({
 									"type" : "Warning",
-									"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+									"message" : "Select distinct not available for values included in aggregate functions. To aggregate over distinct values, include distinct modifier inside the aggregate function (or select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)).",
 									// "listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
-									"isBlocking" : false
+									"isBlocking" : true
 								});
 							}
 
@@ -2247,7 +2258,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								});
 							}
 							if(isMessage == false){
-								var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
+								//var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
+								var subQuery = "{SELECT DISTINCT " + sparqlTable["subClasses"][subclass]["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
 								whereInfo.unshift(subQuery);
 							}
 						}
@@ -2429,9 +2441,9 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 							// subQuery = subQuery + SPARQL_interval+"SELECT DISTINCT "+parentClassInstance + " " + inner.join(" ") + " WHERE{\n";
 							messages.push({
 								"type" : "Warning",
-								"message" : "Select distinct disabled for values included in aggregate functions. To aggregate over distinct values, select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)",
+								"message" : "Select distinct not available for values included in aggregate functions. To aggregate over distinct values, include distinct modifier inside the aggregate function (or select the values in this node and aggregate in outer query (Re-shape Query -> Add outer query)).",
 								// "listOfElementId" : [sparqlTable["subClasses"][subclass]["identification"]["_id"]],
-								"isBlocking" : false
+								"isBlocking" : true
 							});
 						}
 
