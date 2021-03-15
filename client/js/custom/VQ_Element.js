@@ -1283,7 +1283,7 @@ VQ_Schema.prototype = {
 	_.each(this.Ontologies, function (o){
 		pref_list = _.union( pref_list, newLine.concat("@prefix ", o.dprefix, ": <", o.namespace, "> ."));    
 	})
-	var cl_list = [];  // aaa
+	var cl_list = [];  
 	
 	_.each(schema.Classes, function(c){
 		if (!c.isAbstract )
@@ -1381,6 +1381,12 @@ VQ_Schema.prototype = {
 	
 			attr_list = _.union(attr_list,transfom_assoc(c.outAssoc, "\t\tsh:path ", " ;", "targetClass", "out"));
 			attr_list = _.union(attr_list,transfom_assoc(c.inAssoc, "\t\tsh:path \"^", "\" ;", "sourceClass", "in"));
+			
+			if (_.size(c.superClasses) > 0 )
+			{         
+				var superClasses  = _.map(c.superClasses, function(sc) {  return sc.getElementName();  }).join(" ");
+				attr_list = _.union(attr_list,newLine.concat("\tsh:and (\n", "\t\t", superClasses , "\n\t)"));
+			}
 			
 			//if (link.sourceClass.getElementName() != link.targetClass.getElementName()) // Uz šo jāpaskatās, varbūt vairs nebūs būtiski (tas bija pretējam virzienam, lai nav uz sevi divas reizes)
 			cl_list = _.union(cl_list,newLine.concat(sh_cl.join("\r\n"), "\n", attr_list.join(";\r\n")));
