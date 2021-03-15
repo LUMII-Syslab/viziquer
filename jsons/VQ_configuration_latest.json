@@ -217,6 +217,10 @@
           {
             "item": "Execute SPARQL",
             "procedure": "ExecuteSPARQL_from_diagram"
+          },
+          {
+            "item": "Visualize SPARQL",
+            "procedure": "visualizeSPARQL"
           }
         ],
         "readModeNoCollectionContextMenu": [
@@ -930,7 +934,17 @@
 				"subMenu": [
 					{
 						"item": "Simple (attribute) ...",
-						"procedure": "AddAttribute"
+						"procedure": "AddAttribute",
+						"subMenu": [
+							{
+								"item": "(select this)",
+								"procedure": "AddSelectThis"
+							},
+							{
+								"item": "Add attribute ...",
+								"procedure": "AddAttribute"
+							}
+						]
 					},
 					{
 						"item": "Aggregate ...",
@@ -959,6 +973,9 @@
 						"procedure": "AddSubquery"
 					},
 					{
+						"item": "Union ...",
+						"procedure": "AddUnion"
+					},{
 						"item": "Explain ...",
 						"procedure": "ExplainLink"
 					}
@@ -1386,7 +1403,7 @@
                       },
                       {
                         "_id": "4727f620bbedd3f1f98bde47",
-                        "index": 4,
+                        "index": 6,
                         "name": "Require Values",
                         "extensionPoints": [
                           {
@@ -1404,7 +1421,7 @@
                               "compartmentStyle": "NoStyle",
                               "elementStyle": "NoStyle",
                               "input": "true",
-                              "value": "{+} "
+                              "value": ""
                             },
                             {
                               "compartmentStyle": "NoStyle",
@@ -1419,9 +1436,9 @@
                       },
                       {
                         "_id": "d6e2cda95d0c78943ea28f0c",
-                        "index": 6,
+                        "index": 4,
                         "name": "IsInternal",
-                        "label": "Hide",
+                        "label": "Helper (do not include in selection)",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -1433,7 +1450,7 @@
                               "compartmentStyle": "NoStyle",
                               "elementStyle": "NoStyle",
                               "input": "true",
-                              "value": "{hide} "
+                              "value": ""
                             },
                             {
                               "compartmentStyle": "NoStyle",
@@ -1442,6 +1459,19 @@
                               "value": ""
                             }
                           ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "i794avqh6vh6aa1cakgfrvni",
+                        "index": 3,
+                        "name": "Prefixes",
+                        "label": "Prefixes",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+                        "inputType": {
                         },
                         "subCompartmentTypes": []
                       },
@@ -1598,7 +1628,40 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Expression"
+                        "label": "Aggregate expression"
+                      },
+					  {
+                        "_id": "8wsdml2b9w15pzt75s1mjgtj",
+                        "index": 4,
+                        "name": "Require Values",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "afterUpdate",
+                            "procedure": ""
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "{+} "
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Require field/expression values"
                       }
                     ]
                   }
@@ -2065,7 +2128,7 @@
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Distinct",
-				"label": "Distinct values (attributes and in-aggregates)",
+				"label": "Select distinct",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
                 "inputType": {
@@ -2076,7 +2139,7 @@
                       "compartmentStyle": "828245acc3241ea17517a71b",
                       "elementStyle": "NoStyle",
                       "input": "true",
-                      "value": "distinct values"
+                      "value": "select distinct"
                     },
                     {
                       "compartmentStyle": "828245acc3241ea17517a71b",
@@ -3127,10 +3190,6 @@
                     "procedure": "VQsetSubQueryNameSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue",
-                    "procedure": "VQsetAssociationName"
-                  },
-                  {
                     "extensionPoint": "processKeyStroke",
                     "procedure": "linkAutoCompletion"
                   }
@@ -3478,13 +3537,13 @@
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Global Subquery",
+                      "input": "Subquery, Global",
                       "value": "GLOBAL_SUBQUERY"
                     },
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Extra",
+                      "input": "Non-structure (extra join) link",
                       "value": "CONDITION"
                     }
                   ]
