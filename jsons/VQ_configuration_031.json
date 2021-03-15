@@ -1438,7 +1438,7 @@
                         "_id": "d6e2cda95d0c78943ea28f0c",
                         "index": 4,
                         "name": "IsInternal",
-                        "label": "Helper",
+                        "label": "Helper (do not include in selection)",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -3537,13 +3537,13 @@
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Global Subquery",
+                      "input": "Subquery, Global",
                       "value": "GLOBAL_SUBQUERY"
                     },
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Extra",
+                      "input": "Non-structure (extra join) link",
                       "value": "CONDITION"
                     }
                   ]
