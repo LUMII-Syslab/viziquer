@@ -1031,10 +1031,15 @@ VQ_Schema.prototype = {
 			//var scClass = schema.findClassByNameAndCycle(sc);
 			var scClass = schema.findClassByName(sc);
 			var newSchAttr = new VQ_SchemaAttribute(atr);
+			newSchAttr.maxCardinality = newAttr.maxCardinality;
+			newSchAttr.minCardinality = atr.minCardinality;
 			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
 			{
 				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
-				newSchAttr.instanceCount = det.instanceCount  
+				if ( det.minCardinality )
+					newSchAttr.minCardinality = det.minCardinality;
+				
+				newSchAttr.instanceCount = det.instanceCount 
 				if ( det.objectTripleCount )
 					newSchAttr.objectTripleCount = det.objectTripleCount; 
 				else
@@ -1096,17 +1101,33 @@ VQ_Schema.prototype = {
 			//console.log(new_cp)		
 		}
 		
+		if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
+		{
+			_.each(asoc.SourceClassesDetailed, function(sc){
+				_.each(new_cp, function(n){
+					if ( n.SourceClass == sc.classFullName)
+					{
+						n.minCardinality = sc.minCardinality;
+						n.maxCardinality = asoc.maxCardinality;
+					}
+				})
+			})
+		}
+		//console.log("*********************", asoc.localName ,"*********************************")
+		//console.log(new_cp)
+		
 		//_.each(asoc.ClassPairs, function(cp){
 		_.each(new_cp, function(cp){
 			//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
 			//var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
+			if ( !newRole.maxCardinality) {  // Šis bija pēc newSchRole taisīšanas, īsti nezinu kāpēc 
+			  newRole.minCardinality = 0;  
+			  newRole.maxCardinality = -1;
+			}			
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
 			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
-			if ( !newRole.maxCardinality) {
-			  newRole.minCardinality = 0;
-			  newRole.maxCardinality = -1;
-			}
+
 			if (cp.instanceCount)
 				newSchRole.instanceCount = cp.instanceCount
 				
@@ -1300,7 +1321,11 @@ VQ_Schema.prototype = {
 			_.each(c.schemaAttribute, function(attr){  
 				var a = [];
 				a = _.union(a,["\tsh:property ["]);
-				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  //attr.name  //table.insert(a, getValOrNil("\t\tsh:maxCount \"", attr.card, "\" ;")) 
+				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
+				a = _.union(a,newLine.concat("\t\tsh:minCount \"", attr.minCardinality, "\" ;"));
+				var max = "*";
+				if ( attr.maxCardinality != -1 ) max = attr.maxCardinality
+				a = _.union(a,newLine.concat("\t\tsh:maxCount \"", max, "\" ;"));
 				if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
 					a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
 				else
@@ -1323,10 +1348,14 @@ VQ_Schema.prototype = {
 			//	sh:node edm:EuropeanaAggregation ;
 			//];
 			
-			function make_property(v1, v2){
+			function make_property(v1, v2, k1, k2){
 				var l = [];	
-				l = _.union(l,["\tsh:property ["]);  // Vēl kardinalitāti varētu vajadzēt
+				l = _.union(l,["\tsh:property ["]); 
 				l = _.union(l,v1); 
+				l = _.union(l,newLine.concat("\t\tsh:minCount \"", k1, "\" ;"));
+				var max = "*";
+				if ( k2 != -1 ) max = k2;
+				l = _.union(l,newLine.concat("\t\tsh:maxCount \"", max, "\" ;"));
 				l = _.union(l,v2); 
 				l = _.union(l,["\t\]"]);
 				return l.join("\r\n")
@@ -1341,6 +1370,8 @@ VQ_Schema.prototype = {
 						var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName;});  
 						var l = [];	
 						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf);
+						var k1 = link.minCardinality; 
+						var k2 = link.maxCardinality;
 						var v2 = "";
 						if (_.size(link_list) == 1 && (type == "out" || ( type == "in" && link.isSymmetric != true)))
 						{
@@ -1356,8 +1387,15 @@ VQ_Schema.prototype = {
 							var inst_c = 0;
 							var cl_list = "";
 							_.each(link_list2, function(o){ inst_c = inst_c + o.instanceCount; cl_list = cl_list.concat("[sh:node ",o[class_poz].getElementName()," ] ") })
-							if ( _.size(tuksais) > 0 && tuksais[0].instanceCount != inst_c)
+							if ( _.size(tuksais) > 0 && tuksais[0].instanceCount != inst_c)  // Te skatās to summāro skaitu arī
 								link_list2 = [];
+							
+							if ( type == "in")
+							{
+								var tuksais2 = _.filter(link.role.schemaRole, function(o) {return o[class_poz].localName == " ";});
+								if ( _.size(tuksais2) > 0 ) 
+									link_list2 = [];
+							}
 							
 							if (_.size(link_list2) ==  1 )
 								v2 = newLine.concat("\t\tsh:node ", link_list2[0][class_poz].getElementName(), " ;");
@@ -1368,7 +1406,7 @@ VQ_Schema.prototype = {
 						}
 						if ( v2 != "")
 						{
-							l = make_property(v1, v2);
+							l = make_property(v1, v2, k1, k2);
 							attr_list = _.union(attr_list,l);
 						}
 					}
@@ -2144,6 +2182,8 @@ VQ_SchemaAttribute.prototype = Object.create(VQ_Elem.prototype);
 VQ_SchemaAttribute.prototype.constructor = VQ_SchemaAttribute;
 VQ_SchemaAttribute.prototype.attribute = null;
 VQ_SchemaAttribute.prototype.sourceClass = null;
+VQ_SchemaAttribute.prototype.minCardinality = null;
+VQ_SchemaAttribute.prototype.maxCardinality = null;
 
 
 VQ_Role = function (roleInfo){
