@@ -24,9 +24,9 @@
                     <form class="form-horizontal" role="form">
 
 						<form>
-                            <p style="color:purple">What to aggregate (sum, count, etc.)</p>
+                            <p style="color:purple">What to aggregate <div style="color:grey">(leave blank for instances themselves)</div></p>
 							<input class="form-control" id="field-list-aggr" name="field-list-aggr" type="text" list="field-list-aggr-datalist" 
-									placeholder="Leave blank for instances themselves (or select field, or type expression)" style="width:98%;display: inline-block;">
+									placeholder="Field or expression" style="width:98%;display: inline-block;">
 							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
 							<datalist id="field-list-aggr-datalist" class="datalist">
 							 {{#each attList}}
@@ -40,16 +40,18 @@
                             <!-- </select> -->
                         </form>
 						
-						Extra options: <form id="distinct-aggr" style="display:inline-block">
+						<p> Extra options: 
+						<form id="distinct-aggr" style="display:inline-block">
                             <input type="checkbox" id="distinct-aggr-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct values only </p>
+                            <div style="display:inline">Distinct values only </div>
                         </form>
-						<form id="require-aggr"  style="display:inline-block">
+						<form id="require-aggr" style="display:inline-block">
                             <input type="checkbox" id="require-aggr-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Require values explicitly</p>
+                            <div style="display:inline">Require values explicitly</div>
                         </form>
+						</p>
 						
 						<form class="function-radio-list">
                             <p style="color:purple">Function: </p>							
@@ -97,10 +99,9 @@
 		
                         </form> 
 						
-						
 						<form>
                             <p style="color:purple">Give name to result: </p>
-                            <input class="form-control" id="alias-name-aggr" type="text" placeholder="Enter result name/alias (e.g., A_count) that can be referred to from elsewhere .." style="width:98%;display: inline-block;">
+                            <input class="form-control" id="alias-name-aggr" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;">
 							<!-- <input type="text" id="alias-name-aggr"><br> -->
                         </form>
 						  
