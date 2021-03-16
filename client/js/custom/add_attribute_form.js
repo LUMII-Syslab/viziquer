@@ -396,6 +396,15 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = helper.toString() ;
 				// if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
 				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = requireValues.toString() ;
+				
+				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
+					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+						return sub_compart_type.name == "Prefixes";
+					});
+					compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] = {input: prefixesValue, value:prefixesValue}
+				}
+				
+				
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
