@@ -152,6 +152,14 @@ Template.AddAttribute.events({
 				
 				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
 				
+				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				
+				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
+					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+						return sub_compart_type.name == "Prefixes";
+					});
+					compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] = {input: prefixesValue, value:prefixesValue}
+				}
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;	
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;	
 				
@@ -159,7 +167,6 @@ Template.AddAttribute.events({
 				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
 				fullText = fullText + attributeInformation.getAttribute("expression");
 				
-				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
@@ -192,6 +199,14 @@ Template.AddAttribute.events({
 				}
 				
 				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
+				
+				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
+					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
+						return sub_compart_type.name == "Prefixes";
+					});
+					compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] = {input: prefixesValue, value:prefixesValue}
+				}
 				
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;	
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;	
@@ -200,7 +215,6 @@ Template.AddAttribute.events({
 				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
 				fullText = fullText + attributeInformation.getAttribute("expression");
 				
-				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
