@@ -1,5 +1,5 @@
 Interpreter.customMethods({
-	AddAggregate: function () {
+	AddAggregate2: function () {
 
 		$("#add-aggregate-form").modal("show");
 		$('#alias-name-aggr').val('');
@@ -56,7 +56,7 @@ Template.AddAggregate.events({
 	},
 
 	"change #aggr-count": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
@@ -66,33 +66,39 @@ Template.AddAggregate.events({
 		return;
 	},
 	"change #aggr-sum": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggr-avg": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggr-max": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggr-min": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggr-sample": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggr-group_concat": function() {
-		document.getElementById("distinct-aggr").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
+		return;
+	},
+	
+	'click #extra-options-button': function(e) {
+		if(document.getElementById("extra-options").style.display == "none") document.getElementById("extra-options").style.display = "block";
+		else document.getElementById("extra-options").style.display = "none";
 		return;
 	},
 });
@@ -104,7 +110,7 @@ function clearAggregateInput(){
 	document.getElementById("distinct-aggr-check-box").checked=false;
 	document.getElementById("require-aggr-check-box").checked=false;
 	document.getElementById('field-list-aggr').value = "";
-	
+	document.getElementById("extra-options").style.display = "none";
 	defaultFieldList();
 
 	Template.AddAggregate.attList.set([{attribute: "No_attribute"}]);

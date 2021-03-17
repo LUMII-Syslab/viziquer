@@ -105,42 +105,42 @@
 						</div>
 				    {{/if}}
 					<div class="merge-values-expression">
-						<p>Expression: </p>
-						<input type="text" name="expression-merge" value="{{expression}}">
+						<p style="color:purple">What to aggregate</p>
+						<input class="form-control" type="text" name="expression-merge" value="{{expression}}">
 					</div>
 					<div class="merge-values-list">                       
-                        <form id="radio-function-form" class="function-radio-list">
-                            <p>Function: </p>
+                        <form id="radio-function-form" class="function-radio-list" style="width:55%">
+                            <p style="color:purple">Function: </p>
 
-							<label class="label-radio-functions">
+							<label class="label-radio-functions" style="display: inline-block;">
 								<input type="radio" name="radio-function" value="count" {{selectedCount}}>
 								<span class="custom-radio"></span>
 								count &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="count_distinct" {{selectedDistinct}}>
 								<span class="custom-radio"></span>
 								count_distinct &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="sum" {{selectedSum}}>
 								<span class="custom-radio"></span>
 								sum &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="avg" {{selectedAvg}}>
 								<span class="custom-radio"></span>
 								avg &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="max" {{selectedMax}}>
 								<span class="custom-radio"></span>
 								max &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="min" {{selectedMin}}>
 								<span class="custom-radio"></span>
 								min &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="sample" {{selectedSample}}>
 								<span class="custom-radio"></span>
 								sample &ensp;
-								<br/>
+								<!-- <br/> -->
 								<input type="radio" name="radio-function" value="group_concat" {{selectedConcat}}>
 								<span class="custom-radio"></span>
 								group_concat &ensp;
@@ -153,14 +153,14 @@
 					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:none;">                       
                         
                          <form>
-                            <p>Result name (alias): </p>
-                            <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                            <p style="color:purple">Give name to result: </p>
+                            <input class="form-control" type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
                         </form>
 						
 						<form id="distinct-merge">
                             <input type="checkbox" id="distinct-merge-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct values</p>
+                            <p style="display:inline;">Distinct values only</p>
                         </form>
                         
 						{{#if isNotRootClass}}
@@ -174,14 +174,14 @@
 							</form>
 
 							<form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
-								<label><p>Result at least (&gt;=): &emsp;</p> </label>
-								<input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
+								<input class="form-control" id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form>
 
 							<form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
-								<label><p>Result at most (&lt;=):&emsp;</p> </label>
-								<input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
+								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form> 
 						</div>						
@@ -196,14 +196,14 @@
 							</form>
 
 							<form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
-								<label><p>Result at least (&gt;=): &emsp;</p> </label>
-								<input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
+								<input class="form-control" id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form>
 
 							<form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
-								<label><p>Result at most (&lt;=):&emsp;</p> </label>
-								<input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
+								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form> 
 						</div>		
@@ -215,14 +215,14 @@
 					<div class="merge-values-wizard" id="merge-values-wizard-id" style="display:block;">                       
                         
                         <form>
-                            <p>Result name (alias): </p>
-                            <input type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
+                            <p style="color:purple">Give name to result: </p>
+                            <input class="form-control" type="text" id="merge-alias-name" value="{{mergeAlias}}"><br>
                         </form>
 						
 						<form id="distinct-merge">
                             <input type="checkbox" id="distinct-merge-check-box">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct values</p>
+                            <p style="display:inline;">Distinct values only</p>
                         </form>
 						
 						{{#if isNotRootClass}}
@@ -236,14 +236,14 @@
 							</form>
 
 							<form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
-								<label><p>Result at least (&gt;=): &emsp;</p> </label>
-								<input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
+								<input class="form-control" id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form>
 
 							<form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
-								<label><p>Result at most (&lt;=):&emsp;</p> </label>
-								<input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
+								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form> 
 						</div>						
@@ -258,14 +258,14 @@
 							</form>
 
 							<form> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
-								<label><p>Result at least (&gt;=): &emsp;</p> </label>
-								<input id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
+								<input class="form-control" id="merge-results-least" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form>
 
 							<form style="margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
-								<label><p>Result at most (&lt;=):&emsp;</p> </label>
-								<input id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
+								<label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
+								<input class="form-control" id="merge-results-most" type="number" pattern="[0-9]" step="any" required>
 								<span class="validity"></span>  
 							</form> 
 						</div>		

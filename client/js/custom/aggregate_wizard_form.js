@@ -100,8 +100,8 @@ Template.AggregateWizard.events({
 		
 		var expr = $('input[name=aggregate-list-radio]:checked').val();
 		
-		var distinct = $('input[id=distinct-aggregate-check-box]:checked').val();
-		var required = $('input[id=require-aggregate-check-box]:checked').val();	
+		var distinct = $('input[id=distinct-aggr-check-box]:checked').val();
+		var required = $('input[id=require-aggr-check-box]:checked').val();	
 		
 		if(typeof required !== "undefined" && required == "on") required = true;
 		else required = false;
@@ -164,42 +164,42 @@ Template.AggregateWizard.events({
 
 	// "change #aggregate-wizard-function-list": function() {
 	"change #aggregate-count": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-count_distinct": function() {
-		document.getElementById("distinct-aggregate").style.display = "none";
+		document.getElementById("distinct-aggr").style.display = "none";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-sum": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-avg": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-max": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-min": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-sample": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
 	"change #aggregate-group_concat": function() {
-		document.getElementById("distinct-aggregate").style.display = "block";
+		document.getElementById("distinct-aggr").style.display = "inline-block";
 		onAggregationChange();
 		return;
 	},
@@ -228,6 +228,12 @@ Template.AggregateWizard.events({
 		})
 		return;
 	},
+	
+	'click #extra-options-button': function(e) {
+		if(document.getElementById("extra-options").style.display == "none") document.getElementById("extra-options").style.display = "block";
+		else document.getElementById("extra-options").style.display = "none";
+		return;
+	},
 });
 
 
@@ -238,8 +244,9 @@ function clearAggregateInput(){
 		// else e.selected = false;
 	// });
 	document.getElementById("aggregate-count").checked=true;
-	document.getElementById("distinct-aggregate-check-box").checked=false;
-	document.getElementById("require-aggregate-check-box").checked=false;
+	document.getElementById("distinct-aggr-check-box").checked=false;
+	document.getElementById("require-aggr-check-box").checked=false;
+	document.getElementById("extra-options").style.display = "none";
 	
 	defaultFieldList();
 	Template.AggregateWizard.showDisplay.set("none");

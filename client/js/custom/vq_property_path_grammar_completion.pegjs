@@ -70,41 +70,60 @@
 					addContinuation(place, propName, 1, 3);
 				}
 				
-				var start_class = myschema.findClassByName(options.link.getStartElement().getName());
-				var end_class = myschema.findClassByName(options.link.getEndElement().getName());
-				if (start_class) {
-					var all_assoc_from_start = start_class.getAllAssociations();
-					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-						
-					//start
-					for (var role in all_assoc_from_start) {
-						var assoc_name= all_assoc_from_start[role]["short_name"];
-						
-						// var assoc_name = all_assoc_from_start[role]["name"];
-						if (all_assoc_from_start[role]["type"] == "<=") {
-							// assoc_name = "inv("+assoc_name+")";
-							assoc_name = "^"+assoc_name;
-						};
-						addContinuation(place, assoc_name, 99, 2);
-					}
-					//start - end
-					if (end_class){
-						var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-							return _.find(all_sub_super_of_end, function(c) {
-									return c.localName == a.class
-							})
-						});
-						
-						for (var role in possible_assoc_list) {
-							var assoc_name = possible_assoc_list[role]["short_name"];
-							if (possible_assoc_list[role]["type"] == "<=") {
+				if(typeof options.link !== "undefined"){
+					var start_class = myschema.findClassByName(options.link.getStartElement().getName());
+					var end_class = myschema.findClassByName(options.link.getEndElement().getName());
+					if (start_class) {
+						var all_assoc_from_start = start_class.getAllAssociations();
+						var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
+							
+						//start
+						for (var role in all_assoc_from_start) {
+							var assoc_name= all_assoc_from_start[role]["short_name"];
+							
+							// var assoc_name = all_assoc_from_start[role]["name"];
+							if (all_assoc_from_start[role]["type"] == "<=") {
 								// assoc_name = "inv("+assoc_name+")";
 								assoc_name = "^"+assoc_name;
 							};
-							addContinuation(place, assoc_name, 100, 2);
+							addContinuation(place, assoc_name, 99, 2);
 						}
-					}		
-				};	
+						//start - end
+						if (end_class){
+							var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
+								return _.find(all_sub_super_of_end, function(c) {
+										return c.localName == a.class
+								})
+							});
+							
+							for (var role in possible_assoc_list) {
+								var assoc_name = possible_assoc_list[role]["short_name"];
+								if (possible_assoc_list[role]["type"] == "<=") {
+									// assoc_name = "inv("+assoc_name+")";
+									assoc_name = "^"+assoc_name;
+								};
+								addContinuation(place, assoc_name, 100, 2);
+							}
+						}		
+					};
+				} else if (typeof options.className !== "undefined"){
+					var start_class = myschema.findClassByName(options.className);
+					if (start_class) {
+						var all_assoc_from_start = start_class.getAllAssociations();
+						
+						//start
+						for (var role in all_assoc_from_start) {
+							var assoc_name= all_assoc_from_start[role]["short_name"];
+							
+							// var assoc_name = all_assoc_from_start[role]["name"];
+							if (all_assoc_from_start[role]["type"] == "<=") {
+								// assoc_name = "inv("+assoc_name+")";
+								assoc_name = "^"+assoc_name;
+							};
+							addContinuation(place, assoc_name, 99, 2);
+						}
+					}
+				}
 			}
 			
 			// string -> idObject

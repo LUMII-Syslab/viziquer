@@ -112,6 +112,12 @@ autoCompletionAddAttribute = function(e) {
 	autoCompletion(e);
 },
 
+autoCompletionAddLink = function(e) {
+	grammarType = "linkPath"
+	symbolTable = generateSymbolTableAC();
+	autoCompletion(e);
+},
+
 autoCompletion = function(e) {
 
 	removeMessage();
@@ -444,7 +450,15 @@ runCompletion = function (text, act_elem2){
 					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 				};
 			};
-
+		} else if(grammarType == "linkPath"){
+			var name_list = [];
+			//var act_elem = Session.get("activeElement");
+			if (act_elem) {
+				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+				var className = compart["input"];
+				var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), className:className});
+			};
 		} else {
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
@@ -482,7 +496,16 @@ runCompletionNew = function (text, fullText, cursorPosition){
 					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 				};
 			};
-
+		} else if(grammarType == "linkPath"){
+			var name_list = [];
+			//var act_elem = Session.get("activeElement");
+			if (act_elem) {
+				var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+				var className = compart["input"];
+				var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:act_elem, className:className});
+			};
 		} else {
 
 			var className = "";
@@ -498,7 +521,7 @@ runCompletionNew = function (text, fullText, cursorPosition){
 			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 		}
 	} catch (com) {
-		//console.log(com);
+		// console.log(com);
 		var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));
 		return c;
 	}

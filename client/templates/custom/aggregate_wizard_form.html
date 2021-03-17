@@ -1,33 +1,38 @@
 <template name="AggregateWizard">
     <style>
-        div.wizard-list {
+        div.modal-body {
+			overflow-y: auto;
+			max-height: 60vh;
+		}
+		
+		div.wizard-list {
             margin-top: 5px;
             margin-left: 20px;
 			font-size: 12px;
         }
 
-        p {
-            font-size: 12px;
-            font-weight: bold;
-            padding-top: 5px;
-            padding-bottom: : 0px;
-            margin-bottom: 0px;
-        }
+        <!-- p { -->
+            <!-- font-size: 12px; -->
+            <!-- font-weight: bold; -->
+            <!-- padding-top: 5px; -->
+            <!-- padding-bottom: : 0px; -->
+            <!-- margin-bottom: 0px; -->
+        <!-- } -->
 
-        hr {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            margin-left: -5px;
-            border: 0;
-            border-top: 1px solid #c9c7c7;
-            width:95%
-        }
+        <!-- hr { -->
+            <!-- margin-top: 10px; -->
+            <!-- margin-bottom: 10px; -->
+            <!-- margin-left: -5px; -->
+            <!-- border: 0; -->
+            <!-- border-top: 1px solid #c9c7c7; -->
+            <!-- width:95% -->
+        <!-- } -->
 
         .wizard-list form, #field-name, #aggregate-wizard-function-list, #field-list {
             position: relative;             
             width:90%;
             border-radius:5px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         #results_least, #results-most{
@@ -51,84 +56,95 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Aggregate wizard</h4>
                 </div>
-                <div class="modal-bodyFC">                
-                    <div class="wizard-list">                       
+                <div class="modal-body">                
+                    <form class="form-horizontal" role="form">                       
                         <form>
-                            <p>Result name (alias): </p>
-                            <input type="text" id="alias-name" value="{{defaultAlias}}"><br>
-                        </form>
-						
-						<form class="function-radio-list">
-                            <p>Function: </p>
-							
-                                    <label class="label-radio label-aggregate">
-                                        <input id="aggregate-count" type="radio" name="aggregate-list-radio" value="count" {{selectedCount}}>
-                                        <span class="custom-radio"></span>
-                                        <span>count</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-count_distinct" type="radio" name="aggregate-list-radio" value="count_distinct" {{selectedDistinct}}>
-                                        <span class="custom-radio"></span>
-                                        <span>count_distinct</span>
-                                    </label>
-									<label class="label-radio label-aggregate" style="padding-top:0px">
-                                        <input id="aggregate-sum" type="radio" name="aggregate-list-radio" value="sum" {{selectedSum}}>
-                                        <span class="custom-radio"></span>
-                                        <span>sum</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-avg" type="radio" name="aggregate-list-radio" value="avg" {{selectedAvg}}>
-                                        <span class="custom-radio"></span>
-                                        <span>avg</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-max" type="radio" name="aggregate-list-radio" value="max" {{selectedMax}}>
-                                        <span class="custom-radio"></span>
-                                        <span>max</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-min" type="radio" name="aggregate-list-radio" value="min" {{selectedMin}}>
-                                        <span class="custom-radio"></span>
-                                        <span>min</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-sample" type="radio" name="aggregate-list-radio" value="sample" {{selectedSample}}>
-                                        <span class="custom-radio"></span>
-                                        <span>sample</span>
-                                    </label>
-									<label class="label-radio label-aggregate">
-                                        <input id="aggregate-group_concat" type="radio" name="aggregate-list-radio" value="group_concat" {{selectedConcat}}>
-                                        <span class="custom-radio"></span>
-                                        <span>group_concat</span>
-                                    </label>
-		
-                        </form>      
-									
-                        <form>
-                            <p>Field name/expression (leave blank to count/sample instances)</p>
-                            <input type="text" name="field-list" id="field-list" style="width:100%" list="field-list-datalist" value={{expression}}>
+                            <p style="color:purple">What to aggregate <div style="color:grey">(leave blank for instances themselves)</div></p>
+							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
+									placeholder="Field or expression" style="width:83%;display: inline-block;">
+							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
 							<datalist id="field-list-datalist" class="datalist">
 							 {{#each attList}}
                                     <option {{selectedOption}} name="field-name" input="{{attribute}}">{{attribute}}</option>
                                 {{/each}}
 							</datalist>
 							
+							<a id="extra-options-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
+                            <!-- <select name="field-list-aggr" id="field-list-aggr" style="width:100%"> -->
+                                <!-- {{#each attList}} -->
+                                    <!-- <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option> -->
+                                <!-- {{/each}} -->
+                            <!-- </select> -->
                         </form>
-					
-						<form id="distinct-aggregate">
-                            <input type="checkbox" id="distinct-aggregate-check-box" {{distinct}}>
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Distinct values</p>
-                        </form>
+
 						
-                       
+						<div id="extra-options" style="display: none;">
+							<p> Extra options: <br>
+							<form id="distinct-aggr" style="display:inline-block">
+								<input type="checkbox" id="distinct-aggr-check-box" {{distinct}}>
+								<span class="custom-checkbox"></span>
+								<div style="display:inline;font-weight: normal;">Distinct values only </div>
+							</form>
+							<form id="require-aggr" style="display:inline-block">
+								<input type="checkbox" id="require-aggr-check-box" {{require}}>
+								<span class="custom-checkbox"></span>
+								<div style="display:inline;font-weight: normal;">Require values explicitly</div>
+							</form>
+							</p>
+						</div>
 						
-						<form id="require-aggregate">
-                            <input type="checkbox" id="require-aggregate-check-box" {{require}}>
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Require field/expression values</p>
+						
+						<form class="function-radio-list" style="width:55%">
+                            <p style="color:purple">Function: </p>
+                                    <label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-count" type="radio" name="aggregate-list-radio" value="count" {{selectedCount}}>
+                                        <span class="custom-radio"></span>
+                                        <span>count</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-count_distinct" type="radio" name="aggregate-list-radio" value="count_distinct" {{selectedDistinct}}>
+                                        <span class="custom-radio"></span>
+                                        <span>count_distinct</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate" style="padding-top:0px">
+                                        <input id="aggregate-sum" type="radio" name="aggregate-list-radio" value="sum" {{selectedSum}}>
+                                        <span class="custom-radio"></span>
+                                        <span>sum</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-avg" type="radio" name="aggregate-list-radio" value="avg" {{selectedAvg}}>
+                                        <span class="custom-radio"></span>
+                                        <span>avg</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-max" type="radio" name="aggregate-list-radio" value="max" {{selectedMax}}>
+                                        <span class="custom-radio"></span>
+                                        <span>max</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-min" type="radio" name="aggregate-list-radio" value="min" {{selectedMin}}>
+                                        <span class="custom-radio"></span>
+                                        <span>min</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-sample" type="radio" name="aggregate-list-radio" value="sample" {{selectedSample}}>
+                                        <span class="custom-radio"></span>
+                                        <span>sample</span>
+                                    </label>
+									<label class="label-radio inline label-aggregate">
+                                        <input id="aggregate-group_concat" type="radio" name="aggregate-list-radio" value="group_concat" {{selectedConcat}}>
+                                        <span class="custom-radio"></span>
+                                        <span>group_concat</span>
+                                    </label>
+		
+                        </form>      
+						
+						<form>
+                            <p style="color:purple">Give name to result: </p>
+                            <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
+							<!-- <input type="text" id="alias-name-aggr"><br> -->
                         </form>
-                        
+
                         <hr>
 
                         <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
@@ -138,17 +154,17 @@
                         </form>
 
                         <form style="display: {{showDisplay}};"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
-                            <label><p>Result at least (&gt;=): &emsp;</p> </label>
-                            <input id="results_least" type="number" pattern="[0-9]" step="any" required>
+                            <label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
+                            <input class="form-control" id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>
 
                         <form style="display: {{showDisplay}};margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
-                            <label><p>Result at most (&lt;=):&emsp;</p> </label>
-                            <input id="results-most" type="number" pattern="[0-9]" step="any" required>
+                            <label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
+                            <input class="form-control" id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <span class="validity"></span>  
                         </form>                        
-                    </div>
+                    </form>
                 </div>
 
                 <div class="modal-footer">                    

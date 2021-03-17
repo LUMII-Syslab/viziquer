@@ -285,6 +285,11 @@ Template.AddLink.events({
 		clearAddLinkInput();
 		$("#add-link-form").modal("hide");
 	},
+	
+	
+	"click #build-path-button": function() {
+		$("#build-path-form").modal("show");
+	},
 
 //Menu listeners
 	"click #add-link-type-choice": function() {
@@ -526,6 +531,32 @@ Template.AddLink.events({
 			confirmSubquery();
 		}
 	},
+
+});
+
+
+Template.BuildLinkPath.events({
+	"keydown #build-path-input": function(e) {
+		autoCompletionAddLink(e);
+		return;
+	},
+	
+	"click #ok-build-path": function() {
+		
+		var path = $("#build-path-input").val()
+		var asc = Template.AddLink.fullList.curValue;
+		asc.unshift({name: path, class: " ", type: "=>", card: "", clr: "", show: true})
+		Template.AddLink.fullList.set(asc);
+		document.getElementById("build-path-input").value = "";
+		return;
+	},
+	
+	"click #cancel-build-path": function() {
+		document.getElementById("build-path-input").value = "";
+		return;
+	},
+	
+	
 
 });
 

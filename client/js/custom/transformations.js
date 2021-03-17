@@ -57,14 +57,6 @@ Interpreter.customMethods({
 		   elem.setCompartmentValue("Distinct", "", "");
 		 }
  	},
-	
-	VQsetAttributePrefixHelper: function(a,b,c,d) {
-		console.log("fffffffffffffffffffffffffff", a,b,c,d)
- 	},
-	
-	VQsetAttributePrefixRequire: function() {
-		 console.log("fffffffffffffffffffffffffff", a,b,c,d)
- 	},
 
 	TogglePlainMode: function() {
 
@@ -1039,7 +1031,7 @@ Interpreter.customMethods({
             		Template.AggregateWizard.startClassId.set(classId);
             	}else {
             		var classUp = classObj.getLinkToRoot();
-            		Template.AggregateWizard.showDisplay.set("block");
+            		Template.AggregateWizard.showDisplay.set("none");
             		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
             		//console.log("root id = ", getRootId(classObj.obj._id));
             		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
@@ -1096,6 +1088,103 @@ Interpreter.customMethods({
 						
                     }
 					Template.AggregateWizard.fromAddLink.set(false); 
+                    $("#aggregate-wizard-form").modal("show");
+                // } else {
+                	// Interpreter.showErrorMsg("No class name is given", -3);
+                	// return;
+                // }
+            }
+        }  else {
+			Interpreter.showErrorMsg("Aggregate expression too complex for wizard (the wizard supports only aggregate(expression) form)", -3);
+		}
+		
+    },
+	
+	AddAggregate: function(e) {
+
+
+		 Template.AggregateWizard.expressionField.set("")
+		 Template.AggregateWizard.aliasField.set("")
+		 Template.AggregateWizard.requireField.set("")
+	
+		Template.AggregateWizard.require.set("");
+		
+        var classId = Session.get("activeElement");
+        Template.AggregateWizard.endClassId.set(classId);
+		
+		Template.AggregateWizard.aggregation.set("count");
+		Template.AggregateWizard.expression.set("");
+		
+		Interpreter.destroyErrorMsg();
+		var attr_list = [{attribute: ""}];
+        var schema = new VQ_Schema();
+
+        if (classId) {
+            var classObj = new VQ_Element(classId);
+            if (classObj && classObj.isClass()) {
+            	//Display/at least/at most visibility
+            	if(classObj.isRoot()) {
+            		Template.AggregateWizard.showDisplay.set("none");
+            		Template.AggregateWizard.startClassId.set(classId);
+            	}else {
+            		var classUp = classObj.getLinkToRoot();
+            		Template.AggregateWizard.showDisplay.set("block");
+            		Template.AggregateWizard.linkId.set(classUp.link.obj._id);
+            		//console.log("root id = ", getRootId(classObj.obj._id));
+            		//Template.AggregateWizard.startClassId.set(getRootId(classObj.obj._id));
+            		if (classUp.start) {
+        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().start.obj._id);
+        			} else {
+        				Template.AggregateWizard.startClassId.set(classUp.link.getElements().end.obj._id);
+        			}            		
+            	}
+
+                //Attribute generation
+                var class_name = classObj.getName();
+                if (schema.classExist(class_name)) {
+                    var klass = schema.findClassByName(class_name);
+
+                    _.each(klass.getAllAttributes(), function(att){
+						attr_list.push({attribute: att["name"]});
+                    })
+					
+					var selected_elem_id = Session.get("activeElement");
+		
+					var tempSymbolTable = generateSymbolTable();
+					var symbolTable = tempSymbolTable["symbolTable"];
+					for (var  key in symbolTable) {	
+						for (var symbol in symbolTable[key]) {
+							// if(symbolTable[key][symbol]["context"] == selected_elem_id){
+							if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){		
+								attr_list.push({attribute: key, });
+							}else{
+								var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
+								if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) attr_list.push({attribute: key});
+							}
+							// }
+						}	
+					}
+					attr_list = _.uniq(attr_list, false, function(item) {
+						return item["attribute"];
+					});
+					
+                    attr_list = _.sortBy(attr_list, "attribute");
+                }
+                // console.log(attr_list);
+                Template.AggregateWizard.attList.set(attr_list);
+
+                //Alias name
+                // if (class_name) {
+                	if (class_name === null) class_name = "";
+					var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
+                  	if (userAlias !="") {
+                    	Template.AggregateWizard.defaultAlias.set(userAlias);                    
+                 	} else {
+						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
+						else Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
+						
+                    }
+					Template.AggregateWizard.fromAddLink.set(true); 
                     $("#aggregate-wizard-form").modal("show");
                 // } else {
                 	// Interpreter.showErrorMsg("No class name is given", -3);
@@ -1243,7 +1332,6 @@ Interpreter.customMethods({
             });
         };
 	},
-
 	
 });
 
