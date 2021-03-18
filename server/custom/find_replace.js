@@ -109,6 +109,7 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
                                     let parsedResultArray = Compartments_exp_grammar.parse(compartment.input,{});
                                 }
                                 catch(error){
+                                    console.log("parser error", error);
                                     let message = createErrorMessage(error);
                                     let ExpressionErrorObj = {
                                         Expression: compartment.value,
@@ -300,6 +301,7 @@ function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNod
     }
 }
 function deleteOldElementAndCompartments(elementId){ 
+    console.log("element deleting Id:", elementId);
     Compartments.remove({elementId: elementId});
     Elements.remove({_id: elementId});
     // dzēšam nost Elementu un tā Compartments
@@ -342,6 +344,7 @@ function ConcatenateResults(ResultArray){
     return ResultArray.join("");
 }
 function splitCompartmentvalue(value, parserdArray){
+    console.log(`value to split: ${value} parsedArray: ${parserdArray}`);
     let SplittedCompartment = value.split(parserdArray.delimiter);
     let size = SplittedCompartment.length;
     if(parserdArray.index > size - 1) return "";
@@ -354,26 +357,33 @@ function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements
     console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
     if(SpecLine){
         let startElement = Elements.findOne({_id: SpecLine.elementId}).startElement;
-        return findCompartValueByName(CompartmentName, _.intersection(startElements,[startElement]), parserdArray, match); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
+        console.log("startElement in find by specline", startElement);
+        return findCompartValueByName(CompartmentName,[startElement], parserdArray, match); // atstāj tikai to elementu, kas ir saistīts ar norādīto speclīniju
     }
     else console.log('not found spec line');
 }
 function findCompartValueByName(CompartmentName, startElements, parserdArray = {} , match){
+    console.log(`CompartmentName: ${CompartmentName} startElements: ${startElements} parserdArray: ${parserdArray} match: ${match}`);
     let value = "";
     let size = startElements.length;
     startElements = _.map(startElements, function(startElement){
         return _.findWhere(match, {findElementId: startElement}).elementId;
     });
+    
+    console.log("Start elements after map", startElements);
     for(let i = 0; i < size; i++){
-        let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
-        let startElemCompSize = StartElementCompartments.length;
-
+        let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch(); // pie test split ar Dispense rezultāts ir [], jo datubāzē atbi;stoša match elementa vairs nav
+        let startElemCompSize = StartElementCompartments.length; // jo dzēš pirms tam, tāpēc sākumā ir jāapstaigā visi end Elementi un tikai pēc tam tos jādzēš
+        console.log("Star eleme cmp", StartElementCompartments);
+        console.log("starteleme comp size", startElemCompSize);
         for(let j = 0; j < startElemCompSize; j++){
             let CompartmentType = CompartmentTypes.findOne({_id: StartElementCompartments[j].compartmentTypeId});
-            
+            console.log("Found Cmp type", CompartmentType);
+            console.log(`CompartmentName: ${CompartmentName} CompartmentType.name ${CompartmentType.name}`);
             if(CompartmentName == CompartmentType.name){
                 // ja atrod atribūta tipu ar norādīto nosaukumu, tad uzstāda value no atrastā
                 value = StartElementCompartments[j].value;
+                console.log("value to split", StartElementCompartments[j].value);
                 break;
             }
         }
@@ -574,6 +584,7 @@ function replaceStruct(match){
         let endElements     = _.keys(ReplaceLines);
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
         let InsertedTracker = [];
+        let parsedElements  = [];
         _.each(endElements, function(endElement){
             let endElementTypeId    = getElementTypeId(endElement);
             let startFindElements   = _.pluck(ReplaceLines[endElement], 'startElement');
@@ -632,7 +643,10 @@ function replaceStruct(match){
                             else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
                                 console.log('NO START LOCATION');}
                             _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
-                            if(!_.contains(endElements, start.local)) parseCompartmentExpressions(startFindElements, start.local, start.inserted, match);
+                            if(!_.contains(parsedElements, start.local)) {
+                                parseCompartmentExpressions(startFindElements, start.local, start.inserted, match);
+                                parsedElements.push(start.local);
+                            }
                         }
                         else {
                             console.log('found start eleemnt');
@@ -658,7 +672,10 @@ function replaceStruct(match){
                             else {endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));
                                 console.log('no LOCATION');}
                             _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
-                            if(!_.contains(endElements, end.local)) parseCompartmentExpressions(startFindElements, end.local, end.inserted, match);
+                            if(!_.contains(parsedElements, end.local)) {
+                                parseCompartmentExpressions(startFindElements, end.local, end.inserted, match);
+                                parsedElements.push(end.local);
+                            }
                         }
                         else{
                             console.log('found end eleemnt');
@@ -666,7 +683,10 @@ function replaceStruct(match){
                         if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                             let NewEdgeId = Elements.insert(newEdge);
-                            parseCompartmentExpressions(startFindElements, element._id, NewEdgeId, match);
+                            if(!_.contains(parsedElements, element._id)) {
+                                parseCompartmentExpressions(startFindElements, element._id, NewEdgeId, match);
+                                parsedElements.push(element._id);
+                            }
                         }
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
@@ -688,7 +708,10 @@ function replaceStruct(match){
                             if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
                             else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
                             _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
-                            if(!_.contains(endElements, box.local)) parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
+                            if(!_.contains(parsedElements, box.local)) {
+                                parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
+                                parsedElements.push(box.local);
+                            }
                         }
                     }
                 });
@@ -706,7 +729,10 @@ function replaceStruct(match){
                 _.each(startElements, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
                 createCompartments(startElements, createdEndElement); 
-                parseCompartmentExpressions(startFindElements,endElement ,createdEndElement,match);
+                if(!_.contains(parsedElements, endElement)) {
+                    parseCompartmentExpressions(startFindElements,endElement ,createdEndElement,match);
+                    parsedElements.push(endElement);
+                }
                 _.each(startElements, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
             }
             if(endElementTypeId == DeleteBoxType){
