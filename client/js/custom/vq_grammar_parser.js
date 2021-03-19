@@ -14469,7 +14469,38 @@ vq_grammar_parser = (function() {
 
     				}
     				
-    				
+    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
+						o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
+						o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
+						typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] === "undefined" 
+					){
+						var simbolTable = options.symbol_table[options.context._id][o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"]];
+						
+						for (var symbol in simbolTable) {
+							if(simbolTable[symbol]["kind"] == "CLASS_ALIAS" ||
+							simbolTable[symbol]["kind"] == "BIND_ALIAS" ||
+							simbolTable[symbol]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
+							simbolTable[symbol]["kind"] == "PROPERTY_ALIAS"){
+								return {Reference:
+									{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+									type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+									var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+									Substring : o["Substring"],
+									FunctionBETWEEN : o["FunctionBETWEEN"],
+									FunctionLike : o["FunctionLike"]
+								}
+							}
+						}
+						
+					}
+
 
     				// var classInstances = _.keys(_.omit(options.symbol_table, function(value,key,object) {return _.isNull(value.type)}));
     				// if(o["Path"][0] != null && o["Path"][1] == null && classInstances.indexOf(o["Path"][0]["path"]["name"]) > -1) {

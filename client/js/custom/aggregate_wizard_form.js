@@ -96,6 +96,7 @@ Template.AggregateWizard.events({
 	"click #ok-aggregate-wizard": function() {	
 		
 		var alias = $('input[id=alias-name]').val();
+		
 		// var expr = $('option[name=function-name]:selected').val()
 		
 		var expr = $('input[name=aggregate-list-radio]:checked').val();
@@ -109,7 +110,8 @@ Template.AggregateWizard.events({
 		var fld = $('option[name=field-name]:selected').val();
 		var fld = document.getElementById('field-list').value;
 		if (fld == "") {
-			expr = expr.concat("(.)");
+			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT .)");
+			else expr = expr.concat("(.)");
 		} else {
 			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT ", fld, ")");
 			else expr = expr.concat("(", fld, ")");
@@ -118,6 +120,15 @@ Template.AggregateWizard.events({
 		if(Template.AggregateWizard.fromAddLink.get() == true){
 		
 			var vq_end_obj = new VQ_Element(Template.AggregateWizard.endClassId.curValue);
+			var displayCase = document.getElementById("display-results").checked;
+			var minValue = $('input[id=results_least]').val();
+			var maxValue = $('input[id=results-most]').val();
+			
+			if ((displayCase || (minValue != "") || (maxValue != "")) && (alias == null || alias == "")) {
+				var cName = vq_end_obj.getName();
+				var newFunction = $('input[name=aggregate-list-radio]:checked').val()
+				alias = cName.charAt(0) + "_" + newFunction;
+			}
 			//console.log(alias + " " + expr);
 			vq_end_obj.addAggregateField(expr,alias,required);
 
@@ -128,10 +139,7 @@ Template.AggregateWizard.events({
 				}
 			}
 
-			var displayCase = document.getElementById("display-results").checked;
-			var minValue = $('input[id=results_least]').val();
-			var maxValue = $('input[id=results-most]').val();
-			//console.log(displayCase, minValue, maxValue);
+			// console.log(displayCase, minValue, maxValue);
 			if (displayCase || (minValue != "") || (maxValue != "")) {
 				// console.log("display or min/max");
 				var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);

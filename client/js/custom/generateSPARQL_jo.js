@@ -1020,6 +1020,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	sparqlTable["fullSPARQL"] = clazz["fullSPARQL"]; // SPARQL from 'FullSPARQL' field
 	sparqlTable["isUnion"] = clazz["isUnion"]; // label if class is union
 	sparqlTable["isUnit"] = clazz["isUnit"]; // label if class in unit
+	sparqlTable["selectAll"] = clazz["selectAll"]; // label if class is selectAll
 	sparqlTable["variableReferenceCandidate"] = []; // list with candidates to reference
 	sparqlTable["classMembership"] = classMembership; // class Membership role
 	sparqlTable["groupByThis"] = clazz["groupByThis"]; // group By This class
@@ -1274,11 +1275,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	if(clazz["aggregations"].length > 1){
 		_.each(clazz["aggregations"],function(field) {
 			
-			
 			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"]);
-			
-			
-			
+				
 			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
 				isMultipleAllowedAggregation = true;
 				_.each(clazz["aggregations"],function(field2) {
@@ -2126,7 +2124,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							var subQuery = "{SELECT " ;
 
 							//DISTINCT	
-							if(sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
+							if(sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true && sparqlTable["subClasses"][subclass]["selectAll"] != true) subQuery = subQuery + "DISTINCT ";
 							else if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
 							var parentClass = "";
 
@@ -2259,7 +2257,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							}
 							if(isMessage == false){
 								//var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
-								var subQuery = "{SELECT DISTINCT " + sparqlTable["subClasses"][subclass]["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
+								// sparqlTable["subClasses"][subclass]["selectAll"] != true
+								var distinct = "";
+								if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
+								var subQuery = "{SELECT " + distinct + sparqlTable["subClasses"][subclass]["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
 								whereInfo.unshift(subQuery);
 							}
 						}
@@ -2812,8 +2813,6 @@ function parseAggregationMultiple(expressionTable){
 		if (key == "Aggregate" && typeof expressionTable[key] === "string"){
 			var aggregation = expressionTable[key].toLowerCase();
 			if(aggregation != "min" && aggregation != "max" && aggregation != "sample") isMultipleAllowedAggregation = true;
-			//console.log("cfffdfdfdfdfgdfgdfg", typeof expressionTable[key], expressionTable);
-
 		}
 
 		if(key == "var") {
@@ -2840,5 +2839,6 @@ function parseAggregationMultiple(expressionTable){
 			if(temp["isMultipleAllowedCardinality"]==true) isMultipleAllowedCardinality = true;
 		}
 	}
+
 	return {isMultipleAllowedAggregation:isMultipleAllowedAggregation, isMultipleAllowedCardinality:isMultipleAllowedCardinality}
 }

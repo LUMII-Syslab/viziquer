@@ -4,7 +4,10 @@ Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
 Template.AddMergeValues.aggregation = new ReactiveVar("count");
+Template.AddMergeValues.distinct = new ReactiveVar("");
+Template.AddMergeValues.require = new ReactiveVar("");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
+Template.AddMergeValues.requireField = new ReactiveVar("");
 //Template.AddMergeValues.hideField = new ReactiveVar("");
 Template.AddMergeValues.e = new ReactiveVar("");
 Template.AddMergeValues.attribute = new ReactiveVar("");
@@ -14,10 +17,17 @@ Interpreter.customMethods({
 	AddMergeValues: function (e) {
 		
 		var expressionField = getExpression(e);
+		var requireField = getRequireField(e);//require
+		if(requireField[0].checked) Template.AddMergeValues.require.set("checked");
+		else Template.AddMergeValues.require.set("");
+		
+		console.log(requireField.checked, requireField[0].checked)
+		
 		//var hideField = getHide(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
 		var aggregation = parsedExpression["aggregation"];
+		var distinct = parsedExpression["distinct"];
 		
 		Template.AddMergeValues.expression.set(expr);
 		var mergeAlias = getAlais(e).val();
@@ -27,6 +37,10 @@ Interpreter.customMethods({
 		Template.AddMergeValues.aliasField.set(getAlais(e));
 		Template.AddMergeValues.attribute.set(e);
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
+		Template.AddMergeValues.distinct.set(distinct);
+		
+		console.log("eeeee", Template.AddMergeValues.distinct.get())
+		
 		var card = countCardinality(expr, Session.get("activeElement"))
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj){
@@ -61,6 +75,8 @@ Interpreter.customMethods({
 		
 		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);
+		Template.AddMergeValues.requireField.set(requireField);
+		
 		//Template.AddMergeValues.hideField.set(hideField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
 
@@ -96,6 +112,14 @@ Template.AddMergeValues.helpers({
 	
 	mergeAlias: function() {
 		return Template.AddMergeValues.mergeAlias.get();
+	},
+	
+	distinct: function() {
+		return Template.AddMergeValues.distinct.get();
+	},
+	
+	require: function() {
+		return Template.AddMergeValues.require.get();
 	},
 	
 	isNotRootClass: function() {
@@ -153,7 +177,16 @@ Template.AddMergeValues.events({
 		var expr = $('input[name=expression-merge]').val();
 		// var aggregation = $('option[name=function-name-merge]:selected').val();
 		var aggregation = $('input[name=radio-function]:checked').val();
-		expr = aggregation + "(" + expr + ")";
+		
+		// var distinctValues = $('input[id=distinct-merge-check-box]').val();
+		// if(typeof required !== "undefined" && required == "on") required = true;
+		// else required = false;
+		
+		var diaplay = $('input[id=distinct-merge-check-box]:checked').val();	
+		if(typeof diaplay !== "undefined" && diaplay == "on") diaplay = "DISTINCT ";
+		else diaplay = "";
+		
+		expr = aggregation + "("+diaplay + expr + ")";
 		var mergeAliasName = $('input[id=merge-alias-name]').val();
 		
 		if((typeof mergeType !== 'undefined' && mergeType == "MULTIPLE") || typeof mergeType === 'undefined'){
@@ -187,8 +220,8 @@ Template.AddMergeValues.events({
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
 				
-				var requireValues = $('input[id=distinct-merge-check-box]').val();
-				if(requireValues == "on") requireValues = true;
+				var requireValues = $('input[id=require-merge-check-box]:checked').val();	
+				if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
 				else requireValues = false;
 
 				vq_obj.addAggregateField(expr,mergeAliasName,requireValues);
@@ -208,6 +241,10 @@ Template.AddMergeValues.events({
 			};
 		} else {
 			Template.AddMergeValues.expressionField.get().val(expr);
+			var requireValues = $('input[id=require-merge-check-box]:checked').val();	
+			if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
+			else requireValues = false;
+			Template.AddMergeValues.requireField.get()[0].checked = requireValues;
 		}
 		clearMergeValuesInput();
 		return;
@@ -224,7 +261,7 @@ Template.AddMergeValues.events({
         if (checkedName === 'SINGLE') {
            document.getElementById("merge-values-wizard-id").style.display = "none";
         } else {
-           document.getElementById("merge-values-wizard-id").style.display = "block";
+           document.getElementById("merge-values-wizard-id").style.display = "inline-block";
         } 
 	},
 	
@@ -235,7 +272,7 @@ Template.AddMergeValues.events({
 		if(newFunction == "count_distinct"){
 			document.getElementById("distinct-merge").style.display = "none";
 		} else {
-			document.getElementById("distinct-merge").style.display = "block";
+			document.getElementById("distinct-merge").style.display = "inline-block";
 		}
 		
 		//Set at least/at most
@@ -248,6 +285,12 @@ Template.AddMergeValues.events({
 		}
 		return;
 	},
+	
+	'click #extra-options-button-merge': function(e) {
+		if(document.getElementById("extra-options-merge").style.display == "none") document.getElementById("extra-options-merge").style.display = "block";
+		else document.getElementById("extra-options-merge").style.display = "none";
+		return;
+	},
 
 });
 
@@ -255,7 +298,17 @@ function parsedExpressionField(expression){
 	if(expression.indexOf("(") != -1 && expression.endsWith(")") == true ){
 		var aggregation = expression.substring(0, expression.indexOf("("));
 		var aggregationList = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
-		if(aggregationList.indexOf(aggregation.toLowerCase()) != -1) return {expression:expression.substring(expression.indexOf("(")+1, expression.length-1), aggregation:aggregation.toLowerCase()}
+		if(aggregationList.indexOf(aggregation.toLowerCase()) != -1) {
+			var expression = expression.substring(expression.indexOf("(")+1, expression.length-1)
+			var distinct = "";
+			if(expression.toLowerCase().startsWith("distinct ")) {		
+				distinct = "checked";
+				expression = expression.substring(9, expression.length+1)
+			}
+			
+			return {expression:expression, aggregation:aggregation.toLowerCase(), distinct:distinct}
+		
+		}
 	}
 	return {expression:expression, aggregation:""}
 }
@@ -275,8 +328,11 @@ function clearMergeValuesInput(){
 	
 	document.getElementById("merge-alias-name").value = Template.AddMergeValues.mergeAlias.get();
 	document.getElementById("merge-display-results").checked = false;
+	document.getElementById("require-merge-check-box").checked = false;
+	document.getElementById("distinct-merge-check-box").checked = false;
 	document.getElementById("merge-results-least").value = "";
 	document.getElementById("merge-results-most").value = "";
+	document.getElementById("extra-options-merge").style.display = "none";
 }
 
 function getExpression(e){
@@ -288,6 +344,9 @@ function getHide(e){
 
 function getAlais(e){
 	return getField(e, "Field Name");
+	
+}function getRequireField(e){
+	return getField(e, "Require Values");
 }
 
 function getField(e, fieldName){

@@ -2648,6 +2648,15 @@ VQ_Element.prototype = {
     var distinctS = this.boolToString(distinct)
     this.setCompartmentValueAuto("Distinct",distinctS)
   },
+  // determines whether the class has select all property
+  isSelectAll: function() {
+    return this.getCompartmentValue("Select All")=="true";
+  },
+  // bool  ->
+  setSelectAll: function(selectAll) {
+    var selectAllS = this.boolToString(selectAll)
+    this.setCompartmentValueAuto("Select All",selectAllS)
+  },
   // determines whether the query should be grouped by this class
   isGroupByThis: function() {
     return this.getCompartmentValue("Group by this")=="true";

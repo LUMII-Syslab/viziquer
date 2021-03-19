@@ -1183,6 +1183,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 							break;
 						}
 					}
+
 				messages.push({
 						"type" : "Error",
 						"message" : "Path expression " + exp + " can start only with role(object property). To specify arithmetic division, surround the '/' symbol by spaces.",
