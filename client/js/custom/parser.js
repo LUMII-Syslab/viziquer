@@ -2132,6 +2132,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 						&& (expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'CLASS_NAME' ||
 						expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == 'CLASS_ALIAS')
 						){
+							
 							referenceCandidateTable.push(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name']);
 							if(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == "CLASS_ALIAS" || expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['kind'] == "PROPERTY_ALIAS") referenceTable.push("?"+expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name'])
 							
@@ -2606,6 +2607,10 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					}
 					
 					if(visited != 1){
+						var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
+						var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
+						console.log("llll",left, right)
+					
 						
 						if(typeof expressionTable[key]["NumericExpressionL"] !== "undefined") SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						else if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
@@ -2635,6 +2640,8 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 								else SPARQLstring =   SPARQLstring  + "?" +className;
 							}
 						}
+						if((expressionTable[key]["Relation"] == "<>" || expressionTable[key]["Relation"] == "!=" || expressionTable[key]["Relation"] == "=") && typeof left["var"] !== "undefined" && left["var"]["type"] == null &&  typeof right["var"] !== "undefined" && right["var"]["type"] == null) applyExistsToFilter = false;
+
 						visited = 1
 					}
 				}
