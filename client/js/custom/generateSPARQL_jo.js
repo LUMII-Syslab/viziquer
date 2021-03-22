@@ -2260,7 +2260,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								// sparqlTable["subClasses"][subclass]["selectAll"] != true
 								var distinct = "";
 								if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
-								var subQuery = "{SELECT " + distinct + sparqlTable["subClasses"][subclass]["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
+								
+								var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
 								whereInfo.unshift(subQuery);
 							}
 						}
