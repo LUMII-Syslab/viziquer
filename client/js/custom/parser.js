@@ -1156,7 +1156,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 				}
 				
 				var messageText;
-				if(underOptionalPlain == true) messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider moving the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'";
+				if(underOptionalPlain == true) messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Optional-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.\nConsider making the Optional-block a subquery, or define an internal field '"+ expressionTable[key]["var"]["name"] + "' within the scope of '"+ expressionTable[key]["Reference"]["name"] +"'";
 				else messageText = "Reference to instance '" + expressionTable[key]["Reference"]["name"] + "' from Union-block not allowed in navigation expression '" + expressionTable[key]["Reference"]["name"] +"."+expressionTable[key]["var"]["name"] +"' outside the block.'";
 				
 				messages.push({
@@ -2609,7 +2609,7 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 					if(visited != 1){
 						var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 						var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
-						console.log("llll",left, right)
+
 					
 						
 						if(typeof expressionTable[key]["NumericExpressionL"] !== "undefined") SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation);

@@ -890,7 +890,7 @@ function generateSPARQLtext(abstractQueryTable){
 				return arr.indexOf(el) === i;
 			});
 
-			Interpreter.showErrorMsg(showMessages.join("\n"), -3);
+			Interpreter.showErrorMsg(showMessages.join(" // "), -3);
 		 }
 		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking};
 }
