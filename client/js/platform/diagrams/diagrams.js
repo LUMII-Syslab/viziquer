@@ -620,6 +620,10 @@ Template.importOntology.events({
 									if ( cp.TargetClass )
 										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
 									cp_new.instanceCount = cp.instanceCount
+									cp_new.minCardinality = cp.minCardinality
+									cp_new.maxCardinality = cp.maxCardinality
+									cp_new.inverseRole = cp.inverseRole
+  					
 									classpairs.push(cp_new);
 								});
 								el.ClassPairs = classpairs;

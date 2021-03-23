@@ -254,8 +254,6 @@ var PrefixList =
 	"http://rdvocab.info/ElementsGr2/":"rdag2"
   }
   
-  
-  
 function findPrefixFromList(uri) {
   if ( typeof PrefixList[uri] != 'undefined') { return PrefixList[uri];}
   else { return null; }
@@ -1032,13 +1030,13 @@ VQ_Schema.prototype = {
 			var scClass = schema.findClassByName(sc);
 			var newSchAttr = new VQ_SchemaAttribute(atr);
 			newSchAttr.maxCardinality = newAttr.maxCardinality;
-			newSchAttr.minCardinality = atr.minCardinality;
+			newSchAttr.minCardinality = newAttr.minCardinality;
 			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
 			{
 				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
 				if ( det.minCardinality )
 					newSchAttr.minCardinality = det.minCardinality;
-				
+			
 				newSchAttr.instanceCount = det.instanceCount 
 				if ( det.objectTripleCount )
 					newSchAttr.objectTripleCount = det.objectTripleCount; 
@@ -1100,10 +1098,12 @@ VQ_Schema.prototype = {
 			//console.log(asoc.ClassPairs)
 			//console.log(new_cp)		
 		}
-		
+
 		if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
 		{
 			_.each(asoc.SourceClassesDetailed, function(sc){
+				if ( asoc.instanceCount == sc.instanceCount)
+					newRole.sourceClass = sc.classFullName
 				_.each(new_cp, function(n){
 					if ( n.SourceClass == sc.classFullName)
 					{
@@ -1113,20 +1113,29 @@ VQ_Schema.prototype = {
 				})
 			})
 		}
+		if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed ) > 0)
+		{
+			_.each(asoc.TargetClassesDetailed, function(sc){
+				if ( asoc.instanceCount == sc.instanceCount)
+					newRole.targetClass = sc.classFullName
+			})
+		}
 		//console.log("*********************", asoc.localName ,"*********************************")
-		//console.log(new_cp)
+		//console.log(newRole)
 		
 		//_.each(asoc.ClassPairs, function(cp){
 		_.each(new_cp, function(cp){
 			//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
 			//var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
-			if ( !newRole.maxCardinality) {  // Šis bija pēc newSchRole taisīšanas, īsti nezinu kāpēc 
-			  newRole.minCardinality = 0;  
-			  newRole.maxCardinality = -1;
-			}			
+		
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
 			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
+			
+			if ( !newRole.maxCardinality) { 
+			  newRole.minCardinality = 0;  
+			  newRole.maxCardinality = -1;
+			}				
 
 			if (cp.instanceCount)
 				newSchRole.instanceCount = cp.instanceCount
@@ -1309,7 +1318,7 @@ VQ_Schema.prototype = {
 	_.each(schema.Classes, function(c){
 		if (!c.isAbstract )
 		{
-			var c_name = c.getElementName() 
+			var c_name = c.getElementName();
 			var sh_cl = [];
 			
 			sh_cl = _.union(sh_cl,[c_name]);
@@ -1363,24 +1372,39 @@ VQ_Schema.prototype = {
 			function transfom_assoc(assoc, v1_pref, v1_suf, class_poz, type){ 
 				var attr_list = [];
 				var link_names = {};
+
 				_.each(assoc, function(link){ 
 					if (!link_names[link.fullName])
 					{
 						link_names[link.fullName] = 1;
 						var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName;});  
+						var main_class = link.role[class_poz];
+						if ( main_class )
+							link_list  = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].fullName == main_class;}); 
+						var tuksais = _.filter(link_list, function(o) {return o[class_poz].localName == " ";});
+
 						var l = [];	
 						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf);
 						var k1 = link.minCardinality; 
 						var k2 = link.maxCardinality;
 						var v2 = "";
-						if (_.size(link_list) == 1 && (type == "out" || ( type == "in" && link.isSymmetric != true)))
+						if (_.size(link_list) == 1 ) // && (type == "out" || ( type == "in" && link.isSymmetric != true)))
 						{
 							if (!link[class_poz].isAbstract)
 								v2 = newLine.concat("\t\tsh:node ", link[class_poz].getElementName(), " ;");
 							else
 								v2 = ["\t\tsh:nodeKind sh:IRI ;"];  
 						}
-						else if (_.size(link_list) > 1 )
+						else if ( _.size(link_list) == 1 > 1 && _.size(tuksais) == 0 )
+						{
+							var cl_list = "";
+							_.each(link_list, function(o){ inst_c = inst_c + o.instanceCount; cl_list = cl_list.concat("[sh:node ",o[class_poz].getElementName()," ] ") })
+							v2 = newLine.concat("\t\tsh:or ( ", cl_list, ") ;");
+						}
+						else 
+							v2 = ["\t\tsh:nodeKind sh:IRI ;"];  
+							
+						/*else if (_.size(link_list) > 1 )
 						{
 							var link_list2 = _.filter(link_list, function(o) {return o[class_poz].localName != " ";});
 							var tuksais = _.filter(link_list, function(o) {return o[class_poz].localName == " ";});
@@ -1403,7 +1427,7 @@ VQ_Schema.prototype = {
 								v2 = newLine.concat("\t\tsh:or ( ", cl_list, ") ;");
 							else
 								v2 = ["\t\tsh:nodeKind sh:IRI ;"]; 
-						}
+						} */
 						if ( v2 != "")
 						{
 							l = make_property(v1, v2, k1, k2);
