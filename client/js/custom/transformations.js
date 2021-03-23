@@ -1003,6 +1003,7 @@ Interpreter.customMethods({
 			
 			var aggregation = expression_value.substring(0, expression_value.indexOf("(")).toLowerCase();
 			var expression = expression_value.substring(expression_value.indexOf("(")+1, expression_value.length-1);
+			if(expression == ".") expression = "";
 			
 			if(expression.toLowerCase().startsWith("distinct ")){
 				Template.AggregateWizard.distinct.set("checked");
