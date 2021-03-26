@@ -1575,6 +1575,10 @@
                   },
                   {
                     "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "createCompartment",
+					"procedure": "VQTransformLinkToSubQuery"
                   }
                 ],
                 "subCompartmentTypes": [

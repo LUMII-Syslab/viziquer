@@ -65,10 +65,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 	if(obj_class.identification.localName != null) obj_class.identification.localName = obj_class.identification.localName.trim();
 	if(obj_class.identification.localName == "") obj_class.identification.localName = null;
 
-    if (obj_class.instanceAlias) {
-      my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:resolveClassByName(obj_class.identification.localName), context:obj_class.identification._id});
-	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
-    };
+    
 
     _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
 	//parser need class with prefix
@@ -84,6 +81,13 @@ resolveTypesAndBuildSymbolTable = function (query) {
 		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
 		if(typeof obj_class.linkIdentification.Prefix !== 'undefined' && obj_class.linkIdentification.Prefix != "") prefix = obj_class.linkIdentification.Prefix + ":";
         _.extend(obj_class.linkIdentification, parsePathExpression(prefix+obj_class.linkIdentification.localName, obj_class.identification))
+    };
+	
+	if (obj_class.instanceAlias) {
+      var type = resolveClassByName(obj_class.identification.localName)
+	  if(typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.maxCardinality !== "undefined") {type["maxCardinality"] = obj_class.linkIdentification.maxCardinality}
+	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
+	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
 
     obj_class.conditionLinks.forEach(function(cl) {
@@ -462,7 +466,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
            };
          } else {
            if (f.alias) {
-             updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+            
+			 var type = null;
+			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {maxCardinality : 1};
+			  updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", type);
            } else {
              // no alias
              // remove from symbol table ...
@@ -529,6 +536,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
 
     var visited = {};
     var condition_links = [];
+	var messages = [];
     visited[e._id()]=e._id();
 
     // Next auxilary functions
@@ -553,7 +561,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
 							target: visited[link.link.getStartElement()._id()]
 				  };
 			  } else {
-				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				  messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 			  }
             } else {
               // if reverse path exists - register link json
@@ -567,7 +575,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                                           target: visited[link.link.getEndElement()._id()] }
                                      });
 				} else {
-				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				    messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 				}
               } else {
                 // no path ERROR
@@ -585,7 +593,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                           target: visited[link.link.getEndElement()._id()]
 					};
 				}else {
-				  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+				   messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 				}
               } else {
                 // if reverse path exists - register link json
@@ -599,7 +607,7 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
                                             target: visited[link.link.getStartElement()._id()] }
                                        });
 				  } else {
-					  Interpreter.showErrorMsg("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.", -3);
+					    messages.push("Query tree shape can not be identified. Mark edges as extra edges so that join and subquery edges have a tree shape structure.")
 				  }
                 } else {
                   // no path ERROR
@@ -741,6 +749,9 @@ genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list
     _.each(element_list, function(e) {
       e.setVirtualRoot(false)
     });
+	
+	if(messages.length > 0)query_in_abstract_syntax["messages"] = messages;
+	
     return query_in_abstract_syntax;
   });
 };

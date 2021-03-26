@@ -26,6 +26,20 @@ Interpreter.customMethods({
 		});
 	},
 
+	VQTransformLinkToSubQuery:function(classId){
+		
+		var classObj = new VQ_Element(classId);
+        if (classObj && classObj.isClass()) {
+			if(!classObj.isRoot()){
+				var classUp = classObj.getLinkToRoot();    
+				var vq_link_obj = new VQ_Element(classUp.link.obj._id);
+				if(vq_link_obj.isLink() && vq_link_obj.getNestingType() != "GLOBAL_SUBQUERY" && vq_link_obj.getNestingType() != "SUBQUERY" && vq_link_obj.getNestingType() != "CONDITION"){
+					vq_link_obj.setNestingType("SUBQUERY");
+				}
+			}	
+		}
+	},
+	
 	VQsetGroupBy: function() {
 		 var act_elem = Session.get("activeElement");
 		 var elem = new VQ_Element(act_elem);

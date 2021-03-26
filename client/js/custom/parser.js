@@ -3112,7 +3112,7 @@ countCardinality = function(str_expr, context){
 	return -1;
 }
 
-function countMaxExpressionCardinality(expressionTable){
+countMaxExpressionCardinality = function (expressionTable){
 	var isMultiple = false;
 	var isAggregation = false;
 	

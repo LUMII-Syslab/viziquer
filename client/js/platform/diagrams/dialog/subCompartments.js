@@ -217,6 +217,8 @@ Template.show_multi_field_form.events({
 		var elem_style;
 		var compart_style;
 		
+		if(typeof src_id === "undefined") Interpreter.executeExtensionPoint(compart_type, "createCompartment", [Session.get("activeElement")]);
+		
 
 		Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 	},

@@ -22,6 +22,10 @@ Interpreter.customMethods({
        return;
     };
     _.each(queries,function(q) {
+		if(typeof q.messages !== "undefined"){
+		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+	  }
+      else{
          //console.log(JSON.stringify(q,null,2));
      var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
 		 var rootClass = abstractQueryTable["root"];
@@ -30,7 +34,8 @@ Interpreter.customMethods({
 		 Session.set("generatedSparql", result["SPARQL_text"]);
      setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
-     if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+	  if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+	  }
     })
   },
 
@@ -49,15 +54,20 @@ Interpreter.customMethods({
        return;
     };
     _.each(queries,function(q) {
-         //console.log(JSON.stringify(q,null,2));
-     var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-		 var rootClass = abstractQueryTable["root"];
-		 var result = generateSPARQLtext(abstractQueryTable);
-		 // console.log(result["SPARQL_text"], result);
-		 Session.set("generatedSparql", result["SPARQL_text"]);
-     setText_In_SPARQL_Editor(result["SPARQL_text"]);
+		if(typeof q.messages !== "undefined"){
+		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+	  }
+      else{
+			 //console.log(JSON.stringify(q,null,2));
+		 var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+			 var rootClass = abstractQueryTable["root"];
+			 var result = generateSPARQLtext(abstractQueryTable);
+			 // console.log(result["SPARQL_text"], result);
+			 Session.set("generatedSparql", result["SPARQL_text"]);
+		 setText_In_SPARQL_Editor(result["SPARQL_text"]);
 
-     if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		 if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+	  }
     })
   },
 
@@ -102,16 +112,21 @@ Interpreter.customMethods({
           return;
        };
        _.each(queries,function(q) {
+		   if(typeof q.messages !== "undefined"){
+		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+	  }
+      else{
             //console.log(JSON.stringify(q,null,2));
-       var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-   		 var rootClass = abstractQueryTable["root"];
-   		 var result = generateSPARQLtext(abstractQueryTable);
-   		 // console.log(result["SPARQL_text"]);
+		   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+			 var rootClass = abstractQueryTable["root"];
+			 var result = generateSPARQLtext(abstractQueryTable);
+			 // console.log(result["SPARQL_text"]);
 
-       Session.set("generatedSparql", result["SPARQL_text"]);
-       setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+		   Session.set("generatedSparql", result["SPARQL_text"]);
+		   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
-       if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		   if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+	  }
        })
     } else {
       // nothing selected
@@ -174,16 +189,21 @@ Interpreter.customMethods({
           return;
        };
        _.each(queries,function(q) {
+		   if(typeof q.messages !== "undefined"){
+		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+	  }
+      else{
             //console.log(JSON.stringify(q,null,2));
-       var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-   		 var rootClass = abstractQueryTable["root"];
-   		 var result = generateSPARQLtext(abstractQueryTable);
-   		 // console.log(result["SPARQL_text"]);
+		   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+			 var rootClass = abstractQueryTable["root"];
+			 var result = generateSPARQLtext(abstractQueryTable);
+			 // console.log(result["SPARQL_text"]);
 
-       Session.set("generatedSparql", result["SPARQL_text"]);
-       setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+		   Session.set("generatedSparql", result["SPARQL_text"]);
+		   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
-       if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		   if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+	  }
        })
      } else {
        // nothing selected
@@ -324,6 +344,8 @@ Interpreter.customMethods({
 // generate SPARQL for given id-s
 function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
   Interpreter.destroyErrorMsg();
+ 
+  
   var queries = genAbstractQueryForElementList(list_of_ids, root_elements_ids);
   // ErrorHandling - just one query at a moment allowed
   if (queries.length==0) {
@@ -335,7 +357,13 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
   };
   // goes through all queries found within the list of VQ element ids
   _.each(queries, function(q) {
-       //console.log(JSON.stringify(q,null,2));
+	  if(typeof q.messages !== "undefined"){
+		Interpreter.showErrorMsg(q.messages.join(" // "), -3);
+		Session.set("generatedSparql", "");
+		setText_In_SPARQL_Editor("");
+	  }
+      else{
+		  // console.log(JSON.stringify(q,null,2));
    var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
    //console.log(abstractQueryTable);
    var rootClass = abstractQueryTable["root"];
@@ -347,6 +375,7 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 
    $('#vq-tab a[href="#sparql"]').tab('show');
    // Interpreter.destroyErrorMsg();
+  }
   })
 }
 
@@ -1275,13 +1304,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	if(clazz["aggregations"].length > 1){
 		_.each(clazz["aggregations"],function(field) {
 			
-			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"]);
+			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"], symbolTable[clazz["identification"]["_id"]]);
 				
 			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
 				isMultipleAllowedAggregation = true;
 				_.each(clazz["aggregations"],function(field2) {
 					if(field != field2){
-						var aggregationParseResult = parseAggregationMultiple(field2["parsed_exp"]);
+						var aggregationParseResult = parseAggregationMultiple(field2["parsed_exp"], symbolTable[clazz["identification"]["_id"]]);
 						if(aggregationParseResult["isMultipleAllowedCardinality"] == true) isMultipleAllowedCardinality = true;
 					}
 				})
@@ -2806,7 +2835,7 @@ function checkIfIsSimpleAttribute(expressionTable, isSimpleVariable){
 	return {isSimpleVariable:isSimpleVariable, kind:kind, parentType:parentType}
 }
 
-function parseAggregationMultiple(expressionTable){
+function parseAggregationMultiple(expressionTable, symbolTable){
 	var isMultipleAllowedAggregation = null;
 	var isMultipleAllowedCardinality = null;
 
@@ -2828,6 +2857,19 @@ function parseAggregationMultiple(expressionTable){
 				} else {
 					isMultipleAllowedCardinality = true;
 				}
+			//symbolTable has maxCardinality
+			}else if (typeof symbolTable[expressionTable[key]["name"]] !== 'undefined'){
+				var symbolUsage = symbolTable[expressionTable[key]["name"]];
+				var found = false;
+				for(var symbol in symbolUsage){
+					if(typeof symbolUsage[symbol]["type"] !== "undefined" && typeof symbolUsage[symbol]["type"]["maxCardinality"] !== "undefined" && symbolUsage[symbol]["type"]["maxCardinality"] != null){ 
+						if(symbolUsage[symbol]['type']['maxCardinality'] == -1 || symbolUsage[symbol]['type']['maxCardinality'] > 1){
+							isMultipleAllowedCardinality = true;
+						}
+						found = true;
+					}
+				}
+				if(found == false)isMultipleAllowedCardinality = true;
 			// if type information not known
 			} else if(typeof expressionTable[key]['type'] === 'undefined' || expressionTable[key]['type'] == null )  {
 				isMultipleAllowedCardinality = true;
@@ -2835,7 +2877,7 @@ function parseAggregationMultiple(expressionTable){
 		}
 
 		if(typeof expressionTable[key] == 'object'){
-			var temp = parseAggregationMultiple(expressionTable[key]);
+			var temp = parseAggregationMultiple(expressionTable[key], symbolTable);
 			if(temp["isMultipleAllowedAggregation"]==true) isMultipleAllowedAggregation = true;
 			if(temp["isMultipleAllowedCardinality"]==true) isMultipleAllowedCardinality = true;
 		}
