@@ -562,6 +562,7 @@ VQ_Schema.prototype = {
     return "ID_" + this.currentId; // + "_" + name;
   },
   classExist: function (name) {
+    //if (druka)  console.log("Funkcijas izsaukums - classExist"); 
     var cl = this.findClassByName(name);
 	return findName(name, cl);
   },
@@ -590,8 +591,10 @@ VQ_Schema.prototype = {
   getAllClasses: function (){ 
 	if (druka)  console.log("Funkcijas izsaukums - getAllClasses"); 
 	if ( _.size(this.AllClasses) > 0 )
+	{
+		if (druka)  console.log(this.AllClasses); 
 		return this.AllClasses;
-		
+	}	
     var classes = _.filter(this.Classes, function (cl){
 	             return  !cl.isAbstract;  }); //( cl.localName != " " && cl.localName != "_" && cl.localName != "__" )  });	
     var classes_list =  _.map(classes, function (cl) {
@@ -612,13 +615,17 @@ VQ_Schema.prototype = {
 		classes_list = _.sortBy(classes_list, function(c) {return c.localName;})
 	}
 	this.AllClasses = _.map(classes_list, function(c) { return {name:c.name};});
+	if (druka)  console.log(this.AllClasses); 
 	return this.AllClasses;
   },
   getAllSchemaAssociations: function (){
-    return _.map(this.Associations, function (cl) {
+    if (druka)  console.log("Funkcijas izsaukums - getAllSchemaAssociations"); 
+    var rez =  _.map(this.Associations, function (cl) {
 				if (cl.isUnique) return {name: cl.localName};
 				else  if (cl.ontology.prefix == "") return {name: cl.localName};
 				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+	if (druka)  console.log(rez); 
+	return rez;
   },
   findElementByName: function (name, coll) {  
     var element = _.find(coll, function(el){ if ( findName(name, el)) { return el; }; })
@@ -635,6 +642,7 @@ VQ_Schema.prototype = {
 	return _.find(coll, function(el){ if (el.localName == " ") { return el; }; })
   },
   findClassByName: function(name) {
+	//if (druka)  console.log("Funkcijas izsaukums - findClassByName"); 
 	return this.findElementByName(name, this.Classes);
   },
   findClassByNameAndCycle: function(name) {
@@ -644,6 +652,7 @@ VQ_Schema.prototype = {
     return cl;
   },
   findAssociationByName: function(name) {
+    if (druka)  console.log("Funkcijas izsaukums - findAssociationByName"); 
 	return this.findElementByName(name, this.Associations);
   },
   findAttributeByName: function(name) {
@@ -717,8 +726,12 @@ VQ_Schema.prototype = {
     this.Ontologies[newOntology.dprefix] = newOntology;
   },
   resolveClassByName: function (className) {
+    if (druka)  console.log("Funkcijas izsaukums - resolveClassByName " + className);  
     if (this.classExist(className))
+	{
+		if (druka) console.log(this.findClassByName(className).getClassInfo());
 		return this.findClassByName(className).getClassInfo();
+	}
 	else
         return null;
   },
@@ -731,9 +744,7 @@ VQ_Schema.prototype = {
   },
   resolveSchemaRoleByName: function (linkName, sourceClass, targetClass) {
     if (this.associationExist(linkName))
-	{    
 		return this.findSchemaRoleByNameAndTarget(linkName, sourceClass, targetClass).getSchemaRoleInfo();
-	}
 	else
 		return null;
   },
@@ -746,16 +757,18 @@ VQ_Schema.prototype = {
 		return null;
   },
   resolveAttributeByNameAndClass: function (className, attributeName) {
+    if (druka)  console.log("Funkcijas izsaukums - resolveAttributeByNameAndClass " + className + " " + attributeName);
     var sc_class = this.findClassByName(className);
     if (sc_class.localName != " ") {
         var attributes = sc_class.getAttributes();
         var att_list = _.filter(attributes, function(attr) {return attr.name == attributeName || attr.short_name == attributeName });
         if (_.size(att_list) == 1) return [this.resolveAttributeByName(className,(att_list[0].short_name)), sc_class.getClassInfo()];
         else if (_.size(att_list) > 1 )  return [this.resolveAttributeByName(className, attributeName), sc_class.getClassInfo()];
-        attributes = sc_class.getAllAttributes();
-        var att_list = _.filter(attributes, function(attr) {return attr.name == attributeName || attr.short_name == attributeName });
-        if (_.size(att_list) == 1) return [this.resolveAttributeByName(className,(att_list[0].short_name)), sc_class.getClassInfo()];
-        else if (_.size(att_list) > 1 )  return [this.resolveAttributeByName(className, attributeName), sc_class.getClassInfo()];
+		// Par nākamajiem nav skaidrs, kāpēc tie ir izņemti ārā
+        //attributes = sc_class.getAllAttributes(); 
+        //var att_list = _.filter(attributes, function(attr) {return attr.name == attributeName || attr.short_name == attributeName });
+        //if (_.size(att_list) == 1) return [this.resolveAttributeByName(className,(att_list[0].short_name)), sc_class.getClassInfo()];
+        //else if (_.size(att_list) > 1 )  return [this.resolveAttributeByName(className, attributeName), sc_class.getClassInfo()];
         else return [this.resolveAttributeByName(className, attributeName), null];
     }
     else {
@@ -1037,7 +1050,7 @@ VQ_Schema.prototype = {
 				if ( det.minCardinality )
 					newSchAttr.minCardinality = det.minCardinality;
 			
-				newSchAttr.instanceCount = det.instanceCount 
+				newSchAttr.instanceCount = det.tripleCount 
 				if ( det.objectTripleCount )
 					newSchAttr.objectTripleCount = det.objectTripleCount; 
 				else
@@ -1066,7 +1079,8 @@ VQ_Schema.prototype = {
 				extensionMode = pp[0].value;
 		}
 		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
-		
+		//console.log("============== " + asoc.localName +"  =======================")
+		//console.log(asoc)
 		if (extensionMode== "simple")
 		{
 			if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
@@ -1074,11 +1088,11 @@ VQ_Schema.prototype = {
 				_.each(asoc.SourceClassesDetailed, function(sc){
 					var add = true		
 					_.each(asoc.ClassPairs, function(cp){
-						if (sc.classFullName == cp.SourceClass && sc.instanceCount <= cp.instanceCount)
+						if (sc.classFullName == cp.SourceClass && sc.objectTripleCount <= cp.tripleCount)
 							add = false
 					})
-					if (add)
-						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.instanceCount})
+					if (add == true)
+						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.tripleCount})
 				})
 			}
 
@@ -1087,11 +1101,11 @@ VQ_Schema.prototype = {
 				_.each(asoc.TargetClassesDetailed, function(sc){
 					var add = true		
 					_.each(asoc.ClassPairs, function(cp){
-						if (sc.classFullName == cp.TargetClass && sc.instanceCount <= cp.instanceCount)
+						if (sc.classFullName == cp.TargetClass && sc.tripleCount <= cp.tripleCount)
 							add = false
 					})
 					if (add)
-						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.instanceCount})
+						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.tripleCount})
 				})
 			}
 			//console.log("*********************", asoc.localName ,"*********************************")
@@ -1102,7 +1116,7 @@ VQ_Schema.prototype = {
 		if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
 		{
 			_.each(asoc.SourceClassesDetailed, function(sc){
-				if ( asoc.instanceCount == sc.instanceCount)
+				if ( asoc.objectTripleCount == sc.objectTripleCount)
 					newRole.sourceClass = sc.classFullName
 				_.each(new_cp, function(n){
 					if ( n.SourceClass == sc.classFullName)
@@ -1116,7 +1130,7 @@ VQ_Schema.prototype = {
 		if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed ) > 0)
 		{
 			_.each(asoc.TargetClassesDetailed, function(sc){
-				if ( asoc.instanceCount == sc.instanceCount)
+				if ( asoc.tripleCount == sc.tripleCount)
 					newRole.targetClass = sc.classFullName
 			})
 		}
@@ -1138,7 +1152,15 @@ VQ_Schema.prototype = {
 			}				
 
 			if (cp.instanceCount)
-				newSchRole.instanceCount = cp.instanceCount
+			{
+				newSchRole.instanceCount = cp.instanceCount;
+				newSchRole.tripleCount = cp.instanceCount;
+			}
+			else if (cp.tripleCount)
+			{
+				newSchRole.instanceCount = cp.tripleCount;
+				newSchRole.tripleCount = cp.tripleCount;
+			}
 				
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole);
@@ -1327,7 +1349,7 @@ VQ_Schema.prototype = {
 			
 			var attr_list = [];
 			
-			_.each(c.schemaAttribute, function(attr){  
+			 _.each(c.schemaAttribute, function(attr){  // !!! te iet pa shēmas atribūtiem
 				var a = [];
 				a = _.union(a,["\tsh:property ["]);
 				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
@@ -1335,28 +1357,17 @@ VQ_Schema.prototype = {
 				var max = "*";
 				if ( attr.maxCardinality != -1 ) max = attr.maxCardinality
 				a = _.union(a,newLine.concat("\t\tsh:maxCount \"", max, "\" ;"));
-				if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
-					a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
-				else
-					a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
+
+				//if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
+				//	a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
+				//else
+				//	a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
+				a = _.union(a,attr.attribute.sh_type);
 				a = _.union(a,["\t\]"]);
 
 				attr_list = _.union(attr_list,a.join("\r\n"));	
 			})	
-			
-			//sh:property [
-			//	sh:path edm:realizes ;
-			//	sh:nodeKind sh:IRI ;
-			//];
-			//sh:property [
-			//	sh:path terms:proxyFor ;
-			//	sh:or ( [sh:node edm:ProvidedCHO ] [ sh:node edm:EuropeanaAggregation ] ) ;
-			//];
-			//sh:property [
-			//	sh:path terms:proxyIn ;
-			//	sh:node edm:EuropeanaAggregation ;
-			//];
-			
+
 			function make_property(v1, v2, k1, k2){
 				var l = [];	
 				l = _.union(l,["\tsh:property ["]); 
@@ -1369,7 +1380,40 @@ VQ_Schema.prototype = {
 				l = _.union(l,["\t\]"]);
 				return l.join("\r\n")
 			}
+			
 			function transfom_assoc(assoc, v1_pref, v1_suf, class_poz, type){ 
+				var attr_list = [];
+				var link_names = {};
+
+				_.each(assoc, function(link){ 
+					if (!link_names[link.fullName])
+					{
+						link_names[link.fullName] = 1;
+						var l = [];	
+						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf);
+						var k1 = link.minCardinality; 
+						var k2 = link.maxCardinality;
+						var v2 = "";	
+						if (type == "out")
+							v2 = link.role.sh_type;
+						else 
+							v2 = link.role.sh_inv_type;
+							
+						if ( v2 != "")
+						{
+							l = make_property(v1, v2, k1, k2);
+							attr_list = _.union(attr_list,l);
+						}
+					}
+
+				})				
+				return attr_list;
+			}
+			
+			attr_list = _.union(attr_list,transfom_assoc(c.outAssoc, "\t\tsh:path ", " ;", "targetClass", "out"));
+			attr_list = _.union(attr_list,transfom_assoc(c.inAssoc, "\t\tsh:path \"^", "\" ;", "sourceClass", "in"));
+			
+			/*function transfom_assoc(assoc, v1_pref, v1_suf, class_poz, type){ 
 				var attr_list = [];
 				var link_names = {};
 
@@ -1395,16 +1439,16 @@ VQ_Schema.prototype = {
 							else
 								v2 = ["\t\tsh:nodeKind sh:IRI ;"];  
 						}
-						else if ( _.size(link_list) == 1 > 1 && _.size(tuksais) == 0 )
+						else if ( _.size(link_list)  > 1 && _.size(tuksais) == 0 )
 						{
 							var cl_list = "";
-							_.each(link_list, function(o){ inst_c = inst_c + o.instanceCount; cl_list = cl_list.concat("[sh:node ",o[class_poz].getElementName()," ] ") })
-							v2 = newLine.concat("\t\tsh:or ( ", cl_list, ") ;");
+							_.each(link_list, function(o){ cl_list = cl_list.concat("[sh:node ",o[class_poz].getElementName()," ] ") })
+							v2 = newLine.concat("\t\tsh:or2 ( ", cl_list, ") ;");
 						}
 						else 
 							v2 = ["\t\tsh:nodeKind sh:IRI ;"];  
 							
-						/*else if (_.size(link_list) > 1 )
+						--else if (_.size(link_list) > 1 )
 						{
 							var link_list2 = _.filter(link_list, function(o) {return o[class_poz].localName != " ";});
 							var tuksais = _.filter(link_list, function(o) {return o[class_poz].localName == " ";});
@@ -1427,7 +1471,7 @@ VQ_Schema.prototype = {
 								v2 = newLine.concat("\t\tsh:or ( ", cl_list, ") ;");
 							else
 								v2 = ["\t\tsh:nodeKind sh:IRI ;"]; 
-						} */
+						--} 
 						if ( v2 != "")
 						{
 							l = make_property(v1, v2, k1, k2);
@@ -1437,13 +1481,8 @@ VQ_Schema.prototype = {
 
 				})				
 				return attr_list;
-			}
+			} */
 						
-			var link_names = {};
-	
-			attr_list = _.union(attr_list,transfom_assoc(c.outAssoc, "\t\tsh:path ", " ;", "targetClass", "out"));
-			attr_list = _.union(attr_list,transfom_assoc(c.inAssoc, "\t\tsh:path \"^", "\" ;", "sourceClass", "in"));
-			
 			if (_.size(c.superClasses) > 0 )
 			{         
 				var superClasses  = _.map(c.superClasses, function(sc) {  return sc.getElementName();  }).join(" ");
@@ -1928,8 +1967,15 @@ VQ_Elem = function (elemInfo, elemType){
 
 	if (elemInfo.instanceCount)
 		this.instanceCount = parseInt(elemInfo.instanceCount);
+	else if (elemInfo.tripleCount)
+		this.instanceCount = parseInt(elemInfo.tripleCount);
+	else
+		this.instanceCount = -1;
+	
+	if (elemInfo.tripleCount != null)
+		this.tripleCount = parseInt(elemInfo.tripleCount);
 	else 
-		this.instanceCount = -1
+		this.objectTripleCount = -1;
 	
 	if (elemInfo.objectTripleCount != null)
 		this.objectTripleCount = parseInt(elemInfo.objectTripleCount);
@@ -2101,6 +2147,7 @@ VQ_Class.prototype.getAttributes = function() {
 	return _.map(this.schemaAttribute, function (a) {
 		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, short_name:a.getElementShortName(), instanceCount:a.instanceCount}; });
   };
+
 VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	if (druka)  console.log("Funkcijas izsaukums - getAllAttributes" + " " + this.localName); 
 	if (_.size(this.allAttributes) > 0)
@@ -2152,13 +2199,48 @@ VQ_Class.prototype.getClassInfo = function() {
 
 VQ_Attribute = function (attrInfo){
 	VQ_Elem.call(this, attrInfo, "attribute");
-	this.schemaAttribute = {};
+	this.schemaAttribute = {}; 
 	var type = attrInfo.type;  // !!! Šeit vajadzētu tā elegantāk pārvērst
 	if (type == "XSD_STRING" || type == "xsd_langString" || type == "xsd_string") type = "xsd:string";
 	if (type == "XSD_DATE") type = "xsd:date";
 	if (type == "XSD_DATE_TIME") type = "xsd:dateTime";
-	this.type = type;
+
+	var tripleCountSum = 0
+	var sh_type = "";
+	var t = "";
+	if (attrInfo.dataTypes)
+	{
+		this.dataTypes = attrInfo.dataTypes;
+		_.each(attrInfo.dataTypes, function(tt){
+			tripleCountSum = tripleCountSum + tt.tripleCount;
+			sh_type = sh_type.concat("[sh:datatype ",tt.dataType,"] ");
+			if ( tt.tripleCount == attrInfo.tripleCount)
+				type = tt.dataType;   
+		})
+	}
+	if (type != undefined)
+		this.type = type;
+	if ( _.size(attrInfo.dataTypes) == 0 && type != undefined)   
+		this.sh_type = t.concat("\t\tsh:datatype ",type);
+	else if ( _.size(attrInfo.dataTypes) == 0 && type == undefined)   
+		this.sh_type = "\t\tsh:nodeKind sh:IRI";
+	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.dataTypes) == 1)   
+		this.sh_type = t.concat("\t\tsh:datatype ",type);
+	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.dataTypes) > 1)
+		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, ") ;");
+	else if (sh_type != "")
+		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, "[sh:nodeKind sh:IRI]) ;");
+	else
+		this.sh_type = "\t\tsh:nodeKind sh:IRI";
 	
+			
+	//console.log("--------------------------------------")
+	//console.log(attrInfo.localName)
+	//console.log(attrInfo.dataTypes)
+	//console.log(attrInfo.tripleCount)
+	//console.log(tripleCountSum)
+	//console.log(this.sh_type)
+		
 	//var e = schema.findAttributeByName(attrInfo.localName);  
 	var named_elements = {};
 	named_elements = _.extend(_.extend(_.extend(named_elements,schema.Classes),schema.Attributes),schema.Associations);
@@ -2223,6 +2305,51 @@ VQ_Role = function (roleInfo){
 	  this.ontology.namesAreUnique = false;
 	  e.ontology.namesAreUnigue = false;
 	}
+	function concat_classes(list) {
+		var sh_type = "";
+		_.each(list, function(tt){
+			var c_name = schema.findClassByName(tt.classFullName).getElementName();
+			sh_type = sh_type.concat("[sh:node  ",c_name,"] ");
+		})	
+		return sh_type
+	}
+
+	var t = "";
+	if (roleInfo.SourceClassesDetailed)
+	{
+		var mainSourceClass = "";
+		var mainTargetClass = "";
+		_.each(roleInfo.SourceClassesDetailed, function(sc){ if ( roleInfo.objectTripleCount == sc.objectTripleCount) mainSourceClass = sc.classFullName; })  
+		_.each(roleInfo.TargetClassesDetailed, function(sc){ if ( roleInfo.tripleCount == sc.tripleCount) mainTargetClass = sc.classFullName; })
+		
+		if (roleInfo.closedRange == true && _.size(roleInfo.TargetClassesDetailed) == 1)
+			this.sh_type = t.concat("\t\tsh:node ",schema.findClassByName(roleInfo.TargetClassesDetailed[0].classFullName).getElementName());
+		else if (mainTargetClass != "")
+			this.sh_type = t.concat("\t\tsh:node ",schema.findClassByName(mainTargetClass).getElementName());
+		else if (roleInfo.closedRange == true && _.size(roleInfo.TargetClassesDetailed) > 1)
+			this.sh_type = t.concat("\t\tsh:or ( ", concat_classes(roleInfo.TargetClassesDetailed), ") ;");
+		else
+			this.sh_type = "\t\tsh:nodeKind sh:IRI";
+		
+		if (roleInfo.closedDomain == true && _.size(roleInfo.SourceClassesDetailed) == 1)
+			this.sh_inv_type = t.concat("\t\tsh:node ",schema.findClassByName(roleInfo.SourceClassesDetailed[0].classFullName).getElementName());
+		else if (mainSourceClass != "")
+			this.sh_inv_type = t.concat("\t\tsh:node ",schema.findClassByName(mainSourceClass).getElementName());
+		else if (roleInfo.closedDomain == true && _.size(roleInfo.SourceClassesDetailed) > 1)
+			this.sh_inv_type = t.concat("\t\tsh:or ( ", concat_classes(roleInfo.SourceClassesDetailed), ") ;");
+		else
+			this.sh_inv_type = "\t\tsh:nodeKind sh:IRI";
+	}
+	else
+	{
+		this.sh_type = "\t\tsh:nodeKind sh:IRI";
+		this.sh_inv_type = "\t\tsh:nodeKind sh:IRI";
+	}
+		
+	//console.log(roleInfo)
+	//console.log(this.sh_type)
+	//console.log(this.sh_inv_type)
+	
 	if (roleInfo.maxCardinality || roleInfo.minCardinality) {
 	  this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
 	  this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");

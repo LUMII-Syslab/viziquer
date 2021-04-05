@@ -623,6 +623,7 @@ Template.importOntology.events({
 									cp_new.minCardinality = cp.minCardinality
 									cp_new.maxCardinality = cp.maxCardinality
 									cp_new.inverseRole = cp.inverseRole
+									cp_new.tripleCount = cp.tripleCount
   					
 									classpairs.push(cp_new);
 								});
