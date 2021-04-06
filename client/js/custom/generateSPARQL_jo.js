@@ -1124,12 +1124,21 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			sparqlTable["getSubQueryResults"] = true;
 		} else {
 			if(typeof field["parsed_exp"] === 'undefined'){
-				messages.push({
-					"type" : "Error",
-					"message" : "Syntax error in attribute expression " + field["fulltext"],
-					"listOfElementId" : [clazz["identification"]["_id"]],
-					"isBlocking" : true
-				});
+				if(field["exp"].replace(/ /g, '') == "") {
+					messages.push({
+						"type" : "Error",
+						"message" : "warning: empty attribute compartment in node " + clazz["identification"]["short_name"],
+						"listOfElementId" : [clazz["identification"]["_id"]],
+						"isBlocking" : false
+					});
+				} else {
+					messages.push({
+						"type" : "Error",
+						"message" : "Syntax error in attribute expression " + field["fulltext"],
+						"listOfElementId" : [clazz["identification"]["_id"]],
+						"isBlocking" : true
+					});
+				}
 			} else{
 			if(field["alias"] != null && field["alias"].replace(" ", "") !="" && field["alias"].indexOf(" ") >= 0) {
 				messages.push({
@@ -1209,8 +1218,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						}
 					}
 
-					sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
-
+					if(field["isInternal"] != true)sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
+					
 					//local Aggregation
 					tempTripleTable = []
 					for (var triple in result["triples"]){
@@ -1232,6 +1241,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 					localAggregation = localAggregation +"} GROUP BY ?" + idTable[clazz["identification"]["_id"]] +"}";
 					sparqlTable["localAggregateSubQueries"].push(localAggregation);
+					
 					//requireValues
 				}
 

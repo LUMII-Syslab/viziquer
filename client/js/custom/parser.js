@@ -211,7 +211,7 @@ function createTriples(tripleTable, tripleType){
 // alias - given variable alias
 function setVariableName(varName, alias, variableData, generateNewName){
 	// console.log("----------------------------------------");
-	//console.log(varName, alias, variableData, generateNewName);
+	// console.log(varName, alias, variableData, generateNewName);
 	// console.log("expressionLevelNames11111", expressionLevelNames);
 	// console.log("variableNamesClass", variableNamesClass);
 	// console.log("variableNamesAll", variableNamesAll);
@@ -302,7 +302,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		return attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"];
 	}
 	
-	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined'){
+	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined' || typeof variableData["type"] !== 'undefined' ){
 		// console.log("2222", varName);
 		//Aply exists to filter if variable is not defined
 		if(typeof variableNamesClass[varName] === 'undefined' || (typeof variableNamesClass[varName] !== 'undefined' && (variableNamesClass[varName]["isVar"] != true ||
