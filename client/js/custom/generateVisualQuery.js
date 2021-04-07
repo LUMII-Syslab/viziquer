@@ -122,16 +122,55 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 	//order
 	var order = parsedQuery["order"];
 	for(var key in order){
-		var exp = vq_visual_grammar.parse(order[key]["expression"])["value"];
-		var isDescending = false;
-		if(typeof order[key]["descending"] !== 'undefined') isDescending = order[key]["descending"];
-		if(typeof attributeTable[exp] !== 'undefined' && (attributeTable[exp]["alias"] == "" || (attributeTable[exp]["identification"] != null && attributeTable[exp]["identification"]["localName"] == attributeTable[exp]["alias"]))) {
-			attributeTable[exp]["seen"] = true;
+		if(typeof order[key]["expression"] === "string"){
+			var exp = vq_visual_grammar.parse(order[key]["expression"])["value"];
+			var isDescending = false;
+			if(typeof order[key]["descending"] !== 'undefined') isDescending = order[key]["descending"];
+			if(typeof attributeTable[exp] !== 'undefined' && (attributeTable[exp]["alias"] == "" || (attributeTable[exp]["identification"] != null && attributeTable[exp]["identification"]["localName"] == attributeTable[exp]["alias"]))) {
+				attributeTable[exp]["seen"] = true;
+			}
+			orderTable.push({
+				"exp":exp,
+				"isDescending":isDescending
+			})
+		} else {
+			var isDescending = false;
+			if(typeof order[key]["descending"] !== 'undefined') isDescending = order[key]["descending"];
+			
+			var orderTemp = parseSPARQLjsStructureWhere(order[key]["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
+			
+			if(orderTemp["viziQuerExpr"]["exprString"] != ""){
+				orderTable.push({
+					"exp":orderTemp["viziQuerExpr"]["exprString"],
+					"isDescending":isDescending
+				})
+			} else if(order[key]["expression"]["type"] == "aggregate"){	
+				var distinct = "";
+				if(order[key]["expression"]["distinct"] == true)distinct = "DISTINCT ";
+				
+				var aggregateExpression;
+				
+				//agregate on expression
+				if(typeof order[key]["expression"]["expression"] == "object"){
+					var temp = parseSPARQLjsStructureWhere(order[key]["expression"]["expression"], nodeList, [], classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
+					aggregateExpression = temp.viziQuerExpr.exprString;
+					aggregationExp = order[key]["expression"]["aggregation"] + "(" +distinct + aggregateExpression +")";
+					orderTable.push({
+						"exp":aggregationExp,
+						"isDescending":isDescending
+					})
+				} else {
+					aggregateExpression = vq_visual_grammar.parse(order[key]["expression"]["expression"])["value"];
+					var aggregationExp = order[key]["expression"]["aggregation"] + "(" +distinct + aggregateExpression +")";
+					orderTable.push({
+						"exp":aggregationExp,
+						"isDescending":isDescending
+					}) 
+					
+				}
+				
+			}
 		}
-		orderTable.push({
-			"exp":exp,
-			"isDescending":isDescending
-		})
 	}
 	//select
 	var variables = parsedQuery["variables"];
@@ -189,7 +228,15 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];
 	
 				if(typeof bindTable[parsedAttribute] === 'undefined'){
-
+					//var isVariable = false;
+					//for(var link in linkTable){
+					//	if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
+					//		isVariable = true;
+					//		linkTable[link]["linkIdentification"]["localName"] = linkTable[link]["linkIdentification"]["localName"].substring(1);
+					//		linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
+					//		break;
+					//	}
+					//}
 					if(isVariable == false){
 						var attributeInfo = {
 							"alias":"",
@@ -954,6 +1001,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 							"isSubQuery":false,
 							"isGlobalSubQuery":true,
 						}
+						
 						linkTable.push(link);
 						linkTableAdded.push(link);
 					}
@@ -1631,13 +1679,14 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 	}
 	// type=subquery
 	if((where["type"] == "group" || where["type"] == "optional") && typeof where["patterns"][0]["queryType"] != "undefined"){
+		
 		for(var clazz in classesTable){
 			allClasses[clazz] = classesTable[clazz];
 		}
 		// console.log("SUBQUERY", where["patterns"][0], classesTable, allClasses);
 		
 		var abstractTable = generateAbstractTable(where["patterns"][0], allClasses, variableList, nodeList);
-		
+
 		for(var clazz in abstractTable["classesTable"]){
 			allClasses[clazz] = abstractTable["classesTable"][clazz];
 		}
@@ -1651,15 +1700,19 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 						|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
 						if(linkFound==false){
 							var subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject");
+							
 							if(subSelectMainClass == null){
 								for(var subClass in abstractTable["classesTable"]){
 									subSelectMainClass = subClass;
 									break;
 								}
 							}
+							if(typeof abstractTable["classesTable"][subSelectMainClass]["aggregations"] === 'undefined' && typeof where["patterns"][0]["distinct"] === 'undefined'){
+								abstractTable["classesTable"][subSelectMainClass]["selectAll"] = true;
+							}
 							var isSubQuery = true;
 							var isGlobalSubQuery = false;
-							if(typeof where["patterns"][0]["limit"] !== 'undefined' || typeof where["patterns"][0]["offset"] !== 'undefined' || typeof where["patterns"][0]["distinct"] !== 'undefined' || typeof where["patterns"][0]["order"] !== 'undefined'){
+							if(typeof where["patterns"][0]["limit"] !== 'undefined' || typeof where["patterns"][0]["offset"] !== 'undefined' || typeof where["patterns"][0]["order"] !== 'undefined'){
 								isSubQuery = false;
 								isGlobalSubQuery = true;
 							}	
@@ -2605,7 +2658,6 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 					} else {
 						var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]);
 						if (bgptype == "optionalLink" && linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
-
 						if(linkResolved == null){
 							var predicateParsed = vq_visual_grammar.parse(triples[triple]["predicate"])["value"];
 							var linkName = generateInstanceAlias(schema, predicateParsed);
@@ -2638,33 +2690,37 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 							// if object class has identification and does not has link
 							// and subject class has identification and does not has link -> do not create link
 							
+						
 							var objectClasses = nodeList[triples[triple]["object"]]["uses"];
 							for(var oclass in objectClasses){
+								
 								var createAssociation = true;
 								var associationCreated = false;
 								var schema = new VQ_Schema();
-								if (classesTable[oclass]["identification"] != null) {
-									var all_association = schema.findClassByName(classesTable[oclass]["identification"]["short_name"]).getAllAssociations();
-									var associationInClass = false;
-									for(var association in all_association){
-										if(all_association[association]["short_name"] == linkResolved["short_name"] && all_association[association]["type"] == "<="){
-											associationInClass = true;
-											break;
-										}
-									}
-									var all_association = schema.findClassByName(classesTable[oclass]["identification"]["short_name"]).getAllAttributes();
-									for(var association in all_association){
-										if(all_association[association]["short_name"] == linkResolved["short_name"]){
-											associationInClass = true;
-											break;
-										}
-									}
-									if(associationInClass == false) createAssociation = false;
-								};
+								
+								// if (classesTable[oclass]["identification"] != null) {
+									// var all_association = schema.findClassByName(classesTable[oclass]["identification"]["short_name"]).getAllAssociations();
+									// var associationInClass = false;
+									// for(var association in all_association){
+										// if(all_association[association]["short_name"] == linkResolved["short_name"] && all_association[association]["type"] == "<="){
+											// associationInClass = true;
+											// break;
+										// }
+									// }
+									// var all_association = schema.findClassByName(classesTable[oclass]["identification"]["short_name"]).getAllAttributes();
+									// for(var association in all_association){
+										// if(all_association[association]["short_name"] == linkResolved["short_name"]){
+											// associationInClass = true;
+											// break;
+										// }
+									// }
+									// if(associationInClass == false) createAssociation = false;
+								// };
 
 								var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
 
 								for(var sclass in subjectClasses){
+									
 									// if multiple links with same name to same object and subject, then create only one
 									for(var link in linkTableAdded){
 										if(classesTable[linkTableAdded[link]["object"]]["instanceAlias"] == classesTable[oclass]["instanceAlias"] &&
@@ -2693,7 +2749,6 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 											if(associationInClass == false) createAssociation = false;
 										};
 									}
-
 									if(associationCreated != true && (createAssociation == true || schema.resolveLinkByName(triples[triple]["predicate"])==null)){
 										var link = {
 											"linkIdentification":linkResolved,
@@ -3417,6 +3472,11 @@ function visualizeQuery(clazz, parentClass){
 		var distinct = clazz["distinct"];
 		classBox.setDistinct(distinct);
 		// console.log("distinct = ", distinct);
+		
+		//selectAll
+		var selectAll = clazz["selectAll"];
+		if(typeof selectAll === "undefined") selectAll = false;
+		classBox.setSelectAll(selectAll);
 
 		//limit
 		var limit = clazz["limit"];
