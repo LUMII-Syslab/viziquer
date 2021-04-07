@@ -85,7 +85,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 	
 	if (obj_class.instanceAlias) {
       var type = resolveClassByName(obj_class.identification.localName)
-	  if(typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.maxCardinality !== "undefined") {type["maxCardinality"] = obj_class.linkIdentification.maxCardinality}
+	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.maxCardinality !== "undefined") {type["maxCardinality"] = obj_class.linkIdentification.maxCardinality}
 	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
