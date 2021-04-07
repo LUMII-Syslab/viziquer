@@ -172,6 +172,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			}
 		}
 	}
+	
 	//select
 	var variables = parsedQuery["variables"];
 	var starInSelect = false;
@@ -2559,7 +2560,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 			
 			if((bgptype != "optionalLink" || objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["subject"])).length > 0 
-			&& schema.resolveAttributeByName(null, triples[triple]["predicate"]) != null){
+			&& schema.resolveAttributeByName(null, triples[triple]["predicate"]) != null && schema.resolveClassByName(vq_visual_grammar.parse(triples[triple]["object"])["value"]) == null){
 				 // console.log("DATA PROPERTY", triples[triple]);
 				var alias = "";
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"]);
@@ -3199,7 +3200,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 				linkTable[linkName]["isVisited"] = true;
 				clazz["children"] = addChildren(clazz);
 				var childerenClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles);
-				
+						
 				// if child and parent are connected with plain link or optional without filters
 				// if child has no identification (is not defined class)
 				// if child has no attributes or one attribute "(select this)"
