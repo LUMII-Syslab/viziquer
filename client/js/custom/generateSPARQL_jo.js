@@ -2663,7 +2663,10 @@ function generateSELECT(sparqlTable, forSingleClass){
 		groupBy.push(varName);
 		innerDistinctInfo.push(varName);
 	}
-	if(typeof sparqlTable["linkVariableName"] !== 'undefined') selectInfo.push(sparqlTable["linkVariableName"]);
+	if(typeof sparqlTable["linkVariableName"] !== 'undefined') {
+		selectInfo.push(sparqlTable["linkVariableName"]);
+		groupBy.push(sparqlTable["linkVariableName"]);
+	}
 
 	// aggregateVariables
 	for (var number in sparqlTable["selectMain"]["aggregateVariables"]){

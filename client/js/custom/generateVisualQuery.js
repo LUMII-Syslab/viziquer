@@ -28,6 +28,7 @@ Interpreter.customMethods({
 		abstractTable["linkTable"] = removeDuplicateLinks(abstractTable["linkTable"]);
 		
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
+		// console.log(abstractTable);
 		
 		var classesTable = abstractTable["classesTable"];
 		// /*
@@ -196,7 +197,6 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			var isVariable = false;
 			for(var link in linkTable){
 				if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
-					console.log("dsdsdsdsd", linkTable[link])
 					isVariable = true;
 					if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
 						linkTable[link]["linkIdentification"]["localName"] = linkTable[link]["linkIdentification"]["localName"].substring(1);
@@ -208,6 +208,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			
 			//check kind (Class, reference or Property)
 			//class
+						
 			var classes = findByVariableName(classesTable, variables[key]);
 			if(Object.keys(classes).length > 0){
 
@@ -222,6 +223,8 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 				for(var clazz in classes){
 					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
 				}
+			} else if (Object.keys(findByShortName(classesTable, variables[key])).length > 0){
+				
 			}
 			//reference
 			else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined'){	
@@ -1764,13 +1767,14 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 			if(where["type"] == "optional") linkType = "OPTIONAL";
 			if(typeof nodeList["?[ ]"] !== 'undefined'){
 				for(var unionClass in nodeList["?[ ]"]["uses"]){
-					var object = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null, "object");
+					var object = findClassToConnectUNIT(abstractTable["classesTable"], abstractTable["linkTable"], null, "object");
 					if(object == null){
 						for(var subClass in abstractTable["classesTable"]){
 							object = subClass;
 							break;
 						}
 					}
+
 					var link = {
 						"linkIdentification":{localName: "++", short_name: "++"},
 						"object":object,
@@ -1788,7 +1792,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 			if(typeof abstractTable["nodeList"]["?[ ]"] !== 'undefined'){
 				for(var unionClass in abstractTable["nodeList"]["?[ ]"]["uses"]){
 					
-					var subject = findClassToConnect(classesTable, linkTable, nodeList, "subject");
+					var subject = findClassToConnectUNIT(classesTable, linkTable, nodeList, "subject");
 					if(subject == null){
 						for(var subClass in classesTable){
 							subject = subClass;
@@ -1965,6 +1969,76 @@ function findClassToConnect(classesTable, linkTable, nodeList, type){
 	return null;
 }
 
+function findClassToConnectUNIT(classesTable, linkTable, nodeList, type){
+	if(nodeList != null){
+		for(var node in nodeList){
+			for(var clazz in nodeList[node]["uses"]){
+				var linkFound = false;
+				for(var link in linkTable){
+					if(linkTable[link][type] == clazz){
+						linkFound = true;
+						break;
+					}
+				}
+				if(linkFound == false) return clazz;
+			}
+		}
+	} else{
+		for(var clazz in classesTable){
+			if(typeof classesTable[clazz]["aggregations"] !== 'undefined') return clazz;
+		}
+		for(var clazz in classesTable){
+			var linkFound = false;
+			for(var link in linkTable){
+				if(linkTable[link][type] == clazz){
+					linkFound = true;
+					break;
+				}
+			}
+			console.log("clazz", classesTable[clazz])
+			
+			if(linkFound == false) return clazz;
+		}
+	}
+	return null;
+}
+
+function findClassToConnectUnion(classesTable,parentClassesTable, linkTable, nodeList, type){
+	if(nodeList != null){
+		for(var node in nodeList){
+			for(var clazz in nodeList[node]["uses"]){
+				var linkFound = false;
+				for(var link in linkTable){
+					if(linkTable[link][type] == clazz){
+						linkFound = true;
+						break;
+					}
+				}
+				if(linkFound == false) return clazz;
+			}
+		}
+	} else{
+		for(var clazz in classesTable){
+			var linkFound = false;
+			var fromParantClass = false;
+			for(var pClazz in parentClassesTable){
+						if(parentClassesTable[pClazz]["variableName"] == classesTable[clazz]["variableName"]){
+							fromParantClass = true;
+							break;
+						}
+					}
+			for(var link in linkTable){
+				if(linkTable[link][type] == clazz){
+					linkFound = true;
+					break;
+				}
+			}
+			if(linkFound == false && fromParantClass == false) {return clazz;}
+		}
+	}
+	return null;
+}
+
 function createNodeListInstance(nodeList, nodeName){
 	var nodeListInstance = {};
 	if(typeof nodeList[nodeName] === 'undefined'){
@@ -2104,6 +2178,15 @@ function findByVariableName(classesTable, variableName){
 	return classes;
 }
 
+function findByShortName(classesTable, variableName){
+	var classes = [];
+	for(var c in classesTable){
+		var clazz = classesTable[c]
+		if(clazz["identification"]["notInSchema"] == "true" && clazz["identification"]["short_name"] == variableName) classes[c]=clazz;
+	}
+	return classes;
+}
+
 function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attributeTable, linkTable, bgptype, allClasses, generateOnlyExpression){//+parrentClasses
 	var linkTableAdded = [];
 	var classTableAdded = [];
@@ -2127,7 +2210,9 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 
 			if(classResolved == null){
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"])["value"];
+	
 				var className = generateInstanceAlias(schema, objectNameParsed);
+				if(triples[triple]["object"].startsWith("?")) className = triples[triple]["object"]
 				classResolved = {
 					"short_name":className,
 					"localName":className,
@@ -2141,7 +2226,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 				if(typeof parentNodeList[triples[triple]["subject"]] === 'undefined'){
 					if(typeof allClasses[subjectNameParsed["value"]] === 'undefined'){
 						// If class first time used in a query – create new class box
-						// console.log("CLASS 1", subjectNameParsed["value"]);
+						// console.log("CLASS 1", subjectNameParsed["value"], classResolved);
 						classesTable[subjectNameParsed["value"]] = {
 							"variableName":triples[triple]["subject"],
 							"identification":classResolved,
@@ -2787,6 +2872,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 									// ^
 									else if(triples[triple]["predicate"]["items"][item]["type"] == "path" && triples[triple]["predicate"]["items"][item]["pathType"] == "^"){
 										var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
+										if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										pathText.push("^" + buildPathElement(linkResolved));
 									}
 								}
@@ -2825,6 +2911,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 										
 										if(item != triples[triple]["predicate"]["items"].length - 1){
 											var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]);
+											if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]);
 											pathText.push(buildPathElement(linkResolved));
 										}
 										//last element
@@ -2837,6 +2924,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 									else if(triples[triple]["predicate"]["items"][item]["type"] == "path" && triples[triple]["predicate"]["items"][item]["pathType"] == "^"){
 										if(item != triples[triple]["predicate"]["items"].length - 1){
 											linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
+											if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0]);
 											pathText.push("^" + buildPathElement(linkResolved));
 										}
 										//last element
