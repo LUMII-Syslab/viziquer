@@ -2775,53 +2775,72 @@ function generateExpression(expressionTable, SPARQLstring, className, alias, gen
 		
 		
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["iri"]!== 'undefined') {
-			if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
-				var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
-				
-				if(expressionTable[key]["iri"]["PrefixedName"]['var']['type'] !== null){
-					valueString = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
-				} else {
+			if (typeof expressionTable[key]["ArgList"]!== 'undefined' && expressionTable[key]["ArgList"]!= ''){
+				if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
+					SPARQLstring = SPARQLstring + expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
 					if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null){
 						prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
-						if(parseType == "attribute"){
-							var name = alias;
-							if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
-							tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
-							valueString = "?"+name;
-						}
-						if(parseType == "class"){
-							var name = alias;
-							if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
-							tripleTable.push({"var":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "prefixedName":classMembership, "object":className, "inFilter" : true});
-							valueString = name;
-						}
-						
 					}
+				}
+				if (typeof expressionTable[key]["iri"]["IRIREF"]!== 'undefined') {
+					SPARQLstring = SPARQLstring + expressionTable[key]["iri"]["IRIREF"];
 				}
 				
-				if (valueString == "vq:datediff") valueString = "bif:datediff" ;
-				SPARQLstring = SPARQLstring  + valueString;
-			}
-			if (typeof expressionTable[key]["iri"]["IRIREF"]!== 'undefined') {
-				if(typeof expressionTable[key]["ArgList"] === 'undefined' && parseType != "condition"){
-					var name = alias;
-					if(name == null || name == "") {
-						name = "expr_"+counter;
-						counter++;
-					}
-					if(parseType == "class"){tripleTable.push({"var":"?"+className, "prefixedName":classMembership, "object":expressionTable[key]["iri"]["IRIREF"], "inFilter" : true});}
-					else {tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["IRIREF"], "object":className, "inFilter" : true});}
-					
-					SPARQLstring = SPARQLstring + "?"+name;
-				}else{
-					SPARQLstring = SPARQLstring  + expressionTable[key]["iri"]["IRIREF"];
-				}
-			}
-			if (typeof expressionTable[key]["ArgList"]!== 'undefined' && expressionTable[key]["ArgList"]!= ''){
 				var DISTINCT = '';
 				if (typeof expressionTable[key]["ArgList"]["DISTINCT"]!== 'undefined') DISTINCT = expressionTable[key]["ArgList"]["DISTINCT"] + " ";
 				var o = {ArgList : expressionTable[key]["ArgList"]};
-				SPARQLstring = SPARQLstring  + "(" + DISTINCT + " " + generateExpression(o, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+				SPARQLstring = SPARQLstring  + "(" + DISTINCT + generateExpression(o, "", className, null, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
+				
+				if(alias == null || alias == "") {
+					alias = "expr_" + counter;
+					counter++;
+				}
+				
+				tripleTable.push({"BIND":"BIND(" + SPARQLstring + " AS ?" + alias + ")"})
+				SPARQLstring = "?"+alias;
+			} else {
+				if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
+					var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
+					
+					if(expressionTable[key]["iri"]["PrefixedName"]['var']['type'] !== null){
+						valueString = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+					} else {
+						if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null){
+							prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
+							if(parseType == "attribute"){
+								var name = alias;
+								if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
+								tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
+								valueString = "?"+name;
+							}
+							if(parseType == "class"){
+								var name = alias;
+								if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
+								tripleTable.push({"var":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "prefixedName":classMembership, "object":className, "inFilter" : true});
+								valueString = name;
+							}
+							
+						}
+					}
+					
+					if (valueString == "vq:datediff") valueString = "bif:datediff" ;
+					SPARQLstring = SPARQLstring  + valueString;
+				}
+				if (typeof expressionTable[key]["iri"]["IRIREF"]!== 'undefined') {
+					if(typeof expressionTable[key]["ArgList"] === 'undefined' && parseType != "condition"){
+						var name = alias;
+						if(name == null || name == "") {
+							name = "expr_"+counter;
+							counter++;
+						}
+						if(parseType == "class"){tripleTable.push({"var":"?"+className, "prefixedName":classMembership, "object":expressionTable[key]["iri"]["IRIREF"], "inFilter" : true});}
+						else {tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["IRIREF"], "object":className, "inFilter" : true});}
+						
+						SPARQLstring = SPARQLstring + "?"+name;
+					}else{
+						SPARQLstring = SPARQLstring  + expressionTable[key]["iri"]["IRIREF"];
+					}
+				}
 			}
 			visited = 1
 		}

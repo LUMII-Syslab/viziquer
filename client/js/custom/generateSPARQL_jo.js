@@ -365,7 +365,7 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
       else{
 		  // console.log(JSON.stringify(q,null,2));
    var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-   //console.log(abstractQueryTable);
+   // console.log(abstractQueryTable, JSON.stringify(abstractQueryTable,null,2));
    var rootClass = abstractQueryTable["root"];
   var result = generateSPARQLtext(abstractQueryTable);
   // console.log(result["SPARQL_text"]);
