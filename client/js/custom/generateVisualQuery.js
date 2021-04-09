@@ -2182,7 +2182,7 @@ function findByShortName(classesTable, variableName){
 	var classes = [];
 	for(var c in classesTable){
 		var clazz = classesTable[c]
-		if(clazz["identification"]["notInSchema"] == "true" && clazz["identification"]["short_name"] == variableName) classes[c]=clazz;
+		if(typeof clazz["identification"] !== "undefined" && clazz["identification"] != null && clazz["identification"]["notInSchema"] == "variable" && clazz["identification"]["short_name"] == variableName) classes[c]=clazz;
 	}
 	return classes;
 }
@@ -2212,12 +2212,21 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"])["value"];
 	
 				var className = generateInstanceAlias(schema, objectNameParsed);
-				if(triples[triple]["object"].startsWith("?")) className = triples[triple]["object"]
-				classResolved = {
-					"short_name":className,
-					"localName":className,
-					"URI":triples[triple]["object"],
-					"notInSchema": "true"
+				if(triples[triple]["object"].startsWith("?")) {
+					className = triples[triple]["object"];
+					classResolved = {
+						"short_name":className,
+						"localName":className,
+						"URI":triples[triple]["object"],
+						"notInSchema": "variable"
+					}
+				} else {
+					classResolved = {
+						"short_name":className,
+						"localName":className,
+						"URI":triples[triple]["object"],
+						"notInSchema": "true"
+					}
 				}
 				instanceAlias = subjectNameParsed["value"];
 			}
@@ -3487,8 +3496,8 @@ function visualizeQuery(clazz, parentClass){
 		// console.log("className = ", className);
 		// console.log("classIdentification = ", clazz["identification"]);
 		//class not in a schema 
-		if(clazz["identification"] != null && typeof clazz["identification"]["notInSchema"] !== 'undefined'){
-			classBox.setComment("class not in a Schema");
+		if(clazz["identification"] != null && typeof clazz["identification"]["notInSchema"] !== 'undefined' && clazz["identification"]["notInSchema"] != "variable"){
+			classBox.setComment("Class not in the data schema");
 		}
 
 		//attributes
