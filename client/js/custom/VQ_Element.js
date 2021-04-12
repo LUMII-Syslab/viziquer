@@ -1034,41 +1034,10 @@ VQ_Schema.prototype = {
 	}
   },
   makeAttributesAndAssociations: function(data) {
-	_.each(data.Attributes, function(atr){
-		var newAttr = new VQ_Attribute(atr);
-	    schema.addAttribute(newAttr);
-		var uniqueSourceClasses = _.uniq(atr.SourceClasses);
-		_.each(uniqueSourceClasses, function (sc){
-			//var scClass = schema.findClassByNameAndCycle(sc);
-			var scClass = schema.findClassByName(sc);
-			var newSchAttr = new VQ_SchemaAttribute(atr);
-			newSchAttr.maxCardinality = newAttr.maxCardinality;
-			newSchAttr.minCardinality = newAttr.minCardinality;
-			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
-			{
-				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc})
-				if ( det.minCardinality )
-					newSchAttr.minCardinality = det.minCardinality;
-			
-				newSchAttr.instanceCount = det.tripleCount 
-				if ( det.objectTripleCount )
-					newSchAttr.objectTripleCount = det.objectTripleCount; 
-				else
-					newSchAttr.objectTripleCount = 0;
-			}
-			schema.addSchemaAttribute(newSchAttr);
-			schema.addSchemaProperty(newSchAttr);
-			scClass.addProperty(newSchAttr);
-			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-			//newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
-			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
-			//scClass["schemaAttribute"][newSchAttr.getID()] = newSchAttr;  
-			//newSchAttr["sourceClass"] = scClass.classInfo;
-		})
-	})
-	
-	_.each(data.Associations, function(asoc){  
+	function makeAssoc(asoc, dual)
+	{
 		var newRole = new VQ_Role(asoc);
+		newRole.dual = dual;
 		schema.addRole(newRole);
 		var new_cp = asoc.ClassPairs;
 		var extensionMode = "none"
@@ -1081,7 +1050,7 @@ VQ_Schema.prototype = {
 		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
 		//console.log("============== " + asoc.localName +"  =======================")
 		//console.log(asoc)
-		if (extensionMode== "simple")
+		if (extensionMode== "simple" && dual == false)  // Te nav īsti skaidrs, ko darīt ar tiem, kas ir gan atribūti, gan asociācijas
 		{
 			if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
 			{
@@ -1091,7 +1060,7 @@ VQ_Schema.prototype = {
 						if (sc.classFullName == cp.SourceClass && sc.objectTripleCount <= cp.tripleCount)
 							add = false
 					})
-					if (add == true)
+					if (add == true && asoc.closedRange != true)
 						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.tripleCount})
 				})
 			}
@@ -1104,7 +1073,7 @@ VQ_Schema.prototype = {
 						if (sc.classFullName == cp.TargetClass && sc.tripleCount <= cp.tripleCount)
 							add = false
 					})
-					if (add)
+					if (add && asoc.closedDomain != true)
 						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.tripleCount})
 				})
 			}
@@ -1174,7 +1143,48 @@ VQ_Schema.prototype = {
 			createLink(tClass, newSchRole, "inAssoc", "targetClass");
 			//tClass["inAssoc"][newSchRole.ID] = newSchRole;
 			//newSchRole["targetClass"] = tClass.classInfo;
+		})	
+	}    
+	
+	_.each(data.Attributes, function(atr){
+		var newAttr = new VQ_Attribute(atr);
+	    schema.addAttribute(newAttr);
+		//console.log("-------------------------")
+		//console.log(atr)
+		var uniqueSourceClasses = _.uniq(atr.SourceClasses);
+		_.each(uniqueSourceClasses, function (sc){
+			//var scClass = schema.findClassByNameAndCycle(sc);
+			var scClass = schema.findClassByName(sc);
+			var newSchAttr = new VQ_SchemaAttribute(atr);
+			newSchAttr.maxCardinality = newAttr.maxCardinality;
+			newSchAttr.minCardinality = newAttr.minCardinality;
+			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
+			{
+				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc || det.domain == sc })
+				if ( det.minCardinality )
+					newSchAttr.minCardinality = det.minCardinality;
+			
+				newSchAttr.instanceCount = det.tripleCount 
+				if ( det.objectTripleCount )
+					newSchAttr.objectTripleCount = det.objectTripleCount; 
+				else
+					newSchAttr.objectTripleCount = 0;
+			}
+			schema.addSchemaAttribute(newSchAttr);
+			schema.addSchemaProperty(newSchAttr);
+			scClass.addProperty(newSchAttr);
+			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+			//newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
+			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+			//scClass["schemaAttribute"][newSchAttr.getID()] = newSchAttr;  
+			//newSchAttr["sourceClass"] = scClass.classInfo;
 		})
+		if (atr.ClassPairs && _.size(atr.ClassPairs) > 0)
+			makeAssoc(atr, true);
+	})
+	
+	_.each(data.Associations, function(asoc){  
+		makeAssoc(asoc, false);
 	})
 	
 	_.each(schema.Attributes, function(attr) {
@@ -1386,7 +1396,7 @@ VQ_Schema.prototype = {
 				var link_names = {};
 
 				_.each(assoc, function(link){ 
-					if (!link_names[link.fullName])
+					if (!link_names[link.fullName] && ( type == "in" || (type == "out" && !link.role.dual ) ))
 					{
 						link_names[link.fullName] = 1;
 						var l = [];	
