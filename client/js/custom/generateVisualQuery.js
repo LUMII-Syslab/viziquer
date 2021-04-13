@@ -138,8 +138,9 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			var isDescending = false;
 			if(typeof order[key]["descending"] !== 'undefined') isDescending = order[key]["descending"];
 			
-			var orderTemp = parseSPARQLjsStructureWhere(order[key]["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
+
 			
+			var orderTemp = parseSPARQLjsStructureWhere(order[key]["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
 			if(orderTemp["viziQuerExpr"]["exprString"] != ""){
 				orderTable.push({
 					"exp":orderTemp["viziQuerExpr"]["exprString"],
@@ -210,6 +211,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 			//class
 						
 			var classes = findByVariableName(classesTable, variables[key]);
+			// var classes2 = findByShortName(classesTable, variables[key]);
 			if(Object.keys(classes).length > 0){
 
 				//add class as attribute
@@ -1146,6 +1148,12 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 		var ignoreFunction = false;
 		if(where["function"] == "http://www.w3.org/2001/XMLSchema#dateTime" || where["function"] == "http://www.w3.org/2001/XMLSchema#date" || where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
 		//if(where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") functionName = "xsd:decimal";
+		
+		
+		var schema = new VQ_Schema();
+		var shortFunction = generateInstanceAlias(schema, where["function"]);
+		if(shortFunction != where["function"]) functionName = shortFunction;
+		
 		if(ignoreFunction == false) viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + functionName + "(";
 		var args = [];
 			
