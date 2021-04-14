@@ -506,7 +506,7 @@
 
 			iri = ( IRIREF /  PrefixedName)
 
-			IRIREF = (less "<" string_c ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / [0-9])* more ">") 
+			IRIREF = (less "<" string_c ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / "%" / [0-9])* more ">") 
 
 			PrefixedName = (PNAME_LN) 
 
@@ -556,8 +556,8 @@
 			VAR3 = dollar "$" VARNAME
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			StringQuotes = STRING_LITERAL1  / STRING_LITERAL2
-			STRING_LITERAL1 = quote "'" string_c string quote "'"
-			STRING_LITERAL2 = dubble_quote '"' string_c string dubble_quote '"'
+			STRING_LITERAL1 = quote "'" string_c stringQ quote "'"
+			STRING_LITERAL2 = dubble_quote '"' string_c stringQ dubble_quote '"'
 	
 			QName = Path:(Path / PathBr / QNameReference) 
 			
@@ -626,6 +626,7 @@
 			space = ((" ")*) 
 			spaceObl = space_c (" ")+
 			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+)
+			stringQ = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$()/])+) {return {string: string.join("")}}
 			string2 = space_c (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+)
 			
 

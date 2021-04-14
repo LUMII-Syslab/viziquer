@@ -739,7 +739,6 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 	if(where["type"] == "filter"){
 		
 		var temp = parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, patternType, bindTable, checkIfOrAndInFilter(where["expression"], generateOnlyExpression));
-		
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
 		filterTable = temp["filterTable"];
@@ -1177,11 +1176,14 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 	if(where["type"] == "operation"){
 		//realtion or atithmetic
 		if(checkIfRelation(where["operator"]) != -1 || chechIfArithmetic(where["operator"]) != -1){
-
+			
+			
+			
 			if(typeof where["args"][0] == 'string') {
 				var arg1 = generateArgument(where["args"][0]);
 				if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
 				var argValue = arg1["value"];
+				if(arg1["type"] == "iri" && checkIfRelation(where["operator"]) != -1) argValue = "<"+argValue+">";
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;	
 			}
@@ -1201,6 +1203,7 @@ function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, classesTab
 				var arg2 = generateArgument(where["args"][1]);
 				if(arg2["type"] == "varName") viziQuerExpr["exprVariables"].push(arg2["value"]);
 				var argValue = arg2["value"];
+				if(arg2["type"] == "iri" && checkIfRelation(where["operator"]) != -1) argValue = "<"+argValue+">";
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;
 			}
@@ -3322,15 +3325,19 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 				&& typeof childerenClass["aggregations"] === 'undefined'
 				&& linkTable[linkName]["linkIdentification"]["short_name"].indexOf(")*") === -1
 				&& linkTable[linkName]["linkIdentification"]["short_name"].indexOf("|") === -1
-				){
+				){	
 					var exp = linkTable[linkName]["linkIdentification"]["short_name"];
 					if(exp.startsWith("http://") || exp.startsWith("https://")) exp = "<" +exp+ ">";
 					var requred = true;
 					if(linkTable[linkName]["linkType"] == "OPTIONAL") requred = false;
 					var internal = true;
 					if(typeof childerenClass["fields"] !== 'undefined' && childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)")internal = false;
+					
+					var attrAlias = childerenClass["instanceAlias"];
+					if(attrAlias == exp) attrAlias = "";
+					
 					var attributeInfo = {
-						"alias":childerenClass["instanceAlias"],
+						"alias":attrAlias,
 						"identification":null,
 						"exp":exp,
 						"requireValues":requred,

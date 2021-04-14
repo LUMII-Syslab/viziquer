@@ -468,7 +468,7 @@
 
 			iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 
-			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / [0-9])* ">") {return {IRIREF:makeVar(IRIREF)}}
+			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / "%" / [0-9])* ">") {return {IRIREF:makeVar(IRIREF)}}
 
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 
@@ -517,8 +517,8 @@
 			VAR3 = "$" VARNAME
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 			StringQuotes = STRING_LITERAL1  / STRING_LITERAL2
-			STRING_LITERAL1 = "'" string "'"
-			STRING_LITERAL2 = doubleQuotes string:string doubleQuotes
+			STRING_LITERAL1 = "'" stringQ "'"
+			STRING_LITERAL2 = doubleQuotes string:stringQ doubleQuotes
 			doubleQuotes = ('"'/ '“' / '”') {return '"'}
 			QName = Path:(Path / PathBr)  {return pathOrReference(Path)}
 
@@ -578,6 +578,7 @@
 			space = ((" ")*) {return }
 			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
+			stringQ = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$()/])+) {return {string: string.join("")}}
 			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}

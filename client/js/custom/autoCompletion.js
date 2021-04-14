@@ -517,7 +517,7 @@ runCompletionNew = function (text, fullText, cursorPosition){
 				if(typeof compart !== 'undefined') className = compart["input"];;
 			}
 
-			//var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+			// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 		}
 	} catch (com) {
