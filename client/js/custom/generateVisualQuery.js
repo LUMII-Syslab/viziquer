@@ -19,7 +19,7 @@ Interpreter.customMethods({
 		var schema = new VQ_Schema();
 		
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
-		var variableList = getAllVariablesInQuery(parsedQuery, schema);
+		var variableList = getAllVariablesInQuery(parsedQuery, schema, []);
 		
 		// console.log("variableList", variableList);
 
@@ -194,7 +194,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 	
 	for(var key in variables){
 		if(typeof variables[key] === 'string'){
-
+				
 			var isVariable = false;
 			for(var link in linkTable){
 				if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
@@ -243,7 +243,7 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 					//		break;
 					//	}
 					//}
-					if(isVariable == false){
+					if(isVariable == false && variableList[variables[key]] != 1){
 						var attributeInfo = {
 							"alias":"",
 							"identification":null,
@@ -257,6 +257,8 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
 							break;
 						}
+					} else if(variableList[variables[key]] == 1) {
+						Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
 					}
 				} else if(variableList["?"+parsedAttribute] != "seen") {
 	
@@ -3427,23 +3429,28 @@ function getStartClass(classesTable, linkTable) {
   }
 }
 
-function getAllVariablesInQuery(expression, schema){
-	var variableTable = [];
+function getAllVariablesInQuery(expression, schema, variableTable){
+	// var variableTable = [];
 	for(var key in expression){
 		if(typeof expression[key] === 'object'){
 			if(key == 'variables'){
 				var variables = expression[key];
 				for(var variable in variables){
+					
 					if(typeof variables[variable] === 'string' && schema.resolveClassByName(vq_visual_grammar.parse(variables[variable])["value"]) == null){
-						variableTable[variables[variable]] = true;
+						variableTable[variables[variable]] = 0;
 					} else if(typeof variables[variable] === 'object'){
-						variableTable[variables[variable]["variable"]] = true;
+						variableTable[variables[variable]["variable"]] = 1;
 					}
 				}
 			}
-			var temp = getAllVariablesInQuery(expression[key], schema);
+			var temp = getAllVariablesInQuery(expression[key], schema, variableTable);
 			for(var t in temp){
-				variableTable[t] = true;
+				variableTable[t] = temp[t];
+			}
+		} else if(typeof expression[key] === 'string' && expression[key].startsWith("?")) {
+			if(typeof variableTable[expression[key]] !== 'undefined') {
+				variableTable[expression[key]] = variableTable[expression[key]] + 1;
 			}
 		}
 	}
@@ -3778,6 +3785,7 @@ function removeClass(classesTable, clazz){
 
 function getWhereTriplesVaribles(where){
 	var variableList = [];
+	
 	for(var key in where){
 		if(typeof where[key]["type"] !== "undefined" && where[key]["type"] == "bgp"){
 			// console.log(where[key]);
