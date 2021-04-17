@@ -1,3 +1,5 @@
+// import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
+// const { SpacebarsCompiler } = require('meteor/spacebars-compiler');
 
 Template.dialogTabContent.helpers({
 
