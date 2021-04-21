@@ -302,7 +302,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		return attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"];
 	}
 	
-	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined' || typeof variableData["type"] !== 'undefined' ){
+	else if(variableData["kind"] == "PROPERTY_NAME" || typeof variableData["kind"] === 'undefined' || (variableData["kind"] == "UNRESOLVED_FIELD_ALIAS" && typeof variableData["type"] !== 'undefined' )){
 		// console.log("2222", varName);
 		//Aply exists to filter if variable is not defined
 		if(typeof variableNamesClass[varName] === 'undefined' || (typeof variableNamesClass[varName] !== 'undefined' && (variableNamesClass[varName]["isVar"] != true ||
