@@ -915,10 +915,11 @@ Meteor.methods({
 	findEdge: function(edge, diagId){
 		findResults = [];
 		atrastasSkeles = [];
-		console.log('before find edge');
+		console.time("findEdgeTime");
 		findEdge(edge, diagId);
-		console.log('after find Edge');
-		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram})
+		console.timeEnd("findEdgeTime");
+		console.time("foundSkelesGroupingTime");
+		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram});
 		let diagrams 		= _.keys(groupedMatches);
 		let MatchCollection = [];
 		_.each(diagrams, function(diagram){
@@ -940,6 +941,7 @@ Meteor.methods({
 			}
 			MatchCollection.push(obj);
 		})
+		console.timeEnd("foundSkelesGroupingTime");
 		return MatchCollection;
 	},
 	// Dmitrija koda beigas

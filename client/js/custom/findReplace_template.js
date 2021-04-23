@@ -123,10 +123,17 @@ function replaceSingleMatch(diagramId, list){
                     if(match.id == matchId) match.status = 'used'; // maina izmantotā fragmenta statusu
                 })
             });
-            UpdateStatus = markConflictingMatches(UpdateStatus, elementsToLookup);
-            Session.set('ResultsJson', UpdateStatus);
-            
-            Utilities.callMeteorMethod("replaceSingleOccurence",list, function(response){
+            // UpdateStatus = markConflictingMatches(UpdateStatus, elementsToLookup);
+            // Session.set('ResultsJson', UpdateStatus);
+            let ParamList = {
+                match: list,
+                matchData: UpdateStatus,
+                diagramId: diagramId,
+                elementsToLookup: elementsToLookup
+            }
+            Utilities.callMeteorMethod("replaceSingleOccurence",ParamList, function(response){
+                UpdateStatus = updateSession(UpdateStatus, diagramId, response);
+                Session.set('ResultsJson', UpdateStatus);
                 LayoutElements(Session.get('activeDiagram')); // izkārto diagrammas elementus
             });
             console.timeEnd('SingleMatch_replace');
