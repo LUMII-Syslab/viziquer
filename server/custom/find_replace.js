@@ -605,12 +605,11 @@ function FindLinesToDelete(ReplaceLines, match){
     return _.uniq(foundEdgesToDelete);
 }
 
-/*
 function createNode(
     endElement,
     endElements,
     box,
-    Location,
+    BoxLocation,
     match,
     startElements,
     startFindElements,
@@ -619,49 +618,46 @@ function createNode(
     apstaigatieReplace,
     createdBoxes,
     parsedElements,
+    replaceElementsId
 ){
-    let startbox;
-    let FoundMatchedStartElement;
-    if (start.local == endElement){ 
-        // ja elements ir speciāllīnijas labajā galā, tad mēģinām uzradīt tam aizvietojamo elementu tajā pašā vietā, kur bija vecais
-        // console.log('start equals to endEleemnt');
-        let startElementLocationId =  _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
-        FoundMatchedStartElement = Elements.findOne({_id: startElementLocationId});
+    let NewBox;
+    let FoundMatchedElement
+    if(box.local == endElement) {
+        let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
+        //console.log("boclocationID", boxElementLocationId);
+        FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
+        //console.log("FoundElement", FoundMatchedElement);
+        if(typeof FoundMatchedElement === 'undefined') {
+            boxElementLocationId = _.findWhere(ElementDict, {initial: boxElementLocationId}).replacedId;
+            FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
+        }
+        BoxLocation = FoundMatchedElement.location;
+        // console.log('box Location', BoxLocation);
+    }
+    else if(_.contains(endElements, box.local) && box.local != endElement){
+        let FoundEndElement     = _.find(endElements, function(endElement){return endElement == box.local});
+        let startFindElement    = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
+        let startElement        = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
         
-        if(typeof FoundMatchedStartElement === 'undefined') {
-            startElementLocationId = _.findWhere(ElementDict, {initial: startElementLocationId}).replacedId;
-            FoundMatchedStartElement = Elements.findOne({_id: startElementLocationId});
-        }
-        StartLocation = FoundMatchedStartElement.location;
-        // console.log("STARTLOCATOIN", StartLocation);
-    }
-    else if(_.contains(endElements, start.local) && start.local != endElement){
-        // console.log('start not equals to endElement, but is in endElements');
-        // ja dotais uzradamais elements nav vienāds ar doto endElement, bet ir vienāds ar kādu citu end Elements, tad tam arī jāvedo cita location
-        let FoundEndElement = _.find(endElements, function(endElement){return endElement == start.local});
-        let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
-        let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
-        FoundMatchedStartElement = Elements.findOne({_id: startElement});
-        if(typeof FoundMatchedStartElement === 'undefined') {
+        FoundMatchedElement = Elements.findOne({_id: startElement});
+        
+        if(typeof FoundMatchedElement === 'undefined') {
             startElement = _.findWhere(ElementDict, {initial: startElement}).replacedId;
-            FoundMatchedStartElement = Elements.findOne({_id: startElement});
+            FoundMatchedElement = Elements.findOne({_id: startElement});
         }
-        StartLocation = FoundMatchedStartElement.location;
-    } else // console.log('neither in start');
-    if(StartLocation) {startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}), StartLocation);
-    // console.log("STARTLOCATION", StartLocation);
+        BoxLocation = FoundMatchedElement.location;
     }
-    else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
-        // console.log('NO START LOCATION');
-    }
-    _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
-
-    let MatchedReplaceElements = _.filter(ReplaceLines[start.local], function(item){
-        if(getElementTypeId(start.local) == getElementTypeId(item.startElement)) return true;
+    if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
+    else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
+    _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
+    console.log("match",match);
+    console.log(`box.local: ${box.local} endElements ${endElements}`);
+    let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
+        if(getElementTypeId(box.local) == getElementTypeId(item.startElement)) return true;
         else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
     });
     MatchedReplaceElements = _.pluck(MatchedReplaceElements, "startElement");
-    if(_.contains(endElements, start.local) && _.size(MatchedReplaceElements) > 0) {
+    if(_.contains(endElements, box.local) && _.size(MatchedReplaceElements) > 0) {
         _.each(MatchedReplaceElements, function(element){
             let initialMatchedId = _.findWhere(match, {findElementId: element}).elementId;
 
@@ -670,19 +666,25 @@ function createNode(
                     _.each(startElements, function(startElement){ if(startElement.elementId == item.initial) replaceElementsId.push(item.replacedId)})
                 }
                 else replaceElementsId.push(item.initial);
-                item.replacedId = start.inserted;
+                item.replacedId = box.inserted;
             }   })
         });
         
         console.log("ElementDict", ElementDict);
         
     }
-    if(!_.contains(parsedElements, start.local)) {
-        parseCompartmentExpressions(startFindElements, start.local, start.inserted, match);
-        parsedElements.push(start.local);
+    if(!_.contains(parsedElements, box.local)) {
+        parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
+        parsedElements.push(box.local);
+    }
+    return {
+        createdBoxes: createdBoxes,
+        box: box,
+        parsedElements: parsedElements,
+        replaceElementsId: replaceElementsId
     }
 }
-*/
+
 function replaceStruct(match){
     if(match){
         console.time("replaceStructOverallTimer");
@@ -779,132 +781,49 @@ function replaceStruct(match){
                         let EndLocation = undefined;
                         console.time("EdgeAndItsBoxesProcessTime");
                         if(typeof start.inserted === 'undefined'){
-                            let startbox;
-                            let FoundMatchedStartElement;
-                            if (start.local == endElement){ 
-                                // ja elements ir speciāllīnijas labajā galā, tad mēģinām uzradīt tam aizvietojamo elementu tajā pašā vietā, kur bija vecais
-                                // console.log('start equals to endEleemnt');
-                                let startElementLocationId =  _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
-                                FoundMatchedStartElement = Elements.findOne({_id: startElementLocationId});
-                                
-                                if(typeof FoundMatchedStartElement === 'undefined') {
-                                    startElementLocationId = _.findWhere(ElementDict, {initial: startElementLocationId}).replacedId;
-                                    FoundMatchedStartElement = Elements.findOne({_id: startElementLocationId});
-                                }
-                                StartLocation = FoundMatchedStartElement.location;
-                                // console.log("STARTLOCATOIN", StartLocation);
-                            }
-                            else if(_.contains(endElements, start.local) && start.local != endElement){
-                                // console.log('start not equals to endElement, but is in endElements');
-                                // ja dotais uzradamais elements nav vienāds ar doto endElement, bet ir vienāds ar kādu citu end Elements, tad tam arī jāvedo cita location
-                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == start.local});
-                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
-                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
-                                FoundMatchedStartElement = Elements.findOne({_id: startElement});
-                                if(typeof FoundMatchedStartElement === 'undefined') {
-                                    startElement = _.findWhere(ElementDict, {initial: startElement}).replacedId;
-                                    FoundMatchedStartElement = Elements.findOne({_id: startElement});
-                                }
-                                StartLocation = FoundMatchedStartElement.location;
-                            } else // console.log('neither in start');
-                            if(StartLocation) {startbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}), StartLocation);
-                            // console.log("STARTLOCATION", StartLocation);
-                            }
-                            else {startbox =  createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.startElement}));
-                                // console.log('NO START LOCATION');
-                            }
-                            _.first(createdBoxes[element.startElement]).inserted    = Elements.insert(startbox);
-
-                            let MatchedReplaceElements = _.filter(ReplaceLines[start.local], function(item){
-                                if(getElementTypeId(start.local) == getElementTypeId(item.startElement)) return true;
-                                else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
-                            });
-                            MatchedReplaceElements = _.pluck(MatchedReplaceElements, "startElement");
-                            if(_.contains(endElements, start.local) && _.size(MatchedReplaceElements) > 0) {
-                                _.each(MatchedReplaceElements, function(element){
-                                    let initialMatchedId = _.findWhere(match, {findElementId: element}).elementId;
-
-                                    _.each(ElementDict, function(item){ if(item.initial == initialMatchedId ) {
-                                        if(!(typeof item.replacedId === 'undefined')){
-                                            _.each(startElements, function(startElement){ if(startElement.elementId == item.initial) replaceElementsId.push(item.replacedId)})
-                                        }
-                                        else replaceElementsId.push(item.initial);
-                                        item.replacedId = start.inserted;
-                                    }   })
-                                });
-                                
-                                console.log("ElementDict", ElementDict);
-                                
-                            }
-                            if(!_.contains(parsedElements, start.local)) {
-                                parseCompartmentExpressions(startFindElements, start.local, start.inserted, match);
-                                parsedElements.push(start.local);
-                            }
+                            let obj = createNode(
+                                endElement,
+                                endElements,
+                                start,
+                                StartLocation,
+                                match,
+                                startElements,
+                                startFindElements,
+                                ReplaceLines,
+                                diagToReplaceIn,
+                                apstaigatieReplace,
+                                createdBoxes,
+                                parsedElements,
+                                replaceElementsId
+                                );
+                            createdBoxes        = obj.createdBoxes;
+                            start               = obj.box;
+                            replaceElementsId   = obj.replaceElementsId;
+                            parsedElements      = obj.parsedElements;
                         }
                         else {
                             // console.log('found start eleemnt');
                         }
                         if(typeof end.inserted === 'undefined'){
-                            let endbox;
-                            let FoundMatchedEndElement;
-                            if(end.local == endElement) {
-                                // console.log('end equals to endElement');
-                                let endElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
-                            
-                                FoundMatchedEndElement = Elements.findOne({_id: endElementLocationId});
-                                
-                                if(typeof FoundMatchedEndElement === 'undefined') {
-                                    endElementLocationId = _.findWhere(ElementDict, {initial: endElementLocationId}).replacedId;
-                                    FoundMatchedEndElement = Elements.findOne({_id: endElementLocationId});
-                                }
-                                EndLocation = FoundMatchedEndElement.location;
-                            }
-                            else if(_.contains(endElements, end.local) && end.local != endElement){
-                                // console.log('end equals not equals, but is in endElements');
-                                let FoundEndElement = _.find(endElements, function(endElement){return endElement == end.local});
-                                let startFindElement = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
-                                let startElement = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
-                                FoundMatchedEndElement = Elements.findOne({_id: startElement});
-                                
-                                if(typeof FoundMatchedEndElement === 'undefined') {
-                                    startElement = _.findWhere(ElementDict, {initial: startElement}).replacedId;
-                                    FoundMatchedEndElement = Elements.findOne({_id: startElement});
-                                }
-                                EndLocation = FoundMatchedEndElement.location;
-                                // console.log('FoundEndElement', FoundEndElement);console.log('startFindElem',startFindElement);console.log('startElement',startElement);
-                                //console.log('endlocation',EndLocation);
-                            } else {}  // console.log('neither in end');
-                            if(EndLocation) {endbox  = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}), EndLocation);}
-                            else {endbox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element.endElement}));}
-                            _.first(createdBoxes[element.endElement]).inserted      = Elements.insert(endbox);
-
-                            let MatchedReplaceElements = _.filter(ReplaceLines[end.local], function(item){
-                                if(getElementTypeId(end.local) == getElementTypeId(item.startElement)) return true;
-                                else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
-                            });
-                            MatchedReplaceElements = _.pluck(MatchedReplaceElements, "startElement");
-                            if(_.contains(endElements, end.local) && _.size(MatchedReplaceElements) > 0) {
-                                _.each(MatchedReplaceElements, function(element){
-                                    let initialMatchedId = _.findWhere(match, {findElementId: element}).elementId;
-
-                                    _.each(ElementDict, function(item){ 
-                                        if(item.initial == initialMatchedId ) {
-                                            if(!(typeof item.replacedId === 'undefined')){
-                                                _.each(startElements, function(startElement){ if(startElement.elementId == item.initial) replaceElementsId.push(item.replacedId)})
-                                            }
-                                            else replaceElementsId.push(item.initial);
-                                            item.replacedId = end.inserted;
-                                        }    
-                                    });
-                                });
-                                
-                                console.log("ElementDict", ElementDict);
-                                
-                            }
-                            if(!_.contains(parsedElements, end.local)) {
-                                parseCompartmentExpressions(startFindElements, end.local, end.inserted, match);
-                                parsedElements.push(end.local);
-                            }
+                            let obj = createNode(
+                                endElement,
+                                endElements,
+                                end,
+                                EndLocation,
+                                match,
+                                startElements,
+                                startFindElements,
+                                ReplaceLines,
+                                diagToReplaceIn,
+                                apstaigatieReplace,
+                                createdBoxes,
+                                parsedElements,
+                                replaceElementsId
+                                );
+                            createdBoxes        = obj.createdBoxes;
+                            end                 = obj.box;
+                            replaceElementsId   = obj.replaceElementsId;
+                            parsedElements      = obj.parsedElements;
                         }
                         else{
                            // console.log('found end eleemnt');
@@ -926,63 +845,25 @@ function replaceStruct(match){
                         if(typeof box.inserted === 'undefined'){
                             console.log("local box", box.local);
                             console.dir(createdBoxes, {depth:null});
-                            let NewBox;
-                            let FoundMatchedElement
-                            if(box.local == endElement) {
-                                let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
-                                //console.log("boclocationID", boxElementLocationId);
-                                FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
-                                //console.log("FoundElement", FoundMatchedElement);
-                                if(typeof FoundMatchedElement === 'undefined') {
-                                    boxElementLocationId = _.findWhere(ElementDict, {initial: boxElementLocationId}).replacedId;
-                                    FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
-                                }
-                                BoxLocation = FoundMatchedElement.location;
-                                // console.log('box Location', BoxLocation);
-                            }
-                            else if(_.contains(endElements, box.local) && box.local != endElement){
-                                let FoundEndElement     = _.find(endElements, function(endElement){return endElement == box.local});
-                                let startFindElement    = _.first(ReplaceLines[FoundEndElement]).startElement; // atrodam elementu, kas ir aizvietojamās līnijas kreisajā pusē
-                                let startElement        = _.find(match, function(element){return element.findElementId == startFindElement}).elementId;// startFindElement atbilstošais elements dotajā match
-                                
-                                FoundMatchedElement = Elements.findOne({_id: startElement});
-                                
-                                if(typeof FoundMatchedElement === 'undefined') {
-                                    startElement = _.findWhere(ElementDict, {initial: startElement}).replacedId;
-                                    FoundMatchedElement = Elements.findOne({_id: startElement});
-                                }
-                                EndLocation = FoundMatchedElement.location;
-                            }
-                            if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
-                            else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
-                            _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
-                            console.log("match",match);
-                            console.log(`box.local: ${box.local} endElements ${endElements}`);
-                            let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
-                                if(getElementTypeId(box.local) == getElementTypeId(item.startElement)) return true;
-                                else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
-                            });
-                            MatchedReplaceElements = _.pluck(MatchedReplaceElements, "startElement");
-                            if(_.contains(endElements, box.local) && _.size(MatchedReplaceElements) > 0) {
-                                _.each(MatchedReplaceElements, function(element){
-                                    let initialMatchedId = _.findWhere(match, {findElementId: element}).elementId;
-
-                                    _.each(ElementDict, function(item){ if(item.initial == initialMatchedId ) {
-                                        if(!(typeof item.replacedId === 'undefined')){
-                                            _.each(startElements, function(startElement){ if(startElement.elementId == item.initial) replaceElementsId.push(item.replacedId)})
-                                        }
-                                        else replaceElementsId.push(item.initial);
-                                        item.replacedId = box.inserted;
-                                    }   })
-                                });
-                                
-                                console.log("ElementDict", ElementDict);
-                                
-                            }
-                            if(!_.contains(parsedElements, box.local)) {
-                                parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
-                                parsedElements.push(box.local);
-                            }
+                            let obj = createNode(
+                                endElement,
+                                endElements,
+                                box,
+                                BoxLocation,
+                                match,
+                                startElements,
+                                startFindElements,
+                                ReplaceLines,
+                                diagToReplaceIn,
+                                apstaigatieReplace,
+                                createdBoxes,
+                                parsedElements,
+                                replaceElementsId
+                                );
+                            createdBoxes        = obj.createdBoxes;
+                            box                 = obj.box;
+                            replaceElementsId   = obj.replaceElementsId;
+                            parsedElements      = obj.parsedElements;
                         }
                         console.timeEnd("boxProcessingTime");
                     }
@@ -995,13 +876,7 @@ function replaceStruct(match){
                 });
                 InsertedTracker = _.compact(InsertedTracker);
                 console.timeEnd("InsertedTrackerMapTime");
-                // console.log("InsertedTracker",InsertedTracker);
-                // startElements       = _.pluck(startElements, 'elementId');
-                // startElements       = _.map(startElements, function(element){
-                //     let foundInDict = _.findWhere(ElementDict, {initial: element});
-                //     if(typeof foundInDict === "undefined") return element;
-                //     return foundInDict.replacedId;
-                // });
+                
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
                 console.time("LinesSwitchingTime");
