@@ -17,6 +17,13 @@ Template.replaceResults.helpers({
     },
     isConflictingMatch: function(status) {
         return status == 'conflicting'
+    },
+    queryDiagData: function() {
+        return Session.get("QueryDiagData");
+    },
+    notQueryDiagram: function() {
+        const queryDiagData = Session.get("QueryDiagData");
+        return queryDiagData.diagramId != Session.get("activeDiagram");
     }
 });
 Template.registerHelper('incremented', function(index){
@@ -52,6 +59,7 @@ Template.replaceResults.events({
         // clear all tables and messages
         Session.set('ResultsJson', [] );
         Session.set("DiagramErrorMsg", []);
+        Session.set('foundMatchElements', []);
         Session.set("ExpErrors", []);
     },
     'click #replaceInAllDiagrams' : function(){
@@ -93,10 +101,21 @@ function updateSession (ResultsJson, CurrentDiagramId, response){// atjaunojam s
     return ResultsJson;
 }
 function HighlightMatch(diagramId, match){
+    console.log("highLighting match");
     Utilities.callMeteorMethod("checkDiagramExistance", diagramId,function(response){
+        console.log("RESP");
         Session.set("DiagramErrorMsg","");
-        Session.set('foundMatchElements', []);
-        if(response) Session.set('foundMatchElements', match);
+        // Session.set('foundMatchElements', []);
+        if(response) {
+            const matchInSession = Session.get('foundMatchElements');
+            if( _.size(matchInSession) == 0 || typeof matchInSession === 'undefined') Session.set('foundMatchElements', match);
+            else {
+                Session.set('foundMatchElements', match);
+                console.log("found match in session");
+                // history.go(-1);
+                // history.go(1);
+            }
+        }
         else{
             Session.set('foundMatchElements', []);
             Session.set("DiagramErrorMsg","Diagram does not exist");

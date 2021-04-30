@@ -8,6 +8,11 @@
             <h2 style="display: inline;">Find Results</h2>
             <button style="display: inline;" type="button" class="btn btn-danger btn-lg" id="clearResults">Clear results</button>
             <button style="display: inline;" type="button" class="btn btn-info btn-lg" id="replaceInAllDiagrams">Replace all</button>
+            {{ #with queryDiagData }}
+            {{ #if notQueryDiagram }}
+            <a id="backToQuery" class="btn btn-success btn-lg" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Back to query</a>
+            {{ /if}}
+            {{ /with }}
             {{ #if DiagramErrorMessage }}
             <div style="display: inline;" class="alert alert-danger" role="alert"> {{ DiagramErrorMessage }}</div>
             {{ /if }}

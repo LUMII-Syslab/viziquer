@@ -92,6 +92,14 @@ Interpreter.customMethods({
                 else if(_.has(response, "expressionErrors")){
                     Session.set("ExpErrors", response.expressionErrors);
                     Session.set("ResultsJson", response.result);
+                    Session.set("QueryDiagData", {
+                        diagramId: Session.get("activeDiagram"),
+                        projectId: Session.get("activeProject"),
+                        versionId: Session.get("versionId"),
+                        diagramTypeId: Diagrams.findOne({_id: Session.get("activeDiagram")}).diagramTypeId,
+                        editMode: true,
+                        _id: Session.get("activeDiagram")
+                    });
                     console.log('resp', response);
                     console.timeEnd('Find_time');
                     if(_.size(response.result) == 0) Session.set("DiagramErrorMsg", "No results");
