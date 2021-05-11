@@ -956,10 +956,47 @@ Interpreter.customMethods({
 		// console.log("query_text", query_text);
 		var queries = query_text.split("--------------------------------------------\n");
 		var x = 10;
+		var editor = Interpreter.editor;
+		
+		var e;
+			if (editor.data.ev) {
+				e = editor.data.ev;
+			}
+
+			var x, y;
+			if (e) {
+				var mouse_state_obj = editor.getMouseStateObject();
+				var mouse_pos = mouse_state_obj.getMousePosition(e);
+				x = mouse_pos["x"];
+				y = mouse_pos["y"];
+			}
+		
+		console.log("editor", editor, x, y);
+		
 		for(var query in queries){
-			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x);
-			x = x+210;
+			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x, y);
+			x = x+170;
 		}
+		
+		
+		
+		
+		
+		// var query_text = yasqe3.getValue();	
+		// try {
+		    // var queries = JSON.parse(query_text);
+		
+			// var x = 10;
+			// for(var query in queries){
+				// Interpreter.customExtensionPoints.generateVisualQuery(queries[query]["sparql"], x, queries[query]["id"], queries[query]["question"]);
+				// x = x+170;
+			// }
+		// } catch (error) {
+		  // var x = 10;
+		  // Interpreter.customExtensionPoints.generateVisualQuery(query_text, x);
+		// }
+		
+		
 	},
 
 	setIsVisibleFalse: function() {
@@ -1397,7 +1434,9 @@ VQsetAssociationName = function(start, end) {
 
 		console.log("name_list", name_list)
 
-		if(name_list.length == 1) return name_list[0];
+		if(name_list.length == 1) {
+			if(!name_list[0].startsWith("^"))return name_list[0];
+		}
 		
 		return ""
 }

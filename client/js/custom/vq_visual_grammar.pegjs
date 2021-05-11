@@ -33,17 +33,17 @@
 	
 	RDFLiteral = (RDFLiteral:(RDFLiteralA/RDFLiteralB/RDFLiteralC/RDFLiteralD)) {return {value:makeVar(RDFLiteral), type:"RDFLiteral"}}
 	RDFLiteralA = String:((STRING_LITERAL1  / STRING_LITERAL2) LANGTAG) {return makeVar(String)}
-	RDFLiteralB = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#date" {return makeVar(String) + "^^xsd:date"}
-	RDFLiteralC = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#dateTime" {return makeVar(String) + "^^xsd:dateTime"}
+	RDFLiteralC = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#date" {return makeVar(String) + "^^xsd:date"}
+	RDFLiteralB = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#dateTime" {return makeVar(String) + "^^xsd:dateTime"}
 	RDFLiteralD = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:iri {return makeVar(String) + "^^<" +makeVar(iri)+">"}
 	
 	LANGTAG = "@" string
 	
-	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "%" / "(" / ")" / "/" / "-" / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
+	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "%" / "(" / ")" / "/" / "'" / "-" / "," / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
 	
 	iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 	//IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])* ">") {return makeVar(IRIREF)}
-	IRIREF = IRIREF:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])*) {return makeVar(IRIREF)}
+	IRIREF = IRIREF:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" /"-" / [0-9])*) {return makeVar(IRIREF)}
 	PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 	PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
 	PNAME_LN = (LName:(PNAME_NS  Chars_String)) {return makeVar(LName)}

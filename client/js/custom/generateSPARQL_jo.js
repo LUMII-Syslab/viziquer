@@ -577,9 +577,19 @@ function generateIds(rootClass){
 // parentClassId - parent class identificator
 function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass){
 	var referenceTable = [];
+	
+	if(clazz["linkIdentification"]["localName"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
+		if(typeof clazz["instanceAlias"] !== "undefined" && clazz["instanceAlias"] != null && clazz["instanceAlias"] != "") {
+			idTable[parentClassId]["name"] = clazz["instanceAlias"];
+			idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
+		}
+		else idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
 
+	}
 	// if instance is defined, use it
-	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+	else if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") {
+		idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+	}
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
 		if(varName == "?") {
@@ -604,8 +614,6 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
 		idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"expr_"+counter, unionId:unionClass};
 		counter++;
-	} else if(clazz["linkIdentification"]["localName"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
-		idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
 	}
 	else{
 		//TODO container name
@@ -1153,7 +1161,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
 
 				messages = messages.concat(result["messages"]);
-				//console.log("ATTRIBUTE", result);
+				// console.log("ATTRIBUTE", result);
 				sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
 				for (var reference in result["referenceCandidateTable"]){
 					if(typeof result["referenceCandidateTable"][reference] === 'string') sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])
@@ -1679,11 +1687,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					}
 				}
 				// if(subclazz["linkIdentification"]["localName"] == "==") sparqlTable["filters"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
-				if(subclazz["linkIdentification"]["localName"] == "==") temp["sparqlTable"]["equalityLink"] = true;
+				if(subclazz["linkIdentification"]["localName"] == "==") {
+					temp["sparqlTable"]["equalityLink"] = true;
+				}
 			}
 
 			temp["sparqlTable"]["linkType"] = subclazz["linkType"];
-			if(subclazz["identification"]["localName"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["localName"] == "" || subclazz["identification"]["localName"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
+			// if(subclazz["identification"]["localName"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["localName"] == "" || subclazz["identification"]["localName"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
 			temp["sparqlTable"]["isSubQuery"] = subclazz["isSubQuery"];
 			temp["sparqlTable"]["isGlobalSubQuery"] = subclazz["isGlobalSubQuery"];
 

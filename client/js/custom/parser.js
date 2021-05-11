@@ -108,7 +108,7 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, vnc, vna
 	var parsed_exp3 = transformExistsNotExists(parsed_exp2, null, className);
 	//counter++;
 	// console.log(JSON.stringify(parsed_exp3,null,2));
-	var temp = checkIfIsSimpleVariable(parsed_exp3, true, null, true, false, false);
+	var temp = checkIfIsSimpleVariable(parsed_exp3, true, null, true, false, false, false);
 	isSimpleFilter = temp["isSimpleFilter"];
 	isUnderOr = temp["isUnderOr"];
 	isUnderIf = temp["isUnderIf"];
@@ -142,7 +142,7 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, vnc, vna
 }
 
 parse_attrib = function(expr, attribNames, clID, parsed_exp, alias, className, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr) {
-	
+
 	//console.log("parsed_exp",parsed_exp);
 	alias = alias || "";
 	
@@ -153,13 +153,14 @@ parse_attrib = function(expr, attribNames, clID, parsed_exp, alias, className, v
 	var parsed_exp1 = transformSubstring(parsed_exp);
 	// check if given expression is simple variable name or agregation, function, expression
 	// if given expression is simple variable, then in triple use alias(if exists), else - use variable names
-	var temp = checkIfIsSimpleVariable(parsed_exp1, true, true, null, false, false);
+	var temp = checkIfIsSimpleVariable(parsed_exp1, true, true, null, false, false, false);
 	isSimpleVariable = temp["isSimpleVariable"];
 	isUnderOr = temp["isUnderOr"];
 	isUnderIf = temp["isUnderIf"];
 
 	isSimpleVariableForNameDef = checkIfIsSimpleVariableForNameDef(parsed_exp1, true);
-	if(isSimpleVariable == false || alias == "") alias = null; 
+	if(temp["isIRIREF"] == false && (isSimpleVariable == false || alias == "")) alias = null; 
+	
 	var result = generateExpression(parsed_exp1, "", className, alias, true, isSimpleVariable, false);
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, alias, true, isSimpleVariable, false);
 	//console.log(resultSQL);
