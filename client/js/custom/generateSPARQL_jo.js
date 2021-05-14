@@ -1092,7 +1092,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				"isBlocking" : true
 			});
 		} else{
-			var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
+			var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
 			
 			for (var prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
@@ -1158,7 +1158,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					field["alias"] = field["alias"].replace(/ /g, '_');
 				}
 				// console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
-				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
+				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
 
 				messages = messages.concat(result["messages"]);
 				// console.log("ATTRIBUTE", result);
@@ -1371,13 +1371,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				var result;
 				
 				if(clazz["isUnit"] != true){
-				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				
 				counter = result["counter"];
 				for (var attrname in result["variableNamesClass"]) {
 					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 				}} else {
-					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				}
 				messages = messages.concat(result["messages"]);
 				for (var prefix in result["prefixTable"]) {
@@ -1458,7 +1458,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					"isBlocking" : true
 				});
 		} else { 
-			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result);
 			for (var reference in result["referenceCandidateTable"]){
@@ -1879,7 +1879,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 					}else{
-						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 						 messages = messages.concat(result["messages"]);
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 							 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
@@ -1950,7 +1950,7 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 				} else{
-					var result = parse_attrib(group["exp"], [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					var result = parse_attrib(group["exp"], [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 					 messages = messages.concat(result["messages"]);
 					 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 						 //orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");

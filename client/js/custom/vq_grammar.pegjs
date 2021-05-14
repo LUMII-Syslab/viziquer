@@ -474,7 +474,7 @@
 
 			PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
 
-			PNAME_LN = (PropertyReference:PropertyReference? Prefix:PNAME_NS  LName:(Chars_String_variables / Chars_String_prefix) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(Prefix)+makeVar(LName),type:resolveType(makeVar(Prefix)+makeVar(LName)), kind:resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			PNAME_LN = (ref:"@"? PropertyReference:PropertyReference? Prefix:PNAME_NS  LName:(Chars_String_variables / Chars_String_prefix) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(Prefix)+makeVar(LName), ref:ref, type:resolveType(makeVar(Prefix)+makeVar(LName)), kind:resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			PN_PREFIX = Chars_String_prefix
 
@@ -551,8 +551,8 @@
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? ':') {return makeVar(Prefix)}
-			PNAME_LNP = (PNAME_NS:PNAME_NSP  LName:Chars_String_prefix) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
-			LNameP = (LName:(Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			PNAME_LNP = (ref:"@"? PNAME_NS:PNAME_NSP  LName:Chars_String_prefix) {return {var:{name:makeVar(LName), ref:ref,type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
+			LNameP = (ref:"@"? LName:(Chars_String_prefix)) {return {var:{name:makeVar(LName),ref:ref, type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 
 			VERTICAL = "|" {return {Alternative:"|"}}
 			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}}
@@ -567,12 +567,12 @@
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix))
 
-			LName = (PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LName = (ref:"@"? PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName), ref:ref, type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			LNameINV = (PropertyReference:PropertyReference? INV: "INV"i "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			LNameINV3 = (PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV3 = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			LNameINV2 = (PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV2 = (ref:"@"? PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
