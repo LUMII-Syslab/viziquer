@@ -17,18 +17,23 @@
                     <h4 class="modal-title">Condition</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
-                          <div class="form-group" style="margin-bottom:5px;margin-top:10px;">
-				                        <label for="condition-expression" class="col-sm-2 control-label">Expression</label>
-                                <div class="col-sm-10">
-                                  <!-- <textarea id="condition-expression" type="text" class="form-control" style="overflow:auto; resize:none;" rows="3"></textarea> -->
-                                  <input id="condition-expression" type="text" class="form-control" autocomplete="off" />
-                                </div>
-			              </div>
-                          <span class="help-block">
-                            Use Ctrl+Space to activate auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i>
-                        </span>
-                    </form>
+				
+					<form>
+						<div class="form-group" style="margin-bottom:10px;">
+							<label>Expression</label>
+							<input id="condition-expression" type="text" class="form-control">
+							<span class="help-block">Use Ctrl+Space for text auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i></span>	
+						</div>
+
+						<div class="form-group" style="margin-bottom:10px;">
+							<label class="label-checkbox">						
+								<input type="checkbox" id="allow-multiplication-check-box" class="dialog-checkbox input-sm">
+								<span class="custom-checkbox"></span>
+								Allow result multiplication
+							</label>
+						</div>
+		   
+	                </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

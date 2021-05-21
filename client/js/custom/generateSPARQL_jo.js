@@ -1458,7 +1458,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					"isBlocking" : true
 				});
 		} else { 
-			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+			console.log("ccccccccccc", condition)
+			var result = parse_filter(condition, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result);
 			for (var reference in result["referenceCandidateTable"]){

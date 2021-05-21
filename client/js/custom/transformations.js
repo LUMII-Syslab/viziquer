@@ -923,8 +923,8 @@ Interpreter.customMethods({
 		var loc = {x:400,y:400,width:250,height:250};
 		Create_VQ_Element(function(boo) {
 			 boo.setName("Boo");
-			 boo.addCondition("boo > voo");
-			 boo.addCondition("zoo is not here");
+			 boo.addCondition("boo > voo", false);
+			 boo.addCondition("zoo is not here", false);
 			 boo.addField("kvak","a",true,true,true);
 			 boo.addField("mooh","b",true,false,true);
 			 boo.setDistinct(true);

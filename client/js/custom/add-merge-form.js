@@ -214,8 +214,8 @@ Template.AddMergeValues.events({
 					var maxValue = $('input[id=merge-results-most]').val();
 					
 					if(displayCase) parentClass.addField(mergeAliasName,"",false,false,false);
-					if (minValue != "") parentClass.addCondition(mergeAliasName + ">=" + minValue);
-					if (maxValue != "") parentClass.addCondition(mergeAliasName + "<=" + maxValue);
+					if (minValue != "") parentClass.addCondition(mergeAliasName + ">=" + minValue, false);
+					if (maxValue != "") parentClass.addCondition(mergeAliasName + "<=" + maxValue, false);
 					
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
