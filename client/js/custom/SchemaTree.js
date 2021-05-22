@@ -1,4 +1,7 @@
 
+Template.schemaFilter.Classes = new ReactiveVar("");
+Template.schemaFilter.Ont = new ReactiveVar("");
+
 ShowSchemaTree = function () {
 	$("#schema-tree").modal("show");
 };
@@ -92,4 +95,43 @@ Template.schemaTree.events({
 
 	},
 
+});
+
+
+Template.schemaFilter.rendered = async function() {
+	console.log("-----rendered----")
+	console.log(Session.get("activeProject"))
+	var rr = await dataShapes.getProjOntList();  
+	Template.schemaFilter.Ont.set(rr);
+	var cl = await dataShapes.getClassList();
+	Template.schemaFilter.Classes.set(cl);
+}
+
+Template.schemaFilter.helpers({
+	classes: function() {
+		return Template.schemaFilter.Classes.get();
+	},
+	ont: function() {
+		return Template.schemaFilter.Ont.get();
+	},
+});
+
+Template.schemaFilter.events({
+
+	'click #filter': async function(e) {
+
+		var text = $('#find_text').val();
+		console.log(text)
+		var cl = await dataShapes.getClassList(text);
+		Template.schemaFilter.Classes.set(cl);
+
+	},
+	'click .form-check-input': async function(e) {
+		console.log("***************")
+		console.log($(e.target).closest(".form-check-input").is(":checked"))
+		console.log($(e.target).closest(".form-check-input").attr("value"))
+		
+		//var rr = await callWithPost2('fn1',{kaut: 4, kas: 5});
+
+	}
 });

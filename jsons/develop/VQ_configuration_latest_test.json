@@ -331,7 +331,7 @@
           "_id": "ZnHbEQt9jutbYY3E9",
           "diagramId": "7RrwRcGyxshqjBh9p",
           "diagramTypeId": "5MCHCcnGRwF5axfDj",
-          "name": "Test",
+          "name": "Filters",
           "index": 2,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
@@ -392,11 +392,11 @@
             "index": 1,
             "noRepresentation": true,
             "tabIndex": 2,
-            "name": "Test_DBP",
+            "name": "schemaFilter",
             "isObjectRepresentation": false,
             "inputType": {
               "type": "custom",
-              "templateName": "testDBP"
+              "templateName": "schemaFilter"
             },
             "extensionPoints": [
               {
@@ -422,7 +422,7 @@
                 "extensionPoint": "dynamicDropDown"
               }
             ],
-            "label": "Test",
+            "label": "Filters",
             "dialogTabId": "ZnHbEQt9jutbYY3E9"
           }
         }

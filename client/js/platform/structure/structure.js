@@ -87,16 +87,16 @@ Template.structureTemplate.events({
 		$(e.target).closest(".container").find(".project-dropdown-container").addClass("hidden");								
 	},
 
-	'click .project-path': function(e) {
+	'click .project-path': async function(e) {
 		e.preventDefault();
-
+		
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
-    
+		dataShapes.changeActiveProject(proj_id);
     	Router.go("diagrams", {projectId: proj_id, versionId: version_id});
 
-		return;
+		//return;
 	},
   
   	'click .project-dropdown-container': function(e) {

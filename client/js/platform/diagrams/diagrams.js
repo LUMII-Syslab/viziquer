@@ -767,6 +767,7 @@ Template.ontologySettings.events({
 					versionId: Session.get("versionId"),
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
+					schema: $("#dss-schema").val(),
           useStringLiteralConversion: $("#use-string-literal-conversion").val(),
           queryEngineType: $("#query-engine-type").val(),
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
@@ -781,7 +782,7 @@ Template.ontologySettings.events({
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val()
 				};
-
+				
 		Utilities.callMeteorMethod("updateProjectOntology", list);
 	},
 
@@ -805,6 +806,7 @@ Template.ontologySettings.events({
 	 if (proj) {
 		 $("#ontology-uri").val(proj.uri);
 		 $("#ontology-endpoint").val(proj.endpoint);
+		 $("#dss-schema").val(proj.schema);
 		 $("#use-string-literal-conversion").val(proj.useStringLiteralConversion);
 		 $("#query-engine-type").val(proj.queryEngineType);
 		 $("#use-default-grouping-separator").prop("checked", proj.useDefaultGroupingSeparator);
@@ -862,6 +864,12 @@ Template.ontologySettings.events({
 
 });
 
+Template.ontologySettings.schemas = new ReactiveVar([{name: ""}]);
+Template.ontologySettings.rendered = async function() {
+	var rr = await dataShapes.getOntologies();  
+	Template.ontologySettings.schemas.set(rr);
+}
+
 Template.ontologySettings.helpers({
 
 	uri: function() {
@@ -877,7 +885,21 @@ Template.ontologySettings.helpers({
 			return proj.endpoint;
 		}
 	},
-
+	
+	schemas: function() {
+		var ss = Template.ontologySettings.schemas.get();;
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var s = "";
+		if (proj) { s = proj.schema; } ;		
+		for (var i=0;i<ss.length;i++) {
+			if (ss[i]["name"] == s ) {
+				ss[i]["selected"] = "selected";
+				break;
+			}
+		}
+		return ss;
+	},
+	
 	useStringLiteralConversion: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {

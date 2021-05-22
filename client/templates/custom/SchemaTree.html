@@ -37,6 +37,60 @@
 </template>
 
 
+<template name="schemaFilter">
+
+    <div class="col-sm-12">
+        <div class="dd" id="nestable">
+		                <div class="form-group">  
+							<div class="form-group">
+								<div class="col-sm-10">
+									<label class="form-check-label">
+									 <input class="form-check-input" name = "All" id="All" value= "0" type="checkbox" checked="checked">
+									 <span class="custom-checkbox"></span>
+									 All
+								  </label>
+								</div>
+							</div>
+                            {{#each ont}}
+								<div class="form-group">
+									<div class="col-sm-10">
+										<label class="form-check-label">
+										 <input class="form-check-input" name = "{{dprefix}}" id="{{dprefix}}" value={{id}} type="checkbox">
+										 <span class="custom-checkbox"></span>
+										 {{dprefix}}
+									  </label>
+									</div>
+								</div>
+                            {{/each}}
+                        </div>
+						
+						
+						<div class="form-group">
+                            <label for="find_text" class="col-sm-2 control-label">Text</label>
+                            <div class="col-sm-10">
+                                <input id="find_text" type="text" class="form-control" placeholder="">
+                            </div>
+							<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Find</button>
+                        </div>
+						
+						 <div class="form-group">
+                            <label for="classes" class="control-label col-sm-2">Classes</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="classes">
+                                    {{#each classes}}
+                                        <option id="{{_id}}" name={{name}}>{{fullName}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+        </div><!-- dd -->
+    </div>
+
+</template>
+
+
+
 <template name="schemaTree2">
     <!-- Add form-->
     <div id="schema-tree" class="modal fade">

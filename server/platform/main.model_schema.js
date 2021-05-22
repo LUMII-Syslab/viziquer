@@ -196,7 +196,12 @@ Schemas.Projects = new SimpleSchema({
         label: "Projects.endpoint",
         optional: true,
     },
-
+	
+    schema: {
+        type: String,
+        label: "Projects.schema",
+        optional: true,
+    },
 		useStringLiteralConversion: {
 			  type: String,
 			  label: "Projects.useStringLiteralConversion",
@@ -284,6 +289,12 @@ Schemas.Projects = new SimpleSchema({
         regEx: SimpleSchema.RegEx.Id,
         label: "Projects.toolId",
         // denyUpdate: true,
+    },
+	 filters: {
+        type: Object,
+        label: "Projects.filters",
+        optional: true,
+        blackbox: true,
     },
 });
 Projects.attachSchema(Schemas.Projects);

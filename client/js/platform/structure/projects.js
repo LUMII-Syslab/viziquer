@@ -48,10 +48,12 @@ Template.projectsList.events({
   },
 
 //changes active project
-  'click .projects-dropdown-item' : function(e, templ) {
+  'click .projects-dropdown-item' : async function(e, templ) {
       //e.preventDefault();
       var proj_id = $(e.target).closest(".projects-dropdown-item").attr("id");
+	  
       Utilities.changeUserActiveProject(proj_id);
+	  dataShapes.changeActiveProject(proj_id);
   },
 });
 
