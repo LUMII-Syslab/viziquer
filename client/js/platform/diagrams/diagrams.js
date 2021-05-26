@@ -585,6 +585,11 @@ Template.importOntology.events({
 
 					if (data) {
 						if ( data.Classes ) {
+						if ( data.Properties ) {
+							data.Associations = _.filter(data.Properties, function (p){ return  p.objectTripleCount > 0;  });
+							data.Attributes = _.filter(data.Properties, function (p){ return  p.objectTripleCount < p.tripleCount;  });
+							data.Properties = "T";
+						}
 							_.each(data.Classes, function(el) {
 								if (el.localName)
 									el.localName = decodeURIComponent(el.localName);
@@ -601,11 +606,11 @@ Template.importOntology.events({
 									el.localName = decodeURIComponent(el.localName);
 								if (el.fullName)
 									el.fullName = decodeURIComponent(el.fullName);
-								var sourceclasses = [];
-								_.each(el.SourceClasses, function (sc){
-									sourceclasses.push(decodeURIComponent(sc));
-								});
-								el.SourceClasses = sourceclasses;
+								//var sourceclasses = [];
+								//_.each(el.SourceClasses, function (sc){
+								//	sourceclasses.push(decodeURIComponent(sc));
+								//});
+								//el.SourceClasses = sourceclasses;
 							});
 							_.each(data.Associations, function(el) {
 								if (el.localName)
@@ -616,16 +621,27 @@ Template.importOntology.events({
 								_.each(el.ClassPairs, function (cp){
 									var cp_new = {};
 									if ( cp.SourceClass )
-										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
+										cp_new.SourceClass = decodeURIComponent(cp.SourceClass);
 									if ( cp.TargetClass )
-										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
-									cp_new.instanceCount = cp.instanceCount
-									cp_new.minCardinality = cp.minCardinality
-									cp_new.maxCardinality = cp.maxCardinality
-									cp_new.inverseRole = cp.inverseRole
-									cp_new.tripleCount = cp.tripleCount
-  					
-									classpairs.push(cp_new);
+										cp_new.TargetClass = decodeURIComponent(cp.TargetClass);
+									cp_new.instanceCount = cp.instanceCount;
+									cp_new.minCardinality = cp.minCardinality;
+									cp_new.maxCardinality = cp.maxCardinality;
+									cp_new.inverseRole = cp.inverseRole;
+									cp_new.tripleCount = cp.tripleCount;
+									console.log(cp)
+									if ( cp.sourceImportanceIndex !== undefined ) {
+										cp_new.sourceImportanceIndex = cp.sourceImportanceIndex;
+										cp_new.targetImportanceIndex = cp.targetImportanceIndex;
+									}
+									else {
+										cp_new.sourceImportanceIndex = 1;
+										cp_new.targetImportanceIndex = 1;
+									}
+									
+									if (cp_new.sourceImportanceIndex > 0 || cp_new.targetImportanceIndex > 0 ) {
+										classpairs.push(cp_new);
+									}	
 								});
 								el.ClassPairs = classpairs;
 							});
@@ -638,7 +654,6 @@ Template.importOntology.events({
 							}
 							VQ_Schema_copy = null;
 							list.data = data;
-
 							Utilities.callMeteorMethod("loadMOntology", list);
 						}
 						else {

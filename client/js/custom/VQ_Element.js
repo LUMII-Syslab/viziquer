@@ -450,7 +450,7 @@ VQ_Schema_copy = null;
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
-   druka = false;
+   druka = true;
    if (_.size(data) > 0 )  VQ_Schema_copy = null;
    
    var isData = false;
@@ -484,6 +484,7 @@ VQ_Schema = function ( data = {}, tt = 0) {
 	   this.AllClasses = VQ_Schema_copy.AllClasses;
 	   this.namespace = VQ_Schema_copy.namespace;
 	   this.classCount = VQ_Schema_copy.classCount;
+	   this.type = VQ_Schema_copy.type;
 	   schema = this;
 	   return;	
    }
@@ -513,6 +514,9 @@ VQ_Schema = function ( data = {}, tt = 0) {
    } 	 
 
    this.Data = data;
+   this.type = "Old";	
+   if ( data.Properties )
+     this.type = "New";	
    
    if (druka) console.log("Taisa shēmu no datiem");
    this.makeClasses(data);
@@ -1034,15 +1038,21 @@ VQ_Schema.prototype = {
 	}
   },
   makeAttributesAndAssociations: function(data) {
-	function makeAssoc(asoc, dual)
-	{
+	function makeAssoc(asoc, dual) {
 		var newRole = new VQ_Role(asoc);
-		newRole.dual = dual;
+		newRole.dual = false;
+		if (asoc.tripleCount && asoc.objectTripleCount < asoc.tripleCount) {
+			newRole.dual = true;
+			dual = true;
+			console.log(asoc.fullName)
+			//console.log(asoc)
+			console.log(asoc.ClassPairs)
+		}
+		
 		schema.addRole(newRole);
 		var new_cp = asoc.ClassPairs;
 		var extensionMode = "none"
-		if (schema.Data && schema.Data.Parameters)  
-		{
+		if (schema.Data && schema.Data.Parameters) {
 			var pp = _.filter(schema.Data.Parameters, function(p){ return  p.name == "ExtensionMode" });
 			if (_.size(pp) > 0 )
 				extensionMode = pp[0].value;
@@ -1050,61 +1060,74 @@ VQ_Schema.prototype = {
 		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
 		//console.log("============== " + asoc.localName +"  =======================")
 		//console.log(asoc)
-		if (extensionMode== "simple" && dual == false)  // Te nav īsti skaidrs, ko darīt ar tiem, kas ir gan atribūti, gan asociācijas
+		if (schema.type == "New" && extensionMode == "simple" && ( dual == false || dual == true && _.size(asoc.ClassPairs ) > 0)) 
 		{
-			if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
+			if (asoc.SourceClasses && _.size(asoc.SourceClasses ) > 0)
 			{
-				_.each(asoc.SourceClassesDetailed, function(sc){
-					var add = true		
-					_.each(asoc.ClassPairs, function(cp){
-						if (sc.classFullName == cp.SourceClass && sc.objectTripleCount <= cp.tripleCount)
-							add = false
-					})
-					if (add == true && asoc.closedRange != true)
-						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:sc.tripleCount})
+				_.each(asoc.SourceClasses, function(sc){
+					//var add = true		
+					//_.each(asoc.ClassPairs, function(cp){
+					//	if (sc.classFullName == cp.SourceClass && sc.objectTripleCount <= cp.tripleCount)
+					//		add = false
+					//})
+					if ( asoc.SourceClasses.closedRange === false || asoc.SourceClasses.closedRange === undefined && asoc.closedRange !== true)
+						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:-1, sourceImportanceIndex:sc.importanceIndex, targetImportanceIndex:1000}) // Visi tiek salikti kā pēdējie
 				})
 			}
 
-			if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed) > 0)
+			if (asoc.TargetClasses && _.size(asoc.TargetClasses) > 0)
 			{
-				_.each(asoc.TargetClassesDetailed, function(sc){
-					var add = true		
-					_.each(asoc.ClassPairs, function(cp){
-						if (sc.classFullName == cp.TargetClass && sc.tripleCount <= cp.tripleCount)
-							add = false
-					})
-					if (add && asoc.closedDomain != true)
-						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.tripleCount})
+				_.each(asoc.TargetClasses, function(sc){
+					//var add = true		
+					//_.each(asoc.ClassPairs, function(cp){
+					//	if (sc.classFullName == cp.TargetClass && sc.tripleCount <= cp.tripleCount)
+					//		add = false
+					//})
+					if ( asoc.TargetClasses.closedDomain === false || asoc.TargetClasses.closedDomain === undefined && asoc.closedDomain !== true)
+						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:-1, targetImportanceIndex:sc.importanceIndex, sourceImportanceIndex:1000 }) // Visi tiek salikti kā pēdējie
 				})
 			}
 			//console.log("*********************", asoc.localName ,"*********************************")
 			//console.log(asoc.ClassPairs)
-			//console.log(new_cp)		
+			//console.log(new_cp)	
 		}
 
-		if (asoc.SourceClassesDetailed && _.size(asoc.SourceClassesDetailed ) > 0)
+		if (asoc.SourceClasses && _.size(asoc.SourceClasses ) > 0)
 		{
-			_.each(asoc.SourceClassesDetailed, function(sc){
+			_.each(asoc.SourceClasses, function(sc){
 				if ( asoc.objectTripleCount == sc.objectTripleCount)
 					newRole.sourceClass = sc.classFullName
 				_.each(new_cp, function(n){
 					if ( n.SourceClass == sc.classFullName)
 					{
 						n.minCardinality = sc.minCardinality;
-						n.maxCardinality = asoc.maxCardinality;
+						n.maxCardinality = sc.maxCardinality;
 					}
 				})
 			})
 		}
-		if (asoc.TargetClassesDetailed && _.size(asoc.TargetClassesDetailed ) > 0)
+		if (asoc.TargetClasses && _.size(asoc.TargetClasses ) > 0)
 		{
-			_.each(asoc.TargetClassesDetailed, function(sc){
+			_.each(asoc.TargetClasses, function(sc){
 				if ( asoc.tripleCount == sc.tripleCount)
 					newRole.targetClass = sc.classFullName
+				_.each(new_cp, function(n){
+					if ( n.TargetClass == sc.classFullName)
+					{
+						n.minInverseCardinality= sc.minInverseCardinality;
+						n.maxInverseCardinality = sc.maxInverseCardinality;
+					}
+				})
 			})
 		}
 		//console.log("*********************", asoc.localName ,"*********************************")
 		//console.log(newRole)
+		
+		// Šis bija tajā ciklā iekšā nezin kāpēc
+		if ( !newRole.maxCardinality) { 
+		  newRole.minCardinality = 0;  
+		  newRole.maxCardinality = -1;
+		}	
 		
 		//_.each(asoc.ClassPairs, function(cp){
 		_.each(new_cp, function(cp){
@@ -1114,23 +1137,25 @@ VQ_Schema.prototype = {
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
 			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
-			
-			if ( !newRole.maxCardinality) { 
-			  newRole.minCardinality = 0;  
-			  newRole.maxCardinality = -1;
-			}				
 
-			if (cp.instanceCount)
-			{
+			if (cp.instanceCount) {
 				newSchRole.instanceCount = cp.instanceCount;
 				newSchRole.tripleCount = cp.instanceCount;
 			}
-			else if (cp.tripleCount)
-			{
+			else if (cp.tripleCount) {
 				newSchRole.instanceCount = cp.tripleCount;
 				newSchRole.tripleCount = cp.tripleCount;
 			}
-				
+			
+			if ( schema.type == "New" ) {
+				newSchRole.sourceImportanceIndex = cp.sourceImportanceIndex;
+				newSchRole.targetImportanceIndex = cp.targetImportanceIndex;
+			}
+			else {
+				newSchRole.sourceImportanceIndex = 1;
+				newSchRole.targetImportanceIndex = 1;
+			}
+
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
 			schema.addSchemaRole(newSchRole);
 			schema.addSchemaProperty(newSchRole);
@@ -1150,37 +1175,42 @@ VQ_Schema.prototype = {
 		var newAttr = new VQ_Attribute(atr);
 	    schema.addAttribute(newAttr);
 		//console.log("-------------------------")
-		//console.log(atr)
-		var uniqueSourceClasses = _.uniq(atr.SourceClasses);
-		_.each(uniqueSourceClasses, function (sc){
-			//var scClass = schema.findClassByNameAndCycle(sc);
-			var scClass = schema.findClassByName(sc);
-			var newSchAttr = new VQ_SchemaAttribute(atr);
-			newSchAttr.maxCardinality = newAttr.maxCardinality;
-			newSchAttr.minCardinality = newAttr.minCardinality;
-			if (atr.SourceClassesDetailed && _.size(atr.SourceClassesDetailed) > 0)
-			{
-				var det = _.find(atr.SourceClassesDetailed, function (det) { return det.classFullName == sc || det.domain == sc })
-				if ( det.minCardinality )
-					newSchAttr.minCardinality = det.minCardinality;
-			
-				newSchAttr.instanceCount = det.tripleCount 
-				if ( det.objectTripleCount )
-					newSchAttr.objectTripleCount = det.objectTripleCount; 
-				else
-					newSchAttr.objectTripleCount = 0;
-			}
-			schema.addSchemaAttribute(newSchAttr);
-			schema.addSchemaProperty(newSchAttr);
-			scClass.addProperty(newSchAttr);
-			createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-			//newAttr["schemaAttribute"][newSchAttr.ID] = newSchAttr;
-			createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
-			//scClass["schemaAttribute"][newSchAttr.getID()] = newSchAttr;  
-			//newSchAttr["sourceClass"] = scClass.classInfo;
-		})
+		//console.log(atr)  
+		if ( schema.type == "New" ) {
+			_.each(atr.SourceClasses, function (sc){
+				var scClass = schema.findClassByName(sc.classFullName);
+				var newSchAttr = new VQ_SchemaAttribute(atr);
+				newSchAttr.maxCardinality = sc.maxCardinality;
+				newSchAttr.minCardinality = sc.minCardinality;
+				newSchAttr.tripleCount = sc.tripleCount;
+				newSchAttr.objectTripleCount = sc.objectTripleCount;
+				newSchAttr.importanceIndex = sc.importanceIndex;
+				schema.addSchemaAttribute(newSchAttr);
+				schema.addSchemaProperty(newSchAttr);
+				scClass.addProperty(newSchAttr);
+				createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+				createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+			})			
+		}
+		else {
+			var uniqueSourceClasses = _.uniq(atr.SourceClasses);
+			_.each(uniqueSourceClasses, function (sc){
+				var scClass = schema.findClassByName(sc);
+				var newSchAttr = new VQ_SchemaAttribute(atr);
+				newSchAttr.maxCardinality = newAttr.maxCardinality;
+				newSchAttr.minCardinality = newAttr.minCardinality;
+				schema.addSchemaAttribute(newSchAttr);
+				schema.addSchemaProperty(newSchAttr);
+				scClass.addProperty(newSchAttr);
+				createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+				createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+			})			
+		}
+		
+
 		if (atr.ClassPairs && _.size(atr.ClassPairs) > 0)
-			makeAssoc(atr, true);
+			newAttr.dual = true;
+		//	makeAssoc(atr, true);
 	})
 	
 	_.each(data.Associations, function(asoc){  
@@ -2109,21 +2139,23 @@ VQ_Class.prototype.allAttributes = null;
 VQ_Class.prototype.allAssociations = null; 
 VQ_Class.prototype.getAssociations = function() {
 	var out_assoc =  _.map(this.outAssoc, function (a) {
-				var maxCard = a.maxCardinality;
-				if (!maxCard) maxCard = a.role.maxCardinality;
+				//var maxCard = a.maxCardinality;
+				//if (!maxCard) maxCard = a.role.maxCardinality;
 				var className = a.targetClass.localName;
 				if (className == " ") className = "";
 				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "=>", 
-						maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.targetClass.getElementShortName(), instanceCount:a.instanceCount}; });
+						maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.targetClass.getElementShortName(), instanceCount:a.instanceCount,
+						maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex}; });
     _.each(this.inAssoc, function (a) {
-				var maxCard = a.maxCardinality;
-				if (!maxCard) maxCard = a.role.maxCardinality;
+				//var maxCard = a.maxCardinality;
+				//if (!maxCard) maxCard = a.role.maxCardinality;
 				var className = a.targetClass.localName;
 				if (className == " ") className = "";
 				if ( _.size(a.inverseSchemaRole ) == 0 && !a.isSymmetric)
 					out_assoc = _.union(out_assoc, 
 					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "<=", 
-					maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.sourceClass.getElementShortName(), instanceCount:a.instanceCount});
+					maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.sourceClass.getElementShortName(), instanceCount:a.instanceCount,
+					maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex});
 				});
     return out_assoc;
   };
@@ -2138,12 +2170,14 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 		return this.allAssociations;
 	}
 	var assoc = this.getAssociations();  
-	_.each(this.allSuperSubSuperClasses, function(sc){
-		if (paz && sc.isAbstract)
-			assoc = _.union(assoc, sc.getAllAssociations(false));
-		else	
-			assoc = _.union(assoc, sc.getAssociations());
-	})
+	if ( schema.type !== "New" ) {
+		_.each(this.allSuperSubSuperClasses, function(sc){
+			if (paz && sc.isAbstract)
+				assoc = _.union(assoc, sc.getAllAssociations(false));
+			else	
+				assoc = _.union(assoc, sc.getAssociations());
+		})
+	}
 	assoc = _.sortBy(assoc, "name");  
 	assoc = assoc.filter(function(obj, index, self) { 
 					return index === self.findIndex(function(t) { return t['short_name'] === obj['short_name'] &&  t['type'] === obj['type'] &&  
@@ -2155,7 +2189,8 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
   };
 VQ_Class.prototype.getAttributes = function() {  
 	return _.map(this.schemaAttribute, function (a) {
-		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, short_name:a.getElementShortName(), instanceCount:a.instanceCount}; });
+		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, short_name:a.getElementShortName(), instanceCount:a.instanceCount,
+		maxCard: a.maxCardinality, importanceIndex: a.importanceIndex}; });
   };
 
 VQ_Class.prototype.getAllAttributes = function(paz = true) {
@@ -2166,12 +2201,14 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 		return this.allAttributes;
 	}
 	var attributes = this.getAttributes(); 
-	_.each(this.allSuperSubSuperClasses, function(sc){
-		if (paz && sc.isAbstract)
-			attributes = _.union(attributes, sc.getAllAttributes(false));
-		else
-			attributes = _.union(attributes, sc.getAttributes());
-	})
+	if ( schema.type !== "New" ) {
+		_.each(this.allSuperSubSuperClasses, function(sc){
+			if (paz && sc.isAbstract)
+				attributes = _.union(attributes, sc.getAllAttributes(false));
+			else
+				attributes = _.union(attributes, sc.getAttributes());
+		})
+	}
 	attributes = _.sortBy(attributes, function(a) { return a.name}); 
 	attributes = attributes.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['short_name'] === obj['short_name'] });
@@ -2218,10 +2255,10 @@ VQ_Attribute = function (attrInfo){
 	var tripleCountSum = 0
 	var sh_type = "";
 	var t = "";
-	if (attrInfo.dataTypes)
+	if (attrInfo.DataTypes)
 	{
-		this.dataTypes = attrInfo.dataTypes;
-		_.each(attrInfo.dataTypes, function(tt){
+		this.DataTypes = attrInfo.DataTypes;
+		_.each(attrInfo.DataTypes, function(tt){
 			tripleCountSum = tripleCountSum + tt.tripleCount;
 			sh_type = sh_type.concat("[sh:datatype ",tt.dataType,"] ");
 			if ( tt.tripleCount == attrInfo.tripleCount)
@@ -2230,13 +2267,13 @@ VQ_Attribute = function (attrInfo){
 	}
 	if (type != undefined)
 		this.type = type;
-	if ( _.size(attrInfo.dataTypes) == 0 && type != undefined)   
+	if ( _.size(attrInfo.DataTypes) == 0 && type != undefined)   
 		this.sh_type = t.concat("\t\tsh:datatype ",type);
-	else if ( _.size(attrInfo.dataTypes) == 0 && type == undefined)   
+	else if ( _.size(attrInfo.DataTypes) == 0 && type == undefined)   
 		this.sh_type = "\t\tsh:nodeKind sh:IRI";
-	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.dataTypes) == 1)   
+	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.DataTypes) == 1)   
 		this.sh_type = t.concat("\t\tsh:datatype ",type);
-	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.dataTypes) > 1)
+	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.DataTypes) > 1)
 		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, ") ;");
 	else if (sh_type != "")
 		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, "[sh:nodeKind sh:IRI]) ;");
@@ -2263,7 +2300,7 @@ VQ_Attribute = function (attrInfo){
 	}
 	
 	if (attrInfo.maxCardinality || attrInfo.minCardinality) {
-	  this.minCardinality = findCardinality(attrInfo.minCardinality, "MIN");
+	  this.minCardinality = findCardinality(attrInfo.minCardinality, "MIN"); 
 	  this.maxCardinality = findCardinality(attrInfo.maxCardinality, "MAX");
 	}
 	else {
@@ -2323,7 +2360,7 @@ VQ_Role = function (roleInfo){
 		})	
 		return sh_type
 	}
-
+	/*
 	var t = "";
 	if (roleInfo.SourceClassesDetailed)
 	{
@@ -2354,16 +2391,16 @@ VQ_Role = function (roleInfo){
 	{
 		this.sh_type = "\t\tsh:nodeKind sh:IRI";
 		this.sh_inv_type = "\t\tsh:nodeKind sh:IRI";
-	}
+	} */
 		
 	//console.log(roleInfo)
 	//console.log(this.sh_type)
 	//console.log(this.sh_inv_type)
 	
-	if (roleInfo.maxCardinality || roleInfo.minCardinality) {
-	  this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
-	  this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");
-	}
+	//if (roleInfo.maxCardinality || roleInfo.minCardinality) {
+	this.minCardinality = findCardinality(roleInfo.minCardinality, "MIN");
+	this.maxCardinality = findCardinality(roleInfo.maxCardinality, "MAX");
+	//}
 };
 
 VQ_Role.prototype = Object.create(VQ_Elem.prototype);
@@ -2386,18 +2423,20 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role){
 	this.targetClass = {};
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
-	if (cpInfo.maxCardinality || cpInfo.minCardinality) {
-	  this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
-	  this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
-	  if (role.maxCardinality) {
-	    if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
-		if (this.maxCardinality < role.maxCardinality) role.maxCardinality = this.maxCardinality;
-	  }
-	  else {
-	    role.minCardinality = this.minCardinality;
-	    role.maxCardinality = this.maxCardinality;
-	  }
-	}
+	//if (cpInfo.maxCardinality || cpInfo.minCardinality) {
+	this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
+    this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
+	this.minInverseCardinality = findCardinality(cpInfo.minInverseCardinality, "MIN");
+    this.maxInverseCardinality = findCardinality(cpInfo.maxInverseCardinality, "MAX");
+	  //if (role.maxCardinality) {
+	  //  if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
+	  //  if (this.maxCardinality < role.maxCardinality) role.maxCardinality = this.maxCardinality;
+	  //}
+	  //else {
+	  //  role.minCardinality = this.minCardinality;
+	  //  role.maxCardinality = this.maxCardinality;
+	  //}
+	//}
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
