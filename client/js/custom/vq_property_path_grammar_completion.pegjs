@@ -34,14 +34,15 @@
 				var propertyName = "";
 				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
 				if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
-				var targetSourceClass = "targetClass";
-				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
+				var targetSourceClass = "TargetClass";
+				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "SourceClass";
+				
+				
 				
 				var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
 				
 				for(var classPair in schemaAssociationClassPairs){
-					var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
-					
+					var targetClass = schemaAssociationClassPairs[classPair][targetSourceClass];
 					var prop = options.schema.findClassByName(targetClass).getAllAssociations();
 					
 					for(var key in prop){
