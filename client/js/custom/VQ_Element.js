@@ -450,7 +450,7 @@ VQ_Schema_copy = null;
 VQ_Schema = function ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
-   druka = true;
+   druka = false;
    if (_.size(data) > 0 )  VQ_Schema_copy = null;
    
    var isData = false;
@@ -1044,9 +1044,6 @@ VQ_Schema.prototype = {
 		if (asoc.tripleCount && asoc.objectTripleCount < asoc.tripleCount) {
 			newRole.dual = true;
 			dual = true;
-			console.log(asoc.fullName)
-			//console.log(asoc)
-			console.log(asoc.ClassPairs)
 		}
 		
 		schema.addRole(newRole);
@@ -1060,31 +1057,25 @@ VQ_Schema.prototype = {
 		//extensionMode = "none"  // ja grib tomēr nepaplašināto variantu
 		//console.log("============== " + asoc.localName +"  =======================")
 		//console.log(asoc)
-		if (schema.type == "New" && extensionMode == "simple" && ( dual == false || dual == true && _.size(asoc.ClassPairs ) > 0)) 
+		if (schema.type == "New" && extensionMode == "simple" ) // && ( dual == false || dual == true && _.size(asoc.ClassPairs) > 0)) 
 		{
 			if (asoc.SourceClasses && _.size(asoc.SourceClasses ) > 0)
 			{
 				_.each(asoc.SourceClasses, function(sc){
-					//var add = true		
-					//_.each(asoc.ClassPairs, function(cp){
-					//	if (sc.classFullName == cp.SourceClass && sc.objectTripleCount <= cp.tripleCount)
-					//		add = false
-					//})
-					if ( asoc.SourceClasses.closedRange === false || asoc.SourceClasses.closedRange === undefined && asoc.closedRange !== true)
-						new_cp = _.union(new_cp,{SourceClass:sc.classFullName,TargetClass:"",instanceCount:-1, sourceImportanceIndex:sc.importanceIndex, targetImportanceIndex:1000}) // Visi tiek salikti kā pēdējie
+					if ( sc.closedRange === false || sc.closedRange === undefined && asoc.closedRange !== true) {
+						new_cp = _.union(new_cp,{SourceClass:sc.classFullName, TargetClass:"", instanceCount:sc.objectTripleCount, tripleCount:sc.objectTripleCount,
+								sourceImportanceIndex:sc.importanceIndex, targetImportanceIndex:1000}) // Visi tiek salikti kā pēdējie
+					}
 				})
 			}
 
 			if (asoc.TargetClasses && _.size(asoc.TargetClasses) > 0)
 			{
 				_.each(asoc.TargetClasses, function(sc){
-					//var add = true		
-					//_.each(asoc.ClassPairs, function(cp){
-					//	if (sc.classFullName == cp.TargetClass && sc.tripleCount <= cp.tripleCount)
-					//		add = false
-					//})
-					if ( asoc.TargetClasses.closedDomain === false || asoc.TargetClasses.closedDomain === undefined && asoc.closedDomain !== true)
-						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:-1, targetImportanceIndex:sc.importanceIndex, sourceImportanceIndex:1000 }) // Visi tiek salikti kā pēdējie
+					var inst_count = sc.objectTripleCount;
+					if ( sc.closedDomain === false || sc.closedDomain === undefined && asoc.closedDomain !== true)
+						new_cp = _.union(new_cp,{SourceClass:"",TargetClass:sc.classFullName,instanceCount:sc.objectTripleCount, tripleCount:sc.objectTripleCount, 
+						targetImportanceIndex:sc.importanceIndex, sourceImportanceIndex:1000 }) // Visi tiek salikti kā pēdējie
 				})
 			}
 			//console.log("*********************", asoc.localName ,"*********************************")
@@ -1098,10 +1089,14 @@ VQ_Schema.prototype = {
 				if ( asoc.objectTripleCount == sc.objectTripleCount)
 					newRole.sourceClass = sc.classFullName
 				_.each(new_cp, function(n){
-					if ( n.SourceClass == sc.classFullName)
-					{
+					if ( n.SourceClass == sc.classFullName) {	
 						n.minCardinality = sc.minCardinality;
 						n.maxCardinality = sc.maxCardinality;
+						n.sourceTripleCount = sc.objectTripleCount;
+						if ( sc.objectTripleCount == sc.tripleCount)
+							n.dual = false;
+						else
+							n.dual = true;
 					}
 				})
 			})
@@ -1112,10 +1107,10 @@ VQ_Schema.prototype = {
 				if ( asoc.tripleCount == sc.tripleCount)
 					newRole.targetClass = sc.classFullName
 				_.each(new_cp, function(n){
-					if ( n.TargetClass == sc.classFullName)
-					{
+					if ( n.TargetClass == sc.classFullName) {
 						n.minInverseCardinality= sc.minInverseCardinality;
 						n.maxInverseCardinality = sc.maxInverseCardinality;
+						n.targetTripleCount = sc.tripleCount;
 					}
 				})
 			})
@@ -1131,12 +1126,21 @@ VQ_Schema.prototype = {
 		
 		//_.each(asoc.ClassPairs, function(cp){
 		_.each(new_cp, function(cp){
-			//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);
+			//var scClass = schema.findClassByNameAndCycle(cp.SourceClass);  
 			//var tClass = schema.findClassByNameAndCycle(cp.TargetClass);
 		
 			var scClass = schema.findClassByName(cp.SourceClass);
 			var tClass = schema.findClassByName(cp.TargetClass);
+			var scClassName = "";
+			var tClassName = "";
+			if (cp.SourceClass != "")
+				scClassName = scClass.getElementName();
+			if (cp.TargetClass != "")
+				tClassName = tClass.getElementName();
 			var newSchRole = new VQ_SchemaRole(asoc, cp, newRole);
+			newSchRole.sourceClassName = scClassName;
+			newSchRole.targetClassName = tClassName;
+			newSchRole.dual = cp.dual;
 
 			if (cp.instanceCount) {
 				newSchRole.instanceCount = cp.instanceCount;
@@ -1150,24 +1154,31 @@ VQ_Schema.prototype = {
 			if ( schema.type == "New" ) {
 				newSchRole.sourceImportanceIndex = cp.sourceImportanceIndex;
 				newSchRole.targetImportanceIndex = cp.targetImportanceIndex;
+				newSchRole.sourceTripleCount = cp.sourceTripleCount;
+				newSchRole.targetTripleCount = cp.targetTripleCount;
 			}
 			else {
 				newSchRole.sourceImportanceIndex = 1;
 				newSchRole.targetImportanceIndex = 1;
+				newSchRole.sourceTripleCount = -1;
+				newSchRole.targetTripleCount = -1;
 			}
 
 			if (scClass.localName == tClass.localName) newSchRole.isSymmetric = true;
+			
 			schema.addSchemaRole(newSchRole);
 			schema.addSchemaProperty(newSchRole);
 			scClass.addProperty(newSchRole);
 			createLink(newRole, newSchRole, "schemaRole", "role");
-			//newRole["schemaRole"][newSchRole.ID] = newSchRole;
-			createLink(scClass, newSchRole, "outAssoc", "sourceClass");
-			//scClass["outAssoc"][newSchRole.ID] = newSchRole;
-			//newSchRole["sourceClass"] = scClass.classInfo;
-			createLink(tClass, newSchRole, "inAssoc", "targetClass");
-			//tClass["inAssoc"][newSchRole.ID] = newSchRole;
-			//newSchRole["targetClass"] = tClass.classInfo;
+			if (cp.targetImportanceIndex > 0)
+				createLink(scClass, newSchRole, "outAssoc", "sourceClass"); 
+			else
+				newSchRole["sourceClass"] = scClass;
+			if (cp.sourceImportanceIndex > 0)
+				createLink(tClass, newSchRole, "inAssoc", "targetClass");
+			else
+				newSchRole["targetClass"] = tClass;
+
 		})	
 	}    
 	
@@ -1175,21 +1186,27 @@ VQ_Schema.prototype = {
 		var newAttr = new VQ_Attribute(atr);
 	    schema.addAttribute(newAttr);
 		//console.log("-------------------------")
-		//console.log(atr)  
+		//console.log(atr.fullName)
+		//console.log(atr.tripleCount + " " +  atr.objectTripleCount) 		
 		if ( schema.type == "New" ) {
 			_.each(atr.SourceClasses, function (sc){
-				var scClass = schema.findClassByName(sc.classFullName);
-				var newSchAttr = new VQ_SchemaAttribute(atr);
-				newSchAttr.maxCardinality = sc.maxCardinality;
-				newSchAttr.minCardinality = sc.minCardinality;
-				newSchAttr.tripleCount = sc.tripleCount;
-				newSchAttr.objectTripleCount = sc.objectTripleCount;
-				newSchAttr.importanceIndex = sc.importanceIndex;
-				schema.addSchemaAttribute(newSchAttr);
-				schema.addSchemaProperty(newSchAttr);
-				scClass.addProperty(newSchAttr);
-				createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
-				createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+				if ( sc.tripleCount > sc.objectTripleCount ) {
+					var scClass = schema.findClassByName(sc.classFullName);
+					var newSchAttr = new VQ_SchemaAttribute(atr);
+					newSchAttr.maxCardinality = sc.maxCardinality;
+					newSchAttr.minCardinality = sc.minCardinality;
+					newSchAttr.instanceCount = sc.tripleCount;
+					newSchAttr.tripleCount = sc.tripleCount;
+					newSchAttr.dataTripleCount = sc.tripleCount - sc.objectTripleCount;
+					newSchAttr.objectTripleCount = sc.objectTripleCount;
+					newSchAttr.importanceIndex = sc.importanceIndex;
+					newSchAttr.DataTypes = atr.DataTypes // *** newSchAttr.DataTypes = sc.DataTypes;
+					schema.addSchemaAttribute(newSchAttr);
+					schema.addSchemaProperty(newSchAttr);
+					scClass.addProperty(newSchAttr);
+					createLink(newAttr, newSchAttr, "schemaAttribute", "attribute");
+					createLink(scClass, newSchAttr, "schemaAttribute", "sourceClass");
+				}
 			})			
 		}
 		else {
@@ -1199,6 +1216,9 @@ VQ_Schema.prototype = {
 				var newSchAttr = new VQ_SchemaAttribute(atr);
 				newSchAttr.maxCardinality = newAttr.maxCardinality;
 				newSchAttr.minCardinality = newAttr.minCardinality;
+				newSchAttr.importanceIndex = 1;
+				newSchAttr.tripleCount = -1;
+				newSchAttr.dataTripleCount = -1;
 				schema.addSchemaAttribute(newSchAttr);
 				schema.addSchemaProperty(newSchAttr);
 				scClass.addProperty(newSchAttr);
@@ -1383,29 +1403,56 @@ VQ_Schema.prototype = {
 			var c_name = c.getElementName();
 			var sh_cl = [];
 			
-			sh_cl = _.union(sh_cl,[c_name]);
+			sh_cl = _.union(sh_cl,[c_name+"_Shape"]);
 			sh_cl = _.union(sh_cl,["\ta sh:NodeShape ;"]);
 			sh_cl = _.union(sh_cl,newLine.concat("\tsh:targetClass ", c_name, " ;"));
 			
 			var attr_list = [];
-			
-			 _.each(c.schemaAttribute, function(attr){  // !!! te iet pa shēmas atribūtiem
-				var a = [];
-				a = _.union(a,["\tsh:property ["]);
-				a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
-				a = _.union(a,newLine.concat("\t\tsh:minCount \"", attr.minCardinality, "\" ;"));
-				var max = "*";
-				if ( attr.maxCardinality != -1 ) max = attr.maxCardinality
-				a = _.union(a,newLine.concat("\t\tsh:maxCount \"", max, "\" ;"));
+			function get_end_types(attr) {
+				var a11 = "";
+				var a12 = "";
+				var a21 = "";
+				var a22 = "";
+				var cc = 0;
+				var tripleCountSum = 0;
+				_.each(attr.DataTypes, function(tt){  
+					tripleCountSum = tripleCountSum + tt.tripleCount;
+					a21 = a21.concat("sh:datatype ",tt.dataType," ");
+					a22 = a22.concat("[sh:datatype ",tt.dataType,"] ");
+					cc = cc + 1 })
+				if (tripleCountSum < attr.dataTripleCount ) {
+					a11 = "sh:nodeKind sh:Literal ";
+					a12 = "[sh:nodeKind sh:Literal] ";
+					cc = cc + 1
+				}
+				
+				if ( cc == 1 )
+					return newLine.concat("\t\t",a21,a11," ;");
+				else if ( cc > 1)
+					return newLine.concat("\t\tsh:or ( ",a22,a12,") ;");
+				else
+					return "";
 
-				//if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
-				//	a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
-				//else
-				//	a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
-				a = _.union(a,attr.attribute.sh_type);
-				a = _.union(a,["\t\]"]);
+			}
+		
+			 _.each(c.schemaAttribute, function(attr){  // te iet pa shēmas atribūtiem
+				if (attr.objectTripleCount == 0 && attr.importanceIndex > 0 ) {  // tīrie atribūti 
+					var a = [];
+					a = _.union(a,["\tsh:property ["]);
+					a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
+					a = _.union(a,newLine.concat("\t\tsh:minCount \"", attr.minCardinality, "\" ;"));
+					if ( attr.maxCardinality != -1 )
+						a = _.union(a,newLine.concat("\t\tsh:maxCount \"", attr.maxCardinality, "\" ;"));
 
-				attr_list = _.union(attr_list,a.join("\r\n"));	
+					//if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
+					//	a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
+					//else
+					//	a = _.union(a,["\t\tsh:nodeKind sh:IRIOrLiteral ;"]);
+					a = _.union(a,get_end_types(attr));
+					a = _.union(a,["\t\]"]);
+
+					attr_list = _.union(attr_list,a.join("\r\n"));					
+				}
 			})	
 
 			function make_property(v1, v2, k1, k2){
@@ -1413,12 +1460,81 @@ VQ_Schema.prototype = {
 				l = _.union(l,["\tsh:property ["]); 
 				l = _.union(l,v1); 
 				l = _.union(l,newLine.concat("\t\tsh:minCount \"", k1, "\" ;"));
-				var max = "*";
-				if ( k2 != -1 ) max = k2;
-				l = _.union(l,newLine.concat("\t\tsh:maxCount \"", max, "\" ;"));
+				if ( k2 != -1 )
+					l = _.union(l,newLine.concat("\t\tsh:maxCount \"", k2, "\" ;"));
 				l = _.union(l,v2); 
 				l = _.union(l,["\t\]"]);
 				return l.join("\r\n")
+			}
+			
+			function get_end_classes(assoc, link, class_poz) { 
+				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName != " ";});  
+				var tuksais = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName == " ";});
+				var v11 = "";
+				var v12 = "";
+				var v21 = "";
+				var v22 = "";
+				var cc = 0;
+				if (_.size(tuksais) > 0 ) {
+					v11 = "sh:nodeKind sh:IRI";
+					v12 = "[sh:nodeKind sh:IRI] ";
+					cc = cc + 1;
+				}
+				if (_.size(link_list) == 1 ) {
+					v21 = newLine.concat("sh:node ", link[class_poz].getElementName());
+					v22 = newLine.concat("[sh:node ", link[class_poz].getElementName(),"] ");
+					cc = cc + 1;
+				}
+				else if ( _.size(link_list)  > 1 ) {
+					_.each(link_list, function(o){ v22 = v22.concat("[sh:node ",o[class_poz].getElementName(),"] "); cc = cc + 1;  }) 
+				}
+				
+				if ( cc == 1 )
+					return newLine.concat("\t\t",v21,v11," ;");
+				else if ( cc > 1)
+					return newLine.concat("\t\tsh:or ( ",v22,v12,") ;");
+				else
+					return "";
+			}
+			
+			function get_end_classes_and_types(assoc, link, class_poz) {  
+				var attr = _.find(c.schemaAttribute, function(o) {return o.fullName == link.fullName;}); 
+				var a1 = "";
+				var a2 = "";
+				var tripleCountSum = 0;
+				if ( _.size(attr) > 0 ) {
+					_.each(attr.DataTypes, function(tt){  
+						tripleCountSum = tripleCountSum + tt.tripleCount;
+						a2 = a2.concat("[sh:datatype ",tt.dataType,"] "); })
+					if (tripleCountSum < attr.dataTripleCount )
+						a1 = "[sh:nodeKind sh:Literal] ";
+				}
+				
+				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName != " ";});  
+				var tuksais = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName == " ";});
+				var v1 = "";
+				var v2 = "";  
+
+				if (_.size(tuksais) > 0 )
+					v1 = "[sh:nodeKind sh:IRI] ";
+
+				_.each(link_list, function(o){ 
+					v2 = v2.concat("[sh:node ",o[class_poz].getElementName(),"] ");  }) 
+					
+				if ( a1 === "" && a2 === "") a1 = "[sh:nodeKind sh:Literal] ";
+				if ( v1 === "" && v2 === "") v1 = "[sh:nodeKind sh:IRI] ";
+				if ( a1 !== "" && v1 !== "") { 
+					v1 = "";
+					if ( a2 === "" && v2 === "" )
+						a1 = "sh:nodeKind sh:IriOrLiteral";
+					else
+						a1 = "[sh:nodeKind sh:IriOrLiteral] ";
+				}
+				
+				if ( a2 === "" && v2 === "" )
+					return newLine.concat("\t\t",a1," ;");
+				else
+					return newLine.concat("\t\tsh:or ( ",a2,v2,a1,v1,") ;");
 			}
 			
 			function transfom_assoc(assoc, v1_pref, v1_suf, class_poz, type){ 
@@ -1426,18 +1542,20 @@ VQ_Schema.prototype = {
 				var link_names = {};
 
 				_.each(assoc, function(link){ 
-					if (!link_names[link.fullName] && ( type == "in" || (type == "out" && !link.role.dual ) ))
+					if (!link_names[link.fullName] ) // && ( type == "in" || (type == "out" && !link.role.dual ) ))
 					{
 						link_names[link.fullName] = 1;
 						var l = [];	
-						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf);
+						var v1 = newLine.concat(v1_pref, link.getElementName(), v1_suf); //aaa
 						var k1 = link.minCardinality; 
 						var k2 = link.maxCardinality;
 						var v2 = "";	
-						if (type == "out")
-							v2 = link.role.sh_type;
-						else 
-							v2 = link.role.sh_inv_type;
+						if (type == "out" && link.dual == false)
+							v2 = get_end_classes(assoc, link, class_poz);
+						else if (type == "out" && link.dual == true)
+							v2 = get_end_classes_and_types(assoc, link, class_poz);
+						else if (type == "in")
+							v2 = get_end_classes(assoc, link, class_poz);
 							
 						if ( v2 != "")
 						{
@@ -2145,7 +2263,8 @@ VQ_Class.prototype.getAssociations = function() {
 				if (className == " ") className = "";
 				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "=>", 
 						maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.targetClass.getElementShortName(), instanceCount:a.instanceCount,
-						maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex}; });
+						maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex,
+						tripleCount: a.tripleCount , sourceTripleCount: a.sourceTripleCount , targetTripleCount: a.targetTripleCount}; });
     _.each(this.inAssoc, function (a) {
 				//var maxCard = a.maxCardinality;
 				//if (!maxCard) maxCard = a.role.maxCardinality;
@@ -2155,8 +2274,8 @@ VQ_Class.prototype.getAssociations = function() {
 					out_assoc = _.union(out_assoc, 
 					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "<=", 
 					maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.sourceClass.getElementShortName(), instanceCount:a.instanceCount,
-					maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex});
-				});
+					maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex,
+					tripleCount: a.tripleCount , sourceTripleCount: a.sourceTripleCount , targetTripleCount: a.targetTripleCount }); });
     return out_assoc;
   };
 VQ_Class.prototype.getClassName = function (){
@@ -2190,7 +2309,7 @@ VQ_Class.prototype.getAllAssociations = function(paz = true) {
 VQ_Class.prototype.getAttributes = function() {  
 	return _.map(this.schemaAttribute, function (a) {
 		return {name:a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, short_name:a.getElementShortName(), instanceCount:a.instanceCount,
-		maxCard: a.maxCardinality, importanceIndex: a.importanceIndex}; });
+		maxCard: a.maxCardinality, importanceIndex: a.importanceIndex, dataTripleCount:a.dataTripleCount}; });
   };
 
 VQ_Class.prototype.getAllAttributes = function(paz = true) {
@@ -2265,20 +2384,21 @@ VQ_Attribute = function (attrInfo){
 				type = tt.dataType;   
 		})
 	}
-	if (type != undefined)
+	if (type !== undefined)
 		this.type = type;
-	if ( _.size(attrInfo.DataTypes) == 0 && type != undefined)   
+		
+	if ( _.size(attrInfo.DataTypes) == 0 && type !== undefined)   
 		this.sh_type = t.concat("\t\tsh:datatype ",type);
 	else if ( _.size(attrInfo.DataTypes) == 0 && type == undefined)   
-		this.sh_type = "\t\tsh:nodeKind sh:IRI";
-	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.DataTypes) == 1)   
+		this.sh_type = "\t\tsh:nodeKind sh:Literal";
+	else if (tripleCountSum == attrInfo.tripleCount - attrInfo.objectTripleCount && _.size(attrInfo.DataTypes) == 1)   
 		this.sh_type = t.concat("\t\tsh:datatype ",type);
-	else if (tripleCountSum == attrInfo.tripleCount && _.size(attrInfo.DataTypes) > 1)
+	else if (tripleCountSum == attrInfo.tripleCount - attrInfo.objectTripleCount && _.size(attrInfo.DataTypes) > 1)
 		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, ") ;");
 	else if (sh_type != "")
-		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, "[sh:nodeKind sh:IRI]) ;");
+		this.sh_type = t.concat("\t\tsh:or ( ", sh_type, "[sh:nodeKind sh:Literal]) ;");
 	else
-		this.sh_type = "\t\tsh:nodeKind sh:IRI";
+		this.sh_type = "\t\tsh:nodeKind sh:Literal";
 	
 			
 	//console.log("--------------------------------------")
@@ -2352,6 +2472,7 @@ VQ_Role = function (roleInfo){
 	  this.ontology.namesAreUnique = false;
 	  e.ontology.namesAreUnigue = false;
 	}
+	/*
 	function concat_classes(list) {
 		var sh_type = "";
 		_.each(list, function(tt){
@@ -2360,7 +2481,6 @@ VQ_Role = function (roleInfo){
 		})	
 		return sh_type
 	}
-	/*
 	var t = "";
 	if (roleInfo.SourceClassesDetailed)
 	{
