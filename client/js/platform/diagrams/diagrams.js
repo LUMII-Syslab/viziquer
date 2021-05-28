@@ -629,7 +629,6 @@ Template.importOntology.events({
 									cp_new.maxCardinality = cp.maxCardinality;
 									cp_new.inverseRole = cp.inverseRole;
 									cp_new.tripleCount = cp.tripleCount;
-									console.log(cp)
 									if ( cp.sourceImportanceIndex !== undefined ) {
 										cp_new.sourceImportanceIndex = cp.sourceImportanceIndex;
 										cp_new.targetImportanceIndex = cp.targetImportanceIndex;

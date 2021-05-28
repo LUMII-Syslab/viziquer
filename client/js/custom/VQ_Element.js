@@ -1200,7 +1200,7 @@ VQ_Schema.prototype = {
 					newSchAttr.dataTripleCount = sc.tripleCount - sc.objectTripleCount;
 					newSchAttr.objectTripleCount = sc.objectTripleCount;
 					newSchAttr.importanceIndex = sc.importanceIndex;
-					newSchAttr.DataTypes = atr.DataTypes // *** newSchAttr.DataTypes = sc.DataTypes;
+					newSchAttr.DataTypes = sc.DataTypes; // *** newSchAttr.DataTypes = atr.DataTypes 
 					schema.addSchemaAttribute(newSchAttr);
 					schema.addSchemaProperty(newSchAttr);
 					scClass.addProperty(newSchAttr);
@@ -1440,9 +1440,10 @@ VQ_Schema.prototype = {
 					var a = [];
 					a = _.union(a,["\tsh:property ["]);
 					a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
-					a = _.union(a,newLine.concat("\t\tsh:minCount \"", attr.minCardinality, "\" ;"));
+					if ( attr.minCardinality != 0 )
+						a = _.union(a,newLine.concat("\t\tsh:minCount ", attr.minCardinality, " ;"));
 					if ( attr.maxCardinality != -1 )
-						a = _.union(a,newLine.concat("\t\tsh:maxCount \"", attr.maxCardinality, "\" ;"));
+						a = _.union(a,newLine.concat("\t\tsh:maxCount ", attr.maxCardinality, " ;"));
 
 					//if ( attr.objectTripleCount == 0 || attr.objectTripleCount == -1 )
 					//	a = _.union(a,newLine.concat("\t\tsh:datatype \"", attr.attribute.type, "\" ;"));
@@ -1459,9 +1460,10 @@ VQ_Schema.prototype = {
 				var l = [];	
 				l = _.union(l,["\tsh:property ["]); 
 				l = _.union(l,v1); 
-				l = _.union(l,newLine.concat("\t\tsh:minCount \"", k1, "\" ;"));
+				if ( k1 != 0 )
+				l = _.union(l,newLine.concat("\t\tsh:minCount ", k1, " ;"));
 				if ( k2 != -1 )
-					l = _.union(l,newLine.concat("\t\tsh:maxCount \"", k2, "\" ;"));
+					l = _.union(l,newLine.concat("\t\tsh:maxCount ", k2, " ;"));
 				l = _.union(l,v2); 
 				l = _.union(l,["\t\]"]);
 				return l.join("\r\n")
