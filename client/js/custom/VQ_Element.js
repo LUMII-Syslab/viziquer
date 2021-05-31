@@ -1442,6 +1442,7 @@ VQ_Schema.prototype = {
 				var a22 = "";
 				var cc = 0;
 				var tripleCountSum = 0;
+				attr.DataTypes = _.sortBy(attr.DataTypes, function(a) {return -a.tripleCount});
 				_.each(attr.DataTypes, function(tt){  
 					tripleCountSum = tripleCountSum + tt.tripleCount;
 					a21 = a21.concat("sh:datatype ",tt.dataType," ");
@@ -1464,6 +1465,7 @@ VQ_Schema.prototype = {
 			}
 			function get_end_types_sk(attr) {
 				var info = "";
+				attr.DataTypes = _.sortBy(attr.DataTypes, function(a) {return -a.tripleCount});
 				_.each(attr.DataTypes, function(tt){  
 					info = info.concat("\n\t\t\t[sh:datatype ",tt.dataType," ; shx:tripleCount ", tt.tripleCount,"]"); })
 				if (_.size(attr.DataTypes) > 0 )
@@ -1523,7 +1525,9 @@ VQ_Schema.prototype = {
 					infoFull = infoFull.concat("\n\t\t\t[sh:nodeKind sh:Literal ; shx:tripleCount ",link.sourceTripleCountFull - link.sourceTripleCount,"]");
 				infoFull = infoFull.concat(" ) ;");
 				
-				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o.targetClass.localName != " ";});  
+				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o.targetClass.localName != " ";}); 
+				link_list = _.sortBy(link_list, function(l) {return -l.tripleCount}); 
+				
 				var v = "";
 				_.each(link_list, function(o){ 
 					v = v.concat("\n\t\t\t[sh:class ",o.targetClass.getElementName()," ; shx:tripleCount ",o.tripleCount,"]"); }) 				
@@ -1532,6 +1536,7 @@ VQ_Schema.prototype = {
 				
 				var info = "";
 				if ( link.sourceTripleCountFull > link.sourceTripleCount ) {
+					link.DataTypes = _.sortBy(link.DataTypes, function(a) {return -a.tripleCount});
 					_.each(link.DataTypes, function(tt){  
 						info = info.concat("\n\t\t\t[sh:datatype ",tt.dataType," ; shx:tripleCount ", tt.tripleCount,"]"); })
 					if ( info != "" )
@@ -1543,6 +1548,7 @@ VQ_Schema.prototype = {
 				var infoFull = "";
 				infoFull = infoFull.concat("\t\tshx:count_by_nodeKind (\n\t\t\t[sh:nodeKind sh:IRI ; shx:tripleCount ",link.targetTripleCount,"] ) ;");
 				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o.sourceClass.localName != " ";});  
+				link_list = _.sortBy(link_list, function(l) {return -l.tripleCount});
 				var v = "";
 				_.each(link_list, function(o){ 
 					v = v.concat("\n\t\t\t[sh:class ",o.sourceClass.getElementName()," ; shx:tripleCount ",o.tripleCount,"]"); }) 				
@@ -1554,6 +1560,8 @@ VQ_Schema.prototype = {
 			
 			function get_end_classes(assoc, link, class_poz) { 
 				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName != " ";});  
+				link_list = _.sortBy(link_list, function(l) {return -l.tripleCount});
+				
 				var tuksais = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName == " ";});
 				var v11 = "";
 				var v12 = "";
@@ -1590,6 +1598,7 @@ VQ_Schema.prototype = {
 				var a2 = "";
 				var tripleCountSum = 0;
 				if ( _.size(attr) > 0 ) {
+					attr.DataTypes = _.sortBy(attr.DataTypes, function(a) {return -a.tripleCount});
 					_.each(attr.DataTypes, function(tt){  
 						tripleCountSum = tripleCountSum + tt.tripleCount;
 						a2 = a2.concat("[sh:datatype ",tt.dataType,"] "); })
@@ -1598,6 +1607,7 @@ VQ_Schema.prototype = {
 				}
 				
 				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName != " ";});  
+				link_list = _.sortBy(link_list, function(l) {return -l.tripleCount});
 				var tuksais = _.filter(assoc, function(o) {return o.fullName == link.fullName && o[class_poz].localName == " ";});
 				var v1 = "";
 				var v2 = "";
