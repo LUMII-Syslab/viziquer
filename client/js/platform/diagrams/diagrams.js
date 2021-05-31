@@ -1054,7 +1054,9 @@ Template.exportOntology.events({
 			if ( choice == "Ch4" )
 				schema_full.printOwlFormat(3);
 			if ( choice == "Ch1a" )
-				schema_full.getSHACL();
+				schema_full.getSHACL("");
+			if ( choice == "Ch1b" )
+				schema_full.getSHACL("Full");
 			if ( choice == "Ch1" ) {
 				delete schema_data._id;
 				delete schema_data.projectId;
@@ -1072,7 +1074,7 @@ Template.exportOntology.events({
 			Utilities.callMeteorMethod("getProjectSchema", list, function(resp) {
 				if (_.size(resp.schema) > 0 ) {
 					schema_data = resp.schema;
-					if ( choice == "Ch2" || choice == "Ch3" || choice == "Ch4" ) {
+					if ( choice == "Ch2" || choice == "Ch3" || choice == "Ch4" || choice == "Ch1a" || choice == "Ch1b" ) {
 						schema_full = new VQ_Schema(schema_data);
 						if ( choice == "Ch2" )
 							schema_full.printOwlFormat(1);
@@ -1080,6 +1082,10 @@ Template.exportOntology.events({
 							schema_full.printOwlFormat(2);
 						if ( choice == "Ch4" )
 							schema_full.printOwlFormat(2);
+						if ( choice == "Ch1a" )
+							schema_full.getSHACL("");
+						if ( choice == "Ch1b" )
+							schema_full.getSHACL("Full");
 					}
 					if ( choice == "Ch1" ) {
 						delete schema_data._id;
