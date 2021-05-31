@@ -14591,14 +14591,16 @@ vq_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
     			function resolveTypeFromSchemaForAttributeAndLink(id) {
-    				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+    				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["short_name"], id);
+	
     				var res = aorl[0];
     				if (!res) { 
     					res = options.schema.resolveLinkByName(id); 
     					if (res) res["property_type"] = "OBJECT_PROPERTY"
     				}
     				else {
-    						res["parentType"] = aorl[1];
+    						
+							res["parentType"] = aorl[1];
     						res["property_type"] = "DATA_PROPERTY";
     				};
     				return res
@@ -14607,7 +14609,23 @@ vq_grammar_parser = (function() {
     			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
     			// then in schema. Null if does not exist
     			function resolveType(id) {
-    			  var t=resolveTypeFromSymbolTable(id);
+    			  
+				  var t=resolveTypeFromSymbolTable(id);
+				  if(t && typeof t["parentType"] !== 'undefined' && t["parentType"] != null && t["parentType"]["short_name"] != options.context["short_name"]){
+					var tt = null;
+					if (options.exprType) {
+    					tt=resolveTypeFromSchemaForClass(id);
+    					if (!tt) {
+    						tt=resolveTypeFromSchemaForAttributeAndLink(id)
+    					}
+					} else {
+    					t=resolveTypeFromSchemaForAttributeAndLink(id);
+    					if (!tt) {
+    					 t=resolveTypeFromSchemaForClass(id)
+    					}
+					}
+					if(tt) t = t;
+				  }
     				if (!t) {
     					if (options.exprType) {
     					  t=resolveTypeFromSchemaForClass(id);
@@ -14620,7 +14638,6 @@ vq_grammar_parser = (function() {
     						  t=resolveTypeFromSchemaForClass(id)
     					  }
     					}
-
     				}
     				return t;
     			};

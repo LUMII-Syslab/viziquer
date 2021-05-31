@@ -77,6 +77,21 @@
 			// then in schema. Null if does not exist
 			function resolveType(id) {
 			  var t=resolveTypeFromSymbolTable(id);
+			  if(t && typeof t["parentType"] !== 'undefined' && t["parentType"] != null && t["parentType"]["short_name"] != options.context["short_name"]){
+					var tt = null;
+					if (options.exprType) {
+    					tt=resolveTypeFromSchemaForClass(id);
+    					if (!tt) {
+    						tt=resolveTypeFromSchemaForAttributeAndLink(id)
+    					}
+					} else {
+    					t=resolveTypeFromSchemaForAttributeAndLink(id);
+    					if (!tt) {
+    					 t=resolveTypeFromSchemaForClass(id)
+    					}
+					}
+					if(tt) t = t;
+				 }
 				if (!t) {
 					if (options.exprType) {
 					  t=resolveTypeFromSchemaForClass(id);
