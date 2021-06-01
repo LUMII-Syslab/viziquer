@@ -1130,31 +1130,58 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
 			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
 			if(underOptionalPlain == false && underUnion == false){
-
-				var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
-				if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
-					var inFilter = false;
-					//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
-					
-					var variableData = expressionTable[key]["var"];
-					if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-					|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-					else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
-						inFilter = null;
-						applyExistsToFilter = false;
-					}
-					// if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-					// || variableData["type"] != null && false)) inFilter = true;
-					tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["Prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
-
-				}
-				variableTable.push("?" + variable);
-				SPARQLstring = SPARQLstring + "?" + variable;
-				visited = 1;
 				
-				referenceTable.push("?"+expressionTable[key]["Reference"]["name"]);
-				referenceCandidateTable.push(expressionTable[key]["Reference"]["name"]);
+				if(typeof  expressionTable[key]["ReferencePath"] !== "undefined"){
+					var path = getPathFullGrammar(expressionTable[key]["ReferencePath"]);
+					//var variable = setVariableName(path["variable"]["var"]["name"]);
+					var variable = setVariableName(path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, path["variable"]["var"])
+					
+					if(generateTriples == true && path["variable"]["var"]['type'] != null) {
+						var inFilter = false;
+						//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
+						
+						var variableData = path["variable"]["var"];
+						if(typeof variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+						|| variableData["type"] != null) && (typeof path["cardinality"] === 'undefined' || path["cardinality"] > 1 || path["cardinality"] == -1))) inFilter = true;
+						else if((parseType == "condition") && path["cardinality"] == 1){
+							inFilter = null;
+							applyExistsToFilter = false;
+						}
+						tripleTable.push({"var":"?"+variable, "prefixedName":path["path"].substring(1), "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
 
+					}
+					variableTable.push("?" + variable);
+					SPARQLstring = SPARQLstring + "?" + variable;
+					visited = 1;
+					
+					referenceTable.push("?"+expressionTable[key]["Reference"]["name"]);
+					referenceCandidateTable.push(expressionTable[key]["Reference"]["name"]);
+
+				}else{
+					var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
+					if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
+						var inFilter = false;
+						//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
+						
+						var variableData = expressionTable[key]["var"];
+						if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+						|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
+						else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+							inFilter = null;
+							applyExistsToFilter = false;
+						}
+						// if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+						// || variableData["type"] != null && false)) inFilter = true;
+						tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["Prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
+
+					}
+					variableTable.push("?" + variable);
+					SPARQLstring = SPARQLstring + "?" + variable;
+					visited = 1;
+					
+					referenceTable.push("?"+expressionTable[key]["Reference"]["name"]);
+					referenceCandidateTable.push(expressionTable[key]["Reference"]["name"]);
+				}
 			} else {
 				var clId;
 				for(var k in idTable){
@@ -1182,7 +1209,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		//PathFull
 		if(key  == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"] !== 'undefined'){
 			var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
-			console.log("ppppppppppp", path);
+			console.log("ppppppppppp", path, expressionTable[key]["PathProperty"]);
 			// console.log("PathProperty",path, path["isPath"], expressionTable[key]["PathProperty"])
 			if(path["isPath"] != true && parseType != "condition"){
 				
@@ -1216,7 +1243,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			//console.log("path", path)
 			if(typeof variableStructure !== "undefined"){
 				if(typeof variableStructure["SubstringExpression"] !== 'undefined'){
-					console.log("1111")
 					var substringvar = variableStructure["var"];
 					
 					if(substringvar["type"] == null){
