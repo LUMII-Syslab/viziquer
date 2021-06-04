@@ -245,8 +245,14 @@
 
 			Main = (space  ((("(*attr)" / "(*sub)")) / Expression) space)? end
 			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr
-			ValueScope = (curv_br_open "{" (ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) curv_br_close "}")
-			ValueScopeA = (INTEGER two_dots ".." INTEGER)
+			
+			ValueScope = (InlineDataOneVar / InlineDataFull)
+			InlineDataOneVar = (curv_br_open "{" space DataBlockValue* space curv_br_close"}")
+			InlineDataFull = (curv_br_open "{" space ((space br_open "(" space DataBlockValueFull space  br_close ")" space) / NILFull space)* curv_br_close "}")
+			DataBlockValueFull = DataBlockValue* 
+			NILFull = NIL 
+			DataBlockValue = (iri / RDFLiteral / NumericLiteral / BooleanLiteral / UNDEF) space
+			UNDEF = undef "UNDEF"
 
 			classExpr = ((dot ".") / ("(.)") / (select_this"(select this)" / this_c "(this)"))
 
@@ -659,6 +665,7 @@
 			minus = "" {addContinuation(location(), "-", 25, true, 4);}
 			exclamation = "" {addContinuation(location(), "!", 75, false, 4);}
 			a_c = "" {addContinuation(location(), "a", 10, false, 4);}
+			undef = "" {addContinuation(location(), "UNDEF", 25, false, 4);}
 			mult = "" {addContinuation(location(), "*", 25, true, 4);}
 			div = "" {addContinuation(location(), "/", 25, false, 4);}
 			div_path = "" {addContinuation(location(), "/", 25, true, 4);}

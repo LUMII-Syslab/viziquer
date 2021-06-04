@@ -3185,12 +3185,64 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		}
 		
 		if (key == "ValueScope" && typeof expressionTable[key] !== 'undefined'){
+			
 			var tempAlias = alias;
 			if(tempAlias == null) tempAlias = "expr";
-			SPARQLstring = SPARQLstring  + "?" + tempAlias;
-			tripleTable.push({"VALUES":"VALUES ?" + tempAlias + " {" + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}"});
+			// if(tempAlias.indexOf("(") != -1) SPARQLstring = SPARQLstring  + tempAlias;
+			// else SPARQLstring = SPARQLstring  + "?" + tempAlias;
+			if(tempAlias.indexOf("(") != -1) tripleTable.push({"VALUES":"VALUES " + tempAlias + " {" + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}"});
+			else tripleTable.push({"VALUES":"VALUES ?" + tempAlias + " {" + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}"});
+			
 			visited = 1
 		}
+		
+		if (key == "InlineDataOneVar" && typeof expressionTable[key] !== 'undefined'){
+			var dataTable = [];
+			for(var data in expressionTable[key]){
+				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+				dataTable.push(dataBloctValue)
+			}
+			SPARQLstring = SPARQLstring  + dataTable.join(" ");
+			visited = 1
+		}
+		
+		if (key == "InlineDataFull" && typeof expressionTable[key] !== 'undefined'){
+			var dataTable = [];
+			for(var data in expressionTable[key]){
+				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+				dataTable.push(dataBloctValue)
+			}
+			SPARQLstring = SPARQLstring  + dataTable.join(" ");
+			visited = 1
+		}
+		
+		if (key == "DataBlockValueFull" && typeof expressionTable[key] !== 'undefined'){
+			SPARQLstring = SPARQLstring  + "(";
+			var dataTable = [];
+			for(var data in expressionTable[key]){
+				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+				dataTable.push(dataBloctValue)
+			}
+			SPARQLstring = SPARQLstring  + dataTable.join(" ") + ")";
+			
+			visited = 1
+		}
+		
+		if (key == "DataBlockValue" && typeof expressionTable[key] !== 'undefined'){
+			var parseTypeTemp = parseType;
+			parseType = "";
+			var dataBloctValue = generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+			
+			parseType = parseTypeTemp;
+			SPARQLstring = SPARQLstring  + dataBloctValue;
+			visited = 1
+		}
+		
+		if (key == "UNDEF"){
+			SPARQLstring = SPARQLstring  + "UNDEF";
+			visited = 1
+		}
+		
 		if (key == "NIL"){
 			SPARQLstring = SPARQLstring  + "()";
 			visited = 1
