@@ -2674,11 +2674,11 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role){
 	this.targetClass = {};
 	this.inverseSchemaRole = {};
 	this.isSymmetric = false;
-	//if (cpInfo.maxCardinality || cpInfo.minCardinality) {
-	this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
-    this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
-	this.minInverseCardinality = findCardinality(cpInfo.minInverseCardinality, "MIN");
-    this.maxInverseCardinality = findCardinality(cpInfo.maxInverseCardinality, "MAX");
+	if (cpInfo.maxCardinality || cpInfo.minCardinality) {
+		this.minCardinality = findCardinality(cpInfo.minCardinality, "MIN");
+		this.maxCardinality = findCardinality(cpInfo.maxCardinality, "MAX");
+		this.minInverseCardinality = findCardinality(cpInfo.minInverseCardinality, "MIN");
+		this.maxInverseCardinality = findCardinality(cpInfo.maxInverseCardinality, "MAX");
 	  //if (role.maxCardinality) {
 	  //  if (this.minCardinality < role.minCardinality) role.minCardinality = this.minCardinality;
 	  //  if (this.maxCardinality < role.maxCardinality) role.maxCardinality = this.maxCardinality;
@@ -2687,7 +2687,7 @@ VQ_SchemaRole = function (roleInfo, cpInfo, role){
 	  //  role.minCardinality = this.minCardinality;
 	  //  role.maxCardinality = this.maxCardinality;
 	  //}
-	//}
+	}
 };
 
 VQ_SchemaRole.prototype = Object.create(VQ_Elem.prototype);
