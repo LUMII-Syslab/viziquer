@@ -644,7 +644,16 @@ function getAllAssociations(){
 			if (schema.classExist(className)) {
 				
 				var allAssociations = schema.findClassByName(className).getAllAssociations();
-
+				var allAssociationsNotEmpty = allAssociations.filter(function (el) {
+				  return el.short_class_name != ""
+				});
+				var allAssociationsEmpty = allAssociations.filter(function (el) {
+				  return el.short_class_name == ""
+				});
+				allAssociationsNotEmpty.sort(compare)
+				allAssociationsEmpty.sort(compare)
+				allAssociations = allAssociationsNotEmpty.concat(allAssociationsEmpty)
+	
 				//remove duplicates - moved to getAllAssociations()
 				//allAssociations = allAssociations.filter(function(obj, index, self) { 
 				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
@@ -743,5 +752,21 @@ function getAllAssociations(){
 			});  		
 			return asc;
 		}
+}
+
+function compare( a, b ) {
+  if ( a.sourceTripleCount > b.sourceTripleCount){
+    return -1;
+  } 
+//  if ( b.short_class_name == ""){
+ //   return -1;
+//  }
+  if ( a.sourceTripleCount < b.sourceTripleCount ){
+    return 1;
+  }
+  if ( a.sourceImportanceIndex < b.sourceImportanceIndex ){
+    return 1;
+  }
+  return 0;
 }
 

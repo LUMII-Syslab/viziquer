@@ -625,9 +625,18 @@ VQ_Schema.prototype = {
   getAllSchemaAssociations: function (){
     if (druka)  console.log("Funkcijas izsaukums - getAllSchemaAssociations"); 
     var rez =  _.map(this.Associations, function (cl) {
-				if (cl.isUnique) return {name: cl.localName};
-				else  if (cl.ontology.prefix == "") return {name: cl.localName};
-				      else return {name: cl.ontology.prefix + ":" + cl.localName}; });
+				if (cl.isUnique) return {name: cl.localName, tripleCount:cl.tripleCount};
+				else  if (cl.ontology.prefix == "") return {name: cl.localName, tripleCount:cl.tripleCount};
+				      else return {name: cl.ontology.prefix + ":" + cl.localName, tripleCount:cl.tripleCount}; });
+	if (druka)  console.log(rez); 
+	return rez;
+  },
+  getAllSchemaAttributes: function (){
+    if (druka)  console.log("Funkcijas izsaukums - getAllSchemaAttributes"); 
+    var rez =  _.map(this.Attributes, function (cl) {
+				if (cl.isUnique) return {name: cl.localName, tripleCount:cl.tripleCount};
+				else  if (cl.ontology.prefix == "") return {name: cl.localName, tripleCount:cl.tripleCount};
+				      else return {name: cl.ontology.prefix + ":" + cl.localName, tripleCount:cl.tripleCount}; });
 	if (druka)  console.log(rez); 
 	return rez;
   },
@@ -1092,9 +1101,8 @@ VQ_Schema.prototype = {
 					if ( n.SourceClass == sc.classFullName) {	
 						n.minCardinality = sc.minCardinality;
 						n.maxCardinality = sc.maxCardinality;
-						n.sourceObjectTripleCount = sc.objectTripleCount;
-						n.sourceTripleCount = sc.tripleCount;
-						n.sourceDataTripleCount = sc.dataTripleCount;
+						n.sourceTripleCount = sc.objectTripleCount;
+						n.sourceTripleCountFull = sc.tripleCount;
 						if (schema.type == "New")
 							n.DataTypes = sc.DataTypes;
 						if ( sc.objectTripleCount !== sc.tripleCount)
@@ -1159,16 +1167,15 @@ VQ_Schema.prototype = {
 			if ( schema.type == "New" ) {
 				newSchRole.sourceImportanceIndex = cp.sourceImportanceIndex;
 				newSchRole.targetImportanceIndex = cp.targetImportanceIndex;
-				newSchRole.sourceObjectTripleCount = cp.sourceObjectTripleCount;
 				newSchRole.sourceTripleCount = cp.sourceTripleCount;
-				newSchRole.sourceDataTripleCount = cp.sourceDataTripleCount;
+				newSchRole.sourceTripleCountFull = cp.sourceTripleCountFull;
 				newSchRole.targetTripleCount = cp.targetTripleCount;
 				newSchRole.DataTypes = cp.DataTypes;
 			}
 			else {
 				newSchRole.sourceImportanceIndex = 1;
 				newSchRole.targetImportanceIndex = 1;
-				newSchRole.sourceObjectTripleCount = -1;
+				newSchRole.sourceTripleCount = -1;
 				newSchRole.targetTripleCount = -1;
 			}
 
@@ -1205,7 +1212,7 @@ VQ_Schema.prototype = {
 					newSchAttr.minCardinality = sc.minCardinality;
 					newSchAttr.instanceCount = sc.tripleCount;
 					newSchAttr.tripleCount = sc.tripleCount;
-					newSchAttr.dataTripleCount = sc.dataTripleCount;
+					newSchAttr.dataTripleCount = sc.tripleCount - sc.objectTripleCount;
 					newSchAttr.objectTripleCount = sc.objectTripleCount;
 					newSchAttr.importanceIndex = sc.importanceIndex;
 					newSchAttr.DataTypes = sc.DataTypes; // *** newSchAttr.DataTypes = atr.DataTypes 
@@ -1494,12 +1501,7 @@ VQ_Schema.prototype = {
 						  a = _.union(a,newLine.concat("\t\tshx:tripleCount ", attr.tripleCount, " ;")); 
 					a = _.union(a,get_end_types(attr));  
 					if ( par == "Full") {
-						var infoFull = "";
-						infoFull = infoFull.concat("\t\tshx:count_by_nodeKind ( \n\t\t\t[sh:nodeKind sh:Literal ; shx:tripleCount ", attr.dataTripleCount, "]");
-						if ( attr.tripleCount > attr.dataTripleCount)
-							infoFull = infoFull.concat("\n\t\t\t[sh:nodeKind sh:BlankNode ; shx:tripleCount ", attr.tripleCount - attr.dataTripleCount, "]");	
-						infoFull = infoFull.concat(" ) ;");
-						a = _.union(a,infoFull);
+						a = _.union(a,newLine.concat("\t\tshx:count_by_nodeKind ( \n\t\t\t[sh:nodeKind sh:Literal ; shx:tripleCount ", attr.dataTripleCount, "] ) ;"));
 						a = _.union(a,get_end_types_sk(attr));
 					}
 					a = _.union(a,["\t\]"]);
@@ -1527,11 +1529,9 @@ VQ_Schema.prototype = {
 
 			function get_end_classes_and_types_sk_out(assoc, link ) {  
 				var infoFull = "";
-				infoFull = infoFull.concat("\t\tshx:count_by_nodeKind (\n\t\t\t[sh:nodeKind sh:IRI ; shx:tripleCount ",link.sourceObjectTripleCount,"]");
-				if ( link.sourceDataTripleCount > 0 )
-					infoFull = infoFull.concat("\n\t\t\t[sh:nodeKind sh:Literal ; shx:tripleCount ", link.sourceDataTripleCount,"]");
-				if ( link.sourceTripleCount - link.sourceObjectTripleCount - link.sourceDataTripleCount > 0 )
-					infoFull = infoFull.concat("\n\t\t\t[sh:nodeKind sh:BlankNode ; shx:tripleCount ", link.sourceTripleCount - link.sourceObjectTripleCount - link.sourceDataTripleCount,"]");	
+				infoFull = infoFull.concat("\t\tshx:count_by_nodeKind (\n\t\t\t[sh:nodeKind sh:IRI ; shx:tripleCount ",link.sourceTripleCount,"]");
+				if ( link.sourceTripleCountFull > link.sourceTripleCount)
+					infoFull = infoFull.concat("\n\t\t\t[sh:nodeKind sh:Literal ; shx:tripleCount ",link.sourceTripleCountFull - link.sourceTripleCount,"]");
 				infoFull = infoFull.concat(" ) ;");
 				
 				var link_list = _.filter(assoc, function(o) {return o.fullName == link.fullName && o.targetClass.localName != " ";}); 
@@ -1544,7 +1544,7 @@ VQ_Schema.prototype = {
 					infoFull = infoFull.concat("\n\t\tshx:count_by_class (",v," ) ;");
 				
 				var info = "";
-				if ( link.sourceDataTripleCount > 0) {
+				if ( link.sourceTripleCountFull > link.sourceTripleCount ) {
 					link.DataTypes = _.sortBy(link.DataTypes, function(a) {return -a.tripleCount});
 					_.each(link.DataTypes, function(tt){  
 						info = info.concat("\n\t\t\t[sh:datatype ",tt.dataType," ; shx:tripleCount ", tt.tripleCount,"]"); })
@@ -2386,7 +2386,7 @@ VQ_Class.prototype.getAssociations = function() {
 				return {name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "=>", 
 						maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.targetClass.getElementShortName(), instanceCount:a.instanceCount,
 						maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex,
-						tripleCount: a.tripleCount , sourceTripleCount: a.sourceObjectTripleCount , targetTripleCount: a.targetTripleCount}; });
+						tripleCount: a.tripleCount , sourceTripleCount: a.sourceTripleCount , targetTripleCount: a.targetTripleCount}; });
     _.each(this.inAssoc, function (a) {
 				//var maxCard = a.maxCardinality;
 				//if (!maxCard) maxCard = a.role.maxCardinality;
@@ -2397,7 +2397,7 @@ VQ_Class.prototype.getAssociations = function() {
 					{name: a.localName, isUnique:a.isUnique, prefix:a.ontology.prefix, isDefOnt:a.ontology.isDefault, class: className , type: "<=", 
 					maxCard: a.maxCardinality, short_name:a.getElementShortName(), short_class_name:a.sourceClass.getElementShortName(), instanceCount:a.instanceCount,
 					maxInvCard: a.maxInverseCardinality, sourceImportanceIndex: a.sourceImportanceIndex, targetImportanceIndex: a.targetImportanceIndex,
-					tripleCount: a.tripleCount , sourceTripleCount: a.sourceObjectTripleCount , targetTripleCount: a.targetTripleCount }); });
+					tripleCount: a.tripleCount , sourceTripleCount: a.sourceTripleCount , targetTripleCount: a.targetTripleCount }); });
     return out_assoc;
   };
 VQ_Class.prototype.getClassName = function (){

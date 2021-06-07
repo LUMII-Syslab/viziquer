@@ -487,13 +487,23 @@ function getAttributes(){
 
 			if (schema.classExist(class_name)) {
 				var all_attributes = schema.findClassByName(class_name).getAllAttributes();
+				
+				all_attributes.sort((a, b) => a.dataTripleCount < b.dataTripleCount && 1 || -1)
 				for (var key in all_attributes){
 					
 					att_val = all_attributes[key]["short_name"];
 					attr_list.push({name: att_val});
 				}
-			};
-
+			} else {
+				var all_attributes = schema.getAllSchemaAttributes();
+				all_attributes.sort((a, b) => a.tripleCount < b.tripleCount && 1 || -1)
+				for (var key in all_attributes){
+					
+					att_val = all_attributes[key]["name"];
+					attr_list.push({name: att_val});
+				}
+			}
+			
 			
 			//remove duplicates
 			attr_list = attr_list.filter(function(obj, index, self) { 
@@ -539,13 +549,24 @@ function getAssociations(){
 
 			if (schema.classExist(class_name)) {
 				var all_attributes = schema.findClassByName(class_name).getAllAssociations();
+				all_attributes.sort((a, b) => a.tripleCount < b.tripleCount && 1 || -1)
+				
 				for (var key in all_attributes){	
 					att_val = all_attributes[key]["short_name"];
 					if(all_attributes[key]["type"] == "=>") attr_list.push({name: att_val});
 					else attr_list_reverse.push({name: "INV("+att_val+")"});
 				}
-			};
-			
+				
+			} else {
+				var all_attributes = schema.getAllSchemaAssociations();
+				all_attributes.sort((a, b) => a.tripleCount < b.tripleCount && 1 || -1)
+				
+				for (var key in all_attributes){	
+					att_val = all_attributes[key]["name"];
+					attr_list.push({name: att_val});			
+				}
+			}
+	
 			attr_list = attr_list.concat(attr_list_reverse);
 
 			//remove duplicates
