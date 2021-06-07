@@ -644,16 +644,17 @@ function getAllAssociations(){
 			if (schema.classExist(className)) {
 				
 				var allAssociations = schema.findClassByName(className).getAllAssociations();
-				var allAssociationsNotEmpty = allAssociations.filter(function (el) {
+				/*var allAssociationsNotEmpty = allAssociations.filter(function (el) {
 				  return el.short_class_name != ""
 				});
 				var allAssociationsEmpty = allAssociations.filter(function (el) {
 				  return el.short_class_name == ""
 				});
 				allAssociationsNotEmpty.sort(compare)
-				allAssociationsEmpty.sort(compare)
-				allAssociations = allAssociationsNotEmpty.concat(allAssociationsEmpty)
-	
+				allAssociationsEmpty.sort(compare)*/
+				allAssociations.sort(compare)
+				//allAssociations = allAssociationsNotEmpty.concat(allAssociationsEmpty)
+
 				//remove duplicates - moved to getAllAssociations()
 				//allAssociations = allAssociations.filter(function(obj, index, self) { 
 				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
