@@ -1966,7 +1966,7 @@
                         "_id": "9feiflqzvrn04zoawqs9gph4",
                         "index": 2,
                         "name": "Allow result multiplication",
-                        "label": "Simple implementation (can cause result set multiplication)",
+                        "label": "Allow result multiplication",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,

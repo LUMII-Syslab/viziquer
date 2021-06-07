@@ -1,0 +1,28 @@
+{
+	"schemas": [
+	
+	],
+	"projects": [
+	{
+		"caption": "Europeana example project",
+		"name": "Europeana",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/2021/Europeana_2021.json",
+		"decsription": "Example project to access Europeana (schema, connection, query examples)"
+	},
+	{
+		"caption": "Mini-University example (empty) project",
+		"name": "Mini_unversity",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/2021/MiniUniv_Empty.json",
+		"description": "Example empty mini-university project (with data schema and connection information)"
+	},
+	{
+		"caption": "Scholarly Data example (empty) project",
+		"name": "Scholarly_data",
+		"link": "https://viziquer.lumii.lv/schema-store/projects/2021/Scholarly_Empty.json",
+		"decsription": "Example empty project to access the scholarly data endpoint (cf. http://scholarlydata.org)"
+	}
+	
+	]
+}
+
+

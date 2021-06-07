@@ -1944,7 +1944,6 @@
                     "subCompartmentTypes": [
                       {
                         "_id": "cd985918571a15d012ed7b3c",
-						"index": 1,
                         "name": "Expression",
                         "extensionPoints": [
                           {
@@ -1961,34 +1960,6 @@
                         "description": "Use Ctrl+Space for text auto-completion",
                         "subCompartmentTypes": [],
                         "label": "Expression"
-                      },
-					  {
-                        "_id": "9feiflqzvrn04zoawqs9gph4",
-                        "index": 2,
-                        "name": "Allow result multiplication",
-                        "label": "Simple implementation (can cause result set multiplication)",
-                        "extensionPoints": [],
-                        "prefix": null,
-                        "suffix": null,
-                        "defaultValue": false,
-                        "inputType": {
-                          "type": "checkbox",
-                          "values": [
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "true",
-                              "value": "  {*}"
-                            },
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "false",
-                              "value": ""
-                            }
-                          ]
-                        },
-                        "subCompartmentTypes": []
                       }
                     ],
                     "label": "Conditions"
