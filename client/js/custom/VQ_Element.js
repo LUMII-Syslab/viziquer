@@ -1489,7 +1489,7 @@ VQ_Schema.prototype = {
 			}
 		
 			 _.each(c.schemaAttribute, function(attr){  // te iet pa shēmas atribūtiem
-				if (attr.objectTripleCount == 0 && attr.importanceIndex > 0 ) {  // tīrie atribūti 
+				if (attr.objectTripleCount <= 0 && attr.importanceIndex > 0 ) {  // tīrie atribūti 
 					var a = [];
 					a = _.union(a,["\tsh:property ["]);
 					a = _.union(a,newLine.concat("\t\tsh:path ", attr.getElementName(), " ;"));  
@@ -1675,7 +1675,7 @@ VQ_Schema.prototype = {
 						var k2 = link.maxCardinality;
 						var v2 = "";
 						var sk2 = "";						
-						if (type == "out" && link.dual == false) {
+						if (type == "out" && link.dual != true) {
 							v2 = get_end_classes(assoc, link, class_poz);
 							sk2 = get_end_classes_and_types_sk_out(assoc, link );
 						}
