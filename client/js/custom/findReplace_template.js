@@ -153,7 +153,7 @@ function replaceSingleMatch(diagramId, list){
             Utilities.callMeteorMethod("replaceSingleOccurence",ParamList, function(response){
                 UpdateStatus = updateSession(UpdateStatus, diagramId, response);
                 Session.set('ResultsJson', UpdateStatus);
-                LayoutElements(Session.get('activeDiagram')); // izkārto diagrammas elementus
+                LayoutElements(diagramId); // izkārto diagrammas elementus
             });
             console.timeEnd('SingleMatch_replace');
         }
