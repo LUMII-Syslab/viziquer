@@ -137,6 +137,7 @@ function findIncomingEdgesWithType(_elementId, _elementTypeId)
 
 function findEdge (_findEdge, _findDiagramId)
 {
+	console.log("FindEdge", _findEdge._id, _findDiagramId);
 	var edgeswithType =Elements.find(
 			{elementTypeId: _findEdge.elementTypeId, diagramId: {$ne: _findDiagramId}},
 			{fields: {diagramId:1, startElement:1, endElement:1}}).fetch();
@@ -586,6 +587,7 @@ function processVisitedNode(_findElement, _foundElementList)
 
 function processVisitedEdge(_findEdge, _foundEdgeList, _sourceNode, _targetNode)
 {
+	console.log("--------processVisitedEdge", _sourceNode._id, _targetNode._id);
 	var findElement = {findElement: _findEdge, matchedElements: _foundEdgeList};
 	if (apstaigatie)
 	{
