@@ -270,7 +270,7 @@ function FindDiagMatches(diagParamList){
         
         } else return {msg: "Find fragment elements and Replace fragment elements are overlapping"}
     } 
-    else return {msg: "Replace line have not been found"}
+    else return {msg: "Replace line has not been found"}
 
 }
 
@@ -756,7 +756,7 @@ function replaceStruct(match){
                             let boxStartElements = _.filter(match, function(element){ return _.contains(boxStartFindElements, element.findElementId)});
                             boxStartElements = _.pluck(boxStartElements, "elementId");
                             console.log("BOXSTARTELEMENTS", boxStartElements);
-                            boxStartElements = _.filter(boxStartElements, function(element){
+                            boxStartElements = _.filter(boxStartElements, function(element){ // filtrējam sākuma elementus pēc tā vai to tips ir vienāds ar endElement
                                 let FoundElement = Elements.findOne({_id: element});
                                 if(typeof FoundElement !== 'undefined') return FoundElement.elementTypeId == box.elementTypeId;
                                 else {
@@ -764,9 +764,12 @@ function replaceStruct(match){
                                     return getElementTypeId(FoundElement) == box.elementTypeId;
                                 }
                             });
-                            let ElementDictItem = _.findWhere(ElementDict, {initial: _.first(boxStartElements)}); // šeit būs jāpārstrādā, jo pie merge var būt problēmas
-                            console.log("Pirms Kļūdas", "local: ", box._id, "inserted: ", ElementDictItem);
-                            return {local: box._id, inserted: ElementDictItem.replacedId}
+                            if( _.size(boxStartElements) > 0) {
+                                let ElementDictItem = _.findWhere(ElementDict, {initial: _.first(boxStartElements)}); // šeit būs jāpārstrādā, jo pie merge var būt problēmas
+                                console.log("Pirms Kļūdas", "local: ", box._id, "inserted: ", ElementDictItem);
+                                return {local: box._id, inserted: ElementDictItem.replacedId}
+                            }
+                            else return {local: box._id, inserted: undefined}
                         }
                         else return {local: box._id, inserted: undefined}
                     }
