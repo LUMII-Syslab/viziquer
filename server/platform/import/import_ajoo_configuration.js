@@ -11,14 +11,14 @@ Meteor.methods({
 		_import.importDiagrams(data.presentations);
 		_import.importDiagramTypes(data.types);
 	},
-	// separate method for find/replace element import
+	// atsevišķa metode find/replace speciālelementu importam
 	importFindReplaceElements: function(list) {
 		let _import = new ImportAjooConfiguration(list.toolId, list.versionId);
 		let data = list.data;
 		_import.importFindReplaceDiagramElements(_.first(list.data.presentations), list.diagramId);
 		_import.importFindReplaceDiagramElementTypes(_.first(list.data.types), list.diagramTypeId);
 	},
-
+ // tiek izmantotas esošo metožu izveidotās modifikācijas
 	addConfiguratorExportButtonInToolbar: function() {
 
 		var user_id = Meteor.userId();

@@ -52,9 +52,9 @@ function createJsonFromDiagIds(diagramidsAAA)
 function findByEdgeType(list)
 {
 	var elem = Elements.findOne({_id: list.element});
-	console.log("findByEdgeType", list);
+//	console.log("findByEdgeType", list);
 	MyDiags = findDiagramsForUser (elem.diagramId, list.userSystemId);
-	console.log("findByEdgeType", MyDiags);
+//	console.log("findByEdgeType", MyDiags);
 	return edgeswithSourceTargetTypes = _.filter(
 		Elements.find({elementTypeId:list.edgeTypeId, diagramId: {$in: MyDiags}}, { fields: { diagramId: 1, startElement: 1, endElement: 1 } }).fetch(), 
 		function (e){
@@ -74,11 +74,8 @@ function findDiagramsForUser(_diagramId, _userID)
 {
 //	console.log("findDiagramsForUser");
 	var projects = ProjectsUsers.find({"userSystemId":_userID},{projectId:1, _id:0}).map(function(p){return p.projectId;});
-//	console.log(projects);
 	var versions = Versions.find({projectId: {$in: projects}}).map(function(v){return v._id;});
-//	console.log(versions);
 	var diagType = Diagrams.findOne({"_id":_diagramId}).diagramTypeId;
-//	console.log(diagType);
 	//der tās diagrammas, kas ir projektā, kur lietotājam ir tiesības, kam ir pareizais tips un kas nav meklēšanas diagramma
 	var diags = Diagrams.find({$and:
 		[
@@ -88,7 +85,6 @@ function findDiagramsForUser(_diagramId, _userID)
 		]
 		}).map(function(d){return d._id;});
 
-//	console.log(diags);
 	return diags;
 }
 
@@ -109,7 +105,6 @@ function getNotVisitedEdge (_diagramId, _visitedElements)
 
 function getNotVisitedEdgeListForNode(_node)
 {
-
 	return allEdges = Elements.find(
 		{$and:
 			[
@@ -192,12 +187,14 @@ function findEdge (_findEdge, _findDiagramId)
 					return false;
 				}
 			})
+		
 			//edge, kam korekti source target virsotņu tipi
-//		console.log("PIRMS processVisitedEdge", _findEdge, sourceFindElem, targetFindElem);
+	//	console.log("PIRMS processVisitedEdge", _findEdge._id, sourceFindElem._id, targetFindElem._id);
 		processVisitedEdge(_findEdge, edgesWithSourceTargetType, sourceFindElem, targetFindElem);
 		slice = createSlice(_findEdge, edgesWithSourceTargetType);
 		slice = sliceKeyByIndex(slice, 1);
-//		console.log("source, target", sourceFindElem, targetFindElem);
+
+	//	console.log("source, target", sourceFindElem, targetFindElem);
 		slice = processRelatedNode(sourceFindElem, _findDiagramId, slice);
 		slice = sliceKeyByIndex(slice, 2);	
 		slice = processRelatedNode(targetFindElem, _findDiagramId, slice);
@@ -236,11 +233,9 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 	// on se.key.Id equals e.startElement.Id
 	// select new SliceElement(se, e, _patternElement.endElement,
 	// 	InsertMode.EdgeTarget);
-//	console.log("addEdgeAndTargetToSlice");
 	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
 	lastElem = atrastasSkeles.pop();
 	currentSkeles = lastElem.skeles;
-//	console.log("currentSkeles", currentSkeles);
 	derigasSekeles = uniqueMatches.map( function(nem) 
 		{
 		var skeles = _.filter(currentSkeles, function (sk)
@@ -301,7 +296,6 @@ function addEdgeAndTargetToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 {
-//	console.log("addEdgeAndSourceToSlice");
 	uniqueMatches = _.uniq(_newEdgeMatches, e => e._id);
 	lastElem = atrastasSkeles.pop();
 	currentSkeles = lastElem.skeles;
@@ -368,7 +362,6 @@ function addEdgeAndSourceToSlice(_slice, _newEdgeMatches, _findEdge)
 
 function addEdgeToSlice(_slice, _newEdgeMatches, _findEdge)
 {
-//	console.log("addEdgeToSlice");
 	// from se in Aslice
 	// join e in edges
 	// on se.key.Id equals e.startElement.Id
@@ -624,6 +617,7 @@ function processVisitedNode(_findElement, _foundElementList)
 
 function processVisitedEdge(_findEdge, _foundEdgeList, _sourceNode, _targetNode)
 {
+//	console.log("--------processVisitedEdge", _sourceNode._id, _targetNode._id);
 	var findElement = {findElement: _findEdge, matchedElements: _foundEdgeList};
 	if (apstaigatie)
 	{
@@ -746,7 +740,7 @@ function checkConstraintsForElementList(_findElement, _foundElementList)
 	var atrastie = _foundElementList;
 	var constraints = findConstraintsForElement(_findElement);
 
-	_.each(constraints, function(c) {
+		_.each(constraints, function(c) {
 
 		if (atrastie != null && _.size(atrastie)>0)
 		{
@@ -762,7 +756,7 @@ function checkConstraintsForElementList(_findElement, _foundElementList)
 
 function checkConstraintsForElement(constraints, _foundElement)
 {
-
+	
 	var res = true;
 	//ja kāds nosacījums neizpildās tālāk baudīt nav jēgas, tad jālec āra no cikla
 	//find iterē pa kolekciju līdz pirmajam, kas der, tapēc, ja nemačojas atgriežam true, 
@@ -809,21 +803,31 @@ function checkRegExConstraintForElement(_constraint, _element)
 	}
 }
 
-function findMe(list)
+function initializeFind(diagramId, userSystemId)
 {
-//	console.log("Find Me");
+//	console.log("-------initializeFind")
 	apstaigatie = [];
 	findResults = [];
 	constraintViolation = [];
 	atrastasSkeles = [];
 
-	var dt  = Diagrams.findOne({_id:list.diagramId}).diagramTypeId
+	//lai ignorē replace līnijas apstaigājot grafu
+	var dt  = Diagrams.findOne({_id:diagramId}).diagramTypeId
 	ReplaceLineTypeObj = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: dt});
 	if (ReplaceLineTypeObj)
 		{
-			console.log("ReplaceLineTypeObj", ReplaceLineTypeObj);
 			ReplaceLineType = ReplaceLineTypeObj._id;
 		}
+
+	//Meklēsim tikai tais diagrammās, ko lietotājam ir tiesības redzēt.
+	myDiagrams = findDiagramsForUser(diagramId, userSystemId);
+
+}
+
+function findMe(list)
+{
+//	console.log("Find Me");
+   initializeFind(list.diagramId, list.userSystemId)
 
 	notVisitedEdge = getNotVisitedEdge(list.diagramId, apstaigatie);
 	while (notVisitedEdge)
@@ -870,7 +874,7 @@ Meteor.methods({
 	{
 		var elem = Elements.findOne({_id: list.element});
 		var MyDiags = findDiagramsForUser (elem.diagramId, list.userSystemId);
-		console.log("MyDiags", MyDiags);
+//		console.log("MyDiags", MyDiags);
 		var atrastie = checkConstraintsForElementList(
 			elem, 
 			Elements.find({$and: 
@@ -929,11 +933,12 @@ Meteor.methods({
 	    // 	list.diagramId - diagram
 		//  list.projectId - active project id
 		//  list.versionId - active version id 
-		myDiagrams = findDiagramsForUser(list.diagramId, list.userSystemId);
 		return findMe(list);
 	},
-	findNode: function(node){
-		findResults = [];
+	// Dmtirija kods
+	findNode: function(node, userId){
+		//Elīna mainīja
+		initializeFind(node.diagramId, userId);
 		findNode(node);
 		let res = _.map(findResults, function(fr){
 			let matches =  _.map(fr.matchedElements, function(me){
@@ -956,7 +961,7 @@ Meteor.methods({
 				name:		Diagrams.findOne({_id: diagram}).name,
 				matches: _.map(res[diagram], function(match){
 					return{
-						elements:[{ elementId: match.elementId, findElementId: match.findElementId }] 
+						elements:[{ elementId: match.elementId, findElementId: match.findElementId }]
 					}
 				})
 			}
@@ -964,11 +969,15 @@ Meteor.methods({
 		})
 		return MatchCollection;
 	},
-	findEdge: function(edge, diagId){
-		findResults = [];
-		atrastasSkeles = [];
+	findEdge: function(edge, diagId, userId){
+
+		initializeFind(diagId, userId);
+
+		// console.time("findEdgeTime");
 		findEdge(edge, diagId);
-		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram})
+		// console.timeEnd("findEdgeTime");
+		// console.time("foundSkelesGroupingTime");
+		let groupedMatches 	= _.groupBy(_.first(atrastasSkeles).skeles, function(skele){ return skele[0].diagram});
 		let diagrams 		= _.keys(groupedMatches);
 		let MatchCollection = [];
 		_.each(diagrams, function(diagram){
@@ -990,8 +999,12 @@ Meteor.methods({
 			}
 			MatchCollection.push(obj);
 		})
+		// console.timeEnd("foundSkelesGroupingTime");
+	//	console.log("MatchCollection");
+	//	console.dir(MatchCollection, {depth: null});
 		return MatchCollection;
 	},
+	// Dmitrija koda beigas
 	RemoveConstraintAndFind: function(list){
 		Compartments.remove(list.compartmentId);
 		return findMe(list);

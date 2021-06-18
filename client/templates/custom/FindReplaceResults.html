@@ -1,8 +1,21 @@
 <template name="replaceResults">
     <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-top:10px;padding-left:2px;">
         <div>
+            {{ #if DiagramErrorMessage }}
+            <div style="display: inline;" class="alert alert-danger" role="alert"> {{ DiagramErrorMessage }}</div>
+            {{ /if }}
             {{ #if ResultsJson }}
             <h2 style="display: inline;">Find Results</h2>
+            <button style="display: inline;" type="button" class="btn btn-danger btn-lg" id="clearResults">Clear results</button>
+            <button style="display: inline;" type="button" class="btn btn-info btn-lg" id="replaceInAllDiagrams">Replace all</button>
+            {{ #with queryDiagData }}
+            {{ #if notQueryDiagram }}
+            <a id="backToQuery" class="btn btn-success btn-lg" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Back to query</a>
+            {{ /if}}
+            {{ /with }}
+            {{ #if DiagramErrorMessage }}
+            <div style="display: inline;" class="alert alert-danger" role="alert"> {{ DiagramErrorMessage }}</div>
+            {{ /if }}
             <table>
                 <tr><td><div class="col-sm-12">Diagram</div></td>
                     <td><div class="col-sm-12">Action</div></td>
@@ -12,29 +25,65 @@
                 <tr>
 
                     <td><div class="col-sm-12">{{name}} </div></td>
-                    <td><button id="replaceAll" class="replace btn btn-success btn-xs">Replace all occurences</button></td>
+                    <td>
+                        <button id="replaceAll" class="replace btn btn-success btn-sm">Replace all occurences</button>
+                        <a id="highlightAll" class="btn btn-warning btn-block" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Highlight All</a>
+                    </td>
                     <td id="{{diagramId}}">
                         <table>
                             <tr>
                                 <td>Match</td>
                                 <td>Action</td>
+                                <td></td>
                             </tr>
                             {{ #each matches }}
                             
                             <tr>
-                                <td>Match N0 {{incremented @index }} </td>
-                                <td><button id="selectMatch" class="btn btn-success btn-xs">Replace match</button>
-                                    <button id="highlightMatch" class="btn btn-warning btn-xs">Highlight match</button></td>
+                                <td>  Match N0 {{incremented @index }}   </td>
+                                <td>
+                                    {{ #if isNewMatch this.status}}
+                                    <button type="button" id="selectMatch" class="btn btn-success btn-block">Replace match</button>
+                                    {{ /if }}
+                                    {{ #if isUsedMatch this.status}}
+                                    <button type="button" class="btn btn-success btn-block" disabled>Used</button>
+                                    {{ /if }}
+                                    {{ #if isConflictingMatch this.status}}
+                                    <span tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
+                                        <button class="btn btn-success btn-block" style="pointer-events: none;" type="button" disabled>Conflicting</button>
+                                    </span>
+                                    {{ /if }}
+                                </td>
+                                {{ #if isNewMatch this.status}}
+                                <td>
+                                    <a href="{{pathFor 'diagram'}}" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</a>
+                                </td>  
+                                {{ /if }}
                             </tr>
                             
                             {{ /each }}
-                        </table>
+                        </table> 
                     </td>
                 </tr>
-                {{ else }}
-                <h2 style="display: inline;">No Results</h2>
                 {{ /each }}
             </table>
+                {{ #if ExpErrors}}
+                <h3>Expression errors</h3>
+                <table style="border: 1px solid black;">
+                    <tr><th style="border: 1px solid black;"><div class="col-sm-12">Expression</div></th>
+                        <th style="border: 1px solid black;"><div class="col-sm-12">Element type</div></th>
+                        <th style="border: 1px solid black;"><div class="col-sm-12">Compartment type</div></th>
+                        <th style="border: 1px solid black;"><div class="col-sm-12">Error message</div></th>
+                    </tr>
+                    {{ #each ExpErrors }}
+                    <tr>
+                        <td style="border-right: 1px solid black;"><div class="col-sm-12">{{ Expression }} </div></td>
+                        <td style="border-right: 1px solid black;"><div class="col-sm-12">{{ ElementType }} </div></td>
+                        <td style="border-right: 1px solid black;"><div class="col-sm-12">{{ CompartmentType }} </div></td>
+                        <td><div class="col-sm-12">{{ Msg }} </div></td>
+                    </tr>
+                    {{ /each }}
+                </table>
+                {{ /if }}
             {{ /if }}
         </div>
     </div>
