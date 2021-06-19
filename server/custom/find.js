@@ -177,7 +177,16 @@ function findEdge (_findEdge, _findDiagramId)
 			{
 				source = Elements.findOne({_id: e.startElement});
 				target = Elements.findOne({_id: e.endElement});
-				if (source.elementTypeId == sourcetype && target.elementTypeId==targettype)
+				var logs="";
+				if (!source) {
+					console.log("diagram", e.diagramId, "Name", Diagrams.findOne({_id: e.diagramId}).name);
+					logs ="null" } else {logs=source.elementTypeId;};
+				var logt="";
+				if (!target) {
+					console.log("diagram", e.diagramId, "Name", Diagrams.findOne({_id: e.diagramId}).name);
+					logt ="null" } else {logt=target.elementTypeId;};
+				console.log("source.elementTypeId", logs, "target.elementTypeId", logt, "e", e._id);
+				if (source && target && source.elementTypeId == sourcetype && target.elementTypeId==targettype)
 				{
 					return (checkConstraintsForElement(sourceConstraints, source) && 
 						checkConstraintsForElement(targetConstraints, target))
