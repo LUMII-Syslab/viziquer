@@ -467,12 +467,12 @@ function parseCompartmentExpressions(startElements, endElementId, createdEndElem
                         if(typeof ExistingCompartment === 'undefined'){
                             let newCompartment = {
                                 _id:                    undefined,
-                                projectId:              EndElemCompartment.projectId,
+                                projectId:              Elements.findOne({_id: createdEndElementId}).projectId,
                                 elementId:              createdEndElementId,
                                 diagramId:              Elements.findOne({_id: createdEndElementId}).diagramId,
-                                diagramTypeId:          EndElemCompartment.diagramTypeId,
-                                elementTypeId:          EndElemCompartment.elementTypeId,
-                                versionId:              EndElemCompartment.versionId,
+                                diagramTypeId:          Elements.findOne({_id: createdEndElementId}).diagramTypeId,
+                                elementTypeId:          Elements.findOne({_id: createdEndElementId}).elementTypeId,
+                                versionId:              Elements.findOne({_id: createdEndElementId}).versionId,
                                 compartmentTypeId:      EndElemCompartment.compartmentTypeId,
                                 input:                  ExpressionResult,
                                 value:                  value,
@@ -521,8 +521,8 @@ function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
     styleId         : ReplaceElement.styleId,
     type            : ReplaceElement.type,
     location        : Location,
-    projectId       : ReplaceElement.projectId,
-    versionId       : ReplaceElement.versionId
+    projectId       : Diagrams.findOne({_id: diagToReplaceIn}).projectId,
+    versionId       : Diagrams.findOne({_id: diagToReplaceIn}).versionId
     }
 }
 function createEdge(edge, diagId, startElement, endElement){
@@ -546,8 +546,8 @@ function createEdge(edge, diagId, startElement, endElement){
         styleId         : edge.styleId,
         type            : edge.type,
         points          : newPoints,
-        projectId       : edge.projectId,
-        versionId       : edge.versionId,
+        projectId       : Diagrams.findOne({_id: diagId}).projectId,
+        versionId       : Diagrams.findOne({_id: diagId}).versionId,
     }
 }
 
