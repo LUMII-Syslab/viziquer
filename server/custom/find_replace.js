@@ -330,6 +330,7 @@ function createCompartments(oldElementsList, newElementId){
         if(_.size(oldElementCompartments)){
 
             _.each(oldElementCompartments, function(oldElementCompartment){
+                console.log("old element cmp:", oldElementCompartment.value);
                 let compartmentType             = CompartmentTypes.findOne({_id: oldElementCompartment.compartmentTypeId});// old Compartment type
                 let NewElementCompartmentType   = CompartmentTypes.findOne({
                     elementTypeId: newElementTypeId, 
@@ -340,6 +341,7 @@ function createCompartments(oldElementsList, newElementId){
                     // ja tips ir atrasts, tad veidojam kopiju no vecā compartments, ar to nav jābūt problēmu,
                     // un ievietojam jaunu Compartment dbāzē, uzmanīgi ar elementId, elementTypeId, compartmentTypeId utt
                     let NewElementCompartment = Compartments.findOne({elementId: newElementId, compartmentTypeId: NewElementCompartmentType._id});
+                    console.log("NewElementCompartment: ",NewElementCompartment);
                     if( typeof NewElementCompartment === 'undefined'){// ja vēl nav atribūta ar atrasto atribūta tipu pie jaunā elementa, tad veidojam jaunu atribūtu
                         NewElementCompartment                   = oldElementCompartment;
                         NewElementCompartment._id               = undefined;
@@ -657,6 +659,20 @@ function createNode(
     _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
     console.log("match",match);
     console.log(`box.local: ${box.local} endElements ${endElements}`);
+
+    if(_.contains(endElements, box.local)){
+        let relatedStartElements = _.pluck(ReplaceLines[box.local],'startElement');
+        relatedStartElements = _.filter(match, function(matchItem){ 
+            return _.contains(relatedStartElements, matchItem.findElementId);
+        });
+        relatedStartElements = _.map(relatedStartElements,function(element){
+            let alreadyReplacedWith = _.findWhere(ElementDict, {initial: element.elementId});
+            if(alreadyReplacedWith.replacedId) return alreadyReplacedWith.replacedId;
+            else return element.elementId;  
+        });
+        createCompartments(relatedStartElements, _.first(createdBoxes[element._id]).inserted);
+    }
+
     let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
         if(getElementTypeId(box.local) == getElementTypeId(item.startElement)) return true;
         else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
@@ -894,10 +910,13 @@ function replaceStruct(match){
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
                 _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
                 // console.time("LinesSwitchingTime");
+                /**
+                 * pie switchEdges, createCompartments un deleteOldCmpAndEleemnt agrāk bija startElements tagad ir visi elementi
+                 */
                 _.each(replaceElementsId, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 // console.timeEnd("LinesSwitchingTime");
                 // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
-                createCompartments(replaceElementsId, createdEndElement); 
+                // createCompartments(replaceElementsId, createdEndElement); 
                 if(!_.contains(parsedElements, endElement)) {
                     parseCompartmentExpressions(startFindElements,endElement ,createdEndElement,match);
                     parsedElements.push(endElement);
