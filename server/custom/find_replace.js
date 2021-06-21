@@ -330,7 +330,7 @@ function createCompartments(oldElementsList, newElementId){
         if(_.size(oldElementCompartments)){
 
             _.each(oldElementCompartments, function(oldElementCompartment){
-                console.log("old element cmp:", oldElementCompartment.value);
+                // console.log("old element cmp:", oldElementCompartment.value);
                 let compartmentType             = CompartmentTypes.findOne({_id: oldElementCompartment.compartmentTypeId});// old Compartment type
                 let NewElementCompartmentType   = CompartmentTypes.findOne({
                     elementTypeId: newElementTypeId, 
@@ -341,7 +341,7 @@ function createCompartments(oldElementsList, newElementId){
                     // ja tips ir atrasts, tad veidojam kopiju no vecā compartments, ar to nav jābūt problēmu,
                     // un ievietojam jaunu Compartment dbāzē, uzmanīgi ar elementId, elementTypeId, compartmentTypeId utt
                     let NewElementCompartment = Compartments.findOne({elementId: newElementId, compartmentTypeId: NewElementCompartmentType._id});
-                    console.log("NewElementCompartment: ",NewElementCompartment);
+                    // console.log("NewElementCompartment: ",NewElementCompartment);
                     if( typeof NewElementCompartment === 'undefined'){// ja vēl nav atribūta ar atrasto atribūta tipu pie jaunā elementa, tad veidojam jaunu atribūtu
                         NewElementCompartment                   = oldElementCompartment;
                         NewElementCompartment._id               = undefined;
@@ -510,7 +510,7 @@ function deleteElementEdges(elementId){
 }
 function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
     // console.time("CreateBoxToInsert");
-    console.log("FindRepalceElementId", ReplaceElement._id);
+    // console.log("FindRepalceElementId", ReplaceElement._id);
     let Location; // ja Location nav padots argumentā, tad liekam aizvietojamā elementa location
     if(typeof location === 'undefined'){ Location = ReplaceElement.location;}
     else { Location = location; }
@@ -593,9 +593,9 @@ function FindLinesToDelete(ReplaceLines, match){
             _.each(RelatedEdges, function(edge){
                 if(startElement != edge.startElement && _.contains(startElements, edge.startElement)){
                     let matchedEdge = _.findWhere(match, {findElementId: edge._id});
-                    console.log("matched edge", matchedEdge);
-                    console.log("match",match);
-                    console.log("edge._id", edge._id);
+                    // console.log("matched edge", matchedEdge);
+                    // console.log("match",match);
+                    // console.log("edge._id", edge._id);
                     foundEdgesToDelete.push(matchedEdge.elementId);
                 } 
                 // ja dotais aizvietošanas elements nav dotās līnijas sākuma elements, tad dotais aizvietošanas elements ir endElement un ir jāpārbauda
@@ -657,7 +657,7 @@ function createNode(
     if(BoxLocation) NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}), BoxLocation);
     else NewBox = createBox(diagToReplaceIn, _.findWhere(apstaigatieReplace, {_id: element._id}));
     _.first(createdBoxes[element._id]).inserted    = Elements.insert(NewBox);
-    console.log("match",match);
+    // console.log("match",match);
     console.log(`box.local: ${box.local} endElements ${endElements}`);
 
     if(_.contains(endElements, box.local)){
@@ -671,6 +671,7 @@ function createNode(
             else return element.elementId;  
         });
         createCompartments(relatedStartElements, _.first(createdBoxes[element._id]).inserted);
+        _.each(relatedStartElements, function(relatedStartElement){ switchEdgesFromOldToNewElement(relatedStartElement,_.first(createdBoxes[element._id]).inserted, FindRelatedEdges(relatedStartElement))})
     }
 
     let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
@@ -720,6 +721,8 @@ function replaceStruct(match){
         let InsertedTracker = [];
         let parsedElements  = [];
 
+        console.log('lines to delete', LinesToDelete);
+        _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
         console.log("match",match);
         console.log("endElements", endElements);
         console.log("ReplaceLines", ReplaceLines);
@@ -771,7 +774,7 @@ function replaceStruct(match){
                             let boxStartFindElements = _.pluck(ReplaceLines[box._id], 'startElement');
                             let boxStartElements = _.filter(match, function(element){ return _.contains(boxStartFindElements, element.findElementId)});
                             boxStartElements = _.pluck(boxStartElements, "elementId");
-                            console.log("BOXSTARTELEMENTS", boxStartElements);
+                            // console.log("BOXSTARTELEMENTS", boxStartElements);
                             boxStartElements = _.filter(boxStartElements, function(element){ // filtrējam sākuma elementus pēc tā vai to tips ir vienāds ar endElement
                                 let FoundElement = Elements.findOne({_id: element});
                                 if(typeof FoundElement !== 'undefined') return FoundElement.elementTypeId == box.elementTypeId;
@@ -782,7 +785,7 @@ function replaceStruct(match){
                             });
                             if( _.size(boxStartElements) > 0) {
                                 let ElementDictItem = _.findWhere(ElementDict, {initial: _.first(boxStartElements)}); // šeit būs jāpārstrādā, jo pie merge var būt problēmas
-                                console.log("Pirms Kļūdas", "local: ", box._id, "inserted: ", ElementDictItem);
+                                // console.log("Pirms Kļūdas", "local: ", box._id, "inserted: ", ElementDictItem);
                                 return {local: box._id, inserted: ElementDictItem.replacedId}
                             }
                             else return {local: box._id, inserted: undefined}
@@ -794,7 +797,7 @@ function replaceStruct(match){
                 
                 }); // console.log("createdBoxes after map", createdBoxes);
                 createdBoxes = _.groupBy(createdBoxes, 'local');
-                console.log("createdBOXES", createdBoxes);
+                // console.log("createdBOXES", createdBoxes);
                 // console.timeEnd("createdboxTime");
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
                 // console.log('created boxes before', createdBoxes);
@@ -872,7 +875,7 @@ function replaceStruct(match){
                         let box = _.first(createdBoxes[element._id]);
                         let BoxLocation = undefined;
                         if(typeof box.inserted === 'undefined'){
-                            console.log("local box", box.local);
+                            // console.log("local box", box.local);
                             console.dir(createdBoxes, {depth:null});
                             let obj = createNode(
                                 element,
@@ -908,12 +911,18 @@ function replaceStruct(match){
                 // console.timeEnd("InsertedTrackerMapTime");
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
-                _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
+                
                 // console.time("LinesSwitchingTime");
                 /**
                  * pie switchEdges, createCompartments un deleteOldCmpAndEleemnt agrāk bija startElements tagad ir visi elementi
                  */
-                _.each(replaceElementsId, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
+                // let ElementsToSwitchLinesFrom = _.map(startElements, function(startElement){
+                //     const fromDict = _.findWhere(ElementDict, {initial: startElement.elementId});
+                //     if(fromDict.replacedId) return fromDict.replacedId;
+                //     else return startElement.elementId;
+                // });
+                // console.log("Switch lines elenets:", ElementsToSwitchLinesFrom);
+                // _.each(ElementsToSwitchLinesFrom, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
                 // console.timeEnd("LinesSwitchingTime");
                 // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
                 // createCompartments(replaceElementsId, createdEndElement); 
@@ -965,8 +974,8 @@ function markConflictingMatches(matches, elementsToLookup) {
             } else {
                 let ElementDictInitials = _.pluck(ElementDict, "initial");
                 let ElementsToLookup    = formatMatch(match);
-                console.log("ElementsToLookUp before map", ElementsToLookup);
-                console.log("ElementDict", ElementDict);
+                // console.log("ElementsToLookUp before map", ElementsToLookup);
+                // console.log("ElementDict", ElementDict);
                 ElementsToLookup        = _.map(ElementsToLookup, function(pair){
                     if(_.contains(ElementDictInitials, pair.elementId)) return _.findWhere(ElementDict, {initial: pair.elementId}).replacedId;
                     return pair.elementId;
@@ -978,9 +987,9 @@ function markConflictingMatches(matches, elementsToLookup) {
                     ]
                 }).fetch();
                 foundConflictingMatch = _.size(ElementsToLookup) != _.size(foundElements); // ja vārdnīca ElementDict, tad marķēšanas semantika mainās
-                console.log("ElementsTollokup", ElementsToLookup);
-                console.log("foundElements", _.pluck(foundElements, "_id"));
-                console.log("found conflicting", foundConflictingMatch);
+                // console.log("ElementsTollokup", ElementsToLookup);
+                // console.log("foundElements", _.pluck(foundElements, "_id"));
+                // console.log("found conflicting", foundConflictingMatch);
             }
             if(foundConflictingMatch) match.status = 'conflicting';
         }
