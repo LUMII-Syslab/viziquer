@@ -1,4 +1,5 @@
 <template name="replaceResults">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div id="diagram-footer-a" class="col-sm-12 col-md-12 col-lg-12" style="margin-top:10px;padding-left:2px;">
         <div>
             {{ #if DiagramErrorMessage }}
@@ -16,55 +17,80 @@
             {{ #if DiagramErrorMessage }}
             <div style="display: inline;" class="alert alert-danger" role="alert"> {{ DiagramErrorMessage }}</div>
             {{ /if }}
-            <table>
-                <tr><td><div class="col-sm-12">Diagram</div></td>
-                    <td><div class="col-sm-12">Action</div></td>
-                    <td class="match"><div class="col-sm-12">Select match for diagram</div></td>
-                </tr>
-                {{ #each ResultsJson }}
-                <tr>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"><div>Diagram</div></th>
+                        <th scope="col"><div>Action</div></th>
+                        <th scope="col"><div>Macth count</div></th>
+                        <th scope="col"><div></div>expand</th>
+                        <th scope="col" class="match"><div>Select match for diagram</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ #each ResultsJson }}
+                    <tr>
 
-                    <td><div class="col-sm-12">{{name}} </div></td>
-                    <td>
-                        <button id="replaceAll" class="replace btn btn-success btn-sm">Replace all occurences</button>
-                        <a id="highlightAll" class="btn btn-warning btn-block" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Highlight All</a>
-                    </td>
-                    <td id="{{diagramId}}">
-                        <table>
-                            <tr>
-                                <td>Match</td>
-                                <td>Action</td>
-                                <td></td>
-                            </tr>
-                            {{ #each matches }}
-                            
-                            <tr>
-                                <td>  Match N0 {{incremented @index }}   </td>
-                                <td>
+                        <td><div>{{name}} </div></td>
+                        <td>
+                            <button id="replaceAll" class="replace btn btn-success">Replace all occurences</button>
+                            <a id="highlightAll" class="btn btn-warning " diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Highlight All</a>
+                        </td>
+                        <td><div>{{matchCount}}</div></td>
+                        <td>
+                            <div>
+                                <button class="btn btn-outline-light" type="button" data-toggle="collapse" data-target="#{{incremented @index }}" aria-expanded="false">
+                                    <i class="fa fa-arrow-down">
+
+                                    </i>
+                                </button>
+                            </div>
+                        </td>
+                        <td id="diagramId">
+                            <table class="table collapse" id="{{incremented @index }}">
+                                <thead>
+                                <tr>
+                                    <th>Found element count</th>
+                                    <th class="">Action</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{ #each matches }}
+                                
+                                <tr>
+                                    <td><div>{{elementCount}} </div></td>
+                                    <td>
+                                        <div>
+                                            {{ #if isNewMatch this.status}}
+                                            <button type="button" id="selectMatch" class="btn btn-success btn-block">Replace match</button>
+                                            {{ /if }}
+                                            {{ #if isUsedMatch this.status}}
+                                            <button type="button" class="btn btn-success btn-block" disabled>Used</button>
+                                            {{ /if }}
+                                            {{ #if isConflictingMatch this.status}}
+                                            <span tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
+                                                <button class="btn btn-success btn-block" style="pointer-events: none;" type="button" disabled>Conflicting</button>
+                                            </span>
+                                            {{ /if }}
+                                        </div>
+                                    </td>
                                     {{ #if isNewMatch this.status}}
-                                    <button type="button" id="selectMatch" class="btn btn-success btn-block">Replace match</button>
+                                    <td>
+                                        <div>
+                                            <a href="{{pathFor 'diagram'}}" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</a>
+                                        </div>
+                                    </td>  
                                     {{ /if }}
-                                    {{ #if isUsedMatch this.status}}
-                                    <button type="button" class="btn btn-success btn-block" disabled>Used</button>
-                                    {{ /if }}
-                                    {{ #if isConflictingMatch this.status}}
-                                    <span tabindex="0" data-toggle="tooltip" title="This match elements are overlaping with recently replaced match">
-                                        <button class="btn btn-success btn-block" style="pointer-events: none;" type="button" disabled>Conflicting</button>
-                                    </span>
-                                    {{ /if }}
-                                </td>
-                                {{ #if isNewMatch this.status}}
-                                <td>
-                                    <a href="{{pathFor 'diagram'}}" id="highlightMatch" class="btn btn-warning btn-block">Highlight match</a>
-                                </td>  
-                                {{ /if }}
-                            </tr>
-                            
-                            {{ /each }}
-                        </table> 
-                    </td>
-                </tr>
-                {{ /each }}
+                                </tr>
+                                
+                                {{ /each }}
+                                </tbody>
+                            </table> 
+                        </td>
+                    </tr>
+                    {{ /each }}
+                </tbody>
             </table>
                 {{ #if ExpErrors}}
                 <h3>Expression errors</h3>

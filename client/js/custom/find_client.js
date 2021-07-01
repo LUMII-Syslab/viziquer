@@ -102,7 +102,7 @@ Interpreter.customMethods({
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
                 Session.set("DiagramErrorMsg", "");
                 Session.set("ExpErrors", []);
-                
+                console.log(response);
                 if(_.has(response, "msg")){
                     Session.set("DiagramErrorMsg", response.msg);
                 }
@@ -120,6 +120,12 @@ Interpreter.customMethods({
                     console.log('resp', response);
                     console.timeEnd('Find_time');
                     if(_.size(response.result) == 0) Session.set("DiagramErrorMsg", "No results");
+                }
+                else if(_.has(response, "potentialDiagIds")){
+                    console.log("find is")
+                    Session.set("json", response.result);
+                    Session.set("PotentialResults", response.potentialDiagIds);
+                    Session.set("ViolatedConstiants", response.violatedConstraints);
                 }
                 
             });
