@@ -82,7 +82,6 @@ dataShapes = {
 	getClassList : async function(text = "") {
 		var s = this.schema.schema;
 		console.log("------------getClassList------------------")
-		console.log(s)
 		var rr2 = [];
 		if (s !== "" && s !== undefined )
 		{
@@ -92,11 +91,23 @@ dataShapes = {
 			else
 				rr = await callWithGet('ontologies/' + s + '/classes-filtered/' + text);
 			console.log(rr)
-			var rr2 =  _.map(rr.classes, function(n){ return {fullName:n.local_name+" ("+n.cnt+")"}; });
+			rr2 =  _.map(rr.data, function(n){ return {fullName:n.display_name + " (" + n.cnt + ")"}; });
 			console.log(rr2)
-			return await rr2;
+			//return await rr2;
 		}
-		return rr2;
+		return await rr2;
+	},
+	getClasses : async function(par = { filter: "" }) {
+		var s = this.schema.schema;
+		console.log("------------GetClasses------------------")
+		console.log(par)
+		var rr = [];
+		if (s !== "" && s !== undefined )
+		{
+			rr = await callWithPost('ontologies/' + s + '/getClasses', par);
+			console.log(rr)
+		}
+		return await rr;
 	},
 };
 
