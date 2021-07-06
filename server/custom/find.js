@@ -177,7 +177,7 @@ function findEdge (_findEdge, _findDiagramId)
 			{
 				source = Elements.findOne({_id: e.startElement});
 				target = Elements.findOne({_id: e.endElement});
-				if (source && target && source.elementTypeId == sourcetype && target.elementTypeId==targettype)
+				if ( source && target && source.elementTypeId == sourcetype && target.elementTypeId==targettype)
 				{
 					return (checkConstraintsForElement(sourceConstraints, source) && 
 						checkConstraintsForElement(targetConstraints, target))

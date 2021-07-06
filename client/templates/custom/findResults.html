@@ -11,6 +11,12 @@
         <div>
             {{#if json2}}
             <h2>Find Results</h2>
+            <button style="display: inline;" type="button" class="btn btn-danger btn-lg" id="clearResults">Clear results</button>
+            {{ #with queryDiagData }}
+            {{ #if notQueryDiagram }}
+            <a id="backToQuery" class="btn btn-success btn-lg" diagramId="{{_id}}" href="{{pathFor 'diagram'}}">Back to query</a>
+            {{ /if}}
+            {{ /with }}
             <div class="col-sm-12">Diagrams matched: {{diagramCount}}</div>
             <table>
                 <tr> <td><div class="col-sm-12">Diagram</div></td>

@@ -126,6 +126,14 @@ Interpreter.customMethods({
                     Session.set("json", response.result);
                     Session.set("PotentialResults", response.potentialDiagIds);
                     Session.set("ViolatedConstiants", response.violatedConstraints);
+                    Session.set("QueryDiagData", {
+                        diagramId: Session.get("activeDiagram"),
+                        projectId: Session.get("activeProject"),
+                        versionId: Session.get("versionId"),
+                        diagramTypeId: Diagrams.findOne({_id: Session.get("activeDiagram")}).diagramTypeId,
+                        editMode: true,
+                        _id: Session.get("activeDiagram")
+                    });
                 }
                 
             });

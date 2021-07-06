@@ -25,6 +25,13 @@ Template.findResult.helpers({
 	ViolatedConstiants: function() {
 		return Session.get("ViolatedConstiants");
 	},
+	queryDiagData: function() {
+        return Session.get("QueryDiagData");
+    },
+    notQueryDiagram: function() {
+        const queryDiagData = Session.get("QueryDiagData");
+        return queryDiagData.diagramId != Session.get("activeDiagram");
+    }
 });
 
 Template.findResult.events({
@@ -38,5 +45,11 @@ Template.findResult.events({
 							  Session.set("PotentialResults", resp.potentialDiagIds);
 							  Session.set("ViolatedConstiants", resp.violatedConstraints);
 				}); 
-			}
+			},
+	'click #clearResults' : function() {
+				// clear all tables and messages
+				Session.set('json', [] );
+				Session.set("PotentialResults", []);
+				Session.set('ViolatedConstiants', []);
+			},
 	})
