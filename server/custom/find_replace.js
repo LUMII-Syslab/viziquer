@@ -672,7 +672,8 @@ function createNode(
         });
         relatedStartElements = _.map(relatedStartElements,function(element){
             let alreadyReplacedWith = _.findWhere(ElementDict, {initial: element.elementId});
-            if(alreadyReplacedWith.replacedId) return alreadyReplacedWith.replacedId;
+            let StillExists = Elements.findOne({_id: element.elementId});
+            if(alreadyReplacedWith.replacedId && typeof StillExists === 'undefined') return alreadyReplacedWith.replacedId;
             else return element.elementId;  
         });
         createCompartments(relatedStartElements, _.first(createdBoxes[element._id]).inserted);
