@@ -97,6 +97,9 @@ Interpreter.customMethods({
             return { diagramId: diagID, projectId: Session.get("activeProject"), versionId: Session.get("versionId"), userId: Session.get("userSystemId")};
         };
         function CallServerFind(serverMethodName, diagParamList){
+            Session.set('json', [] );
+            Session.set("PotentialResults", []);
+            Session.set('ViolatedConstiants', []);
             
             console.time('Find_time');
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
