@@ -61,7 +61,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	{
 		console.log("findMode");
 		var foundElementsjson =  Session.get("json");
-		if ( typeof foundElementsjson === 'undefined') foundElementsjson = Session.get('foundMatchElements');
+		if ( typeof foundElementsjson === 'undefined' || _.size(foundElementsjson) == 0) foundElementsjson = Session.get('foundMatchElements');
 		var dgr_id =  Session.get("activeDiagram");
 		console.log("foundMatchElements", foundElementsjson);
 		if (foundElementsjson && dgr_id)
