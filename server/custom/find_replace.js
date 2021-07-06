@@ -206,6 +206,12 @@ function FindDiagMatches(diagParamList){
                 // tā kā dažu spec līniju fragmenti var būt nesaistīti savā starpā, no šiem nesaistītiem
                 // fragmentiem ir jāveido dekarta reizinājuma kopa
                 cartesianProductOfMatches       = _.map(cartesianProductOfMatches, function(match){
+                    let elements = _.flatten(_.map(match, function(matchItem){
+                        // elementu idi katram matcham, lai tos varētu izcelt
+                        return _.map(matchItem.elements, function(elementPair){
+                            return elementPair.elementId;
+                        })
+                    }));
                     return {
                         match:          match,
                         status:         'new',
@@ -214,15 +220,12 @@ function FindDiagMatches(diagParamList){
                         versionId:      diag.versionId,
                         _id:            diagram,
                         diagramTypeId:  diag.diagramTypeId,
-                        elements:       _.flatten(_.map(match, function(matchItem){
-                            // elementu idi katram matcham, lai tos varētu izcelt
-                            return _.map(matchItem.elements, function(elementPair){
-                                return elementPair.elementId;
-                            })
-                        })),
+                        elements:       elements,
+                        elementCount:   _.size(_.uniq(elements)),
                         editMode:       "findMode",
                     }
                 });
+                cartesianProductOfMatches = _.sortBy(cartesianProductOfMatches, function(match){ return -match.elementCount});
                 let resultObj = {
                     _id:            diagram,
                     name:           _.first(findResults[diagram]).name,
@@ -230,6 +233,7 @@ function FindDiagMatches(diagParamList){
                     editMode:       "findMode",
                     projectId:      ProjectId,
                     versionId:      diag.versionId,
+                    matchCount:     _.size(cartesianProductOfMatches),
                     diagramTypeId:  diag.diagramTypeId,
                     elements:       _.uniq(_.flatten(_.map(cartesianProductOfMatches, function(match){
                         // to pašu visiem diagrammas matchiem, lai varētu izcelt visus fragmentus
@@ -270,7 +274,7 @@ function FindDiagMatches(diagParamList){
         
         } else return {msg: "Find fragment elements and Replace fragment elements are overlapping"}
     } 
-    else return {msg: "Replace line has not been found"}
+    else return Meteor.call("findMe", diagParamList); // šeit vienkārši jāizsauc findMe no find.js
 
 }
 
