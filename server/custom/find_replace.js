@@ -633,6 +633,7 @@ function createNode(
 ){
     let NewBox;
     let FoundMatchedElement
+    const SwitchToCompartmentType = CompartmentTypes.findOne({name: "SwitchLinesTo", diagramTypeId: element.diagramTypeId})._id;
     if(box.local == endElement) {
         let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
         //console.log("boclocationID", boxElementLocationId);
@@ -675,7 +676,41 @@ function createNode(
             else return element.elementId;  
         });
         createCompartments(relatedStartElements, _.first(createdBoxes[element._id]).inserted);
-        _.each(relatedStartElements, function(relatedStartElement){ switchEdgesFromOldToNewElement(relatedStartElement,_.first(createdBoxes[element._id]).inserted, FindRelatedEdges(relatedStartElement))})
+        _.each(relatedStartElements, function(relatedStartElement){
+            // find replace lines between relatedStartelement's findElementId and box.local
+            // check SwitchLinesTo attribute value 
+            let findElement = _.findWhere(match, {elementId: relatedStartElement});
+            if(!findElement){
+                findElement = _.findWhere(
+                    match,
+                    {elementId: _.findWhere(ElementDict,{replacedId: relatedStartElement}).initial
+                }).findElementId;
+            } 
+            else findElement = findElement.findElementId;
+
+            let replaceLines = _.where(ReplaceLines[box.local], {startElement: findElement});
+            
+            if(replaceLines){
+                console.log("replaceLines", replaceLines);
+                let toSwitch = _.some(replaceLines, function(rLine){
+                    let compartment = Compartments.findOne({elementId: rLine._id, compartmentTypeId: SwitchToCompartmentType});
+                    console.log(`compartment: ${compartment} rLine._id ${rLine._id} rLine ${rLine} compartmentTypeId ${SwitchToCompartmentType}`)
+                    if(compartment) return compartment.value == "true";
+                    else return false;
+                });
+                if(toSwitch) {
+                    const relatedEdges = FindRelatedEdges(relatedStartElement);
+                    console.log("related Edges", relatedEdges);
+                    console.log("relatedStartElement",relatedStartElement);
+                    switchEdgesFromOldToNewElement(
+                        relatedStartElement,
+                        _.first(createdBoxes[element._id]).inserted, 
+                        relatedEdges
+                        );
+                }
+            }
+            
+        });
     }
 
     let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
