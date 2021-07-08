@@ -1,17 +1,23 @@
 // ***********************************************************************************
 const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 const callWithPost = async (funcName, data = {}) => {
-    const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-	//console.log(response)
-    return await response.json();
+	try {
+		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
+		//console.log(response)
+		return await response.json();
+	}
+	catch(err) {
+		console.log("-------error-----------")
+		return {complete: false, data: [], error: err};  
+    }	
 }
 
 const callWithGet = async (funcName) => {
@@ -97,16 +103,28 @@ dataShapes = {
 		}
 		return await rr2;
 	},
-	getClasses : async function(par = { filter: "" }) {
+	getClasses : async function(par = {}) {
 		var s = this.schema.schema;
 		console.log("------------GetClasses------------------")
 		console.log(par)
-		var rr = [];
+		var rr = {complete: false, data: [], error: "DSS parameter not found"};
 		if (s !== "" && s !== undefined )
 		{
 			rr = await callWithPost('ontologies/' + s + '/getClasses', par);
-			console.log(rr)
 		}
+		console.log(rr)
+		return await rr;
+	},
+	getProperties : async function(par = {}) {
+		var s = this.schema.schema;
+		console.log("------------GetProperties------------------")
+		console.log(par)
+		var rr = {complete: false, data: [], error: "DSS parameter not found"};
+		if (s !== "" && s !== undefined )
+		{
+			rr = await callWithPost('ontologies/' + s + '/getProperties', par);
+		}
+		console.log(rr)
 		return await rr;
 	},
 };
