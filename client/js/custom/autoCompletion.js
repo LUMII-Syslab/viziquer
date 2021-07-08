@@ -42,9 +42,14 @@ Interpreter.customMethods({
 		autoCompletion(e);
 	},
 
-	linkAutoCompletion: function(e, compart) {
+	linkAutoCompletion: async function(e, compart) {
 		grammarType = "link"
-		autoCompletion(e);
+		await autoCompletion(e);
+	},
+	
+	classAutoCompletion: async function(e, compart) {
+		grammarType = "className"
+		await autoCompletion(e);
 	},
 
 });
@@ -100,26 +105,25 @@ generateSymbolTableAC = function() {
 	}
   }
 
-autoCompletionAddCondition = function(e) {
+autoCompletionAddCondition = async function(e) {
 	grammarType = "class"
 	symbolTable = generateSymbolTableAC();
-	autoCompletion(e);
+	await autoCompletion(e);
 }
 
-autoCompletionAddAttribute = function(e) {
+autoCompletionAddAttribute = async function(e) {
 	grammarType = "attribute"
 	symbolTable = generateSymbolTableAC();
-	autoCompletion(e);
+	await autoCompletion(e);
 },
 
-autoCompletionAddLink = function(e) {
+autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	symbolTable = generateSymbolTableAC();
-	autoCompletion(e);
+	await autoCompletion(e);
 },
 
-autoCompletion = function(e) {
-
+autoCompletion = async function(e) {
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
 	// if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
@@ -128,7 +132,7 @@ autoCompletion = function(e) {
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
 
-		var continuations = runCompletionNew(textBefore, text, textBefore.length);
+		var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 			errorMessage(continuations, elem);
@@ -172,7 +176,7 @@ const isAutocompletionKey = function(e) {
 	return ev.location === 0 && !AUTOCOMPLETE_EXCLUSIONS.includes(ev.key);
 }
 
-function keyUpHandler(e){
+async function keyUpHandler(e){
 
 	if(e.keyCode === 8){
 		var m = document.getElementById("message");
@@ -181,7 +185,7 @@ function keyUpHandler(e){
 			var text = e.target.value;
 			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
-			var continuations = runCompletionNew(textBefore, text, textBefore.length);
+			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
 			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 				errorMessage(continuations,  document.activeElement);
@@ -199,7 +203,7 @@ function keyUpHandler(e){
 			var text = e.target.value;
 			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
-			var continuations = runCompletionNew(textBefore, text, textBefore.length);
+			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
 			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 				errorMessage(continuations,  document.activeElement);
@@ -482,50 +486,70 @@ runCompletion = function (text, act_elem2){
 	return [];
 }
 
-runCompletionNew = function (text, fullText, cursorPosition){
-	var act_elem = Session.get("activeElement");
-	try {
-		var schema = new VQ_Schema();
-
-		if(grammarType == "link"){
-			var name_list = [];
-
-			if (act_elem) {
-				var vq_link = new VQ_Element(act_elem);
-				if (vq_link.isLink()) {
-					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-				};
-			};
-		} else if(grammarType == "linkPath"){
-			var name_list = [];
-			//var act_elem = Session.get("activeElement");
-			if (act_elem) {
-				var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-				var className = compart["input"];
-				var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:act_elem, className:className});
-			};
-		} else {
-
-			var className = "";
-
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-			if(typeof act_el !== 'undefined'){
-				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-				if(typeof compart !== 'undefined') className = compart["input"];;
+runCompletionNew = async function  (text, fullText, cursorPosition){
+		
+	if(grammarType == "className"){
+			var c = {};
+			c["prefix"] = "";
+			c["suggestions"] = [];
+			var cls;
+			if(fullText != ""){
+				cls = await dataShapes.getClasses({filter:fullText});
+			}else{
+				cls = await dataShapes.getClasses();
 			}
+			
+			cls = cls["data"];
 
-			// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-			var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+			for(var cl in cls){
+				c["suggestions"].push({name: cls[cl]["display_name"], priority:100, type:3})
+			}
+			return c;
+	} else {
+	
+		var act_elem = Session.get("activeElement");
+		try {
+			var schema = new VQ_Schema();
+			
+			if(grammarType == "link"){
+				var name_list = [];
+
+				if (act_elem) {
+					var vq_link = new VQ_Element(act_elem);
+					if (vq_link.isLink()) {
+						var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+					};
+				};
+			} else if(grammarType == "linkPath"){
+				var name_list = [];
+				//var act_elem = Session.get("activeElement");
+				if (act_elem) {
+					var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					var className = compart["input"];
+					var parsed_exp = vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:act_elem, className:className});
+				};
+			} else {
+
+				var className = "";
+
+				var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+				if(typeof act_el !== 'undefined'){
+					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					if(typeof compart !== 'undefined') className = compart["input"];
+				}
+
+				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				var parsed_exp = vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+			}
+		} catch (com) {
+			// console.log(com);
+			var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
+			return c;
 		}
-	} catch (com) {
-		// console.log(com);
-		var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));
-		return c;
 	}
-
 	return [];
 }
 
