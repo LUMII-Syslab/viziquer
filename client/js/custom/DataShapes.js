@@ -35,6 +35,7 @@ const callWithGet = async (funcName) => {
 		return {};  
     }
 }
+
 // ***********************************************************************************
 
 dataShapes = {
@@ -57,6 +58,8 @@ dataShapes = {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
 				this.schema.ontologies = {};
+				this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
+				this.schema.limit = 100;
 				var ont_list = await this.getOntList(proj.schema);
 				var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
 				Utilities.callMeteorMethod("updateProject", list);
@@ -72,16 +75,11 @@ dataShapes = {
 		return await rr2;		
 	},
 	getProjOntList : async function() {
-			//var proj = Projects.findOne({_id: Session.get("activeProject")});
 			var s = this.schema.schema;
 			var rr = [];
 			if (s !== "" && s !== undefined )
 			{
 			    rr = this.getOntList(s);
-				//var rr = await callWithGet('ontologies/'+s+'/ns');
-				//rr2 =  _.map(rr.ns, function(n){ return {dprefix:n.name+" ("+n.cl_count+")", uri:n.name, id:String(n.id), priority:n.priority}; });
-				//rr2 = _.sortBy(rr2, function(a) { return -a.priority});
-
 			}
 		return await rr;		
 	},
@@ -103,29 +101,53 @@ dataShapes = {
 		}
 		return await rr2;
 	},
-	getClasses : async function(par = {}) {
+	callServerFunction : async function(funcName, params) {
 		var s = this.schema.schema;
-		console.log("------------GetClasses------------------")
-		console.log(par)
+		console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
 		if (s !== "" && s !== undefined )
-		{
-			rr = await callWithPost('ontologies/' + s + '/getClasses', par);
+		{		
+			params.endpointUrl = this.schema.endpoint;
+			if ( params.limit === undefined )
+				params.limit = this.schema.limit;
+				
+			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
 		console.log(rr)
 		return await rr;
 	},
-	getProperties : async function(par = {}) {
-		var s = this.schema.schema;
+	getClasses : async function(params = {}) {
+		console.log("------------GetClasses------------------")
+		// dataShapes.getClasses()
+		// dataShapes.getClasses({limit: 30})
+		// dataShapes.getClasses({filter:'aa'})
+		// dataShapes.getClasses({uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'})
+		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
+		// dataShapes.getClasses({uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden', namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
+		// dataShapes.getClasses({pList: { out: [{name: 'educationalAuthority', type: 'out'}]}})
+		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}]}})
+		// dataShapes.getClasses({pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}})
+		// dataShapes.getClasses({pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}})
+		
+		return await this.callServerFunction("getClasses", params);
+	},
+	getProperties : async function(params = {}) {		
 		console.log("------------GetProperties------------------")
-		console.log(par)
-		var rr = {complete: false, data: [], error: "DSS parameter not found"};
-		if (s !== "" && s !== undefined )
-		{
-			rr = await callWithPost('ontologies/' + s + '/getProperties', par);
-		}
-		console.log(rr)
-		return await rr;
+		
+		return await this.callServerFunction("getProperties", params);
+		//var s = this.schema.schema;
+		//return await this.callServerFunction("getClasses", params);
+		//console.log(par)
+		//var rr = {complete: false, data: [], error: "DSS parameter not found"};
+		//if (s !== "" && s !== undefined )
+		//{
+		//	par.endpointUrl = this.schema.endpoint;
+		//	if ( par.limit === undefined )
+		//		par.limit = this.schema.limit;
+		//	rr = await callWithPost('ontologies/' + s + '/getProperties', par);
+		//}
+		//console.log(rr)
+		//return await rr;
 	},
 };
 
