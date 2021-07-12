@@ -1,5 +1,6 @@
 
 Template.schemaFilter.Classes = new ReactiveVar("");
+Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaFilter.Ont = new ReactiveVar("");
 
 ShowSchemaTree = function () {
@@ -10,20 +11,30 @@ ShowSchemaTree = function () {
 Template.schemaTree.helpers({
 
 	classes: function() {
-    	var schema = new VQ_Schema();
+		return Template.schemaTree.Classes.get();
+    /*	var schema = new VQ_Schema();
 		return schema.Tree;
-
-		if (schema) {
-			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
-				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
-			}), "localName"), function(c) {return c.localName != " "});
-
-			return classes;
-		}
+    */
 	},
 
 });
 
+async function  useFilter () {
+	var text = $('#filter_text').val();
+	console.log(text)
+	var params = {limit: 30, filter:text};
+	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
+		var namespaces = {};
+		if ($("#dbo").is(":checked"))
+			namespaces.in = ['dbo'];
+		if ($("#yago").is(":checked"))
+			namespaces.notIn = ['yago'];
+		params.namespaces = namespaces;
+	}
+	var clFull = await dataShapes.getClasses(params);
+	var classes = _.map(clFull.data, function(cl) {return {ch_count: 0, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt})`}});
+	Template.schemaTree.Classes.set(classes);
+}
 
 Template.schemaTree.events({
 
@@ -56,7 +67,6 @@ Template.schemaTree.events({
 		}
 	},
 
-
 	"dblclick .class-body": function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
 		//console.log($(e.target).closest(".class-body"))
@@ -84,8 +94,7 @@ Template.schemaTree.events({
 								 width: DEFAULT_BOX_WIDTH,
 								 height: DEFAULT_BOX_HEIGHT};
 	  //console.log(loc);
-			var schema = new VQ_Schema;
-			class_name =  schema.findClassByName(class_name).getElementShortName();
+
 			Create_VQ_Element(function(boo) {
 				boo.setName(class_name);
 				var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -94,17 +103,34 @@ Template.schemaTree.events({
 		}	
 
 	},
+	'click #filter': async function(e) {
+		useFilter ();
+	},
+	'click #dbo': async function(e) {
+		useFilter ();
+	},
+	'click #dbo': async function(e) {
+		useFilter ();
+	},
 
 });
 
 
 Template.schemaFilter.rendered = async function() {
-	console.log("-----rendered----")
-	console.log(Session.get("activeProject"))
+	console.log("-----rendered schemaFilter----")
+	//console.log(Session.get("activeProject"))
 	var rr = await dataShapes.getProjOntList();  
 	Template.schemaFilter.Ont.set(rr);
 	var cl = await dataShapes.getClassList();
 	Template.schemaFilter.Classes.set(cl);
+}
+
+Template.schemaTree.rendered = async function() {
+	console.log("-----rendered schemaTree----")
+	//console.log(Session.get("activeProject"))
+	var clFull = await dataShapes.getClasses({limit: 30,namespaces: { in: ['dbo']}});
+	var classes = _.map(clFull.data, function(cl) {return {ch_count: 0, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt})`}});
+	Template.schemaTree.Classes.set(classes);
 }
 
 Template.schemaFilter.helpers({

@@ -116,6 +116,11 @@ dataShapes = {
 		console.log(rr)
 		return await rr;
 	},
+	getNamespaces : async function(params = {}) {
+		console.log("------------getNamespaces ------------------")
+		//dataShapes.getNamespaces()
+		return await this.callServerFunction("getNamespaces", params);
+	},
 	getClasses : async function(params = {}) {
 		console.log("------------GetClasses------------------")
 		// dataShapes.getClasses()
@@ -133,6 +138,23 @@ dataShapes = {
 	},
 	getProperties : async function(params = {}) {		
 		console.log("------------GetProperties------------------")
+		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
+		//dataShapes.getProperties({propertyKind:'Object'})
+		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
+		//dataShapes.getProperties({propertyKind:'Object', filter: 'aa'})
+		//dataShapes.getProperties({propertyKind:'Object', className: 'umbel-rc:Park'})
+		//dataShapes.getProperties({propertyKind:'Data', className: 'umbel-rc:Park'})
+		//dataShapes.getProperties({propertyKind:'Connect', className: 'umbel-rc:Park', otherEndClassName: 'umbel-rc:Philosopher'}) 
+		//dataShapes.getProperties({propertyKind:'All', className: 'dbo:Meeting'})  -- tam nav propertiju  !!! ko darī ar tiem apastrofiem vārdos?
+		//dataShapes.getProperties({propertyKind:'All', className: 'umbel-rc:Philosopher'})
+		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})
+		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})
+		//dataShapes.getProperties({propertyKind:'Connect', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World", otherEndUriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"})
+		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"})
+		//dataShapes.getProperties({propertyKind:'Object', className: 'dbo:Tenure'})
+		//dataShapes.getProperties({propertyKind:'ObjectExt', otherEndClassName:'umbel-rc:Crater'})
+		//dataShapes.getProperties({propertyKind:'Connect', className: 'CareerStation', otherEndClassName:'umbel-rc:Crater'})
+		//dataShapes.getProperties({propertyKind:'All', className: 'CareerStation', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'})
 		
 		return await this.callServerFunction("getProperties", params);
 		//var s = this.schema.schema;
@@ -148,6 +170,16 @@ dataShapes = {
 		//}
 		//console.log(rr)
 		//return await rr;
+	},
+	resolveClassByName : async function(params = {}) {	
+		console.log("------------resolveClassByName------------------")
+		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
+		return await this.callServerFunction("resolveClassByName", params);
+	},
+	resolvePropertyByName : async function(params = {}) {	
+		console.log("------------resolvePropertyByName------------------")
+		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
+		return await this.callServerFunction("resolvePropertyByName", params);
 	},
 };
 
