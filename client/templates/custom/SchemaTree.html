@@ -33,8 +33,7 @@
 		<button class="toggle-tree-button expand" node-id="{{node_id}}"  type="button">Expand</button>
 	{{/if}}	
 
-       
-        <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
+         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
         <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
 
         <ol class="dd-list attributes-list" style="display: {{display}}; " >
@@ -48,8 +47,57 @@
 
 </template>
 
-
 <template name="schemaFilter">
+
+    <div class="col-sm-12">
+        <div class="dd" id="nestable">
+			<div class="col-sm-12">
+				<select class="form-control" id="propType" value="All properties">
+				  <option>All properties </option>
+				  <option>Object properties</option>
+				  <option>Data properties</option>
+				</select>
+			</div>
+			<input id="filter_text2" type="text" class="form-control" placeholder="">
+			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+			<label class="form-check-label">
+				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked="checked">
+				<span class="custom-checkbox"></span>
+				Exclude dbp:
+			</label>
+            <ol class="dd-list">
+
+				{{#each properties}}
+				{{> subTreeP}}
+				{{/each}}
+
+            </ol>
+        </div><!-- dd -->
+    </div>
+
+</template>
+
+<template name="subTreeP">
+    <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
+	{{#if ch_count  }}
+		<button class="toggle-tree-button expand" node-id="{{node_id}}"  type="button">Expand</button>
+	{{/if}}	
+
+         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
+        <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
+
+        <ol class="dd-list attributes-list" style="display: {{display}}; " >
+
+            {{#each children}}
+                {{> subTree}}
+            {{/each}}
+
+        </ol>
+    </li>
+
+</template>
+
+<template name="schemaFilter_old">
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
@@ -102,44 +150,3 @@
 </template>
 
 
-
-<template name="schemaTree2">
-    <!-- Add form-->
-    <div id="schema-tree" class="modal fade">
-
-        <div class="modal-dialog">
-            <div class="modal-content" style="overflow:auto;">
-                <div class="modal-header">
-                    <button id="modalCloseButton" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Schema</h4>
-                </div>
-                <div class="modal-body">
-
-                    <ul class="list-group">
-
-                        {{#each classes}}
-                            <li class="list-group-item" >
-                                {{localName}} {{fullName}}
-                            </li>
-
-                            <ul class="list-group" style="margin-left: 50px;">
-                                {{#each attributes}}
-                                    <li class="list-group-item">{{localName}}</li>
-                                {{/each}}
-                            </ul>
-
-                        {{/each}}
-
-                    </ul>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                </div>
-
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End of add form-->
-</template>
