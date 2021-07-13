@@ -3011,12 +3011,12 @@ VQ_Element.prototype = {
   },
   // determines whether a class rather than instance is searched
   isVariable: function() {
-    var name = this.getName();
+    var name = this.getName().trim();
 		return (name && name.charAt(0)=='?');
   },
   // gets class variable name (e.g. X for ?X)
   getVariableName: function() {
-    if (this.isVariable()) {return this.getName().substr(1)} else { return null }
+    if (this.isVariable()) {return this.getName().trim().substr(1)} else { return null }
   },
   // determines whether the link is subquery link
   isSubQuery: function() {

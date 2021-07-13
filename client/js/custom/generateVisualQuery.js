@@ -5,6 +5,7 @@ var y = 10;
 var width = 150;
 var height = 100;
 var counter = 0;
+var whereTriplesVaribles = [];
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -12,28 +13,29 @@ Interpreter.customMethods({
   generateVisualQuery: function(text, xx, yy, queryId, queryQuestion){
 	   // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, function(parsedQuery) {
+		whereTriplesVaribles = [];
 		x = xx;
 		y = yy;
 		counter = 0;
-		// console.log(JSON.stringify(parsedQuery, 0, 2));
+		//console.log(JSON.stringify(parsedQuery, 0, 2));
 		var schema = new VQ_Schema();
 		
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = getAllVariablesInQuery(parsedQuery, schema, []);
 		
 		// console.log("variableList", variableList);
-
+		whereTriplesVaribles = getWhereTriplesVaribles(parsedQuery["where"]);
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = generateAbstractTable(parsedQuery, [], variableList, []);
 		abstractTable["linkTable"] = removeDuplicateLinks(abstractTable["linkTable"]);
 		
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
-		// console.log(abstractTable);
+		console.log(abstractTable);
 		
 		var classesTable = abstractTable["classesTable"];
 		// /*
-		var whereTriplesVaribles = getWhereTriplesVaribles(parsedQuery["where"]);
 		
+//		console.log("whereTriplesVaribles", whereTriplesVaribles)
 		// Decide which class is a query start class
 		
 		var tempGetStartClass = getStartClass(classesTable, abstractTable["linkTable"]);
@@ -845,6 +847,75 @@ function parseSPARQLjsStructureWhere(where, plainVariables, nodeList, parentNode
 		bgptype == "plain";
 		
 		if(linkTable.length == 0) linkTable = linkTableAdded;
+	}
+	//type=values
+	if(where["type"] == "values"){
+			
+		var variableList = [];
+		
+		for(var valueClause in where["values"]){		
+			var valuePairs = where["values"][valueClause];
+			for(var pair in valuePairs){
+				variableList.push(vq_visual_grammar.parse(pair)["value"]);
+			}
+		}
+		
+		var variableList = variableList.filter(function (el, i, arr) {
+			return arr.indexOf(el) === i;
+		});
+
+		if(variableList.length == 1){
+			var alias = variableList[0];
+			var valuesList = [];
+			
+			for(var valueClause in where["values"]){
+				var valuePairs = where["values"][valueClause];
+				for(var pair in valuePairs){
+					valuesList.push(vq_visual_grammar.parse(valuePairs[pair])["value"]);
+				}
+			}
+			var values = "{" + valuesList.join(" ") + "}";
+			
+			attributeInfo = {
+				"variableName":alias,
+				"identification":{short_name:alias},
+				"alias":alias,
+				"requireValues":false,
+				"seen":true,
+				"exp":values
+			};
+			
+			for (var clazz in classesTable){
+				classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+				break;
+			}
+		} else {
+			var alias = "(" +variableList.join(" ") + ")";
+			
+			var valuesList = [];
+			for(var valueClause in where["values"]){
+				var valuePairs = where["values"][valueClause];
+				var valuesPairList = [];
+				for(var pair in valuePairs){
+					valuesPairList.push(vq_visual_grammar.parse(valuePairs[pair])["value"]);
+				}
+				valuesList.push("(" + valuesPairList.join(" ") + ")")
+			}
+			var values = "{" + valuesList.join(" ") + "}";
+	
+			attributeInfo = {
+				"variableName":alias,
+				"identification":{short_name:alias},
+				"alias":alias,
+				"requireValues":false,
+				"seen":true,
+				"exp":values
+			};
+			for (var clazz in classesTable){
+				classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+				break;
+			}
+		}
 	}
 	//type=filter
 	if(where["type"] == "filter"){
@@ -2494,6 +2565,7 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 	// console.log("parentNodeList", parentNodeList);
 	// console.log("allClasses", allClasses);
 	// console.log("nodeList", nodeList);
+	// console.log("variableList", variableList);
 	
 	for(var triple in triples){
 		//class definitions
@@ -2696,6 +2768,60 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 						nodeList[triples[triple]["subject"]]["uses"] = parentNodeList[triples[triple]["subject"]]["uses"];
 					}
 				} 
+				if(whereTriplesVaribles[triples[triple]["object"].substring(1)] >1){
+					var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"])["value"];
+					var instanceAlias = generateInstanceAlias(schema, objectNameParsed);
+					if(Object.keys(nodeList[triples[triple]["object"]]["uses"]).length == 0){
+						if(typeof parentNodeList[triples[triple]["object"]] === 'undefined'){
+							if(typeof allClasses[objectNameParsed] === 'undefined'){
+								// If first time used in a query – create new class box.
+								classesTable[objectNameParsed] = {
+									"variableName":triples[triple]["object"],
+									"identification":null,
+									"instanceAlias":instanceAlias,
+									"isVariable":false,
+									"isUnit":false,
+									"isUnion":false
+								};
+								classTableAdded.push(objectNameParsed);
+								nodeList[triples[triple]["object"]]["uses"][objectNameParsed] = "dataProperty";
+								// console.log("CLASS DP 22", objectNameParsed);
+							} else {
+								// If defined in all query scope (two or more scope level up) - create new class box with different identification.
+								classesTable[objectNameParsed+counter] = {
+									"variableName":triples[triple]["object"],
+									"identification":null,
+									"instanceAlias":instanceAlias,
+									"isVariable":false,
+									"isUnit":false,
+									"isUnion":false
+								};
+								classTableAdded.push(objectNameParsed+counter);
+								nodeList[triples[triple]["object"]]["uses"][objectNameParsed+counter] = "dataProperty";
+								counter++;
+								// console.log("CLASS DP 23", objectNameParsed);
+							}
+						} else {
+							// If class defined in a parent scope
+							for(var use in parentNodeList[triples[triple]["object"]]["uses"]){
+								if(typeof classesTable[use] === 'undefined'){
+									classesTable[use] = {
+										"variableName":triples[triple]["object"],
+										"identification":null,
+										"instanceAlias":instanceAlias,
+										"isVariable":false,
+										"isUnit":false,
+										"isUnion":false
+									};
+									classTableAdded.push(use);
+									nodeList[triples[triple]["object"]]["uses"][use] = "dataProperty";
+								}
+							}
+							// console.log("CLASS DP 24", objectNameParsed);
+							nodeList[triples[triple]["object"]]["uses"] = parentNodeList[triples[triple]["object"]]["uses"];
+						}
+					}
+				}
 				
 				
 			}
@@ -2947,8 +3073,10 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 			
 			//data property
 			
+			//console.log("whereTriplesVaribles", whereTriplesVaribles);
 			// console.log("triples[triple]", triples[triple]);
 			// console.log("bgptype", bgptype);
+			//console.log("nodeList", nodeList[triples[triple]["object"]]);
 			// console.log("nodeList", nodeList[triples[triple]["object"]]["uses"]);
 			// console.log("schema", schema.resolveAttributeByName(null, triples[triple]["predicate"]));
 			// console.log("findByVariableName", triples[triple]["subject"], classesTable, findByVariableName(classesTable, triples[triple]["subject"]));
@@ -2957,15 +3085,17 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 			
 			
 			var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"]);
-	
+			
 			if((objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") 
 			||( bgptype != "optionalLink" 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["subject"])).length > 0 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["object"])).length == 0 
 			&& Object.keys(findByVariableName(classesTable, vq_visual_grammar.parse(triples[triple]["object"])["value"])).length == 0 
 		    && vq_visual_grammar.parse(triples[triple]["object"])["type"] != "iri"
+			//&& whereTriplesVaribles[triples[triple]["object"]] <=1
 			&& schema.resolveAttributeByName(null, triples[triple]["predicate"]) != null && schema.resolveClassByName(vq_visual_grammar.parse(triples[triple]["object"])["value"]) == null)){
-				 // console.log("DATA PROPERTY", triples[triple]);
+				// console.log("DATA PROPERTY", triples[triple], schema.resolveLinkByName(triples[triple]["predicate"]));
+				 
 				var alias = "";
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"]);
 				var attributeResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
@@ -3041,7 +3171,8 @@ function generateTypebgp(triples, nodeList, parentNodeList, classesTable, attrib
 			}
 			//object property
 			else {
-				// console.log("OBJECT PROPERTY", triples[triple]);
+				//console.log("OBJECT PROPERTY", triples[triple]);
+				
 				if (typeof triples[triple]["predicate"] == "string"){
 					if(triples[triple]["predicate"].startsWith("?")){
 						// for every object usage in nodeList, for elery subject usage in nodeList - create link
@@ -3652,8 +3783,18 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						clazz = addAttributeToClass(clazz, attributeInfo);
 						
 						for(var condition  in childerenClass["conditions"]){
-							if(typeof clazz["conditions"] === 'undefined') clazz["conditions"] = [];
-							if(!clazz["conditions"]["exp"].includes(childerenClass["conditions"][condition]["exp"])) clazz["conditions"].push(childerenClass["conditions"][condition]); 
+							if(typeof clazz["conditions"] === 'undefined') {
+								clazz["conditions"] = [];
+								clazz["conditions"].push(childerenClass["conditions"][condition]);
+							}
+							var included = false;
+							for(var con in clazz["conditions"]){
+								if(clazz["conditions"][con]["exp"].includes(childerenClass["conditions"][condition]["exp"])) {
+									included = true;
+									break;
+								}
+							}
+							if(!included) clazz["conditions"].push(childerenClass["conditions"][condition]); 
 						}
 
 						if(typeof childerenClass["groupByThis"] !== 'undefined' && childerenClass["groupByThis"] == true) {
@@ -3919,6 +4060,9 @@ function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 
 		// console.log("CONDITIONS");
 		//conditions
+
+		clazz["conditions"] = removeDuplicateConditions(clazz["conditions"]);
+		
 		_.each(clazz["conditions"],function(condition) {
 			var expression = condition["exp"];
 
@@ -4215,4 +4359,16 @@ function getWhereTriplesPlainVaribles(where){
 		}
 	}
 	return variableList;
+}
+
+function removeDuplicateConditions(conditions){
+	var c = [];
+	for(var con in conditions){
+		c[conditions[con]["exp"]] = conditions[con];
+	}
+	var cc = [];
+	for(var con in c){
+		cc.push(c[con])
+	}
+	return cc
 }
