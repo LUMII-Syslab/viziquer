@@ -489,6 +489,7 @@ runCompletion = function (text, act_elem2){
 runCompletionNew = async function  (text, fullText, cursorPosition){
 		
 	if(grammarType == "className"){
+			
 			var c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
@@ -502,7 +503,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			cls = cls["data"];
 
 			for(var cl in cls){
-				c["suggestions"].push({name: cls[cl]["display_name"], priority:100, type:3})
+				c["suggestions"].push({name: cls[cl]["prefix"]+":"+cls[cl]["display_name"], priority:100, type:3})
 			}
 			return c;
 	} else {

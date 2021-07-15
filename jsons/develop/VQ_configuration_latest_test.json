@@ -322,7 +322,7 @@
           "_id": "ZnHbEQt9jutbYY3E8",
           "diagramId": "7RrwRcGyxshqjBh9p",
           "diagramTypeId": "5MCHCcnGRwF5axfDj",
-          "name": "Schema Tree",
+          "name": "Classes",
           "index": 1,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
@@ -331,7 +331,7 @@
           "_id": "ZnHbEQt9jutbYY3E9",
           "diagramId": "7RrwRcGyxshqjBh9p",
           "diagramTypeId": "5MCHCcnGRwF5axfDj",
-          "name": "Filters",
+          "name": "Properties",
           "index": 2,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
@@ -378,7 +378,7 @@
                 "extensionPoint": "dynamicDropDown"
               }
             ],
-            "label": "Schema Tree",
+            "label": "Classes",
             "dialogTabId": "ZnHbEQt9jutbYY3E8"
           }
         },
@@ -422,7 +422,7 @@
                 "extensionPoint": "dynamicDropDown"
               }
             ],
-            "label": "Filters",
+            "label": "Properties",
             "dialogTabId": "ZnHbEQt9jutbYY3E9"
           }
         }
@@ -2690,8 +2690,11 @@
                     "extensionPoint": "dynamicDefaultValue"
                   },
                   {
-                    "extensionPoint": "dynamicDropDown",
-                    "procedure": "VQgetClassNames"
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "processKeyStroke",
+                    "procedure": "classAutoCompletion"
                   }
                 ],
                 "dialogTabId": "Exf3sEg8fpo7hYYRc"
