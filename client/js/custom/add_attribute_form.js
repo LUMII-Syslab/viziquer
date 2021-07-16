@@ -10,10 +10,12 @@ Template.AddNewAttribute.attributeid = new ReactiveVar("");
 Template.AddNewAttribute.selectThis = new ReactiveVar("");
 
 Interpreter.customMethods({
-	AddAttribute: function () {
+	AddAttribute: async function () {
 		// attribute-to-add
-		Template.AddAttribute.attrList.set(getAttributes());
-		Template.AddAttribute.linkList.set(getAssociations());
+		var attributes = await getAttributes()
+		var associations = await getAssociations()
+		Template.AddAttribute.attrList.set(attributes);
+		Template.AddAttribute.linkList.set(associations);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		$("#add-attribute-form").modal("show");
 		$('input[name=stack-checkbox]').attr('checked',false);
@@ -72,7 +74,7 @@ Template.AddAttribute.events({
 		return;
 	},
 	
-	"click #save-add-attribute": function(e) {
+	"click #save-add-attribute": async function(e) {
 
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -92,9 +94,10 @@ Template.AddAttribute.events({
 			}
 		  });
 		};
-		
-		Template.AddAttribute.attrList.set(getAttributes());
-		Template.AddAttribute.linkList.set(getAssociations());
+		var attributes = await getAttributes();
+		var associations = await getAssociations();
+		Template.AddAttribute.attrList.set(attributes);
+		Template.AddAttribute.linkList.set(associations);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		
 		return;
@@ -260,7 +263,7 @@ Template.AddAttribute.events({
 	},
 	
 	
-	"click #attribute-delete-button": function(e) {
+	"click #attribute-delete-button": async function(e) {
 			
 		var list = {compartmentId: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"),
 					projectId: Session.get("activeProject"),
@@ -269,8 +272,8 @@ Template.AddAttribute.events({
 
 		Utilities.callMeteorMethod("removeCompartment", list);
 		
-		var attr_list = getAttributes();
-		var link_list = getAssociations();
+		var attr_list = await getAttributes();
+		var link_list = await getAssociations();
 		Template.AddAttribute.attrList.set(attr_list);
 		Template.AddAttribute.linkList.set(link_list);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
@@ -278,10 +281,24 @@ Template.AddAttribute.events({
 		return;
 	},
 	
-	"keyup #mySearch-attribute": function(){
+	"keyup #mySearch-attribute": async function(){
+		// var value = $("#mySearch-attribute").val().toLowerCase();
+		// var attr_list = await getAttributes();
+		// var link_list = await getAssociations();
+		// attr_list = attr_list.filter(function(obj) { 
+			// return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
+		// });
+		// Template.AddAttribute.attrList.set(attr_list);
+		// link_list = link_list.filter(function(obj) { 
+			// return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
+		// });
+		// Template.AddAttribute.linkList.set(link_list);
+	},
+	
+	'click #attribute-apply-button': async function(e) {
 		var value = $("#mySearch-attribute").val().toLowerCase();
-		var attr_list = getAttributes();
-		var link_list = getAssociations();
+		var attr_list = await getAttributes();
+		var link_list = await getAssociations();
 		attr_list = attr_list.filter(function(obj) { 
 			return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
 		});
@@ -290,6 +307,7 @@ Template.AddAttribute.events({
 			return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
 		});
 		Template.AddAttribute.linkList.set(link_list);
+		return;
 	},
 	
 	'click #attribute-new-button': function(e) {
@@ -454,7 +472,7 @@ Template.AddNewAttribute.events({
 	},
 });
 
-function getAttributes(){
+async function getAttributes(filter){
 	var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
@@ -462,38 +480,36 @@ function getAttributes(){
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
 			
-			// if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) attr_list.push({name:"(select this)"});
 			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
 			else attr_list.push({name:"(select this)"});
 						
 			attr_list.push({separator:"line"});
 			
-		
+		/*
 			var symbolTable = generateSymbolTable()["symbolTable"];
 			
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
 						if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 ))attr_list.push({name: key});
-						// if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)attr_list.push({name: key});
 					}
 				}	
 			}
 			
-			attr_list.push({separator:"line"});
+			attr_list.push({separator:"line"});*/
 
 			var class_name = vq_obj.getName();
-			var schema = new VQ_Schema();
-
-			if (schema.classExist(class_name)) {
-				var all_attributes = schema.findClassByName(class_name).getAllAttributes();
-				for (var key in all_attributes){
-					
-					att_val = all_attributes[key]["short_name"];
-					attr_list.push({name: att_val});
-				}
-			};
-
+			var param = {propertyKind:'Data', className: class_name}
+			if(filter != null) param["filter"] = filter;
+			var prop = await dataShapes.getProperties(param);
+			prop = prop["data"];
+			
+			for(var cl in prop){
+				var prefix;
+				if(prop[cl]["is_local"] == true)prefix = "";
+				else prefix = prop[cl]["prefix"]+":";
+				attr_list.push({name: prefix+prop[cl]["display_name"]})
+			}
 			
 			//remove duplicates
 			attr_list = attr_list.filter(function(obj, index, self) { 
@@ -517,37 +533,35 @@ function getAttributes(){
 	
 				attr.buttonName = "required-attribute";
 				return attr;
-			});
-			
+			});	
 			return attr_list;
-
 		}
 	return [];
 }
 
-function getAssociations(){
+async function getAssociations(filter){
 	var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
-			var attr_list_reverse = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
 			
 			var class_name = vq_obj.getName();
-			var schema = new VQ_Schema();
-
-			if (schema.classExist(class_name)) {
-				var all_attributes = schema.findClassByName(class_name).getAllAssociations();
-				for (var key in all_attributes){	
-					att_val = all_attributes[key]["short_name"];
-					if(all_attributes[key]["type"] == "=>") attr_list.push({name: att_val});
-					else attr_list_reverse.push({name: "INV("+att_val+")"});
-				}
-			};
 			
-			attr_list = attr_list.concat(attr_list_reverse);
-
+			var param = {propertyKind:'Object', className: class_name}
+			if(filter != null) param["filter"] = filter;
+			var prop = await dataShapes.getProperties(param)
+			prop = prop["data"];
+			
+			
+			for(var cl in prop){
+				var prefix;
+				if(prop[cl]["is_local"] == true)prefix = "";
+				else prefix = prop[cl]["prefix"]+":";
+				attr_list.push({name: prefix+prop[cl]["display_name"]})
+			}
+		
 			//remove duplicates
 			attr_list = attr_list.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
@@ -570,6 +584,7 @@ function getAssociations(){
 				attr.buttonName = "required-attribute";
 				return attr;
 			});
+			
 			return attr_list;
 
 		}

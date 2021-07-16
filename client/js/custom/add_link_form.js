@@ -1,9 +1,9 @@
 Interpreter.customMethods({
-	AddLink: function () {
+	AddLink: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
 		
-		_.each(getAllAssociations(), function(a){
+		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
 		Template.AddLink.fullList.set(asc);
@@ -17,10 +17,10 @@ Interpreter.customMethods({
 		$("#add-link-form").modal("show");
 	},
 
-	AddSubquery: function () {
+	AddSubquery: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
-		_.each(getAllAssociations(), function(a){
+		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
 		Template.AddLink.fullList.set(asc);
@@ -70,10 +70,10 @@ Interpreter.customMethods({
         }, newPosition);
 	},
 
-	AddLinkTest: function () {
+	AddLinkTest: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
-		_.each(getAllAssociations(), function(a){
+		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
 		Template.AddLink.fullList.set(asc);		
@@ -109,7 +109,7 @@ Template.AddLink.helpers({
 
 Template.AddLink.events({
 //Buttons
-	"click #ok-add-link": function() {
+	"click #ok-add-link": async function() {
 
 		//Read user's choise
 		var obj = $('input[name=link-list-radio]:checked').closest(".association");
@@ -127,7 +127,7 @@ Template.AddLink.events({
 	            console.log("Choose valid link");
 	            $(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link</div>");
 	        } else {
-	        	Template.AddLink.fullList.set(getAllAssociations());
+	        	Template.AddLink.fullList.set(await getAllAssociations());
 	        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, choose link. <br> Path deffinition will be added later</div>");
 	        }
         } else {
@@ -194,6 +194,7 @@ Template.AddLink.events({
 
 				//Fields
 				var attr_list = [{attribute: ""}];
+				
 				var schema = new VQ_Schema();
 
 				if (schema.classExist(class_name)) {
@@ -606,7 +607,7 @@ function confirmSubquery(){
 	// console.log(txt);
 }
 
-function getAllAssociations(){
+async function getAllAssociations(){
 	//start_elem
 		var start_elem_id = Session.get("activeElement");
 		var startElement = new VQ_Element(start_elem_id);
@@ -625,7 +626,7 @@ function getAllAssociations(){
 			
 			if(className === null) className= "";
 			
-			var schema = new VQ_Schema();
+			// var schema = new VQ_Schema();
 			var proj = Projects.findOne({_id: Session.get("activeProject")});
 
 			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
@@ -641,15 +642,20 @@ function getAllAssociations(){
 				}					
 			} 
 
-			if (schema.classExist(className)) {
+			// if (schema.classExist(className)) {
 				
-				var allAssociations = schema.findClassByName(className).getAllAssociations();
+				// var allAssociations = schema.findClassByName(className).getAllAssociations();
+				var param = {propertyKind:'Object', className: className}
+				// if(filter != null) param["filter"] = filter;
+				var prop = await dataShapes.getProperties(param)
+				var allAssociations = prop["data"];
 
 				//remove duplicates - moved to getAllAssociations()
 				//allAssociations = allAssociations.filter(function(obj, index, self) { 
 				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 				//});
 				_.each(allAssociations, function(e){
+	
 					var cardinality = "";
 					var colorLetters = ""; 				
 					if (proj) {				
@@ -685,17 +691,20 @@ function getAllAssociations(){
 					
 					
 					//prefix:name
-					var eName = e.short_name
+					var prefix;
+					if(e.is_local == true)prefix = "";
+					else prefix = e.prefix+":";
+					var eName = prefix + e.display_name;
 					
 					
-					if(e.type == "=>") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
+					if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
 					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
 					
 					if (e.class == className && e.type == "=>"){ //Link to itself
 						ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
 					}
 				});
-			}
+			// }
 
 			//default value for any case
 			if (proj){
@@ -740,7 +749,7 @@ function getAllAssociations(){
 
       		asc = asc.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-			});  		
+			}); 	
 			return asc;
 		}
 }

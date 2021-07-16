@@ -490,6 +490,16 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		
 	if(grammarType == "className"){
 			
+			/*try {
+			// var parsed_exp = testGramma_completion.parse(text, {schema:"", symbol_table:"", className:"", type:grammarType, context:""});
+			var parsed_exp = await testGrammar_completion_parser.parse(text, {schema:"", symbol_table:"", className:"", type:grammarType, context:""});
+			}catch (com) {
+				// console.log("uuuuuuuuuuuuuuuuuu", text, com);
+				console.log("uuuuuuuuuuuuuuuuuu", JSON.parse(com["message"]));
+				// var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
+				// return c;
+			}*/
+			
 			var c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
@@ -503,7 +513,10 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			cls = cls["data"];
 
 			for(var cl in cls){
-				c["suggestions"].push({name: cls[cl]["prefix"]+":"+cls[cl]["display_name"], priority:100, type:3})
+				var prefix;
+				if(cls[cl]["is_local"] == true)prefix = "";
+				else prefix = cls[cl]["prefix"]+":";
+				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:3})
 			}
 			return c;
 	} else {
