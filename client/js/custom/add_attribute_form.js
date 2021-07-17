@@ -70,7 +70,7 @@ Template.AddAttribute.events({
 			}
 		  });
 		};
-		
+
 		return;
 	},
 	
@@ -109,7 +109,7 @@ Template.AddAttribute.events({
 		 buttonn.each(function () {
 			$(this)[0].className = "button button-required";
 		  });
-		
+		  
 		return;
 	},
 	
@@ -297,15 +297,15 @@ Template.AddAttribute.events({
 	
 	'click #attribute-apply-button': async function(e) {
 		var value = $("#mySearch-attribute").val().toLowerCase();
-		var attr_list = await getAttributes();
-		var link_list = await getAssociations();
-		attr_list = attr_list.filter(function(obj) { 
-			return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		});
+		var attr_list = await getAttributes(value);
+		var link_list = await getAssociations(value);
+		//attr_list = attr_list.filter(function(obj) { 
+		//	return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
+		//});
 		Template.AddAttribute.attrList.set(attr_list);
-		link_list = link_list.filter(function(obj) { 
-			return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		});
+		//link_list = link_list.filter(function(obj) { 
+		//	return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
+		//});
 		Template.AddAttribute.linkList.set(link_list);
 		return;
 	},
@@ -439,7 +439,7 @@ Template.AddNewAttribute.events({
 		document.getElementById("add-new-attribute-expression").value = "";
 		document.getElementById("add-new-attribute-requireValues").checked = false;
 		document.getElementById("add-new-attribute-helper").checked = false;
-		
+	
 		return;
 	},
 	
@@ -499,8 +499,18 @@ async function getAttributes(filter){
 			attr_list.push({separator:"line"});*/
 
 			var class_name = vq_obj.getName();
-			var param = {propertyKind:'Data', className: class_name}
+			var individual =  vq_obj.getInstanceAlias();
+		
+			var param = {propertyKind:'Data', filterColumn:'Display_name'};
+			if (class_name !== null && class_name !== undefined) param["className"] = class_name;
+			if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 			if(filter != null) param["filter"] = filter;
+			var value = $("#mySearch-attribute").val()
+			if ($("#dbp").is(":checked") ) {
+				//param.namespaces = {notIn: ['dbp']};;
+				param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
+			}
+			// console.log(getExistingAttributes());
 			var prop = await dataShapes.getProperties(param);
 			prop = prop["data"];
 			
@@ -546,11 +556,18 @@ async function getAssociations(filter){
 			var attr_list = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
-			
+						
 			var class_name = vq_obj.getName();
+			var individual =  vq_obj.getInstanceAlias();
 			
-			var param = {propertyKind:'Object', className: class_name}
+			var param = {propertyKind:'Object', filterColumn:'Display_name'};
+			if (class_name !== null && class_name !== undefined) param["className"] = class_name;
+			if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 			if(filter != null) param["filter"] = filter;
+			if ($("#dbp").is(":checked") ) {
+				//param.namespaces = {notIn: ['dbp']};
+				param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
+			}
 			var prop = await dataShapes.getProperties(param)
 			prop = prop["data"];
 			

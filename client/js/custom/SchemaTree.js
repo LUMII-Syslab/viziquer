@@ -16,7 +16,7 @@ Template.schemaTree.helpers({
 
 async function  useFilter () {
 	var text = $('#filter_text').val();
-	console.log(text)
+	//console.log(text)
 	var params = {limit: Template.schemaTree.Count.get(), filter:text, filterColumn: 'display_name'};
 	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 		var namespaces = {};
@@ -36,9 +36,6 @@ async function  useFilter () {
 
 async function  useFilterP () {
 	var text = $('#filter_text2').val();
-	console.log("0000000000000000000")
-	console.log(text)
-	console.log($("#propType").val())
 	var params = {propertyKind:'All', limit: Template.schemaFilter.Count.get(), filter:text, filterColumn: 'display_name'};
 	if ($("#dbp").is(":checked") ) {
 		var namespaces = {notIn: ['dbp']};
@@ -141,7 +138,7 @@ Template.schemaTree.events({
 });
 
 Template.schemaFilter.rendered = async function() {
-	console.log("-----rendered schemaFilter----")
+	//console.log("-----rendered schemaFilter----")
 	var propTreeLimit = startCount;
 	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: propTreeLimit });  //,namespaces: { notIn: ['dbp']}
 	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: `${p.prefix}:${p.display_name}`, localName: `${p.prefix}:${p.display_name} (${p.cnt_x})`}});
@@ -153,7 +150,7 @@ Template.schemaFilter.rendered = async function() {
 }
 
 Template.schemaTree.rendered = async function() {
-	console.log("-----rendered schemaTree----")
+	//console.log("-----rendered schemaTree----")
 	var classTreeLimit = startCount;
 	//console.log(Session.get("activeProject"))
 	var clFull = await dataShapes.getClasses({limit: classTreeLimit ,namespaces: { in: ['dbo']}});

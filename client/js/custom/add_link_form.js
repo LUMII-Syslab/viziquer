@@ -13,7 +13,8 @@ Interpreter.customMethods({
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
 		$('input[id=goto-wizard]').prop("checked",false);
-		$('input[id=goto-wizard]').prop("disabled","disabled");		
+		$('input[id=goto-wizard]').prop("disabled","disabled");	
+		$("#mySearch")[0].value = "";		
 		$("#add-link-form").modal("show");
 	},
 
@@ -313,7 +314,7 @@ Template.AddLink.events({
 		$("div[id=errorField]").remove();
 	},
 
-	"keyup #mySearch": function(){
+	"keyup #mySearch5": function(){
 	// 	if (!Template.AddLink.testAddLink.curValue.data){ console.log("\nmySearch NORMAL action");
 	// 		$("div[id=errorField]").remove();
 	// 		var value = $("#mySearch").val().toLowerCase();
@@ -532,6 +533,14 @@ Template.AddLink.events({
 			confirmSubquery();
 		}
 	},
+	'click #apply-button': async function(e) {
+		var asc = [];
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+		})
+		Template.AddLink.fullList.set(asc);
+		return;
+	},
 
 });
 
@@ -645,10 +654,27 @@ async function getAllAssociations(){
 			// if (schema.classExist(className)) {
 				
 				// var allAssociations = schema.findClassByName(className).getAllAssociations();
-				var param = {propertyKind:'Object', className: className}
+				
+				var individual =  startElement.getInstanceAlias();
+				
+				var param = {propertyKind:'ObjectExt', filterColumn:'Display_name'};
+				if (className !== "" && className !== undefined) param["className"] = className;
+				if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
+				var filter = $("#mySearch").val().toLowerCase();
+				if(filter != null) param["filter"] = filter;
+				if ($("#dbp_for_links").is(":checked") ) {
+					//param.namespaces = {notIn: ['dbp']};
+					param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
+				}
+				
 				// if(filter != null) param["filter"] = filter;
 				var prop = await dataShapes.getProperties(param)
 				var allAssociations = prop["data"];
+				
+				_.each(allAssociations, function(e){
+					if ( e.mark === 'out') e.type = '=>';
+					else e.type = '<=';
+				});
 
 				//remove duplicates - moved to getAllAssociations()
 				//allAssociations = allAssociations.filter(function(obj, index, self) { 
@@ -749,7 +775,12 @@ async function getAllAssociations(){
 
       		asc = asc.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-			}); 	
+			}); 
+			
+			_.each(asc, function(e){
+				e.class = "";
+			});
+
 			return asc;
 		}
 }

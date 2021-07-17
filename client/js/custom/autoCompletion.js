@@ -504,11 +504,40 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			c["prefix"] = "";
 			c["suggestions"] = [];
 			var cls;
-			if(fullText != ""){
-				cls = await dataShapes.getClasses({filter:fullText});
-			}else{
-				cls = await dataShapes.getClasses();
-			}
+			
+			var params = {}
+			if(fullText != "") params.filter = fullText;
+			
+			var selected_elem_id = Session.get("activeElement");			
+			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+				
+				var vq_obj = new VQ_Element(selected_elem_id);
+				
+				var individual =  vq_obj.getInstanceAlias();
+				if (individual !== null && individual !== undefined) params.uriIndividual = individual;
+				
+				var pList = {in: [], out: []};
+				var field_list = vq_obj.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+				if ( field_list.length > 0) pList.out = field_list;
+			
+				var link_list =  vq_obj.getLinks();
+				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+					if (link.type === 'in')
+						pList.in.push(link);
+					else
+						pList.out.push(link);
+				});
+				
+				if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
+			}			
+			
+			cls = await dataShapes.getClasses(params);
+			//if(fullText != ""){
+			//	cls = await dataShapes.getClasses({filter:fullText});
+			//}else{
+			//	cls = await dataShapes.getClasses();
+			//}
 			
 			cls = cls["data"];
 
