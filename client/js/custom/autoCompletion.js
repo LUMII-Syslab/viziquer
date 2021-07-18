@@ -522,14 +522,14 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			
 				var link_list =  vq_obj.getLinks();
 				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in')
+					if (link.type === 'in' && link.name !== null )
 						pList.in.push(link);
-					else
+					if (link.type === 'out' && link.name !== null )
 						pList.out.push(link);
 				});
 				
 				if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
-				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
+				params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
 			cls = await dataShapes.getClasses(params);
@@ -548,8 +548,42 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:3})
 			}
 			return c;
-	} else {
-	
+	}
+	if(grammarType == "link"){
+		var p = {};
+		p["prefix"] = "";
+		p["suggestions"] = [];
+		var params = {propertyKind:'Object'};
+		if(fullText != "") params.filter = fullText;
+		var selected_elem_id = Session.get("activeElement");			
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+				
+			var vq_link = new VQ_Element(selected_elem_id);
+			if (vq_link.isLink()) {
+				var elements = vq_link.getElements();
+				var class_name = elements.start.getName();
+				var individual =  elements.start.getInstanceAlias();
+				if (class_name !== null && class_name !== undefined) params["className"] = class_name;
+				if (individual !== null && individual !== undefined) params["uriIndividual"] = individual;
+
+				class_name = elements.end.getName();
+				individual =  elements.end.getInstanceAlias();
+				if (class_name !== null && class_name !== undefined) params["otherEndClassName"] = class_name;
+				if (individual !== null && individual !== undefined) params["otherEndUriIndividual"] = individual;
+
+			}
+		}
+		props = await dataShapes.getProperties(params);
+		props = props["data"];
+		for(var pr in props){
+			var prefix;
+			if(props[pr]["is_local"] == true)prefix = "";
+			else prefix = props[pr]["prefix"]+":";
+			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:3})
+		}
+		return p;
+	}
+	else {
 		var act_elem = Session.get("activeElement");
 		try {
 			var schema = new VQ_Schema();

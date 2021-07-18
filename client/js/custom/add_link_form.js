@@ -657,7 +657,7 @@ async function getAllAssociations(){
 				
 				var individual =  startElement.getInstanceAlias();
 				
-				var param = {propertyKind:'ObjectExt', filterColumn:'Display_name'};
+				var param = {propertyKind:'ObjectExt'};
 				if (className !== "" && className !== undefined) param["className"] = className;
 				if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 				var filter = $("#mySearch").val().toLowerCase();

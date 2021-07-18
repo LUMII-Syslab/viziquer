@@ -784,6 +784,8 @@ Template.ontologySettings.events({
 				};
 				
 		Utilities.callMeteorMethod("updateProjectOntology", list);
+		dataShapes.changeActiveProject(Session.get("activeProject"));
+		
 	},
 
 	'click #use-default-grouping-separator' : function(e, templ) {

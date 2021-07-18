@@ -57,13 +57,13 @@ dataShapes = {
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
-				this.schema.ontologies = {};
-				this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
+				//this.schema.ontologies = {};
+				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
 				this.schema.limit = 100;
-				var ont_list = await this.getOntList(proj.schema);
-				var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
-				Utilities.callMeteorMethod("updateProject", list);
-				this.schema.ontologies.list = ont_list;
+				//var ont_list = await this.getOntList(proj.schema);
+				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
+				//Utilities.callMeteorMethod("updateProject", list);
+				//this.schema.ontologies.list = ont_list;
 			}
 		}
 	},
@@ -145,7 +145,7 @@ dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', className: 'umbel-rc:Park'})
 		//dataShapes.getProperties({propertyKind:'Data', className: 'umbel-rc:Park'})
 		//dataShapes.getProperties({propertyKind:'Connect', className: 'umbel-rc:Park', otherEndClassName: 'umbel-rc:Philosopher'}) 
-		//dataShapes.getProperties({propertyKind:'All', className: 'dbo:Meeting'})  -- tam nav propertiju  !!! ko darī ar tiem apastrofiem vārdos?
+		//dataShapes.getProperties({propertyKind:'All', className: 'dbo:Meeting'})  -- tam nav propertiju  !!! ko darīt ar tiem apastrofiem vārdos?
 		//dataShapes.getProperties({propertyKind:'All', className: 'umbel-rc:Philosopher'})
 		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})
 		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})

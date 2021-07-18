@@ -501,12 +501,12 @@ async function getAttributes(filter){
 			var class_name = vq_obj.getName();
 			var individual =  vq_obj.getInstanceAlias();
 		
-			var param = {propertyKind:'Data', filterColumn:'Display_name'};
+			var param = {propertyKind:'Data'};
 			if (class_name !== null && class_name !== undefined) param["className"] = class_name;
 			if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 			if(filter != null) param["filter"] = filter;
 			var value = $("#mySearch-attribute").val()
-			if ($("#dbp").is(":checked") ) {
+			if ($("#dbp_for_attributes").is(":checked") ) {
 				//param.namespaces = {notIn: ['dbp']};;
 				param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
 			}
@@ -560,11 +560,11 @@ async function getAssociations(filter){
 			var class_name = vq_obj.getName();
 			var individual =  vq_obj.getInstanceAlias();
 			
-			var param = {propertyKind:'Object', filterColumn:'Display_name'};
+			var param = {propertyKind:'Object'};
 			if (class_name !== null && class_name !== undefined) param["className"] = class_name;
 			if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 			if(filter != null) param["filter"] = filter;
-			if ($("#dbp").is(":checked") ) {
+			if ($("#dbp_for_attributes").is(":checked") ) {
 				//param.namespaces = {notIn: ['dbp']};
 				param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
 			}
