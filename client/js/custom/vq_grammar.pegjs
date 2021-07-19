@@ -11,75 +11,86 @@
       // string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
 			function resolveTypeFromSymbolTable(id) {
-				var context = options.context._id;
+				// var context = options.context._id;
 
-				if(typeof options.symbol_table[context] === 'undefined') return null;
+				// if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].type
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-						}
-					}
-					return st_row.type
-				} else {
-					return null
-				}
+				// var st_row = options.symbol_table[context][id];
+				// if (st_row) {
+					// if(st_row.length == 0) return null;
+					// if(st_row.length == 1){
+						// return st_row[0].type
+					// }
+					// if(st_row.length > 1){
+						// for (var symbol in st_row) {
+							// if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+						// }
+					// }
+					// return st_row.type
+				// } else {
+					// return null
+				// }
+				return null
 			};
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
 			function resolveKindFromSymbolTable(id) {
-				var context = options.context._id;
+				// var context = options.context._id;
 
-				if(typeof options.symbol_table[context] === 'undefined') return null;
+				// if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].kind
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-						}
-					}
-					return st_row.kind
-				} else {
-					return null
-				}
+				// var st_row = options.symbol_table[context][id];
+				// if (st_row) {
+					// if(st_row.length == 0) return null;
+					// if(st_row.length == 1){
+						// return st_row[0].kind
+					// }
+					// if(st_row.length > 1){
+						// for (var symbol in st_row) {
+							// if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+						// }
+					// }
+					// return st_row.kind
+				// } else {
+					// return null
+				// }
+				return null
 			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
+			async function resolveTypeFromSchemaForClass(id) {
+				var cls = await dataShapes.resolveClassByName({name: id})
+				if(cls["data"].length > 0){
+					return cls["data"][0];
+				}
+				
+				return null;
+			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
 			function resolveTypeFromSchemaForAttributeAndLink(id) {
-				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-				var res = aorl[0];
-				if (!res) { 
-					res = options.schema.resolveLinkByName(id); 
-					if (res) res["property_type"] = "OBJECT_PROPERTY"
-				}
-				else {
-						res["parentType"] = aorl[1];
-						res["property_type"] = "DATA_PROPERTY";
-				};
-				return res
+				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+				// var res = aorl[0];
+				// if (!res) { 
+					// res = options.schema.resolveLinkByName(id); 
+					// if (res) res["property_type"] = "OBJECT_PROPERTY"
+				// }
+				// else {
+						// res["parentType"] = aorl[1];
+						// res["property_type"] = "DATA_PROPERTY";
+				// };
+				// return res
+				return null
 			};
 			// string -> idObject
 			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
 			// then in schema. Null if does not exist
-			function resolveType(id) {
+			async function resolveType(id) {
+			  
 			  var t=resolveTypeFromSymbolTable(id);
 				if (!t) {
 					if (options.exprType) {
-					  t=resolveTypeFromSchemaForClass(id);
+					  t= await resolveTypeFromSchemaForClass(id);
 					  if (!t) {
 						  t=resolveTypeFromSchemaForAttributeAndLink(id)
 					  }

@@ -3,7 +3,7 @@ Interpreter.customMethods({
 
   Foo: function() { console.log("This menu item does nothing") },
 
-  ExecuteSPARQL_from_diagram: function() {
+  ExecuteSPARQL_from_diagram: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
@@ -12,7 +12,7 @@ Interpreter.customMethods({
       return e["_id"]
     });
 
-    var queries = genAbstractQueryForElementList(elems_in_diagram_ids);
+    var queries =  await genAbstractQueryForElementList(elems_in_diagram_ids);
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
        Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
@@ -21,13 +21,13 @@ Interpreter.customMethods({
        Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
        return;
     };
-    _.each(queries,function(q) {
+    _.each(queries,async function(q) {
 		if(typeof q.messages !== "undefined"){
 		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
 	  }
       else{
          //console.log(JSON.stringify(q,null,2));
-     var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+     var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 		 var rootClass = abstractQueryTable["root"];
 		 var result = generateSPARQLtext(abstractQueryTable);
 		 // console.log(result["SPARQL_text"]);
@@ -39,11 +39,11 @@ Interpreter.customMethods({
     })
   },
 
-  ExecuteSPARQL_from_selection: function() {
+  ExecuteSPARQL_from_selection: async function() {
     var editor = Interpreter.editor;
 		var elem_ids = _.keys(editor.getSelectedElements());
     // allow single node query for every element
-    var queries = (elem_ids.length == 1) ? genAbstractQueryForElementList(elem_ids,elem_ids) : genAbstractQueryForElementList(elem_ids);
+    var queries = (elem_ids.length == 1) ?  await genAbstractQueryForElementList(elem_ids,elem_ids) :  await genAbstractQueryForElementList(elem_ids);
 
     // ErrorHandling - just one query at a moment allowed
     if (queries.length==0) {
@@ -53,13 +53,13 @@ Interpreter.customMethods({
        Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
        return;
     };
-    _.each(queries,function(q) {
+    _.each(queries,async function(q) {
 		if(typeof q.messages !== "undefined"){
 		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
 	  }
       else{
 			 //console.log(JSON.stringify(q,null,2));
-		 var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+		 var abstractQueryTable =  await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"], result);
@@ -71,7 +71,7 @@ Interpreter.customMethods({
     })
   },
 
-  ExecuteSPARQL_from_component: function() {
+  ExecuteSPARQL_from_component: async function() {
     var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
 
@@ -102,7 +102,7 @@ Interpreter.customMethods({
 
        var elem_ids = _.keys(visited_elems);
 
-       var queries = genAbstractQueryForElementList(elem_ids);
+       var queries =  await genAbstractQueryForElementList(elem_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
           Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
@@ -111,13 +111,13 @@ Interpreter.customMethods({
           Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
           return;
        };
-       _.each(queries,function(q) {
+       _.each(queries,async function(q) {
 		   if(typeof q.messages !== "undefined"){
-		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
-	  }
-      else{
+			Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+		  }
+		  else{
             //console.log(JSON.stringify(q,null,2));
-		   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+		   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"]);
@@ -126,14 +126,14 @@ Interpreter.customMethods({
 		   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
 		   if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
-	  }
+		}
        })
     } else {
       // nothing selected
     }
   },
 
-  ExecuteSPARQL_from_query_part: function() {
+  ExecuteSPARQL_from_query_part: async function() {
     var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
 
@@ -179,7 +179,7 @@ Interpreter.customMethods({
 
        GetComponentIds(selected_elem);
 
-       var queries = genAbstractQueryForElementList(query_elements_ids, root_elements_ids);
+       var queries =  await genAbstractQueryForElementList(query_elements_ids, root_elements_ids);
        // ErrorHandling - just one query at a moment allowed
        if (queries.length==0) {
           Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
@@ -188,13 +188,13 @@ Interpreter.customMethods({
           Interpreter.showErrorMsg("The query has to contain exactly one main query class (orange box). Mark all other classes as condition classes (cf. the Extra tab in property sheet).", -3);
           return;
        };
-       _.each(queries,function(q) {
+       _.each(queries,async function(q) {
 		   if(typeof q.messages !== "undefined"){
-		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
-	  }
-      else{
+			Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+		  }
+		  else{
             //console.log(JSON.stringify(q,null,2));
-		   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+		   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"]);
@@ -210,17 +210,17 @@ Interpreter.customMethods({
      }
   },
 
-  GenerateSPARQL_from_selection: function() {
+  GenerateSPARQL_from_selection: async function() {
     // get _id-s of selected elements - it serves as potential root Classes
     // and as allowed elements
     var editor = Interpreter.editor;
 		var elem_ids = _.keys(editor.getSelectedElements());
     // allow execute single-class non-root elements
-    if (elem_ids.length == 1) { GenerateSPARQL_for_ids(elem_ids, elem_ids) } else { GenerateSPARQL_for_ids(elem_ids) };
+    if (elem_ids.length == 1) {  await GenerateSPARQL_for_ids(elem_ids, elem_ids) } else {  await GenerateSPARQL_for_ids(elem_ids) };
 
   },
 
-  GenerateSPARQL_from_component: function() {
+  GenerateSPARQL_from_component: async function() {
 
 	var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
@@ -251,14 +251,14 @@ Interpreter.customMethods({
        GetComponentIds(selected_elem);
 
        var elem_ids = _.keys(visited_elems);
-       GenerateSPARQL_for_ids(elem_ids);
+       await GenerateSPARQL_for_ids(elem_ids);
     } else {
       // nothing selected
     }
 
   },
 
-  GenerateSPARQL_from_query_part: function() {
+  GenerateSPARQL_from_query_part: async function() {
     var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
 
@@ -304,14 +304,14 @@ Interpreter.customMethods({
 
        GetComponentIds(selected_elem);
 
-       GenerateSPARQL_for_ids(query_elements_ids, root_elements_ids)
+        await GenerateSPARQL_for_ids(query_elements_ids, root_elements_ids)
      } else {
        // nothing selected
      }
 
   },
 
-  GenerateSPARQL_from_diagram: function() {
+  GenerateSPARQL_from_diagram: async function() {
 
 	// get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
@@ -321,10 +321,10 @@ Interpreter.customMethods({
       return e["_id"]
     });
 
-    GenerateSPARQL_for_ids(elems_in_diagram_ids)
+     await GenerateSPARQL_for_ids(elems_in_diagram_ids)
   },
 
-  GenerateSPARQL_from_diagram_for_all_queries: function() {
+  GenerateSPARQL_from_diagram_for_all_queries: async function() {
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
 
@@ -342,11 +342,11 @@ Interpreter.customMethods({
 });
 
 // generate SPARQL for given id-s
-function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
+async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
   Interpreter.destroyErrorMsg();
  
   
-  var queries = genAbstractQueryForElementList(list_of_ids, root_elements_ids);
+  var queries = await genAbstractQueryForElementList(list_of_ids, root_elements_ids);
   // ErrorHandling - just one query at a moment allowed
   if (queries.length==0) {
      Interpreter.showErrorMsg("The query has to contain a main query class (orange box).", -3);
@@ -356,7 +356,7 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
      return;
   };
   // goes through all queries found within the list of VQ element ids
-  _.each(queries, function(q) {
+  _.each(queries, async function(q) {
 	  if(typeof q.messages !== "undefined"){
 		Interpreter.showErrorMsg(q.messages.join(" // "), -3);
 		Session.set("generatedSparql", "");
@@ -364,18 +364,18 @@ function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 	  }
       else{
 		  // console.log(JSON.stringify(q,null,2));
-   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-   // console.log(abstractQueryTable, JSON.stringify(abstractQueryTable,null,2));
-   var rootClass = abstractQueryTable["root"];
-  var result = generateSPARQLtext(abstractQueryTable);
-  // console.log(result["SPARQL_text"]);
+	   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
+	   // console.log(abstractQueryTable, JSON.stringify(abstractQueryTable,null,2));
+	   var rootClass = abstractQueryTable["root"];
+	  var result = generateSPARQLtext(abstractQueryTable);
+	  // console.log(result["SPARQL_text"]);
 
-   Session.set("generatedSparql", result["SPARQL_text"]);
-   setText_In_SPARQL_Editor(result["SPARQL_text"]);
+	   Session.set("generatedSparql", result["SPARQL_text"]);
+	   setText_In_SPARQL_Editor(result["SPARQL_text"]);
 
-   $('#vq-tab a[href="#sparql"]').tab('show');
-   // Interpreter.destroyErrorMsg();
-  }
+	   $('#vq-tab a[href="#sparql"]').tab('show');
+	   // Interpreter.destroyErrorMsg();
+	  }
   })
 }
 
@@ -494,14 +494,14 @@ function executeSparqlString(sparql, paging_info) {
 
 
 // generate SPARQL for all queries
-function GenerateSPARQL_for_all_queries(list_of_ids) {
+async function GenerateSPARQL_for_all_queries(list_of_ids) {
   Interpreter.destroyErrorMsg();
-  var queries = genAbstractQueryForElementList(list_of_ids);
+  var queries =  await genAbstractQueryForElementList(list_of_ids);
 
   // goes through all queries found within the list of VQ element ids
-  _.each(queries, function(q) {
+  _.each(queries, async function(q) {
        //console.log(JSON.stringify(q,null,2));
-   var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 
    var result = generateSPARQLtext(abstractQueryTable);
    // console.log(result["SPARQL_text"]);
@@ -668,17 +668,19 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 }
 
 // find all prefixes used it a SPARQL query
-// expressionTable - query abstract syntex table
+// expressionTable - query abstract syntax table
 // prefixTable - table with prefixes find so far
 function findUsedPrefixes(expressionTable, prefixTable){
 
 	for(var key in expressionTable){
-		if(key == 'Prefix') {
+		if(key == 'prefix') {
+			
 			if(typeof prefixTable[expressionTable[key]] === 'undefined') prefixTable[expressionTable[key]] = 1;
 			else prefixTable[expressionTable[key]] = prefixTable[expressionTable[key]] +1;
 		}
 		if(typeof expressionTable[key] == 'object') prefixTable = findUsedPrefixes(expressionTable[key], prefixTable);
 	}
+	
 	return prefixTable;
 }
 
@@ -701,7 +703,7 @@ function findEmptyPrefix(prefixTable){
 // generate SPARQL query text
 // abstractQueryTable - abstract query sintex table
 function generateSPARQLtext(abstractQueryTable){
-	console.log("abstractQueryTable", abstractQueryTable)
+	// console.log("abstractQueryTable", abstractQueryTable)
 		 var messages = [];
 
 		 var rootClass = abstractQueryTable["root"];
@@ -717,7 +719,7 @@ function generateSPARQLtext(abstractQueryTable){
 
 		 //empty prefix in query
 		 var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
-
+		
 		 //table with unique variable names
 		 var variableNamesAll = [];
 
@@ -905,6 +907,7 @@ function generateSPARQLtext(abstractQueryTable){
 
 			 //Prefixes
 			 var prefixes = "";
+			  
 			 for (var prefix in prefixTable){
 				if(typeof prefixTable[prefix] === "string") prefixes = prefixes + "PREFIX " + prefix + " " + prefixTable[prefix] + "\n";
 			 }
@@ -1896,7 +1899,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
 							 //orderGroupBy.push(result["exp"]);
 							 orderTripleTable.push(result["triples"]);
-							 console.log("ccccccccc", result)
+
 							 messages.push({
 								"type" : "Warning",
 								"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",

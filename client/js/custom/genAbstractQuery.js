@@ -3,7 +3,7 @@ Interpreter.customMethods({
 
  // -->
   // method just prints active diagram's Abstract Query Syntax tree to the console
-  GenerateAbstractQuery: function() {
+  GenerateAbstractQuery: async function() {
     console.log("Generate AbstractQuery called");
     // get _id of the active ajoo diagram
     var diagramId = Session.get("activeDiagram");
@@ -14,9 +14,10 @@ Interpreter.customMethods({
     });
     //console.log(elems_in_diagram_ids);
     // Print All Queries within the diagram
-    _.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) {
+    _.each(await genAbstractQueryForElementList(elems_in_diagram_ids),async function(q) {
          //console.log(JSON.stringify(q,null,2));
-         console.log(JSON.stringify(resolveTypesAndBuildSymbolTable(q),null,2));
+		 var st = await resolveTypesAndBuildSymbolTable(q)
+         console.log(JSON.stringify(st,null,2));
          //resolveTypesAndBuildSymbolTable(q);
        })
     //_.each(genAbstractQueryForElementList(elems_in_diagram_ids),function(q) { console.log(JSON.stringify(q,null,2))});
@@ -29,50 +30,63 @@ Interpreter.customMethods({
 // For the query in abstract syntax
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
-resolveTypesAndBuildSymbolTable = function (query) {
-
+resolveTypesAndBuildSymbolTable = async function (query) {
   // TODO: This is not efficient to recreate schema each time
-  var schema = new VQ_Schema();
+  // var schema = new VQ_Schema();
   // Adding default namespace
-  if (schema && query && query.root) {
+ /* if (schema && query && query.root) {
      query.root.defaultNamespace = schema.URI;
      query.prefixes = schema.getPrefixes();
      //console.log(schema.getPrefixes());
-  };
+  };*/
+  if (query && query.root) {
+	// query.root.defaultNamespace = schema.URI;
+	query.prefixes = await dataShapes.getNamespaces();
+  }
+
   // string -->[IdObject]
-  function resolveClassByName(className) {
-    return schema.resolveClassByName(className)
+  async function resolveClassByName(className) {
+    
+	var cls = await dataShapes.resolveClassByName({name: className})
+	if(cls["data"].length > 0){
+		return cls["data"][0];
+	}
+	return null;
+	// return schema.resolveClassByName(className)
   };
 
   // string -->[IdObject]
-  function resolveLinkByName(linkName) {
-    return schema.resolveLinkByName(linkName)
+  async function resolveLinkByName(linkName) {
+	return await dataShapes.resolvePropertyByName({name: linkName})
+    // return schema.resolveLinkByName(linkName)
   };
 
   // string, string -->[IdObject]
-  function resolveAttributeByName(className, attributeName) {
-    return schema.resolveAttributeByName(className, attributeName)
+  async function resolveAttributeByName(className, attributeName) {
+    return await dataShapes.resolvePropertyByName({name: attributeName})
+	// return schema.resolveAttributeByName(className, attributeName)
   };
 
   var symbol_table = {};
 
    //JSON -->
   // function recursively modifies query by adding identification info
-  function resolveClass(obj_class, parents_scope_table) {
+  async function resolveClass(obj_class, parents_scope_table) {
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
 	if(obj_class.identification.localName != null) obj_class.identification.localName = obj_class.identification.localName.trim();
 	if(obj_class.identification.localName == "") obj_class.identification.localName = null;
 
-    
-
-    _.extend(obj_class.identification, resolveClassByName(obj_class.identification.localName));
+    var resCl = await resolveClassByName(obj_class.identification.localName);
+	
+    _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
 
 	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
-    _.extend(obj_class.identification, parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification));
+	var par = await parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification)
+    _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
 
@@ -90,49 +104,54 @@ resolveTypesAndBuildSymbolTable = function (query) {
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
 
-    obj_class.conditionLinks.forEach(function(cl) {
+    for (const cl of obj_class.conditionLinks) {
+    // obj_class.conditionLinks.forEach(function(cl) {
       _.extend(cl.identification,resolveLinkByName(cl.identification.localName));
       _.extend(cl.identification, parsePathExpression(cl.identification.localName, obj_class.identification))
-    });
+    }
+	// );
 
-    obj_class.fields.forEach(function(f) {
+     for (const f of obj_class.fields) {
+    // obj_class.fields.forEach(async function(f) {
         // CAUTION .............
         // HACK: * and ** fields
-        if (f.exp=="*") {
-           var cl =schema.findClassByName(obj_class.identification.localName);
-           if (cl) {
-              var attr_list = cl.getAllAttributes();
-              attr_list.forEach(function(attr) {
-                var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
-                obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
-              });
+        // if (f.exp=="*") {
+           // var cl =schema.findClassByName(obj_class.identification.localName);
+           // if (cl) {
+              // var attr_list = cl.getAllAttributes();
+              // attr_list.forEach(async function(attr) {
+                // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
+                // var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
+              // });
 
-			  obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
-           };
-        } else if (f.exp=="(*attr)") {
-           var cl =schema.findClassByName(obj_class.identification.localName);
-           if (cl) {
-              var attr_list = cl.getAllAttributes()
-              attr_list.forEach(function(attr) {
-                var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
-                obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
-              });
+			  // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
+           // };
+        // } else if (f.exp=="(*attr)") {
+           // var cl =schema.findClassByName(obj_class.identification.localName);
+           // if (cl) {
+              // var attr_list = cl.getAllAttributes()
+              // attr_list.forEach(async function(attr) {
+                // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
+                // var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
+              // });
 
-           };
-        } else if (f.exp=="(*sub)") {
-           obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
-        } else if (f.alias) {
+           // };
+        // } else if (f.exp=="(*sub)") {
+           // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
+        // } else if (f.alias) {
+        if (f.alias) {
              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
         } else {
           // field without alias? We should somehow identify it
           // obj_id + exp
           my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
         };
-    });
-
-    obj_class.aggregations.forEach(function(f) {
+    }
+	// );
+	for (const f of obj_class.aggregations) {
+    // obj_class.aggregations.forEach(function(f) {
         if (f.alias) {
           if ((obj_class.linkType == "REQUIRED" || obj_class.linkType == "OPTIONAL") && (obj_class.isSubQuery || obj_class.isGlobalSubQuery)) {
              // TODO: longer path!
@@ -142,36 +161,46 @@ resolveTypesAndBuildSymbolTable = function (query) {
 			  diagramm_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 		  };
         };
-    });
+    }
+	// );
 
-    obj_class.children.forEach(function(ch) {
-      resolveClass(ch, my_scope_table);
+	for (const ch of obj_class.children) {
+    // obj_class.children.forEach(async function(ch) {
+      await resolveClass(ch, my_scope_table);
 
-    });
+    }
+	// );
 
     // we should copy to parent
     if (obj_class.linkIdentification) {
        if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
-            my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+            for (const ca of my_scope_table.CLASS_ALIAS) {
+			// my_scope_table.CLASS_ALIAS.forEach(function(ca) {
                 parents_scope_table.CLASS_ALIAS.push(_.clone(ca))
-            });
-            my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
+            }
+			// );
+			for (const ca of my_scope_table.AGGREGATE_ALIAS) {
+            // my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
 				clone_ca = _.clone(ca);
 				if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
 				  if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
 			    };
 				if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
                 parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
-            });
+            }
+			// );
        };
 
        if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
-         my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+         for (const ca of my_scope_table.CLASS_ALIAS) {
+		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
              parents_scope_table.CLASS_ALIAS.push(clone_ca)
-         });
-         my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
+         }
+		 // );
+		 for (const ca of my_scope_table.AGGREGATE_ALIAS) {
+         // my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
              if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
@@ -180,17 +209,21 @@ resolveTypesAndBuildSymbolTable = function (query) {
 				if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
 			 }
              parents_scope_table.AGGREGATE_ALIAS.push(clone_ca)
-         });
+         }
+		 // );
        };
 
 
        if (obj_class.linkType !== "NOT") {
-         my_scope_table.CLASS_ALIAS.forEach(function(ca) {
+         for (const ca of  my_scope_table.CLASS_ALIAS) {
+		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
              parents_scope_table.CLASS_ALIAS.push(clone_ca)
-         });
-		 my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
+         }
+		 // );
+		 for (const ca of   my_scope_table.UNRESOLVED_FIELD_ALIAS) {
+		 // my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
@@ -200,8 +233,10 @@ resolveTypesAndBuildSymbolTable = function (query) {
 			if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
 		   }
            parents_scope_table.UNRESOLVED_FIELD_ALIAS.push(clone_ca)
-         });
-         my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
+         }
+		 // );
+		  for (const ca of   my_scope_table.UNRESOLVED_NAME) {
+         // my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
@@ -212,7 +247,8 @@ resolveTypesAndBuildSymbolTable = function (query) {
 		   }
            parents_scope_table.UNRESOLVED_NAME.push(clone_ca)
 		   
-         });
+         }
+		 // );
        };
     }
 
@@ -244,16 +280,19 @@ resolveTypesAndBuildSymbolTable = function (query) {
   };
 
   var empty_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
-  resolveClass(query.root, empty_scope_table);
+  await resolveClass(query.root, empty_scope_table);
 
   // String, String, ObjectId --> JSON
   // Parses the text and returns object with property "parsed_exp"
   // Used only when parsing class name
-  function parseExpression(str_expr, exprType, context) {
+  async function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_grammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
-		  // var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
+		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, symbol_table:symbol_table, exprType:exprType, context:context});
+		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
+		  // var test = testGrammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
+		  // var test = await testGrammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context})
+		  // parsed_exp = await addSchemaInformation(parsed_exp, exprType);
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -271,7 +310,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  // var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context._id});
+		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:null, symbol_table:symbol_table, context:context._id});
 		  //console.log(JSON.stringify(parsed_exp2,null,2));
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
@@ -285,11 +324,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
-  function parseExpObject(exp_obj, context) {
+  async function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
 	   try {
-		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		 // console.log("parse_obj", parse_obj);
 		} catch (e) {
 		  // TODO: error handling
@@ -303,7 +342,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
 		if(parse_obj != "[*sub]"){
 			try {
-			  var parsed_exp = vq_grammar_parser.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
@@ -367,19 +406,19 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
   // JSON -->
   // Parses all expressions in the object and recursively in all children
-  function resolveClassExpressions(obj_class, parent_class) {
+  async function resolveClassExpressions(obj_class, parent_class) {
 
   if (parent_class) {
       var pc_st = symbol_table[parent_class.identification._id];
       var oc_st = symbol_table[obj_class.identification._id];
 
       // copy from parent, DOWN
-      _.each(pc_st, function(entry_list, id) {
-        _.each(entry_list, function(entry) {
+      _.each(pc_st, async function(entry_list, id) {
+        _.each(entry_list, async function(entry) {
           if (((obj_class.linkType == "REQUIRED") && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) ||
               (entry.kind == "CLASS_ALIAS" && !((obj_class.linkType=="OPTIONAL") && entry.upByOptional))) {
             if (!oc_st[id]) { oc_st[id] = []; };
-            if (!_.any(oc_st[id], function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
+            if (!_.any(oc_st[id], async function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
                 // Note that _.clone does SHALLOW copy. Thus type is not copied, but referenced.
                 entry_clone = _.clone(entry);
                 if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) { entry_clone["downBySubquery"] = true; };
@@ -392,13 +431,17 @@ resolveTypesAndBuildSymbolTable = function (query) {
 
     }
 
-    obj_class.conditions.forEach(function(c) {parseExpObject(c,obj_class.identification);});
-    obj_class.aggregations.forEach(function(a) {parseExpObject(a,obj_class.identification);});
+    for (const c of obj_class.conditions) {await parseExpObject(c,obj_class.identification);};
+	// obj_class.conditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);});
+	for (const a of obj_class.aggregations) {await parseExpObject(a,obj_class.identification);};
+    // obj_class.aggregations.forEach(async function(a) {await parseExpObject(a,obj_class.identification);});
     // CAUTION!!!!! Hack for * and **
     // obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
     obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="(*attr)" || f.exp=="(*sub)")});
 
-    obj_class.fields.forEach(function(f) {
+
+	for (const f of obj_class.fields){
+    // await obj_class.fields.forEach(async function(f) {
       // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {
         if (obj_class.instanceAlias==null) {
@@ -408,7 +451,7 @@ resolveTypesAndBuildSymbolTable = function (query) {
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
             var condition = {exp:"(this) = " + strURI};
-			      parseExpObject(condition, obj_class.identification);
+			      await parseExpObject(condition, obj_class.identification);
 			      obj_class.conditions.push(condition);
             obj_class.instanceAlias = null;
           } else {
@@ -421,9 +464,11 @@ resolveTypesAndBuildSymbolTable = function (query) {
         f.exp="GROUP_CONCAT("+f.exp+")";
       };
 
-         parseExpObject(f, obj_class.identification);
+         await parseExpObject(f, obj_class.identification);
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
+		 // console.log("ffff",f,f.parsed_exp, JSON.stringify(f.parsed_exp,null,2) )
+		
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
          if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
@@ -497,32 +542,47 @@ resolveTypesAndBuildSymbolTable = function (query) {
               var expression = f.exp;
 			        if (f.alias) expression = f.alias;
 			        var condition = {exp:"EXISTS(" + expression + ")"};
-			        parseExpObject(condition, obj_class.identification);
+			        await parseExpObject(condition, obj_class.identification);
 			        obj_class.conditions.push(condition);
             }
-         }
-    });
+         } 
+		
+		
+    }
+	// );
+	
+	
 
-    if (obj_class.orderings) { obj_class.orderings.forEach(function(c) {parseExpObject(c,obj_class.identification);}) };
-    if (obj_class.groupings) { obj_class.groupings.forEach(parseExpObject) };
-    if (obj_class.havingConditions) { obj_class.havingConditions.forEach(function(c) {parseExpObject(c,obj_class.identification);}) };
+    if (obj_class.orderings) { 
+		for (const c of obj_class.orderings){await parseExpObject(c,obj_class.identification);}
+		// obj_class.orderings.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) 
+	};
+    if (obj_class.groupings) { 
+		for (const c of obj_class.groupings){await parseExpObject}
+		// obj_class.groupings.forEach(await parseExpObject) 
+	};
+    // if (obj_class.havingConditions) { obj_class.havingConditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) };
 
+	for (const ch of obj_class.children){ await resolveClassExpressions(ch,obj_class); }
+    // obj_class.children.forEach(async function(ch) { await resolveClassExpressions(ch,obj_class); });
+	
 
-    obj_class.children.forEach(function(ch) { resolveClassExpressions(ch,obj_class); });
+	
     return;
   };
 
-  resolveClassExpressions(query.root);
+  await resolveClassExpressions(query.root);
+  
   cleanSymbolTable();
 
-  //console.log(symbol_table);
+  
   return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes}
 };
 
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
-genAbstractQueryForElementList = function (element_id_list, virtual_root_id_list) {
+genAbstractQueryForElementList = async function (element_id_list, virtual_root_id_list) {
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
   // determine which elements are root elements
@@ -776,4 +836,17 @@ function replaceArithmetics(parse_obj_table, sign){
 		else parse_obj = parse_obj  + sign + obj;
     });
 	return parse_obj
+}
+
+async function addSchemaInformation(expressionTable, exprType){
+	for(var key in expressionTable){
+		if(key == "var") {		
+			var res = await resolveType(expressionTable[key]["name"], exprType);
+			expressionTable[key]["type"] = res;
+		}
+		if(typeof expressionTable[key] == 'object'){
+			expressionTable[key] = await addSchemaInformation(expressionTable[key], exprType);
+		}
+	}
+	return expressionTable;
 }
