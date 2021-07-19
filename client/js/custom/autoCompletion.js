@@ -58,7 +58,7 @@ var currentFocus = 0;
 
 
 generateSymbolTableAC = function() {
-	if(isAutocompletionActive()==false){
+	/*if(isAutocompletionActive()==false){
 		
 		var editor = Interpreter.editor;
 		var elem = _.keys(editor.getSelectedElements());
@@ -103,6 +103,8 @@ generateSymbolTableAC = function() {
 	} else {
 		return symbolTable;
 	}
+	*/
+	return [];
   }
 
 autoCompletionAddCondition = async function(e) {
@@ -289,7 +291,7 @@ function autocomplete(inp, continuations) {
 		// continuations = { prefix: '', suggestions: []}
 		return;
 	}
-	if (continuations.suggestions.length === 0) {
+	if (typeof continuations.suggestions === "undefined" || continuations.suggestions.length === 0) {
 		// continuations.suggestions.push({type: 0, name: '-- no suggestions found --'});
 		// continuations.suggestions.push({type: 0, name: ''});
 		return;
@@ -549,7 +551,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			}
 			return c;
 	}
-	if(grammarType == "link"){
+	else if(grammarType == "link"){
 		var p = {};
 		p["prefix"] = "";
 		p["suggestions"] = [];
@@ -608,11 +610,38 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			var prefix;
 			if(props[pr]["is_local"] == true)prefix = "";
 			else prefix = props[pr]["prefix"]+":";
-			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:3})
+			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
 		}
 		return p;
 	}
-	else {
+	else if(grammarType == "attribute"){
+		var p = {};
+		p["prefix"] = "";
+		p["suggestions"] = [];
+		
+		var params = {propertyKind:'Data'};
+		if(fullText != "") params.filter = fullText;
+		var selected_elem_id = Session.get("activeElement");	
+		var pList;
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			var act_el = Elements.findOne({_id: selected_elem_id}); //Check if element ID is valid
+			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
+			var class_name = compart["input"];
+			params["className"] = class_name;
+		}
+		
+		props = await dataShapes.getProperties(params);
+		props = props["data"];
+		for(var pr in props){
+			var prefix;
+			if(props[pr]["is_local"] == true)prefix = "";
+			else prefix = props[pr]["prefix"]+":";
+			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:1})
+		}
+		return p;
+	}
+	/*else {
 		var act_elem = Session.get("activeElement");
 		try {
 			var schema = new VQ_Schema();
@@ -655,7 +684,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
 			return c;
 		}
-	}
+	}*/
 	return [];
 }
 
