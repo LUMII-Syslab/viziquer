@@ -522,14 +522,14 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			
 				var link_list =  vq_obj.getLinks();
 				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in' && link.name !== null )
+					if (link.type === 'in' && link.name !== null && link.name !== undefined )
 						pList.in.push(link);
-					if (link.type === 'out' && link.name !== null )
+					if (link.type === 'out' && link.name !== null && link.name !== undefined )
 						pList.out.push(link);
 				});
 				
 				if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
-				params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
+				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
 			cls = await dataShapes.getClasses(params);
@@ -555,7 +555,8 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		p["suggestions"] = [];
 		var params = {propertyKind:'Object'};
 		if(fullText != "") params.filter = fullText;
-		var selected_elem_id = Session.get("activeElement");			
+		var selected_elem_id = Session.get("activeElement");	
+		var pList;
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				
 			var vq_link = new VQ_Element(selected_elem_id);
@@ -566,13 +567,41 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 				if (class_name !== null && class_name !== undefined) params["className"] = class_name;
 				if (individual !== null && individual !== undefined) params["uriIndividual"] = individual;
 
+				pList = {in: [], out: []};
+				var field_list = elements.start.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+				if ( field_list.length > 0) pList.out = field_list;
+
+				var link_list =  elements.start.getLinks();
+				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+					if (link.type === 'in' && link.name !== null && link.name !== undefined)
+						pList.in.push(link);
+					if (link.type === 'out' && link.name !== null && link.name !== undefined)
+						pList.out.push(link);
+				});
+				if (pList.in.length > 0 || pList.out.length > 0) params.pListFrom = pList;				
+
 				class_name = elements.end.getName();
 				individual =  elements.end.getInstanceAlias();
 				if (class_name !== null && class_name !== undefined) params["otherEndClassName"] = class_name;
 				if (individual !== null && individual !== undefined) params["otherEndUriIndividual"] = individual;
+				
+				pList = {in: [], out: []};
+				var field_list = elements.end.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+				if ( field_list.length > 0) pList.out = field_list;
+
+				var link_list =  elements.end.getLinks();
+				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+					if (link.type === 'in' && link.name !== null && link.name !== undefined )
+						pList.in.push(link);
+					if (link.type === 'out' && link.name !== null && link.name !== undefined )
+						pList.out.push(link);
+				});
+				if (pList.in.length > 0 || pList.out.length > 0) params.pListTo = pList;	
 
 			}
 		}
+		
+	
 		props = await dataShapes.getProperties(params);
 		props = props["data"];
 		for(var pr in props){

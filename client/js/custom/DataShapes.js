@@ -130,11 +130,15 @@ dataShapes = {
 		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
 		// dataShapes.getClasses({uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden', namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
 		// dataShapes.getClasses({pList: { out: [{name: 'educationalAuthority', type: 'out'}]}})
-		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}]}})
-		// dataShapes.getClasses({pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}})
-		// dataShapes.getClasses({pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}})
+		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}]}})  23
+		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}) 20
+		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}) 58
 		
 		return await this.callServerFunction("getClasses", params);
+	},
+	getTreeClasses : async function(params = {}) {
+		console.log("------------GetTreeClasses------------------")
+		return await this.callServerFunction("getTreeClasses", params);
 	},
 	getProperties : async function(params = {}) {		
 		console.log("------------GetProperties------------------")

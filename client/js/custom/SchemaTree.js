@@ -17,7 +17,7 @@ Template.schemaTree.helpers({
 async function  useFilter () {
 	var text = $('#filter_text').val().toLowerCase();
 	//console.log(text)
-	var params = {limit: Template.schemaTree.Count.get(), filter:text};
+	var params = {limit: Template.schemaTree.Count.get(), filter:text, mode: 'Top'};
 	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 		var namespaces = {};
 		if ($("#dbo").is(":checked"))
@@ -26,8 +26,8 @@ async function  useFilter () {
 			namespaces.notIn = ['yago'];
 		params.namespaces = namespaces;
 	}
-	var clFull = await dataShapes.getClasses(params);
-	var classes = _.map(clFull.data, function(cl) {return {ch_count: 0, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
+	var clFull = await dataShapes.getTreeClasses(params);
+	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.ch_count), children: [], node_id: cl.id, data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
 	
 	if ( clFull.complete === false )
 		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
@@ -56,11 +56,45 @@ async function  useFilterP () {
 
 Template.schemaTree.events({
 
-	"click .toggle-tree-button": function(e) {
+	"click .toggle-tree-button": async function(e) {
 		var toggle_button = $(e.target);
 		var class_item = toggle_button.closest(".class-item");
 		var tree_node_id = toggle_button[0].attributes["node-id"].value;
+		//console.log(tree_node_id)
+		var params = {limit: startCount, mode: 'Sub', class_id:tree_node_id,};
+		if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
+			var namespaces = {};
+			if ($("#dbo").is(":checked"))
+				namespaces.in = ['dbo'];
+			if ($("#yago").is(":checked"))
+				namespaces.notIn = ['yago'];
+			params.namespaces = namespaces;
+		}
 		
+		var treeTop = Template.schemaTree.Classes.get();
+		var cc = _.filter(treeTop, function(c){ 
+				return  c.node_id == tree_node_id });
+		
+		if ( _.size(cc[0].children) == 0) {
+		
+			var clSub = await dataShapes.getTreeClasses(params);
+			var classes = _.map(clSub.data, function(cl) {return {ch_count: 0, node_id: cl.id, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
+			if ( clSub.complete === false )
+				classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
+
+			treeTop = _.map(treeTop, function(cl) { 
+					var rr;
+					if (cl.node_id == tree_node_id) rr = {ch_count: Number(cl.ch_count), node_id: cl.node_id, children: classes, data_id: cl.data_id, localName: cl.data_id};
+					else rr = cl;
+					return rr;
+				});
+				//console.log(treeTop);
+				Template.schemaTree.Classes.set(treeTop);
+		}
+		else
+			useFilter ();
+		
+		/*
 		if (toggle_button.hasClass("expand")) {
 			//class_item.find(".attributes-list").css({display: "block"});
 			class_item.children().css({display: "block"});
@@ -82,7 +116,7 @@ Template.schemaTree.events({
 					
 			if ( VQ_Schema_copy && VQ_Schema_copy.TreeList[tree_node_id])	
 				VQ_Schema_copy.TreeList[tree_node_id].display = "none";	
-		}
+		} */
 	},
 
 	"dblclick .class-body": function(e) {
@@ -153,11 +187,10 @@ Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
 	var classTreeLimit = startCount;
 	//console.log(Session.get("activeProject"))
-	var clFull = await dataShapes.getClasses({limit: classTreeLimit ,namespaces: { in: ['dbo']}});
-	var classes = _.map(clFull.data, function(cl) {return {ch_count: 0, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
+	var clFull = await dataShapes.getTreeClasses({mode: 'Top', limit: classTreeLimit ,namespaces: { in: ['dbo']}});
+	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.ch_count), node_id: cl.id, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
 	if ( clFull.complete === false)
 		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
-	
 	Template.schemaTree.Classes.set(classes);
 	Template.schemaTree.Count.set(classTreeLimit);
 }

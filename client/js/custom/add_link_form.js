@@ -667,6 +667,22 @@ async function getAllAssociations(){
 					param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
 				}
 				
+				var pList = {in: [], out: []};
+	
+				var field_list = startElement.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+				if ( field_list.length > 0) pList.out = field_list;
+
+				var link_list =  startElement.getLinks();
+				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+					if (link.type === 'in' && link.name !== null && link.name !== undefined )
+						pList.in.push(link);
+					if (link.type === 'out' && link.name !== null && link.name !== undefined )
+						pList.out.push(link);
+				});
+				
+				if (pList.in.length > 0 || pList.out.length > 0) param.pListFrom = pList;
+				
+				
 				// if(filter != null) param["filter"] = filter;
 				var prop = await dataShapes.getProperties(param)
 				var allAssociations = prop["data"];
