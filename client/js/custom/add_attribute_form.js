@@ -309,6 +309,12 @@ Template.AddAttribute.events({
 		Template.AddAttribute.linkList.set(link_list);
 		return;
 	},
+	'click #dbp_for_attributes': async function(e) {
+		var value = $("#mySearch-attribute").val().toLowerCase();
+		var attr_list = await getAttributes(value);
+		var link_list = await getAssociations(value);
+		Template.AddAttribute.attrList.set(attr_list);
+	},
 	
 	'click #attribute-new-button': function(e) {
 		Template.AddNewAttribute.alias.set("");

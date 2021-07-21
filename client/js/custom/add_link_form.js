@@ -541,6 +541,14 @@ Template.AddLink.events({
 		Template.AddLink.fullList.set(asc);
 		return;
 	},
+	'click #dbp_for_links': async function(e) {
+		var asc = [];
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+		})
+		Template.AddLink.fullList.set(asc);
+		return;
+	},
 
 });
 

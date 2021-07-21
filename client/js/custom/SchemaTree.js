@@ -7,8 +7,8 @@ Template.schemaTree.TopClass = new ReactiveVar("");
 Template.schemaTree.ClassPath = new ReactiveVar("");
 Template.schemaFilter.Count = new ReactiveVar("");
 Template.schemaFilter.Ont = new ReactiveVar("");
-const startCount = 10;
-const plusCount = 5;
+const startCount = 30;
+const plusCount = 20;
 
 Template.schemaTree.helpers({
 	classes: function() {
@@ -96,7 +96,10 @@ async function  useFilterP () {
 	var text = $('#filter_text2').val().toLowerCase();
 	var params = {propertyKind:'All', limit: Template.schemaFilter.Count.get(), filter:text};
 	if ($("#dbp").is(":checked") ) {
-		params.namespaces = {notIn: ['dbp']};
+		//params.namespaces = {notIn: ['dbp']};
+		params.orderByPrefix = `case when ns_id = 2 then 0 
+else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
+or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
 	}
 	if ( $("#propType").val() === 'Object properties' )
 		params.propertyKind = 'Object';
@@ -118,7 +121,7 @@ Template.schemaTree.events({
 		var topClass = Template.schemaTree.TopClass.get();
 		console.log(tree_node_id)
 		//console.log(Template.schemaTree.ClassPath.get())
-		Template.schemaTree.Count.set(startCount);
+		//Template.schemaTree.Count.set(startCount);
 		$("#filter_text")[0].value = "";
 
 		if ( tree_node_id == 0 ) {
@@ -205,15 +208,15 @@ Template.schemaTree.events({
 		}		
 	},
 	'click #filter': async function(e) {
-		Template.schemaTree.Count.set(startCount)
+		//Template.schemaTree.Count.set(startCount)
 		await useFilter();
 	},
 	'click #dbo': async function(e) {
-		Template.schemaTree.Count.set(startCount)
+		//Template.schemaTree.Count.set(startCount)
 		await useFilter ();
 	},
 	'click #yago': async function(e) {
-		Template.schemaTree.Count.set(startCount)
+		//Template.schemaTree.Count.set(startCount)
 		await useFilter ();
 	},
 
@@ -221,7 +224,7 @@ Template.schemaTree.events({
 
 Template.schemaFilter.rendered = async function() {
 	//console.log("-----rendered schemaFilter----")
-	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: startCount, namespaces: { notIn: ['dbp']}});
+	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: startCount, orderByPrefix: `case when ns_id = 2 then 0 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`});
 	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
 	if ( pFull.complete === false)
 		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
