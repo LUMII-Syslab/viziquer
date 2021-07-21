@@ -14542,55 +14542,56 @@ vq_grammar_parser = (function() {
           // string -> idObject
     			// returns type of the identifier from symbol table. Null if does not exist.
     			function resolveTypeFromSymbolTable(id) {
-				// var context = options.context._id;
+				var context = options.context._id;
 
-				// if(typeof options.symbol_table[context] === 'undefined') return null;
+				if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				// var st_row = options.symbol_table[context][id];
-				// if (st_row) {
-					// if(st_row.length == 0) return null;
-					// if(st_row.length == 1){
-						// return st_row[0].type
-					// }
-					// if(st_row.length > 1){
-						// for (var symbol in st_row) {
-							// if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-						// }
-					// }
-					// return st_row.type
-				// } else {
-					// return null
-				// }
+				var st_row = options.symbol_table[context][id];
+				if (st_row) {
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].type
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+						}
+					}
+					return st_row.type
+				} else {
+					return null
+				}
 				return null
 			};
 			// string -> idObject
 			// returns kind of the identifier from symbol table. Null if does not exist.
 			function resolveKindFromSymbolTable(id) {
-				// var context = options.context._id;
+				var context = options.context._id;
 
-				// if(typeof options.symbol_table[context] === 'undefined') return null;
+				if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				// var st_row = options.symbol_table[context][id];
-				// if (st_row) {
-					// if(st_row.length == 0) return null;
-					// if(st_row.length == 1){
-						// return st_row[0].kind
-					// }
-					// if(st_row.length > 1){
-						// for (var symbol in st_row) {
-							// if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-						// }
-					// }
-					// return st_row.kind
-				// } else {
-					// return null
-				// }
+				var st_row = options.symbol_table[context][id];
+				if (st_row) {
+					if(st_row.length == 0) return null;
+					if(st_row.length == 1){
+						return st_row[0].kind
+					}
+					if(st_row.length > 1){
+						for (var symbol in st_row) {
+							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+						}
+					}
+					return st_row.kind
+				} else {
+					return null
+				}
 				return null
 			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 			async function resolveTypeFromSchemaForClass(id) {
 				var cls = await dataShapes.resolveClassByName({name: id})
+				if(cls["complite"] == false) return null;
 				if(cls["data"].length > 0){
 					return cls["data"][0];
 				}
@@ -14603,9 +14604,12 @@ vq_grammar_parser = (function() {
 				
 				var aorl = await dataShapes.resolvePropertyByName({name: id})
 				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+				if(aorl["complite"] == false) return null;
 				var res = aorl["data"][0];
 				if(res){
-					res["property_type"] = "DATA_PROPERTY";
+					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
 					return res;
 				}
 				// if (!res) { 
@@ -14624,6 +14628,7 @@ vq_grammar_parser = (function() {
 			// then in schema. Null if does not exist
 			async function resolveType(id) {
 			  
+			  if(id !== "undefined"){
 			  var t=resolveTypeFromSymbolTable(id);
 				if (!t) {
 					if (options.exprType) {
@@ -14639,11 +14644,13 @@ vq_grammar_parser = (function() {
 					}
 
 				}
-				return t;
+			  return t;}
+			  return null;
 			};
           //string -> string
     			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
      	    function resolveKind(id) {
+				if(id !== "undefined"){
     				    var k=resolveKindFromSymbolTable(id);
     						if (!k) {
     						  if (options.exprType) {
@@ -14662,7 +14669,8 @@ vq_grammar_parser = (function() {
 
     					  }
     						return k;
-							// return "CLASS_NAME";
+				}
+				return null
     		  };
     			function pathOrReference(o) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases

@@ -519,20 +519,34 @@ function setText_In_SPARQL_Editor(text) {
 
 //generate table with unique class names in form [_id] = class_unique_name
 //rootClass - abstract syntax table starting with 'rootClass' object
-function generateIds(rootClass){
+function generateIds(rootClass, knownPrefixes){
 	var counter = 0;
 	var idTable = [];
 	var referenceTable = [];
+	var prefixTable = [];
 
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
-		rootClassId = rootClass["identification"]["localName"];
+		rootClassId = rootClass["identification"]["local_name"];
 		if (checkIfIsURI(rootClassId) == "full_form") rootClassId = "expr";
-		if (checkIfIsURI(rootClassId) == "prefix_form") rootClassId = rootClassId.substr(rootClassId.indexOf(":")+1);
+		if (checkIfIsURI(rootClassId) == "prefix_form") {
+			rootClassId = rootClassId.substr(rootClassId.indexOf(":")+1);
+		}
 	}
 	else rootClassId = rootClassId.replace(/ /g, '_');
 
+	if (checkIfIsURI(rootClassId) == "prefix_form") {
+		var prefix = rootClassId.substring(0, rootClassId.indexOf(":"))
+		
+		for(var kp in knownPrefixes){
+			if(knownPrefixes[kp]["name"] == prefix) {
+				prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
+				break;
+			}
+		}
+	}
+	
 	//set rootClassId to "expr" if no class name
 	if(rootClassId == null || rootClassId == "(no_class)") rootClassId = "expr";
 	if (checkIfIsURI(rootClassId) == "not_uri") rootClassId = rootClassId.replace(/-/g, '_');
@@ -555,8 +569,12 @@ function generateIds(rootClass){
 	_.each(rootClass["children"],function(subclazz) {
 		var unionClass = null;
 		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
-		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass);
+		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes);
 		idTable.concat(temp["idTable"]);
+		prefixTable.concat(temp["prefixTable"]);
+		for(pr in temp["prefixTable"]){
+			prefixTable[pr] = temp["prefixTable"][pr];
+		}
 		referenceTable[rootClassId]["classes"].push(temp["referenceTable"]);
 	})
 
@@ -565,7 +583,7 @@ function generateIds(rootClass){
 		idTableTemp[key] = idTable[key]["name"];
 	}
 
-	return {idTable:idTableTemp, referenceTable:referenceTable};
+	return {idTable:idTableTemp, referenceTable:referenceTable, prefixTable:prefixTable};
 }
 
 
@@ -575,10 +593,22 @@ function generateIds(rootClass){
 // idTable - table with unique class names, generated so far
 // counter - counter for classes with equals names
 // parentClassId - parent class identificator
-function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass){
+function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass, knownPrefixes){
 	var referenceTable = [];
+	var prefixTable = [];
 	
-	if(clazz["linkIdentification"]["localName"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
+	if (checkIfIsURI(clazz["instanceAlias"]) == "prefix_form") {
+		var prefix = clazz["instanceAlias"].substring(0, clazz["instanceAlias"].indexOf(":"))
+		
+		for(var kp in knownPrefixes){
+			if(knownPrefixes[kp]["name"] == prefix) {
+				prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
+				break;
+			}
+		}
+	}
+	
+	if(clazz["linkIdentification"]["local_name"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
 		if(typeof clazz["instanceAlias"] !== "undefined" && clazz["instanceAlias"] != null && clazz["instanceAlias"] != "") {
 			idTable[parentClassId]["name"] = clazz["instanceAlias"];
 			idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
@@ -588,7 +618,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	}
 	// if instance is defined, use it
 	else if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") {
-		idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+		idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
 	}
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
@@ -599,20 +629,20 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				// if given class name is in the table, add counter to the class name
 				if(idTable[key]["name"] == "_" + varName){
 					foundInIdTable = true;
-					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName + "_"+ counter, unionId:unionClass};
+					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName + "_"+ counter, unionId:unionClass};
 					counter++;
 				}
 			}
 			// if given class name is not in the table, use it
-			if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName, unionId:unionClass};
+			if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName, unionId:unionClass};
 		} else{
 			if(varName.startsWith("?"))varName = varName.substr(1);
-			idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"_" + varName, unionId:unionClass};
+			idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName, unionId:unionClass};
 		}
 
 	}
-	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["localName"] == null || clazz["identification"]["localName"] == "" || clazz["identification"]["localName"] == "(no_class)") || typeof clazz["identification"]["URI"] === 'undefined') {
-		idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:"expr_"+counter, unionId:unionClass};
+	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["local_name"] == null || clazz["identification"]["local_name"] == "" || clazz["identification"]["local_name"] == "(no_class)") || typeof clazz["identification"]["iri"] === 'undefined') {
+		idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"expr_"+counter, unionId:unionClass};
 		counter++;
 	}
 	else{
@@ -621,24 +651,24 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		if(parentClassIsUnion == true){
 			for(var key in idTable) {
 				// if given class name is in the table, add counter to the class name
-				if(idTable[key]["localName"] == clazz["identification"]["localName"] && idTable[key]["unionId"] == unionClass){
+				if(idTable[key]["local_name"] == clazz["identification"]["local_name"] && idTable[key]["unionId"] == unionClass){
 					foundInIdTable = true;
-					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:idTable[key]["name"], unionId:unionClass};
+					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:idTable[key]["name"], unionId:unionClass};
 				}
 			}
 		}
 		if(foundInIdTable == false){
 			for(var key in idTable) {
 				// if given class name is in the table, add counter to the class name
-				if(idTable[key]["name"] == clazz["identification"]["localName"]){
+				if(idTable[key]["name"] == clazz["identification"]["local_name"]){
 					foundInIdTable = true;
-					idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["identification"]["localName"].replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
+					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
 					counter++;
 				}
 			}
 		}
 		// if given class name is not in the table, use it
-		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {localName:clazz["identification"]["localName"], name:clazz["identification"]["localName"].replace(/-/g, '_'), unionId:unionClass};
+		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
 	}
 	var className = idTable[clazz["identification"]["_id"]]["name"];
 	var linkType = "palin";
@@ -659,12 +689,18 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			if(unionClass == null) unionClass = clazz["identification"]["_id"];
 		} else unionClass = null;
 
-		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass);
+		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes);
 		idTable.concat(temp["idTable"]);
+		for(pr in temp["prefixTable"]){
+			prefixTable[pr] = temp["prefixTable"][pr];
+		}
 		referenceTable[className]["classes"].push(temp["referenceTable"]);
 		counter = temp["counter"];
 	})
-	return {idTable: idTable, referenceTable: referenceTable, counter:counter};
+	
+	
+	
+	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable};
 }
 
 // find all prefixes used it a SPARQL query
@@ -713,7 +749,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 var knownPrefixes = abstractQueryTable["prefixes"];
 
  		 //generate table with unique class names in form [_id] = class_unique_name
-		 var generateIdsResult = generateIds(rootClass);
+		 var generateIdsResult = generateIds(rootClass, knownPrefixes);
 		 var idTable = generateIdsResult["idTable"];
 		 var referenceTable = generateIdsResult["referenceTable"];
 
@@ -742,6 +778,10 @@ function generateSPARQLtext(abstractQueryTable){
 
 		 // table with prefixes used in query
 		 var prefixTable = result["prefixTable"];
+		 
+		 for(var pr in generateIdsResult["prefixTable"]){
+			 prefixTable[pr] = generateIdsResult["prefixTable"][pr];
+		 }
 
 		 var SPARQL_text = "";
 		 var SPARQL_interval = "  ";
@@ -1082,7 +1122,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(typeof fieldNames[attrname] === 'undefined') fieldNames[varName] = [];
 		fieldNames[varName][clazz["identification"]["_id"]] = idTable[clazz["identification"]["_id"]];
 	}
-	else if(clazz["identification"]["localName"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["localName"] != "[ + ]" && clazz["identification"]["localName"] != null && clazz["identification"]["localName"] != "" && clazz["identification"]["localName"] != "(no_class)") {
+	else if(clazz["identification"]["local_name"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["local_name"] != "[ + ]" && clazz["identification"]["local_name"] != null && clazz["identification"]["local_name"] != "" && clazz["identification"]["local_name"] != "(no_class)") {
 		var instAlias = clazz["instanceAlias"]
 		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
@@ -1090,13 +1130,12 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(typeof clazz["identification"]["parsed_exp"] === 'undefined'){
 			messages.push({
 				"type" : "Error",
-				"message" : "Syntax error in class name " + clazz["identification"]["localName"],
+				"message" : "Syntax error in class name " + clazz["identification"]["local_name"],
 				"listOfElementId" : [clazz["identification"]["_id"]],
 				"isBlocking" : true
 			});
 		} else{
-			var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
-			
+			var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
 			for (var prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 			}
@@ -1116,7 +1155,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			}
 			sparqlTable["classTriple"] = temp.join("\n"); // triples for class name
 
-			// sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["localName"] + ".";
+			// sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["local_name"] + ".";
 			var namespace = clazz["identification"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 			if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+namespace+">";
@@ -1138,7 +1177,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				if(field["exp"].replace(/ /g, '') == "") {
 					messages.push({
 						"type" : "Error",
-						"message" : "warning: empty attribute compartment in node " + clazz["identification"]["short_name"],
+						"message" : "warning: empty attribute compartment in node " + clazz["identification"]["display_name"],
 						"listOfElementId" : [clazz["identification"]["_id"]],
 						"isBlocking" : false
 					});
@@ -1161,7 +1200,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					field["alias"] = field["alias"].replace(/ /g, '_');
 				}
 				// console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
-				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
+				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
 
 				messages = messages.concat(result["messages"]);
 				// console.log("ATTRIBUTE", result);
@@ -1244,7 +1283,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					if(clazz["isUnion"] == true || clazz["isUnit"] == true) rootClass = "";
 					var localAggregation = "{SELECT " + rootClass + "(" + result["exp"] + " AS ?" + alias + ") WHERE{";
 
-					if(field["requireValues"] != true && clazz["identification"]["localName"] != "(no_class)") localAggregation = localAggregation + sparqlTable["classTriple"] + " OPTIONAL{";
+					if(field["requireValues"] != true && clazz["identification"]["local_name"] != "(no_class)") localAggregation = localAggregation + sparqlTable["classTriple"] + " OPTIONAL{";
 
 					localAggregation = localAggregation + uniqueTriples.join(" ");
 
@@ -1374,13 +1413,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				var result;
 				
 				if(clazz["isUnit"] != true){
-				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				
 				counter = result["counter"];
 				for (var attrname in result["variableNamesClass"]) {
 					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 				}} else {
-					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["short_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				}
 				messages = messages.concat(result["messages"]);
 				for (var prefix in result["prefixTable"]) {
@@ -1439,10 +1478,10 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					}
 					
 				} else {
-					//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
+					//Interpreter.showErrorMsg("Aggregate functions are not allowed in '" + clazz["identification"]["local_name"] + "' class. Use aggregate functions in query main class or subquery main class.", -3);
 					messages.push({
 						"type" : "Error",
-						"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["localName"] + "' class. Use aggregate functions in query main class or subquery main class.",
+						"message" : "Aggregate functions are not allowed in '" + clazz["identification"]["local_name"] + "' class. Use aggregate functions in query main class or subquery main class.",
 						"listOfElementId" : [clazz["identification"]["_id"]],
 						"isBlocking" : true
 					});
@@ -1461,7 +1500,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					"isBlocking" : true
 				});
 		} else { 
-			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["short_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+			var result = parse_filter(condition["exp"], attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result);
 			for (var reference in result["referenceCandidateTable"]){
@@ -1532,27 +1571,27 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		}
 		underNotLink = tempUnderNotLink;
 		//link triple
-		//if(typeof subclazz["linkIdentification"]["localName"] !== 'undefined'){
+		//if(typeof subclazz["linkIdentification"]["local_name"] !== 'undefined'){
 
-			// if((subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") && subclazz["identification"]["localName"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["localName"] != "[ + ]") {
-			if(subclazz["linkIdentification"]["localName"] == null || subclazz["linkIdentification"]["localName"] == "") {
+			// if((subclazz["linkIdentification"]["local_name"] == null || subclazz["linkIdentification"]["local_name"] == "") && subclazz["identification"]["local_name"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["local_name"] != "[ + ]") {
+			if(subclazz["linkIdentification"]["local_name"] == null || subclazz["linkIdentification"]["local_name"] == "") {
 				//console.log(subclazz, clazz);
 				// clazz["identification"]["_id"]
 				//Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
 				messages.push({
 					"type" : "Error",
 					// "message" : "Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.",
-					"message" : "Empty link between nodes ("+ clazz["identification"]["localName"] +") and ("+  subclazz["identification"]["localName"] +"). Please specify the link property or ++ for the link without property.",
+					"message" : "Empty link between nodes ("+ clazz["identification"]["local_name"] +") and ("+  subclazz["identification"]["local_name"] +"). Please specify the link property or ++ for the link without property.",
 					"listOfElementId" : [subclazz["linkIdentification"]["_id"]],
 					"isBlocking" : false
 				});
 			}
 
-			if(subclazz["linkIdentification"]["localName"] != null && subclazz["linkIdentification"]["localName"] != "++"){
+			if(subclazz["linkIdentification"]["local_name"] != null && subclazz["linkIdentification"]["local_name"] != "++"){
 				var subject, preditate, object;
-				if(subclazz["linkIdentification"]["localName"].startsWith('?')) {
-					if(subclazz["linkIdentification"]["localName"].startsWith('??') == true) {
-						if(subclazz["linkIdentification"]["localName"] == "??") {
+				if(subclazz["linkIdentification"]["local_name"].startsWith('?')) {
+					if(subclazz["linkIdentification"]["local_name"].startsWith('??') == true) {
+						if(subclazz["linkIdentification"]["local_name"] == "??") {
 							preditate = " ?property";
 
 							var tempAlias = "?property_";
@@ -1601,22 +1640,22 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 
 						}
-						else preditate = " " + subclazz["linkIdentification"]["localName"].substring(1);
+						else preditate = " " + subclazz["linkIdentification"]["local_name"].substring(1);
 					}
-					else preditate = " " + subclazz["linkIdentification"]["localName"];
-					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["localName"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["localName"];
+					else preditate = " " + subclazz["linkIdentification"]["local_name"];
+					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["local_name"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["local_name"];
 				} else {
-					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["localName"];
+					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["local_name"];
 					if(typeof subclazz["linkIdentification"]["parsed_exp"] === 'undefined'){
 						messages.push({
 							"type" : "Error",
-							"message" : "Syntax error in link expression " + subclazz["linkIdentification"]["localName"],
+							"message" : "Syntax error in link expression " + subclazz["linkIdentification"]["local_name"],
 							"listOfElementId" : [clazz["identification"]["_id"]],
 							"isBlocking" : true
 						});
 					} else{
-						// if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
-						if(typeof subclazz["linkIdentification"]["parsed_exp"]["PathProperty"] !== 'undefined' && subclazz["linkIdentification"]["localName"] != "=="){
+						// if(typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] !== 'undefined' && subclazz["linkIdentification"]["local_name"] != "=="){
+						if(typeof subclazz["linkIdentification"]["parsed_exp"]["PathProperty"] !== 'undefined' && subclazz["linkIdentification"]["local_name"] != "=="){
 							// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 							var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
 
@@ -1631,7 +1670,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						}
 						var namespace = subclazz["linkIdentification"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-						// if(subclazz["linkIdentification"]["localName"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
+						// if(subclazz["linkIdentification"]["local_name"] != "==" && typeof subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"] === 'undefined') prefixTable[getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"])+":"] = "<"+namespace+">";
 					}
 				}
 				if(subclazz["isInverse"] == true) {
@@ -1646,7 +1685,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					object = idTable[subclazz["identification"]["_id"]];
 				}
 				// if is global subQuery then no need in link between classes
-				if(subclazz["linkIdentification"]["localName"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
+				if(subclazz["linkIdentification"]["local_name"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
 					var subjectName = subject;
 					if(subjectName.indexOf("://") != -1) subjectName = "<" + subjectName + ">";
 					else if(subjectName.indexOf(":") != -1){
@@ -1662,41 +1701,41 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					temp["sparqlTable"]["linkTriple"] = subjectName +  preditate + " " + objectName + ".";
 				} else{
 					if(preditate == null || preditate.replace(" ", "") =="") {
-						//Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["localName"] + "'", -3);
+						//Interpreter.showErrorMsg("Unknown property '" + subclazz["linkIdentification"]["local_name"] + "'", -3);
 						messages.push({
 							"type" : "Error",
-							"message" : "Unrecognized link property or property path '" + subclazz["linkIdentification"]["localName"] + "'. Please specify link property or property path from ontology.",
+							"message" : "Unrecognized link property or property path '" + subclazz["linkIdentification"]["local_name"] + "'. Please specify link property or property path from ontology.",
 							"listOfElementId" : [subclazz["linkIdentification"]["_id"]],
 							"isBlocking" : true
 						});
 					}
 					else if(subject == null && clazz["isUnion"] != true) {
-						//Interpreter.showErrorMsg("Unknown subject class '" + subclazz["identification"]["localName"] + "'", -3);
+						//Interpreter.showErrorMsg("Unknown subject class '" + subclazz["identification"]["local_name"] + "'", -3);
 						messages.push({
 							"type" : "Error",
-							"message" : "Unknown subject class '" + subclazz["identification"]["localName"] + "'",
+							"message" : "Unknown subject class '" + subclazz["identification"]["local_name"] + "'",
 							"listOfElementId" : [subclazz["identification"]["_id"], subclazz["linkIdentification"]["_id"]],
 							"isBlocking" : true
 						});
 					}
 					else if(object == null) {
-						//Interpreter.showErrorMsg("Unknown object class '" + parentClass["identification"]["localName"] + "'", -3);
+						//Interpreter.showErrorMsg("Unknown object class '" + parentClass["identification"]["local_name"] + "'", -3);
 						messages.push({
 							"type" : "Error",
-							"message" : "Unknown object class '" + parentClass["identification"]["localName"] + "'",
+							"message" : "Unknown object class '" + parentClass["identification"]["local_name"] + "'",
 							"listOfElementId" : [parentClass["identification"]["_id"], subclazz["linkIdentification"]["_id"]],
 							"isBlocking" : true
 						});
 					}
 				}
-				// if(subclazz["linkIdentification"]["localName"] == "==") sparqlTable["filters"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
-				if(subclazz["linkIdentification"]["localName"] == "==") {
+				// if(subclazz["linkIdentification"]["local_name"] == "==") sparqlTable["filters"].push("FILTER(" + "?" + subject + " = " + "?" + object +")");
+				if(subclazz["linkIdentification"]["local_name"] == "==") {
 					temp["sparqlTable"]["equalityLink"] = true;
 				}
 			}
 
 			temp["sparqlTable"]["linkType"] = subclazz["linkType"];
-			// if(subclazz["identification"]["localName"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["localName"] == "" || subclazz["identification"]["localName"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
+			// if(subclazz["identification"]["local_name"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["local_name"] == "" || subclazz["identification"]["local_name"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
 			temp["sparqlTable"]["isSubQuery"] = subclazz["isSubQuery"];
 			temp["sparqlTable"]["isGlobalSubQuery"] = subclazz["isGlobalSubQuery"];
 
@@ -1739,11 +1778,11 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		
 		var triple = "";
 		
-		if(typeof condLink["identification"]["parsed_exp"]["PathProperty"] !== 'undefined' && condLink["identification"]["localName"] != "=="){
+		if(typeof condLink["identification"]["parsed_exp"]["PathProperty"] !== 'undefined' && condLink["identification"]["local_name"] != "=="){
 			if(typeof condLink["identification"]["parsed_exp"] === 'undefined'){
 						messages.push({
 							"type" : "Error",
-							"message" : "Syntax error in condition link expression " + condLink["identification"]["localName"],
+							"message" : "Syntax error in condition link expression " + condLink["identification"]["local_name"],
 							"listOfElementId" : [clazz["identification"]["_id"]],
 							"isBlocking" : true
 						});
@@ -1760,7 +1799,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				}
 			}
 		} else {
-			triple = sourse + " " + getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) + ":" + condLink["identification"]["localName"] + " " + target + ".";
+			triple = sourse + " " + getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) + ":" + condLink["identification"]["local_name"] + " " + target + ".";
 			var namespace = condLink["identification"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 			prefixTable[getPrefix(emptyPrefix, condLink["identification"]["Prefix"]) +":"] = "<"+namespace+">";

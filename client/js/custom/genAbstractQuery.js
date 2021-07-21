@@ -46,10 +46,11 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
   // string -->[IdObject]
   async function resolveClassByName(className) {
-    
-	var cls = await dataShapes.resolveClassByName({name: className})
-	if(cls["data"].length > 0){
-		return cls["data"][0];
+    if(typeof className !== "undefined" && className !== null){
+		var cls = await dataShapes.resolveClassByName({name: className})
+		if(cls["data"].length > 0){
+			return cls["data"][0];
+		}
 	}
 	return null;
 	// return schema.resolveClassByName(className)
@@ -75,30 +76,30 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
-	if(obj_class.identification.localName != null) obj_class.identification.localName = obj_class.identification.localName.trim();
-	if(obj_class.identification.localName == "") obj_class.identification.localName = null;
+	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
+	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
-    var resCl = await resolveClassByName(obj_class.identification.localName);
+    var resCl = await resolveClassByName(obj_class.identification.local_name);
 	
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
 
 	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
-	var par = await parseExpression(prefix+obj_class.identification.localName, "CLASS_NAME", obj_class.identification)
+	var par = await parseExpression(prefix+obj_class.identification.local_name, "CLASS_NAME", obj_class.identification)
     _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
 
 		//parser need link with prefix
 		var prefix = "";
-		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.localName));
+		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
 		if(typeof obj_class.linkIdentification.Prefix !== 'undefined' && obj_class.linkIdentification.Prefix != "") prefix = obj_class.linkIdentification.Prefix + ":";
-        _.extend(obj_class.linkIdentification, parsePathExpression(prefix+obj_class.linkIdentification.localName, obj_class.identification))
+        _.extend(obj_class.linkIdentification, await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification))
     };
 	
 	if (obj_class.instanceAlias) {
-      var type = resolveClassByName(obj_class.identification.localName)
+      var type = resolveClassByName(obj_class.identification.local_name)
 	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.maxCardinality !== "undefined") {type["maxCardinality"] = obj_class.linkIdentification.maxCardinality}
 	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
@@ -106,8 +107,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
     for (const cl of obj_class.conditionLinks) {
     // obj_class.conditionLinks.forEach(function(cl) {
-      _.extend(cl.identification,resolveLinkByName(cl.identification.localName));
-      _.extend(cl.identification, parsePathExpression(cl.identification.localName, obj_class.identification))
+      _.extend(cl.identification,resolveLinkByName(cl.identification.local_name));
+      _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
 
@@ -116,7 +117,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         // CAUTION .............
         // HACK: * and ** fields
         // if (f.exp=="*") {
-           // var cl =schema.findClassByName(obj_class.identification.localName);
+           // var cl =schema.findClassByName(obj_class.identification.local_name);
            // if (cl) {
               // var attr_list = cl.getAllAttributes();
               // attr_list.forEach(async function(attr) {
@@ -128,7 +129,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			  // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
            // };
         // } else if (f.exp=="(*attr)") {
-           // var cl =schema.findClassByName(obj_class.identification.localName);
+           // var cl =schema.findClassByName(obj_class.identification.local_name);
            // if (cl) {
               // var attr_list = cl.getAllAttributes()
               // attr_list.forEach(async function(attr) {
@@ -274,7 +275,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
          symbol_table["root"][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
        })
     })
-
+	
 
     return;
   };
@@ -306,12 +307,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
   // String --> JSON
   // Parses the text and returns object with property "parsed_exp"
-  function parsePathExpression(str_expr, context) {
+  async function parsePathExpression(str_expr, context) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  // var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-		  var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:null, symbol_table:symbol_table, context:context._id});
-		  //console.log(JSON.stringify(parsed_exp2,null,2));
+		  var schema = new VQ_Schema();
+		  // var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context._id});
+		  var parsed_exp = await vq_property_path_grammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context._id});
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
     } catch (e) {
@@ -468,7 +470,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
 		 // console.log("ffff",f,f.parsed_exp, JSON.stringify(f.parsed_exp,null,2) )
-		
+
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
          if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
@@ -487,7 +489,47 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-           //console.log(var_obj);
+
+           switch (var_obj["kind"]) {
+             case "PROPERTY_NAME":
+                if (f.alias) {
+                  updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+                } else {
+                  updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
+                  renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+                }
+
+                break;
+             case "PROPERTY_ALIAS":
+                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+
+                break;
+             case "CLASS_ALIAS":
+                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", var_obj["type"]);
+                break;
+             default:
+                 //  - so what is it???? It is ERROR ...
+
+           };
+         } else if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"]
+         ) {
+           var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
+
            switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
                 if (f.alias) {
@@ -538,6 +580,35 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
             var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+
+			if (var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
+              var expression = f.exp;
+			        if (f.alias) expression = f.alias;
+			        var condition = {exp:"EXISTS(" + expression + ")"};
+			        await parseExpObject(condition, obj_class.identification);
+			        obj_class.conditions.push(condition);
+            }
+         } 
+		 
+		  if (f.requireValues && p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[1] && p[1].ConditionalOrExpression[0].ConditionalAndExpression[1].length == 0 &&
+             p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpressionList.length == 0
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName
+             && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"]
+         ) {
+            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
+
 			if (var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
               var expression = f.exp;
 			        if (f.alias) expression = f.alias;
@@ -566,7 +637,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	for (const ch of obj_class.children){ await resolveClassExpressions(ch,obj_class); }
     // obj_class.children.forEach(async function(ch) { await resolveClassExpressions(ch,obj_class); });
 	
-
+	
 	
     return;
   };
@@ -614,7 +685,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
             // if path exists - create link json
             if (link.link.getEndElement().isTherePathToElement(link.link.getStartElement())) {
 			  if(link.link.isConditional()){
-				  return { identification: { _id: link.link._id(), localName: link.link.getName() },
+				  return { identification: { _id: link.link._id(), local_name: link.link.getName() },
 							//If link is inverse, then we got it right
 							isInverse: !link.link.isInverse(),
 							isNot: link.link.getType()=="NOT",
@@ -629,7 +700,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 				if(link.link.isConditional()){
 					condition_links.push({ from: link.link.getStartElement()._id(),
                                        link_info: {
-                                          identification: { _id: link.link._id(), localName: link.link.getName() },
+                                          identification: { _id: link.link._id(), local_name: link.link.getName() },
                                           isInverse: link.link.isInverse(),
                                           isNot: link.link.getType()=="NOT",
                                           target: visited[link.link.getEndElement()._id()] }
@@ -647,7 +718,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
               // if path exists - create link json
               if (link.link.getStartElement().isTherePathToElement(link.link.getEndElement())) {
 				if(link.link.isConditional()){
-					return { identification: { _id: link.link._id(), localName: link.link.getName() },
+					return { identification: { _id: link.link._id(), local_name: link.link.getName() },
                           isInverse: link.link.isInverse(),
                           isNot: link.link.getType()=="NOT",
                           target: visited[link.link.getEndElement()._id()]
@@ -661,7 +732,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 				  if(link.link.isConditional()){
 					condition_links.push({ from: link.link.getEndElement()._id(),
                                          link_info: {
-                                            identification: { _id: link.link._id(), localName: link.link.getName() },
+                                            identification: { _id: link.link._id(), local_name: link.link.getName() },
                                             isInverse: !link.link.isInverse(),
                                             isNot: link.link.getType()=="NOT",
                                             target: visited[link.link.getStartElement()._id()] }
@@ -701,11 +772,11 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
               visited[elem._id()]=elem._id();
               _.extend(linkedElem_obj,
                 {
-                    linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
+                    linkIdentification:{_id: link.link._id(),local_name: link.link.getName()},
                     linkType: link.link.getType(),
                     isSubQuery: link.link.isSubQuery(),
                     isGlobalSubQuery: link.link.isGlobalSubQuery(),
-                    identification: { _id: elem._id(), localName: elem.getName()},
+                    identification: { _id: elem._id(), local_name: elem.getName()},
                     instanceAlias: elem.getInstanceAlias(),
                     isVariable:elem.isVariable(),
                     isUnion:elem.isUnion(),
@@ -772,7 +843,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
      }
    };
     var query_in_abstract_syntax = { root: {
-      identification: { _id: e._id(), localName: e.getName()},
+      identification: { _id: e._id(), local_name: e.getName()},
       instanceAlias: e.getInstanceAlias(),
       isVariable:e.isVariable(),
       isUnion:e.isUnion(),

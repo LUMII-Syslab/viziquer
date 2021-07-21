@@ -758,8 +758,8 @@ Interpreter.customMethods({
 		return [val.value]
 	},
 	
-	VQgetOrderByFields: function(val) {
-			// console.log("order by")
+	VQgetOrderByFields: async function(val) {
+			 console.log("order by")
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
@@ -778,7 +778,7 @@ Interpreter.customMethods({
 		
 		var order_by_list = [];
 	
-		var tempSymbolTable = generateSymbolTable();
+		var tempSymbolTable = await generateSymbolTable();
 		var symbolTable = tempSymbolTable["symbolTable"];
 		var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
 		
@@ -812,6 +812,7 @@ Interpreter.customMethods({
 			
 			if(_.size(aggregationAliases) == 0 && typeof select_distinct !== 'undefined' && select_distinct.input != "true"){
 				//check if Class name is defined for active element
+				
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 
 				if (!compart_type) {
@@ -841,10 +842,12 @@ Interpreter.customMethods({
 	 		return item["input"];
 	 	});
 		
+		//console.log("order_by_list", order_by_list);
+		
 		return order_by_list;
 	},
 	
-	VQgetGroupByFields: function(val) {
+	VQgetGroupByFields: async function(val) {
 		//console.log("group by")
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
@@ -870,7 +873,7 @@ Interpreter.customMethods({
 
 		var selected_elem_id = Session.get("activeElement");
 		
-		var tempSymbolTable = generateSymbolTable();
+		var tempSymbolTable = await generateSymbolTable();
 		// console.log("group by", tempSymbolTable);
 		var symbolTable = tempSymbolTable["symbolTable"];
 
@@ -903,6 +906,8 @@ Interpreter.customMethods({
 		group_by_list = _.uniq(group_by_list, false, function(item) {
 	 		return item["input"];
 	 	});
+		
+		//console.log("group_by_list", group_by_list)
 		
 		return group_by_list;
 	},
@@ -1480,8 +1485,8 @@ findAttributeInAbstractTable = function(context, clazz, fieldValue){
 
 }
 
-generateSymbolTable = function() {
-// console.log("    generateSymbolTable")
+generateSymbolTable = async function() {
+ console.log("    generateSymbolTable")
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
@@ -1512,13 +1517,17 @@ generateSymbolTable = function() {
        GetComponentIds(selected_elem);
 
        var elem_ids = _.keys(visited_elems);  
-       var queries = genAbstractQueryForElementList(elem_ids, null);   
-	    _.each(queries,function(q) {
-		abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-       })
+       var queries = await genAbstractQueryForElementList(elem_ids, null); 
+	  
+	   for (const q of queries) {
+	    //_.each(queries,async function(q) {
+		abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);	
+       }
+	   //)
     } else {
       // nothing selected
     }
+
 	// console.log(abstractQueryTable);
 	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"]};
     return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"]};
