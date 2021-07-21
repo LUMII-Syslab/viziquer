@@ -777,6 +777,7 @@ Template.ontologySettings.events({
 					showCardinalities: $("#show-cardinalities").is(":checked"),
 					simpleConditionImplementation: $("#simple-condition-implementation").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
+					showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
@@ -968,6 +969,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.showPrefixesForAllNonLocalNames=="true");
+		}
+	},
+	showPrefixesForAllNames: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.showPrefixesForAllNames=="true");
 		}
 	},
 	completeRDFBoxesInDatetimeFunctions: function() {

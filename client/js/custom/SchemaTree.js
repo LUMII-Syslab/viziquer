@@ -4,10 +4,11 @@ Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaTree.Count = new ReactiveVar("");
 Template.schemaTree.TopClass = new ReactiveVar("");
+Template.schemaTree.ClassPath = new ReactiveVar("");
 Template.schemaFilter.Count = new ReactiveVar("");
 Template.schemaFilter.Ont = new ReactiveVar("");
-const startCount = 30;
-const plusCount = 20;
+const startCount = 10;
+const plusCount = 5;
 
 Template.schemaTree.helpers({
 	classes: function() {
@@ -15,35 +16,52 @@ Template.schemaTree.helpers({
 	},
 });
 
-async function  useFilter (count = 0) {
-	if (count === 0 ) count = startCount;
-	var text = $('#filter_text').val().toLowerCase();
-	Template.schemaTree.Count.set(count);
-	var params;
-	var treeTop = Template.schemaTree.Classes.get();
-	//console.log(treeTop)
-	if ( Template.schemaTree.TopClass.get() !== 0 ) {
-		params = {limit: count, filter:text, mode: 'Sub', class_id:Template.schemaTree.TopClass.get()};
-		if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
-			var namespaces = {};
-			if ($("#dbo").is(":checked"))
-				namespaces.in = ['dbo'];
-			if ($("#yago").is(":checked"))
-				namespaces.notIn = ['yago'];
-			params.namespaces = namespaces;
-		} 
-		
-		var clSub = await dataShapes.getTreeClasses(params);
-		var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.ch_count), node_id: cl.id, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
-			if ( clSub.complete === false )
-				classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
-		
-		treeTop[0].children = classes;
-		Template.schemaTree.Classes.set(treeTop);
+function getNameF(o) {
+	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
+		return `${o.display_name} (${o.cnt_x})`;
+	else 
+		return `${o.prefix}:${o.display_name} (${o.cnt_x})`;
 
-	}
-	else {
-		params = {limit: count, filter:text, mode: 'Top'};
+}
+
+function getName(o) {
+	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
+		return `${o.display_name}`;
+	else 
+		return `${o.prefix}:${o.display_name}`;
+
+}
+
+async function setTreeTop (filter = '') {
+	var params = {mode: 'Top', limit: Template.schemaTree.Count.get()};
+	if (filter !== '')
+		params.filter = filter;
+		
+	var namespaces = { in:[], notIn:[]};
+	if ($("#dbo").is(":checked"))
+		namespaces.in = ['dbo'];
+	if ($("#yago").is(":checked"))
+		namespaces.notIn = ['yago'];
+	params.namespaces = namespaces;
+	
+	var clFull = await dataShapes.getTreeClasses(params);
+	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
+	if ( clFull.complete === false)
+		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+	Template.schemaTree.Classes.set(classes);
+	Template.schemaTree.TopClass.set(0);
+}
+
+async function setTreeSubClasses (cc, nsPlus, filter = '') {
+	
+	Template.schemaTree.TopClass.set(cc[0].node_id);
+	var params = {limit: Template.schemaTree.Count.get(), mode: 'Sub', class_id: Template.schemaTree.TopClass.get()};
+	var tree = [{ ch_count: 1, children: [], data_id: ".", localName: "Tree top", node_id: 0 }];
+	
+	if ( filter !== '')
+		params.filter = filter;
+
+	if ( nsPlus) {
 		if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 			var namespaces = {};
 			if ($("#dbo").is(":checked"))
@@ -51,22 +69,34 @@ async function  useFilter (count = 0) {
 			if ($("#yago").is(":checked"))
 				namespaces.notIn = ['yago'];
 			params.namespaces = namespaces;
-		}
-		var clFull = await dataShapes.getTreeClasses(params);
-		var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.ch_count), children: [], node_id: cl.id, data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
-		
-		if ( clFull.complete === false )
-			classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
-		Template.schemaTree.Classes.set(classes);		
+		}	
 	}
+		
+	var clSub = await dataShapes.getTreeClasses(params);
+	var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
+	if ( clSub.complete === false )
+		classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
+
+	cc[0].children = classes;
+	tree.push(cc[0]);
+	Template.schemaTree.Classes.set(tree); 
+}
+
+async function  useFilter () {
+	var text = $('#filter_text').val().toLowerCase();
+	var treeTop = Template.schemaTree.Classes.get();
+
+	if ( Template.schemaTree.TopClass.get() != 0 ) 
+		await setTreeSubClasses ([treeTop[1]], true, text);
+	else 
+		await setTreeTop(text);
 }
 
 async function  useFilterP () {
 	var text = $('#filter_text2').val().toLowerCase();
-	var params = {propertyKind:'All', limit: startCount, filter:text};
+	var params = {propertyKind:'All', limit: Template.schemaFilter.Count.get(), filter:text};
 	if ($("#dbp").is(":checked") ) {
-		var namespaces = {notIn: ['dbp']};
-		params.namespaces = namespaces;
+		params.namespaces = {notIn: ['dbp']};
 	}
 	if ( $("#propType").val() === 'Object properties' )
 		params.propertyKind = 'Object';
@@ -74,7 +104,7 @@ async function  useFilterP () {
 		params.propertyKind = 'Data';
 		
 	var pFull = await dataShapes.getProperties(params);  
-	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: `${p.prefix}:${p.display_name}`, localName: `${p.prefix}:${p.display_name} (${p.cnt_x})`}});
+	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
 	if ( pFull.complete === false)
 		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 		
@@ -82,73 +112,57 @@ async function  useFilterP () {
 }
 
 Template.schemaTree.events({
-
 	"click .toggle-tree-button": async function(e) {
 		var toggle_button = $(e.target);
-		var class_item = toggle_button.closest(".class-item");
 		var tree_node_id = toggle_button[0].attributes["node-id"].value;
-		
-		if ( Template.schemaTree.TopClass.get() === tree_node_id) {
-			Template.schemaTree.TopClass.set(0);
-			useFilter();
+		var topClass = Template.schemaTree.TopClass.get();
+		console.log(tree_node_id)
+		//console.log(Template.schemaTree.ClassPath.get())
+		Template.schemaTree.Count.set(startCount);
+		$("#filter_text")[0].value = "";
+
+		if ( tree_node_id == 0 ) {
+			await setTreeTop();
+		}
+		if ( topClass == tree_node_id) {
+			var classPath = Template.schemaTree.ClassPath.get();
+			classPath.pop();
+			if ( classPath.length === 0) {
+				await setTreeTop();
+			}
+			else {
+				var cc = classPath[classPath.length-1];
+				console.log(classPath)
+				console.log(classPath.length-1)
+				console.log(cc)
+				await setTreeSubClasses ([cc], false);
+			}
 		}
 		else {
-			console.log(tree_node_id)
-			var params = {limit: startCount, mode: 'Sub', class_id:tree_node_id};
-			
+
 			var treeTop = Template.schemaTree.Classes.get();
 			var cc;
 			
 			if ( Template.schemaTree.TopClass.get() === 0)
 				cc = _.filter(treeTop, function(c){ return  c.node_id == tree_node_id });
 			else
-				cc = _.filter(treeTop[0].children, function(c){ return  c.node_id == tree_node_id });
+				cc = _.filter(treeTop[1].children, function(c){ return  c.node_id == tree_node_id });
 				
-			console.log(cc)
+			//console.log(cc)
 			if ( cc[0].ch_count > 0) {
-				Template.schemaTree.TopClass.set(tree_node_id);
-				var clSub = await dataShapes.getTreeClasses(params);
-				var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.ch_count), node_id: cl.id, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
-				if ( clSub.complete === false )
-					classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
-
-				cc[0].children = classes;
-				Template.schemaTree.Classes.set(cc); 
-				$("#filter_text")[0].value = "";	
+				var classPath = Template.schemaTree.ClassPath.get();
+				classPath.push(cc[0]);
+				Template.schemaTree.ClassPath.set(classPath);
+				//console.log(Template.schemaTree.ClassPath.get())
+				await setTreeSubClasses (cc, false);
 			}
-		
 		}
-
-		/*
-		if (toggle_button.hasClass("expand")) {
-			//class_item.find(".attributes-list").css({display: "block"});
-			class_item.children().css({display: "block"});
-			
-			toggle_button.removeClass("expand")
-						.addClass("collapse")
-						.text("Collapse");
-						
-			if ( VQ_Schema_copy && VQ_Schema_copy.TreeList[tree_node_id])
-				VQ_Schema_copy.TreeList[tree_node_id].display = "block";
-		}
-
-		else {
-			class_item.find(".attributes-list").css({display: "none"});
-			//class_item.children().css({display: "none"});
-			toggle_button.removeClass("collapse")
-						.addClass("expand")
-						.text("Expand");
-					
-			if ( VQ_Schema_copy && VQ_Schema_copy.TreeList[tree_node_id])	
-				VQ_Schema_copy.TreeList[tree_node_id].display = "none";	
-		} */
 	},
 
-	"dblclick .class-body": function(e) {
+	"dblclick .class-body": async function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
-		//console.log($(e.target).closest(".class-body"))
-		//var class_name = $(e.target).closest(".class-body").attr("data-id");
-		if ( class_name !== "" && class_name !== "..." && class_name !== "..")
+
+		if ( class_name !== "" && class_name !== "..." && class_name !== ".." && class_name !== ".")
 		{
 			const BLACK_HEADER_HEIGHT = 45;
 			const DEFAULT_BOX_WIDTH = 194;
@@ -180,51 +194,48 @@ Template.schemaTree.events({
 		if ( class_name === "...") {
 			var count = Template.schemaTree.Count.get();
 			count = count + plusCount;
-			Template.schemaTree.Count.set(count)
-			useFilter (count);
+			Template.schemaTree.Count.set(count);
+			await useFilter();
 		}	
 		if ( class_name === "..") {
 			var count = Template.schemaTree.Count.get();
 			count = count + plusCount;
-			Template.schemaTree.Count.set(count)
-			useFilter (count);
+			Template.schemaTree.Count.set(count);
+			await useFilter();
 		}		
 	},
 	'click #filter': async function(e) {
-		useFilter ();
+		Template.schemaTree.Count.set(startCount)
+		await useFilter();
 	},
 	'click #dbo': async function(e) {
-		useFilter ();
+		Template.schemaTree.Count.set(startCount)
+		await useFilter ();
 	},
 	'click #yago': async function(e) {
-		useFilter ();
+		Template.schemaTree.Count.set(startCount)
+		await useFilter ();
 	},
 
 });
 
 Template.schemaFilter.rendered = async function() {
 	//console.log("-----rendered schemaFilter----")
-	var propTreeLimit = startCount;
-	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: propTreeLimit, namespaces: { notIn: ['dbp']}});
-	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: `${p.prefix}:${p.display_name}`, localName: `${p.prefix}:${p.display_name} (${p.cnt_x})`}});
+	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: startCount, namespaces: { notIn: ['dbp']}});
+	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
 	if ( pFull.complete === false)
 		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
-	
 	Template.schemaFilter.Properties.set(properties);
-	Template.schemaFilter.Count.set(propTreeLimit);
-	Template.schemaTree.TopClass.set(0);
+	Template.schemaFilter.Count.set(startCount);
 }
 
 Template.schemaTree.rendered = async function() {
-	//console.log("-----rendered schemaTree----")
-	//console.log(Session.get("activeProject"))
-	var clFull = await dataShapes.getTreeClasses({mode: 'Top', limit: startCount ,namespaces: { in: ['dbo']}});
-	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.ch_count), node_id: cl.id, children: [], data_id: `${cl.prefix}:${cl.display_name}`, localName: `${cl.prefix}:${cl.display_name} (${cl.cnt_x})`}});
-	if ( clFull.complete === false)
-		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
-	Template.schemaTree.Classes.set(classes);
+
 	Template.schemaTree.Count.set(startCount);
-}
+	await setTreeTop ();
+	Template.schemaTree.ClassPath.set([]);
+
+	}
 
 Template.schemaFilter.helpers({
 	properties: function() {
@@ -234,22 +245,25 @@ Template.schemaFilter.helpers({
 
 Template.schemaFilter.events({
 
-	"dblclick .class-body": function(e) {
+	"dblclick .class-body": async function(e) {
 		var prop_name = $(e.target).closest(".class-body").attr("value");
 		if ( prop_name === "...") {
 			var count = Template.schemaFilter.Count.get();
 			count = count + plusCount;
-			Template.schemaFilter.Count.set(count)
-			useFilterP ();
+			Template.schemaFilter.Count.set(count);
+			await useFilterP();
 		}		
 	},
 	'click #filter2': async function(e) {
-		useFilterP ();
+		Template.schemaFilter.Count.set(startCount)
+		await useFilterP();
 	},
 	'click #dbp': async function(e) {
+		Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
 	},
 	'click #propType': async function(e) {
+		Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
 	},
 });

@@ -261,6 +261,12 @@ Schemas.Projects = new SimpleSchema({
  			 optional: true,
  	    },
 		
+		showPrefixesForAllNames: {
+ 			 type: String,
+ 			 label: "Projects.showPrefixesForAllNames",
+ 			 optional: true,
+ 	    },
+		
 		completeRDFBoxesInDatetimeFunctions: {
  			 type: String,
  			 label: "Projects.completeRDFBoxesInDatetimeFunctions",
