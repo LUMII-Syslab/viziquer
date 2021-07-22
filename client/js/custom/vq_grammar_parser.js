@@ -14,7 +14,7 @@ vq_grammar_parser = (function() {
     child.prototype = new ctor();
   }
 
-   function peg$SyntaxError(message, expected, found, location) {
+  function peg$SyntaxError(message, expected, found, location) {
     this.message  = message;
     this.expected = expected;
     this.found    = found;
@@ -416,7 +416,7 @@ vq_grammar_parser = (function() {
         peg$c376 = async function(IRIREF) {return {IRIREF:makeVar(IRIREF)}},
         peg$c377 = async function(PrefixedName) {return {PrefixedName:PrefixedName}},
         peg$c378 = async function(Prefix) {return makeVar(Prefix)},
-        peg$c379 = async function(ref, PropertyReference, Prefix, LName, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(Prefix)+makeVar(LName), ref:ref, type:await resolveType(makeVar(Prefix)+makeVar(LName)), kind:resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c379 = async function(ref, PropertyReference, Prefix, LName, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(Prefix)+makeVar(LName), ref:ref, type:await resolveType(makeVar(Prefix)+makeVar(LName)), kind:await resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c380 = async function(Var) {return makeVar(Var)},
         peg$c381 = "`",
         peg$c382 = { type: "literal", value: "`", description: "\"`\"" },
@@ -471,12 +471,12 @@ vq_grammar_parser = (function() {
         peg$c431 = async function(PathNegatedPropertySetBracketted) {return {PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted}},
         peg$c432 = async function(iriOra) {return {inv:"", iriOra:iriOra}},
         peg$c433 = async function(iriOra) {return {inv:"^", iriOra:iriOra}},
-        peg$c434 = async function(ref, PNAME_NS, LName) {return {var:{name:makeVar(LName), ref:ref,type:await resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}},
-        peg$c435 = async function(ref, LName) {return {var:{name:makeVar(LName),ref:ref, type:await resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}},
+        peg$c434 = async function(ref, PNAME_NS, LName) {return {var:{name:makeVar(LName), ref:ref,type:await resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:await resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}},
+        peg$c435 = async function(ref, LName) {return {var:{name:makeVar(LName),ref:ref, type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
         peg$c436 = async function() {return {Alternative:"|"}},
         peg$c437 = async function() {return {PathSymbol :"/"}},
         peg$c438 = async function(Chars_String_variables) {return Chars_String_variables},
-        peg$c439 = async function(ref, PropertyReference, LName, PathMod, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(LName), ref:ref, type:await resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c439 = async function(ref, PropertyReference, LName, PathMod, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(LName), ref:ref, type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c440 = { type: "literal", value: "INV", description: "\"INV\"" },
         peg$c441 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c442 = async function(ref, PropertyReference, INV, PNAME_NS, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
@@ -525,7 +525,7 @@ vq_grammar_parser = (function() {
       peg$startRuleFunction = peg$startRuleFunctions[options.startRule];
     }
 
-    function text() {
+    async function text() {
       return input.substring(peg$savedPos, peg$currPos);
     }
 
@@ -2508,7 +2508,7 @@ vq_grammar_parser = (function() {
       s0 = peg$currPos;
       s1 = await peg$parseStringQuotes();
       if (s1 !== peg$FAILED) {
-        s2 =await peg$parseLANGTAG();
+        s2 = await peg$parseLANGTAG();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
           s1 = await peg$c76(s1, s2);
@@ -2782,7 +2782,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseCOUNT_DISTINCT();
+      s1 = await peg$parseCOUNT_DISTINCT();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;
@@ -3028,7 +3028,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseGROUP_CONCAT();
+      s1 = await peg$parseGROUP_CONCAT();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;
@@ -3110,7 +3110,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseGROUP_CONCAT();
+      s1 = await peg$parseGROUP_CONCAT();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;
@@ -3186,7 +3186,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseGROUP_CONCAT();
+      s1 = await peg$parseGROUP_CONCAT();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;
@@ -3262,7 +3262,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseGROUP_CONCAT();
+      s1 = await peg$parseGROUP_CONCAT();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;
@@ -5321,7 +5321,7 @@ vq_grammar_parser = (function() {
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 =await  peg$c272();
+        s1 = await peg$c272();
       }
       s0 = s1;
 
@@ -6291,7 +6291,7 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 =await  peg$parseBNODE();
+      s1 = await peg$parseBNODE();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 40) {
           s2 = peg$c80;

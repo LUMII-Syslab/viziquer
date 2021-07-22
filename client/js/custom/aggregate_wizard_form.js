@@ -93,6 +93,12 @@ Template.AggregateWizard.helpers({
 });
 
 Template.AggregateWizard.events({
+	
+	"keydown #field-list": function(e) {
+		autoCompletionAddAttribute(e);
+		return;
+	},
+	
 	"click #ok-aggregate-wizard": function() {	
 		
 		var alias = $('input[id=alias-name]').val();

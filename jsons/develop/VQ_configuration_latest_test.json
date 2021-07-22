@@ -2407,10 +2407,10 @@
                         "name": "Name",
                         "label": "Name (Alias or attribute)",
                         "extensionPoints": [
-                          {
-                            "extensionPoint": "dynamicDropDown",
-                            "procedure": "VQgetOrderByFields"
-                          }
+                           {
+							"extensionPoint": "processKeyStroke",
+							"procedure": "orderAutoCompletion"
+						   }
                         ],
                         "prefix": "order by ",
                         "suffix": null,
@@ -2534,9 +2534,9 @@
                         "label": "Name (Alias or attribute)",
                         "extensionPoints": [
                           {
-                            "extensionPoint": "dynamicDropDown",
-                            "procedure": "VQgetGroupByFields"
-                          }
+							"extensionPoint": "processKeyStroke",
+							"procedure": "groupAutoCompletion"
+						  }
                         ],
                         "prefix": "group by ",
                         "suffix": null,

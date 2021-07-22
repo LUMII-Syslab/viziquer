@@ -51,6 +51,18 @@ Interpreter.customMethods({
 		grammarType = "className"
 		await autoCompletion(e);
 	},
+	
+	orderAutoCompletion: async function(e, compart) {
+		grammarType = "order"
+		console.log("oooooooooooo")
+		await autoCompletion(e);
+	},
+	
+	groupAutoCompletion: async function(e, compart) {
+		grammarType = "group"
+		console.log("ggggggggggg")
+		await autoCompletion(e);
+	},
 
 });
 
@@ -121,6 +133,18 @@ autoCompletionAddAttribute = async function(e) {
 
 autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
+	symbolTable = generateSymbolTableAC();
+	await autoCompletion(e);
+},
+
+autoCompletionOrderBy = async function(e) {
+	grammarType = "order"
+	symbolTable = generateSymbolTableAC();
+	await autoCompletion(e);
+},
+
+autoCompletionGroupBy = async function(e) {
+	grammarType = "group"
 	symbolTable = generateSymbolTableAC();
 	await autoCompletion(e);
 },
@@ -613,6 +637,112 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
 		}
 		return p;
+	}
+	else if(grammarType == "order"){
+		var c = {};
+			c["prefix"] = "";
+			c["suggestions"] = [];
+		
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var order_by_list = [];
+	
+		var tempSymbolTable = await generateSymbolTable();
+		var symbolTable = tempSymbolTable["symbolTable"];
+		var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
+		
+		for (var key in rootSymbolTable) {
+			for(var k in rootSymbolTable[key]){
+				if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") c["suggestions"].push({name: key , priority:100, type:3});
+			}
+		}
+		
+		for (var key in symbolTable) {
+			for(var k in symbolTable[key]){
+				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
+			}
+		}
+
+		return c;
+	}
+	else if(grammarType == "group"){
+		var c = {};
+			c["prefix"] = "";
+			c["suggestions"] = [];
+			
+		var act_elem = Session.get("activeElement");
+		//Active element does not exist OR has no Name OR is of an unpropriate type
+		if (!act_elem) {
+			return [];
+		}
+		var act_comp = Compartments.findOne({elementId: act_elem})
+		if (!act_comp) {
+			return [];
+		}
+
+		var elem_type = ElementTypes.findOne({name: "Class"});
+		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
+			return [];
+		}
+		
+		var group_by_list = [];
+		var group_by_list_vissible = [];
+		
+		var group_by_list_sub = [];
+		var group_by_list_vissible_sub = [];
+
+		var selected_elem_id = Session.get("activeElement");
+		
+		var tempSymbolTable = await generateSymbolTable();
+		// console.log("group by", tempSymbolTable);
+		var symbolTable = tempSymbolTable["symbolTable"];
+
+
+		
+		for (var  key in symbolTable) {
+			
+			for (var  k in symbolTable[key]) {
+				var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][k]["context"], tempSymbolTable["abstractQueryTable"], key);
+					
+				if(symbolTable[key][k]["context"] == selected_elem_id){
+					
+					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS") {
+						if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list.push({name: key , priority:100, type:3});
+						else group_by_list_vissible.push({name: key , priority:100, type:3});
+					}
+					if(symbolTable[key][k]["kind"] == "CLASS_ALIAS") group_by_list.unshift({name: key , priority:100, type:3});
+				}
+				if (symbolTable[key][k]["upBySubQuery"] == 1) {
+					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list_sub.push({name: key , priority:100, type:3});
+					else group_by_list_vissible_sub.push({name: key , priority:100, type:3});
+				}
+			}
+		}
+
+		group_by_list = _.union(group_by_list, group_by_list_vissible);
+		group_by_list = _.union(group_by_list, group_by_list_sub);
+		group_by_list = _.union(group_by_list, group_by_list_vissible_sub);
+		
+		group_by_list = _.uniq(group_by_list, false, function(item) {
+	 		return item["name"];
+	 	});
+		
+		c["suggestions"] = group_by_list;
+		
+		return c;
 	}
 	else if(grammarType == "attribute"){
 		var p = {};

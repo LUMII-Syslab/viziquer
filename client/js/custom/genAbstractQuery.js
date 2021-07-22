@@ -86,7 +86,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	var prefix = "";
 
 	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
-	var par = await parseExpression(prefix+obj_class.identification.local_name, "CLASS_NAME", obj_class.identification)
+	var par = await parseExpression(prefix+obj_class.identification.display_name, "CLASS_NAME", obj_class.identification)
     _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
@@ -331,7 +331,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    if(typeof parse_obj !== 'undefined'){
 	   try {
 		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
-		 // console.log("parse_obj", parse_obj);
+		 console.log("parse_obj", parse_obj);
 		} catch (e) {
 		  // TODO: error handling
 		 // console.log(e)
