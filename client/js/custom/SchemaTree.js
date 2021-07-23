@@ -16,11 +16,11 @@ Template.schemaTree.helpers({
 	},
 });
 
-function getNameF(o) {
+function getNameF(o, col = 'cnt_x') {
 	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
-		return `${o.display_name} (${o.cnt_x})`;
+		return `${o.display_name} (${o[col]})`;
 	else 
-		return `${o.prefix}:${o.display_name} (${o.cnt_x})`;
+		return `${o.prefix}:${o.display_name} (${o[col]})`;
 
 }
 
@@ -97,19 +97,24 @@ async function  useFilter () {
 async function  useFilterP () {
 	var text = $('#filter_text2').val().toLowerCase();
 	var params = {propertyKind:'All', limit: Template.schemaFilter.Count.get(), filter:text};
+	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
 		//params.namespaces = {notIn: ['dbp']};
 		params.orderByPrefix = `case when ns_id = 2 then 0 
 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
 	}
-	if ( $("#propType").val() === 'Object properties' )
+	if ( $("#propType").val() === 'Object properties' ) {
 		params.propertyKind = 'Object';
-	if ( $("#propType").val() === 'Data properties' )
+		col = 'object_cnt_x'
+	}
+	if ( $("#propType").val() === 'Data properties' ) {
 		params.propertyKind = 'Data';
+		col = 'data_cnt_x';
+	}
 		
 	var pFull = await dataShapes.getProperties(params);  
-	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
+	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p, col)}});
 	if ( pFull.complete === false)
 		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 		
@@ -233,7 +238,7 @@ Template.schemaFilter.rendered = async function() {
 }
 
 Template.schemaTree.rendered = async function() {
-
+	console.log("-----rendered schemaTree----")
 	Template.schemaTree.Count.set(startCount);
 	await setTreeTop ();
 	Template.schemaTree.ClassPath.set([]);

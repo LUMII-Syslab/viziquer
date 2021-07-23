@@ -680,6 +680,16 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 				_.each(allAssociations, function(e){
 					if ( e.mark === 'out') e.type = '=>';
 					else e.type = '<=';
+					
+					if (e.class_iri !== undefined && e.class_iri !== null) {
+						var prefix;
+						if(e.class_is_local == true)prefix = "";
+						else prefix = e.class_prefix+":";
+						e.short_class_name = prefix + e.class_display_name;						
+					}
+					else
+						e.short_class_name = "";
+					
 				});
 
 				//remove duplicates - moved to getAllAssociations()
@@ -783,9 +793,9 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 			}); 
 			
-			_.each(asc, function(e){
-				e.class = "";
-			});
+			//_.each(asc, function(e){
+			//	e.class = "";
+			//});
 
 			return asc;
 		}

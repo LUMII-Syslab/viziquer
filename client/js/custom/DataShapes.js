@@ -105,7 +105,7 @@ dataShapes = {
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
 		console.log(proj)
-		this.schema = { resolvedClasses: {}, resolvedProperties: {}, treeTops: {}, showPrefixes: "false"};
+		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, treeTops: {}, showPrefixes: "false"};
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
@@ -231,7 +231,7 @@ dataShapes = {
 		return rr;
 	},
 	resolveClassByName : async function(params = {}) {	
-		console.log("------------resolveClassByName------------------")
+		console.log("------------resolveClassByName---"+ params.name +"---------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
 		var rr;
 		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
@@ -239,6 +239,7 @@ dataShapes = {
 				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
 			if (this.schema.resolvedClassesF[params.name] !== undefined) 
 				rr = { complete:false, data: []};
+			console.log(rr)
 		}
 		else {
 			rr = await this.callServerFunction("resolveClassByName", {main: params});
@@ -250,7 +251,7 @@ dataShapes = {
 		return rr;
 	},
 	resolvePropertyByName : async function(params = {}) {	
-		console.log("------------resolvePropertyByName------------------")
+		console.log("------------resolvePropertyByName---"+ params.name +"---------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		var rr;
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
@@ -258,6 +259,7 @@ dataShapes = {
 				rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
 			if (this.schema.resolvedPropertiesF[params.name] !== undefined)
 				rr = { complete:false, data: []};
+			console.log(rr)
 		}
 		else {
 			rr = await this.callServerFunction("resolvePropertyByName", {main: params});
