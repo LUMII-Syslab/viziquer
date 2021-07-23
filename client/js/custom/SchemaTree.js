@@ -33,18 +33,20 @@ function getName(o) {
 }
 
 async function setTreeTop (filter = '') {
-	var params = {mode: 'Top', limit: Template.schemaTree.Count.get()};
+	var params = {treeMode: 'Top', limit: Template.schemaTree.Count.get()};
 	if (filter !== '')
 		params.filter = filter;
 		
-	var namespaces = { in:[], notIn:[]};
-	if ($("#dbo").is(":checked"))
-		namespaces.in = ['dbo'];
-	if ($("#yago").is(":checked"))
-		namespaces.notIn = ['yago'];
-	params.namespaces = namespaces;
+	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
+		var namespaces = {};
+		if ($("#dbo").is(":checked"))
+			namespaces.in = ['dbo'];
+		if ($("#yago").is(":checked"))
+			namespaces.notIn = ['yago'];
+		params.namespaces = namespaces;
+	}
 	
-	var clFull = await dataShapes.getTreeClasses(params);
+	var clFull = await dataShapes.getTreeClasses({main:params});
 	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
 	if ( clFull.complete === false)
 		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
@@ -55,7 +57,7 @@ async function setTreeTop (filter = '') {
 async function setTreeSubClasses (cc, nsPlus, filter = '') {
 	
 	Template.schemaTree.TopClass.set(cc[0].node_id);
-	var params = {limit: Template.schemaTree.Count.get(), mode: 'Sub', class_id: Template.schemaTree.TopClass.get()};
+	var params = {limit: Template.schemaTree.Count.get(), treeMode: 'Sub'};  
 	var tree = [{ ch_count: 1, children: [], data_id: ".", localName: "Tree top", node_id: 0 }];
 	
 	if ( filter !== '')
@@ -72,7 +74,7 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 		}	
 	}
 		
-	var clSub = await dataShapes.getTreeClasses(params);
+	var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: Template.schemaTree.TopClass.get()}});
 	var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
 	if ( clSub.complete === false )
 		classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
@@ -119,14 +121,15 @@ Template.schemaTree.events({
 		var toggle_button = $(e.target);
 		var tree_node_id = toggle_button[0].attributes["node-id"].value;
 		var topClass = Template.schemaTree.TopClass.get();
-		console.log(tree_node_id)
 		//console.log(Template.schemaTree.ClassPath.get())
 		//Template.schemaTree.Count.set(startCount);
 		$("#filter_text")[0].value = "";
 
 		if ( tree_node_id == 0 ) {
 			await setTreeTop();
+			return;
 		}
+
 		if ( topClass == tree_node_id) {
 			var classPath = Template.schemaTree.ClassPath.get();
 			classPath.pop();
@@ -135,9 +138,6 @@ Template.schemaTree.events({
 			}
 			else {
 				var cc = classPath[classPath.length-1];
-				console.log(classPath)
-				console.log(classPath.length-1)
-				console.log(cc)
 				await setTreeSubClasses ([cc], false);
 			}
 		}

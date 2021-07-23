@@ -479,14 +479,9 @@ Template.AddNewAttribute.events({
 });
 
 function formParams(vq_obj, propertyKind, filter) {
-	
+
 	var param = {propertyKind: propertyKind};	
-	var class_name = vq_obj.getName();
-	var individual =  vq_obj.getInstanceAlias();
-	
-	if (class_name !== null && class_name !== undefined) param["className"] = class_name;
-	if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
-	if(filter != null) param["filter"] = filter;
+	if (filter != null) param["filter"] = filter;
 	var value = $("#mySearch-attribute").val()
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		//param.namespaces = {notIn: ['dbp']};;
@@ -495,20 +490,6 @@ function formParams(vq_obj, propertyKind, filter) {
 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
 	}
-	var pList = {in: [], out: []};
-	
-	var field_list = vq_obj.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
-	if ( field_list.length > 0) pList.out = field_list;
-
-	var link_list =  vq_obj.getLinks();
-	_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-		if (link.type === 'in' && link.name !== null && link.name !== undefined )
-			pList.in.push(link);
-		if (link.type === 'out' && link.name !== null && link.name !== undefined)
-			pList.out.push(link);
-	});
-	
-	if (pList.in.length > 0 || pList.out.length > 0) param.pListFrom = pList;
 	
 	return param;
 }
@@ -541,7 +522,7 @@ async function getAttributes(filter){
 
 			var param = formParams(vq_obj, 'Data', filter);
 
-			var prop = await dataShapes.getProperties(param);
+			var prop = await dataShapes.getProperties(param, vq_obj);
 			prop = prop["data"];
 			
 			for(var cl in prop){
@@ -589,7 +570,7 @@ async function getAssociations(filter){
 				
 			var param = formParams(vq_obj, 'Object', filter);
 
-			var prop = await dataShapes.getProperties(param)
+			var prop = await dataShapes.getProperties(param, vq_obj)
 			prop = prop["data"];
 			
 			

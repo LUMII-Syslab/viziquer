@@ -531,39 +531,20 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			c["suggestions"] = [];
 			var cls;
 			
-			var params = {}
+			var params = {};
+			var vq_obj;
 			if(fullText != "") params.filter = fullText;
 			
 			var selected_elem_id = Session.get("activeElement");			
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-				
-				var vq_obj = new VQ_Element(selected_elem_id);
-				
+
+				vq_obj = new VQ_Element(selected_elem_id);
 				var individual =  vq_obj.getInstanceAlias();
 				if (individual !== null && individual !== undefined) params.uriIndividual = individual;
-				
-				var pList = {in: [], out: []};
-				var field_list = vq_obj.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
-				if ( field_list.length > 0) pList.out = field_list;
-			
-				var link_list =  vq_obj.getLinks();
-				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in' && link.name !== null && link.name !== undefined )
-						pList.in.push(link);
-					if (link.type === 'out' && link.name !== null && link.name !== undefined )
-						pList.out.push(link);
-				});
-				
-				if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
-			cls = await dataShapes.getClasses(params);
-			//if(fullText != ""){
-			//	cls = await dataShapes.getClasses({filter:fullText});
-			//}else{
-			//	cls = await dataShapes.getClasses();
-			//}
+			cls = await dataShapes.getClasses(params, vq_obj);
 			
 			cls = cls["data"];
 
@@ -580,55 +561,21 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		p["prefix"] = "";
 		p["suggestions"] = [];
 		var params = {propertyKind:'Object'};
-		if(fullText != "") params.filter = fullText;
+		if (fullText != "") params.filter = fullText;
 		var selected_elem_id = Session.get("activeElement");	
-		var pList;
+		var elFrom;
+		var elTo;
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				
 			var vq_link = new VQ_Element(selected_elem_id);
 			if (vq_link.isLink()) {
 				var elements = vq_link.getElements();
-				var class_name = elements.start.getName();
-				var individual =  elements.start.getInstanceAlias();
-				if (class_name !== null && class_name !== undefined) params["className"] = class_name;
-				if (individual !== null && individual !== undefined) params["uriIndividual"] = individual;
-
-				pList = {in: [], out: []};
-				var field_list = elements.start.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
-				if ( field_list.length > 0) pList.out = field_list;
-
-				var link_list =  elements.start.getLinks();
-				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in' && link.name !== null && link.name !== undefined)
-						pList.in.push(link);
-					if (link.type === 'out' && link.name !== null && link.name !== undefined)
-						pList.out.push(link);
-				});
-				if (pList.in.length > 0 || pList.out.length > 0) params.pListFrom = pList;				
-
-				class_name = elements.end.getName();
-				individual =  elements.end.getInstanceAlias();
-				if (class_name !== null && class_name !== undefined) params["otherEndClassName"] = class_name;
-				if (individual !== null && individual !== undefined) params["otherEndUriIndividual"] = individual;
-				
-				pList = {in: [], out: []};
-				var field_list = elements.end.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
-				if ( field_list.length > 0) pList.out = field_list;
-
-				var link_list =  elements.end.getLinks();
-				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in' && link.name !== null && link.name !== undefined )
-						pList.in.push(link);
-					if (link.type === 'out' && link.name !== null && link.name !== undefined )
-						pList.out.push(link);
-				});
-				if (pList.in.length > 0 || pList.out.length > 0) params.pListTo = pList;	
-
+				elFrom = elements.start;
+				elTo = elements.end;
 			}
 		}
-		
 	
-		props = await dataShapes.getProperties(params);
+		props = await dataShapes.getProperties(params, elFrom, elTo);
 		props = props["data"];
 		for(var pr in props){
 			var prefix;
@@ -749,19 +696,16 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		p["prefix"] = "";
 		p["suggestions"] = [];
 		
-		var params = {propertyKind:'Data'};
-		if(fullText != "") params.filter = fullText;
-		var selected_elem_id = Session.get("activeElement");	
+		var params = {propertyKind: 'Data'};
+		if (fullText != "") params.filter = fullText;
+		var selected_elem_id = Session.get("activeElement");
+		var act_el;
 		var pList;
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-			var act_el = Elements.findOne({_id: selected_elem_id}); //Check if element ID is valid
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
-			var class_name = compart["input"];
-			params["className"] = class_name;
+			act_el = new VQ_Element(selected_elem_id)
 		}
 		
-		props = await dataShapes.getProperties(params);
+		props = await dataShapes.getProperties(params, act_el);
 		props = props["data"];
 		for(var pr in props){
 			var prefix;

@@ -662,12 +662,8 @@ async function getAllAssociations(){
 			// if (schema.classExist(className)) {
 				
 				// var allAssociations = schema.findClassByName(className).getAllAssociations();
-				
-				var individual =  startElement.getInstanceAlias();
-				
+
 				var param = {propertyKind:'ObjectExt'};
-				if (className !== "" && className !== undefined) param["className"] = className;
-				if (individual !== null && individual !== undefined) param["uriIndividual"] = individual;
 				var filter = $("#mySearch").val().toLowerCase();
 				if(filter != null) param["filter"] = filter;
 				if ($("#dbp_for_links").is(":checked") ) {
@@ -678,24 +674,7 @@ else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 't
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
 				}
 				
-				var pList = {in: [], out: []};
-	
-				var field_list = startElement.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
-				if ( field_list.length > 0) pList.out = field_list;
-
-				var link_list =  startElement.getLinks();
-				_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
-					if (link.type === 'in' && link.name !== null && link.name !== undefined )
-						pList.in.push(link);
-					if (link.type === 'out' && link.name !== null && link.name !== undefined )
-						pList.out.push(link);
-				});
-				
-				if (pList.in.length > 0 || pList.out.length > 0) param.pListFrom = pList;
-				
-				
-				// if(filter != null) param["filter"] = filter;
-				var prop = await dataShapes.getProperties(param)
+				var prop = await dataShapes.getProperties(param, startElement);
 				var allAssociations = prop["data"];
 				
 				_.each(allAssociations, function(e){

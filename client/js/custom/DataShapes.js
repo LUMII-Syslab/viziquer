@@ -37,18 +37,55 @@ const callWithGet = async (funcName) => {
 }
 
 // ***********************************************************************************
+const getPList = (vq_obj) => {
+	var pList = {in: [], out: []};
+	var field_list = vq_obj.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+	if (field_list.length > 0) pList.out = field_list;
 
+	var link_list =  vq_obj.getLinks();
+	_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+		if (link.type === 'in' && link.name !== null && link.name !== undefined )
+			pList.in.push(link);
+		if (link.type === 'out' && link.name !== null && link.name !== undefined )
+			pList.out.push(link);
+	});
+	
+	return pList;
+}
+
+const findElementDataForClass = (vq_obj) => {
+	var params = {}
+	var individual =  vq_obj.getInstanceAlias();
+	if (individual !== null && individual !== undefined) 
+		params.uriIndividual = individual;
+	
+	var pList = getPList(vq_obj);
+	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+	return params;
+}
+
+const findElementDataForProperty = (vq_obj) => {
+	var params = {};
+	var individual =  vq_obj.getInstanceAlias();
+	var class_name = vq_obj.getName();
+	if (individual !== null && individual !== undefined) 
+		params.uriIndividual = individual;
+	if (class_name !== null && class_name !== undefined) 
+		params.className = class_name;
+	
+	var pList = getPList(vq_obj);
+	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+	return params;
+}
+// ***********************************************************************************
 dataShapes = {
-	schema : { resolvedClasses: {}, resolvedProperties: {}, treeTops: {}, showPrefixes: "false"},
+	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, treeTops: {}, showPrefixes: "false"},
 	getOntologies : async function() {
+		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
-		var rr2 = rr.info;
-		rr2.unshift({name:""});
-		
-		//rr =  _.map(rr, function(n){ return n.name; });
-		//rr.unshift("");
-		//var rr2 =  _.map(rr, function(n){ return {name:n}; });
-		return await rr2;		
+		rr.unshift({name:""});
+		console.log(rr)
+		return await rr;		
 	},
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
@@ -61,58 +98,23 @@ dataShapes = {
 				//this.schema.ontologies = {};
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
 				this.schema.limit = 20;
-				//var ont_list = await this.getOntList(proj.schema);
 				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
 				//Utilities.callMeteorMethod("updateProject", list);
 				//this.schema.ontologies.list = ont_list;
 			}
 		}
 	},
-	getOntList : async function(schema) {
-		var rr = await callWithGet('ontologies/' + schema + '/ns');
-		var rr2 =  _.map(rr.ns, function(n){ return {dprefix:n.name+" ("+n.cl_count+")", id:String(n.id), priority:n.priority}; });
-		rr2 = _.sortBy(rr2, function(a) { return -a.priority});
-		console.log(rr2)
-		return await rr2;		
-	},
-	getProjOntList : async function() {
-			var s = this.schema.schema;
-			var rr = [];
-			if (s !== "" && s !== undefined )
-			{
-			    rr = this.getOntList(s);
-			}
-		return await rr;		
-	},
-	getClassList : async function(text = "") {
-		var s = this.schema.schema;
-		console.log("------------getClassList------------------")
-		var rr2 = [];
-		if (s !== "" && s !== undefined )
-		{
-			var rr = [];
-			if (text === "")
-				rr = await callWithGet('ontologies/' + s + '/classes');
-			else
-				rr = await callWithGet('ontologies/' + s + '/classes-filtered/' + text);
-			console.log(rr)
-			rr2 =  _.map(rr.data, function(n){ return {fullName:n.display_name + " (" + n.cnt + ")"}; });
-			console.log(rr2)
-			//return await rr2;
-		}
-		return await rr2;
-	},
 	callServerFunction : async function(funcName, params) {
 		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		this.schema.limit = 20; // ----- !!! ( for development ) - remove !!! -----
+		this.schema.limit = 30; // ----- !!! ( for development ) - remove !!! -----
 		var s = this.schema.schema;
 		console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
 		if (s !== "" && s !== undefined )
 		{		
-			params.endpointUrl = this.schema.endpoint;
-			if ( params.limit === undefined )
-				params.limit = this.schema.limit;
+			params.main.endpointUrl = this.schema.endpoint;
+			if ( params.main.limit === undefined )
+				params.main.limit = this.schema.limit;
 				
 			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
@@ -122,28 +124,42 @@ dataShapes = {
 	getNamespaces : async function(params = {}) {
 		console.log("------------getNamespaces ------------------")
 		//dataShapes.getNamespaces()
-		return await this.callServerFunction("getNamespaces", params);
+		return await this.callServerFunction("getNamespaces", {main:params});
 	},
-	getClasses : async function(params = {}) {
+	getClasses : async function(params = {}, vq_obj = null) {
 		console.log("------------GetClasses------------------")
 		// dataShapes.getClasses()
-		// dataShapes.getClasses({limit: 30})
+		// dataShapes.getClasses({limit: 30}) 
 		// dataShapes.getClasses({filter:'aa'})
-		// dataShapes.getClasses({uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'})
 		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
-		// dataShapes.getClasses({uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden', namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
-		// dataShapes.getClasses({pList: { out: [{name: 'educationalAuthority', type: 'out'}]}})
-		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}]}})  23
-		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}) 20
-		// dataShapes.getClasses({onlyPropsInSchema: true, pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}) 58
-		
-		return await this.callServerFunction("getClasses", params);
+		// dataShapes.getClasses({}, new VQ_Element(Session.get("activeElement")))
+		// ***  dataShapes.getClasses({element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'}})
+		// ***  dataShapes.getClasses({element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'} })  -- visas ir yago klases
+		// ***  dataShapes.getClasses({element: { pList: { out: [{name: 'educationalAuthority', type: 'out'}]}}})
+		// ***  dataShapes.getClasses({main:{ onlyPropsInSchema: true}, element: { pList: {in: [{name: 'super', type: 'in'}]}}})  23
+		// ***  dataShapes.getClasses({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
+		// ***  dataShapes.getClasses({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
+		var allParams = {main: params};
+		if ( vq_obj !== null && vq_obj !== undefined )
+			allParams.element = findElementDataForClass(vq_obj);
+		return await this.callServerFunction("getClasses", allParams);
 	},
-	getTreeClasses : async function(params = {}) {
+	getTreeClasses : async function(params) {
 		console.log("------------GetTreeClasses------------------")
+		function makeTreeName(params) {
+			var nList = [];
+			if ( params.main.namespaces !== undefined) {
+				if ( params.main.namespaces.in !== undefined )
+					nList.push(params.main.namespaces.in.join('_'));
+				if ( params.main.namespaces.notIn !== undefined )
+					nList.push(params.main.namespaces.notIn.join('_'));
+			}
+			nList.push(params.main.limit);
+			return nList.join('_');
+		}
 		var rr;
-		if ( params.mode === 'Top' && ( params.filter === undefined || params.filter === '' )) {
-			var nsString = `in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}_${params.limit}`;
+		if ( params.main.treeMode === 'Top' && ( params.main.filter === undefined || params.main.filter === '' )) {
+			var nsString = makeTreeName(params);
 			//console.log(`in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}`)
 			if (this.schema.treeTops[nsString] !== undefined) {
 				rr = this.schema.treeTops[nsString];
@@ -158,52 +174,48 @@ dataShapes = {
 			
 		return rr;
 	},
-	getProperties : async function(params = {}) {		
+	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {		
 		console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
 		//dataShapes.getProperties({propertyKind:'Object', filter: 'aa'})
-		//dataShapes.getProperties({propertyKind:'Object', className: 'umbel-rc:Park'})
-		//dataShapes.getProperties({propertyKind:'Data', className: 'umbel-rc:Park'})
-		//dataShapes.getProperties({propertyKind:'Connect', className: 'umbel-rc:Park', otherEndClassName: 'umbel-rc:Philosopher'}) 
-		//dataShapes.getProperties({propertyKind:'All', className: 'dbo:Meeting'})  -- tam nav propertiju  !!! ko darīt ar tiem apastrofiem vārdos?
-		//dataShapes.getProperties({propertyKind:'All', className: 'umbel-rc:Philosopher'})
-		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})
-		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"})
-		//dataShapes.getProperties({propertyKind:'Connect', uriIndividual: "http://dbpedia.org/resource/Gulliver's_World", otherEndUriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"})
-		//dataShapes.getProperties({propertyKind:'ObjectExt', uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"})
-		//dataShapes.getProperties({propertyKind:'Object', className: 'dbo:Tenure'})
-		//dataShapes.getProperties({propertyKind:'ObjectExt', otherEndClassName:'umbel-rc:Crater'})
-		//dataShapes.getProperties({propertyKind:'Connect', className: 'CareerStation', otherEndClassName:'umbel-rc:Crater'})
-		//dataShapes.getProperties({propertyKind:'All', className: 'CareerStation', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'})
-		
-		return await this.callServerFunction("getProperties", params);
-		//var s = this.schema.schema;
-		//return await this.callServerFunction("getClasses", params);
-		//console.log(par)
-		//var rr = {complete: false, data: [], error: "DSS parameter not found"};
-		//if (s !== "" && s !== undefined )
-		//{
-		//	par.endpointUrl = this.schema.endpoint;
-		//	if ( par.limit === undefined )
-		//		par.limit = this.schema.limit;
-		//	rr = await callWithPost('ontologies/' + s + '/getProperties', par);
-		//}
-		//console.log(rr)
-		//return await rr;
+		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
+		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
+		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
+		// *** dataShapes.getProperties({main: {propertyKind:'Data'}, element: {className: 'umbel-rc:Park'}})
+		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}}) 
+		// *** dataShapes.getProperties({main:{propertyKind:'All'}, element:{className: 'umbel-rc:Philosopher'}})
+		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, elemet:{uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"}})
+		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, elemet: { riIndividual: "http://dbpedia.org/resource/Gulliver's_World"}, elementOE: {uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"}})
+		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element:{uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"}})
+		// *** dataShapes.getProperties({main:{propertyKind:'Object'}, element:{className: 'dbo:Tenure'}})
+		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element: { className:'umbel-rc:Crater'}})
+		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, element:{className: 'CareerStation'}, elementOE:{otherEndClassName:'umbel-rc:Crater'}})
+		// *** dataShapes.getProperties({main:{propertyKind:'All', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'}, element:{className: 'CareerStation'}})
+		var allParams = {main: params};
+		if ( vq_obj !== null && vq_obj !== undefined )
+			allParams.element = findElementDataForProperty(vq_obj);
+		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
+			allParams.elementOE = findElementDataForProperty(vq_obj_2);
+		return await this.callServerFunction("getProperties", allParams);
 	},
 	resolveClassByName : async function(params = {}) {	
 		console.log("------------resolveClassByName------------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
 		var rr;
-		if (this.schema.resolvedClasses[params.name] !== undefined) {
-			rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
+		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
+			if (this.schema.resolvedClasses[params.name] !== undefined) 
+				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
+			if (this.schema.resolvedClassesF[params.name] !== undefined) 
+				rr = { complete:false, data: []};
 		}
 		else {
-			rr = await this.callServerFunction("resolveClassByName", params);
+			rr = await this.callServerFunction("resolveClassByName", {main: params});
 			if ( rr.complete )
 				this.schema.resolvedClasses[params.name] = rr.data[0];
+			else
+				this.schema.resolvedClassesF[params.name] = 1;
 		}
 		return rr;
 	},
@@ -211,53 +223,22 @@ dataShapes = {
 		console.log("------------resolvePropertyByName------------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		var rr;
-		if (this.schema.resolvedProperties[params.name] !== undefined) {
-			rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
+		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
+			if (this.schema.resolvedProperties[params.name] !== undefined)
+				rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
+			if (this.schema.resolvedPropertiesF[params.name] !== undefined)
+				rr = { complete:false, data: []};
 		}
 		else {
-			rr = await this.callServerFunction("resolvePropertyByName", params);
+			rr = await this.callServerFunction("resolvePropertyByName", {main: params});
 			if ( rr.complete )
 				this.schema.resolvedProperties[params.name] = rr.data[0];
+			else
+				this.schema.resolvedPropertiesF[params.name] = 1;
 		}
 		return rr;
 	},
 };
 
 // ***********************************************************************************
-// ****************************Šo man pagaidām nevajag, bet drīz vajadzēs**************************************************
-VQ_Schema_New = function () {
-  // Te būs jāsaprot, kurā projektā atrodamies un kāda ir zināmā informācija
-	var schema = new VQ_Schema();
-    this.Classes = schema.Classes;
-    this.Ontologies = schema.Ontologies;
-    this.Tree = schema.Tree;
-};
 
-VQ_Schema_New.prototype = {
-  constructor: VQ_Schema_New,
-  Classes: null,
-  Ontologies:null,
-  Tree:null,
-  getOntList: function() {
-	var ont_list =  _.map(this.Ontologies, function (o) {
-		return {dprefix:o.dprefix};});
-	return 	ont_list;		
-  },
-  getAllClasses: function () { 
-	var cl_list =  _.map(this.Classes, function (c) {
-		return {localName:c.localName, dprefix:c.ontology.dprefix}; });
-	return 	cl_list;
-  },
-  getAllClassesF: function (filter) { 
-	var cl_list =  this.getAllClasses();
-	cl_list = _.filter(cl_list, function(c){ 
-				return  c.localName.indexOf(filter) != -1 });	
-	return 	cl_list;
-  },
-  getAllClassesFO: function (filter, ont) { 
-	var cl_list =  this.getAllClasses();
-	cl_list = _.filter(cl_list, function(c){ 
-				return  c.localName.indexOf(filter) != -1 && c.dprefix == ont });	
-	return 	cl_list;
-  }
- }
