@@ -54,13 +54,16 @@ Interpreter.customMethods({
 	
 	orderAutoCompletion: async function(e, compart) {
 		grammarType = "order"
-		console.log("oooooooooooo")
 		await autoCompletion(e);
 	},
 	
 	groupAutoCompletion: async function(e, compart) {
 		grammarType = "group"
-		console.log("ggggggggggg")
+		await autoCompletion(e);
+	},
+	
+	instanceAutoCompletion: async function(e, compart) {
+		grammarType = "instance"
 		await autoCompletion(e);
 	},
 
@@ -145,6 +148,12 @@ autoCompletionOrderBy = async function(e) {
 
 autoCompletionGroupBy = async function(e) {
 	grammarType = "group"
+	symbolTable = generateSymbolTableAC();
+	await autoCompletion(e);
+},
+
+autoCompletionInstance = async function(e) {
+	grammarType = "instance"
 	symbolTable = generateSymbolTableAC();
 	await autoCompletion(e);
 },
@@ -550,7 +559,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 
 			for(var cl in cls){
 				var prefix;
-				if(cls[cl]["is_local"] == true)prefix = "";
+				if(cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 				else prefix = cls[cl]["prefix"]+":";
 				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:3})
 			}
@@ -579,7 +588,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		props = props["data"];
 		for(var pr in props){
 			var prefix;
-			if(props[pr]["is_local"] == true)prefix = "";
+			if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 			else prefix = props[pr]["prefix"]+":";
 			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
 		}
@@ -709,11 +718,20 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		props = props["data"];
 		for(var pr in props){
 			var prefix;
-			if(props[pr]["is_local"] == true)prefix = "";
+			if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 			else prefix = props[pr]["prefix"]+":";
 			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:1})
 		}
 		return p;
+	}
+	else if(grammarType == "instance"){
+		var c = {};
+			c["prefix"] = "";
+			c["suggestions"] = [];
+			
+			// c["suggestions"].push({name: "test" , priority:100, type:3});
+			
+			return c;
 	}
 	/*else {
 		var act_elem = Session.get("activeElement");

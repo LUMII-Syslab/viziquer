@@ -507,18 +507,20 @@ async function getAttributes(filter){
 						
 			attr_list.push({separator:"line"});
 			
-		/*
-			var symbolTable = generateSymbolTable()["symbolTable"];
-			
+		
+			var abstractS = await generateSymbolTable();
+			var symbolTable = abstractS["symbolTable"];
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
-						if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 ))attr_list.push({name: key});
+						if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 )){
+							attr_list.push({name: key});
+						}
 					}
 				}	
 			}
 			
-			attr_list.push({separator:"line"});*/
+			attr_list.push({separator:"line"});
 
 			var param = formParams(vq_obj, 'Data', filter);
 
@@ -527,7 +529,7 @@ async function getAttributes(filter){
 			
 			for(var cl in prop){
 				var prefix;
-				if(prop[cl]["is_local"] == true)prefix = "";
+				if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 				else prefix = prop[cl]["prefix"]+":";
 				attr_list.push({name: prefix+prop[cl]["display_name"]})
 			}
@@ -576,7 +578,7 @@ async function getAssociations(filter){
 			
 			for(var cl in prop){
 				var prefix;
-				if(prop[cl]["is_local"] == true)prefix = "";
+				if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 				else prefix = prop[cl]["prefix"]+":";
 				attr_list.push({name: prefix+prop[cl]["display_name"]})
 			}

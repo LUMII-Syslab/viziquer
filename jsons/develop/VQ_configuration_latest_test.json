@@ -2764,6 +2764,10 @@
                     "extensionPoint": "afterUpdate",
                     "procedure": "VQsetGroupBy"
                   },
+				  {
+					"extensionPoint": "processKeyStroke",
+					"procedure": "instanceAutoCompletion"
+				  },
                   {
                     "extensionPoint": "dynamicPrefix"
                   },
