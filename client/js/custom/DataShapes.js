@@ -1,5 +1,7 @@
 // ***********************************************************************************
 const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
+const MAX_ANSWERS = 30;
+// ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
 		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
@@ -43,10 +45,11 @@ const getPList = (vq_obj) => {
 	if (field_list.length > 0) pList.out = field_list;
 
 	var link_list =  vq_obj.getLinks();
-	_.each(link_list.map(function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}}),function(link) {
+	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}});
+	_.each(link_list_filtered, function(link) {
 		if (link.type === 'in' && link.name !== null && link.name !== undefined )
-			pList.in.push(link);
-		if (link.type === 'out' && link.name !== null && link.name !== undefined )
+				pList.in.push(link);
+		if (link.type === 'out' && link.name !== null && link.name !== undefined ) 
 			pList.out.push(link);
 	});
 	
@@ -77,6 +80,18 @@ const findElementDataForProperty = (vq_obj) => {
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
 }
+
+const findElementDataForIndividual = (vq_obj) => {
+	var params = {};
+	var class_name = vq_obj.getName();
+	if (class_name !== null && class_name !== undefined) 
+		params.className = class_name;
+	
+	var pList = getPList(vq_obj);
+	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+	return params;
+}
+
 // ***********************************************************************************
 dataShapes = {
 	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, treeTops: {}, showPrefixes: "false"},
@@ -97,7 +112,7 @@ dataShapes = {
 				this.schema.showPrefixes = proj.showPrefixesForAllNames;
 				//this.schema.ontologies = {};
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
-				this.schema.limit = 20;
+				this.schema.limit = MAX_ANSWERS;
 				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
 				//Utilities.callMeteorMethod("updateProject", list);
 				//this.schema.ontologies.list = ont_list;
@@ -106,7 +121,7 @@ dataShapes = {
 	},
 	callServerFunction : async function(funcName, params) {
 		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		this.schema.limit = 30; // ----- !!! ( for development ) - remove !!! -----
+		this.schema.limit = MAX_ANSWERS; // ----- !!! ( for development ) - remove !!! -----
 		var s = this.schema.schema;
 		console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
@@ -199,6 +214,21 @@ dataShapes = {
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
 		return await this.callServerFunction("getProperties", allParams);
+	},
+	getIndividuals : async function(params = {}, vq_obj = null) {
+		console.log("------------getIndividuals ------------------")
+		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
+		var rr;
+		var allParams = {main: params};
+		if ( vq_obj !== null && vq_obj !== undefined ) 
+			allParams.element = findElementDataForIndividual(vq_obj);
+			
+		//console.log(allParams)
+		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined )
+			rr = await this.callServerFunction("getIndividuals", allParams);
+		else
+			rr = { complete:false, data: []}; 
+		return rr;
 	},
 	resolveClassByName : async function(params = {}) {	
 		console.log("------------resolveClassByName------------------")

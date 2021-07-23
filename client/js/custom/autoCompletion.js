@@ -584,7 +584,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			}
 		}
 	
-		props = await dataShapes.getProperties(params, elFrom, elTo);
+		var props = await dataShapes.getProperties(params, elFrom, elTo);
 		props = props["data"];
 		for(var pr in props){
 			var prefix;
@@ -709,12 +709,11 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		if (fullText != "") params.filter = fullText;
 		var selected_elem_id = Session.get("activeElement");
 		var act_el;
-		var pList;
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			act_el = new VQ_Element(selected_elem_id)
 		}
 		
-		props = await dataShapes.getProperties(params, act_el);
+		var props = await dataShapes.getProperties(params, act_el);
 		props = props["data"];
 		for(var pr in props){
 			var prefix;
@@ -726,12 +725,23 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 	}
 	else if(grammarType == "instance"){
 		var c = {};
-			c["prefix"] = "";
-			c["suggestions"] = [];
-			
-			// c["suggestions"].push({name: "test" , priority:100, type:3});
-			
-			return c;
+		c["prefix"] = "";
+		c["suggestions"] = [];
+		var params = {};
+		if (fullText != "") params.filter = fullText;
+		
+		var selected_elem_id = Session.get("activeElement");
+		var act_el;
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			act_el = new VQ_Element(selected_elem_id);
+		}
+		
+		var inst = await dataShapes.getIndividuals(params, act_el);
+		for(var i in inst){
+			c["suggestions"].push({name: inst[i], priority:100, type:1})
+		}
+	
+		return c;
 	}
 	/*else {
 		var act_elem = Session.get("activeElement");
