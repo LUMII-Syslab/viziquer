@@ -12880,12 +12880,21 @@ vq_grammar_parser = (function() {
             if (peg$silentFails === 0) { await peg$fail(peg$c365); }
           }
           if (s3 === peg$FAILED) {
-            if (peg$c372.test(input.charAt(peg$currPos))) {
-              s3 = input.charAt(peg$currPos);
+            if (input.charCodeAt(peg$currPos) === 46) {
+              s3 = peg$c16;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+            }
+            if (s3 === peg$FAILED) {
+              if (peg$c372.test(input.charAt(peg$currPos))) {
+                s3 = input.charAt(peg$currPos);
+                peg$currPos++;
+              } else {
+                s3 = peg$FAILED;
+                if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+              }
             }
           }
         }
@@ -12907,12 +12916,21 @@ vq_grammar_parser = (function() {
               if (peg$silentFails === 0) { await peg$fail(peg$c365); }
             }
             if (s3 === peg$FAILED) {
-              if (peg$c372.test(input.charAt(peg$currPos))) {
-                s3 = input.charAt(peg$currPos);
+              if (input.charCodeAt(peg$currPos) === 46) {
+                s3 = peg$c16;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+              }
+              if (s3 === peg$FAILED) {
+                if (peg$c372.test(input.charAt(peg$currPos))) {
+                  s3 = input.charAt(peg$currPos);
+                  peg$currPos++;
+                } else {
+                  s3 = peg$FAILED;
+                  if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                }
               }
             }
           }
@@ -12990,20 +13008,29 @@ vq_grammar_parser = (function() {
             if (peg$silentFails === 0) { await peg$fail(peg$c365); }
           }
           if (s3 === peg$FAILED) {
-            if (input.charCodeAt(peg$currPos) === 45) {
-              s3 = peg$c55;
+            if (input.charCodeAt(peg$currPos) === 46) {
+              s3 = peg$c16;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c56); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c17); }
             }
             if (s3 === peg$FAILED) {
-              if (peg$c372.test(input.charAt(peg$currPos))) {
-                s3 = input.charAt(peg$currPos);
+              if (input.charCodeAt(peg$currPos) === 45) {
+                s3 = peg$c55;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c56); }
+              }
+              if (s3 === peg$FAILED) {
+                if (peg$c372.test(input.charAt(peg$currPos))) {
+                  s3 = input.charAt(peg$currPos);
+                  peg$currPos++;
+                } else {
+                  s3 = peg$FAILED;
+                  if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                }
               }
             }
           }
@@ -13026,20 +13053,29 @@ vq_grammar_parser = (function() {
               if (peg$silentFails === 0) { await peg$fail(peg$c365); }
             }
             if (s3 === peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 45) {
-                s3 = peg$c55;
+              if (input.charCodeAt(peg$currPos) === 46) {
+                s3 = peg$c16;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c56); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c17); }
               }
               if (s3 === peg$FAILED) {
-                if (peg$c372.test(input.charAt(peg$currPos))) {
-                  s3 = input.charAt(peg$currPos);
+                if (input.charCodeAt(peg$currPos) === 45) {
+                  s3 = peg$c55;
                   peg$currPos++;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c56); }
+                }
+                if (s3 === peg$FAILED) {
+                  if (peg$c372.test(input.charAt(peg$currPos))) {
+                    s3 = input.charAt(peg$currPos);
+                    peg$currPos++;
+                  } else {
+                    s3 = peg$FAILED;
+                    if (peg$silentFails === 0) { await peg$fail(peg$c373); }
+                  }
                 }
               }
             }
@@ -14541,137 +14577,137 @@ vq_grammar_parser = (function() {
 
           // string -> idObject
     			// returns type of the identifier from symbol table. Null if does not exist.
-    			function resolveTypeFromSymbolTable(id) {
-				var context = options.context._id;
+    			async function resolveTypeFromSymbolTable(id) {
+    				var context = options.context._id;
 
-				if(typeof options.symbol_table[context] === 'undefined') return null;
+    				if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].type
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-						}
-					}
-					return st_row.type
-				} else {
-					return null
-				}
-				return null
-			};
-			// string -> idObject
-			// returns kind of the identifier from symbol table. Null if does not exist.
-			function resolveKindFromSymbolTable(id) {
-				var context = options.context._id;
+    				var st_row = options.symbol_table[context][id];
+    				if (st_row) {
+    					if(st_row.length == 0) return null;
+    					if(st_row.length == 1){
+    						return st_row[0].type
+    					}
+    					if(st_row.length > 1){
+    						for (var symbol in st_row) {
+    							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+    						}
+    					}
+    					return st_row.type
+    				} else {
+    					return null
+    				}
+    				return null
+    			};
+    			// string -> idObject
+    			// returns kind of the identifier from symbol table. Null if does not exist.
+    			async function resolveKindFromSymbolTable(id) {
+    				var context = options.context._id;
 
-				if(typeof options.symbol_table[context] === 'undefined') return null;
+    				if(typeof options.symbol_table[context] === 'undefined') return null;
 
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].kind
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-						}
-					}
-					return st_row.kind
-				} else {
-					return null
-				}
-				return null
-			};
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-			async function resolveTypeFromSchemaForClass(id) {
-				var cls = await dataShapes.resolveClassByName({name: id})
-				if(cls["complite"] == false) return null;
-				if(cls["data"].length > 0){
-					return cls["data"][0];
-				}
-				
-				return null;
-			};
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			async function resolveTypeFromSchemaForAttributeAndLink(id) {
-				
-				var aorl = await dataShapes.resolvePropertyByName({name: id})
-				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-				if(aorl["complite"] == false) return null;
-				var res = aorl["data"][0];
-				if(res){
-					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
-					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
-					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
-					return res;
-				}
-				// if (!res) { 
-					// res = options.schema.resolveLinkByName(id); 
-					// if (res) res["property_type"] = "OBJECT_PROPERTY"
-				// }
-				// else {
-						// res["parentType"] = aorl[1];
-						// res["property_type"] = "DATA_PROPERTY";
-				// };
-				
-				return null
-			};
-			// string -> idObject
-			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
-			// then in schema. Null if does not exist
-			async function resolveType(id) {
-			  
-			  if(id !== "undefined"){
-			  var t=resolveTypeFromSymbolTable(id);
-				if (!t) {
-					if (options.exprType) {
-					  t= await resolveTypeFromSchemaForClass(id);
-					  if (!t) {
-						  t=resolveTypeFromSchemaForAttributeAndLink(id)
-					  }
-					} else {
-					  t=resolveTypeFromSchemaForAttributeAndLink(id);
-					  if (!t) {
-						  t=resolveTypeFromSchemaForClass(id)
-					  }
-					}
-
-				}
-			  return t;}
-			  return null;
-			};
-          //string -> string
-    			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
-     	    function resolveKind(id) {
-				if(id !== "undefined"){
-    				    var k=resolveKindFromSymbolTable(id);
-    						if (!k) {
-    						  if (options.exprType) {
-    							  if (resolveTypeFromSchemaForClass(id)) {
-    									 k="CLASS_NAME";
-    							  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
-    									 k="PROPERTY_NAME";
-    							  }
-    							} else {
-    							  if (resolveTypeFromSchemaForAttributeAndLink(id)) {
-    									k="PROPERTY_NAME";
-    							  } else if (resolveTypeFromSchemaForClass(id)) {
-    									k="CLASS_NAME";
-    							 }
-    							}
-
+    				var st_row = options.symbol_table[context][id];
+    				if (st_row) {
+    					if(st_row.length == 0) return null;
+    					if(st_row.length == 1){
+    						return st_row[0].kind
+    					}
+    					if(st_row.length > 1){
+    						for (var symbol in st_row) {
+    							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+    						}
+    					}
+    					return st_row.kind
+    				} else {
+    					return null
+    				}
+    				return null
+    			};
+    			// string -> idObject
+    			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
+    			async function resolveTypeFromSchemaForClass(id) {
+    				var cls = await dataShapes.resolveClassByName({name: id})
+    				if(cls["complite"] == false) return null;
+    				if(cls["data"].length > 0){
+    					return cls["data"][0];
+    				}
+    				
+    				return null;
+    			};
+    			// string -> idObject
+    			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
+    			async function resolveTypeFromSchemaForAttributeAndLink(id) {
+    				
+    				var aorl = await dataShapes.resolvePropertyByName({name: id})
+    				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+    				if(aorl["complite"] == false) return null;
+    				var res = aorl["data"][0];
+    				if(res){
+    					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+    					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+    					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
+    					return res;
+    				}
+    				// if (!res) { 
+    					// res = options.schema.resolveLinkByName(id); 
+    					// if (res) res["property_type"] = "OBJECT_PROPERTY"
+    				// }
+    				// else {
+    						// res["parentType"] = aorl[1];
+    						// res["property_type"] = "DATA_PROPERTY";
+    				// };
+    				
+    				return null
+    			};
+    			// string -> idObject
+    			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
+    			// then in schema. Null if does not exist
+    			async function resolveType(id) {
+    			  
+    			  if(id !== "undefined"){
+    			  var t=await resolveTypeFromSymbolTable(id);
+    				if (!t) {
+    					if (options.exprType) {
+    					  t= await resolveTypeFromSchemaForClass(id);
+    					  if (!t) {
+    						  t=await resolveTypeFromSchemaForAttributeAndLink(id)
     					  }
-    						return k;
-				}
-				return null
-    		  };
+    					} else {
+    					  t=await resolveTypeFromSchemaForAttributeAndLink(id);
+    					  if (!t) {
+    						  t=await resolveTypeFromSchemaForClass(id)
+    					  }
+    					}
+
+    				}
+    			  return t;}
+    			  return null;
+    			};
+              //string -> string
+        			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
+         	   async function resolveKind(id) {
+    				if(id !== "undefined"){
+        				    var k=await resolveKindFromSymbolTable(id);
+        						if (!k) {
+        						  if (options.exprType) {
+        							  if (await resolveTypeFromSchemaForClass(id)) {
+        									 k="CLASS_NAME";
+        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+        									 k="PROPERTY_NAME";
+        							  }
+        							} else {
+        							  if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+        									k="PROPERTY_NAME";
+        							  } else if (await resolveTypeFromSchemaForClass(id)) {
+        									k="CLASS_NAME";
+        							 }
+        							}
+
+        					  }
+        						return k;
+    				}
+    				return null
+        		  };
     			function pathOrReference(o) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
