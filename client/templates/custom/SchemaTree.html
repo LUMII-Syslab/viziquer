@@ -3,15 +3,15 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<input id="filter_text" type="text" class="form-control" placeholder="">
+			<input id="filter_text" type="text" class="form-control" placeholder="{{f}}">
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
-				<input class="form-check-input" name = "dbo" id="dbo" value= "1" type="checkbox" checked="checked">
+				<input class="form-check-input" name = "dbo" id="dbo" value= "1" type="checkbox" checked={{dbo}}>
 				<span class="custom-checkbox"></span>
 				Only from dbo:
 			</label>
 			<label class="form-check-label">
-				<input class="form-check-input" name = "yago" id="yago" value= "2" type="checkbox">
+				<input class="form-check-input" name = "yago" id="yago" value= "2" type="checkbox" checked={{yago}}>
 				<span class="custom-checkbox"></span>
 				Exclude yago:
 			</label>
@@ -52,16 +52,16 @@
     <div class="col-sm-12">
         <div class="dd" id="nestable">
 			<div class="col-sm-12">
-				<select class="form-control" id="propType" value="All properties">
-				  <option>All properties </option>
+				<select class="form-control" id="propType" value={{pKind}}>
+				  <option>All properties</option>
 				  <option>Object properties</option>
 				  <option>Data properties</option>
 				</select>
 			</div>
-			<input id="filter_text2" type="text" class="form-control" placeholder="">
+			<input id="filter_text2" type="text" class="form-control" placeholder="{{f}}">
 			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
-				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked="checked">
+				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
 				<span class="custom-checkbox"></span>
 				Basic list
 			</label>

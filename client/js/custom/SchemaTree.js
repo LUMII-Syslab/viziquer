@@ -1,18 +1,25 @@
 
-Template.schemaFilter.Classes = new ReactiveVar("");
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
-Template.schemaTree.Count = new ReactiveVar("");
-Template.schemaTree.TopClass = new ReactiveVar("");
-Template.schemaTree.ClassPath = new ReactiveVar("");
-Template.schemaFilter.Count = new ReactiveVar("");
-Template.schemaFilter.Ont = new ReactiveVar("");
-const startCount = 30;
-const plusCount = 20;
+//Template.schemaTree.Count = new ReactiveVar("");
+//Template.schemaTree.TopClass = new ReactiveVar("");
+//Template.schemaTree.ClassPath = new ReactiveVar("");
+//Template.schemaFilter.Count = new ReactiveVar("");
+//const startCount = 30;
+//const plusCount = 20;
 
 Template.schemaTree.helpers({
 	classes: function() {
 		return Template.schemaTree.Classes.get();
+	},
+	dbo: function() {
+		return dataShapes.schema.tree.dbo;
+	},
+	yago: function() {
+		return dataShapes.schema.tree.yago;
+	},
+	f: function() {
+		return dataShapes.schema.tree.filterC;
 	},
 });
 
@@ -32,8 +39,21 @@ function getName(o) {
 
 }
 
+function setNS() {
+	if ($("#dbo").is(":checked"))
+		dataShapes.schema.tree.dbo = true;
+	else
+		dataShapes.schema.tree.dbo = false;
+		
+	if ($("#yago").is(":checked"))
+		dataShapes.schema.tree.yago = true;
+	else
+		dataShapes.schema.tree.yago = false;
+}
+
 async function setTreeTop (filter = '') {
-	var params = {treeMode: 'Top', limit: Template.schemaTree.Count.get()};
+	//var params = {treeMode: 'Top', limit: Template.schemaTree.Count.get()};
+	var params = {treeMode: 'Top', limit: dataShapes.schema.tree.countC};
 	if (filter !== '')
 		params.filter = filter;
 		
@@ -51,13 +71,15 @@ async function setTreeTop (filter = '') {
 	if ( clFull.complete === false)
 		classes.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 	Template.schemaTree.Classes.set(classes);
-	Template.schemaTree.TopClass.set(0);
+	dataShapes.schema.tree.topClass = 0;
 }
 
 async function setTreeSubClasses (cc, nsPlus, filter = '') {
 	
-	Template.schemaTree.TopClass.set(cc[0].node_id);
-	var params = {limit: Template.schemaTree.Count.get(), treeMode: 'Sub'};  
+	dataShapes.schema.tree.topClass = cc[0].node_id;
+	//var params = {limit: Template.schemaTree.Count.get(), treeMode: 'Sub'}; 
+	var params = {limit: dataShapes.schema.tree.countC, treeMode: 'Sub'}; 
+	
 	var tree = [{ ch_count: 1, children: [], data_id: ".", localName: "Tree top", node_id: 0 }];
 	
 	if ( filter !== '')
@@ -74,7 +96,7 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 		}	
 	}
 		
-	var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: Template.schemaTree.TopClass.get()}});
+	var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: dataShapes.schema.tree.topClass}});
 	var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
 	if ( clSub.complete === false )
 		classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
@@ -86,9 +108,11 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 
 async function  useFilter () {
 	var text = $('#filter_text').val().toLowerCase();
+	dataShapes.schema.tree.filterC = text;
+	setNS();
 	var treeTop = Template.schemaTree.Classes.get();
 
-	if ( Template.schemaTree.TopClass.get() != 0 ) 
+	if ( dataShapes.schema.tree.topClass != 0 ) 
 		await setTreeSubClasses ([treeTop[1]], true, text);
 	else 
 		await setTreeTop(text);
@@ -96,7 +120,8 @@ async function  useFilter () {
 
 async function  useFilterP () {
 	var text = $('#filter_text2').val().toLowerCase();
-	var params = {propertyKind:'All', limit: Template.schemaFilter.Count.get(), filter:text};
+	dataShapes.schema.tree.filterP = text;
+	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text};
 	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
 		//params.namespaces = {notIn: ['dbp']};
@@ -106,14 +131,18 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 	}
 	if ( $("#propType").val() === 'Object properties' ) {
 		params.propertyKind = 'Object';
+		dataShapes.schema.tree.pKind = 'Object properties';
 		col = 'object_cnt_x'
 	}
 	if ( $("#propType").val() === 'Data properties' ) {
 		params.propertyKind = 'Data';
+		dataShapes.schema.tree.pKind = 'Data properties';
 		col = 'data_cnt_x';
 	}
+	if ( $("#propType").val() === 'All properties' )
+		dataShapes.schema.tree.pKind = 'All properties';
 		
-	var pFull = await dataShapes.getProperties(params);  
+	var pFull = await dataShapes.getTreeProperties(params);  
 	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p, col)}});
 	if ( pFull.complete === false)
 		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
@@ -125,10 +154,10 @@ Template.schemaTree.events({
 	"click .toggle-tree-button": async function(e) {
 		var toggle_button = $(e.target);
 		var tree_node_id = toggle_button[0].attributes["node-id"].value;
-		var topClass = Template.schemaTree.TopClass.get();
-		//console.log(Template.schemaTree.ClassPath.get())
+		var topClass = dataShapes.schema.tree.topClass;
 		//Template.schemaTree.Count.set(startCount);
-		$("#filter_text")[0].value = "";
+		$("#filter_text")[0].value = '';
+		dataShapes.schema.tree.filterC = '';
 
 		if ( tree_node_id == 0 ) {
 			await setTreeTop();
@@ -136,7 +165,7 @@ Template.schemaTree.events({
 		}
 
 		if ( topClass == tree_node_id) {
-			var classPath = Template.schemaTree.ClassPath.get();
+			var classPath = dataShapes.schema.tree.classPath;
 			classPath.pop();
 			if ( classPath.length === 0) {
 				await setTreeTop();
@@ -151,17 +180,15 @@ Template.schemaTree.events({
 			var treeTop = Template.schemaTree.Classes.get();
 			var cc;
 			
-			if ( Template.schemaTree.TopClass.get() === 0)
+			if ( dataShapes.schema.tree.topClass === 0)
 				cc = _.filter(treeTop, function(c){ return  c.node_id == tree_node_id });
 			else
 				cc = _.filter(treeTop[1].children, function(c){ return  c.node_id == tree_node_id });
 				
-			//console.log(cc)
 			if ( cc[0].ch_count > 0) {
-				var classPath = Template.schemaTree.ClassPath.get();
+				var classPath = dataShapes.schema.tree.classPath;
 				classPath.push(cc[0]);
-				Template.schemaTree.ClassPath.set(classPath);
-				//console.log(Template.schemaTree.ClassPath.get())
+				dataShapes.schema.tree.classPath = classPath;
 				await setTreeSubClasses (cc, false);
 			}
 		}
@@ -194,21 +221,26 @@ Template.schemaTree.events({
 								 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-				boo.setName(class_name);
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-			}, loc);
+					boo.setName(class_name);
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+				}, loc);
+			
 		}
 		if ( class_name === "...") {
-			var count = Template.schemaTree.Count.get();
-			count = count + plusCount;
-			Template.schemaTree.Count.set(count);
+			//var count = Template.schemaTree.Count.get();
+			var count = dataShapes.schema.tree.countC;
+			count = count + dataShapes.schema.tree.plus;
+			//Template.schemaTree.Count.set(count);
+			dataShapes.schema.tree.countC = count;
 			await useFilter();
 		}	
 		if ( class_name === "..") {
-			var count = Template.schemaTree.Count.get();
-			count = count + plusCount;
-			Template.schemaTree.Count.set(count);
+			//var count = Template.schemaTree.Count.get();
+			var count = dataShapes.schema.tree.countC;
+			count = count + dataShapes.schema.tree.plus;
+			//Template.schemaTree.Count.set(count);
+			dataShapes.schema.tree.countC = count;
 			await useFilter();
 		}		
 	},
@@ -229,49 +261,142 @@ Template.schemaTree.events({
 
 Template.schemaFilter.rendered = async function() {
 	//console.log("-----rendered schemaFilter----")
-	var pFull = await dataShapes.getProperties({propertyKind:'All', limit: startCount, orderByPrefix: `case when ns_id = 2 then 0 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`});
-	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
-	if ( pFull.complete === false)
-		properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
-	Template.schemaFilter.Properties.set(properties);
-	Template.schemaFilter.Count.set(startCount);
+	$("#filter_text2")[0].value = dataShapes.schema.tree.filterP;
+	$("#propType").val(dataShapes.schema.tree.pKind);
+	await useFilterP ();
+	
+	//var pFull = await dataShapes.getTreeProperties({propertyKind:'All', limit: dataShapes.schema.tree.countP, orderByPrefix: `case when ns_id = 2 then 0 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`});
+	//var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
+	//if ( pFull.complete === false)
+	//	properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
+	//Template.schemaFilter.Properties.set(properties);
 }
 
 Template.schemaTree.rendered = async function() {
-	console.log("-----rendered schemaTree----")
-	Template.schemaTree.Count.set(startCount);
-	await setTreeTop ();
-	Template.schemaTree.ClassPath.set([]);
+	//console.log("-----rendered schemaTree----")
+	//Template.schemaTree.Count.set(startCount);
+	$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
+	await useFilter ();
+	//Template.schemaTree.ClassPath.set([]);
 
-	}
+}
 
 Template.schemaFilter.helpers({
 	properties: function() {
 		return Template.schemaFilter.Properties.get();
 	},
+	f: function() {
+		return dataShapes.schema.tree.filterP;
+	},
+	dbp: function() {
+		return dataShapes.schema.tree.dbp;
+	},
+	pKind: function() {
+		return dataShapes.schema.tree.pKind;
+	},
 });
 
 Template.schemaFilter.events({
-
 	"dblclick .class-body": async function(e) {
 		var prop_name = $(e.target).closest(".class-body").attr("value");
 		if ( prop_name === "...") {
-			var count = Template.schemaFilter.Count.get();
-			count = count + plusCount;
-			Template.schemaFilter.Count.set(count);
+			var count = dataShapes.schema.tree.countP;
+			count = count + dataShapes.schema.tree.plus;
+			dataShapes.schema.tree.countP = count;
 			await useFilterP();
+		}
+		else {
+			const BLACK_HEADER_HEIGHT = 45;
+			const DEFAULT_BOX_WIDTH = 194;
+			const DEFAULT_BOX_HEIGHT = 66;
+			const DEFAULT_OFFSET = 10;	
+			
+			// get location of the editor
+			var ajoo_scene_attrs = Interpreter.editor.stage.attrs;
+			var attrs = {scroll_h: ajoo_scene_attrs.container.scrollTop,
+			scroll_w: ajoo_scene_attrs.container.scrollLeft,
+			visible_h: ajoo_scene_attrs.container.clientHeight,
+			visible_w: ajoo_scene_attrs.container.clientWidth,
+			total_h: ajoo_scene_attrs.height,
+			y_relative_top: ajoo_scene_attrs.container.getBoundingClientRect().top,
+			y_relative_bottom: ajoo_scene_attrs.container.getBoundingClientRect().bottom,
+			};
+			
+			var loc = {x: attrs.visible_w + attrs.scroll_w - DEFAULT_OFFSET- DEFAULT_BOX_WIDTH,
+					 y: attrs.scroll_h + attrs.visible_h-DEFAULT_OFFSET-DEFAULT_BOX_HEIGHT,
+					 width: DEFAULT_BOX_WIDTH,
+					 height: DEFAULT_BOX_HEIGHT};
+			
+			var pKind = "";
+			if (dataShapes.schema.tree.pKind == 'Object properties') 
+				pKind = "Object";
+			if (dataShapes.schema.tree.pKind == 'Data properties') 
+				pKind = "Data";
+			if ( pKind === "") {
+				var prop_info = await dataShapes.resolvePropertyByName({name: prop_name});
+				console.log(prop_info.data[0].object_cnt)
+				if ( prop_info.data[0].object_cnt > prop_info.data[0].data_cnt )
+					pKind = "Object";
+				else
+					pKind = "Data";
+			}
+			
+			if ( pKind == 'Object') {
+				//// Place in bottom right corner of visible area
+
+				var loc2 = {x: attrs.visible_w + attrs.scroll_w - DEFAULT_OFFSET- DEFAULT_BOX_WIDTH,
+									 y: attrs.scroll_h + attrs.visible_h - DEFAULT_OFFSET - 3*DEFAULT_BOX_HEIGHT,
+									 width: DEFAULT_BOX_WIDTH,
+									 height: DEFAULT_BOX_HEIGHT};
+
+				Create_VQ_Element(function(boo) {
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					boo.setName("");
+					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+					
+					Create_VQ_Element(function(cl){
+						var proj = Projects.findOne({_id: Session.get("activeProject")});
+						cl.setName("");
+						cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+						
+						cl.setClassStyle("condition");	                
+						locLink = [loc.x+DEFAULT_BOX_WIDTH/2, loc2.y+DEFAULT_BOX_HEIGHT, loc.x+DEFAULT_BOX_WIDTH/2, loc.y];                 
+						Create_VQ_Element(function(lnk) {
+							lnk.setName(prop_name);
+							lnk.setLinkType("REQUIRED");	                    
+							lnk.setNestingType("PLAIN");						
+							if (proj && proj.autoHideDefaultPropertyName=="true") { 
+								lnk.hideDefaultLinkName(true);
+								lnk.setHideDefaultLinkName("true");
+							}
+						}, locLink, true, cl, boo); }
+					, loc);}
+				,loc2);
+				
+			}
+			else {
+				Create_VQ_Element(function(boo) {
+						boo.setName("");
+						var proj = Projects.findOne({_id: Session.get("activeProject")});
+						boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+						boo.addField(prop_name,null,true,false,false);
+					}, loc);				
+
+			}
+
+			
 		}		
 	},
 	'click #filter2': async function(e) {
-		Template.schemaFilter.Count.set(startCount)
+		//Template.schemaFilter.Count.set(startCount)
 		await useFilterP();
 	},
 	'click #dbp': async function(e) {
-		Template.schemaFilter.Count.set(startCount)
+		//Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
 	},
 	'click #propType': async function(e) {
-		Template.schemaFilter.Count.set(startCount)
+		//Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
 	},
 });

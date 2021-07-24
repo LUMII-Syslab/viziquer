@@ -1,6 +1,8 @@
 // ***********************************************************************************
 const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 const MAX_ANSWERS = 30;
+const MAX_TREE_ANSWERS = 30;
+const TREE_PLUS = 0;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -94,7 +96,10 @@ const findElementDataForIndividual = (vq_obj) => {
 
 // ***********************************************************************************
 dataShapes = {
-	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, treeTops: {}, showPrefixes: "false"},
+	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
+			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
+			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', 
+					 pKind: 'All properties', topClass: 0, classPath: []}},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -105,14 +110,17 @@ dataShapes = {
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
 		console.log(proj)
-		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, treeTops: {}, showPrefixes: "false"};
+		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
+						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS, 
+						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', 
+					          pKind: 'All properties', topClass: 0, classPath: []}};
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames;
 				//this.schema.ontologies = {};
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
-				this.schema.limit = MAX_ANSWERS;
+				//this.schema.limit = MAX_ANSWERS;
 				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
 				//Utilities.callMeteorMethod("updateProject", list);
 				//this.schema.ontologies.list = ont_list;
@@ -121,7 +129,6 @@ dataShapes = {
 	},
 	callServerFunction : async function(funcName, params) {
 		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		this.schema.limit = MAX_ANSWERS; // ----- !!! ( for development ) - remove !!! -----
 		var s = this.schema.schema;
 		console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
@@ -155,12 +162,15 @@ dataShapes = {
 		// ***  dataShapes.getClasses({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
 		// ***  dataShapes.getClasses({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
 		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
+		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
+			allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
+		}
 		return await this.callServerFunction("getClasses", allParams);
 	},
 	getTreeClasses : async function(params) {
 		console.log("------------GetTreeClasses------------------")
+		console.log(params)
 		function makeTreeName(params) {
 			var nList = [];
 			if ( params.main.namespaces !== undefined) {
@@ -176,12 +186,12 @@ dataShapes = {
 		if ( params.main.treeMode === 'Top' && ( params.main.filter === undefined || params.main.filter === '' )) {
 			var nsString = makeTreeName(params);
 			//console.log(`in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}`)
-			if (this.schema.treeTops[nsString] !== undefined) {
-				rr = this.schema.treeTops[nsString];
+			if (this.schema.treeTopsC[nsString] !== undefined) {
+				rr = this.schema.treeTopsC[nsString];
 			}
 			else {
 				rr =  await this.callServerFunction("getTreeClasses", params);
-				this.schema.treeTops[nsString] = rr;
+				this.schema.treeTopsC[nsString] = rr;
 			}
 		}
 		else
@@ -214,6 +224,33 @@ dataShapes = {
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
 		return await this.callServerFunction("getProperties", allParams);
+	},
+	getTreeProperties : async function(params) {
+		function makeTreeName(params) {
+			var nList = [];
+			nList.push(params.propertyKind);
+			if ( params.orderByPrefix !== undefined && params.orderByPrefix !== undefined )
+				nList.push('Basic');
+			else
+				nList.push('Full');
+			nList.push(params.limit);
+			return nList.join('_');
+		}
+		var rr;
+		if ( params.filter === undefined || params.filter === '' ) {
+			var tName = makeTreeName(params);
+			if (this.schema.treeTopsP[tName] !== undefined) {
+				rr = this.schema.treeTopsP[tName];
+			}
+			else {
+				rr =  await this.getProperties(params);
+				this.schema.treeTopsP[tName] = rr;
+			}
+		}
+		else
+			rr =  await this.getProperties(params);
+
+		return rr;
 	},
 	getIndividuals : async function(params = {}, vq_obj = null) {
 		console.log("------------getIndividuals ------------------")
