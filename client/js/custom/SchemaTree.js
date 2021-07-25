@@ -96,8 +96,9 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 			params.namespaces = namespaces;
 		}	
 	}
-		
-	var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: dataShapes.schema.tree.topClass}});
+	params.classId =  dataShapes.schema.tree.topClass;
+	//var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: dataShapes.schema.tree.topClass}});
+	var clSub = await dataShapes.getTreeClasses({main:params});
 	var classes = _.map(clSub.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
 	if ( clSub.complete === false )
 		classes.push({ch_count: 0, children: [], data_id: "..", localName: "More ..."});
@@ -351,20 +352,27 @@ Template.schemaFilter.events({
 					 height: DEFAULT_BOX_HEIGHT};
 			
 			var pKind = "";
+			var prop_info = await dataShapes.resolvePropertyByName({name: prop_name});
+			prop_info = prop_info.data[0];
 			if (dataShapes.schema.tree.pKind == 'Object properties') 
 				pKind = "Object";
 			if (dataShapes.schema.tree.pKind == 'Data properties') 
 				pKind = "Data";
 			if ( pKind === "") {
-				var prop_info = await dataShapes.resolvePropertyByName({name: prop_name});
-				if ( prop_info.data[0].object_cnt > prop_info.data[0].data_cnt )
+				if ( prop_info.object_cnt > prop_info.data_cnt )
 					pKind = "Object";
 				else
 					pKind = "Data";
 			}
 			
+			var domainName  = "";
+			var rangeName = "";
+			if ( prop_info.domain_class_id !== null)
+				domainName = getName({display_name: prop_info.dc_display_name, prefix: prop_info.dc_prefix, is_local: prop_info.dc_is_local });
+			if ( prop_info.range_class_id !== null)
+				rangeName = getName({display_name: prop_info.rc_display_name, prefix: prop_info.rc_prefix, is_local: prop_info.rc_is_local });
+			
 			if ( pKind == 'Object') {
-				//// Place in bottom right corner of visible area
 
 				var loc2 = {x: attrs.visible_w + attrs.scroll_w - DEFAULT_OFFSET- DEFAULT_BOX_WIDTH,
 									 y: attrs.scroll_h + attrs.visible_h - DEFAULT_OFFSET - 3*DEFAULT_BOX_HEIGHT,
@@ -373,12 +381,12 @@ Template.schemaFilter.events({
 
 				Create_VQ_Element(function(boo) {
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setName("");
+					boo.setName(domainName);
 					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 					
 					Create_VQ_Element(function(cl){
 						var proj = Projects.findOne({_id: Session.get("activeProject")});
-						cl.setName("");
+						cl.setName(rangeName);
 						cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 						
 						cl.setClassStyle("condition");	                
@@ -398,7 +406,7 @@ Template.schemaFilter.events({
 			}
 			else {
 				Create_VQ_Element(function(boo) {
-						boo.setName("");
+						boo.setName(domainName);
 						var proj = Projects.findOne({_id: Session.get("activeProject")});
 						boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 						boo.addField(prop_name,null,true,false,false);
