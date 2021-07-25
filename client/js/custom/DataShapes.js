@@ -1,5 +1,6 @@
 // ***********************************************************************************
-const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
+// const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
+const SCHEMA_SERVER_URL = Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL');
 const MAX_ANSWERS = 30;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
