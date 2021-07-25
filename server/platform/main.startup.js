@@ -29,7 +29,11 @@
             const path = Npm.require('path');
             const dotenv = Npm.require('dotenv');
             const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
-            const envPath = path.resolve(process.env.PWD, envFile);
+
+			let startFolder = process.cwd();
+			let projectFolder = startFolder.slice(0, startFolder.indexOf('.meteor'));
+
+			const envPath = path.resolve(projectFolder, envFile);
             console.log(`Looking for env in ${envPath}`);
             const env = dotenv.config({ path: envPath });
             if (env && env.parsed) {
