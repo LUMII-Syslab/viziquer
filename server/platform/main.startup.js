@@ -1,7 +1,7 @@
-	
+
 	Meteor.startup(function () {
 		console.log("Loading server");
-		
+
 		Meteor.call("importConfiguration");
 
   		// var settings = Meteor.settings || {};
@@ -24,7 +24,21 @@
 	  			CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
 	  		});
   		}
-  		
+
+        if (Meteor.isServer) {
+            const path = Npm.require('path');
+            const dotenv = Npm.require('dotenv');
+            const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
+            const envPath = path.resolve(process.env.PWD, envFile);
+            console.log(`Looking for env in ${envPath}`);
+            const env = dotenv.config({ path: envPath });
+            if (env && env.parsed) {
+                console.log('env loaded:', env.parsed)
+            } else {
+                console.log('no env found');
+            }
+        }
+
 		console.log("End startup");
 	});
 
