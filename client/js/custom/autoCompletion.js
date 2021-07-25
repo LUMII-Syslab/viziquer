@@ -556,12 +556,15 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			cls = await dataShapes.getClasses(params, vq_obj);
 			
 			cls = cls["data"];
-
+			
 			for(var cl in cls){
 				var prefix;
 				if(cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 				else prefix = cls[cl]["prefix"]+":";
-				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:3})
+				var type = 3;
+				if (cls[cl].principal_class === 0)
+					type = 0;
+				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:type})
 			}
 			return c;
 	}
@@ -736,9 +739,9 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			act_el = new VQ_Element(selected_elem_id);
 		}
 		
-		var inst = await dataShapes.getIndividuals(params, act_el);
+		var inst = await dataShapes.getIndividuals(params, act_el); 
 		for(var i in inst){
-			c["suggestions"].push({name: inst[i], priority:100, type:1})
+			c["suggestions"].push({name: inst[i], priority:100, type:0})
 		}
 	
 		return c;

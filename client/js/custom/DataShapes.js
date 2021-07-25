@@ -2,7 +2,7 @@
 const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 const MAX_ANSWERS = 30;
 const MAX_TREE_ANSWERS = 30;
-const TREE_PLUS = 0;
+const TREE_PLUS = 20;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -43,18 +43,39 @@ const callWithGet = async (funcName) => {
 // ***********************************************************************************
 const getPList = (vq_obj) => {
 	var pList = {in: [], out: []};
-	var field_list = vq_obj.getFields().map(function(f) { return {name:f.exp, type: 'out'}});
+	var field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
 	if (field_list.length > 0) pList.out = field_list;
 
 	var link_list =  vq_obj.getLinks();
-	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), type: type}});
+
+	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
-		if (link.type === 'in' && link.name !== null && link.name !== undefined )
+		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
+			if ( link.t === 'REQUIRED' ) {
 				pList.in.push(link);
-		if (link.type === 'out' && link.name !== null && link.name !== undefined ) 
-			pList.out.push(link);
+			}
+			else {
+				if (!vq_obj.isRoot()) {
+					var sE = new VQ_Element(link.sE);
+					if (sE.isRoot())
+						pList.in.push(link);
+				}
+			}			
+		}
+				
+		if (link.type === 'out' && link.name !== null && link.name !== undefined ) {
+			if ( link.t === 'REQUIRED' ) {
+				pList.out.push(link);
+			}
+			else {
+				if (!vq_obj.isRoot()) {
+					var eE = new VQ_Element(link.eE);
+					if (eE.isRoot())
+						pList.out.push(link);
+				}
+			}
+		}
 	});
-	
 	return pList;
 }
 
@@ -98,8 +119,8 @@ const findElementDataForIndividual = (vq_obj) => {
 dataShapes = {
 	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
 			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
-			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', 
-					 pKind: 'All properties', topClass: 0, classPath: []}},
+			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
+					 pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -112,8 +133,8 @@ dataShapes = {
 		console.log(proj)
 		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
 						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS, 
-						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', 
-					          pKind: 'All properties', topClass: 0, classPath: []}};
+						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
+					          pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}};
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
@@ -266,6 +287,14 @@ dataShapes = {
 		else
 			rr = { complete:false, data: []}; 
 		return rr;
+	},
+	getTreeIndividuals : async function(params = {}, className) {
+		console.log("------------getTreeIndividuals ------------------")
+		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
+		var rr;
+		var allParams = {main: params, element:{className: className}};
+
+		return await this.callServerFunction("getIndividuals", allParams);
 	},
 	resolveClassByName : async function(params = {}) {	
 		console.log("------------resolveClassByName---"+ params.name +"---------------")

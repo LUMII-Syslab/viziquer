@@ -335,6 +335,15 @@
           "index": 2,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
+        },
+		{
+          "_id": "ZnHbEQt9jutbYY3E7",
+          "diagramId": "7RrwRcGyxshqjBh9p",
+          "diagramTypeId": "5MCHCcnGRwF5axfDj",
+          "name": "Individuals",
+          "index": 3,
+          "toolId": "3v8WrqRP2oos7kaSA",
+          "versionId": "cMoFeT3YoEkLwDabd"
         }
       ],
       "compartmentTypes": [
@@ -424,6 +433,50 @@
             ],
             "label": "Properties",
             "dialogTabId": "ZnHbEQt9jutbYY3E9"
+          }
+        },
+		{
+          "object": {
+            "_id": "WXuJFoqWMkM2ohtpC",
+            "toolId": "3v8WrqRP2oos7kaSA",
+            "versionId": "cMoFeT3YoEkLwDabd",
+            "diagramTypeId": "5MCHCcnGRwF5axfDj",
+            "diagramId": "7RrwRcGyxshqjBh9p",
+            "index": 1,
+            "noRepresentation": true,
+            "tabIndex": 3,
+            "name": "schemaInstances",
+            "isObjectRepresentation": false,
+            "inputType": {
+              "type": "custom",
+              "templateName": "schemaInstances"
+            },
+            "extensionPoints": [
+              {
+                "extensionPoint": "beforeUpdate"
+              },
+              {
+                "extensionPoint": "update",
+                "procedure": "UpdateCompartment"
+              },
+              {
+                "extensionPoint": "afterUpdate"
+              },
+              {
+                "extensionPoint": "dynamicPrefix"
+              },
+              {
+                "extensionPoint": "dynamicSuffix"
+              },
+              {
+                "extensionPoint": "dynamicDefaultValue"
+              },
+              {
+                "extensionPoint": "dynamicDropDown"
+              }
+            ],
+            "label": "Individuals",
+            "dialogTabId": "ZnHbEQt9jutbYY3E7"
           }
         }
       ],

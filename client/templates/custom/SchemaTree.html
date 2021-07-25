@@ -97,6 +97,51 @@
 
 </template>
 
+<template name="schemaInstances">
+
+    <div class="col-sm-12">
+        <div class="dd" id="nestable">
+			<div class="col-sm-12">
+				<select class="form-control" id="class" value={{class}}>
+				  <option>owl:Thing</option>
+				  <option>foaf:Document</option>
+				  <option>skos:Concept</option>
+				</select>
+			</div>
+			<input id="filter_text3" type="text" class="form-control" placeholder="{{f}}">
+			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+            <ol class="dd-list">
+
+				{{#each instances}}
+				{{> subSchemaInstances}}
+				{{/each}}
+
+            </ol>
+        </div><!-- dd -->
+    </div>
+
+</template>
+
+<template name="subSchemaInstances">
+    <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
+	{{#if ch_count  }}
+		<button class="toggle-tree-button expand" node-id="{{node_id}}"  type="button">Expand</button>
+	{{/if}}	
+
+         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
+        <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
+
+        <ol class="dd-list attributes-list" style="display: {{display}}; " >
+
+            {{#each children}}
+                {{> subTree}}
+            {{/each}}
+
+        </ol>
+    </li>
+
+</template>
+
 <template name="schemaFilter_old">
 
     <div class="col-sm-12">
