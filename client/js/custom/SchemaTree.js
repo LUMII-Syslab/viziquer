@@ -273,7 +273,12 @@ Template.schemaTree.events({
 		//Template.schemaTree.Count.set(startCount)
 		await useFilter ();
 	},
-
+	'keyup #filter_text': async function(e){
+		if (e.keyCode == 13) {
+			await useFilter();
+		}
+		return;
+	},
 });
 
 Template.schemaTree.rendered = async function() {
@@ -429,6 +434,12 @@ Template.schemaFilter.events({
 		//Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
 	},
+	'keyup #filter_text2': async function(e){
+		if (e.keyCode == 13) {
+			await useFilterP();
+		}
+		return;
+	},
 });
 
 Template.schemaInstances.helpers({
@@ -494,5 +505,11 @@ Template.schemaInstances.events({
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class)
 			useFilterI ();
+	},
+	'keyup #filter_text3': async function(e){
+		if (e.keyCode == 13) {
+			await useFilterI();
+		}
+		return;
 	},
 });

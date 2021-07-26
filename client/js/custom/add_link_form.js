@@ -4,7 +4,7 @@ Interpreter.customMethods({
 		var asc = [];
 		Template.AddLink.Count.set(startCount);
 		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
 		Template.AddLink.fullList.set(asc);
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
@@ -22,7 +22,7 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
 		Template.AddLink.fullList.set(asc);
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
@@ -75,7 +75,7 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
 		Template.AddLink.fullList.set(asc);		
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
@@ -546,7 +546,7 @@ Template.AddLink.events({
 	'click #apply-button': async function(e) {
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
 		Template.AddLink.fullList.set(asc);
 		return;
@@ -555,7 +555,7 @@ Template.AddLink.events({
 		if (e.keyCode == 13) {
 			var asc = [];
 			_.each(await getAllAssociations(), function(a){
-				asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+				asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 			})
 			Template.AddLink.fullList.set(asc);
 		}
@@ -564,7 +564,7 @@ Template.AddLink.events({
 	'click #dbp_for_links': async function(e) {
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
 		Template.AddLink.fullList.set(asc);
 		return;
@@ -687,9 +687,7 @@ async function getAllAssociations(){
 				var filter = $("#mySearch").val().toLowerCase();
 				if(filter != null) param["filter"] = filter;
 				param["limit"] = Template.AddLink.Count.get();
-				
-				console.log("cccccccccc", Template.AddLink.Count.get())
-				
+
 				if ($("#dbp_for_links").is(":checked") ) {
 					//param.namespaces = {notIn: ['dbp']};
 					//param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
@@ -702,8 +700,15 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 				var allAssociations = prop["data"];
 				
 				_.each(allAssociations, function(e){
-					if ( e.mark === 'out') e.type = '=>';
-					else e.type = '<=';
+					if ( e.mark === 'out') {
+						e.type = '=>';
+						e.is = "is";
+						e.of = "of";
+					} else {
+						e.type = '<=';
+						e.is = "";
+						e.of = "";
+					}
 					
 					if (e.class_iri !== undefined && e.class_iri !== null) {
 						var prefix;
@@ -763,11 +768,11 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 					var eName = prefix + e.display_name;
 					
 					
-					if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
-					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters});
+					if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
+					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
 					
 					if (e.class == className && e.type == "=>"){ //Link to itself
-						ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters});
+						ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters, is:e.is, of:e.of});
 					}
 				});
 			// }
@@ -775,9 +780,9 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 			//default value for any case
 			if (proj){
       			if (proj.showCardinalities=="true")
-      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple"}); 
+      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""}); 
 				else {
-      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: ""});
+      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: "", is:"", of:""});
       			}
       		}
       		asc = asc.concat(ascReverse);
@@ -807,9 +812,9 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 					}
 				}
       			if (proj.showCardinalities=="true")
-      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""}); 
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""}); 
 				else {
-      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: ""});
+      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""});
       			}
       		}
 
@@ -820,6 +825,8 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 			//_.each(asc, function(e){
 			//	e.class = "";
 			//});
+
+			console.log("YYYYYYYYYYYYYYYYYYY", asc)
 
 			return asc;
 		}
