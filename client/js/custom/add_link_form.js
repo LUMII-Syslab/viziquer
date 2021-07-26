@@ -2,7 +2,7 @@ Interpreter.customMethods({
 	AddLink: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
-		
+		Template.AddLink.Count.set(startCount);
 		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
 		})
@@ -88,7 +88,9 @@ Interpreter.customMethods({
 		$("#add-link-form").modal("show");
 	},
 })
-
+Template.AddLink.Count = new ReactiveVar("")
+const startCount = 30;
+const plusCount = 20
 Template.AddLink.fullList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: "", show: true}]);
 // Template.AddLink.shortList = new ReactiveVar([{name: "++", class: " ", type: "=>", card: "", clr: ""}]);
 Template.AddLink.testAddLink = new ReactiveVar({data: false});
@@ -110,6 +112,14 @@ Template.AddLink.helpers({
 
 Template.AddLink.events({
 //Buttons
+	'click #more-add-link-button': async function(e) {
+		// var value = $("#mySearch").val().toLowerCase();
+		var count = Template.AddLink.Count.get();
+			count = count + plusCount;
+		Template.AddLink.Count.set(count);
+		Template.AddLink.fullList.set(await getAllAssociations());
+	},
+
 	"click #ok-add-link": async function() {
 
 		//Read user's choise
@@ -541,6 +551,16 @@ Template.AddLink.events({
 		Template.AddLink.fullList.set(asc);
 		return;
 	},
+	'keyup #mySearch': async function(e) {
+		if (e.keyCode == 13) {
+			var asc = [];
+			_.each(await getAllAssociations(), function(a){
+				asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true});
+			})
+			Template.AddLink.fullList.set(asc);
+		}
+		return;
+	},
 	'click #dbp_for_links': async function(e) {
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
@@ -666,6 +686,10 @@ async function getAllAssociations(){
 				var param = {propertyKind:'ObjectExt'};
 				var filter = $("#mySearch").val().toLowerCase();
 				if(filter != null) param["filter"] = filter;
+				param["limit"] = Template.AddLink.Count.get();
+				
+				console.log("cccccccccc", Template.AddLink.Count.get())
+				
 				if ($("#dbp_for_links").is(":checked") ) {
 					//param.namespaces = {notIn: ['dbp']};
 					//param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';

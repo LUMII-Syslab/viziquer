@@ -157,9 +157,11 @@
                                 {{/if}}
 
                             {{/each}}
-
-                        </div>
 							
+                        </div>
+						<div>
+						<a style="width: 53px;" id="more-attributes-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
+						 </div>
                     </form>
 					
 					<button onclick="showAssociations()">[+]</button>
@@ -175,9 +177,11 @@
                                 </div>
 
                             {{/each}}
-
-                        </div>
 							
+                        </div>
+						<div>
+						<a style="display: none; width: 53px;" id="more-associations-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
+						</div>
 					</form>
                 </div>
 				
@@ -186,7 +190,12 @@
                 <div class="modal-footer">
 					
 					<div class="help-tip-attribute">
-                        <p>???</p>
+                        <p>Tick the box by an attribute name to include it as an optional attribute.<br><br>
+
+Tick the box once again (the sign changes to +) to have the attribute as required.<br><br>
+
+To change the attribute to a helper (exclude from selection), save the attribute selection, then edit the form upper part.
+</p>
 					</div>
                     <button id="cancel-add-attribute" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button id="save-add-attribute" type="button" class="btn btn-default">Save</button>
@@ -199,6 +208,12 @@
 	<script>
 function showAssociations() {
   var x = document.getElementById("class-associations");
+  if (x.style.display !== "none") {
+	x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+  var x = document.getElementById("more-associations-button");
   if (x.style.display !== "none") {
 	x.style.display = "none";
   } else {

@@ -161,7 +161,12 @@
                                     <label class="label-radio">
                                         <input type="radio" name="link-list-radio" value="{{name}}" card={{card}}>
                                         <span class="custom-radio"></span>
-                                        <span style="{{clr}}">{{name}} {{text}} {{type}} {{card}} {{class}} </span>
+										 
+                                        <span style="color:#00968894; font-weight: normal;"> is </span>
+                                        <span style="{{clr}}">{{name}} {{text}} </span>
+										<span style="color:#00968894; font-weight: normal;"> of </span>
+                                        <span style="{{clr}}">{{type}} {{card}} {{class}} </span>
+										
                                     </label>
                                 </div>
                                 {{/if}}
@@ -188,7 +193,7 @@
 
                 <div class="modal-footer" style="clear: both;">
                     <!-- {{#if testAddLink.data}}  -->
-                        <button id="add-long-link" type="button" class="btn btn-default">Connect remote class</button> 
+                        <!-- <button id="add-long-link" type="button" class="btn btn-default">Connect remote class</button>  -->
                     <!-- {{/if}} -->
                     <button id="cancel-add-link" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-link" type="button" class="btn btn-primary">OK</button>
