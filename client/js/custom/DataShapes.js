@@ -1,16 +1,16 @@
 // ***********************************************************************************
-// const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
-let _schemaServerUrl = null;
-const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
-    if (_schemaServerUrl) return _schemaServerUrl;
-    Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL', (error, result) => {
-        if (error) {
-            return reject(error);
-        }
-        _schemaServerUrl = result;
-        return resolve(result);
-    })
-});
+const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
+//let _schemaServerUrl = null;
+//const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
+//    if (_schemaServerUrl) return _schemaServerUrl;
+//    Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL', (error, result) => {
+//        if (error) {
+//            return reject(error);
+//        }
+//        _schemaServerUrl = result;
+//        return resolve(result);
+//    })
+//});
 // ***********************************************************************************
 const MAX_ANSWERS = 30;
 const MAX_TREE_ANSWERS = 30;
@@ -18,8 +18,9 @@ const TREE_PLUS = 20;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
-        const schemaServerUrl = await getSchemaServerUrl();
-		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
+        //const schemaServerUrl = await getSchemaServerUrl();
+		//const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
+		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -39,8 +40,9 @@ const callWithPost = async (funcName, data = {}) => {
 
 const callWithGet = async (funcName) => {
 	try {
-        const schemaServerUrl = await getSchemaServerUrl();
-		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
+        //const schemaServerUrl = await getSchemaServerUrl();
+		//const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
+		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache'
