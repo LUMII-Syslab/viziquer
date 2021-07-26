@@ -738,10 +738,10 @@ function createNode(
                     if(getElementTypeId(relatedStartElement) == getElementTypeId(box.local)){
                         let index = ElementDict.findIndex(pair => pair.initial === relatedStartElement);
                         if(typeof ElementDict[index].replacedId === "undefined") ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
-                        else{
-                            index = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
+                        else if (_.contains(relatedStartElements, ElementDict[index].initial) ){
                             ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
                         }
+                        else index = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
                     }
 
                     createCompartments([relatedStartElement], _.first(createdBoxes[element._id]).inserted);// kopējam atribūtus tikai no tā elementa, kuram atbiltošai replace līnijai atribūts SwitchLinesTo ir ieķeksēts 
