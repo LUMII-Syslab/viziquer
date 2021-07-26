@@ -1,13 +1,25 @@
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
-const SCHEMA_SERVER_URL = Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL');
+let _schemaServerUrl = null;
+const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
+    if (_schemaServerUrl) return _schemaServerUrl;
+    Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL', (error, result) => {
+        if (error) {
+            return reject(error);
+        }
+        _schemaServerUrl = result;
+        return resolve(result);
+    })
+});
+// ***********************************************************************************
 const MAX_ANSWERS = 30;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
-		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
+        const schemaServerUrl = await getSchemaServerUrl();
+		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -21,13 +33,14 @@ const callWithPost = async (funcName, data = {}) => {
 	}
 	catch(err) {
 		console.log("-------error-----------")
-		return {complete: false, data: [], error: err};  
-    }	
+		return {complete: false, data: [], error: err};
+    }
 }
 
 const callWithGet = async (funcName) => {
 	try {
-		const response = await window.fetch(`${SCHEMA_SERVER_URL}/${funcName}`, {
+        const schemaServerUrl = await getSchemaServerUrl();
+		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache'
@@ -37,7 +50,7 @@ const callWithGet = async (funcName) => {
 	}
 	catch(err) {
         console.error(err)
-		return {};  
+		return {};
     }
 }
 
@@ -61,9 +74,9 @@ const getPList = (vq_obj) => {
 					if (sE.isRoot())
 						pList.in.push(link);
 				}
-			}			
+			}
 		}
-				
+
 		if (link.type === 'out' && link.name !== null && link.name !== undefined ) {
 			if ( link.t === 'REQUIRED' ) {
 				pList.out.push(link);
@@ -83,9 +96,9 @@ const getPList = (vq_obj) => {
 const findElementDataForClass = (vq_obj) => {
 	var params = {}
 	var individual =  vq_obj.getInstanceAlias();
-	if (individual !== null && individual !== undefined) 
+	if (individual !== null && individual !== undefined)
 		params.uriIndividual = individual;
-	
+
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
@@ -95,11 +108,11 @@ const findElementDataForProperty = (vq_obj) => {
 	var params = {};
 	var individual =  vq_obj.getInstanceAlias();
 	var class_name = vq_obj.getName();
-	if (individual !== null && individual !== undefined) 
+	if (individual !== null && individual !== undefined)
 		params.uriIndividual = individual;
-	if (class_name !== null && class_name !== undefined) 
+	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
-	
+
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
@@ -108,9 +121,9 @@ const findElementDataForProperty = (vq_obj) => {
 const findElementDataForIndividual = (vq_obj) => {
 	var params = {};
 	var class_name = vq_obj.getName();
-	if (class_name !== null && class_name !== undefined) 
+	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
-	
+
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
@@ -118,7 +131,7 @@ const findElementDataForIndividual = (vq_obj) => {
 
 // ***********************************************************************************
 dataShapes = {
-	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
+	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
 			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
 					 pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}},
@@ -127,13 +140,13 @@ dataShapes = {
 		var rr = await callWithGet('info/');
 		rr.unshift({name:""});
 		console.log(rr)
-		return await rr;		
+		return await rr;
 	},
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
 		console.log(proj)
-		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {}, 
-						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS, 
+		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
+						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
 						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
 					          pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}};
 		if (proj !== undefined) {
@@ -155,11 +168,11 @@ dataShapes = {
 		console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
 		if (s !== "" && s !== undefined )
-		{		
+		{
 			params.main.endpointUrl = this.schema.endpoint;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
-				
+
 			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
 		console.log(rr)
@@ -173,7 +186,7 @@ dataShapes = {
 	getClasses : async function(params = {}, vq_obj = null) {
 		console.log("------------GetClasses------------------")
 		// dataShapes.getClasses()
-		// dataShapes.getClasses({limit: 30}) 
+		// dataShapes.getClasses({limit: 30})
 		// dataShapes.getClasses({filter:'aa'})
 		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
 		// dataShapes.getClasses({}, new VQ_Element(Session.get("activeElement")))
@@ -218,10 +231,10 @@ dataShapes = {
 		}
 		else
 			rr =  await this.callServerFunction("getTreeClasses", params);
-			
+
 		return rr;
 	},
-	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {		
+	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
 		console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
@@ -231,7 +244,7 @@ dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
 		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Data'}, element: {className: 'umbel-rc:Park'}})
-		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}}) 
+		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'All'}, element:{className: 'umbel-rc:Philosopher'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, elemet:{uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"}})
 		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, elemet: { riIndividual: "http://dbpedia.org/resource/Gulliver's_World"}, elementOE: {uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"}})
@@ -279,14 +292,14 @@ dataShapes = {
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined ) 
+		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForIndividual(vq_obj);
-			
+
 		//console.log(allParams)
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined )
 			rr = await this.callServerFunction("getIndividuals", allParams);
 		else
-			rr = { complete:false, data: []}; 
+			rr = { complete:false, data: []};
 		return rr;
 	},
 	getTreeIndividuals : async function(params = {}, className) {
@@ -297,14 +310,14 @@ dataShapes = {
 
 		return await this.callServerFunction("getIndividuals", allParams);
 	},
-	resolveClassByName : async function(params = {}) {	
+	resolveClassByName : async function(params = {}) {
 		console.log("------------resolveClassByName---"+ params.name +"---------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
 		var rr;
 		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
-			if (this.schema.resolvedClasses[params.name] !== undefined) 
+			if (this.schema.resolvedClasses[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
-			if (this.schema.resolvedClassesF[params.name] !== undefined) 
+			if (this.schema.resolvedClassesF[params.name] !== undefined)
 				rr = { complete:false, data: []};
 			console.log(rr)
 		}
@@ -317,7 +330,7 @@ dataShapes = {
 		}
 		return rr;
 	},
-	resolvePropertyByName : async function(params = {}) {	
+	resolvePropertyByName : async function(params = {}) {
 		console.log("------------resolvePropertyByName---"+ params.name +"---------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		var rr;
