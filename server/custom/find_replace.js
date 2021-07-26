@@ -741,7 +741,10 @@ function createNode(
                         else if (_.contains(relatedStartElements, ElementDict[index].initial) ){
                             ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
                         }
-                        else index = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
+                        else {
+                            index = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
+                            ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                        }
                     }
 
                     createCompartments([relatedStartElement], _.first(createdBoxes[element._id]).inserted);// kopējam atribūtus tikai no tā elementa, kuram atbiltošai replace līnijai atribūts SwitchLinesTo ir ieķeksēts 
