@@ -294,8 +294,9 @@
 
 			UnaryExpressionList = space Unary:("*" / "/") space UnaryExpression:UnaryExpression {return {Unary:Unary, UnaryExpression:UnaryExpression}}
 
-			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
-			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
+			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
+			// PrimaryExpression = DoubleSquareBracketName
+			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 
 			BooleanLiteral = BooleanLiteral:(TRUE/ FALSE) {return {BooleanLiteral:BooleanLiteral}}
 
@@ -584,6 +585,7 @@
 			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}}
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" /"." /" "/"/" / [0-9])*)
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" /"." / [0-9])*)
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" /"." / "-" / [0-9])*)
 			Chars_String_variables = ("[" Chars_String_variables:Chars_String_prefix "]") {return Chars_String_variables}
@@ -599,6 +601,11 @@
 			LNameINV3 = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			LNameINV2 = (ref:"@"? PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+
+			DoubleSquareBracketName = LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			squarePrefix = Chars_String_prefix ":"
+			squareVariable = "[["  Chars_String_square  "]]"
+			
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
