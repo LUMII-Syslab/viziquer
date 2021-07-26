@@ -702,12 +702,12 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 				_.each(allAssociations, function(e){
 					if ( e.mark === 'out') {
 						e.type = '=>';
-						e.is = "is";
-						e.of = "of";
-					} else {
-						e.type = '<=';
 						e.is = "";
 						e.of = "";
+					} else {
+						e.type = '<=';
+						e.is = "is";
+						e.of = "of";
 					}
 					
 					if (e.class_iri !== undefined && e.class_iri !== null) {
