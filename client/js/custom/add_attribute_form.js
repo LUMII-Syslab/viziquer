@@ -8,10 +8,16 @@ Template.AddNewAttribute.requireValues = new ReactiveVar("false");
 Template.AddNewAttribute.helper = new ReactiveVar("false");
 Template.AddNewAttribute.attributeid = new ReactiveVar("");
 Template.AddNewAttribute.selectThis = new ReactiveVar("");
+Template.AddAttribute.Count = new ReactiveVar("")
+Template.AddAttribute.CountAssoc = new ReactiveVar("")
+const startCount = 30;
+const plusCount = 20;
 
 Interpreter.customMethods({
 	AddAttribute: async function () {
 		// attribute-to-add
+		Template.AddAttribute.Count.set(startCount);
+		Template.AddAttribute.CountAssoc.set(startCount);
 		var attributes = await getAttributes()
 		var associations = await getAssociations()
 		Template.AddAttribute.attrList.set(attributes);
@@ -22,6 +28,7 @@ Interpreter.customMethods({
 		$('button[name=required-attribute]').html('\&nbsp;');
 		$("#class-associations")[0].style.display = "none";
 		$("#mySearch-attribute")[0].value = "";
+		$("#more-associations-button")[0].style.display = "none";
 	}
 })
 
@@ -281,18 +288,14 @@ Template.AddAttribute.events({
 		return;
 	},
 	
-	"keyup #mySearch-attribute": async function(){
-		// var value = $("#mySearch-attribute").val().toLowerCase();
-		// var attr_list = await getAttributes();
-		// var link_list = await getAssociations();
-		// attr_list = attr_list.filter(function(obj) { 
-			// return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		// });
-		// Template.AddAttribute.attrList.set(attr_list);
-		// link_list = link_list.filter(function(obj) { 
-			// return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		// });
-		// Template.AddAttribute.linkList.set(link_list);
+	"keyup #mySearch-attribute": async function(e){
+		if (e.keyCode == 13) {
+			var attr_list = await getAttributes(value);
+			var link_list = await getAssociations(value);
+			Template.AddAttribute.attrList.set(attr_list);
+			Template.AddAttribute.linkList.set(link_list);
+		}
+		return;
 	},
 	
 	'click #attribute-apply-button': async function(e) {
@@ -315,6 +318,24 @@ Template.AddAttribute.events({
 		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
 	},
+	
+	'click #more-attributes-button': async function(e) {
+		var value = $("#mySearch-attribute").val().toLowerCase();
+		var count = Template.AddAttribute.Count.get();
+			count = count + plusCount;
+			Template.AddAttribute.Count.set(count);
+		var attr_list = await getAttributes(value);
+		Template.AddAttribute.attrList.set(attr_list);
+	},
+	'click #more-associations-button': async function(e) {
+		var value = $("#mySearch-attribute").val().toLowerCase();
+		var count = Template.AddAttribute.CountAssoc.get();
+			count = count + plusCount;
+			Template.AddAttribute.CountAssoc.set(count);
+		var link_list = await getAssociations(value);
+		Template.AddAttribute.linkList.set(link_list);
+	},
+	
 	
 	'click #attribute-new-button': function(e) {
 		Template.AddNewAttribute.alias.set("");
@@ -478,10 +499,12 @@ Template.AddNewAttribute.events({
 	},
 });
 
-function formParams(vq_obj, propertyKind, filter) {
+function formParams(vq_obj, propertyKind, filter, limit) {
 
 	var param = {propertyKind: propertyKind};	
 	if (filter != null) param["filter"] = filter;
+	if (limit != null) param["limit"] = limit;
+	console.log("param", param)
 	var value = $("#mySearch-attribute").val()
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		//param.namespaces = {notIn: ['dbp']};;
@@ -522,9 +545,13 @@ async function getAttributes(filter){
 			
 			attr_list.push({separator:"line"});
 
-			var param = formParams(vq_obj, 'Data', filter);
+			var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
 
 			var prop = await dataShapes.getProperties(param, vq_obj);
+			
+			if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
+			else $("#more-attributes-button")[0].style.display = "block";
+			
 			prop = prop["data"];
 			
 			for(var cl in prop){
@@ -570,11 +597,13 @@ async function getAssociations(filter){
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
 				
-			var param = formParams(vq_obj, 'Object', filter);
+			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
 
 			var prop = await dataShapes.getProperties(param, vq_obj)
 			prop = prop["data"];
 			
+			if(prop["complete"] == true) $("#more-associations-button")[0].style.display = "none";
+			else  $("#more-associations-button")[0].style.display = "block";
 			
 			for(var cl in prop){
 				var prefix;

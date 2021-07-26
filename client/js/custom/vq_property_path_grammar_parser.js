@@ -2126,8 +2126,8 @@ vq_property_path_grammar_parser = (function() {
     			// then in schema. Null if does not exist
     			async function resolveType(id) {var t=await resolveTypeFromSymbolTable(id);
 					if (!t) {
-						t=await resolveTypeFromSchemaForClass(id); 
-						if (!t) {t=await resolveTypeFromSchemaForAttributeAndLink(id)}
+						t=await resolveTypeFromSchemaForAttributeAndLink(id); 
+						if (!t) {t=await resolveTypeFromSchemaForClass(id)}
 					} 
 					return t;
 				};
