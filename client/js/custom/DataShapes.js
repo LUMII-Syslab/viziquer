@@ -199,7 +199,7 @@ dataShapes = {
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
-			allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
+			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
 		}
 		return await this.callServerFunction("getClasses", allParams);
 	},
