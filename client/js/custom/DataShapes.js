@@ -139,12 +139,12 @@ dataShapes = {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
 		rr.unshift({name:""});
-		console.log(rr)
+		// *** console.log(rr)
 		return await rr;
 	},
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
-		console.log(proj)
+		// *** console.log(proj)
 		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
 						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
@@ -163,9 +163,9 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
+		// *** *** this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
 		var s = this.schema.schema;
-		console.log(params)
+		// *** console.log(params)
 		var rr = {complete: false, data: [], error: "DSS parameter not found"};
 		if (s !== "" && s !== undefined )
 		{
@@ -175,16 +175,16 @@ dataShapes = {
 
 			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
-		console.log(rr)
+		// *** console.log(rr)
 		return await rr;
 	},
 	getNamespaces : async function(params = {}) {
-		console.log("------------getNamespaces ------------------")
+		// *** console.log("------------getNamespaces ------------------")
 		//dataShapes.getNamespaces()
 		return await this.callServerFunction("getNamespaces", {main:params});
 	},
 	getClasses : async function(params = {}, vq_obj = null) {
-		console.log("------------GetClasses------------------")
+		// *** console.log("------------GetClasses------------------")
 		// dataShapes.getClasses()
 		// dataShapes.getClasses({limit: 30})
 		// dataShapes.getClasses({filter:'aa'})
@@ -204,8 +204,8 @@ dataShapes = {
 		return await this.callServerFunction("getClasses", allParams);
 	},
 	getTreeClasses : async function(params) {
-		console.log("------------GetTreeClasses------------------")
-		console.log(params)
+		// *** console.log("------------GetTreeClasses------------------")
+		// *** console.log(params)
 		function makeTreeName(params) {
 			var nList = [];
 			if ( params.main.namespaces !== undefined) {
@@ -235,7 +235,7 @@ dataShapes = {
 		return rr;
 	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
-		console.log("------------GetProperties------------------")
+		// *** console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
@@ -288,7 +288,7 @@ dataShapes = {
 		return rr;
 	},
 	getIndividuals : async function(params = {}, vq_obj = null) {
-		console.log("------------getIndividuals ------------------")
+		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 		var allParams = {main: params};
@@ -303,7 +303,7 @@ dataShapes = {
 		return rr;
 	},
 	getTreeIndividuals : async function(params = {}, className) {
-		console.log("------------getTreeIndividuals ------------------")
+		// *** console.log("------------getTreeIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 		var allParams = {main: params, element:{className: className}};
@@ -311,7 +311,7 @@ dataShapes = {
 		return await this.callServerFunction("getIndividuals", allParams);
 	},
 	resolveClassByName : async function(params = {}) {
-		console.log("------------resolveClassByName---"+ params.name +"---------------")
+		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
 		var rr;
 		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
@@ -319,7 +319,7 @@ dataShapes = {
 				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
 			if (this.schema.resolvedClassesF[params.name] !== undefined)
 				rr = { complete:false, data: []};
-			console.log(rr)
+			// *** console.log(rr)
 		}
 		else {
 			rr = await this.callServerFunction("resolveClassByName", {main: params});
@@ -331,7 +331,7 @@ dataShapes = {
 		return rr;
 	},
 	resolvePropertyByName : async function(params = {}) {
-		console.log("------------resolvePropertyByName---"+ params.name +"---------------")
+		// *** console.log("------------resolvePropertyByName---"+ params.name +"---------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		var rr;
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
@@ -339,7 +339,7 @@ dataShapes = {
 				rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
 			if (this.schema.resolvedPropertiesF[params.name] !== undefined)
 				rr = { complete:false, data: []};
-			console.log(rr)
+			// *** console.log(rr)
 		}
 		else {
 			rr = await this.callServerFunction("resolvePropertyByName", {main: params});

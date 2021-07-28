@@ -683,7 +683,7 @@ async function getAllAssociations(){
 				
 				// var allAssociations = schema.findClassByName(className).getAllAssociations();
 
-				var param = {propertyKind:'ObjectExt'};
+				var param = {propertyKind:'ObjectExt', linksWithTargets:true};
 				var filter = $("#mySearch").val().toLowerCase();
 				if(filter != null) param["filter"] = filter;
 				param["limit"] = Template.AddLink.Count.get();
@@ -826,7 +826,7 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 			//	e.class = "";
 			//});
 
-			console.log("YYYYYYYYYYYYYYYYYYY", asc)
+			// *** console.log("YYYYYYYYYYYYYYYYYYY", asc)
 
 			return asc;
 		}

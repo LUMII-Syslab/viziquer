@@ -504,7 +504,6 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 	var param = {propertyKind: propertyKind};	
 	if (filter != null) param["filter"] = filter;
 	if (limit != null) param["limit"] = limit;
-	console.log("param", param)
 	var value = $("#mySearch-attribute").val()
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		//param.namespaces = {notIn: ['dbp']};;
