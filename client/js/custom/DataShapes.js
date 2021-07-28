@@ -2,7 +2,7 @@
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 let _schemaServerUrl = null;
 const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
-    if (_schemaServerUrl) return _schemaServerUrl;
+    //if (_schemaServerUrl) return _schemaServerUrl;
     Meteor.call('getEnvVariable', 'SCHEMA_SERVER_URL', (error, result) => {
         if (error) {
             return reject(error);
