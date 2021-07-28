@@ -175,6 +175,8 @@ dataShapes = {
 
 			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
+		else
+			Interpreter.showErrorMsg("Project DSS parameter not found !");
 		// *** console.log(rr)
 		return await rr;
 	},
