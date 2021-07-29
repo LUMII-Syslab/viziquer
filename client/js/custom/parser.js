@@ -2659,7 +2659,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 						var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 
-					
+						console.log("rrrrrrrrrrrrrrr", left, right)
 						
 						if(typeof expressionTable[key]["NumericExpressionL"] !== "undefined") SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						else if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
@@ -2682,7 +2682,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							}
 							if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') {
 								//expressionLevelNames = [];
+								console.log("QQQQQQQQQQQQQQQQQQQQ", expressionTable[key]["NumericExpressionR"])
 								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation); 
+								console.log("QQQQQQQQQQQQQQQQQQQQ", SPARQLstring)
 							}
 							else if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
 								if(alias!=null)SPARQLstring = SPARQLstring  + " ?" +alias;
@@ -2855,7 +2857,10 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
 					
 					if(expressionTable[key]["iri"]["PrefixedName"]['var']['type'] !== null){
-						valueString = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+						var valueStringTemp = generateExpression({"var" : expressionTable[key]["iri"]["PrefixedName"]['var']}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
+						if(valueStringTemp.indexOf(":") !== -1){
+							prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
+						} else valueString = valueStringTemp;
 					} else {
 						if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null){
 							prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";

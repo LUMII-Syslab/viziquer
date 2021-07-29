@@ -1274,7 +1274,25 @@ Interpreter.customMethods({
 		}
 		return false;
 	},
+	
+	AddSelectThis: function(){
+		
+		
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
+		 var vq_obj = new VQ_Element(selected_elem_id);
+		 var fields = vq_obj.getFields();
+		 for(var field in fields){
+			 if(fields[field]["exp"] == "(select this)") return; 
+		 }
+		 vq_obj.addField("(select this)",null,false,false,false);
+		};
+
+		return;
+	},
+	
+	
 	//Adds outer query as [ ] class with ++ link
 	addOuterQuery: function(){
 		var selected_elem_id = Session.get("activeElement");

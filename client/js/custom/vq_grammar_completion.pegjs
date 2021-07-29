@@ -9,238 +9,352 @@
 			//////////////////////////////////////////////
 			var continuations = {};
 			
-			function makeArray(value){
-				if (continuations[value]==null) {
-					continuations[value] = {};
-				}
-				return continuations;
-			}
-			
-			function getClasses(place, priority){
-				var cls = options.schema.getAllClasses();
-				for(var key in cls){
-					addContinuation(place, cls[key]["name"], priority, false, 3);
-				}
-			}
-			function getReferences(place, priority){
-				for(var key in options["symbol_table"]){
-					for(var k in options["symbol_table"][key]){
-						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") addContinuation(place, key, priority, false, 3);
-					}
-				};
-			}
-			function getProperties(place, priority){
-				var prop = options.schema.findClassByName(options.className).getAllAttributes()
-				for(var key in prop){
-					var propName= prop[key]["short_name"];
-					addContinuation(place, propName, 100, false, 1);
-				}
-				getAssociations(place, 95);
-				//getClasses(place, 94);
-				getPropertyAlias(place, 93);
-			}
-			function getPropertyAlias(place, priority){
+        			function makeArray(value){
+        				if (continuations[value]==null) {
+        					continuations[value] = {};
+        				}
+        				return continuations;
+        			}
+        			
+        			async function getReferences(place, priority){
+        				for(var key in options["symbol_table"]){
+        					for(var k in options["symbol_table"][key]){
+        						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") await addContinuation(place, key, priority, false, 3);
+        					}
+        				};
+        			}
+        			async function getProperties(place, priority){
+        				var selected_elem_id = Session.get("activeElement");
+    					var act_el;
+    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    						act_el = new VQ_Element(selected_elem_id)
+    					}
+    					
+    					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
+    					prop = prop["data"];
+    					
+    					for(var cl in prop){
+    						var prefix;
+    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    						else prefix = prop[cl]["prefix"]+":";
 
-				var selected_elem_id = Session.get("activeElement");
-				for (var  key in options["symbol_table"]) {	
-					for (var symbol in options["symbol_table"][key]) {
-						if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){
-							if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))addContinuation(place, key, priority, false, 3);;
-						}
-					}	
-				}
-			}
-			
-			function getAssociations(place, priority){
-				var prop = options.schema.findClassByName(options.className).getAllAssociations()
+    						var propName = prefix+prop[cl]["display_name"]
+    						await addContinuation(place, propName, 100, false, 1);
+    					}
+    					
+        				await getAssociations(place, 95);
+        				await getPropertyAlias(place, 93);
+        			}
+        			async function getPropertyAlias(place, priority){
 
-				for(var key in prop){
-					var propName= prop[key]["short_name"];
-					if(prop[key]["type"] == "<=") {
-						addContinuation(place, "^" + propName, priority, false, 2)
-						// addContinuation(place, "INV(" + propName + ")", priority, false, 2)
-					}
-					else addContinuation(place, propName, priority, false, 2);
-				}
-			}
-			
-			function getAttrSub(place, priority){
-				if(options.type == "attribute"){
-					addContinuation(place, "(*attr)", priority, false, 3);
-					addContinuation(place, "(*sub)", priority, false, 3);
-				}
-			}
-			
-			function addContinuation(place, continuation, priority, spaceBefore, type, start_end){
-				var position = "start";
-				if(start_end != null)position = start_end;
-				makeArray(place[position]["offset"]);
-				if(typeof continuations[place[position]["offset"]][continuation] === "undefined" || continuations[place[position]["offset"]][continuation]["priority"] > priority) 
-				{
-					continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type, spaceBefore:spaceBefore};
-				}
-			}
-			
-			function returnContinuation(){
-				return JSON.stringify(continuations,null,2);
-			}
+        				var selected_elem_id = Session.get("activeElement");
+        				for (var  key in options["symbol_table"]) {	
+        					for (var symbol in options["symbol_table"][key]) {
+        						if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){
+        							if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);;
+        						}
+        					}	
+        				}
+        			}
+        			
+        			async function getAssociations(place, priority){
+        				
+    					var selected_elem_id = Session.get("activeElement");
+    					var act_el;
+    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    						act_el = new VQ_Element(selected_elem_id)
+    					}
+    					
+    					var prop = await dataShapes.getProperties({propertyKind:'Object'}, act_el);
+    					prop = prop["data"];
+    			
+    					for(var cl in prop){
+    						var prefix;
+    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    						else prefix = prop[cl]["prefix"]+":";
 
-			function makeVar(o) {return makeString(o);};
+    						var propName = prefix+prop[cl]["display_name"]
+    						await addContinuation(place, propName, priority, false, 2);
+    					}
+        			}
+        			
+        			
+        			async function addContinuation(place, continuation, priority, spaceBefore, type, start_end){
+        				var position = "start";
+        				if(start_end != null)position = start_end;
+        				makeArray(place[position]["offset"]);
+        				if(typeof continuations[place[position]["offset"]][continuation] === "undefined" || continuations[place[position]["offset"]][continuation]["priority"] > priority) 
+        				{
+        					continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type, spaceBefore:spaceBefore};
+        				}
+        			}
+        			
+        			async function returnContinuation(){
+        				return JSON.stringify(continuations,null,2);
+        			}
 
-			// string -> idObject
-			// returns type of the identifier from symbol table. Null if does not exist.
-			// returns type of the identifier from symbol table. Null if does not exist.
-			function resolveTypeFromSymbolTable(id) {
-				var context = options.context._id;
-				
-				if(typeof options.symbol_table[context] === 'undefined') return null;
-				
-				var st_row = options.symbol_table[context][id]; 
-				if (st_row) { 
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].type 
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-						}
-					}
-					return st_row.type 
-				} else { 
-					return null 
-				} 
-			};
-			// string -> idObject
-			// returns kind of the identifier from symbol table. Null if does not exist.
-			function resolveKindFromSymbolTable(id) { 
-				var context = options.context._id;
-				
-				if(typeof options.symbol_table[context] === 'undefined') return null;
-				
-				var st_row = options.symbol_table[context][id]; 
-				if (st_row) { 
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].kind 
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-						}
-					}
-					return st_row.kind 
-				} else { 
-					return null 
-				} 
-			};
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			function resolveTypeFromSchemaForAttributeAndLink(id) {var aorl = options.schema.resolveAttributeByName(null,id); if (!aorl) { aorl = options.schema.resolveLinkByName(id)}; return aorl};
-			// string -> idObject
-			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
-			// then in schema. Null if does not exist
-			function resolveType(id) {var t=resolveTypeFromSymbolTable(id); if (!t) {t=resolveTypeFromSchemaForClass(id); if (!t) {t=resolveTypeFromSchemaForAttributeAndLink(id)}} return t;};
-			//string -> string
-			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
-			function resolveKind(id) {
-				    var k=resolveKindFromSymbolTable(id);
-						if (!k) {
-							if (resolveTypeFromSchemaForClass(id)) {
-							    k="CLASS_NAME";
-						  } else if (resolveTypeFromSchemaForAttributeAndLink(id)) {
-								  k="PROPERTY_NAME";
-							}
-					  }
-				return k;
-		    };
-			function pathOrReference(o) {	
-				
-				
-				
-				var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
-				var propertyName = "";
-				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
-				if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
-				
-				var targetSourceClass = "targetClass";
-				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
-				
-				if(typeof options.schema.findAssociationByName(propertyName) !== 'undefined'){
-						var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
-						for(var classPair in schemaAssociationClassPairs){
-								
-							var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
-							var prop = options.schema.findClassByName(targetClass).getAllAttributes();
-								
-							for(var key in prop){
-								addContinuation(location(), prop[key]["name"], 100, false, 1, "end");
-							}
-								
-							prop = options.schema.findClassByName(targetClass).getAllAssociations();
-								
-							for(var key in prop){
-								var propName= prop[key]["short_name"];
-								if(prop[key]["type"] == "<=") {
-									addContinuation(location(), "^" + propName, 100, false, 2, "end")
-									// addContinuation(location(), "INV(" + propName + ")", 100, false, 2, "end")
-								}
-								else addContinuation(location(), propName, 100, false, 2, "end");
-							}
-						}
-    				}
-				return o;
-			};
-			
-			function ifObjectDataProperty(o){
-				
-				var varibleName;
-				
-				if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
-				else  varibleName = makeVar(o);
-				if(options.schema.resolveLinkByName(varibleName) != null) addContinuation(location(), ".", 99, false, 4, "end");
-				if(resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) addContinuation(location(), ":", 30, false, 4, "end");
-				
-				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
-				
-				return o;
-			}
-			
-			function referenceNames(o) {
-				var classAliasTable = [];
-				for(var key in options["symbol_table"]){
-					for(var k in options["symbol_table"][key]){
-						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["localName"]
-					}
-				};
-				
-				if(typeof classAliasTable[o] !== 'undefined')continuations[location()["end"]["offset"]] = {};
-			
-				var prop = options.schema.findClassByName(classAliasTable[o]).getAllAttributes();
-				for(var key in prop){
-					addContinuation(location(), prop[key]["name"], 100, false, 1, "end");
-				}
-					
-				prop = options.schema.findClassByName(classAliasTable[o]).getAllAssociations();
-				for(var key in prop){
-					addContinuation(location(), prop[key]["short_name"], 99, false, 2, "end");
-				}
+        			function makeVar(o) {return makeString(o);};
 
-				return o;
-			};
-			function transformExpressionIntegerScopeToList(start, end){
-				var s = parseInt(start["Number"]);
-				var e = parseInt(end["Number"]);
-				var expressionList = [];
-				for (var i = s; i <= e; i++) {
-					expressionList.push({"NumericLiteral": {"Number": i}});
-					if(i!=e) expressionList.push({"Comma": ","});
-				} 
-				return expressionList;
-			}
+        			// string -> idObject
+        			// returns type of the identifier from symbol table. Null if does not exist.
+        			// returns type of the identifier from symbol table. Null if does not exist.
+        			async function resolveTypeFromSymbolTable(id) {
+            				var context = options.context._id;
+    						
+            				if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+
+            				var st_row = options.symbol_table[context][id];
+            				if (st_row) {
+            					if(st_row.length == 0) return null;
+            					if(st_row.length == 1){
+            						return st_row[0].type
+            					}
+            					if(st_row.length > 1){
+            						for (var symbol in st_row) {
+            							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+            						}
+            					}
+            					return st_row.type
+            				} else {
+            					return null
+            				}
+            				return null
+            			};
+            			// string -> idObject
+            			// returns kind of the identifier from symbol table. Null if does not exist.
+            			async function resolveKindFromSymbolTable(id) {
+            				var context = options.context._id;
+
+            				if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+
+            				var st_row = options.symbol_table[context][id];
+            				if (st_row) {
+            					if(st_row.length == 0) return null;
+            					if(st_row.length == 1){
+            						return st_row[0].kind
+            					}
+            					if(st_row.length > 1){
+            						for (var symbol in st_row) {
+            							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+            						}
+            					}
+            					return st_row.kind
+            				} else {
+            					return null
+            				}
+            				return null
+            			};
+            			// string -> idObject
+            			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
+            			async function resolveTypeFromSchemaForClass(id) {
+            				var cls = await dataShapes.resolveClassByName({name: id})
+            				if(cls["complite"] == false) return null;
+            				if(cls["data"].length > 0){
+            					return cls["data"][0];
+            				}
+            				
+            				return null;
+            			};
+            			// string -> idObject
+            			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
+            			async function resolveTypeFromSchemaForAttributeAndLink(id) {
+            				
+            				var aorl = await dataShapes.resolvePropertyByName({name: id})
+            				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+            				if(aorl["complite"] == false) return null;
+            				var res = aorl["data"][0];
+            				if(res){
+            					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+            					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+            					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
+            					return res;
+            				}
+            				// if (!res) { 
+            					// res = options.schema.resolveLinkByName(id); 
+            					// if (res) res["property_type"] = "OBJECT_PROPERTY"
+            				// }
+            				// else {
+            						// res["parentType"] = aorl[1];
+            						// res["property_type"] = "DATA_PROPERTY";
+            				// };
+            				
+            				return null
+            			};
+            			// string -> idObject
+            			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
+            			// then in schema. Null if does not exist
+            			async function resolveType(id) {
+            			  
+            			  if(id !== "undefined"){
+            			  var t=await resolveTypeFromSymbolTable(id);
+            				if (!t) {
+            					if (options.exprType) {
+            					  t= await resolveTypeFromSchemaForClass(id);
+            					  if (!t) {
+            						  t=await resolveTypeFromSchemaForAttributeAndLink(id)
+            					  }
+            					} else {
+            					  t=await resolveTypeFromSchemaForAttributeAndLink(id);
+            					  if (!t) {
+            						  t=await resolveTypeFromSchemaForClass(id)
+            					  }
+            					}
+
+            				}
+            			  return t;}
+            			  return null;
+            			};
+                      //string -> string
+                			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
+                 	   async function resolveKind(id) {
+            				if(id !== "undefined"){
+                				    var k=await resolveKindFromSymbolTable(id);
+                						if (!k) {
+                						  if (options.exprType) {
+                							  if (await resolveTypeFromSchemaForClass(id)) {
+                									 k="CLASS_NAME";
+                							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+                									 k="PROPERTY_NAME";
+                							  }
+                							} else {
+                							  if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+                									k="PROPERTY_NAME";
+                							  } else if (await resolveTypeFromSchemaForClass(id)) {
+                									k="CLASS_NAME";
+                							 }
+                							}
+
+                					  }
+                						return k;
+            				}
+            				return null
+                		  };
+        			async function pathOrReference(o) {
+    						
+    					// var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
+        				// var propertyName = "";
+        				// if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
+        				// if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
+        				
+        				// var targetSourceClass = "targetClass";
+        				// if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
+        				
+        				// if(typeof options.schema.findAssociationByName(propertyName) !== 'undefined'){
+        						// var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
+        						// for(var classPair in schemaAssociationClassPairs){
+        								
+        							// var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
+        							// var prop = options.schema.findClassByName(targetClass).getAllAttributes();
+        								
+        							// for(var key in prop){
+        								// await addContinuation(await location(), prop[key]["name"], 100, false, 1, "end");
+        							// }
+        								
+        							// prop = options.schema.findClassByName(targetClass).getAllAssociations();
+        								
+        							// for(var key in prop){
+        								// var propName= prop[key]["short_name"];
+        								// if(prop[key]["type"] == "<=") {
+        									// await addContinuation(await location(), "^" + propName, 100, false, 2, "end")
+        								// }
+        								// else await addContinuation(await location(), propName, 100, false, 2, "end");
+        							// }
+        						// }
+            				// }
+        				return o;
+        			};
+        			
+        			async function ifObjectDataProperty(o){
+        				
+        				var varibleName;
+        				
+        				if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
+        				else  varibleName = makeVar(o);
+        				if(options.schema.resolveLinkByName(varibleName) != null) await addContinuation(await location(), ".", 99, false, 4, "end");
+        				if(await resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) await addContinuation(await location(), ":", 30, false, 4, "end");
+        				
+        				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
+        				
+        				return o;
+        			}
+    				async function afterVar(o) {
+						
+						var varibleName = makeVar(o);
+						var selected_elem_id = Session.get("activeElement");
+    					var act_el;
+    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    						act_el = new VQ_Element(selected_elem_id)
+    					}
+    					
+    					var prop = await dataShapes.getProperties({propertyKind:'Data', filter:varibleName}, act_el);
+    					prop = prop["data"];
+						
+    					for(var cl in prop){
+    						var prefix;
+    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    						else prefix = prop[cl]["prefix"]+":";
+
+    						var propName = prefix+prop[cl]["display_name"]
+    						await addContinuation(await location(), propName, 100, false, 1);
+    					}
+						
+						var prop = await dataShapes.getProperties({propertyKind:'Object', filter:varibleName}, act_el);
+    					prop = prop["data"];
+						
+    					for(var cl in prop){
+    						var prefix;
+    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    						else prefix = prop[cl]["prefix"]+":";
+
+    						var propName = prefix+prop[cl]["display_name"]
+    						await addContinuation(await location(), propName, 100, false, 2);
+    					}
+									
+    					return o;
+    				};
+        			
+        			async function referenceNames(o) {
+    	
+    					var classAliasTable = [];
+        				for(var key in options["symbol_table"]){
+        					for(var k in options["symbol_table"][key]){
+        						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["localName"]
+        					}
+        				};
+        				
+        				if(typeof classAliasTable[o] !== 'undefined')continuations[location()["end"]["offset"]] = {};
+        			
+        				// var prop = options.schema.findClassByName(classAliasTable[o]).getAllAttributes();
+        				// for(var key in prop){
+        					// await addContinuation(await location(), prop[key]["name"], 100, false, 1, "end");
+        				// }
+        					
+        				// prop = options.schema.findClassByName(classAliasTable[o]).getAllAssociations();
+        				// for(var key in prop){
+        					// await addContinuation(await location(), prop[key]["short_name"], 99, false, 2, "end");
+        				// }
+    					
+    					var selected_elem_id = Session.get("activeElement");
+    					var act_el;
+    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+    						act_el = new VQ_Element(selected_elem_id)
+    					}
+    					
+    					var prop = await dataShapes.getProperties({propertyKind:'All'}, act_el);
+    					prop = prop["data"];
+    			
+    					for(var cl in prop){
+    						var prefix;
+    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    						else prefix = prop[cl]["prefix"]+":";
+
+    						var propName = prefix+prop[cl]["display_name"]
+    						// await addContinuation(place, propName, priority, false, 2);
+    						await addContinuation(await location(), propName, 99, false, 2, "end");
+    					}
+
+        				return o;
+        			};
 		}
 
 			Main = (space  ((("(*attr)" / "(*sub)")) / Expression) space)? end
@@ -306,8 +420,8 @@
 
 			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
-			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
-			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / QName / LN
+			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName/ QName / LN
+			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName/ QName / LN
 
 			BooleanLiteral = (TRUE / FALSE) 
 			
@@ -517,7 +631,7 @@
 
 			PN_PREFIX = string_c Chars_String_prefix
 
-			PN_LOCAL = variables_c Var:Chars_String 
+			PN_LOCAL = variables_c Var:Chars_String {return afterVar(Var)} 
 
 			PropertyReference = PropertyReference_c "`"
 
@@ -604,23 +718,30 @@
 			Reference= references_c Chars_String:Chars_String {return makeVar(Chars_String)} 
 			
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
-			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
-			Chars_String_prefix_LName = LName:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*) {return ifObjectDataProperty(LName)}
-			Chars_String_variables = (squere_br_open "[" variables_c Chars_String_prefix squere_br_close "]")
+			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / "." / [0-9])*)
+			Chars_String_prefix_LName = LName:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" /"." / [0-9])*) {return ifObjectDataProperty(LName)}
+			Chars_String_variables = (squere_br_open "[" Chars_String_variable squere_br_close "]")
+			Chars_String_variable = variables_c Var:Chars_String_prefix {return afterVar(Var)} 
 			
 																																																			//atributs vai associacija
 			LN =((LNameINV / LNameINV2 / LName) )
 			
 			PathMod = PathMod:((question "?") / (mult "*") / (plus "+"))
 			
-			LNameSimple = (Chars_String_variables / (variables_c Chars_String_prefix_LName))
+			LNameSimple = (Chars_String_variables / (Chars_String_prefix_LNameA))
+			Chars_String_prefix_LNameA = variables_c Var:Chars_String_prefix_LName {return afterVar(Var)}
+			
 
 			LNameINV = (at "@"? PropertyReference? INV: inv_c "INV"i br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			LNameINV2 = (at "@"? PropertyReference? INV: check "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			Substring = (squere_br_open "[" (INTEGER (comma_c "," space INTEGER)?) squere_br_close "]")?
-			LName = (at "@"? PropertyReference? LName:(Chars_String_variables / (variables_c Chars_String_prefix_LName)) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) 
+			LName = (at "@"? PropertyReference? LName:(Chars_String_variables / Chars_String_prefix_LNameA) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) 
 			
+			DoubleSquareBracketName = variables_c Var:(squarePrefix? squareVariable) {return afterVar(Var)}
+			squarePrefix = Chars_String_prefix colon_cc":"
+			squareVariable = double_squere_br_open "[["  Chars_String_square  double_squere_br_close "]]"
+			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" /"." /" "/"/" / [0-9])*)
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
 			space = ((" ")*) 
@@ -752,6 +873,8 @@
 			inv_c = "" {addContinuation(location(), "", 85, false, 4);}
 			squere_br_open = "" {addContinuation(location(), "[", 28, false, 4);}
 			squere_br_close = "" {addContinuation(location(), "]", 28, false, 4);}
+			double_squere_br_open = "" {addContinuation(location(), "[[", 28, false, 4);}
+			double_squere_br_close = "" {addContinuation(location(), "]]", 28, false, 4);}
 			relations = "" {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);}
 			like_c = "" {addContinuation(location(), "LIKE", 30, true, 4);}
 			more = "" {addContinuation(location(), ">", 10, false, 4);}
@@ -762,12 +885,11 @@
 			string_c = "" {addContinuation(location(), "", 1, false, 4);}
 			colon_c = "" {addContinuation(location(), "", 30, false, 4);}
 			vertical_c = "" {addContinuation(location(), "|", 10, false, 4);}
+			colon_cc = "" {addContinuation(location(), ":", 10, false, 4);}
 			space_c = "" {addContinuation(location(), " ", 1, false, 4);}
 			PropertyReference_c = "" {addContinuation(location(), "`", 1, false, 4);}
 			variables_c = "" {getProperties(location(), 91);}
 			references_c = "" {getReferences(location(), 91);}
 			associations_c = "" {getAssociations(location(), 91);}
-			classes_c = "" {getClasses(location(), 91); getAssociations(location(), 91);}
-			attrSub_c = "" {getAttrSub(location(), 92)}
 			
 			end = "" {error(returnContinuation()); return;}
