@@ -124,6 +124,7 @@ function uploadProject(list) {
 								simpleConditionImplementation: "",
 								endpointUsername: "",
 								endpointPassword: "",
+								schema: "",
 							};
 
 			_.extend(project_data, data.project);
@@ -144,6 +145,7 @@ function uploadProject(list) {
 														completeRDFBoxesInDatetimeFunctions: project_data.completeRDFBoxesInDatetimeFunctions,
 														endpointUsername: project_data.endpointUsername,
 														endpointPassword: project_data.endpointPassword,
+														schema: project_data.schema,
 													}});
 
 

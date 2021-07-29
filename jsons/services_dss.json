@@ -4,7 +4,7 @@
 	"projects": [
 	{
 		"caption": "DBPedia sample project",
-		"name": "DBPedia sample",
+		"name": "DBPedia_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/DBPedia_Sample.json",
 		"description": "A simple project with some queries over DBPedia"
 	}
