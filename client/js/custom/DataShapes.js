@@ -163,10 +163,16 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		// *** *** this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
+		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
 		var s = this.schema.schema;
+		//if (s === "" || s === undefined ) {
+		//	console.log(Session.get("activeProject"))
+		//	await this.changeActiveProject(Session.get("activeProject"));
+		//	s = this.schema.schema;
+		//}
+			
 		// *** console.log(params)
-		var rr = {complete: false, data: [], error: "DSS parameter not found"};
+		var rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
 		{
 			params.main.endpointUrl = this.schema.endpoint;

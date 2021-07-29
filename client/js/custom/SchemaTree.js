@@ -162,7 +162,8 @@ async function  useFilterI () {
 	var iFull = await dataShapes.getTreeIndividuals(params, className);  
 
 	var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-	instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+	if (iFull.length > 0)
+		instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 		
 	Template.schemaInstances.Instances.set(instances);
 }
@@ -264,6 +265,11 @@ Template.schemaTree.events({
 	'click #filter': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
 		await useFilter();
+	},
+	'keydown #filter': async function(e) {
+		//Template.schemaTree.Count.set(startCount)
+		if ( e.keyCode === 13 )
+			await useFilter();
 	},
 	'click #dbo': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
@@ -426,6 +432,10 @@ Template.schemaFilter.events({
 		//Template.schemaFilter.Count.set(startCount)
 		await useFilterP();
 	},
+	'keydown #filter2': async function(e) {
+		if ( e.keyCode === 13 )
+			await useFilterP();
+	},
 	'click #dbp': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
 		useFilterP ();
@@ -500,6 +510,10 @@ Template.schemaInstances.events({
 	},
 	'click #filter3': async function(e) {
 		await useFilterI();
+	},
+	'keydown #filter3': async function(e) {
+		if ( e.keyCode === 13 )
+			await useFilterI();
 	},
 	'click #class': async function(e) {
 		var className = $("#class").val();
