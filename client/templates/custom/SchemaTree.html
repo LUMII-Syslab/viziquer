@@ -3,7 +3,6 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<label  class="col-sm-12 control-label">Double-click an item to start a query from it</label>
 			<input id="filter_text" type="text" class="form-control" placeholder="{{f}}">
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
@@ -16,6 +15,7 @@
 				<span class="custom-checkbox"></span>
 				Exclude yago:
 			</label>
+			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
 
 				{{#each classes}}
@@ -52,7 +52,6 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<label  class="col-sm-12 control-label">Double-click an item to start a query from it</label>
 			<div class="col-sm-12">
 				<select class="form-control" id="propType" value={{pKind}}>
 				  <option>All properties</option>
@@ -67,6 +66,7 @@
 				<span class="custom-checkbox"></span>
 				Basic list
 			</label>
+			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
 
 				{{#each properties}}
@@ -103,7 +103,6 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<label  class="col-sm-12 control-label">Double-click an item to start a query from it</label>
 			<div class="col-sm-12">
 				<select class="form-control" id="class" value={{class}}>
 				  <option>owl:Thing</option>
@@ -113,6 +112,7 @@
 			</div>
 			<input id="filter_text3" type="text" class="form-control" placeholder="{{f}}">
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
 
 				{{#each instances}}
