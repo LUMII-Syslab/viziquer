@@ -104,12 +104,17 @@
     <div class="col-sm-12">
         <div class="dd" id="nestable">
 			<div class="col-sm-12">
-				<select class="form-control" id="class" value={{class}}>
+				<select class="form-control" id="class" value="dbo:Person">
+				  <option>dbo:Person</option>
+				  <option>dbo:Place</option>
+				  <option>dbo:Location</option>
+				  <option>dbo:Work</option>				
 				  <option>owl:Thing</option>
 				  <option>foaf:Document</option>
 				  <option>skos:Concept</option>
 				</select>
 			</div>
+			<div class="describe">Large class selected, results may come very slowly</div>
 			<input id="filter_text3" type="text" class="form-control" placeholder="{{f}}">
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<div class="describe">Double-click an item to start a query from it</div>

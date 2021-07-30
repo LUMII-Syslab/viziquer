@@ -13,6 +13,7 @@ const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
 });
 // ***********************************************************************************
 const MAX_ANSWERS = 30;
+const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 // ***********************************************************************************
@@ -133,8 +134,8 @@ const findElementDataForIndividual = (vq_obj) => {
 dataShapes = {
 	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
-			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					 pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}},
+			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
+					 pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person'}},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -144,16 +145,16 @@ dataShapes = {
 	},
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
-		// *** console.log(proj)
+		//console.log(proj)
 		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
-						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_TREE_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					          pKind: 'All properties', topClass: 0, classPath: [], class: 'owl:Thing'}};
+						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
+					          pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person'}};
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames;
-				//this.schema.ontologies = {};
+				//this.schema.ontologies = {}; 
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
 				//this.schema.limit = MAX_ANSWERS;
 				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
@@ -307,7 +308,7 @@ dataShapes = {
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined )
 			rr = await this.callServerFunction("getIndividuals", allParams);
 		else
-			rr = { complete:false, data: []};
+			rr = [];
 		return rr;
 	},
 	getTreeIndividuals : async function(params = {}, className) {
@@ -316,7 +317,7 @@ dataShapes = {
 		var rr;
 		var allParams = {main: params, element:{className: className}};
 
-		return await this.callServerFunction("getIndividuals", allParams);
+		return await this.callServerFunction("getTreeIndividuals", allParams);
 	},
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")

@@ -15,6 +15,7 @@ Meteor.methods({
 																										 indirectClassMembershipRole: list.indirectClassMembershipRole,
 																										 showCardinalities: list.showCardinalities,
 																										 autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
+																										 showPrefixesForAllNames: list.showPrefixesForAllNames,
 																										 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,
 																										 completeRDFBoxesInDatetimeFunctions: list.completeRDFBoxesInDatetimeFunctions,
 																										 simpleConditionImplementation: list.simpleConditionImplementation,

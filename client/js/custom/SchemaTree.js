@@ -158,11 +158,14 @@ async function  useFilterI () {
 	var params = { limit: dataShapes.schema.tree.countI, filter:text};
 	var className = $("#class").val();
 	dataShapes.schema.tree.class = className;
+	
+	Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+	
 
 	var iFull = await dataShapes.getTreeIndividuals(params, className);  
 
 	var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-	if (iFull.length > 0)
+	if (iFull.length === dataShapes.schema.tree.countI)
 		instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 		
 	Template.schemaInstances.Instances.set(instances);
@@ -467,14 +470,13 @@ Template.schemaInstances.helpers({
 Template.schemaInstances.events({
 	"dblclick .class-body": async function(e) {
 		var i_name = $(e.target).closest(".class-body").attr("value");
-		console.log(i_name)
 		if ( i_name === "...") {
 			var count = dataShapes.schema.tree.countI;
 			count = count + dataShapes.schema.tree.plus;
 			dataShapes.schema.tree.countI = count;
 			await useFilterI();
 		}
-		else {
+		else if (i_name !== "wait") {
 			const BLACK_HEADER_HEIGHT = 45;
 			const DEFAULT_BOX_WIDTH = 194;
 			const DEFAULT_BOX_HEIGHT = 66;
@@ -517,8 +519,10 @@ Template.schemaInstances.events({
 	},
 	'click #class': async function(e) {
 		var className = $("#class").val();
-		if ( className !== dataShapes.schema.tree.class)
+		if ( className !== dataShapes.schema.tree.class) {
+			$("#filter_text3")[0].value = '';
 			useFilterI ();
+		}
 	},
 	'keyup #filter_text3': async function(e){
 		if (e.keyCode == 13) {
