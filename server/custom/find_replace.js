@@ -1,14 +1,14 @@
-// autors: Dmitrijs
+// Dmitrija kods
 let ReplaceLineType;
 let DeleteBoxType;
 let apstaigatieReplace;
 let createdBoxes;
 let ElementDict; // elementu vārdnīca, kurā tiek pieglabāti aizvietoto elementu idi, ja aizvietojamais tips nemainījās
 
-function getStartElements(diagParamList, diagramType){// iegūstam starta elementus no visām speciāllīnijām
-    // console.time("getStartElementsTimer");
+function getStartElements(diagParamList, diagramType){
+    // iegūstam starta elementus no visām speciāllīnijām
     let elementsToFind  = [];
-    ReplaceLineType     = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: diagramType})._id;// ja tādas speciāllīnijas definīcijā nav, tad metīs kļūdu
+    ReplaceLineType     = ElementTypes.findOne({name: "FindReplaceLink", diagramTypeId: diagramType})._id;
     DeleteBoxType       = ElementTypes.findOne({name: "RemoveElement", diagramTypeId: diagramType})._id;
     let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: diagParamList.diagramId}).fetch();
     if( ReplaceLines ){
@@ -17,10 +17,9 @@ function getStartElements(diagParamList, diagramType){// iegūstam starta elemen
             elementsToFind.push(elementToFind);
         })
     }
-    // console.timeEnd("getStartElementsTimer");
     return elementsToFind;
 }
-function getElementTypeId(elementId){ return Elements.findOne({_id: elementId}).elementTypeId; }
+function getElementTypeId(elementId){ return Elements.findOne({_id: elementId}).elementTypeId; } // atgriež elementa tipa id
 function getEdges(_boxId){
     // atrodam virsotnei saistītās šķautnes, kuras nav replaceLine tipa
     return relatedEdges = Elements.find({
@@ -32,6 +31,7 @@ function getEdges(_boxId){
     }).fetch();
 }
 function cartesianProductOf(listOfMatches) {
+    // veido Dekarta reizinājumu matchiem
     return _.reduce(listOfMatches, function(a, b) {// a un b ir iteratori, kas iterē pa diviem blakus esošiem masīviem masīvā
         return _.flatten(_.map(a, function(x) {
             return _.map(b, function(y) {
@@ -42,6 +42,7 @@ function cartesianProductOf(listOfMatches) {
     }, [ [] ]);
 }// paņemts no https://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
 function createErrorMessage(error){
+    // izveido izteiksmes ķļudas paziņojuma simbolu virkni no error objekta, kuru atgriež parseris
     let msg = "Expected: ";
     let expectedItems = _.pluck(error.expected, "value");
     msg += expectedItems.join(" or ");
@@ -79,7 +80,7 @@ function BreadthFirstSearch(ElementsArray){ // grafa apstaigāšana plašumā
     else return false;
 }
 function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma validācija
-    // console.time("checkQueryTimer");
+    
     let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: diagramId, diagramTypeId: diagramTypeId}).fetch();
     let ExpressionErrors= [];
     if(_.size(ReplaceLines)){
@@ -129,21 +130,20 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
                 });
             }
         });
-        // console.timeEnd("checkQueryTimer");
+
         if(OverLapping) return false;
         else return ExpressionErrors; 
     } // ja nav pārklājumu, tad atgriež masīvu ar kļūdaino izt. paziņojumiem
 }
 function checkDuplicates(findResult, findElementsIds){
-    // console.time("checkDuplicateTimer");
+    // pārbauda, vai matchā ir vienādi findElementId
     let duplicate = {};
     let findElements = _.uniq(_.flatten(_.map(findResult[0].matches, function(match){
         return _.map(match.elements, function(element){
             return element.findElementId;
         })
     })));
-    // console.log("findElements",findElements);
-    // console.log("findElementsIds", findElementsIds);
+
     duplicate["found"] = _.every(findElements, function(findElement){ return _.contains(findElementsIds, findElement)});
     
     if(_.size(findElementsIds) == 0){
@@ -155,12 +155,12 @@ function checkDuplicates(findResult, findElementsIds){
         });
     }    
     duplicate["findElementsIds"] = findElementsIds;
-    // console.timeEnd("checkDuplicateTimer");
+
     return duplicate;
 }
 function FindDiagMatches(diagParamList){
     console.log("findDiags");
-    // console.time("FindDiagMatchesTimer");
+    // meklē matchus 
     let diagramTypeId       = Diagrams.findOne({_id:diagParamList.diagramId}).diagramTypeId;
     let StartFindElements   = getStartElements(diagParamList, diagramTypeId);   // F - atrodam Find starta elementu
     let findResults         = [];// sagrupētie pēc diagramId
@@ -185,13 +185,11 @@ function FindDiagMatches(diagParamList){
                 } // ja nav, tad meklē pēc virsotnes
             });
             let startFindElementsIds = _.pluck(StartFindElements,'_id');
-            // console.log("Find results before grouping");
-            // console.dir(findResults, {depth: null});
+            
             findResults = _.flatten(findResults);
             findResults = _.groupBy(findResults,'diagramId'); 
             let diagrams = _.keys(findResults);
-            console.log('findResults');
-            console.dir(findResults, {depth: null});
+
             _.each(diagrams, function(diagram){
                 let currentDiagramMatches = [];
                 _.each(findResults[diagram], function(diagramItem){
@@ -200,9 +198,9 @@ function FindDiagMatches(diagParamList){
 
                 let diag                        = Diagrams.findOne({_id: diagram});
                 let ProjectId                   = Versions.findOne({_id: diag.versionId}).projectId;
-                // console.time("cartesianProductTime");
+               
                 let cartesianProductOfMatches   = cartesianProductOf(currentDiagramMatches);
-                // console.timeEnd("cartesianProductTime");
+                
                 // tā kā dažu spec līniju fragmenti var būt nesaistīti savā starpā, no šiem nesaistītiem
                 // fragmentiem ir jāveido dekarta reizinājuma kopa
                 cartesianProductOfMatches       = _.map(cartesianProductOfMatches, function(match){
@@ -247,7 +245,7 @@ function FindDiagMatches(diagParamList){
                 }
                 Results.push(resultObj);
             });
-            // console.time("ResultsFilteringTime");
+            
             Results = _.filter(Results, function(result){
                 let uniqueFindElements = _.uniq(_.flatten(_.map(result.matches, function(match){
 
@@ -262,32 +260,31 @@ function FindDiagMatches(diagParamList){
                     return _.contains(uniqueFindElements, startFindElementsId);
                 });
             }); 
-            // console.timeEnd("ResultsFilteringTime");
             // nofiltrē tos matchus, kuri neietver visus meklējamo elementu idus,
             // katram matcha vienumam ir struktūra {elementId, findElementId}
             // elementId ir atrastais un findElementId ir tam atbisltošais meklējamais elements pierpasījuma diagrmmā
             console.log('return ok');
-            // console.timeEnd("FindDiagMatchesTimer");
-            // console.log("Find Results after grouping and Cartesian product");
-            // console.dir(Results, {depth: null});
+            
             return {result: Results, expressionErrors: queryCheck}
         
         } else return {msg: "Find fragment elements and Replace fragment elements are overlapping"}
     } 
-    else return Meteor.call("findMe", diagParamList); // šeit vienkārši jāizsauc findMe no find.js
+    else return Meteor.call("findMe", diagParamList); // šeit vienkārši jāizsauc findMe no find.js, ja nav speciāllīniju
 
 }
 
 function FindRelatedEdges(elementId){
+    // atlasām saistītās šķautnes
     return RelatedOldNodeEdges = Elements.find({
         $and:
         [
             {$or: [{startElement: elementId},{endElement: elementId}]},
             {elementTypeId: {$ne: ReplaceLineType}}
         ]
-    }).fetch();// atlasām saistītās šķautnes
+    }).fetch();
 }
 function FindEdgeBySourceAndTarget(soureId, targetId){
+    // meklē pēc šķautni pēc sākuma un beigu elementiem
     return ( Elements.findOne({
         startElement: soureId,
         endElement: targetId
@@ -296,12 +293,13 @@ function FindEdgeBySourceAndTarget(soureId, targetId){
         startElement: targetId,
         endElement: soureId
     })
-    ); // meklē pēc šķautni pēc sākuma un beigu elementiem
+    ); 
 }
 function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNodeEdges){
+    // katru šķautni no aizvietojamā elementa pārkabina uz jaunizveidoto elementu
     if( RelatedOldNodeEdges){
         _.each(RelatedOldNodeEdges, function(edge){// kabinām klāt jaunai virsotnei
-            if(edge.startElement == oldElementId){ // 
+            if(edge.startElement == oldElementId){ 
                 console.log('update EDGE', Elements.update(
                     {_id: edge._id},
                     {$set: {startElement: newElementId}}
@@ -315,26 +313,23 @@ function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNod
                     ));
                 
             }
-        })// katru šķautni no aizvietojamā elementa pārkabina
+        })
     }
 }
 function deleteOldElementAndCompartments(elementId){
-    // console.time("DeletionTimer");
-    console.log("delete element Id:", elementId);
+    // dzēšam nost Elementu un tā Compartments
     Compartments.remove({elementId: elementId});
     Elements.remove({_id: elementId});
-    // dzēšam nost Elementu un tā Compartments
-    // console.timeEnd("DeletionTimer");
 }
 function createCompartments(oldElementsList, newElementId){
-    // console.time("createCmpTime");
+    // veido atribūtus jaunizveidotam elementam no aizvietojamiem elementiem
      let newElementTypeId = getElementTypeId(newElementId);
     _.each(oldElementsList, function(oldElementId){
         let oldElementCompartments = Compartments.find({elementId: oldElementId}).fetch();
         if(_.size(oldElementCompartments)){
 
             _.each(oldElementCompartments, function(oldElementCompartment){
-                // console.log("old element cmp:", oldElementCompartment.value);
+                
                 let compartmentType             = CompartmentTypes.findOne({_id: oldElementCompartment.compartmentTypeId});// old Compartment type
                 let NewElementCompartmentType   = CompartmentTypes.findOne({
                     elementTypeId: newElementTypeId, 
@@ -353,7 +348,7 @@ function createCompartments(oldElementsList, newElementId){
                         NewElementCompartment.elementTypeId     = newElementTypeId;
                         NewElementCompartment.compartmentTypeId = NewElementCompartmentType._id;
 
-                        console.log('compartment insertion:',Compartments.insert(NewElementCompartment));
+                        Compartments.insert(NewElementCompartment);
                         
                     }
                     else console.log('compartment with such type already exists');
@@ -361,21 +356,21 @@ function createCompartments(oldElementsList, newElementId){
                 else console.log('Compartment type not found');
             });
         }
-    });
-    // console.timeEnd("createCmpTime");    
+    });    
 }
 function ConcatenateResults(ResultArray){
+    // konkatenē iegūtās virknes no izteiksmēm
     return ResultArray.join("");
 }
 function splitCompartmentvalue(value, parserdArray){
-    // console.log(`value to split: ${value} parsedArray: ${parserdArray}`);
+    // sadala iegūto vērtību
     let SplittedCompartment = value.split(parserdArray.delimiter);
     let size = SplittedCompartment.length;
     if(parserdArray.index > size - 1) return "";
     else return SplittedCompartment[parserdArray.index];
 }
 function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements, parserdArray = {}, match ){// line.atr
-    
+    // meklē elementus pēc speclīnijas, kad atrod, nodod vadību findCompartValueByName funkcijai 
     let diagramIdFind   = Elements.findOne({_id: _.first(startElements)}).diagramId;
     let SpecLine        = Compartments.findOne({elementTypeId: ReplaceLineType, diagramId: diagramIdFind, value: SpecLineName});
     // console.log(`elementTypeId: ${ReplaceLineType} diagramId: ${diagramIdFind} value: ${SpecLineName}`);
@@ -387,23 +382,20 @@ function findCompartValueBySpecLine(SpecLineName, CompartmentName, startElements
     else console.log('not found spec line');
 }
 function findCompartValueByName(CompartmentName, startElements, parserdArray = {} , match){
-    // console.log(`CompartmentName: ${CompartmentName} startElements: ${startElements} parserdArray: ${parserdArray} match: ${match}`);
+    // iegūst vērtību no izteiksmē norādītā atribūta nosaukuma
     let value = "";
     let size = startElements.length;
     startElements = _.map(startElements, function(startElement){
         return _.findWhere(match, {findElementId: startElement}).elementId;
     });
     
-    // console.log("Start elements after map", startElements);
     for(let i = 0; i < size; i++){
-        let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch(); // pie test split ar Dispense rezultāts ir [], jo datubāzē atbi;stoša match elementa vairs nav
+        let StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch(); 
         if(StartElementCompartments.length == 0) {
             startElements[i] = _.findWhere(ElementDict, {initial: startElements[i]}).replacedId;
             StartElementCompartments = Compartments.find({elementId: startElements[i]}).fetch();
         }
-        let startElemCompSize = StartElementCompartments.length; // jo dzēš pirms tam, tāpēc sākumā ir jāapstaigā visi end Elementi un tikai pēc tam tos jādzēš
-        // console.log("Star eleme cmp", StartElementCompartments);
-        // console.log("starteleme comp size", startElemCompSize);
+        let startElemCompSize = StartElementCompartments.length; 
         for(let j = 0; j < startElemCompSize; j++){
             let CompartmentType = CompartmentTypes.findOne({_id: StartElementCompartments[j].compartmentTypeId});
             // console.log("Found Cmp type", CompartmentType);
@@ -439,7 +431,7 @@ function extractCompartmentValues(ParsedResultArray, startElements, match){
     console.log("ResultArray:", ResultArray);
     return ConcatenateResults(ResultArray);
 }
-/* functions for getting cmp type prefix and sufix */
+/* funkcijas prefiksu un sufiksu iegūšanai*/
 function getPrefix(compartmentType){
     return (_.has(compartmentType, "prefix")) ? compartmentType.prefix : "";
 }
@@ -447,13 +439,12 @@ function getSuffix(compartmentType){
     return (_.has(compartmentType, "suffix")) ? compartmentType.suffix : "";
 }
 /*  */
-function parseCompartmentExpressions(startElements, endElementId, createdEndElementId, match){ // looking for expression which starts with @ symbol
-    // console.time("ParsingAndExpProcesssingTimer");
-    console.log("parsing, createdElement", createdEndElementId);
+function parseCompartmentExpressions(startElements, endElementId, createdEndElementId, match){ 
+    // parsē izteiksmes
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
     console.log("EndElem Cmp ", EndElementCompartments);
     const CompartmentCount = _.size(EndElementCompartments);
-    // console.log("Cmp count", CompartmentCount);
+   
     if(CompartmentCount){
         _.each(EndElementCompartments, function(EndElemCompartment){
                 let parsedResultArray;
@@ -502,25 +493,22 @@ function parseCompartmentExpressions(startElements, endElementId, createdEndElem
                 }
         });
     }
-    // console.timeEnd("ParsingAndExpProcesssingTimer");
 }
 function deleteElementEdges(elementId){
-    // console.time("deleteEdgesTimer");
+    // dzēš šķautnes, kuras ir saistītas ar doto elementu
     let RelatedEdges = FindRelatedEdges(elementId);
     if(!( typeof RelatedEdges === 'undefined')){
         _.each(RelatedEdges, function(relatedEdge){
             deleteOldElementAndCompartments(relatedEdge._id);
         })
     }
-    // console.timeEnd("deleteEdgesTimer");
 }
 function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
-    // console.time("CreateBoxToInsert");
-    // console.log("FindRepalceElementId", ReplaceElement._id);
+    // veido elementa objektu
     let Location; // ja Location nav padots argumentā, tad liekam aizvietojamā elementa location
     if(typeof location === 'undefined'){ Location = ReplaceElement.location;}
     else { Location = location; }
-    // console.timeEnd("CreateBoxToInsert");
+    
     return NewReplaceElement = {
     diagramId       : diagToReplaceIn,
     diagramTypeId   : ReplaceElement.diagramTypeId,
@@ -534,6 +522,7 @@ function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
     }
 }
 function createEdge(edge, diagId, startElement, endElement){
+    // veido šķautnes objektu
     const StartElement = Elements.findOne({_id:startElement});
     const EndElement   = Elements.findOne({_id: endElement});
     console.log("EndEleemnt ", EndElement);
@@ -562,6 +551,7 @@ function createEdge(edge, diagId, startElement, endElement){
 }
 
 function pushEdgeNodes(edge){
+    // apstaigāšanas daļa
     let FindSource = _.findWhere(apstaigatieReplace,{_id: edge.startElement});
     let FindTarget = _.findWhere(apstaigatieReplace,{_id: edge.endElement});
     if( typeof FindSource === 'undefined'){
@@ -576,6 +566,7 @@ function pushEdgeNodes(edge){
     }
 }
 function getNotVisitedItems() { 
+    // apstaigāšanas daļa
     let notVisitedBox = _.findWhere(apstaigatieReplace, {visited: false});
     if(notVisitedBox) {
         notVisitedBox.visited = true;
@@ -592,7 +583,7 @@ function getNotVisitedItems() {
     else return false;
 }
 function FindLinesToDelete(ReplaceLines, match){
-    // console.time("FindLinesToDeleteTimer");
+    // atrod dzēšamās šķautnes pieprasījumā, delete edge paterns
     let startElements       = _.pluck(ReplaceLines, "startElement");
     let foundEdgesToDelete  = [];
     _.each(startElements, function(startElement){
@@ -601,9 +592,7 @@ function FindLinesToDelete(ReplaceLines, match){
             _.each(RelatedEdges, function(edge){
                 if(startElement != edge.startElement && _.contains(startElements, edge.startElement)){
                     let matchedEdge = _.findWhere(match, {findElementId: edge._id});
-                    // console.log("matched edge", matchedEdge);
-                    // console.log("match",match);
-                    // console.log("edge._id", edge._id);
+                    
                     foundEdgesToDelete.push(matchedEdge.elementId);
                 } 
                 // ja dotais aizvietošanas elements nav dotās līnijas sākuma elements, tad dotais aizvietošanas elements ir endElement un ir jāpārbauda
@@ -615,16 +604,17 @@ function FindLinesToDelete(ReplaceLines, match){
             });
         }
     });
-    // console.timeEnd("FindLinesToDeleteTimer");
     return _.uniq(foundEdgesToDelete);
 }
 function ToSwitch(rLine, SwitchToCompartmentType){
+    // pārbauda speclīnijas SwitchLinesTo vērtību
     let compartment = Compartments.findOne({elementId: rLine._id, compartmentTypeId: SwitchToCompartmentType});
     console.log(`compartment: ${compartment} rLine._id ${rLine._id} rLine ${rLine} compartmentTypeId ${SwitchToCompartmentType}`)
     if(compartment) return compartment.value == "true";
     else return false;
 }
 function checkReplaceLinesIntersection(element, replaceLines){
+    // pārbauda merge gadījumus, kad papildus speclīnijas, piemēram, izteiksmēm
     let RL_endElem_Not_eq_element = Elements.find({
         $and:[
             {diagramId: element.diagramId},
@@ -632,13 +622,9 @@ function checkReplaceLinesIntersection(element, replaceLines){
             {endElement: {$ne: element._id}}
         ]
     }).fetch();
-    console.log("RL_endElem_Not_eq_element ",RL_endElem_Not_eq_element);
-    console.log("replaceLINES in Check ",replaceLines);
+    
     RL_endElem_Not_eq_element = _.pluck(RL_endElem_Not_eq_element,"startElement");
     let elementReplaceLines = _.uniq(_.pluck(replaceLines,"startElement"));
-    console.log("plucked checkRLIntersection ",RL_endElem_Not_eq_element);
-    console.log("plucked replaceLINEs ", elementReplaceLines);
-    console.log("intersection", _.intersection(RL_endElem_Not_eq_element,elementReplaceLines));
     return _.size(_.intersection(RL_endElem_Not_eq_element,elementReplaceLines)) > 0;
 }
 function createNode(
@@ -657,21 +643,21 @@ function createNode(
     parsedElements,
     replaceElementsId
 ){
+    // uzrada jaunu elementu
     let NewBox;
     let FoundMatchedElement
     console.log("-----------------------------------------CREATING NEW NODE-----------------------------------------------------------", box.local);
     const SwitchToCompartmentType = CompartmentTypes.findOne({name: "SwitchLinesTo", diagramTypeId: element.diagramTypeId})._id;
     if(box.local == endElement) {
         let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
-        //console.log("boclocationID", boxElementLocationId);
+        
         FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
-        //console.log("FoundElement", FoundMatchedElement);
+        
         if(typeof FoundMatchedElement === 'undefined') {
             boxElementLocationId = _.findWhere(ElementDict, {initial: boxElementLocationId}).replacedId;
             FoundMatchedElement = Elements.findOne({_id: boxElementLocationId});
         }
         BoxLocation = FoundMatchedElement.location;
-        // console.log('box Location', BoxLocation);
     }
     else if(_.contains(endElements, box.local) && box.local != endElement){
         let FoundEndElement     = _.find(endElements, function(endElement){return endElement == box.local});
@@ -747,7 +733,8 @@ function createNode(
                         }
                     }
 
-                    createCompartments([relatedStartElement], _.first(createdBoxes[element._id]).inserted);// kopējam atribūtus tikai no tā elementa, kuram atbiltošai replace līnijai atribūts SwitchLinesTo ir ieķeksēts 
+                    createCompartments([relatedStartElement], _.first(createdBoxes[element._id]).inserted);
+                    // kopējam atribūtus tikai no tā elementa, kuram atbiltošai replace līnijai atribūts SwitchLinesTo ir ieķeksēts 
                 }
                 else{
                     let ToSwitchRL = _.filter(ReplaceLines[box.local], function(RL){
@@ -774,12 +761,11 @@ function createNode(
                         }
                     }
                 }
-            }// elementi tiek dzēsti nekorekti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            console.log("checkRLIntersection ",checkRLIntersection);
-            // if(checkRLIntersection) console.log("relatedStartElementToReplace ",relatedStartElementToReplace);
+            }
+            // ja ir merge gadījums ar papildus speclīnijām, tad dzēš tikai ieķeksēta SwitchLinesTo atribūta atbilstošo elementu
             if( checkRLIntersection && 
                 relatedStartElementToReplace ) replaceElementsId.push(relatedStartElementToReplace);
-            else replaceElementsId.push(relatedStartElement); //console.log("relatedStartElement ",relatedStartElement)
+            else replaceElementsId.push(relatedStartElement); 
         });
     }
 
@@ -797,11 +783,10 @@ function createNode(
 
 function replaceStruct(match){
     if(match){
-        // console.time("replaceStructOverallTimer");
-        // console.time("repalceBeforeEach");
+        
         let FindDiagram     = Elements.findOne({_id: _.first(match).findElementId}).diagramId;
         let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: FindDiagram}).fetch();
-        // console.log("match ", match);
+        
         let LinesToDelete   = FindLinesToDelete(ReplaceLines,match); // atrodam līnijas, kuras jādzēš
         ReplaceLines        = _.groupBy(ReplaceLines,'endElement');
         let endElements     = _.keys(ReplaceLines);
@@ -810,16 +795,12 @@ function replaceStruct(match){
         let parsedElements  = [];
         let replaceElementsId   = [];
 
-        console.log('lines to delete', LinesToDelete);
         _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
-        console.log("match",match);
-        console.log("endElements", endElements);
-        console.log("ReplaceLines", ReplaceLines);
+        
         _.each(endElements, function(endElement){
             _.each(ReplaceLines[endElement], function(replaceline){
                 if(getElementTypeId(endElement) == getElementTypeId(replaceline.startElement)) {
-                    //console.log("endElement", endElement);
-                    //console.log("startElement", replaceline.startElement);
+                    // aizpilda ElementDict vārdnīcu
                     let initialMatched = _.findWhere(match, {findElementId: replaceline.startElement});
                     if(!ElementDict) {
                         ElementDict = [];
@@ -832,8 +813,7 @@ function replaceStruct(match){
                 } 
             });
         });
-        console.log("ElementsDict before replace", ElementDict);
-        // console.timeEnd("repalceBeforeEach");
+
         _.each(endElements, function(endElement){
             let endElementTypeId    = getElementTypeId(endElement);
             let startFindElements   = _.pluck(ReplaceLines[endElement], 'startElement');
@@ -844,27 +824,25 @@ function replaceStruct(match){
                 // ejot cauri speciāllīnijām, atrodam elementus, kurus ir jāaizvieto
                 let FirstReplaceElement = Elements.findOne(endElement);
                 _.extend(FirstReplaceElement, {visited: false});
-                // console.time("repalceBFS");
+                
                 apstaigatieReplace = [FirstReplaceElement];
                 let found = getNotVisitedItems();
                 while(found) { found = getNotVisitedItems() }
-                // console.timeEnd("repalceBFS");
-                // console.time("createdboxTime");
+                
                 createdBoxes = _.filter(apstaigatieReplace, function(apst){ return _.has(apst, "visited") });
-                // console.log("InsertedTracker before createdBoxes container", InsertedTracker);
+                
                 InsertedTracker = _.compact(InsertedTracker);
                 createdBoxes = _.map(createdBoxes, function(box){
-                    // console.log("InsertedTracker in map", InsertedTracker);
                     let insertedBox = _.findWhere(InsertedTracker, {localId: box._id});
                     if(typeof insertedBox === 'undefined') //return {local: box._id, inserted: undefined}
                      {
                         if(_.contains(endElements, box._id)){
-                            // ??? 
                             let boxStartFindElements = _.pluck(ReplaceLines[box._id], 'startElement');
                             let boxStartElements = _.filter(match, function(element){ return _.contains(boxStartFindElements, element.findElementId)});
                             boxStartElements = _.pluck(boxStartElements, "elementId");
-                            // console.log("BOXSTARTELEMENTS", boxStartElements);
-                            boxStartElements = _.filter(boxStartElements, function(element){ // filtrējam sākuma elementus pēc tā vai to tips ir vienāds ar endElement
+                            
+                            boxStartElements = _.filter(boxStartElements, function(element){ 
+                                // filtrējam sākuma elementus pēc tā vai to tips ir vienāds ar endElement
                                 let FoundElement = Elements.findOne({_id: element});
                                 if(typeof FoundElement !== 'undefined') return FoundElement.elementTypeId == box.elementTypeId;
                                 else {
@@ -873,8 +851,8 @@ function replaceStruct(match){
                                 }
                             });
                             if( _.size(boxStartElements) > 0) {
-                                let ElementDictItem = _.findWhere(ElementDict, {initial: _.first(boxStartElements)}); // šeit būs jāpārstrādā, jo pie merge var būt problēmas
-                                // console.log("Pirms Kļūdas", "local: ", box._id, "inserted: ", ElementDictItem);
+                                let ElementDictItem = _.findWhere(ElementDict, {initial: _.first(boxStartElements)});
+                                
                                 return {local: box._id, inserted: ElementDictItem.replacedId}
                             }
                             else return {local: box._id, inserted: undefined}
@@ -884,21 +862,19 @@ function replaceStruct(match){
                     
                     else return {local: box._id, inserted: insertedBox.inserted}
                 
-                }); // console.log("createdBoxes after map", createdBoxes);
+                });
                 createdBoxes = _.groupBy(createdBoxes, 'local');
-                // console.log("createdBOXES", createdBoxes);
-                // console.timeEnd("createdboxTime");
                 // palīgkonteiners, lai pieglabāt jau ievietotās virsotnes
-                // console.log('created boxes before', createdBoxes);
-                // console.log('inserted tracker before: ', InsertedTracker);
+                
                 let apstaigatieReplaceId = _.pluck(apstaigatieReplace,'_id');
                 _.each(apstaigatieReplace, function(element){
-                    if( !_.has(element,"visited")){ // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace
+                    if( !_.has(element,"visited")){ 
+                        // visited īpašības nav tikai šķautnēm konteinerā apastaigatieReplace, veido startElement un endElement
                         let start = _.first(createdBoxes[element.startElement]);
                         let end   = _.first(createdBoxes[element.endElement]);
                         let StartLocation = undefined;
                         let EndLocation = undefined;
-                        // console.time("EdgeAndItsBoxesProcessTime");
+                        
                         if(typeof start.inserted === 'undefined'){
                             let obj = createNode(
                                 element,
@@ -949,7 +925,8 @@ function replaceStruct(match){
                         else{
                            console.log('found end eleemnt');
                         }
-                        if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
+                        if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ 
+                            // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
                             let NewEdgeId = Elements.insert(newEdge);
                             if(!_.contains(parsedElements, element._id)) {
@@ -957,15 +934,13 @@ function replaceStruct(match){
                                 parsedElements.push(element._id);
                             }
                         }
-                        // console.timeEnd("EdgeAndItsBoxesProcessTime");
                     }
                     else { // ja visited īpašība ir, vedojam šo pašu virsotni
-                        // console.time("boxProcessingTime");
+                        
                         let box = _.first(createdBoxes[element._id]);
                         let BoxLocation = undefined;
                         if(typeof box.inserted === 'undefined'){
-                            // console.log("local box", box.local);
-                            console.dir(createdBoxes, {depth:null});
+                            
                             let obj = createNode(
                                 element,
                                 endElement,
@@ -987,17 +962,16 @@ function replaceStruct(match){
                             replaceElementsId   = obj.replaceElementsId;
                             parsedElements      = obj.parsedElements;
                         }
-                        // console.timeEnd("boxProcessingTime");
+                        
                     }
                 });
-                // console.time("InsertedTrackerMapTime"); //
+                
                 InsertedTracker = _.map(apstaigatieReplace, function(apstaigatais){
                     if(createdBoxes[apstaigatais._id]){
                         return {localId: apstaigatais._id, inserted: _.first(createdBoxes[apstaigatais._id]).inserted}
                     }
                 });
                 InsertedTracker = _.compact(InsertedTracker);
-                // console.timeEnd("InsertedTrackerMapTime");
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
 
@@ -1024,23 +998,21 @@ function replaceStruct(match){
             console.log("replaceElementsId", replaceElementsId);
             _.each(replaceElementsId, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
         }
-        
-        // console.timeEnd("replaceStructOverallTimer");
     }
     else console.log('match not found/undefined')
 }
 function formatMatch(match){
-    // console.time("formatMatchTimer");
+    // pārveido match struktūru pirms aizvietošanas
     let FormatedMatch = _.flatten(_.map(match.match, function(MatchItem){
         return _.map(MatchItem.elements, function(elementPair){
             return elementPair;
         })
     }));
-    // console.timeEnd("formatMatchTimer");
+    
     return FormatedMatch;
 }
 function markConflictingMatches(matches, elementsToLookup) { 
-    // console.time("markConflictingMatchesTimer");
+    // marķē konfliktējošos matchus pēc kārtējās aizvietošanas
     _.each(matches, function(match){
         if(match.status == 'new'){
             let foundConflictingMatch = false;
@@ -1054,8 +1026,7 @@ function markConflictingMatches(matches, elementsToLookup) {
             } else {
                 let ElementDictInitials = _.pluck(ElementDict, "initial");
                 let ElementsToLookup    = formatMatch(match);
-                // console.log("ElementsToLookUp before map", ElementsToLookup);
-                // console.log("ElementDict", ElementDict);
+                
                 ElementsToLookup        = _.map(ElementsToLookup, function(pair){
                     if(_.contains(ElementDictInitials, pair.elementId)) return _.findWhere(ElementDict, {initial: pair.elementId}).replacedId;
                     return pair.elementId;
@@ -1066,13 +1037,14 @@ function markConflictingMatches(matches, elementsToLookup) {
                         {_id: {$in: ElementsToLookup}}
                     ]
                 }).fetch();
-                foundConflictingMatch = _.size(ElementsToLookup) != _.size(foundElements); // ja vārdnīca ElementDict, tad marķēšanas semantika mainās
+                foundConflictingMatch = _.size(ElementsToLookup) != _.size(foundElements); 
+                // ja vārdnīca ElementDict, tad marķēšanas semantika mainās
 
             }
             if(foundConflictingMatch) match.status = 'conflicting';
         }
     });
-    // console.timeEnd("markConflictingMatchesTimer");
+
     return matches;
 }
 Meteor.methods({
@@ -1157,7 +1129,7 @@ Meteor.methods({
         return responseResults;
     },
     updateLayout: function(list) {
-        // console.time("updateLayoutTimer");
+        // atjauno diagramas izkārtojumu
         let Boxes           = _.where(list.IdDict, {type: "box"});
         let Lines           = _.where(list.IdDict, {type: "line"});
         let layoutResult    = list.layoutResult;
