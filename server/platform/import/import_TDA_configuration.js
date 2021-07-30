@@ -20,15 +20,15 @@ Meteor.methods({
 			else { 
                 var user_id = Meteor.userId();
                 if (is_project_version_admin(user_id, list)) {
-				    console.log("Liekam iekšā")
-					console.log(Services.find({toolId: list.toolId }).count())
-					console.log(list.toolId)
+				    //console.log("Liekam iekšā")
+					//console.log(Services.find({toolId: list.toolId }).count())
+					//console.log(list.toolId)
 					Services.remove({toolId: list.toolId});
-					console.log(Services.find({toolId: list.toolId }).count())
+					//console.log(Services.find({toolId: list.toolId }).count())
 					var data = list.data;
 					var services = _.extend(data, {toolId: list.toolId});
 					Services.batchInsert([services]); 
-					console.log(Services.find({toolId: list.toolId }).count())
+					//console.log(Services.find({toolId: list.toolId }).count())
 				}
 				
 			}

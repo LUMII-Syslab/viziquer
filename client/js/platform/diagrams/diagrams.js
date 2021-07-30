@@ -783,7 +783,7 @@ Template.ontologySettings.events({
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val()
 				};
-				
+
 		Utilities.callMeteorMethod("updateProjectOntology", list);
 		dataShapes.changeActiveProject(Session.get("activeProject"));
 		
@@ -820,6 +820,7 @@ Template.ontologySettings.events({
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
 		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="false");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
+		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="false");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
 		 $("#endpoint-username").val(proj.endpointUsername);

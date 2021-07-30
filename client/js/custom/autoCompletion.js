@@ -737,7 +737,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		var c = {};
 		c["prefix"] = "";
 		c["suggestions"] = [];
-		var params = {};
+		var params = {limit: dataShapes.schema.tree.countI};
 		if (fullText != "") params.filter = fullText;
 		
 		var selected_elem_id = Session.get("activeElement");
@@ -747,6 +747,10 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		}
 		
 		var inst = await dataShapes.getIndividuals(params, act_el); 
+
+		if (fullText != "")
+			c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
+			
 		for(var i in inst){
 			c["suggestions"].push({name: inst[i], priority:100, type:0})
 		}
