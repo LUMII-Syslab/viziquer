@@ -1039,11 +1039,16 @@
                 "procedure": "AddAttribute",
 				"subMenu": [
 					{
+						"item": "(select this)",
+						"procedure": "AddSelectThis"
+					},
+					{
+						
 						"item": "Simple (attribute) ...",
 						"procedure": "AddAttribute",
 						"subMenu": [
 							{
-								"item": "(select this)",
+								"item": "(select this) ",
 								"procedure": "AddSelectThis"
 							},
 							{
