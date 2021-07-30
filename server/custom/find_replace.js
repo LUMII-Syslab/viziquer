@@ -320,7 +320,7 @@ function switchEdgesFromOldToNewElement(oldElementId, newElementId,RelatedOldNod
 }
 function deleteOldElementAndCompartments(elementId){
     // console.time("DeletionTimer");
-    // console.log("element deleting Id:", elementId);
+    console.log("delete element Id:", elementId);
     Compartments.remove({elementId: elementId});
     Elements.remove({_id: elementId});
     // dzēšam nost Elementu un tā Compartments
@@ -436,7 +436,7 @@ function extractCompartmentValues(ParsedResultArray, startElements, match){
                 return "";
         }
     });
-    // console.log("ResultArray:", ResultArray);
+    console.log("ResultArray:", ResultArray);
     return ConcatenateResults(ResultArray);
 }
 /* functions for getting cmp type prefix and sufix */
@@ -449,7 +449,9 @@ function getSuffix(compartmentType){
 /*  */
 function parseCompartmentExpressions(startElements, endElementId, createdEndElementId, match){ // looking for expression which starts with @ symbol
     // console.time("ParsingAndExpProcesssingTimer");
+    console.log("parsing, createdElement", createdEndElementId);
     let EndElementCompartments = Compartments.find({elementId: endElementId}).fetch();
+    console.log("EndElem Cmp ", EndElementCompartments);
     const CompartmentCount = _.size(EndElementCompartments);
     // console.log("Cmp count", CompartmentCount);
     if(CompartmentCount){
@@ -457,7 +459,7 @@ function parseCompartmentExpressions(startElements, endElementId, createdEndElem
                 let parsedResultArray;
                 const cmpType = CompartmentTypes.findOne({_id: EndElemCompartment.compartmentTypeId});
                 
-                if(cmpType.inputType.type == "input"){
+                if(cmpType.inputType.type == "input" || cmpType.inputType.type == "textarea"){ // pie citiem tipiem būs jāskatās
                     try{
                         parsedResultArray = Compartments_exp_grammar.parse(EndElemCompartment.input,{}); // labouts no value uz input
                     }
@@ -534,6 +536,8 @@ function createBox(diagToReplaceIn, ReplaceElement, location = undefined){
 function createEdge(edge, diagId, startElement, endElement){
     const StartElement = Elements.findOne({_id:startElement});
     const EndElement   = Elements.findOne({_id: endElement});
+    console.log("EndEleemnt ", EndElement);
+    console.log("endElement Create edge ", endElement);
     const newPoints    = [
         StartElement.location.x, 
         StartElement.location.y, 
@@ -614,7 +618,29 @@ function FindLinesToDelete(ReplaceLines, match){
     // console.timeEnd("FindLinesToDeleteTimer");
     return _.uniq(foundEdgesToDelete);
 }
-
+function ToSwitch(rLine, SwitchToCompartmentType){
+    let compartment = Compartments.findOne({elementId: rLine._id, compartmentTypeId: SwitchToCompartmentType});
+    console.log(`compartment: ${compartment} rLine._id ${rLine._id} rLine ${rLine} compartmentTypeId ${SwitchToCompartmentType}`)
+    if(compartment) return compartment.value == "true";
+    else return false;
+}
+function checkReplaceLinesIntersection(element, replaceLines){
+    let RL_endElem_Not_eq_element = Elements.find({
+        $and:[
+            {diagramId: element.diagramId},
+            {elementTypeId: ReplaceLineType},
+            {endElement: {$ne: element._id}}
+        ]
+    }).fetch();
+    console.log("RL_endElem_Not_eq_element ",RL_endElem_Not_eq_element);
+    console.log("replaceLINES in Check ",replaceLines);
+    RL_endElem_Not_eq_element = _.pluck(RL_endElem_Not_eq_element,"startElement");
+    let elementReplaceLines = _.uniq(_.pluck(replaceLines,"startElement"));
+    console.log("plucked checkRLIntersection ",RL_endElem_Not_eq_element);
+    console.log("plucked replaceLINEs ", elementReplaceLines);
+    console.log("intersection", _.intersection(RL_endElem_Not_eq_element,elementReplaceLines));
+    return _.size(_.intersection(RL_endElem_Not_eq_element,elementReplaceLines)) > 0;
+}
 function createNode(
     element,
     endElement,
@@ -633,6 +659,7 @@ function createNode(
 ){
     let NewBox;
     let FoundMatchedElement
+    console.log("-----------------------------------------CREATING NEW NODE-----------------------------------------------------------", box.local);
     const SwitchToCompartmentType = CompartmentTypes.findOne({name: "SwitchLinesTo", diagramTypeId: element.diagramTypeId})._id;
     if(box.local == endElement) {
         let boxElementLocationId = _.findWhere(startElements, {findElementId: _.first(ReplaceLines[endElement]).startElement}).elementId;
@@ -670,71 +697,92 @@ function createNode(
         relatedStartElements = _.filter(match, function(matchItem){ 
             return _.contains(relatedStartElements, matchItem.findElementId);
         });
-        relatedStartElements = _.map(relatedStartElements,function(element){
-            let alreadyReplacedWith = _.findWhere(ElementDict, {initial: element.elementId});
-            let StillExists = Elements.findOne({_id: element.elementId});
+        relatedStartElements = _.map(relatedStartElements,function(matchElement){
+            let alreadyReplacedWith = _.findWhere(ElementDict, {initial: matchElement.elementId});
+            let StillExists = Elements.findOne({_id: matchElement.elementId});
             if(alreadyReplacedWith.replacedId && typeof StillExists === 'undefined') return alreadyReplacedWith.replacedId;
-            else return element.elementId;  
+            else return matchElement.elementId;  
         });
-        createCompartments(relatedStartElements, _.first(createdBoxes[element._id]).inserted);
+        
+
         _.each(relatedStartElements, function(relatedStartElement){
             // find replace lines between relatedStartelement's findElementId and box.local
             // check SwitchLinesTo attribute value 
             let findElement = _.findWhere(match, {elementId: relatedStartElement});
-            if(!findElement){
+            if(!findElement){ 
                 findElement = _.findWhere(
                     match,
                     {elementId: _.findWhere(ElementDict,{replacedId: relatedStartElement}).initial
                 }).findElementId;
+
             } 
             else findElement = findElement.findElementId;
-
-            let replaceLines = _.where(ReplaceLines[box.local], {startElement: findElement});
             
+            let replaceLines = _.where(ReplaceLines[box.local], {startElement: findElement});
+
+            const checkRLIntersection = checkReplaceLinesIntersection(element, replaceLines);
+
+            let relatedStartElementToReplace = undefined; 
             if(replaceLines){
-                console.log("replaceLines", replaceLines);
+               // console.log("replaceLines", replaceLines);
                 let toSwitch = _.some(replaceLines, function(rLine){
-                    let compartment = Compartments.findOne({elementId: rLine._id, compartmentTypeId: SwitchToCompartmentType});
-                    console.log(`compartment: ${compartment} rLine._id ${rLine._id} rLine ${rLine} compartmentTypeId ${SwitchToCompartmentType}`)
-                    if(compartment) return compartment.value == "true";
-                    else return false;
+                    return ToSwitch(rLine,SwitchToCompartmentType);
                 });
                 if(toSwitch) {
                     const relatedEdges = FindRelatedEdges(relatedStartElement);
+                    relatedStartElementToReplace = relatedStartElement;
                     console.log("related Edges", relatedEdges);
-                    console.log("relatedStartElement",relatedStartElement);
-                    switchEdgesFromOldToNewElement(
-                        relatedStartElement,
-                        _.first(createdBoxes[element._id]).inserted, 
-                        relatedEdges
-                        );
+                    console.log("relatedStartElement in toSwitch",relatedStartElement);
+                    switchEdgesFromOldToNewElement(relatedStartElement, _.first(createdBoxes[element._id]).inserted, relatedEdges);
+
+                    if(getElementTypeId(relatedStartElement) == getElementTypeId(box.local)){
+                        let index = ElementDict.findIndex(pair => pair.initial === relatedStartElement);
+                        if(typeof ElementDict[index].replacedId === "undefined") ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                        else if (_.contains(relatedStartElements, ElementDict[index].initial) ){
+                            ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                        }
+                        else {
+                            index = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
+                            ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                        }
+                    }
+
+                    createCompartments([relatedStartElement], _.first(createdBoxes[element._id]).inserted);// kopējam atribūtus tikai no tā elementa, kuram atbiltošai replace līnijai atribūts SwitchLinesTo ir ieķeksēts 
                 }
-            }
-            
+                else{
+                    let ToSwitchRL = _.filter(ReplaceLines[box.local], function(RL){
+                        return ToSwitch(RL, SwitchToCompartmentType);
+                    });
+                    if(_.size(ToSwitchRL) > 0){
+                        let ReplaceElement = _.findWhere(ElementDict,{
+                            initial: _.findWhere(match, {findElementId: _.first(ToSwitchRL).startElement}).elementId
+                        });
+                        if(_.contains(relatedStartElements,ReplaceElement.initial))relatedStartElementToReplace = ReplaceElement.initial;
+                        else relatedStartElementToReplace = ReplaceElement.replacedId;
+                    }
+                    else{
+                        if(!checkRLIntersection){
+                            if(getElementTypeId(relatedStartElement) == getElementTypeId(box.local)){
+                                let index = ElementDict.findIndex(pair => pair.initial === relatedStartElement);
+                                if(typeof ElementDict[index].replacedId === "undefined") ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                                else{
+                                    let nIndex = ElementDict.findIndex(pair => pair.initial === ElementDict[index].replacedId);
+                                    if(nIndex == -1) ElementDict[index].replacedId = _.first(createdBoxes[element._id]).inserted;
+                                    else ElementDict[nIndex].replacedId = _.first(createdBoxes[element._id]).inserted;
+                                }   
+                            }
+                        }
+                    }
+                }
+            }// elementi tiek dzēsti nekorekti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            console.log("checkRLIntersection ",checkRLIntersection);
+            // if(checkRLIntersection) console.log("relatedStartElementToReplace ",relatedStartElementToReplace);
+            if( checkRLIntersection && 
+                relatedStartElementToReplace ) replaceElementsId.push(relatedStartElementToReplace);
+            else replaceElementsId.push(relatedStartElement); //console.log("relatedStartElement ",relatedStartElement)
         });
     }
 
-    let MatchedReplaceElements = _.filter(ReplaceLines[box.local], function(item){
-        if(getElementTypeId(box.local) == getElementTypeId(item.startElement)) return true;
-        else { let replaceElement = _.findWhere(match, {findElementId: item.startElement}).elementId; replaceElementsId.push(replaceElement); return false;}
-    });
-    MatchedReplaceElements = _.pluck(MatchedReplaceElements, "startElement");
-    if(_.contains(endElements, box.local) && _.size(MatchedReplaceElements) > 0) {
-        _.each(MatchedReplaceElements, function(element){
-            let initialMatchedId = _.findWhere(match, {findElementId: element}).elementId;
-
-            _.each(ElementDict, function(item){ if(item.initial == initialMatchedId ) {
-                if(!(typeof item.replacedId === 'undefined')){
-                    _.each(startElements, function(startElement){ if(startElement.elementId == item.initial) replaceElementsId.push(item.replacedId)})
-                }
-                else replaceElementsId.push(item.initial);
-                item.replacedId = box.inserted;
-            }   })
-        });
-        
-        console.log("ElementDict", ElementDict);
-        
-    }
     if(!_.contains(parsedElements, box.local)) {
         parseCompartmentExpressions(startFindElements, box.local, box.inserted, match);
         parsedElements.push(box.local);
@@ -760,6 +808,7 @@ function replaceStruct(match){
         let diagToReplaceIn = Elements.findOne({_id: _.first(match).elementId}).diagramId;
         let InsertedTracker = [];
         let parsedElements  = [];
+        let replaceElementsId   = [];
 
         console.log('lines to delete', LinesToDelete);
         _.each(LinesToDelete, function(line){ deleteOldElementAndCompartments(line) });
@@ -789,7 +838,7 @@ function replaceStruct(match){
             let endElementTypeId    = getElementTypeId(endElement);
             let startFindElements   = _.pluck(ReplaceLines[endElement], 'startElement');
             let startElements       = _.filter(match, function(element){ return _.contains(startFindElements, element.findElementId)});
-            let replaceElementsId   = [];
+            
             
             if( !(typeof endElementTypeId === 'undefined') && endElementTypeId != DeleteBoxType){
                 // ejot cauri speciāllīnijām, atrodam elementus, kurus ir jāaizvieto
@@ -873,7 +922,7 @@ function replaceStruct(match){
                             parsedElements      = obj.parsedElements;
                         }
                         else {
-                            // console.log('found start eleemnt');
+                            console.log('found start eleemnt');
                         }
                         if(typeof end.inserted === 'undefined'){
                             let obj = createNode(
@@ -898,7 +947,7 @@ function replaceStruct(match){
                             parsedElements      = obj.parsedElements;
                         }
                         else{
-                           // console.log('found end eleemnt');
+                           console.log('found end eleemnt');
                         }
                         if( !FindEdgeBySourceAndTarget(start.inserted, end.inserted) ){ // pārbaudām, vai šķautne netika izveidota iepriekšējās iterācijās
                             let newEdge = createEdge(element, diagToReplaceIn, start.inserted, end.inserted);
@@ -951,27 +1000,12 @@ function replaceStruct(match){
                 // console.timeEnd("InsertedTrackerMapTime");
                 
                 let createdEndElement = _.first(createdBoxes[FirstReplaceElement._id]).inserted;
-                
-                // console.time("LinesSwitchingTime");
-                /**
-                 * pie switchEdges, createCompartments un deleteOldCmpAndEleemnt agrāk bija startElements tagad ir visi elementi
-                 */
-                // let ElementsToSwitchLinesFrom = _.map(startElements, function(startElement){
-                //     const fromDict = _.findWhere(ElementDict, {initial: startElement.elementId});
-                //     if(fromDict.replacedId) return fromDict.replacedId;
-                //     else return startElement.elementId;
-                // });
-                // console.log("Switch lines elenets:", ElementsToSwitchLinesFrom);
-                // _.each(ElementsToSwitchLinesFrom, function(element){ switchEdgesFromOldToNewElement(element, createdEndElement,FindRelatedEdges(element)) });// pārvietojam šķautnes
-                // console.timeEnd("LinesSwitchingTime");
-                // jāveic pārbaudi uz to vai šķautnes ir jāoārkabina, vai nav. Ja nav jāpārkabina, piemēram, pie delete edge paterna.
-                // createCompartments(replaceElementsId, createdEndElement); 
+
                 if(!_.contains(parsedElements, endElement)) {
                     parseCompartmentExpressions(startFindElements,endElement ,createdEndElement,match);
                     parsedElements.push(endElement);
                 }
-                console.log("replaceElementsId", replaceElementsId);
-                _.each(replaceElementsId, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
+                
             }
             if(endElementTypeId == DeleteBoxType){
                 // ja speclīnijas beigās ir speciālais dzēšanas elements, tad aizvietošanas vietā ir dzēšana
@@ -980,11 +1014,17 @@ function replaceStruct(match){
                 _.each(DeleteElements, function(de){
                     const DeleteElement = Elements.findOne({_id: de.elementId});
                     if(DeleteElement){
-                        deleteOldElementAndCompartments(DeleteElement._id);
+                        replaceElementsId.push(DeleteElement._id);
                     }
                 });
             }
         });
+        if(_.size(replaceElementsId) > 0){
+            replaceElementsId = _.uniq(replaceElementsId);
+            console.log("replaceElementsId", replaceElementsId);
+            _.each(replaceElementsId, function(element){ deleteOldElementAndCompartments(element)}); // dzēšam vecos elementus
+        }
+        
         // console.timeEnd("replaceStructOverallTimer");
     }
     else console.log('match not found/undefined')
@@ -1027,9 +1067,7 @@ function markConflictingMatches(matches, elementsToLookup) {
                     ]
                 }).fetch();
                 foundConflictingMatch = _.size(ElementsToLookup) != _.size(foundElements); // ja vārdnīca ElementDict, tad marķēšanas semantika mainās
-                // console.log("ElementsTollokup", ElementsToLookup);
-                // console.log("foundElements", _.pluck(foundElements, "_id"));
-                // console.log("found conflicting", foundConflictingMatch);
+
             }
             if(foundConflictingMatch) match.status = 'conflicting';
         }
