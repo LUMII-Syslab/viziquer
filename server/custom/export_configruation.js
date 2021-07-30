@@ -32,8 +32,10 @@ ExportDiagramConfig.prototype = {
 	},
 
 	exportDiagramTypes: function(tool_id) {
-
-		var diagram_type = DiagramTypes.findOne({toolId: tool_id});
+		///Elīna Laboja, lai eksportē vairākas definīcijas vienā toolī
+		var diagram_types = DiagramTypes.find({toolId: tool_id});
+		diagram_types.forEach(diagram_type => {
+					//var diagram_type = DiagramTypes.findOne({toolId: tool_id});
 		if (!diagram_type) {
 			console.error("No diagram type");
 			return;
@@ -50,6 +52,8 @@ ExportDiagramConfig.prototype = {
 							};
 
 		this.types.push(diagram_type_out);
+		});
+
 	},
 
 	exportBoxTypes: function(diagram_type_id) {
@@ -118,23 +122,28 @@ ExportDiagramConfig.prototype = {
 	exportDiagrams: function(tool_id) {
 
 		var self = this;
+///Elīna Laboja, lai eksportē vairākas definīcijas vienā toolī
+		var diagrams = Diagrams.find({toolId: tool_id});
+		diagrams.forEach(diagram => {
 
-		var diagram = Diagrams.findOne({toolId: tool_id,});
-		if (!diagram) {
-			console.error("No diagram");
-			return;
-		}
+			if (!diagram) {
+				console.error("No diagram");
+				return;
+			}
+	
+			var diagram_id = diagram._id;
+			self.exportBoxes(diagram_id);
+			self.exportLines(diagram_id);
+	
+			var diagram_out = {object: diagram,
+								boxes: self.exportBoxes(diagram_id),
+								lines: self.exportLines(diagram_id),
+							};
+	
+			self.presentations.push(diagram_out);
 
-		var diagram_id = diagram._id;
-		self.exportBoxes(diagram_id);
-		self.exportLines(diagram_id);
-
-		var diagram_out = {object: diagram,
-							boxes: self.exportBoxes(diagram_id),
-							lines: self.exportLines(diagram_id),
-						};
-
-		self.presentations.push(diagram_out);
+		});
+	//	var diagram = Diagrams.findOne({toolId: tool_id,});
 	},
 
 	exportBoxes: function(diagram_id) {
