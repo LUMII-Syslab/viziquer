@@ -130,12 +130,32 @@ const findElementDataForIndividual = (vq_obj) => {
 	return params;
 }
 
+const classes = [
+'dbo:Person', 
+'dbo:Place', 
+'dbo:Location', 
+'dbo:Work', 
+'dbo:Settlement', 
+'dbo:Athlete', 
+'dbo:Organisation', 
+'dbo:MusicalWork', 
+'dbo:Species', 
+'dbo:Politician', 
+'dbo:Film', 
+'dbo:Animal', 
+'dbo:Event', 
+'dbo:Agent', 
+'dbo:TimePeriod', 
+'owl:Thing', 
+'foaf:Document', 
+'skos:Concept'
+];
 // ***********************************************************************************
 dataShapes = {
 	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
 			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					 pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person'}},
+					 pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person', classes: classes}},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -149,7 +169,7 @@ dataShapes = {
 		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
 						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
 						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					          pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person'}};
+					          pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person', classes: classes}};
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
@@ -165,6 +185,9 @@ dataShapes = {
 	},
 	callServerFunction : async function(funcName, params) {
 		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
+		this.schema.showPrefixes = true; // ----- !!! ( for development ) - remove !!! -----
+		//console.log("---------callServerFunction--------------" + funcName)
+		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		var s = this.schema.schema;
 		//if (s === "" || s === undefined ) {
 		//	console.log(Session.get("activeProject"))

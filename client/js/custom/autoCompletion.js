@@ -748,8 +748,10 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 		
 		var inst = await dataShapes.getIndividuals(params, act_el); 
 
-		if (fullText != "")
-			c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
+		if (fullText != "" ){
+			if ( inst.length === 0 || inst.length > 0 && inst[0] !== "dbr:"+fullText )
+				c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
+		}
 			
 		for(var i in inst){
 			c["suggestions"].push({name: inst[i], priority:100, type:0})

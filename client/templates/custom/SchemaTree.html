@@ -3,7 +3,7 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<input id="filter_text" type="text" class="form-control" placeholder="{{f}}">
+			<input id="filter_text" type="text" class="form-control" >
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
 				<input class="form-check-input" name = "dbo" id="dbo" value= "1" type="checkbox" checked={{dbo}}>
@@ -59,7 +59,7 @@
 				  <option>Data properties</option>
 				</select>
 			</div>
-			<input id="filter_text2" type="text" class="form-control" placeholder="{{f}}">
+			<input id="filter_text2" type="text" class="form-control" >
 			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
 				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
@@ -104,18 +104,16 @@
     <div class="col-sm-12">
         <div class="dd" id="nestable">
 			<div class="col-sm-12">
-				<select class="form-control" id="class" value="dbo:Person">
-				  <option>dbo:Person</option>
-				  <option>dbo:Place</option>
-				  <option>dbo:Location</option>
-				  <option>dbo:Work</option>				
-				  <option>owl:Thing</option>
-				  <option>foaf:Document</option>
-				  <option>skos:Concept</option>
+				<select class="form-control" id="class" value="dbo:Person" >
+					{{#each classes}}
+						<option value="{{name}}">{{name}}</option>
+					{{/each}}
 				</select>
 			</div>
-			<div class="describe">Large class selected, results may come very slowly</div>
-			<input id="filter_text3" type="text" class="form-control" placeholder="{{f}}">
+			{{#if isBigClass  }}
+				<div class="describe">Large class selected, results may come very slowly</div>
+			{{/if}}
+			<input id="filter_text3" type="text" class="form-control" >
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">

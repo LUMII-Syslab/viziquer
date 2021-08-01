@@ -2,6 +2,7 @@
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
+Template.schemaInstances.IsBigClass = new ReactiveVar("");
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
@@ -52,11 +53,27 @@ function setNS() {
 		dataShapes.schema.tree.yago = false;
 }
 
-async function setTreeTop (filter = '') {
+function setBC() {
+	const c = dataShapes.schema.tree.class;
+    const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); // TODO
+	Template.schemaInstances.IsBigClass.set(r);
+}
+
+async function setTreeTop (filter = '', plus = 0) {
 	//var params = {treeMode: 'Top', limit: Template.schemaTree.Count.get()};
 	var params = {treeMode: 'Top', limit: dataShapes.schema.tree.countC};
-	if (filter !== '')
+	if (filter !== '') {
 		params.filter = filter;
+		if (plus == 1) {
+			let cc = Template.schemaTree.Classes.get();
+			cc.pop();
+			cc.push({ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."});
+			Template.schemaTree.Classes.set(cc);
+		}
+		else
+			Template.schemaTree.Classes.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+
+	}
 		
 	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 		var namespaces = {};
@@ -108,19 +125,19 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 	Template.schemaTree.Classes.set(tree); 
 }
 
-async function  useFilter () {
+async function  useFilter (plus = 0) {
 	var text = $('#filter_text').val().toLowerCase();
 	dataShapes.schema.tree.filterC = text;
 	setNS();
 	var treeTop = Template.schemaTree.Classes.get();
-
+	
 	if ( dataShapes.schema.tree.topClass != 0 ) 
 		await setTreeSubClasses ([treeTop[1]], true, text);
 	else 
-		await setTreeTop(text);
+		await setTreeTop(text, plus);
 }
 
-async function  useFilterP () {
+async function  useFilterP (plus = 0) {
 	var text = $('#filter_text2').val().toLowerCase();
 	dataShapes.schema.tree.filterP = text;
 	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text};
@@ -143,6 +160,10 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 	}
 	if ( $("#propType").val() === 'All properties' )
 		dataShapes.schema.tree.pKind = 'All properties';
+	
+	if ( text !== "") {
+		Template.schemaFilter.Properties.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+	}
 		
 	var pFull = await dataShapes.getTreeProperties(params);  
 	var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p, col)}});
@@ -152,15 +173,15 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 	Template.schemaFilter.Properties.set(properties);
 }
 
-async function  useFilterI () {
+async function  useFilterI (plus = 0) {
 	var text = $('#filter_text3').val();
 	dataShapes.schema.tree.filterI = text;
 	var params = { limit: dataShapes.schema.tree.countI, filter:text};
 	var className = $("#class").val();
+
 	dataShapes.schema.tree.class = className;
 	
 	Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
-	
 
 	var iFull = await dataShapes.getTreeIndividuals(params, className);  
 
@@ -218,7 +239,7 @@ Template.schemaTree.events({
 	"dblclick .class-body": async function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
 
-		if ( class_name !== "" && class_name !== "..." && class_name !== ".." && class_name !== ".")
+		if ( class_name !== "" && class_name !== "..." && class_name !== ".." && class_name !== "." && class_name !== "wait")
 		{
 			const BLACK_HEADER_HEIGHT = 45;
 			const DEFAULT_BOX_WIDTH = 194;
@@ -254,7 +275,7 @@ Template.schemaTree.events({
 			count = count + dataShapes.schema.tree.plus;
 			//Template.schemaTree.Count.set(count);
 			dataShapes.schema.tree.countC = count;
-			await useFilter();
+			await useFilter(1);
 		}	
 		if ( class_name === "..") {
 			//var count = Template.schemaTree.Count.get();
@@ -262,7 +283,7 @@ Template.schemaTree.events({
 			count = count + dataShapes.schema.tree.plus;
 			//Template.schemaTree.Count.set(count);
 			dataShapes.schema.tree.countC = count;
-			await useFilter();
+			await useFilter(1);
 		}		
 	},
 	'click #filter': async function(e) {
@@ -292,6 +313,7 @@ Template.schemaTree.events({
 
 Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
+	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
 	$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
 	await useFilter ();
@@ -316,6 +338,7 @@ Template.schemaInstances.rendered = async function() {
 	//console.log("-----rendered schemaInstances----")
 	$("#filter_text3")[0].value = dataShapes.schema.tree.filterI;
 	$("#class").val(dataShapes.schema.tree.class);
+	setBC();
 	await useFilterI ();
 }
 
@@ -341,9 +364,9 @@ Template.schemaFilter.events({
 			var count = dataShapes.schema.tree.countP;
 			count = count + dataShapes.schema.tree.plus;
 			dataShapes.schema.tree.countP = count;
-			await useFilterP();
+			await useFilterP(1);
 		}
-		else {
+		else if ( prop_name !== "wait") {
 			const BLACK_HEADER_HEIGHT = 45;
 			const DEFAULT_BOX_WIDTH = 194;
 			const DEFAULT_BOX_HEIGHT = 66;
@@ -465,6 +488,12 @@ Template.schemaInstances.helpers({
 	class: function() {
 		return dataShapes.schema.tree.class;
 	},
+	classes: function() {  
+		return dataShapes.schema.tree.classes.map( v => { return {name:v}});
+	},
+	isBigClass: function() {
+		return Template.schemaInstances.IsBigClass.get();
+	},
 });
 
 Template.schemaInstances.events({
@@ -499,7 +528,7 @@ Template.schemaInstances.events({
 					 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-					boo.setName("");
+					boo.setName($("#class").val());
 					boo.setInstanceAlias(i_name);
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
 					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
@@ -521,6 +550,9 @@ Template.schemaInstances.events({
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class) {
 			$("#filter_text3")[0].value = '';
+			dataShapes.schema.tree.filterI = '';
+			dataShapes.schema.tree.class = className;
+			setBC();
 			useFilterI ();
 		}
 	},
