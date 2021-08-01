@@ -817,12 +817,12 @@ Template.ontologySettings.events({
 		 $("#default-grouping-separator").val(proj.defaultGroupingSeparator);
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
-		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="false");
-		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="false");
-		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="false");
-		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="false");
-		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="false");
-		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="false");
+		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="true");
+		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="true");
+		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
+		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
+		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
+		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);
 	 }

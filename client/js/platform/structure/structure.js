@@ -256,6 +256,7 @@ Template.createProjectModal.events({
 						icon: icon_name,
 						category: category_name,
 						toolId: tool_id,
+						showPrefixesForAllNames: "true",
 					};
 
 			var obj = $('input[name=stack-radio]:checked').closest(".schema");
