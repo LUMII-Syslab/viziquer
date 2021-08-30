@@ -79,18 +79,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
+
     var resCl = await resolveClassByName(obj_class.identification.local_name);
-	
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
 
-	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
+	if(typeof obj_class.identification.prefix !== 'undefined' && obj_class.identification.prefix != "") prefix = obj_class.identification.prefix + ":";
 	var par = await parseExpression(prefix+obj_class.identification.display_name, "CLASS_NAME", obj_class.identification)
     _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
-
 		//parser need link with prefix
 		var prefix = "";
 		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
@@ -290,10 +289,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, symbol_table:symbol_table, exprType:exprType, context:context});
-		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
-		  // var test = testGrammar.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context});
-		  // var test = await testGrammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, exprType:exprType, context:context})
-		  // parsed_exp = await addSchemaInformation(parsed_exp, exprType);
+		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:null, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -331,7 +327,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    if(typeof parse_obj !== 'undefined'){
 	   try {
 		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
-		 console.log("parse_obj", parse_obj);
 		} catch (e) {
 		  // TODO: error handling
 		 // console.log(e)
@@ -345,7 +340,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		if(parse_obj != "[*sub]"){
 			try {
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
-			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:schema, symbol_table:symbol_table, context:context});
+			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
 			  // TODO: error handling
@@ -909,15 +904,3 @@ function replaceArithmetics(parse_obj_table, sign){
 	return parse_obj
 }
 
-async function addSchemaInformation(expressionTable, exprType){
-	for(var key in expressionTable){
-		if(key == "var") {		
-			var res = await resolveType(expressionTable[key]["name"], exprType);
-			expressionTable[key]["type"] = res;
-		}
-		if(typeof expressionTable[key] == 'object'){
-			expressionTable[key] = await addSchemaInformation(expressionTable[key], exprType);
-		}
-	}
-	return expressionTable;
-}
