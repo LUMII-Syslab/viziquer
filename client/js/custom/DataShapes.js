@@ -220,12 +220,12 @@ dataShapes = {
 			s = this.schema.schema;
 		}
 		
-		//if (s === "" || s === undefined ) {
-		//	console.log("--------Tomēr tukšs-------------")
-		//	this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		//	this.schema.showPrefixes = "true"; // ----- !!! ( for development ) - remove !!! -----
-		//	s = 'DBpedia';
-		//}
+		//*if (s === "" || s === undefined ) {
+		//*	console.log("--------Tomēr tukšs-------------")
+		//*	this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
+		//*	this.schema.showPrefixes = "true"; // ----- !!! ( for development ) - remove !!! -----
+		//*	s = 'DBpedia';
+		//*}
 		
 		// *** console.log(params)
 		var rr = {complete: false, data: [], error: "DSS schema not found"};
