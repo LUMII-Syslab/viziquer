@@ -150,12 +150,41 @@ const classes = [
 'foaf:Document', 
 'skos:Concept'
 ];
+
+const getEmptySchema  = () => {
+return {
+		empty: true,
+		resolvedClasses: {}, 
+		resolvedProperties: {}, 
+		resolvedClassesF: {}, 
+		resolvedPropertiesF: {},
+		treeTopsC: {}, 
+		treeTopsP: {}, 
+		showPrefixes: "false", 
+		limit: MAX_ANSWERS,
+		tree: {
+			countC:MAX_TREE_ANSWERS, 
+			countP:MAX_TREE_ANSWERS, 
+			countI:MAX_IND_ANSWERS, 
+			plus:TREE_PLUS, 
+			dbo: true, 
+			yago: false, 
+			dbp: true, 
+			filterC: '', 
+			filterP: '', 
+			filterI: '',
+			pKind: 'All properties', 
+			topClass: 0, 
+			classPath: [], 
+			class: 'dbo:Person', 
+			classes: classes
+		}
+	}
+}
+
 // ***********************************************************************************
 dataShapes = {
-	schema : { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
-			   treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
-			   tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					 pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person', classes: classes}},
+	schema : getEmptySchema(),
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -165,15 +194,12 @@ dataShapes = {
 	},
 	changeActiveProject : async function(proj_id) {
 		var proj = Projects.findOne({_id: proj_id});
-		//console.log(proj)
-		this.schema = { resolvedClasses: {}, resolvedProperties: {}, resolvedClassesF: {}, resolvedPropertiesF: {},
-						treeTopsC: {}, treeTopsP: {}, showPrefixes: "false", limit: MAX_ANSWERS,
-						tree:{countC:MAX_TREE_ANSWERS, countP:MAX_TREE_ANSWERS, countI:MAX_IND_ANSWERS, plus:TREE_PLUS, dbo: true, yago: false, dbp: true, filterC: '', filterP: '', filterI: '',
-					          pKind: 'All properties', topClass: 0, classPath: [], class: 'dbo:Person', classes: classes}};
+		this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames;
+				this.schema.empty = false;
 				//this.schema.ontologies = {}; 
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
 				//this.schema.limit = MAX_ANSWERS;
@@ -184,17 +210,23 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		this.schema.showPrefixes = true; // ----- !!! ( for development ) - remove !!! -----
-		//console.log("---------callServerFunction--------------" + funcName)
+		console.log("---------callServerFunction--------------" + funcName)
+		console.log(params)
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		var s = this.schema.schema;
+		if (s === "" || s === undefined ) {
+			console.log(Session.get("activeProject"))
+			await this.changeActiveProject(Session.get("activeProject"));
+			s = this.schema.schema;
+		}
+		
 		//if (s === "" || s === undefined ) {
-		//	console.log(Session.get("activeProject"))
-		//	await this.changeActiveProject(Session.get("activeProject"));
-		//	s = this.schema.schema;
+		//	console.log("--------Tomēr tukšs-------------")
+		//	this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
+		//	this.schema.showPrefixes = "true"; // ----- !!! ( for development ) - remove !!! -----
+		//	s = 'DBpedia';
 		//}
-			
+		
 		// *** console.log(params)
 		var rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
@@ -207,7 +239,7 @@ dataShapes = {
 		}
 		else
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
-		// *** console.log(rr)
+		console.log(rr)
 		return await rr;
 	},
 	getNamespaces : async function(params = {}) {
@@ -345,6 +377,8 @@ dataShapes = {
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
+		//dataShapes.resolveClassByName({name: 'foaf:Document'})
+		
 		var rr;
 		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
 			if (this.schema.resolvedClasses[params.name] !== undefined)
