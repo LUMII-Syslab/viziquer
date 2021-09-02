@@ -3,6 +3,9 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
+			{{#if empty }}
+				<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
+			{{/if}}
 			<input id="filter_text" type="text" class="form-control" >
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
@@ -23,6 +26,7 @@
 				{{/each}}
 
             </ol>
+
         </div><!-- dd -->
     </div>
 
@@ -104,7 +108,7 @@
     <div class="col-sm-12">
         <div class="dd" id="nestable">
 			<div class="col-sm-12">
-				<select class="form-control" id="class" value="dbo:Person" >
+				<select class="form-control" id="class" value={{class}} >
 					{{#each classes}}
 						<option value="{{name}}">{{name}}</option>
 					{{/each}}

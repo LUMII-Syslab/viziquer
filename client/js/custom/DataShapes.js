@@ -175,9 +175,8 @@ return {
 			filterI: '',
 			pKind: 'All properties', 
 			topClass: 0, 
-			classPath: [], 
-			class: 'dbo:Person', 
-			classes: classes
+			classPath: [],
+			classes: []			
 		}
 	}
 }
@@ -200,6 +199,19 @@ dataShapes = {
 				this.schema.schema =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames;
 				this.schema.empty = false;
+				this.schema.endpoint =  proj.endpoint; 
+				if (proj.schema === 'DBpedia') {
+					this.schema.tree.class = 'dbo:Person';
+					this.schema.tree.classes = classes;
+				}
+				else {
+					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
+					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
+					this.schema.tree.class = c_list[0];
+					this.schema.tree.classes = c_list;
+					this.schema.tree.dbo = false;
+				}
+
 				//this.schema.ontologies = {}; 
 				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
 				//this.schema.limit = MAX_ANSWERS;
@@ -215,7 +227,7 @@ dataShapes = {
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		var s = this.schema.schema;
 		if (s === "" || s === undefined ) {
-			console.log(Session.get("activeProject"))
+			//console.log(Session.get("activeProject"))
 			await this.changeActiveProject(Session.get("activeProject"));
 			s = this.schema.schema;
 		}

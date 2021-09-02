@@ -1,8 +1,11 @@
 
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
+Template.schemaTree.Empty = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
 Template.schemaInstances.IsBigClass = new ReactiveVar("");
+Template.schemaInstances.Class = new ReactiveVar("");
+Template.schemaInstances.Classes = new ReactiveVar("");
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
@@ -22,6 +25,9 @@ Template.schemaTree.helpers({
 	},
 	f: function() {
 		return dataShapes.schema.tree.filterC;
+	},
+	empty: function() {
+		return Template.schemaTree.Empty.get();
 	},
 });
 
@@ -93,7 +99,6 @@ async function setTreeTop (filter = '', plus = 0) {
 }
 
 async function setTreeSubClasses (cc, nsPlus, filter = '') {
-	
 	dataShapes.schema.tree.topClass = cc[0].node_id;
 	//var params = {limit: Template.schemaTree.Count.get(), treeMode: 'Sub'}; 
 	var params = {limit: dataShapes.schema.tree.countC, treeMode: 'Sub'}; 
@@ -177,7 +182,8 @@ async function  useFilterI (plus = 0) {
 	var text = $('#filter_text3').val();
 	dataShapes.schema.tree.filterI = text;
 	var params = { limit: dataShapes.schema.tree.countI, filter:text};
-	var className = $("#class").val();
+	//var className = $("#class").val();
+	var className = Template.schemaInstances.Class.get();
 
 	dataShapes.schema.tree.class = className;
 	
@@ -226,7 +232,7 @@ Template.schemaTree.events({
 				cc = _.filter(treeTop, function(c){ return  c.node_id == tree_node_id });
 			else
 				cc = _.filter(treeTop[1].children, function(c){ return  c.node_id == tree_node_id });
-				
+			
 			if ( cc[0].ch_count > 0) {
 				var classPath = dataShapes.schema.tree.classPath;
 				classPath.push(cc[0]);
@@ -309,16 +315,31 @@ Template.schemaTree.events({
 		}
 		return;
 	},
+	'click #reload': async function(e){
+		Template.schemaTree.Empty.set(false);
+		await useFilter ();	
+		await useFilterP ();
+		$("#class").val(dataShapes.schema.tree.class);	
+		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { return {name:v}}));		
+		await useFilterI ();	
+	},	
+	
 });
 
 Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
+
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
-	$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
-	await useFilter ();
+	if (dataShapes.schema.empty)
+		Template.schemaTree.Empty.set(true);
+	else {
+		Template.schemaTree.Empty.set(false);
+		$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
+		await useFilter ();		
+	}
 	//Template.schemaTree.ClassPath.set([]);
-
 }
 
 Template.schemaFilter.rendered = async function() {
@@ -338,6 +359,8 @@ Template.schemaInstances.rendered = async function() {
 	//console.log("-----rendered schemaInstances----")
 	$("#filter_text3")[0].value = dataShapes.schema.tree.filterI;
 	$("#class").val(dataShapes.schema.tree.class);
+	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { return {name:v}}));
 	setBC();
 	await useFilterI ();
 }
@@ -486,10 +509,12 @@ Template.schemaInstances.helpers({
 		return dataShapes.schema.tree.filterI;
 	},
 	class: function() {
-		return dataShapes.schema.tree.class;
+		return Template.schemaInstances.Class.get();
+		//return dataShapes.schema.tree.class;
 	},
 	classes: function() {  
-		return dataShapes.schema.tree.classes.map( v => { return {name:v}});
+		return Template.schemaInstances.Classes.get();
+		//return dataShapes.schema.tree.classes.map( v => { return {name:v}});
 	},
 	isBigClass: function() {
 		return Template.schemaInstances.IsBigClass.get();
@@ -552,6 +577,7 @@ Template.schemaInstances.events({
 			$("#filter_text3")[0].value = '';
 			dataShapes.schema.tree.filterI = '';
 			dataShapes.schema.tree.class = className;
+			Template.schemaInstances.Class.set(className);
 			setBC();
 			useFilterI ();
 		}
