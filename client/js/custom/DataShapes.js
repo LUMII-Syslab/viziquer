@@ -114,7 +114,10 @@ const findElementDataForProperty = (vq_obj) => {
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
-	var pList = getPList(vq_obj);
+	var pList = {in: [], out: []};	
+	if (dataShapes.schema.pp_rels) 
+		pList = getPList(vq_obj);
+	
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
 }
@@ -162,6 +165,7 @@ return {
 		treeTopsP: {}, 
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
+		pp_rels: true,
 		tree: {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
@@ -210,6 +214,7 @@ dataShapes = {
 					this.schema.tree.class = c_list[0];
 					this.schema.tree.classes = c_list;
 					this.schema.tree.dbo = false;
+					this.schema.pp_rels = false;
 				}
 
 				//this.schema.ontologies = {}; 
