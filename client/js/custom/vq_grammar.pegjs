@@ -294,9 +294,9 @@
 
 			UnaryExpressionList = space Unary:("*" / "/") space UnaryExpression:UnaryExpression {return {Unary:Unary, UnaryExpression:UnaryExpression}}
 
-			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
+			PrimaryExpression = BooleanLiteral / iriOrFunction / BuiltInCall /  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 			// PrimaryExpression = DoubleSquareBracketName
-			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
+			PrimaryExpression2 = BooleanLiteral / iriOrFunction / BuiltInCall2 /  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 
 			BooleanLiteral = BooleanLiteral:(TRUE/ FALSE) {return {BooleanLiteral:BooleanLiteral}}
 
@@ -311,8 +311,8 @@
 
 			BrackettedExpression = ("(" space BrackettedExpression: Expression space ")") {return {BrackettedExpression:BrackettedExpression}}
 
-			BuiltInCall = Aggregate / FunctionExpression / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
-			BuiltInCall2 = Aggregate  / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall = Aggregate / FunctionExpression / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall2 = Aggregate / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
 
 			Aggregate = Aggregate:(AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) {return {Aggregate:Aggregate}}
 

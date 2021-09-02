@@ -2305,13 +2305,13 @@ vq_grammar_parser = (function() {
 
       s0 = await peg$parseBooleanLiteral();
       if (s0 === peg$FAILED) {
-        s0 = await peg$parseBuiltInCall();
+        s0 = await peg$parseiriOrFunction();
         if (s0 === peg$FAILED) {
-          s0 = await peg$parseRDFLiteral();
+          s0 = await peg$parseBuiltInCall();
           if (s0 === peg$FAILED) {
-            s0 = await peg$parseBrackettedExpression();
+            s0 = await peg$parseRDFLiteral();
             if (s0 === peg$FAILED) {
-              s0 = await peg$parseiriOrFunction();
+              s0 = await peg$parseBrackettedExpression();
               if (s0 === peg$FAILED) {
                 s0 = await peg$parseNumericLiteral();
                 if (s0 === peg$FAILED) {
@@ -2351,13 +2351,13 @@ vq_grammar_parser = (function() {
 
       s0 = await peg$parseBooleanLiteral();
       if (s0 === peg$FAILED) {
-        s0 = await peg$parseBuiltInCall2();
+        s0 = await peg$parseiriOrFunction();
         if (s0 === peg$FAILED) {
-          s0 = await peg$parseRDFLiteral();
+          s0 = await peg$parseBuiltInCall2();
           if (s0 === peg$FAILED) {
-            s0 = await peg$parseBrackettedExpression();
+            s0 = await peg$parseRDFLiteral();
             if (s0 === peg$FAILED) {
-              s0 = await peg$parseiriOrFunction();
+              s0 = await peg$parseBrackettedExpression();
               if (s0 === peg$FAILED) {
                 s0 = await peg$parseNumericLiteral();
                 if (s0 === peg$FAILED) {
@@ -2664,23 +2664,17 @@ vq_grammar_parser = (function() {
       if (s0 === peg$FAILED) {
         s0 = await peg$parseFunctionExpression();
         if (s0 === peg$FAILED) {
-          s0 = await peg$parseHASMAX();
+          s0 = await peg$parseRegexExpression();
           if (s0 === peg$FAILED) {
-            s0 = await peg$parseHASRANK();
+            s0 = await peg$parseSubstringExpression();
             if (s0 === peg$FAILED) {
-              s0 = await peg$parseRegexExpression();
+              s0 = await peg$parseSubstringBifExpression();
               if (s0 === peg$FAILED) {
-                s0 = await peg$parseSubstringExpression();
+                s0 = await peg$parseStrReplaceExpression();
                 if (s0 === peg$FAILED) {
-                  s0 = await peg$parseSubstringBifExpression();
+                  s0 = await peg$parseExistsFunc();
                   if (s0 === peg$FAILED) {
-                    s0 = await peg$parseStrReplaceExpression();
-                    if (s0 === peg$FAILED) {
-                      s0 = await peg$parseExistsFunc();
-                      if (s0 === peg$FAILED) {
-                        s0 = await peg$parseNotExistsFunc();
-                      }
-                    }
+                    s0 = await peg$parseNotExistsFunc();
                   }
                 }
               }
@@ -2708,23 +2702,17 @@ vq_grammar_parser = (function() {
 
       s0 = await peg$parseAggregate();
       if (s0 === peg$FAILED) {
-        s0 = await peg$parseHASMAX();
+        s0 = await peg$parseRegexExpression();
         if (s0 === peg$FAILED) {
-          s0 = await peg$parseHASRANK();
+          s0 = await peg$parseSubstringExpression();
           if (s0 === peg$FAILED) {
-            s0 = await peg$parseRegexExpression();
+            s0 = await peg$parseSubstringBifExpression();
             if (s0 === peg$FAILED) {
-              s0 = await peg$parseSubstringExpression();
+              s0 = await peg$parseStrReplaceExpression();
               if (s0 === peg$FAILED) {
-                s0 = await peg$parseSubstringBifExpression();
+                s0 = await peg$parseExistsFunc();
                 if (s0 === peg$FAILED) {
-                  s0 = await peg$parseStrReplaceExpression();
-                  if (s0 === peg$FAILED) {
-                    s0 = await peg$parseExistsFunc();
-                    if (s0 === peg$FAILED) {
-                      s0 = await peg$parseNotExistsFunc();
-                    }
-                  }
+                  s0 = await peg$parseNotExistsFunc();
                 }
               }
             }
