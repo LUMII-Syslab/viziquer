@@ -154,6 +154,14 @@ const classes = [
 'skos:Concept'
 ];
 
+const b_classes = [
+'skos:Concept',
+'foaf:Document',
+'owl:Thing',
+'dbo:TimePeriod',
+'dbo:Agent'
+];
+
 const getEmptySchema  = () => {
 return {
 		empty: true,
@@ -180,7 +188,8 @@ return {
 			pKind: 'All properties', 
 			topClass: 0, 
 			classPath: [],
-			classes: []			
+			classes: [],
+			b_classes: []			
 		}
 	}
 }
@@ -207,6 +216,7 @@ dataShapes = {
 				if (proj.schema === 'DBpedia') {
 					this.schema.tree.class = 'dbo:Person';
 					this.schema.tree.classes = classes;
+					this.schema.tree.b_classes = b_classes;
 				}
 				else {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});

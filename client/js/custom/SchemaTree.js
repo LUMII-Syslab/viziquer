@@ -61,7 +61,8 @@ function setNS() {
 
 function setBC() {
 	const c = dataShapes.schema.tree.class;
-    const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); // TODO
+    //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); // TODO
+	const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
 	Template.schemaInstances.IsBigClass.set(r);
 }
 
