@@ -110,6 +110,74 @@ Template.AddLink.helpers({
 	},
 });
 
+Template.SelectTargetClass.classes = new ReactiveVar("")
+
+Template.SelectTargetClass.helpers({
+
+	classes: function(){
+		return Template.SelectTargetClass.classes.get();
+	},
+
+}); 
+
+Template.SelectTargetClass.events({
+	
+	"keyup #class-search": async function(){
+		var f = $("#class-search").val().toLowerCase();
+		$('[name=class-list-radio]').removeAttr('checked');
+		
+		var obj = $('input[name=link-list-radio]:checked').closest(".association");
+		var name = obj.attr("name");
+		var line_direct = obj.attr("line_direct");
+		
+		var params = {};
+			if(line_direct == "=>") {
+				params = {
+					"main": {"limit": 30,  "filter": f},
+					"element": {"pList": {"in": [{"name": name, "type": "in"}]}}
+				}
+			} else {
+				params = {
+					"main": {"limit": 30,  "filter": f},
+					"element": {"pList": {"out": [{"name": name, "type": "out"}]}}
+				}
+			}
+		var classes = await dataShapes.getClassesFull(params);
+		classes = classes.data;
+		
+		_.each(classes, function(e){
+			var prefix;
+			if(e.class_is_local == true)prefix = "";
+			else prefix = e.prefix+":";
+			e.short_class_name = prefix + e.display_name;
+			if(e.principal_class == 2) e.clr = "color: purple";
+			else if(e.principal_class == 0) e.clr = "color: #C5C5C5";
+			else e.clr = "color: #777777";
+			//style="{{clr}}"
+			
+		})
+		Template.SelectTargetClass.classes.set(classes);
+	},
+	
+	"click #ok-select-class": function() {
+		var clazz = $('input[name=class-list-radio]:checked').val();
+		if(typeof clazz !== "undefined"){
+			var obj = $('input[name=link-list-radio]:checked').closest(".association");
+			obj.attr("className", clazz);
+			obj.find('#targetClass')[0].innerHTML= clazz;
+		}
+		return;
+	},
+	
+	"click #cancel-select-class": function() {
+		//document.getElementById("build-path-input").value = "";
+		return;
+	},
+	
+	
+
+});
+
 Template.AddLink.events({
 //Buttons
 	'click #more-add-link-button': async function(e) {
@@ -246,6 +314,60 @@ Template.AddLink.events({
 
 	"click #cancel-add-link": function() {
 		clearAddLinkInput();
+	},
+	
+	"click #select-class-button": async function() { 
+		
+		var obj = $('input[name=link-list-radio]:checked').closest(".association");
+		var linkType = $('input[name=type-radio]:checked').val();
+
+		var name = obj.attr("name");
+		var line_direct = obj.attr("line_direct");
+		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
+		var class_name = obj.attr("className");
+
+		var classes;
+		if(name == "==" || name == "++") classes = await dataShapes.getClasses();
+		else {
+			var params = {};
+			if(line_direct == "=>") {
+				params = {
+					"main": {"limit": 30},
+					"element": {"pList": {"in": [{"name": name, "type": "in",}],}}
+				}
+			} else {
+				params = {
+					"main": {"limit": 30},
+					"element": {"pList": {"out": [{"name": name, "type": "out",}],}}
+				}
+			}
+			classes = await dataShapes.getClassesFull(params);
+		}
+		classes = classes.data;
+		
+		
+		
+		
+		
+		_.each(classes, function(e){
+			var prefix;
+			if(e.class_is_local == true)prefix = "";
+			else prefix = e.prefix+":";
+			e.short_class_name = prefix + e.display_name;	
+
+			if(e.principal_class == 2) e.clr = "color: purple";
+			else if(e.principal_class == 0) e.clr = "color: #bbbbbb";
+			else e.clr = "color: #777777";
+		})
+		if(class_name != null & class_name !== "" && class_name != " "){
+			classes.unshift({short_class_name:class_name, clr: "color: #777777"})
+		}
+		
+		Template.SelectTargetClass.classes.set(classes);
+		
+		$("#class-search")[0].value = "";
+		$('[name=class-list-radio]').removeAttr('checked');
+		$("#select-class-form").modal("show");
 	},
 
 	"click #add-long-link": function() {
@@ -538,7 +660,6 @@ Template.AddLink.events({
 	"change #link-list-form": function() {
 		var typeName = $('input[name=type-radio]').filter(':checked').val();
 		var cardValue = $('input[name=link-list-radio]:checked').attr("card");
-		console.log("changed", typeName, cardValue);
 		if (typeName == "NESTED" && cardValue == "") {
 			confirmSubquery();
 		}

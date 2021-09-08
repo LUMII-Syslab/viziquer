@@ -165,8 +165,9 @@
                                         <span style="color:#009688; font-weight: normal;"> {{is}} </span>
                                         <span style="{{clr}}">{{name}} {{text}} </span>
 										<span style="color:#009688; font-weight: normal;"> {{of}} </span>
-                                        <span style="{{clr}}">{{type}} {{card}} {{class}} </span>
-										
+                                        <span style="{{clr}}">{{type}} {{card}} </span>
+                                        <span id="targetClass" style="{{clr}}">{{class}} </span>
+										<a class="btn btn-xs btn-default"><i id="select-class-button" class="fa" >..</i></a>
                                     </label>
                                 </div>
                                 {{/if}}
@@ -183,6 +184,11 @@
                             {{/each}}
                         {{/if}} -->
                         </div>
+						
+						<div>
+						<a style="width: 53px;" id="more-add-link-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
+						 </div>
+						
                         <!-- <div class="form-group">
                             <div class="col-sm-10">
         						<input id="fileList" type='file' multiple/>
@@ -261,6 +267,57 @@
                 <div class="modal-footer" style="clear: both;">
                     <button id="cancel-build-path" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-build-path" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+
+</template>
+
+<template name="SelectTargetClass">
+
+
+	<!-- Modal for new document -->
+    <div id="select-class-form" class="modal fade">
+        
+        <div class="modal-dialog" style="width:550px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Select Class</h4>
+                </div>
+
+
+                 <div class="form-group" >
+				 
+					<div class="searchBox" id="searchBox">   				
+						<input class="form-control" id="class-search" type="text" placeholder="Search.." style="display: inline-block;">
+					</div>
+					<div style="height:420px; overflow-y: scroll;">
+                              <div class="col-lg-10 targetClass" name="(no_class)" className="(no_class)">
+                                    <label class="label-radio">
+                                        <input type="radio" name="class-list-radio" value="(no_class)">
+                                        <span class="custom-radio"></span>
+                                        <span>(no_class)</span>
+                                    </label>
+                                </div>            
+                            {{#each classes}}                    
+                                <div class="col-lg-10 targetClass" name="{{short_class_name}}" className="{{short_class_name}}">
+                                    <label class="label-radio">
+                                        <input type="radio" name="class-list-radio" value="{{short_class_name}}">
+                                        <span class="custom-radio"></span>
+                                        <span style="{{clr}}">{{short_class_name}} </span>
+                                    </label>
+                                </div>
+                            {{/each}}
+                    </div>
+                </div>
+				
+
+                <div class="modal-footer" style="clear: both;">
+                    <button id="cancel-select-class" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-select-class" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

@@ -74,16 +74,20 @@
                             {{/each}}
                         </datalist>
                     {{else}}                        
-                        <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button> </p>
+                        <p><span style="color:darkorange;">{{elements.[0].name}}</span> => <span style="color:darkorange;">{{elements.[1].name}}</span> 
+						<!-- <button id="option-button" style="margin-left: 10px; display:inline-block; float:right;">Options</button>  -->
+						</p>
                     {{/if}}                    
                     <hr>
-                    <div class="searchBox">                       
-                        <input class="form-control" id="searchList" type="text" placeholder="Search.." style="width:90%;display: inline-block;">
-                        &ensp;
-                        <div class="help-tip">
-                            <p style="width:500px;font-size: 12px; line-height: 16px;"> Only one string can be used.<!-- Period is used to separate search in link and class parts:<br>&ensp;&ensp;[what to search in link]<span style="color:orange; font-size: 20px;">.</span>[what to search in class].<br>Only one period symbol is allowed.<br>Spaces and commas are allowed as separators to search for multiple words.--></p> 
-                        </div>
-                    </div>
+                    <!-- <div class="searchBox">                        -->
+                        <!-- <input class="form-control" id="searchList" type="text" placeholder="Search.." style="width:90%;display: inline-block;"> -->
+                        <!-- &ensp; -->
+                        <!-- <div class="help-tip"> -->
+                            <!-- <p style="width:500px;font-size: 12px; line-height: 16px;"> Only one string can be used. -->
+							<!-- Period is used to separate search in link and class parts:<br>&ensp;&ensp;[what to search in link]<span style="color:orange; font-size: 20px;">.</span>[what to search in class].<br>Only one period symbol is allowed.<br>Spaces and commas are allowed as separators to search for multiple words.-->
+							<!-- </p>  -->
+                        <!-- </div> -->
+                    <!-- </div> -->
                     <hr>
 
                     <div class="modal-bodyCC">
@@ -109,20 +113,20 @@
                 </div>
 
                 <div class="modal-footer">
-                    <form style="float:left;">
-                        <div style="position: relative; left: 0px;">
-                            <input type="checkbox" id="not-show-as-property-path">
-                            <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Draw the chain with classes graphically</p>
-                        </div>
-                        {{#if gotoSubquery.isChecked}}
-                            <div style="position: relative; left: 2px; padding-top: 5px;">
-                                <input type="checkbox" id="connect-classes-goto-aggregate-wizard" {{gotoSubquery.gotoWizard}}>
-                                <span class="custom-checkbox"></span>
-                                <p style="display:inline;">Use Aggregate wizard for subquery link</p>
-                            </div>
-                        {{/if}}                        
-                    </form>                    
+                    <!-- <form style="float:left;"> -->
+                        <!-- <div style="position: relative; left: 0px;"> -->
+                            <!-- <input type="checkbox" id="not-show-as-property-path"> -->
+                            <!-- <span class="custom-checkbox"></span> -->
+                            <!-- <p style="display:inline;">Draw the chain with classes graphically</p> -->
+                        <!-- </div> -->
+                        <!-- {{#if gotoSubquery.isChecked}} -->
+                            <!-- <div style="position: relative; left: 2px; padding-top: 5px;"> -->
+                                <!-- <input type="checkbox" id="connect-classes-goto-aggregate-wizard" {{gotoSubquery.gotoWizard}}> -->
+                                <!-- <span class="custom-checkbox"></span> -->
+                                <!-- <p style="display:inline;">Use Aggregate wizard for subquery link</p> -->
+                            <!-- </div> -->
+                        <!-- {{/if}}                         -->
+                    <!-- </form>                     -->
                     <button id="cancel-connect" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-connect" type="button" class="btn btn-primary">OK</button>
                 </div>

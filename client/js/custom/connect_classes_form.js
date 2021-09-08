@@ -1,6 +1,6 @@
 Interpreter.customMethods({
 //From selection
-	ConnectClasses: function () {
+	ConnectClasses: async function () {
 		Interpreter.destroyErrorMsg();
 	//check fo only 2 classes
 		var editor = Interpreter.editor;
@@ -90,7 +90,7 @@ Interpreter.customMethods({
 				}
 
 				
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
 				    if (n !== 0) {
@@ -109,7 +109,7 @@ Interpreter.customMethods({
 				Template.ConnectClassesSettings.fromToClass.set({fromName: usedClasses[0].name, fromID: usedClasses[0].id, toName: usedClasses[1].name, toID: usedClasses[1].id});
 
 
-				$("#not-show-as-property-path")[0].checked = true;
+				// $("#not-show-as-property-path")[0].checked = true;
 				if (Template.ConnectClasses.gotoSubquery.get().isChecked) $("#connect-classes-goto-aggregate-wizard")[0].checked = false;
 				$("#connect-classes-form").modal("show");			
 			}
@@ -118,7 +118,7 @@ Interpreter.customMethods({
 	},
 
 //From Link
-	linkConnectClasses: function () {
+	linkConnectClasses: async function () {
 		Interpreter.destroyErrorMsg();		
 		var link = new VQ_Element(Session.get("activeElement"));
 		if (link && link.isLink()) {
@@ -165,7 +165,7 @@ Interpreter.customMethods({
 					}					
 				}
 
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
 				    if (n !== 0) {
@@ -191,7 +191,7 @@ Interpreter.customMethods({
 		}
 	},
 
-	test_linkConnectClasses: function () {
+	test_linkConnectClasses: async function () {
 		Interpreter.destroyErrorMsg();
 		var link = new VQ_Element(Session.get("activeElement"));
 		if (link && link.isLink()) {
@@ -200,7 +200,7 @@ Interpreter.customMethods({
 			if (startClass && endClass) {
 				var ids = [{text: startClass.obj["_id"]}, {text: endClass.obj["_id"]}];
 				var usedClasses = [{name: startClass.getName(), id: startClass.obj["_id"]}, {name: endClass.getName(), id: endClass.obj["_id"]}];
-				var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 				list.sort(function (x, y) {
 				    var n = x.array.length - y.array.length;
 				    if (n !== 0) {
@@ -342,8 +342,11 @@ Template.ConnectClasses.events({
 			return;
 		}
 		
+		
+		
 		var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)[0]["array"];
-		chain = _.rest(chain);
+		// var chain = Template.ConnectClasses.linkList.curValue.filter(a => a.number == number)["array"];
+		// chain = _.rest(chain);
 		if (!Template.ConnectClasses.addLongLink.get().data){			
 			firstId = Template.ConnectClasses.elements.curValue[0].id;
 			lastElement = Template.ConnectClasses.elements.curValue.filter(e => e.id != firstId)[0];
@@ -422,7 +425,7 @@ Template.ConnectClasses.events({
 	            				newPosition.x + Math.round(newPosition.width/2), Math.max(oldPosition.y + oldPosition.height, newPosition.y + newPosition.height) + 60,
 	            				newPosition.x + Math.round(newPosition.width/2), newPosition.y + newPosition.height]; 
 	            //console.log(oldPosition, newPosition, locLink);
-
+				console.log("eeeeeeeeeeefffffffffffffffffff", name, Template.ConnectClasses.linkList.curValue)
 				Create_VQ_Element(function(lnk) {
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
                     lnk.setName(name);
@@ -497,11 +500,11 @@ Template.ConnectClasses.events({
 		$("#searchList")[0].value = "";
 	},
 
-	"click #choose-second-class-button": function(){
+	"click #choose-second-class-button": async function(){
 		$('#chain_text')[0].style.color = "";
 		var nextClassName = $('#classList2').val();
 		var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: nextClassName}];
-		var list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+		var list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 
 		var inverseCount = Template.ConnectClassesSettings.inverseValue.curValue.data;
 		_.each(list, function(a){					
@@ -574,7 +577,7 @@ Template.ConnectClassesSettings.helpers({
 })
 
 Template.ConnectClassesSettings.events({
-	"click #ok-connect-settings": function(){
+	"click #ok-connect-settings": async function(){
 		//Path's length		
 		if (document.getElementById("default-max-length").checked) {
 			Template.ConnectClassesSettings.pathLength.set(3);
@@ -597,11 +600,11 @@ Template.ConnectClassesSettings.events({
 			if (elementList.fromID == startElemID){
 				//console.log("original order");
 				Template.ConnectClasses.elements.set([{name: elementList.fromName, id: elementList.fromID}, {name: elementList.toName, id: elementList.toID}]);
-				list = GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
+				list = await GetChains([{text: elementList.fromID}, {text: elementList.toID}], Template.ConnectClassesSettings.pathLength.curValue);
 			} else if (elementList.toID == startElemID) {
 				//console.log("oposite order");
 				Template.ConnectClasses.elements.set([{name: elementList.toName, id: elementList.toID}, {name: elementList.fromName, id: elementList.fromID}]);
-				list = GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);		
+				list = await GetChains([{text: elementList.toID}, {text: elementList.fromID}], Template.ConnectClassesSettings.pathLength.curValue);		
 			} else {
 				console.log("unknown order");
 				return;
@@ -618,7 +621,7 @@ Template.ConnectClassesSettings.events({
 		} else {
 			if ($('#classList2').val()) {
 				var ids = [{text: Template.ConnectClasses.IDS.curValue["id"]}, {text: "no_class_exists", name: $('#classList2').val()}];
-				list = GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
+				list = await GetChains(ids, Template.ConnectClassesSettings.pathLength.curValue);
 			} else {
 				list = [{array: [{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1}]
 			}
@@ -679,9 +682,9 @@ function clearConnectClassesInput(){
 	//$("#max_length")[0].value = "3";
 	$('input[name=fc-radio]:checked').attr('checked', false);
 	$('input[name=stack-radio]:checked').attr('checked', false);
-	$("#not-show-as-property-path")[0].checked = false;
+	// $("#not-show-as-property-path")[0].checked = false;
 	if (Template.ConnectClasses.gotoSubquery.get().isChecked) $("#connect-classes-goto-aggregate-wizard")[0].checked = false;
-	$("#searchList")[0].value = "";
+	// $("#searchList")[0].value = "";
 	$('#chain_text')[0].style.color = "";
 	Template.ConnectClasses.IDS.set([{name: "no class", id:"0"}]);
 	Template.ConnectClasses.linkList.set([{array: [{class: "No connection of given length is found"}], number: -1}]);
@@ -716,167 +719,60 @@ function clearConnectClassesSettingsInput(){
 //Based on AddLink
 //Find all the associations for class with given ID
 //Output: association name, class on the other side, link direction as [{name: "", class: "", type: "(inv)", direction: "=>"}]
-function GetChains(ids, maxLength){
-	var schema = new VQ_Schema();
-	var link_chain = [];
-	linkRezult = [];
-	elemInfo = [];	
-	_.each(ids, function(id){		
-		if (id["text"] == "no_class_exists") {
-			elemInfo.push({id: id["text"], class: id["name"]});
-		}else {
-			elem = new VQ_Element(id["text"]);
-			if (elem.isUnion() && !elem.isRoot()) { //console.log(239);// [ + ] element, that has link to upper class 
-				if (elem.getLinkToRoot()){
-					var element = elem.getLinkToRoot().link.getElements();
-					var newStartClass = "";
-					if (elem.getLinkToRoot().start) {
-						var newStartClass = new VQ_Element(element.start.obj._id);
-	    			} else {
-	    				var newStartClass = new VQ_Element(element.end.obj._id);
-	    			} //console.log(newStartClass.getName());
-	    			elemInfo.push({id: id["text"], class: newStartClass.getName()});	    									
-				}					
-			} else {
-				elemInfo.push({id: id["text"], class: elem.getName()});
-
-			}
-			//elemInfo.push({id: id["text"], class: elem.getName()});
-		}
-	}); //console.log(GetLinks(elemInfo[0]["id"]));
-//Direct links
-	_.each(GetLinks(elemInfo[0]["id"]), function(e) {		
-		if(e["class"] == elemInfo[1]["class"]){
-			linkRezult.push([e]); //console.log(e);
-		} else if (e["class"] == elemInfo[0]["class"]) {
-			//console.log("same class");
-		} else {
-			link_chain.push([e]); 
-		}
-	}); //console.log(GetLinks(elemInfo[1]["id"]));
-//Inverse direct links
-	_.each(GetLinks(elemInfo[1]["id"]) , function(e) {		
-		if(e["class"] == elemInfo[0]["class"]){
-			var tp = "";
-			if (e.type == "<=") {tp = "=>";} else { tp = "<=";}
-			var newElem = {
-					name: e.name, 
-					isUnique: e.isUnique, 
-					prefix: e.prefix, 
-					isDefOnt: e.isDefOnt, 
-					class: elemInfo[1]["class"], 
-					type: tp, 
-					maxCard: e.maxCard, 
-					short_name: e.short_name, 
-					short_class_name: elemInfo[1]["class"]
-				};
-			var exists = false;
-			_.each(linkRezult, function(el){//console.log(764, _.isEqual(el[0],newElem), el[0], newElem);
-				if (!exists && el[0].name == newElem.name && el[0].class == newElem.class && el[0].type == newElem.type ) {
-					exists = true;
-				}
-			});
-			if (!exists){
-				// console.log("new ", newElem);
-				linkRezult.push([newElem]);
-			}
-		}
-	}); 
-
-	var actChain = link_chain;
-	var asocNew = [];	
-	for (var i = 1; i < maxLength; i++){
-		if(actChain){ 
-			link_chain = actChain; //console.log(799, actChain);
-			actChain = [];
-			asocNew = [];
-
-			_.each(link_chain, function(e){ 
-				asocNew = [];
-				var className = e[i-1]["class"];
-				var allAsoc = schema.findClassByName(className).getAllAssociations(); //console.log(766, className);
-				/*[{
-					name: a.localName, 
-					isUnique:a.isUnique, 
-					prefix:a.ontology.prefix, 
-					isDefOnt:a.ontology.isDefault, 
-					class: a.sourceClass.localName , 
-					type: "<=" || "=>", 
-					maxCard: a.maxCardinality, 
-					short_name:a.getElementShortName(), 
-					short_class_name:a.sourceClass.getElementShortName() || a.targetClass.getElementShortName()
-				}]*/
-				
-				_.each(allAsoc, function(a){ //console.log(a.maxCard);
-					var index = -1;
-					var isNew = true;
-					_.each(asocNew, function(as){
-						//if association connects same classes AND the same link name (!= (as.type != a.type) => XOR different directions)
-						if (as.class == a.class && as.name == a.name) { 
-							isNew = false;							
-						}
-					});
-
-					// if (i > 1 && isNew && e[i-1]["name"] == a.name && e[i-1]["type"] != a.type && a.maxCard == 1) {
-					// 	if (e[i-2]["class"] == a.class ) {
-					// 		console.log("maxCard == 1 vor inverse link from", e[i-2]["class"], "\n", e[i-1], "\n", a);
-					// 		isNew = false;
-					// 	}
-					// }  
-					
-					if (isNew) {
-						asocNew.push(a);
-					} 					
-				});
-
-				allAsoc = [];
-
-				var e_elem = [];
-				_.each(asocNew, function(el) {							
-					e_elem = e.slice();
-					//Check for loop (returning to already existing class)
-					var classNew = true;
-					_.each(e_elem, function(ee){
-						if (ee["class"] == el["class"]){
-							classNew = false;
-						}
-					})
-
-					if (classNew && !(el["class"] == elemInfo[0]["class"])){							
-						e_elem.push(el);																		
-						if(el["class"] == elemInfo[1]["class"]){
-							linkRezult.push(e_elem);
-						} else{								
-							actChain.push(e_elem);
-						}
-					}
-				})
-			})
-		} else {
-			i = maxLength; //stop for cycle
-		}
-	}
-
-	link_chain = [];
-	actChain = [];								
-
-	//Update information on chains
-	var resultChain = [];
+async function GetChains(ids, maxLength){
+	
+	
 	var resultStringArray=[]
-	var i = 0;
-	_.each(linkRezult, function(e){
-		resultChain = [{link: "", class: elemInfo[0]["class"], type: ""}];
-		_.each(e, function(ee){ 	
-			if (ee["type"] == "=>") {
-				resultChain.push({link: ee["name"], class: ee["class"], type: "", direction: ee["type"]});
-			} else {
-				resultChain.push({link: ee["name"], class: ee["class"], type: " <= ", direction: ee["type"]});
-			}
-		})
-		resultStringArray.push({number: i, show: true, countInverseLinks: countInverse(resultChain), array: resultChain});
-		i++;
-	})
-
+	
+	if(ids.length == 2){
+		console.log("IIIIIIIIIII", ids)
+		var elem1 = new VQ_Element(ids[0]["text"]);
+		var elem2 = new VQ_Element(ids[1]["text"]);
+		var params = {propertyKind:'Object'};
+		var props = await dataShapes.getProperties(params, elem1, elem2);
+		var props2 = await dataShapes.getProperties(params, elem2, elem1);
+		
+		console.log("DDDDDDDDD",props, props2,Template.ConnectClasses.elements)
+		
+		var i = 0;
+		_.each(props.data, function(e){
+			console.log("EEEEEE", e)
+			
+			var resultChain = [];
+			//prefix:name
+			var prefix;
+			if(e.is_local == true)prefix = "";
+			else prefix = e.prefix+":";
+			var eName = prefix + e.display_name;
+		
+			if(e.mark == "out") resultChain.push({link: eName, type: "",  direction:e.type});
+			else resultChain.push({name: eName, type: "<=",  direction:e.type});
+					
+			resultStringArray.push({number: i, show: true, countInverseLinks: countInverse(resultChain), array: resultChain});
+			i++;
+		});
+		
+		_.each(props2.data, function(e){
+			console.log("EEEEEE", e)
+			
+			var resultChain = [];
+			//prefix:name
+			var prefix;
+			if(e.is_local == true)prefix = "";
+			else prefix = e.prefix+":";
+			var eName = prefix + e.display_name;
+		
+			if(e.mark == "out") resultChain.push({link: eName, type: "<=",  direction:e.type});
+			else resultChain.push({name: eName, type: "",  direction:e.type});
+					
+			resultStringArray.push({number: i, show: true, countInverseLinks: countInverse(resultChain), array: resultChain});
+			i++;
+		});
+		
+		
+	}
+	
+	console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee", resultStringArray)
 	
 	if(resultStringArray.length == 0) {
 		resultStringArray.push({array:[{class: "No connection of given length is found"}], show: true, countInverseLinks: 0, number: -1});
@@ -932,6 +828,8 @@ function GetLinks(start_elem_id){
 }
 
 function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryFromElement, longLink){
+	console.log("OOOOOOOOOOO", chain)
+	
 	if (chain.length == 0)  {
 		return;
 	}
