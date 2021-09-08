@@ -281,18 +281,23 @@ dataShapes = {
 		// dataShapes.getClasses({filter:'aa'})
 		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
 		// dataShapes.getClasses({}, new VQ_Element(Session.get("activeElement")))
-		// ***  dataShapes.getClasses({element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'}})
-		// ***  dataShapes.getClasses({element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'} })  -- visas ir yago klases
-		// ***  dataShapes.getClasses({element: { pList: { out: [{name: 'educationalAuthority', type: 'out'}]}}})
-		// ***  dataShapes.getClasses({main:{ onlyPropsInSchema: true}, element: { pList: {in: [{name: 'super', type: 'in'}]}}})  23
-		// ***  dataShapes.getClasses({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
-		// ***  dataShapes.getClasses({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
 			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
 		}
 		return await this.callServerFunction("getClasses", allParams);
+	},
+	getClassesFull : async function(params = {}) {
+		// *** console.log("------------GetClasses------------------")
+		// ***  dataShapes.getClassesFull({main:{}, element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'}})
+		// ***  dataShapes.getClassesFull({{main:{},element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'} })  -- visas ir yago klases
+		// ***  dataShapes.getClassesFull({{main:{},element: { pList: { out: [{name: 'educationalAuthority', type: 'out'}]}}})
+		// ***  dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}, element: { pList: {in: [{name: 'super', type: 'in'}]}}})  23
+		// ***  dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
+		// ***  dataShapes.getClassesFull({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
+
+		return await this.callServerFunction("getClasses", params);
 	},
 	getTreeClasses : async function(params) {
 		// *** console.log("------------GetTreeClasses------------------")
