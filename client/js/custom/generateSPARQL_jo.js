@@ -723,16 +723,18 @@ function findUsedPrefixes(expressionTable, prefixTable){
 // find prefix, used most offen in query or empty prefix if it is already used
 // prefixTable - table with prefixes in a query
 function findEmptyPrefix(prefixTable){
-	var prefix = null;
+	
+	var prefix = "";
+	// var prefix = null;
 
-	if(typeof prefixTable[""] === 'undefined' && typeof prefixTable[":"] === 'undefined'){
-		for(var key in prefixTable){
-			if(typeof prefixTable[key] === 'number'){
-				if(prefix == null) prefix = key;
-				else if(prefixTable[key] > prefixTable[prefix]) prefix = key;
-			}
-		}
-	} else prefix = "";
+	// if(typeof prefixTable[""] === 'undefined' && typeof prefixTable[":"] === 'undefined'){
+		// for(var key in prefixTable){
+			// if(typeof prefixTable[key] === 'number'){
+				// if(prefix == null) prefix = key;
+				// else if(prefixTable[key] > prefixTable[prefix]) prefix = key;
+			// }
+		// }
+	// } else prefix = "";
 	return prefix
 }
 
@@ -755,7 +757,8 @@ function generateSPARQLtext(abstractQueryTable){
 		 var referenceTable = generateIdsResult["referenceTable"];
 
 		 //empty prefix in query
-		 var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
+		 // var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
+		 var emptyPrefix = findEmptyPrefix(knownPrefixes);
 		
 		 //table with unique variable names
 		 var variableNamesAll = [];
@@ -2221,14 +2224,14 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							var parentClass = "";
 
 							// if(sparqlTable["subClasses"][subclass]["linkTriple"] != null || sparqlTable["subClasses"][subclass]["equalityLink"] == true) {
-							if(sparqlTable["isUnion"] == false && sparqlTable["isUnit"] == false) {
+							if(sparqlTable["isUnion"] == false && sparqlTable["isUnit"] == false && sparqlTable["class"].indexOf(":") == -1) {
 								parentClass = sparqlTable["class"] //+ " ";
 
 								selectResult["groupBy"].unshift(sparqlTable["class"]);
 							}
-							if(sparqlTable["isUnion"] == true || sparqlTable["isUnit"] == true) parentClass = "";
+							if(sparqlTable["isUnion"] == true || sparqlTable["isUnit"] == true || sparqlTable["class"].indexOf(":") != -1) parentClass = "";
 							else tempSelect.unshift(parentClass);
-
+								
 							tempSelect = tempSelect.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});

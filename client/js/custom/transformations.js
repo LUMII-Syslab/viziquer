@@ -662,7 +662,7 @@ Interpreter.customMethods({
 			 var link = new VQ_Element(c["elementId"]);
 			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
 
-			 link.setIsInverseLink(c["value"].substring(0,4)=="inv(");
+			 // link.setIsInverseLink(c["value"].substring(0,4)=="inv(");
 		}
 	},
 
