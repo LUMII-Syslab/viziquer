@@ -218,6 +218,14 @@ dataShapes = {
 					this.schema.tree.classes = classes;
 					this.schema.tree.b_classes = b_classes;
 				}
+				else if (proj.schema === 'Tweets_cov') {
+					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
+					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
+					this.schema.tree.class = c_list[0];
+					this.schema.tree.classes = c_list;
+					this.schema.tree.dbo = false;
+					this.schema.pp_rels = true;
+				}
 				else {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
