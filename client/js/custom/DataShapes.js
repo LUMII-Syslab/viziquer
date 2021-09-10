@@ -346,6 +346,15 @@ dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', filter: 'aa'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
+		var allParams = {main: params};
+		if ( vq_obj !== null && vq_obj !== undefined )
+			allParams.element = findElementDataForProperty(vq_obj);
+		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
+			allParams.elementOE = findElementDataForProperty(vq_obj_2);
+		return await this.callServerFunction("getProperties", allParams);
+	},
+	getPropertiesFull : async function(params = {}) {
+		// *** console.log("------------GetProperties------------------")
 		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Data'}, element: {className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}})
@@ -357,12 +366,8 @@ dataShapes = {
 		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element: { className:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, element:{className: 'CareerStation'}, elementOE:{otherEndClassName:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'All', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'}, element:{className: 'CareerStation'}})
-		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
-			allParams.element = findElementDataForProperty(vq_obj);
-		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
-			allParams.elementOE = findElementDataForProperty(vq_obj_2);
-		return await this.callServerFunction("getProperties", allParams);
+		
+		return await this.callServerFunction("getProperties", params);
 	},
 	getTreeProperties : async function(params) {
 		function makeTreeName(params) {
