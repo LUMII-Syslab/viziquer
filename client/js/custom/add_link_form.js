@@ -185,7 +185,14 @@ Template.AddLink.events({
 		var count = Template.AddLink.Count.get();
 			count = count + plusCount;
 		Template.AddLink.Count.set(count);
-		Template.AddLink.fullList.set(await getAllAssociations());
+		
+		var asc = [];
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
+		})
+		Template.AddLink.fullList.set(asc);
+		
+		// Template.AddLink.fullList.set(await getAllAssociations());
 	},
 
 	"click #ok-add-link": async function() {
