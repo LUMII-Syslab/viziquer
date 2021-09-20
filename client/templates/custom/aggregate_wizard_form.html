@@ -59,16 +59,22 @@
                 <div class="modal-body">                
                     <form class="form-horizontal" role="form">                       
                         <form>
-                            <p style="color:purple">What to aggregate <div style="color:grey">(leave blank for instances themselves)</div></p>
+                            <p style="color:purple">What to aggregate:  
+							<!-- <div class="help-tip">
+                                <p>Field or expression. Leave blank for class instance aggregation. </p>
+                            </div> -->
+							<!-- <div style="color:grey">(leave blank for instances themselves)</div> --> </p>
 							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
-									placeholder="Field or expression" style="width:83%;display: inline-block;" value="{{expression}}">
+									placeholder="(class instances)" style="width:77%;display: inline-block;" value="{{expression}}">
 							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
 							<!-- <datalist id="field-list-datalist" class="datalist"> -->
 							 <!-- {{#each attList}} -->
                                     <!-- <option {{selectedOption}} name="field-name" input="{{attribute}}">{{attribute}}</option> -->
                                 <!-- {{/each}} -->
 							<!-- </datalist> -->
-							
+							<!--<div class="help-tip">
+                                <p>Field or expression. Leave blank for class instance aggregation. </p>
+                            </div> -->
 							<a id="extra-options-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
                             <!-- <select name="field-list-aggr" id="field-list-aggr" style="width:100%"> -->
                                 <!-- {{#each attList}} -->
@@ -140,7 +146,7 @@
                         </form>      
 						
 						<form>
-                            <p style="color:purple">Give name to result: </p>
+                            <p style="color:purple">Result name (alias): </p>
                             <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
 							<!-- <input type="text" id="alias-name-aggr"><br> -->
                         </form>
@@ -150,7 +156,7 @@
                         <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Display result </p>
+                            <p style="display:inline;">Display result (in host node)</p>
                         </form>
 
                         <form style="display: {{showDisplay}}; margin-bottom: 0px;"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
