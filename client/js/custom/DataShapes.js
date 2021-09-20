@@ -369,6 +369,13 @@ dataShapes = {
 		
 		return await this.callServerFunction("getProperties", params);
 	},
+	checkProperty : async function(params = {}) {
+		// *** console.log("------------checkProperty-----------------")
+		// *** dataShapes.checkProperty ({name:'onyx:EmotionSet', propertyName: 'onyx:hasEmotion'})
+		// *** dataShapes.checkProperty ({name:'http://dbpedia.org/ontology/Country', propertyName: 'http://dbpedia.org/ontology/abstract'})
+		// *** dataShapes.checkProperty ({name:'http://dbpedia.org/ontology/Country', propertyName: 'http://dbpedia.org/ontology/birthPlace'})
+		return await this.callServerFunction("checkProperty", {main:params});
+	},
 	getTreeProperties : async function(params) {
 		function makeTreeName(params) {
 			var nList = [];
@@ -422,6 +429,7 @@ dataShapes = {
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")
 		//dataShapes.resolveClassByName({name: 'umbel-rc:Park'})
+		//dataShapes.resolveClassByName({name: 'http://dbpedia.org/ontology/Year'})
 		//dataShapes.resolveClassByName({name: 'foaf:Document'})
 		
 		var rr;
@@ -444,6 +452,7 @@ dataShapes = {
 	resolvePropertyByName : async function(params = {}) {
 		// *** console.log("------------resolvePropertyByName---"+ params.name +"---------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
+		//dataShapes.resolvePropertyByName({name: 'http://dbpedia.org/ontology/years'})
 		var rr;
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
 			if (this.schema.resolvedProperties[params.name] !== undefined)
