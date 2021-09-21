@@ -1145,6 +1145,7 @@ Interpreter.customMethods({
 						
                     }
 					Template.AggregateWizard.fromAddLink.set(false); 
+					Template.AggregateWizard.placeholder.set("("+class_name+")");
                     $("#aggregate-wizard-form").modal("show");
                 // } else {
                 	// Interpreter.showErrorMsg("No class name is given", -3);
@@ -1242,6 +1243,7 @@ Interpreter.customMethods({
 						
                     }
 					Template.AggregateWizard.fromAddLink.set(true); 
+					Template.AggregateWizard.placeholder.set("("+class_name+")");
                     $("#aggregate-wizard-form").modal("show");
                 // } else {
                 	// Interpreter.showErrorMsg("No class name is given", -3);

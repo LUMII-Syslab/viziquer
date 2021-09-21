@@ -65,7 +65,7 @@
                             </div> -->
 							<!-- <div style="color:grey">(leave blank for instances themselves)</div> --> </p>
 							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
-									placeholder="(class instances)" style="width:77%;display: inline-block;" value="{{expression}}">
+									placeholder="{{fieldsPlaceholder}}" style="width:77%;display: inline-block;" value="{{expression}}">
 							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
 							<!-- <datalist id="field-list-datalist" class="datalist"> -->
 							 <!-- {{#each attList}} -->
@@ -156,16 +156,17 @@
                         <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
-                            <p style="display:inline;">Display result (in host node)</p>
+                            <p style="display:inline;">Display result (in host node)</p> 
+							<a id="add-conditions-button" class="btn btn-xs btn-success"><i>Add conditions</i></a>
                         </form>
 
-                        <form style="display: {{showDisplay}}; margin-bottom: 0px;"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                        <form id="result-at-least" style="display: none; margin-bottom: 0px;"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
                             <label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
                             <input class="form-control" id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <!-- <span class="validity"></span>   -->
                         </form>
 
-                        <form style="display: {{showDisplay}};margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
+                        <form id="result-at-most" style="display: none; margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
                             <label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
                             <input class="form-control" id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <!-- <span class="validity"></span>   -->

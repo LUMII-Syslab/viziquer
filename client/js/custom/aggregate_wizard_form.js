@@ -12,11 +12,16 @@ Template.AggregateWizard.fromAddLink = new ReactiveVar(true);
 Template.AggregateWizard.expressionField = new ReactiveVar("");
 Template.AggregateWizard.aliasField = new ReactiveVar("");
 Template.AggregateWizard.requireField = new ReactiveVar("");
+Template.AggregateWizard.placeholder = new ReactiveVar("");
 
 Template.AggregateWizard.helpers({
 	defaultAlias: function(){
 		//console.log("AggregateWizard.helpers");
 		return Template.AggregateWizard.defaultAlias.get();
+	},
+	
+	fieldsPlaceholder: function(){
+		return Template.AggregateWizard.placeholder.get();
 	},
 
 	attList: function(){
@@ -248,6 +253,14 @@ Template.AggregateWizard.events({
 		else document.getElementById("extra-options").style.display = "none";
 		return;
 	},
+	'click #add-conditions-button': function(e) {
+		if(document.getElementById("result-at-most").style.display == "none") document.getElementById("result-at-most").style.display = "block";
+		else document.getElementById("result-at-most").style.display = "none";
+		
+		if(document.getElementById("result-at-least").style.display == "none") document.getElementById("result-at-least").style.display = "block";
+		else document.getElementById("result-at-least").style.display = "none";
+		return;
+	},
 });
 
 
@@ -261,6 +274,8 @@ function clearAggregateInput(){
 	document.getElementById("distinct-aggr-check-box").checked=false;
 	document.getElementById("require-aggr-check-box").checked=false;
 	document.getElementById("extra-options").style.display = "none";
+	document.getElementById("result-at-most").style.display = "none";
+	document.getElementById("result-at-least").style.display = "none";
 	
 	defaultFieldList();
 	Template.AggregateWizard.showDisplay.set("none");

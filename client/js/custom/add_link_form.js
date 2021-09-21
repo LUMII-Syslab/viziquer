@@ -9,7 +9,21 @@ Interpreter.customMethods({
 		Template.AddLink.fullList.set(asc);
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
-
+		
+		var start_elem_id = Session.get("activeElement");			
+		var currentElement = new VQ_Element(start_elem_id);
+		var joinLinkDesc = "join information from the host node and the linked node";
+		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
+		
+		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		{
+			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+		}
+		
+		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
+		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
+			
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
 		$('input[id=goto-wizard]').prop("checked",false);
@@ -27,6 +41,20 @@ Interpreter.customMethods({
 		Template.AddLink.fullList.set(asc);
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
+		
+		var start_elem_id = Session.get("activeElement");			
+		var currentElement = new VQ_Element(start_elem_id);
+		var joinLinkDesc = "join information from the host node and the linked node";
+		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
+		
+		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		{
+			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+		}
+		
+		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
+		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
 
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
@@ -88,6 +116,8 @@ Interpreter.customMethods({
 		$("#add-link-form").modal("show");
 	},
 })
+Template.AddLink.JoinLinkText = new ReactiveVar("")
+Template.AddLink.SubqueryLinkText = new ReactiveVar("")
 Template.AddLink.Count = new ReactiveVar("")
 const startCount = 30;
 const plusCount = 20
@@ -99,6 +129,12 @@ Template.AddLink.helpers({
 
 	fullList: function(){
 		return Template.AddLink.fullList.get();
+	},
+	joinLinkText: function(){
+		return Template.AddLink.JoinLinkText.get();
+	},
+	subqueryLinkText: function(){
+		return Template.AddLink.SubqueryLinkText.get();
 	},
 
 	// shortList: function(){
@@ -304,6 +340,7 @@ Template.AddLink.events({
 					Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");
 					Template.AggregateWizard.showDisplay.set("block");
 					Template.AggregateWizard.fromAddLink.set(true);
+					Template.AggregateWizard.placeholder.set("("+class_name+")");
 					
 					$("#aggregate-wizard-form").modal("show");
 				} else {
@@ -450,6 +487,50 @@ Template.AddLink.events({
 	},
 
 	"click #link-list-form": function() {
+		var checkedName = $('input[name=link-list-radio]:checked');
+	
+		var start_elem_id = Session.get("activeElement");			
+		var currentElement = new VQ_Element(start_elem_id);
+		var joinLinkDesc = "";
+		var subqueryLinkDesc = "";
+		if(checkedName.attr("value") == "++" || checkedName.attr("value") == "=="){
+			joinLinkDesc = "join information from the host node and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
+			if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") {
+				joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+			}
+		} else {
+			
+			var obj = $('input[name=link-list-radio]:checked').closest(".association");
+			
+			var targetClassText = "";
+			var targetClassTextS = "";
+			var className = obj.attr("className");
+			
+			
+	
+			var line_direct = obj.attr("line_direct");
+			if(line_direct == "=>"){
+				if(className != null && className != "") {
+					targetClassText = " (that is a " + className + ")";
+					targetClassTextS = " to" + className;
+				}
+				joinLinkDesc = "join information from "+currentElement.getName()+" and its linked " + checkedName.attr("value") + targetClassText;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about " + checkedName.attr("value") +" links " + targetClassTextS;
+			} else {
+				if(className != null && className != "") {
+					targetClassText = " (from " + className + ")";
+					targetClassTextS = " from" + className;
+				}
+				joinLinkDesc = "join information from "+currentElement.getName()+" and its incoming link by " + checkedName.attr("value") + targetClassText;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about incoming " + checkedName.attr("value")+" links" +targetClassTextS;
+			}
+		}
+		Template.AddLink.JoinLinkText.set(joinLinkDesc);
+		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
+		
+		
 		$("div[id=errorField]").remove();
 	},
 
