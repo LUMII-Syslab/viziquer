@@ -2070,7 +2070,35 @@
                         },
                         "description": "Use Ctrl+Space for text auto-completion",
                         "subCompartmentTypes": [],
-                        "label": "Expression"
+                         "label": "Expression"
+                      },
+					  {
+                        "_id": "9feiflqzvrn04zoawqs9gph4",
+                        "index": 2,
+                        "name": "Allow result multiplication",
+                        "label": "Force simple implementation (can cause result set multiplication due to multiple-valued properties)",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "  {*}"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []			 
                       }
                     ],
                     "label": "Conditions"

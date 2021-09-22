@@ -162,8 +162,8 @@ Template.AggregateWizard.events({
 				}
 				//addField: function(exp,alias,requireValues,groupValues,isInternal)
 				if (displayCase) vq_start_obj.addField(alias,);
-				if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue);
-				if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue);
+				if (minValue != "") vq_start_obj.addCondition(alias + ">=" + minValue, false);
+				if (maxValue != "") vq_start_obj.addCondition(alias + "<=" + maxValue, false);
 			} else {
 				//console.log("no display or min/max");
 			}

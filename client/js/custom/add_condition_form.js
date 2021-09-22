@@ -23,7 +23,10 @@ Template.AddCondition.events({
 		//Read user's choise
 		  var vq_obj = new VQ_Element(selected_elem_id);
 			var condition = $('#condition-expression').val();
-			vq_obj.addCondition(condition);
+			var allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
+			if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") allowMultiplication = true;
+			else allowMultiplication = false;
+			vq_obj.addCondition(condition, allowMultiplication);
 	  };
 
 		return;

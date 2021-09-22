@@ -2862,11 +2862,17 @@ VQ_Element.prototype = {
   // --> [{exp:string}]
   // returns an array of conditions' expressions
   getConditions: function() {
-    return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
+	 return this.getMultiCompartmentSubCompartmentValues("Conditions",
+    [{title:"exp",name:"Expression"},
+    {title:"allowResultMultiplication",name:"Allow result multiplication",transformer:function(v) {return v=="true"}}]);
+    // return this.getMultiCompartmentValues("Conditions").map(function(c) {return {exp:c}});
   },
   // string -->
-  addCondition: function(condition) {
-    this.addCompartmentSubCompartments("Conditions",[{name:"Expression", value:condition}])
+  addCondition: function(condition, allowResultMultiplication) {
+    this.addCompartmentSubCompartments("Conditions",[
+	  {name:"Expression", value:condition},
+	  {name:"Allow result multiplication",value:this.boolToString(allowResultMultiplication)}
+	])
   },
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
