@@ -141,6 +141,7 @@ autoCompletionAddAttribute = async function(e) {
 autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	symbolTable = await generateSymbolTableAC();
+	console.log("autoCompletionAddLink", e.originalEvent.target.value)
 	await autoCompletion(e);
 },
 
@@ -170,7 +171,7 @@ autoCompletion = async function(e) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
-
+		console.log("autoCompletion text", text, e, e.originalEvent.target.value);
 		var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
@@ -222,6 +223,7 @@ async function keyUpHandler(e){
 		if(m != null) {
 			removeMessage();
 			var text = e.target.value;
+			console.log("keyUpHandler text", text);
 			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
 			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
@@ -241,6 +243,7 @@ async function keyUpHandler(e){
 			removeMessage();
 			var text = e.target.value;
 			// var continuations = runCompletion(text, Session.get("activeElement"));
+			console.log("keyUpHandler2 text", text);
 			var textBefore = text.substring(0, e.target.selectionStart);
 			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
@@ -575,35 +578,38 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			}
 			return c;
 	}
-	else if(grammarType == "link"){
-		var p = {};
-		p["prefix"] = "";
-		p["suggestions"] = [];
-		var params = {propertyKind:'Object'};
-		if (fullText != "") params.filter = fullText;
-		var selected_elem_id = Session.get("activeElement");	
-		var elFrom;
-		var elTo;
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+	// else if(grammarType == "link"){
+		
+		// console.log("LLLLLLLLLLLLLLLLLLLLLLLL")
+		
+		// var p = {};
+		// p["prefix"] = "";
+		// p["suggestions"] = [];
+		// var params = {propertyKind:'Object'};
+		// if (fullText != "") params.filter = fullText;
+		// var selected_elem_id = Session.get("activeElement");	
+		// var elFrom;
+		// var elTo;
+		// if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				
-			var vq_link = new VQ_Element(selected_elem_id);
-			if (vq_link.isLink()) {
-				var elements = vq_link.getElements();
-				elFrom = elements.start;
-				elTo = elements.end;
-			}
-		}
+			// var vq_link = new VQ_Element(selected_elem_id);
+			// if (vq_link.isLink()) {
+				// var elements = vq_link.getElements();
+				// elFrom = elements.start;
+				// elTo = elements.end;
+			// }
+		// }
 	
-		var props = await dataShapes.getProperties(params, elFrom, elTo);
-		props = props["data"];
-		for(var pr in props){
-			var prefix;
-			if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-			else prefix = props[pr]["prefix"]+":";
-			p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
-		}
-		return p;
-	}
+		// var props = await dataShapes.getProperties(params, elFrom, elTo);
+		// props = props["data"];
+		// for(var pr in props){
+			// var prefix;
+			// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+			// else prefix = props[pr]["prefix"]+":";
+			// p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
+		// }
+		// return p;
+	// }
 	else if(grammarType == "order"){
 		var c = {};
 			c["prefix"] = "";
@@ -762,15 +768,19 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 	else {
 		var act_elem = Session.get("activeElement");
 		try {
-			var schema = new VQ_Schema();
+			// var schema = new VQ_Schema();
 			
 			if(grammarType == "link"){
+				console.log("OOOOOOOOOOOOOOOOOOOOOOO", text)
 				var name_list = [];
 
 				if (act_elem) {
 					var vq_link = new VQ_Element(act_elem);
 					if (vq_link.isLink()) {
-						var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						// console.log("PPPPPPPPP", fullText, text)
+						// var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						
 					};
 				};
 			} else if(grammarType == "linkPath"){
@@ -781,7 +791,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					var className = compart["input"];
-					var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:act_elem, className:className});
+					var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:act_elem, className:className});
 				};
 			} else {
 
@@ -793,9 +803,9 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					if(typeof compart !== 'undefined') className = compart["input"];
 				}
-
+				// console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-				var parsed_exp = await vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				var parsed_exp = await vq_grammar_completion_parser.parse(text, {schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
 			// console.log(com);

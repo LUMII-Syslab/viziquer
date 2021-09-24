@@ -326,7 +326,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
 	   try {
-		  parse_obj = vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
+		  // parse_obj = await vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
+		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		} catch (e) {
 		  // TODO: error handling
 		 // console.log(e)

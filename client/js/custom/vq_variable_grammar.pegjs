@@ -12,50 +12,92 @@
 			// string -> idObject
 			// returns type of the identifier from symbol table. Null if does not exist.
 			// returns type of the identifier from symbol table. Null if does not exist.
-			function resolveTypeFromSymbolTable(id) {
+			async function resolveTypeFromSymbolTable(id) {
 				var context = options.context._id;
-				
+
 				if(typeof options.symbol_table[context] === 'undefined') return null;
-				
-				var st_row = options.symbol_table[context][id]; 
-				if (st_row) { 
+
+				var st_row = options.symbol_table[context][id];
+				if (st_row) {
 					if(st_row.length == 0) return null;
 					if(st_row.length == 1){
-						return st_row[0].type 
+						return st_row[0].type
 					}
 					if(st_row.length > 1){
 						for (var symbol in st_row) {
 							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
 						}
 					}
-					return st_row.type 
-				} else { 
-					return null 
-				} 
+					return st_row.type
+				} else {
+					return null
+				}
+				return null
 			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-			function resolveTypeFromSchemaForClass(id) {return options.schema.resolveClassByName(id) };
+			async function resolveTypeFromSchemaForClass(id) {
+				var cls = await dataShapes.resolveClassByName({name: id})
+				if(cls["complite"] == false) return null;
+				if(cls["data"].length > 0){
+					return cls["data"][0];
+				}
+				
+				return null;
+			};
 			// string -> idObject
 			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			function resolveTypeFromSchemaForAttributeAndLink(id) {
-				var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-				var res = aorl[0];
-				if (!res) { res = options.schema.resolveLinkByName(id)}
-				else {
-						res["parentType"] = aorl[1];
-				};
-				return res
+			async function resolveTypeFromSchemaForAttributeAndLink(id) {
+				
+				var aorl = await dataShapes.resolvePropertyByName({name: id})
+				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
+				if(aorl["complite"] == false) return null;
+				var res = aorl["data"][0];
+				if(res){
+					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
+					return res;
+				}
+				// if (!res) { 
+					// res = options.schema.resolveLinkByName(id); 
+					// if (res) res["property_type"] = "OBJECT_PROPERTY"
+				// }
+				// else {
+						// res["parentType"] = aorl[1];
+						// res["property_type"] = "DATA_PROPERTY";
+				// };
+				
+				return null
 			};
 			// string -> idObject
 			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
 			// then in schema. Null if does not exist
-			function resolveType(id) {var t=resolveTypeFromSymbolTable(id); if (!t) {t=resolveTypeFromSchemaForClass(id); if (!t) {t=resolveTypeFromSchemaForAttributeAndLink(id)}} return t;};
+			async function resolveType(id) {
+			  if(id !== "undefined"){
+			  var t=await resolveTypeFromSymbolTable(id);
+				if (!t) {
+					if (options.exprType) {
+					  t= await resolveTypeFromSchemaForClass(id);
+					  if (!t) {
+						  t=await resolveTypeFromSchemaForAttributeAndLink(id)
+					  }
+					} else {
+					  t=await resolveTypeFromSchemaForAttributeAndLink(id);
+					  if (!t) {
+						  t=await resolveTypeFromSchemaForClass(id)
+					  }
+					}
+
+				}
+			  return t;}
+			  return null;
+			};
 
 			
-			function checkIfVariable(Variable) {
+			async function checkIfVariable(Variable) {
 				var v=makeVar(Variable)
-				if(resolveType(v) == null ) return v.replace(/-/g, " - ");
+				if(await resolveType(v) == null ) return v.replace(/-/g, " - ");
 				return Variable;
 			};
 			

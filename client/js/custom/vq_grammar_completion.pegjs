@@ -266,12 +266,12 @@
         			
         			async function ifObjectDataProperty(o){
         				
-        				var varibleName;
+        				// var varibleName;
         				
-        				if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
-        				else  varibleName = makeVar(o);
-        				if(options.schema.resolveLinkByName(varibleName) != null) await addContinuation(await location(), ".", 99, false, 4, "end");
-        				if(await resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) await addContinuation(await location(), ":", 30, false, 4, "end");
+        				// if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
+        				// else  varibleName = makeVar(o);
+        				// if(options.schema.resolveLinkByName(varibleName) != null) await addContinuation(await location(), ".", 99, false, 4, "end");
+        				// if(await resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) await addContinuation(await location(), ":", 30, false, 4, "end");
         				
         				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
         				
@@ -314,7 +314,10 @@
     				};
         			
         			async function referenceNames(o) {
-    	
+						
+						
+						console.log("YYYYYYYYYYYYYYYYY", o)
+						
     					var classAliasTable = [];
         				for(var key in options["symbol_table"]){
         					for(var k in options["symbol_table"][key]){
