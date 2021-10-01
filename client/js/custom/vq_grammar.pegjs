@@ -294,7 +294,7 @@
 
 			UnaryExpressionList = space Unary:("*" / "/") space UnaryExpression:UnaryExpression {return {Unary:Unary, UnaryExpression:UnaryExpression}}
 
-			PrimaryExpression = BooleanLiteral / iriOrFunction / BuiltInCall /  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
+			PrimaryExpression = BooleanLiteral  / BuiltInCall / iriOrFunction/  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 			// PrimaryExpression = DoubleSquareBracketName
 			PrimaryExpression2 = BooleanLiteral / iriOrFunction / BuiltInCall2 /  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 
@@ -416,8 +416,8 @@
 			FunctionCOALESCE = PrimaryExpression1:PrimaryExpression2 space "??" space PrimaryExpression2:PrimaryExpression2 {return {Function:"coalesceShort", PrimaryExpression1:PrimaryExpression1, PrimaryExpression2:PrimaryExpression2}}
 
 			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
-			FunctionExpressionLANGMATCHESA = PrimaryExpression:(QName / LN) LANGTAG_MUL:LANGTAG_MUL {return {Function:"langmatchesShortMultiple", PrimaryExpression:PrimaryExpression, LANGTAG_MUL:LANGTAG_MUL}}
-			FunctionExpressionLANGMATCHESB = PrimaryExpression:(QName / LN) LANGTAG:LANGTAG {return {Function:"langmatchesShort", PrimaryExpression:PrimaryExpression, LANGTAG:makeVar(LANGTAG)}}
+			FunctionExpressionLANGMATCHESA = PrimaryExpression:(PrefixedName / QName / LN) LANGTAG_MUL:LANGTAG_MUL {return {Function:"langmatchesShortMultiple", PrimaryExpression:PrimaryExpression, LANGTAG_MUL:LANGTAG_MUL}}
+			FunctionExpressionLANGMATCHESB = PrimaryExpression:(PrefixedName / QName / LN) LANGTAG:LANGTAG {return {Function:"langmatchesShort", PrimaryExpression:PrimaryExpression, LANGTAG:makeVar(LANGTAG)}}
 
 			BOUNDFunction = Function: BOUND "(" space PrimaryExpression:PrimaryExpression space")" {return {Function:Function, PrimaryExpression:PrimaryExpression}}
 			NilFunction = Function: (RAND / NOW / UUID / STRUUID) NIL:NIL {return {Function:Function, NIL:NIL}}

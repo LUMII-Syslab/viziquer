@@ -2305,9 +2305,9 @@ vq_grammar_parser = (function() {
 
       s0 = await peg$parseBooleanLiteral();
       if (s0 === peg$FAILED) {
-        s0 = await peg$parseiriOrFunction();
+        s0 = await peg$parseBuiltInCall();
         if (s0 === peg$FAILED) {
-          s0 = await peg$parseBuiltInCall();
+          s0 = await peg$parseiriOrFunction();
           if (s0 === peg$FAILED) {
             s0 = await peg$parseRDFLiteral();
             if (s0 === peg$FAILED) {
@@ -6081,9 +6081,12 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = await peg$parseQName();
+      s1 = await peg$parsePrefixedName();
       if (s1 === peg$FAILED) {
-        s1 = await peg$parseLN();
+        s1 = await peg$parseQName();
+        if (s1 === peg$FAILED) {
+          s1 = await peg$parseLN();
+        }
       }
       if (s1 !== peg$FAILED) {
         s2 = await peg$parseLANGTAG_MUL();
@@ -6118,9 +6121,12 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = await peg$parseQName();
+      s1 = await peg$parsePrefixedName();
       if (s1 === peg$FAILED) {
-        s1 = await peg$parseLN();
+        s1 = await peg$parseQName();
+        if (s1 === peg$FAILED) {
+          s1 = await peg$parseLN();
+        }
       }
       if (s1 !== peg$FAILED) {
         s2 = await peg$parseLANGTAG();

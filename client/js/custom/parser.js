@@ -196,7 +196,7 @@ function createTriples(tripleTable, tripleType){
 				if(parseType == "attribute") {
 					var triple = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
 					if(attributeFilter != ""){
-						triple = triple+ "\n  FILTER("+attributeFilter+")\n";
+						triple = triple+ " FILTER("+attributeFilter+")";
 					}
 					triples.push(triple);
 				}
@@ -2960,7 +2960,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				var pe = generateExpression({PrimaryExpression : expressionTable[key]["PrimaryExpression"]}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
 				if(parseType == "attribute"){
 					SPARQLstring = pe
-					attributeFilter = "LANGMATCHES(LANG(" + pe + "), '" +expressionTable[key]["LANGTAG"].substring(1) + "')";
+					attributeFilter = "LANG(" + pe + ") = '" +expressionTable[key]["LANGTAG"].substring(1) + "'";
 				}				
 			}else if(typeof expressionTable[key]["Function"]!== 'undefined' && expressionTable[key]["Function"] == "langmatchesShortMultiple"){
 				attributeFilter = true;

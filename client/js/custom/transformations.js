@@ -978,6 +978,8 @@ Interpreter.customMethods({
 		
 		console.log("editor", editor, x, y);
 		
+		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
+		
 		for(var query in queries){
 			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x, y);
 			x = x+170;
@@ -990,12 +992,7 @@ Interpreter.customMethods({
 		// var query_text = yasqe3.getValue();	
 		// try {
 		    // var queries = JSON.parse(query_text);
-		
-			// var x = 10;
-			// for(var query in queries){
-				// Interpreter.customExtensionPoints.generateVisualQuery(queries[query]["sparql"], x, queries[query]["id"], queries[query]["question"]);
-				// x = x+170;
-			// }
+			// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		// } catch (error) {
 		  // var x = 10;
 		  // Interpreter.customExtensionPoints.generateVisualQuery(query_text, x);
