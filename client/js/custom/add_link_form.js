@@ -360,18 +360,22 @@ Template.AddLink.events({
 		clearAddLinkInput();
 	},
 	
-	"click #select-class-button": async function() { 
+	"click #select-class-button": async function(e) { 
 		
 		var obj = $('input[name=link-list-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
 		var name = obj.attr("name");
+		if(typeof name === "undefined") name = $(e.target).closest(".association").attr("name");
 		var line_direct = obj.attr("line_direct");
+		if(typeof line_direct === "undefined") line_direct = $(e.target).closest(".association").attr("line_direct");
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = obj.attr("className");
 
 		var classes;
-		if(name == "==" || name == "++") classes = await dataShapes.getClasses();
+		if(name == "==" || name == "++") {
+			classes = await dataShapes.getClasses();
+		}
 		else {
 			var params = {};
 			if(line_direct == "=>") {
@@ -388,10 +392,7 @@ Template.AddLink.events({
 			classes = await dataShapes.getClassesFull(params);
 		}
 		classes = classes.data;
-		
-		
-		
-		
+	
 		
 		_.each(classes, function(e){
 			var prefix;
