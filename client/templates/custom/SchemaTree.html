@@ -5,9 +5,10 @@
         <div class="dd" id="nestable">
 			{{#if empty }}
 				<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
-			{{/if}}
-			<input id="filter_text" type="text" class="form-control" >
+			{{else}}
+			<input id="filter_text" type="text" class="form-control" value={{f1}} >
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+			{{#if nsInclude }}
 			<label class="form-check-label">
 				<input class="form-check-input" name = "dbo" id="dbo" value= "1" type="checkbox" checked={{dbo}}>
 				<span class="custom-checkbox"></span>
@@ -18,6 +19,7 @@
 				<span class="custom-checkbox"></span>
 				Exclude yago:
 			</label>
+			{{/if}}
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
 
@@ -26,7 +28,7 @@
 				{{/each}}
 
             </ol>
-
+			{{/if}}
         </div><!-- dd -->
     </div>
 

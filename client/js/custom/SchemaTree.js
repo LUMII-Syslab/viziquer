@@ -2,6 +2,10 @@
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaTree.Empty = new ReactiveVar("");
+Template.schemaTree.F1 = new ReactiveVar("");
+Template.schemaTree.NsInclude = new ReactiveVar("");
+Template.schemaTree.NsP = new ReactiveVar("");
+Template.schemaTree.NsM = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
 Template.schemaInstances.IsBigClass = new ReactiveVar("");
 Template.schemaInstances.Class = new ReactiveVar("");
@@ -17,14 +21,17 @@ Template.schemaTree.helpers({
 	classes: function() {
 		return Template.schemaTree.Classes.get();
 	},
+	nsInclude: function() {
+		return Template.schemaTree.NsInclude.get();
+	},
 	dbo: function() {
-		return dataShapes.schema.tree.dbo;
+		return Template.schemaTree.NsP.get();
 	},
 	yago: function() {
-		return dataShapes.schema.tree.yago;
+		return Template.schemaTree.NsM.get();
 	},
-	f: function() {
-		return dataShapes.schema.tree.filterC;
+	f1: function() {
+		return Template.schemaTree.F1.get();
 	},
 	empty: function() {
 		return Template.schemaTree.Empty.get();
@@ -81,15 +88,24 @@ async function setTreeTop (filter = '', plus = 0) {
 			Template.schemaTree.Classes.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
 
 	}
-		
-	if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
+
+	if ( dataShapes.schema.tree.dbo || dataShapes.schema.tree.yago) {
+		var namespaces = {};
+		if (dataShapes.schema.tree.dbo)
+			namespaces.in = ['dbo'];
+		if (dataShapes.schema.tree.yago)
+			namespaces.notIn = ['yago'];
+		params.namespaces = namespaces;
+	} 
+	
+	/*if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 		var namespaces = {};
 		if ($("#dbo").is(":checked"))
-			namespaces.in = ['dbo'];
+			namespaces.in = [;;dbo];
 		if ($("#yago").is(":checked"))
 			namespaces.notIn = ['yago'];
 		params.namespaces = namespaces;
-	}
+	} */
 	
 	var clFull = await dataShapes.getTreeClasses({main:params});
 	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
@@ -132,9 +148,10 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 }
 
 async function  useFilter (plus = 0) {
-	var text = $('#filter_text').val().toLowerCase();
+	//var text = $('#filter_text').val().toLowerCase();
+	var text = Template.schemaTree.F1.get().toLowerCase();
 	dataShapes.schema.tree.filterC = text;
-	setNS();
+	// ** setNS();
 	var treeTop = Template.schemaTree.Classes.get();
 	
 	if ( dataShapes.schema.tree.topClass != 0 ) 
@@ -149,7 +166,6 @@ async function  useFilterP (plus = 0) {
 	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text};
 	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
-		//params.namespaces = {notIn: ['dbp']};
 		params.orderByPrefix = `case when ns_id = 2 then 0 
 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
@@ -295,6 +311,7 @@ Template.schemaTree.events({
 	},
 	'click #filter': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
+		Template.schemaTree.F1.set($('#filter_text').val());
 		await useFilter();
 	},
 	'keydown #filter': async function(e) {
@@ -304,20 +321,28 @@ Template.schemaTree.events({
 	},
 	'click #dbo': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
+		setNS();
 		await useFilter ();
 	},
 	'click #yago': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
+		setNS();
 		await useFilter ();
 	},
 	'keyup #filter_text': async function(e){
 		if (e.keyCode == 13) {
+			Template.schemaTree.F1.set($('#filter_text').val());
 			await useFilter();
 		}
 		return;
 	},
 	'click #reload': async function(e){
+		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		Template.schemaTree.Empty.set(false);
+		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
+		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
+		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
+		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
 		await useFilterP ();
 		$("#class").val(dataShapes.schema.tree.class);	
@@ -329,17 +354,25 @@ Template.schemaTree.events({
 });
 
 Template.schemaTree.rendered = async function() {
-	//console.log("-----rendered schemaTree----")
+	console.log("-----rendered schemaTree----")
 
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
-	if (dataShapes.schema.empty)
+	if (dataShapes.schema.empty) {
 		Template.schemaTree.Empty.set(true);
+		Template.schemaTree.NsInclude.set(false);
+	}
 	else {
 		Template.schemaTree.Empty.set(false);
-		$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
+		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
+		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
+		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
+		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);		
+
+		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
 		await useFilter ();		
 	}
+
 	//Template.schemaTree.ClassPath.set([]);
 }
 

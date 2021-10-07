@@ -115,7 +115,7 @@ const findElementDataForProperty = (vq_obj) => {
 		params.className = class_name;
 
 	var pList = {in: [], out: []};	
-	if (dataShapes.schema.pp_rels) 
+	if (dataShapes.schema.use_pp_rels) 
 		pList = getPList(vq_obj);
 	
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
@@ -178,7 +178,8 @@ return {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
 			countI:MAX_IND_ANSWERS, 
-			plus:TREE_PLUS, 
+			plus:TREE_PLUS,
+			nsInclude: true,			
 			dbo: true, 
 			yago: false, 
 			dbp: true, 
@@ -210,37 +211,35 @@ dataShapes = {
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.schema =  proj.schema;
-				this.schema.showPrefixes = proj.showPrefixesForAllNames;
+				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				this.schema.empty = false;
-				this.schema.endpoint =  proj.endpoint; 
-				if (proj.schema === 'DBpedia') {
+				this.schema.endpoint =  proj.endpoint;
+				
+				var info = await callWithGet('info/');
+				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
+				this.schema.use_pp_rels = schema_info.use_pp_rels;
+
+				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'dbo:Person';
 					this.schema.tree.classes = classes;
 					this.schema.tree.b_classes = b_classes;
 				}
-				else if (proj.schema === 'Tweets_cov') {
+				else if (schema_info.tree_profile === 'DBpediaL') {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];
 					this.schema.tree.classes = c_list;
 					this.schema.tree.dbo = false;
-					this.schema.pp_rels = true;
 				}
 				else {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];
 					this.schema.tree.classes = c_list;
+					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
-					this.schema.pp_rels = false;
 				}
 
-				//this.schema.ontologies = {}; 
-				//this.schema.endpoint =  proj.endpoint;   // "https://dbpedia.org/sparql"
-				//this.schema.limit = MAX_ANSWERS;
-				//var list = {projectId: proj_id, set:{ filters:{list:ont_list}}};
-				//Utilities.callMeteorMethod("updateProject", list);
-				//this.schema.ontologies.list = ont_list;
 			}
 		}
 	},
