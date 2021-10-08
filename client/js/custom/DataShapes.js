@@ -352,6 +352,12 @@ dataShapes = {
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
 		return await this.callServerFunction("getProperties", allParams);
 	},
+	getNextProperties : async function(params = {}) {
+		// *** console.log("------------getNextProperties---"+ params.name +"---------------")
+		//dataShapes.getNextProperties({name: 'restingPlacePosition'})  
+		//dataShapes.getNextProperties({name: 'http://dbpedia.org/ontology/years'})
+		return await this.callServerFunction("getNextProperties",{main: params});
+	},	
 	getPropertiesFull : async function(params = {}) {
 		// *** console.log("------------GetProperties------------------")
 		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
