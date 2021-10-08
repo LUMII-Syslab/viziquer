@@ -1,0 +1,492 @@
+{
+    "namespace": "http://lumii.lv/ontologies/2016/mini-bkus-en#",
+	"schemaVersion": "2017-07-12",
+    "formatVersion": "0.2",
+    "Classes": [
+      {
+        "localName": "CPhysician",
+		"SuperClasses": []
+      },
+      {
+        "localName": "CDiagnosis",
+	    "SuperClasses": []
+      },
+      {
+        "localName": "CManipDescr",
+        "SuperClasses": []
+      },
+      {
+        "localName": "Patient",
+        "SuperClasses": []
+      },
+      {
+        "localName": "OutpatientEpisode",
+        "SuperClasses": []
+      },
+      {
+        "localName": "HospitalEpisode",
+        "SuperClasses": []
+      },
+      {
+        "localName": "TreatmentInWard",
+        "SuperClasses": []
+      },
+      {
+        "localName": "Manipulation",
+        "SuperClasses": []
+      }
+    ],
+    "Attributes": [
+      {
+        "localName": "personCode",
+        "type": "xsd:string",
+        "SourceClasses": [ 
+          "CPhysician",
+          "Patient"
+        ]
+      },
+      {
+        "localName": "name",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "CPhysician",
+          "CDiagnosis",
+          "CManipDescr",
+          "Patient"
+        ]
+      },
+      {
+        "localName": "surname",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "CPhysician",
+          "Patient"
+        ]
+      },
+      {
+        "localName": "code",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "CDiagnosis",
+          "CManipDescr"
+        ]
+      },
+      {
+        "localName": "cost",
+        "type": "xsd:double",
+        "SourceClasses": [
+          "CManipDescr"
+        ]
+      },
+      {
+        "localName": "gender",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "Patient"
+        ]
+      },
+      {
+        "localName": "birthDate",
+        "type": "xsd:date",
+        "SourceClasses": [
+          "Patient"
+        ]
+      },
+      {
+        "localName": "visitDate",
+        "type": "xsd:date",
+        "SourceClasses": [
+          "OutpatientEpisode"
+        ]
+      },
+      {
+        "localName": "visitDuration",
+        "type": "xsd:decimal",
+        "SourceClasses": [
+          "OutpatientEpisode"
+        ]
+      },
+      {
+        "localName": "visitCost",
+        "type": "xsd:double",
+        "SourceClasses": [
+          "OutpatientEpisode"
+        ]
+      },
+      {
+        "localName": "orderNo",
+        "type": "xsd:integer",
+        "SourceClasses": [
+          "OutpatientDiagnosisRecord",
+		  "AdmissionDiagnosisRecord",
+		  "DischargeDiagnosisRecord",
+		  "TreatmentInWard"
+        ]
+      },
+      {
+        "localName": "admissionTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "dischargeTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "dischargeReason",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "lengthInDays",
+        "type": "xsd:integer",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "totalCost",
+        "type": "xsd:double",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "caseRecordNo",
+        "type": "xsd:integer",
+        "SourceClasses": [
+          "HospitalEpisode"
+        ]
+      },
+      {
+        "localName": "ward",
+        "type": "xsd:string",
+        "SourceClasses": [
+          "TreatmentInWard"
+        ]
+      },
+      {
+        "localName": "arrivalTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "TreatmentInWard"
+        ]
+      },
+      {
+        "localName": "transferTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "TreatmentInWard"
+        ]
+      },
+      {
+        "localName": "isLastTr",
+        "type": "xsd:boolean",
+        "SourceClasses": [
+          "TreatmentInWard"
+        ]
+      },
+      {
+        "localName": "startingTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "Manipulation"
+        ]
+      },
+      {
+        "localName": "endingTime",
+        "type": "xsd:dateTime",
+        "SourceClasses": [
+          "Manipulation"
+        ]
+      }
+    ],
+    "Associations": [
+      {
+        "localName": "familyDoctor",
+        "ClassPairs": [
+          {
+            "SourceClass": "Patient",
+            "TargetClass": "CPhysician",
+            "inverseRole": "patient",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "physician",
+        "ClassPairs": [
+          {
+            "SourceClass": "OutpatientEpisode",
+            "TargetClass": "CPhysician",
+            "inverseRole": "outpatientEpisode",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "outpatientEpisode",
+        "ClassPairs": [
+          {
+            "SourceClass": "CPhysician",
+            "TargetClass": "OutpatientEpisode",
+            "inverseRole": "physician",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+          {
+            "SourceClass": "Patient",
+            "TargetClass": "OutpatientEpisode",
+            "inverseRole": "patient",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+      {
+        "localName": "referringPhysician",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CPhysician",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "hospitalEpisode",
+        "ClassPairs": [
+          {
+            "SourceClass": "Patient",
+            "TargetClass": "HospitalEpisode",
+            "inverseRole": "patient",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+		  {
+            "SourceClass": "TreatmentInWard",
+            "TargetClass": "HospitalEpisode",
+            "inverseRole": "treatmentInWard",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "responsiblePhysician",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CPhysician",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "attendingPhysician",
+        "ClassPairs": [
+          {
+            "SourceClass": "TreatmentInWard",
+            "TargetClass": "CPhysician",
+            "inverseRole": "treatmentInWard",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "treatmentInWard",
+        "ClassPairs": [
+          {
+            "SourceClass": "CPhysician",
+            "TargetClass": "TreatmentInWard",
+            "inverseRole": "attendingPhysician",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "TreatmentInWard",
+            "inverseRole": "hospitalEpisode",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+		  {
+            "SourceClass": "Manipulation",
+            "TargetClass": "TreatmentInWard",
+            "inverseRole": "manipulation",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      },
+	  {
+        "localName": "outpatientDiagnosis_main",
+        "ClassPairs": [
+          {
+            "SourceClass": "OutpatientEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+	  {
+        "localName": "outpatientDiagnosis_extra",
+        "ClassPairs": [
+          {
+            "SourceClass": "OutpatientEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+	  {
+        "localName": "outpatientDiagnosis",
+        "ClassPairs": [
+          {
+            "SourceClass": "OutpatientEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+      {
+        "localName": "admissionDiagnosis_main",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+	  {
+        "localName": "admissionDiagnosis_extra",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+	  {
+        "localName": "admissionDiagnosis",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+	  {
+        "localName": "dischargeDiagnosis",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+	  {
+        "localName": "dischargeDiagnosis_main",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+	  {
+        "localName": "dischargeDiagnosis_extra",
+        "ClassPairs": [
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "CDiagnosis",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+      {
+        "localName": "manipDescr",
+        "ClassPairs": [
+          {
+            "SourceClass": "Manipulation",
+            "TargetClass": "CManipDescr",
+            "inverseRole": "manipulation",
+            "minCardinality": 0,
+            "maxCardinality": 1
+          }
+        ]
+      },
+      {
+        "localName": "manipulation",
+        "ClassPairs": [
+          {
+            "SourceClass": "CManipDescr",
+            "TargetClass": "Manipulation",
+            "inverseRole": "manipDescr",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+          {
+            "SourceClass": "TreatmentInWard",
+            "TargetClass": "Manipulation",
+            "inverseRole": "treatmentInWard",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          }
+        ]
+      },
+      {
+        "localName": "patient",
+        "ClassPairs": [
+          {
+            "SourceClass": "CPhysician",
+            "TargetClass": "Patient",
+            "inverseRole": "familyDoctor",
+            "minCardinality": 0,
+            "maxCardinality": -1
+          },
+		  {
+            "SourceClass": "OutpatientEpisode",
+            "TargetClass": "Patient",
+            "inverseRole": "outpatientEpisode",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          },
+          {
+            "SourceClass": "HospitalEpisode",
+            "TargetClass": "Patient",
+            "inverseRole": "hospitalEpisode",
+            "minCardinality": 1,
+            "maxCardinality": 1
+          }
+        ]
+      }
+    ]
+  }
+
