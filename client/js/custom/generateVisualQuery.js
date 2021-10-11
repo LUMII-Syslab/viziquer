@@ -5,6 +5,7 @@ var y = 10;
 var width = 150;
 var height = 100;
 var counter = 0;
+VQ_Elements = {};
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -55,8 +56,9 @@ Interpreter.customMethods({
 		}
 		visitedClasses[ startClass["name"]] = true;
 		// Generate tree ViziQuer query structure, from class and link tables 
-		classesTable = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses);
-
+		var generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, []);
+		classesTable = generateClassCtructuretemp.clazz;
+		
 		classesTable["orderings"] = abstractTable["orderTable"];
 		if(typeof classesTable["groupings"] !== "undefined") classesTable["groupings"] = classesTable["groupings"].concat( abstractTable["groupTable"]);
 		else classesTable["groupings"] = abstractTable["groupTable"];
@@ -69,9 +71,13 @@ Interpreter.customMethods({
 		// Visualize query based on tree structure
 		var queryId = queries[query]["id"];
 		var queryQuestion = queries[query]["question"];
+		
+		VQ_Elements = {};
+		
 		await visualizeQuery(classesTable, null, queryId, queryQuestion);
 			// */	
-		// console.log("classesTable", classesTable, abstractTable);
+		 //console.log("classesTable", classesTable, abstractTable);
+		
 		
 		x = x+170;
 		y = yy;
@@ -103,6 +109,8 @@ Interpreter.customMethods({
 		// console.log("abstractTable", abstractTable);
 		
 		var classesTable = abstractTable["classesTable"];
+		var classCount = Object.keys(classesTable).length;
+		//console.log("TTTTTTTTTTTTTTT", Object.keys(classesTable).length);
 		// /*
 		var whereTriplesVaribles = getWhereTriplesVaribles(parsedQuery["where"]);
 		// Decide which class is a query start class
@@ -118,8 +126,9 @@ Interpreter.customMethods({
 		}
 		visitedClasses[ startClass["name"]] = true;
 		// Generate tree ViziQuer query structure, from class and link tables 
-		classesTable = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses);
-
+		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, []);
+		classesTable = generateClassCtructuretemp.clazz;
+		conditionLinks = generateClassCtructuretemp.conditionLinks;
 		classesTable["orderings"] = abstractTable["orderTable"];
 		if(typeof classesTable["groupings"] !== "undefined") classesTable["groupings"] = classesTable["groupings"].concat( abstractTable["groupTable"]);
 		else classesTable["groupings"] = abstractTable["groupTable"];
@@ -130,15 +139,55 @@ Interpreter.customMethods({
 		
 		// console.log("whereTriplesVaribles", whereTriplesVaribles);
 		// Visualize query based on tree structure
-		
+		VQ_Elements = {};
 		await visualizeQuery(classesTable, null, queryId, queryQuestion);
 			// */	
 		// console.log("classesTable", classesTable, abstractTable);
-		
+		var i = 0;
+		while(Object.keys(VQ_Elements).length < classCount && i < 10){
+			await delay(100);
+			i++;
+		}
 
+		 _.each(conditionLinks,function(condLink) {
+			
+			var linkName = condLink["identification"]["local_name"];
+			var isNot = condLink["isNot"];
+			var isInverse = condLink["isInverse"];
+			var linkType = "REQUIRED";
+			
+			 var target = new VQ_Element(VQ_Elements[condLink.target]);
+			 var source = new VQ_Element(VQ_Elements[condLink.source]);
+			 
+			 var tCoordinates = target.getCoordinates();
+			 var sCoordinates = source.getCoordinates();
+			 
+			  var coordX = tCoordinates.x + Math.round(tCoordinates.width/2)+20;
+				var coordY = sCoordinates.y + sCoordinates.height;
+				var locLink = [];
+
+				if(isInverse != true){
+					locLink = [coordX, coordY, coordX, tCoordinates.y]; 
+					Create_VQ_Element(function(linkLine) {
+						linkLine.setName(linkName);
+						linkLine.setLinkType(linkType);
+						linkLine.setNestingType("CONDITION");
+					}, locLink, true, target, source);
+				} else {
+					locLink = [coordX, tCoordinates.y, coordX, coordY];
+					Create_VQ_Element(function(linkLine) {
+						linkLine.setName(linkName);
+						linkLine.setLinkType(linkType);
+						linkLine.setNestingType("CONDITION");
+					}, locLink, true, source, target);
+				}
+			//TODO create condition link
+		})
 	  });
   },
 });
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 // Generate ViziQuer query abstract syntax tables
 async function generateAbstractTable(parsedQuery, allClasses, variableList, parentNodeList){
@@ -1090,6 +1139,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				"isSubQuery":true,
 				"isGlobalSubQuery":false,
 			}
+
+			
 			linkTable.push(link);
 			linkTableAdded.push(link);
 		}
@@ -1131,6 +1182,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					"isSubQuery":true,
 					"isGlobalSubQuery":false,
 				}
+
 				linkTable.push(link);
 				linkTableAdded.push(link);
 				
@@ -1679,9 +1731,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		//exists
 		else if(where["operator"] == "exists"){
 			var nodeLitsTemp = [];
-			
-			console.log("EEEEEEEEEEEEEEEEEE", where)
-			
+
 			if(where["args"].length == 1 && where["args"][0]["type"] == "bgp" && where["args"][0]["triples"].length == 1){
 				var collectNodeListTemp  = await collectNodeList(where["args"]);
 				var temp  = collectNodeListTemp["nodeList"];
@@ -2093,7 +2143,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						"isSubQuery":true,
 						"isGlobalSubQuery":false,
 					}
-					
+
 					linkTable.push(link);
 					linkTableAdded.push(link);
 					linkFound = true;
@@ -2118,6 +2168,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						"isSubQuery":true,
 						"isGlobalSubQuery":false,
 					}
+	
 					linkTable.push(link);
 					linkTableAdded.push(link);
 					linkFound = true;
@@ -2137,6 +2188,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(typeof nodeList[node] !== 'undefined'){
 					for(var classNode in abstractTable["nodeList"][node]["uses"]){
 						for(var classParentNode in nodeList[node]["uses"]){
+
 							var link = {
 								"linkIdentification":{local_name: "==", short_name: "=="},
 								"object":classParentNode,
@@ -2146,12 +2198,15 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								"isSubQuery":true,
 								"isGlobalSubQuery":false,
 							}
+							
 							linkTable.push(link);
 							linkTableAdded.push(link);
 						}
 					}
 				}
 			}
+			
+			// if class from parentNodeList in nodeList dont has attributes, except (select this), and nodeList class has link, relink it to parentNodeList and make subquery
 			
 			// if no equals nodes found, connect subquery main class, with parent query class, without outgoing links
 			// TO DO
@@ -2164,7 +2219,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				break;
 			}
 		}
-
+		
 		abstractTable["classesTable"][subSelectMainClass]["orderings"] = abstractTable["orderTable"];
 		abstractTable["classesTable"][subSelectMainClass]["groupings"] = abstractTable["groupings"];
 		if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
@@ -3143,7 +3198,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						}	
 					} else {
 						// object properties or data properties under optionalLink
-						
 						var linkResolved = attributeResolved.data[0];
 						
 						var attributeResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]});
@@ -3156,6 +3210,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						// if not OP and is DP
 						// if (bgptype == "optionalLink" && linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
 						if(linkResolved == null){
+			
 							var predicateParsed = vq_visual_grammar.parse(triples[triple]["predicate"])["value"];
 							var linkName = await generateInstanceAlias(predicateParsed);
 						
@@ -3171,6 +3226,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						// if(bgptype == "optional" || bgptype == "optionalLink") linkType = "OPTIONAL";
 						
 						if(typeof unionSubject !== 'undefined' && unionSubject != null && triples[triple]["subject"] == unionSubject){
+				
 							var link = {
 								"linkIdentification":linkResolved,
 								"object":triples[triple]["object"],
@@ -3187,10 +3243,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							// for every object usage in nodeList, for every subject usage in nodeList - create link
 							// if object class has identification and does not has link
 							// and subject class has identification and does not has link -> do not create link
-
+						
 							var objectClasses = nodeList[triples[triple]["object"]]["uses"];
 							for(var oclass in objectClasses){
-								
+						
 								var createAssociation = true;
 								var associationCreated = false;
 								//var schema = new VQ_Schema();
@@ -3217,20 +3273,24 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
 
 								for(var sclass in subjectClasses){
-									
+					
 									// if multiple links with same name to same object and subject, then create only one
 									for(var link in linkTableAdded){
 										if(classesTable[linkTableAdded[link]["object"]]["instanceAlias"] == classesTable[oclass]["instanceAlias"] &&
 										classesTable[linkTableAdded[link]["subject"]]["instanceAlias"] == classesTable[sclass]["instanceAlias"] &&
 										linkTableAdded[link]["linkIdentification"]["short_name"] == linkResolved["short_name"]) {
 											associationCreated = true;
+			
 										}
 									}
 									if(Object.keys(subjectClasses).length > 1 || Object.keys(objectClasses).length > 1){
+							
+										
 										if (classesTable[sclass]["identification"] != null) {
 											
-											var resolvePropertyByNameAndClass = await dataShapes.checkProperty ({name:classesTable[sclass]["identification"]["iri"], propertyName: linkResolved["iri"]})
-											if(resolvePropertyByNameAndClass.data.length == 0) createAssociation = false;
+											var resolvePropertyByNameAndClass = await dataShapes.checkProperty({name:classesTable[sclass]["identification"]["iri"], propertyName: linkResolved["iri"]})
+											
+											// if(resolvePropertyByNameAndClass.data.length == 0) createAssociation = false;
 											
 											// var all_association = schema.findClassByName(classesTable[sclass]["identification"]["short_name"]).getAllAssociations();
 											// var associationInClass = false;
@@ -3785,15 +3845,21 @@ function addAggrigateToClass(classesTable, identification){
 }
 
 // Generate tree like ViziQuer query structure, from class and link tables 
-function generateClassCtructure(clazz, className, classesTable, linkTable, whereTriplesVaribles, visitedClasses){
+function generateClassCtructure(clazz, className, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks){
 	// In link table find all links with a subject or an object as given the class. Add class from opposite link end and link information, as given class children.
+	clazz.c_id = className;
 	for(var linkName in linkTable){
 		if(typeof linkTable[linkName]["isConditionLink"] === 'undefined'){
-			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false){
+			
+			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false){	
+
 				linkTable[linkName]["isVisited"] = true;
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses);
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks);
 				visitedClasses = tempAddClass["visitedClasses"];
+
+				conditionLinks = tempAddClass["conditionLinks"];
 				if(typeof visitedClasses[linkTable[linkName]["object"]] === 'undefined' || visitedClasses[linkTable[linkName]["object"]] != true){
+					
 					clazz["children"] = addChildren(clazz);
 					var childerenClass = tempAddClass["childrenClass"];
 		
@@ -3852,13 +3918,35 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						// childerenClass["isVisited"] = true;
 						visitedClasses[linkTable[linkName]["object"]] = true;
 					}
+				} else {
+					// condition links
+					if(linkTable[linkName]["subject"] == className){
+						linkTable[linkName]["isVisited"] = true;
+						var conditinClass = classesTable[linkTable[linkName]["subject"]];
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["object"], true, false)
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["subject"];
+						conditionLinks.push(clink);
+					} else if(linkTable[linkName]["object"] == className){
+						var conditinClass = classesTable[linkTable[linkName]["object"]];
+						linkTable[linkName]["isVisited"] = true;
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["subject"], false, false);
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["object"];
+						conditionLinks.push(clink);
+					}	
 				}
 
 			} else if(linkTable[linkName]["object"] == className && linkTable[linkName]["isVisited"] == false){
+
 				linkTable[linkName]["isVisited"] = true;
 				clazz["children"] = addChildren(clazz);
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses)
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks)
 				visitedClasses = tempAddClass["visitedClasses"];
+				conditionLinks = tempAddClass["conditionLinks"];
+				
 				if(typeof visitedClasses[linkTable[linkName]["subject"]] === 'undefined' || visitedClasses[linkTable[linkName]["subject"]] != true){
 					var childerenClass = tempAddClass["childrenClass"];
 					
@@ -3867,23 +3955,53 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 					visitedClasses[linkTable[linkName]["subject"]] = true;
 					
 				}
+				else {
+					// condition links
+					if(linkTable[linkName]["subject"] == className){
+						linkTable[linkName]["isVisited"] = true;
+						var conditinClass = classesTable[linkTable[linkName]["subject"]];
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["object"], true, false)
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["subject"];
+						conditionLinks.push(clink);
+					} else if(linkTable[linkName]["object"] == className){
+						var conditinClass = classesTable[linkTable[linkName]["object"]];
+						linkTable[linkName]["isVisited"] = true;
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["subject"], false, false);
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["object"];
+						conditionLinks.push(clink);
+					}	
+				}
 			}
 		} else {
+			
 			// condition links
-			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false){
-				linkTable[linkName]["isVisited"] = true;
-				var conditinClass = classesTable[linkTable[linkName]["subject"]];
-				conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
-				conditinClass["conditionLinks"].push(addConditinClass(linkTable[linkName], linkTable[linkName]["object"], true, false));
-			} else if(linkTable[linkName]["object"] == className && linkTable[linkName]["isVisited"] == false){
-				var conditinClass = classesTable[linkTable[linkName]["object"]];
-				linkTable[linkName]["isVisited"] = true;
-				conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
-				conditinClass["conditionLinks"].push(addConditinClass(linkTable[linkName], linkTable[linkName]["subject"], false, false));
+			if(linkTable[linkName]["isVisited"] != true){
+				if(linkTable[linkName]["subject"] == className){
+						linkTable[linkName]["isVisited"] = true;
+						var conditinClass = classesTable[linkTable[linkName]["subject"]];
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["object"], true, false)
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["subject"];
+						conditionLinks.push(clink);
+				} else if(linkTable[linkName]["object"] == className){
+						var conditinClass = classesTable[linkTable[linkName]["object"]];
+						linkTable[linkName]["isVisited"] = true;
+						conditinClass["conditionLinks"] = addConditionLinks(conditinClass);
+						var clink = addConditinClass(linkTable[linkName], linkTable[linkName]["subject"], false, false);
+						conditinClass["conditionLinks"].push(clink);
+						clink.source = linkTable[linkName]["object"];
+						conditionLinks.push(clink);
+				}	
 			}
 		}
 	}
-	return clazz;
+
+	return {clazz:clazz, conditionLinks:conditionLinks};
 }
 
 function addChildren(clazz){
@@ -3895,16 +4013,17 @@ function addConditionLinks(clazz){
 	return clazz["conditionLinks"];
 }
 
-function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses){
+function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks){
 
 	childrenClass["isInverse"] = isInverse;
 	childrenClass["linkIdentification"] = linkInformation["linkIdentification"];
 	childrenClass["linkType"] = linkInformation["linkType"];
 	childrenClass["isSubQuery"] = linkInformation["isSubQuery"];
-	childrenClass["isGlobalSubQuery"] = linkInformation["isGlobalSubQuery"];;
-	childrenClass = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses);
+	childrenClass["isGlobalSubQuery"] = linkInformation["isGlobalSubQuery"];
+	generateClassCtructureTemp = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks);
+	childrenClass = generateClassCtructureTemp.clazz;
 
-	return {childrenClass:childrenClass, visitedClasses:visitedClasses};
+	return {childrenClass:childrenClass, visitedClasses:visitedClasses, conditionLinks:conditionLinks};
 }
 
 function addConditinClass(linkInformation, targetClass, isInverse, isNot){
@@ -4019,6 +4138,7 @@ function buildPathElement(pathElement){
 
 // Visualize query based on tree structure
 async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
+	
 	//node type
 	var nodeType = "condition";
 	if(parentClass == null) nodeType = "query";
@@ -4049,6 +4169,8 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 		var oldPosition = parentClass.getCoordinates(); //Old class coordinates and size
 		newPosition = parentClass.getNewLocation(d); //New class coordinates and size
 	}
+	
+	
 	
 	var new_elem_id = Create_VQ_Element(function(classBox) {
 		if(className != null && className != "") classBox.setName(className);
@@ -4224,6 +4346,8 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 			//TODO find second class
 			//TODO create condition link
 		})
+	
+	VQ_Elements[clazz.c_id] = classBox.obj._id;
 	}, newPosition);
 }
 
