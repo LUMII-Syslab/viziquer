@@ -86,7 +86,10 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	var prefix = "";
 
 	if(typeof obj_class.identification.prefix !== 'undefined' && obj_class.identification.prefix != "") prefix = obj_class.identification.prefix + ":";
-	var par = await parseExpression(prefix+obj_class.identification.display_name, "CLASS_NAME", obj_class.identification)
+	
+	var display_name = prefix+obj_class.identification.display_name;
+	if(typeof obj_class.identification.display_name === "undefined") display_name = obj_class.identification.local_name;
+	var par = await parseExpression(display_name, "CLASS_NAME", obj_class.identification)
     _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
