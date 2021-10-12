@@ -1,5 +1,8 @@
 
 Template.schemaFilter.Properties = new ReactiveVar("");
+Template.schemaFilter.F2 = new ReactiveVar("");
+Template.schemaFilter.PropKind = new ReactiveVar("");
+Template.schemaFilter.BL = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaTree.Empty = new ReactiveVar("");
 Template.schemaTree.F1 = new ReactiveVar("");
@@ -10,6 +13,7 @@ Template.schemaInstances.Instances = new ReactiveVar("");
 Template.schemaInstances.IsBigClass = new ReactiveVar("");
 Template.schemaInstances.Class = new ReactiveVar("");
 Template.schemaInstances.Classes = new ReactiveVar("");
+Template.schemaInstances.F3 = new ReactiveVar("");
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
@@ -161,7 +165,8 @@ async function  useFilter (plus = 0) {
 }
 
 async function  useFilterP (plus = 0) {
-	var text = $('#filter_text2').val().toLowerCase();
+	//var text = $('#filter_text2').val().toLowerCase();
+	var text = Template.schemaFilter.F2.get().toLowerCase();
 	dataShapes.schema.tree.filterP = text;
 	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text};
 	var col = 'cnt_x';
@@ -196,7 +201,8 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 }
 
 async function  useFilterI (plus = 0) {
-	var text = $('#filter_text3').val();
+	//var text = $('#filter_text3').val();
+	var text = Template.schemaInstances.F3.get();
 	dataShapes.schema.tree.filterI = text;
 	var params = { limit: dataShapes.schema.tree.countI, filter:text};
 	//var className = $("#class").val();
@@ -221,7 +227,7 @@ Template.schemaTree.events({
 		var tree_node_id = toggle_button[0].attributes["node-id"].value;
 		var topClass = dataShapes.schema.tree.topClass;
 		//Template.schemaTree.Count.set(startCount);
-		$("#filter_text")[0].value = '';
+		Template.schemaTree.F1.set('');
 		dataShapes.schema.tree.filterC = '';
 
 		if ( tree_node_id == 0 ) {
@@ -258,7 +264,9 @@ Template.schemaTree.events({
 			}
 		}
 	},
-
+	'click .class-body': async function(e) {
+		console.log(e)
+	},
 	"dblclick .class-body": async function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
 
@@ -316,17 +324,21 @@ Template.schemaTree.events({
 	},
 	'keydown #filter': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
-		if ( e.keyCode === 13 )
+		if ( e.keyCode === 13 ) {
+			Template.schemaTree.F1.set($('#filter_text').val());
 			await useFilter();
+		}
 	},
 	'click #dbo': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
 		setNS();
+		Template.schemaTree.F1.set($('#filter_text').val());
 		await useFilter ();
 	},
 	'click #yago': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
 		setNS();
+		Template.schemaTree.F1.set($('#filter_text').val());
 		await useFilter ();
 	},
 	'keyup #filter_text': async function(e){
@@ -344,10 +356,14 @@ Template.schemaTree.events({
 		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
+		Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
+		Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
+		Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
 		await useFilterP ();
-		$("#class").val(dataShapes.schema.tree.class);	
+		//$("#class").val(dataShapes.schema.tree.class);	
+		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
-		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { return {name:v}}));		
+		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
 		await useFilterI ();	
 	},	
 	
@@ -366,7 +382,7 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaTree.Empty.set(false);
 		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
 		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
-		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
+		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);		
 
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
@@ -378,8 +394,9 @@ Template.schemaTree.rendered = async function() {
 
 Template.schemaFilter.rendered = async function() {
 	//console.log("-----rendered schemaFilter----")
-	$("#filter_text2")[0].value = dataShapes.schema.tree.filterP;
-	$("#propType").val(dataShapes.schema.tree.pKind);
+	Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
+	Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
+	Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
 	await useFilterP ();
 	
 	//var pFull = await dataShapes.getTreeProperties({propertyKind:'All', limit: dataShapes.schema.tree.countP, orderByPrefix: `case when ns_id = 2 then 0 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`});
@@ -391,10 +408,11 @@ Template.schemaFilter.rendered = async function() {
 
 Template.schemaInstances.rendered = async function() {
 	//console.log("-----rendered schemaInstances----")
-	$("#filter_text3")[0].value = dataShapes.schema.tree.filterI;
-	$("#class").val(dataShapes.schema.tree.class);
+	//$("#filter_text3")[0].value = dataShapes.schema.tree.filterI;
+	//$("#class").val(dataShapes.schema.tree.class);
+	Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
-	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { return {name:v}}));
+	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
 	setBC();
 	await useFilterI ();
 }
@@ -404,13 +422,13 @@ Template.schemaFilter.helpers({
 		return Template.schemaFilter.Properties.get();
 	},
 	f: function() {
-		return dataShapes.schema.tree.filterP;
+		return Template.schemaFilter.F2.get();
 	},
 	dbp: function() {
-		return dataShapes.schema.tree.dbp;
+		return Template.schemaFilter.BL.get();
 	},
 	pKind: function() {
-		return dataShapes.schema.tree.pKind;
+		return Template.schemaFilter.PropKind.get();
 	},
 });
 
@@ -513,22 +531,28 @@ Template.schemaFilter.events({
 	},
 	'click #filter2': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
+		Template.schemaFilter.F2.set($('#filter_text2').val());
 		await useFilterP();
 	},
 	'keydown #filter2': async function(e) {
-		if ( e.keyCode === 13 )
+		if ( e.keyCode === 13 ) {
+			Template.schemaFilter.F2.set($('#filter_text2').val());
 			await useFilterP();
+		}
 	},
 	'click #dbp': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
+		Template.schemaFilter.F2.set($('#filter_text2').val());
 		useFilterP ();
 	},
 	'click #propType': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
+		Template.schemaFilter.F2.set($('#filter_text2').val());
 		useFilterP ();
 	},
 	'keyup #filter_text2': async function(e){
 		if (e.keyCode == 13) {
+			Template.schemaFilter.F2.set($('#filter_text2').val());
 			await useFilterP();
 		}
 		return;
@@ -540,7 +564,7 @@ Template.schemaInstances.helpers({
 		return Template.schemaInstances.Instances.get();
 	},
 	f: function() {
-		return dataShapes.schema.tree.filterI;
+		return Template.schemaInstances.F3.get();
 	},
 	class: function() {
 		return Template.schemaInstances.Class.get();
@@ -599,16 +623,19 @@ Template.schemaInstances.events({
 		}		
 	},
 	'click #filter3': async function(e) {
+		Template.schemaInstances.F3.set($('#filter_text3').val());
 		await useFilterI();
 	},
 	'keydown #filter3': async function(e) {
-		if ( e.keyCode === 13 )
+		if ( e.keyCode === 13 ) {
+			Template.schemaInstances.F3.set($('#filter_text3').val());
 			await useFilterI();
+		}
 	},
 	'click #class': async function(e) {
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class) {
-			$("#filter_text3")[0].value = '';
+			Template.schemaInstances.F3.set('');
 			dataShapes.schema.tree.filterI = '';
 			dataShapes.schema.tree.class = className;
 			Template.schemaInstances.Class.set(className);
@@ -618,6 +645,7 @@ Template.schemaInstances.events({
 	},
 	'keyup #filter_text3': async function(e){
 		if (e.keyCode == 13) {
+			Template.schemaInstances.F3.set($('#filter_text3').val());
 			await useFilterI();
 		}
 		return;
