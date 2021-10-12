@@ -585,10 +585,10 @@
 										<div class="form-group">
 											<label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
 											<div class="col-sm-9">
-												<select class="form-control" id="use-string-literal-conversion" value="{{useStringLiteralConversion}}">
-												  <option>SIMPLE</option>
-												  <option>TYPED</option>
-												  <option>OFF</option>
+												<select class="form-control" id="use-string-literal-conversion" >
+												    {{#each useStringLiteralConversionList}}
+														<option {{selected}} value="{{name}}">{{name}}</option>
+													{{/each}}
 												</select>
 											</div>
 										</div>
@@ -596,9 +596,10 @@
 										<div class="form-group">
 											<label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
 											<div class="col-sm-9">
-												<select class="form-control" id="query-engine-type" value="{{queryEngineType}}">
-												  <option>VIRTUOSO</option>
-												  <option>GENERAL</option>
+												<select class="form-control" id="query-engine-type">
+												  {{#each queryEngineTypeList}}
+													 <option {{selected}} value="{{name}}">{{name}}</option>
+												  {{/each}}
 												</select>
 											</div>
 										</div>

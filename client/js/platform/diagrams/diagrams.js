@@ -904,18 +904,35 @@ Template.ontologySettings.helpers({
 		return ss;
 	},
 	
-	useStringLiteralConversion: function() {
+	useStringLiteralConversionList: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var act = 'SIMPLE';
 		if (proj) {
-			return proj.useStringLiteralConversion;
+			act = proj.useStringLiteralConversion;
 		}
+		var list = [{name:'SIMPLE'}, {name:'TYPED'}, {name:'OFF'}];
+		var selected = list.filter(function(o){ return o.name == act})[0];
+		selected["selected"] = "selected";
+		return list;
 	},
 
-	queryEngineType: function() {
+	queryEngineTypeList: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var act = 'VIRTUOSO';
 		if (proj) {
-			return proj.queryEngineType;
+			act = proj.queryEngineType;
 		}
+		var list = [];
+		if ( act == 'VIRTUOSO') {
+			list.push({name: 'VIRTUOSO', selected: 'selected'});
+			list.push({name: 'GENERAL'});
+		}
+		else
+		{
+			list.push({name: 'VIRTUOSO'});
+			list.push({name: 'GENERAL', selected: 'selected'});
+		}
+		return list;
 	},
 
 	defaultGroupingSeparator: function() {
