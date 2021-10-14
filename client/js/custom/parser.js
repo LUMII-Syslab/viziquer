@@ -1133,7 +1133,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
 			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
 			if(underOptionalPlain == false && underUnion == false){
-				
 				if(typeof  expressionTable[key]["ReferencePath"] !== "undefined"){
 					var path = getPathFullGrammar(expressionTable[key]["ReferencePath"]);
 					//var variable = setVariableName(path["variable"]["var"]["name"]);
@@ -1151,7 +1150,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							applyExistsToFilter = false;
 						}
 						tripleTable.push({"var":"?"+variable, "prefixedName":path["path"].substring(1), "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
-
 					}
 					variableTable.push("?" + variable);
 					SPARQLstring = SPARQLstring + "?" + variable;
@@ -1176,7 +1174,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						// if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && (variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
 						// || variableData["type"] != null && false)) inFilter = true;
 						tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
-
 					}
 					variableTable.push("?" + variable);
 					SPARQLstring = SPARQLstring + "?" + variable;
@@ -2686,10 +2683,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						)
 					    ||(((typeof right["var"] !== 'undefined' && typeof right["var"]["kind"] !== 'undefined' && right["var"]["kind"] == "PROPERTY_NAME") 
 						|| typeof right["Path"] !== 'undefined' 
-						|| typeof right["Reference"] !== 'undefined')
+						|| typeof right["Reference"] !== 'undefined'
+						)
 						&& typeof left["var"] === 'undefined' 
 						&& typeof left["Path"] === 'undefined' 
 						&& typeof left["Reference"] === 'undefined'
+						&& (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] === 'undefined')
 						)
 					)){
 						

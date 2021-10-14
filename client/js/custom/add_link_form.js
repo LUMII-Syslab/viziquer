@@ -182,8 +182,10 @@ Template.SelectTargetClass.events({
 		classes = classes.data;
 		
 		_.each(classes, function(e){
+			
+			console.log("CCCCCCCCCCCCC", e)
 			var prefix;
-			if(e.class_is_local == true)prefix = "";
+			if(e.class_is_local == true || e.prefix == "")prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;
 			if(e.principal_class == 2) e.clr = "color: purple";
@@ -365,13 +367,14 @@ Template.AddLink.events({
 		var obj = $('input[name=link-list-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
-		var name = obj.attr("name");
-		if(typeof name === "undefined") name = $(e.target).closest(".association").attr("name");
+		// var name = obj.attr("name");
+		// if(typeof name === "undefined") 
+		var name = $(e.target).closest(".association").attr("name");
 		var line_direct = obj.attr("line_direct");
 		if(typeof line_direct === "undefined") line_direct = $(e.target).closest(".association").attr("line_direct");
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
-		var class_name = obj.attr("className");
-
+		var class_name = $(e.target).closest(".association").attr("className");
+			
 		var classes;
 		if(name == "==" || name == "++") {
 			classes = await dataShapes.getClasses();
@@ -393,10 +396,9 @@ Template.AddLink.events({
 		}
 		classes = classes.data;
 	
-		
 		_.each(classes, function(e){
 			var prefix;
-			if(e.class_is_local == true)prefix = "";
+			if(e.class_is_local == true || e.prefix == "")prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;	
 
@@ -404,6 +406,9 @@ Template.AddLink.events({
 			else if(e.principal_class == 0) e.clr = "color: #bbbbbb";
 			else e.clr = "color: #777777";
 		})
+		
+		classes = classes.filter(function(e) { return e.short_class_name !== class_name });
+		
 		if(class_name != null & class_name !== "" && class_name != " "){
 			classes.unshift({short_class_name:class_name, clr: "color: #777777"})
 		}
@@ -907,6 +912,7 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 				}
 				
 				var prop = await dataShapes.getProperties(param, startElement);
+				
 				var allAssociations = prop["data"];
 				
 				_.each(allAssociations, function(e){
