@@ -94,10 +94,21 @@ const getPList = (vq_obj) => {
 	return pList;
 }
 
+// string -> int
+// function checks if the text is uri
+// 0 - not URI, 3 - full form, 4 - short form
+function isURI(text) {
+  if(text.indexOf("://") != -1)
+    return 3;
+  else
+    if(text.indexOf(":") != -1) return 4;
+  return 0;
+};
+
 const findElementDataForClass = (vq_obj) => {
 	var params = {}
 	var individual =  vq_obj.getInstanceAlias();
-	if (individual !== null && individual !== undefined)
+	if (individual !== null && individual !== undefined && isURI(individual) != 0) 
 		params.uriIndividual = individual;
 
 	var pList = getPList(vq_obj);
@@ -109,7 +120,7 @@ const findElementDataForProperty = (vq_obj) => {
 	var params = {};
 	var individual =  vq_obj.getInstanceAlias();
 	var class_name = vq_obj.getName();
-	if (individual !== null && individual !== undefined)
+	if (individual !== null && individual !== undefined && isURI(individual) != 0)
 		params.uriIndividual = individual;
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
@@ -214,6 +225,7 @@ dataShapes = {
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
+				this.schema.uri =  proj.uri;
 				
 				var info = await callWithGet('info/');
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
@@ -266,6 +278,7 @@ dataShapes = {
 		if (s !== "" && s !== undefined )
 		{
 			params.main.endpointUrl = this.schema.endpoint;
+			params.main.namedGraph  = this.schema.uri;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
