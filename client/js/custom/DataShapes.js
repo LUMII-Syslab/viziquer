@@ -225,7 +225,8 @@ dataShapes = {
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
-				this.schema.uri =  proj.uri;
+				if ( proj.uri != undefined )
+					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
 				var info = await callWithGet('info/');
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
@@ -251,7 +252,9 @@ dataShapes = {
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 				}
-
+				this.schema.tree.classes.unshift('All classes LN');  // TODO
+				this.schema.tree.classes.unshift('All classes T');  // TODO
+				this.schema.tree.classes.unshift('All classes U');  // TODO
 			}
 		}
 	},
@@ -259,6 +262,7 @@ dataShapes = {
 		console.log("---------callServerFunction--------------" + funcName)
 		console.log(params)
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
+		startTime = Date.now();
 		var s = this.schema.schema;
 		if (s === "" || s === undefined ) {
 			//console.log(Session.get("activeProject"))
@@ -287,6 +291,7 @@ dataShapes = {
 		else
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
 		console.log(rr)
+		console.log(Date.now() - startTime)
 		return await rr;
 	},
 	getNamespaces : async function(params = {}) {

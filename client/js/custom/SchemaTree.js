@@ -421,7 +421,7 @@ Template.schemaFilter.helpers({
 	properties: function() {
 		return Template.schemaFilter.Properties.get();
 	},
-	f: function() {
+	f2: function() {
 		return Template.schemaFilter.F2.get();
 	},
 	dbp: function() {
@@ -563,7 +563,7 @@ Template.schemaInstances.helpers({
 	instances: function() {
 		return Template.schemaInstances.Instances.get();
 	},
-	f: function() {
+	f3: function() {
 		return Template.schemaInstances.F3.get();
 	},
 	class: function() {
@@ -611,7 +611,8 @@ Template.schemaInstances.events({
 					 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-					boo.setName($("#class").val());
+					if (!$("#class").val().includes('All classes'))  // TODO
+						boo.setName($("#class").val());
 					boo.setInstanceAlias(i_name);
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
 					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
@@ -635,8 +636,8 @@ Template.schemaInstances.events({
 	'click #class': async function(e) {
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class) {
-			Template.schemaInstances.F3.set('');
-			dataShapes.schema.tree.filterI = '';
+			//Template.schemaInstances.F3.set('');  //TODO
+			//dataShapes.schema.tree.filterI = '';  //TODO
 			dataShapes.schema.tree.class = className;
 			Template.schemaInstances.Class.set(className);
 			setBC();

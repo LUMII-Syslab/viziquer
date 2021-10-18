@@ -65,7 +65,7 @@
 				  <option>Data properties</option>
 				</select>
 			</div>
-			<input id="filter_text2" type="text" class="form-control" >
+			<input id="filter_text2" type="text" class="form-control"  value={{f2}} >
 			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
 				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
@@ -112,14 +112,14 @@
 			<div class="col-sm-12">
 				<select class="form-control" id="class" >
 					{{#each classes}}
-						<option {{selected}} value="{{name}}">{{name}}</option>
+						<option style="height:30px" {{selected}} value="{{name}}">{{name}}</option>
 					{{/each}}
 				</select>
 			</div>
 			{{#if isBigClass  }}
 				<div class="describe">Large class selected, results may come very slowly</div>
 			{{/if}}
-			<input id="filter_text3" type="text" class="form-control" >
+			<input id="filter_text3" type="text" class="form-control"  value={{f3}}>
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
