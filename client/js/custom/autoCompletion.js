@@ -73,57 +73,11 @@ var currentFocus = 0;
 
 
 generateSymbolTableAC = async function() {
-	if(isAutocompletionActive()==false){
-		
-		var editor = Interpreter.editor;
-		var elem = _.keys(editor.getSelectedElements());
-		var abstractQueryTable = {}
-
-		// now we should find the connected classes ...
-		if (elem) {
-		   var selected_elem = new VQ_Element(elem[0]);
-		   var visited_elems = {};
-
-		   function GetComponentIds(vq_elem) {
-			   visited_elems[vq_elem._id()]=true;
-			   _.each(vq_elem.getLinks(),function(link) {
-				   if (!visited_elems[link.link._id()]) {
-					 visited_elems[link.link._id()]=true;
-					 var next_el = null;
-					 if (link.start) {
-					   next_el=link.link.getStartElement();
-					 } else {
-					   next_el=link.link.getEndElement();
-					 };
-					 if (!visited_elems[next_el._id()]) {
-						GetComponentIds(next_el);
-					 };
-				   };
-			   });
-		   };
-
-		   GetComponentIds(selected_elem);
-
-		   var elem_ids = _.keys(visited_elems);
-		   var queries = await genAbstractQueryForElementList(elem_ids, null);
-		    for (const q of queries) {
-		   
-			// _.each(queries,async function(q) {
-			abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
-		   }
-		   // )
-		} else {
-		  // nothing selected
-		}
-		// console.log("SymbolTable", abstractQueryTable);
-		// console.log("SymbolTable", abstractQueryTable, abstractQueryTable["symbolTable"][Session.get("activeElement")]);
-		
-		return abstractQueryTable["symbolTable"][Session.get("activeElement")];
-	} else {		
-		return symbolTable;
-	}
+ 
+	var tempSymbolTable = await generateSymbolTable();
+	var st = tempSymbolTable["symbolTable"];
 	
-	return [];
+	return st;
   }
 
 autoCompletionAddCondition = async function(e) {
@@ -141,7 +95,6 @@ autoCompletionAddAttribute = async function(e) {
 autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	symbolTable = await generateSymbolTableAC();
-	console.log("autoCompletionAddLink", e.originalEvent.target.value)
 	await autoCompletion(e);
 },
 
@@ -171,7 +124,6 @@ autoCompletion = async function(e) {
 		var elem = document.activeElement;
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
-		console.log("autoCompletion text", text, e, e.originalEvent.target.value);
 		var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
@@ -223,7 +175,6 @@ async function keyUpHandler(e){
 		if(m != null) {
 			removeMessage();
 			var text = e.target.value;
-			console.log("keyUpHandler text", text);
 			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
 			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
@@ -243,7 +194,6 @@ async function keyUpHandler(e){
 			removeMessage();
 			var text = e.target.value;
 			// var continuations = runCompletion(text, Session.get("activeElement"));
-			console.log("keyUpHandler2 text", text);
 			var textBefore = text.substring(0, e.target.selectionStart);
 			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
 
@@ -503,9 +453,7 @@ runCompletion = async function (text, act_elem2){
 				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 				var className = compart["input"];
-				
-				
-				var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), className:className});
+				var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), className:className});
 			};
 		} else {
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
@@ -771,7 +719,6 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			// var schema = new VQ_Schema();
 			
 			if(grammarType == "link"){
-				console.log("OOOOOOOOOOOOOOOOOOOOOOO", text)
 				var name_list = [];
 
 				if (act_elem) {
@@ -791,7 +738,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					var className = compart["input"];
-					var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:act_elem, className:className});
+					var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
 				};
 			} else {
 
@@ -803,13 +750,18 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					if(typeof compart !== 'undefined') className = compart["input"];
 				}
-				// console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
+				if(typeof symbolTable === 'undefined'){
+					var tempSymbolTable = await generateSymbolTable();
+					symbolTable = tempSymbolTable["symbolTable"];
+				}
 				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-				var parsed_exp = await vq_grammar_completion_parser.parse(text, {schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				var parsed_exp = await vq_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
 			// console.log(com);
-			// console.log(JSON.stringify(com["message"], 0, 2));
+			// console.log(JSON.stringify(com["message"], null, 2));
+			// console.log(JSON.parse(com["message"]));
 			var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
 			return c;
 		}

@@ -40,9 +40,9 @@
 
         					var params = {propertyKind:'Object'};
             				// if (fullText != "") params.filter = fullText;
-            				var selected_elem_id = Session.get("activeElement");	
-            				var elFrom=options.link.getStartElement();
-            				var elTo=options.link.getEndElement();
+            				// var selected_elem_id = Session.get("activeElement");	
+            				// var elFrom=options.link.getStartElement();
+            				// var elTo=options.link.getEndElement();
             				// if (varibleName != "") params.filter=varibleName;
         					
         					var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
@@ -83,11 +83,15 @@
 									 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
 								 }
         					} else {
-        						var elFrom=options.link.getStartElement().getName();
-        						var elTo=options.link.getEndElement().getName();
+
+        						if(typeof options.link !== "undefined"){
+									var elFrom=options.link.getStartElement().getName();
+									var elTo=options.link.getEndElement().getName();
+									
+									if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
+									if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
+								} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
         						
-        						if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
-        						if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
         						
         						if (varibleName != "") params.main.filter=varibleName;
     	
@@ -119,11 +123,14 @@
         					if(pathParts.length > 1){
         						 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
         					} else {
-        						var elFrom=options.link.getStartElement().getName();
-        						var elTo=options.link.getEndElement().getName();
+        						if(typeof options.link !== "undefined"){
+									var elFrom=options.link.getStartElement().getName();
+									var elTo=options.link.getEndElement().getName();
+									
+									if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
+									if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
+								} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
         						
-        						if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
-        						if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
         						
         					}
 
@@ -152,10 +159,19 @@
 								var params = {propertyKind:'ObjectExt'};
 								// if (fullText != "") params.filter = fullText;
 								var selected_elem_id = Session.get("activeElement");	
-								var elFrom=options.link.getStartElement();
-								var elTo=options.link.getEndElement();
+								var props;
+								if(typeof options.link !== "undefined"){
+									var elFrom=options.link.getStartElement();
+									var elTo=options.link.getEndElement();
 
-								var props = await dataShapes.getProperties(params, elFrom, elTo);
+									props = await dataShapes.getProperties(params, elFrom, elTo);
+								} else {
+									var params = {main:{propertyKind:'ObjectExt',"limit": 30}};
+									if (typeof options.className !== 'undefined') params.element = {className: options.className};
+									props = await dataShapes.getPropertiesFull(params);
+								}
+								
+								
 								props = props["data"];
 	
 								for(var pr in props){
@@ -366,131 +382,7 @@
                         	return null
                         }
         			
-        			// string -> idObject
-        			// returns type of the identifier from symbol table. Null if does not exist.
-        			async function resolveTypeFromSymbolTable(id) {
-                    	var context = options.context._id;
-            						
-                    	if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
-
-                    	var st_row = options.symbol_table[context][id];
-                    	if (st_row) {
-        					if(st_row.length == 0) return null;
-                    		if(st_row.length == 1){
-                    			return st_row[0].type
-                    		}
-                    		if(st_row.length > 1){
-                    			for (var symbol in st_row) {
-                    				if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-                    			}
-                    		}
-                    		return st_row.type
-                    	} else {
-                    		return null
-                    	}
-                    	return null
-                    };
-        			// string -> idObject
-        			// returns kind of the identifier from symbol table. Null if does not exist.
-        			async function resolveKindFromSymbolTable(id) {
-                    	var context = options.context._id;
-
-                    	if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
-
-                    	var st_row = options.symbol_table[context][id];
-                    	if (st_row) {
-                    		if(st_row.length == 0) return null;
-                    		if(st_row.length == 1){
-                    			return st_row[0].kind
-                    		}
-                    		if(st_row.length > 1){
-                    			for (var symbol in st_row) {
-                    				if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-                    			}
-                    		}
-                    		return st_row.kind
-                    	} else {
-                    		return null
-                    	}
-                    	return null
-                    };
-        			// string -> idObject
-        			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-        			async function resolveTypeFromSchemaForClass(id) {
-                    	var cls = await dataShapes.resolveClassByName({name: id})
-                    	if(cls["complite"] == false) return null;
-                    	if(cls["data"].length > 0){
-                    		return cls["data"][0];
-                    	}
-                    				
-                    	return null;
-                    };
-                    // string -> idObject
-                    // returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-                    async function resolveTypeFromSchemaForAttributeAndLink(id) {
-                    				
-                    	var aorl = await dataShapes.resolvePropertyByName({name: id})
-                    	// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-                    	if(aorl["complite"] == false) return null;
-                    	var res = aorl["data"][0];
-                    	if(res){
-                    		if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
-                    		else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
-                    		else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
-                    		return res;
-                    	}
-                  
-                    	return null
-                    };
-                    // string -> idObject
-                    // returns type of the identifier from schema. Looks everywhere. First in the symbol table,
-                    // then in schema. Null if does not exist
-                    async function resolveType(id) {
-                    			  
-                    	if(id !== "undefined"){
-                    		var t=await resolveTypeFromSymbolTable(id);
-        					if (!t) {
-                    			if (options.exprType) {
-                    				t= await resolveTypeFromSchemaForClass(id);
-        							if (!t) {
-        								t=await resolveTypeFromSchemaForAttributeAndLink(id)
-                    				}
-        						} else {
-                    				t=await resolveTypeFromSchemaForAttributeAndLink(id);
-                    				if (!t) {
-        								t=await resolveTypeFromSchemaForClass(id)
-        							}
-        						}
-
-                    		}
-                    		return t;}
-                    	 return null;
-                    };
-                    //string -> string
-                    // resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
-                    async function resolveKind(id) {
-                    	if(id !== "undefined"){
-                        	var k=await resolveKindFromSymbolTable(id);
-                        	if (!k) {
-                        		if (options.exprType) {
-                        			if (await resolveTypeFromSchemaForClass(id)) {
-                        				k="CLASS_NAME";
-        							} else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-                        				k="PROPERTY_NAME";
-                        			}
-                        		} else {
-                        			if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-                        				k="PROPERTY_NAME";
-                        			} else if (await resolveTypeFromSchemaForClass(id)) {
-                        				k="CLASS_NAME";
-                        			}
-                        		}
-
-                        	}
-        					return k;
-                    	}
-                    	return null
-                    }
+        			
 		}
 
 			    

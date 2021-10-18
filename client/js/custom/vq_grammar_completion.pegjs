@@ -24,26 +24,29 @@
         				};
         			}
         			async function getProperties(place, priority){
-        				var selected_elem_id = Session.get("activeElement");
-    					var act_el;
-    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-    						act_el = new VQ_Element(selected_elem_id)
-    					}
-    					
-    					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
-    					prop = prop["data"];
-    					
-    					for(var cl in prop){
-    						var prefix;
-    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-    						else prefix = prop[cl]["prefix"]+":";
+        				
+						if (options.text.split(/[.\/]/).length <= 1 && options.text.indexOf("^") ==-1){
+							var selected_elem_id = Session.get("activeElement");
+							var act_el;
+							if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+								act_el = new VQ_Element(selected_elem_id)
+							}
+							
+							var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
+							prop = prop["data"];
+							
+							for(var cl in prop){
+								var prefix;
+								if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+								else prefix = prop[cl]["prefix"]+":";
 
-    						var propName = prefix+prop[cl]["display_name"]
-    						await addContinuation(place, propName, 100, false, 1);
-    					}
-    					
-        				await getAssociations(place, 95);
-        				await getPropertyAlias(place, 93);
+								var propName = prefix+prop[cl]["display_name"]
+								await addContinuation(place, propName, 100, false, 1);
+							}
+							
+							await getAssociations(place, 95);
+							await getPropertyAlias(place, 93);
+						}
         			}
         			async function getPropertyAlias(place, priority){
 
@@ -229,43 +232,82 @@
             				}
             				return null
                 		  };
+						  
+					async function getInverseAssociations(o){
+
+							var pathParts = options.text.split(/[.\/]/);
+        					// var varibleName = makeVar(o);
+        					var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+        					if(pathParts.length > 1){
+        						 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+        					} else {
+        						if (typeof options.className !== 'undefined') params.element = {className: options.className};	
+        					}
+
+            				var props = await dataShapes.getPropertiesFull(params);
+            				props = props["data"];
+
+            				for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+            					if ( props[pr].mark === 'in'){
+            						if(o == "^")propName = "^"+propName;
+									else propName = "inv("+propName+")";
+            					}
+            					await addContinuation(await location(), propName, 100, false, 2, "end");
+            				}
+            									
+                			return;
+        			}	  
+					
         			async function pathOrReference(o) {
-    						
-    					// var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
-        				// var propertyName = "";
-        				// if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
-        				// if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
-        				
-        				// var targetSourceClass = "targetClass";
-        				// if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
-        				
-        				// if(typeof options.schema.findAssociationByName(propertyName) !== 'undefined'){
-        						// var schemaAssociationClassPairs = options.schema.findAssociationByName(propertyName)["Info"]["ClassPairs"];
-        						// for(var classPair in schemaAssociationClassPairs){
-        								
-        							// var targetClass = schemaAssociationClassPairs[classPair]["TargetClass"];
-        							// var prop = options.schema.findClassByName(targetClass).getAllAttributes();
-        								
-        							// for(var key in prop){
-        								// await addContinuation(await location(), prop[key]["name"], 100, false, 1, "end");
-        							// }
-        								
-        							// prop = options.schema.findClassByName(targetClass).getAllAssociations();
-        								
-        							// for(var key in prop){
-        								// var propName= prop[key]["short_name"];
-        								// if(prop[key]["type"] == "<=") {
-        									// await addContinuation(await location(), "^" + propName, 100, false, 2, "end")
-        								// }
-        								// else await addContinuation(await location(), propName, 100, false, 2, "end");
-        							// }
-        						// }
-            				// }
-        				return o;
+    					var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
+            				var propertyName = "";
+            				if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
+            				if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
+            				var targetSourceClass = "targetClass";
+            				if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
+
+        					
+							var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+        					var props= await dataShapes.getPropertiesFull(p);
+
+            				props = props["data"];
+            				for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+								
+            					await addContinuation(await location(), propName, 100, false, 1, "end");
+            				}
+							
+							
+        					var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+        					var props= await dataShapes.getPropertiesFull(p);
+
+            				props = props["data"];
+
+            				for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+            					if ( props[pr].mark === 'in'){
+            						propName = "^"+propName;
+            					}
+								
+            					await addContinuation(await location(), propName, 100, false, 2, "end");
+            				}
+            				return o;
         			};
         			
         			async function ifObjectDataProperty(o){
-        				
         				// var varibleName;
         				
         				// if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
@@ -278,84 +320,146 @@
         				return o;
         			}
     				async function afterVar(o) {
-						
 						var varibleName = makeVar(o);
 						var selected_elem_id = Session.get("activeElement");
     					var act_el;
     					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     						act_el = new VQ_Element(selected_elem_id)
     					}
-    					
-    					var prop = await dataShapes.getProperties({propertyKind:'Data', filter:varibleName}, act_el);
-    					prop = prop["data"];
 						
-    					for(var cl in prop){
-    						var prefix;
-    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-    						else prefix = prop[cl]["prefix"]+":";
+						
+						var pathParts = options.text.split(/[.\/]/);
+        				var varibleName = makeVar(o);
+        				var params = {main:{propertyKind:'Data',"limit": 30}}
+        				var isInv = false;
+    						
+        				if(pathParts.length > 1){
+        						 params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+    							 params.main.filter=pathParts[pathParts.length-1];
+    							 if(pathParts[pathParts.length-1].startsWith("^")){
+    								 isInv = true;
+    								 params.main.filter=pathParts[pathParts.length-1].substr(1);
+									 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+    							 } else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
+									 isInv = true;
+    								 params.main.filter=pathParts[pathParts.length-1].substr(4);
+									 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+								 }
+        				} else {
 
-    						var propName = prefix+prop[cl]["display_name"]
-    						await addContinuation(await location(), propName, 100, false, 1);
-    					}
-						
-						var prop = await dataShapes.getProperties({propertyKind:'Object', filter:varibleName}, act_el);
-    					prop = prop["data"];
-						
-    					for(var cl in prop){
-    						var prefix;
-    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-    						else prefix = prop[cl]["prefix"]+":";
-
-    						var propName = prefix+prop[cl]["display_name"]
-    						await addContinuation(await location(), propName, 100, false, 2);
-    					}
+        						if (typeof options.className !== 'undefined') params.element = {className: options.className};
+        						
+        						
+        						if (varibleName != "") params.main.filter=varibleName;
+    	
+    							if(pathParts[0].startsWith("^"))isInv = true;
+        				}
+						if(isInv == false){
+							var props = await dataShapes.getPropertiesFull(params);
+							props = props["data"];
+							for(var pr in props){
+									var prefix;
+									if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+									else prefix = props[pr]["prefix"]+":";
+										
+									var propName = prefix+props[pr]["display_name"];
 									
+									await addContinuation(await location(), propName, 100, false, 1);
+							}
+						}
+						// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+						params.main.propertyKind = 'ObjectExt'
+						var props = await dataShapes.getPropertiesFull(params);
+						props = props["data"];
+						for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+            					if ( props[pr].mark === 'in' && isInv == false){
+            						propName = "^"+propName;
+            					}
+            					if(isInv == false || (isInv == true && props[pr].mark === 'in'))await addContinuation(await location(), propName, 100, false, 2);
+            			}
+						
+			
     					return o;
     				};
         			
-        			async function referenceNames(o) {
-						
-						
-						console.log("YYYYYYYYYYYYYYYYY", o)
-						
+        			async function referenceNames(o) {	
     					var classAliasTable = [];
         				for(var key in options["symbol_table"]){
         					for(var k in options["symbol_table"][key]){
-        						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["localName"]
+        						if(options["symbol_table"][key][k]["kind"] == "CLASS_ALIAS") classAliasTable[key] = options["symbol_table"][key][k]["type"]["local_name"]
         					}
         				};
-        				
-        				if(typeof classAliasTable[o] !== 'undefined')continuations[location()["end"]["offset"]] = {};
-        			
-        				// var prop = options.schema.findClassByName(classAliasTable[o]).getAllAttributes();
-        				// for(var key in prop){
-        					// await addContinuation(await location(), prop[key]["name"], 100, false, 1, "end");
-        				// }
-        					
-        				// prop = options.schema.findClassByName(classAliasTable[o]).getAllAssociations();
-        				// for(var key in prop){
-        					// await addContinuation(await location(), prop[key]["short_name"], 99, false, 2, "end");
-        				// }
-    					
-    					var selected_elem_id = Session.get("activeElement");
-    					var act_el;
-    					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-    						act_el = new VQ_Element(selected_elem_id)
-    					}
-    					
-    					var prop = await dataShapes.getProperties({propertyKind:'All'}, act_el);
-    					prop = prop["data"];
-    			
-    					for(var cl in prop){
-    						var prefix;
-    						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-    						else prefix = prop[cl]["prefix"]+":";
+						var loc = await location();
+        				if(typeof classAliasTable[o] !== 'undefined') {
+							continuations[loc["end"]["offset"]] = {};
+							var params = {main:{propertyKind:'Data',"limit": 30}};
+							params.element = {className: classAliasTable[o]};	
 
-    						var propName = prefix+prop[cl]["display_name"]
-    						// await addContinuation(place, propName, priority, false, 2);
-    						await addContinuation(await location(), propName, 99, false, 2, "end");
-    					}
+            				var props = await dataShapes.getPropertiesFull(params);
+            				props = props["data"];
 
+            				for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+            					await addContinuation(await location(), propName, 100, false, 1, "end");
+            				}
+							params.main.propertyKind = "Object";
+							var props = await dataShapes.getPropertiesFull(params);
+            				props = props["data"];
+
+            				for(var pr in props){
+            					var prefix;
+            					if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            					else prefix = props[pr]["prefix"]+":";
+            						
+            					var propName = prefix+props[pr]["display_name"];
+            					if ( props[pr].mark === 'in'){
+            						if(o == "^")propName = "^"+propName;
+									else propName = "inv("+propName+")";
+            					}
+            					await addContinuation(await location(), propName, 100, false, 2, "end");
+            				}
+						} else {
+							var selected_elem_id = Session.get("activeElement");
+							var act_el;
+							if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+								act_el = new VQ_Element(selected_elem_id)
+							}
+							
+							var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
+							prop = prop["data"];
+					
+							for(var cl in prop){
+								var prefix;
+								if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+								else prefix = prop[cl]["prefix"]+":";
+
+								var propName = prefix+prop[cl]["display_name"]
+								// await addContinuation(place, propName, priority, false, 2);
+								await addContinuation(await location(), propName, 99, false, 1, "end");
+							}
+							
+							var prop = await dataShapes.getProperties({propertyKind:'Object'}, act_el);
+							prop = prop["data"];
+					
+							for(var cl in prop){
+								var prefix;
+								if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+								else prefix = prop[cl]["prefix"]+":";
+
+								var propName = prefix+prop[cl]["display_name"]
+								// await addContinuation(place, propName, priority, false, 2);
+								await addContinuation(await location(), propName, 99, false, 2, "end");
+							}
+						}
         				return o;
         			};
 		}
@@ -423,8 +527,8 @@
 
 			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
-			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName/ QName / LN
-			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName/ QName / LN
+			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / QName/ iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName  / LN
+			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 
 			BooleanLiteral = (TRUE / FALSE) 
 			
@@ -689,8 +793,8 @@
 			//PathSequenceBr = PathSequence:(PathEltOrInverse (PATH_SYMBOL PathEltOrInverse)* ){return {PathSequence:PathSequence}}
 			PathEltOrInverse = PathEltOrInverse:(PathElt3 / PathElt1 / PathElt2) {return {PathEltOrInverse:PathEltOrInverse}}
 			PathElt1 = PathElt:PathElt {return {inv:"", PathElt:PathElt}}
-			PathElt2 = check "^" PathElt:PathElt {return {inv:"^", PathElt:PathElt}}
-			PathElt3 = inv_c "inv"i br_open "(" space PathElt:PathElt space br_close ")" {return {inv:"^", PathElt:PathElt}}
+			PathElt2 = Check PathElt:PathElt {return {inv:"^", PathElt:PathElt}}
+			PathElt3 = Inv br_open "(" space PathElt:PathElt space br_close ")" {return {inv:"^", PathElt:PathElt}}
 			PathElt = PathPrimary:PathPrimary PathMod:PathMod? {return {PathPrimary:PathPrimary, PathMod:PathMod}}
 			PathPrimary =  (exclamation "!" PathNegatedPropertySet)/ iriP / (br_open "(" space Path space br_close ")") / LNameP/ (a_c "a") 
 			PathNegatedPropertySet = PathNegatedPropertySet:(PathNegatedPropertySet2 / PathNegatedPropertySet1){return {PathNegatedPropertySet:PathNegatedPropertySet}}
@@ -699,8 +803,11 @@
 			PathNegatedPropertySetBracketted = (br_open "(" (space PathOneInPropertySet (space VERTICAL space PathOneInPropertySet)*)? space br_close ")")
 			PathOneInPropertySet = PathOneInPropertySet3 / PathOneInPropertySet1 / PathOneInPropertySet2
 			PathOneInPropertySet1 = iriOra:(iriP  / LNameP/ (a_c "a")'a') {return {inv:"", iriOra:iriOra}}
-			PathOneInPropertySet2 = check "^" iriOra:(iriP  / LNameP/ (a_c "a")'a') {return {inv:"^", iriOra:iriOra}}
-			PathOneInPropertySet3 = inv_c "inv"i br_open "(" iriOra:(iriP / LNameP/ (a_c "a")'a' ) br_close ")" {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet2 = Check iriOra:(iriP  / LNameP/ (a_c "a")'a') {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet3 = Inv br_open "(" iriOra:(iriP / LNameP/ (a_c "a")'a' ) br_close ")" {return {inv:"^", iriOra:iriOra}}
+			
+			Check = check_c "^" {return getInverseAssociations("^")}
+			Inv = inv_c "inv"i {return getInverseAssociations("inv")}
 			
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
@@ -720,8 +827,8 @@
 			ReferenceDot =  Reference: Reference dot_path "." {return referenceNames(Reference)}
 			Reference= references_c Chars_String:Chars_String {return makeVar(Chars_String)} 
 			
-			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
-			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / "." / [0-9])*)
+			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])* (("..") [0-9]+)?)
+			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])* (("..") [0-9]+)?)	
 			Chars_String_prefix_LName = LName:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" /"." / [0-9])*) {return ifObjectDataProperty(LName)}
 			Chars_String_variables = (squere_br_open "[" Chars_String_variable squere_br_close "]")
 			Chars_String_variable = variables_c Var:Chars_String_prefix {return afterVar(Var)} 
@@ -735,8 +842,8 @@
 			Chars_String_prefix_LNameA = variables_c Var:Chars_String_prefix_LName {return afterVar(Var)}
 			
 
-			LNameINV = (at "@"? PropertyReference? INV: inv_c "INV"i br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			LNameINV2 = (at "@"? PropertyReference? INV: check "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (at "@"? PropertyReference? INV: Inv br_open "(" LName:LNameSimple  br_close")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV2 = (at "@"? PropertyReference? INV: Check LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			Substring = (squere_br_open "[" (INTEGER (comma_c "," space INTEGER)?) squere_br_close "]")?
 			LName = (at "@"? PropertyReference? LName:(Chars_String_variables / Chars_String_prefix_LNameA) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) 
@@ -789,7 +896,7 @@
 			true_c = "" {addContinuation(location(), "true", 10, false, 4);}
 			false_c = "" {addContinuation(location(), "false", 10, false, 4);}
 			double_check = "" {addContinuation(location(), "^^", 10, false, 4);}
-			check = "" {addContinuation(location(), "", 10, false, 4);}
+			check_c = "" {addContinuation(location(), "", 10, false, 4);}
 			br_open = "" {addContinuation(location(), "(", 90, false, 4);}
 			br_close = "" {addContinuation(location(), ")", 10, false, 4);}
 			count_distinct_c = "" {if(options.type=="attribute") addContinuation(location(), "COUNT_DISTINCT", 35, false, 4); else addContinuation(location(), "", 1, false, 4);}

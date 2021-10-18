@@ -759,7 +759,7 @@ Interpreter.customMethods({
 	},
 	
 	VQgetOrderByFields: async function(val) {
-			 console.log("order by")
+		//	 console.log("order by")
 		//atribute value for class
 		var act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
@@ -975,8 +975,6 @@ Interpreter.customMethods({
 				x = mouse_pos["x"];
 				y = mouse_pos["y"];
 			}
-		
-		console.log("editor", editor, x, y);
 		
 		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		
@@ -1535,6 +1533,9 @@ generateSymbolTable = async function() {
 
        var elem_ids = _.keys(visited_elems);  
        var queries = await genAbstractQueryForElementList(elem_ids, null); 
+	  
+	  
+	  
 	  
 	   for (const q of queries) {
 	    //_.each(queries,async function(q) {
