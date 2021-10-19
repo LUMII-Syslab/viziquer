@@ -14,6 +14,7 @@ Template.schemaInstances.IsBigClass = new ReactiveVar("");
 Template.schemaInstances.Class = new ReactiveVar("");
 Template.schemaInstances.Classes = new ReactiveVar("");
 Template.schemaInstances.F3 = new ReactiveVar("");
+Template.schemaInstances.showI = new ReactiveVar("");
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
@@ -72,7 +73,7 @@ function setNS() {
 
 function setBC() {
 	const c = dataShapes.schema.tree.class;
-    //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); // TODO
+    //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); 
 	const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
 	Template.schemaInstances.IsBigClass.set(r);
 }
@@ -202,23 +203,25 @@ or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_nam
 
 async function  useFilterI (plus = 0) {
 	//var text = $('#filter_text3').val();
-	var text = Template.schemaInstances.F3.get();
-	dataShapes.schema.tree.filterI = text;
-	var params = { limit: dataShapes.schema.tree.countI, filter:text};
-	//var className = $("#class").val();
-	var className = Template.schemaInstances.Class.get();
+	if (Template.schemaInstances.showI.get()) {
+		var text = Template.schemaInstances.F3.get();
+		dataShapes.schema.tree.filterI = text;
+		var params = { limit: dataShapes.schema.tree.countI, filter:text};
+		//var className = $("#class").val();
+		var className = Template.schemaInstances.Class.get();
 
-	dataShapes.schema.tree.class = className;
-	
-	Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
-
-	var iFull = await dataShapes.getTreeIndividuals(params, className);  
-
-	var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-	if (iFull.length === dataShapes.schema.tree.countI)
-		instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+		dataShapes.schema.tree.class = className;
 		
-	Template.schemaInstances.Instances.set(instances);
+		Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+
+		var iFull = await dataShapes.getTreeIndividuals(params, className);  
+
+		var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
+		if (iFull.length === dataShapes.schema.tree.countI)
+			instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+			
+		Template.schemaInstances.Instances.set(instances);
+	}
 }
 
 Template.schemaTree.events({
@@ -363,6 +366,7 @@ Template.schemaTree.events({
 		//$("#class").val(dataShapes.schema.tree.class);	
 		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
 		await useFilterI ();	
 	},	
@@ -412,6 +416,7 @@ Template.schemaInstances.rendered = async function() {
 	//$("#class").val(dataShapes.schema.tree.class);
 	Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+	Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
 	setBC();
 	await useFilterI ();
@@ -577,6 +582,9 @@ Template.schemaInstances.helpers({
 	isBigClass: function() {
 		return Template.schemaInstances.IsBigClass.get();
 	},
+	showI: function() {
+		return Template.schemaInstances.showI.get();
+	},
 });
 
 Template.schemaInstances.events({
@@ -611,15 +619,13 @@ Template.schemaInstances.events({
 					 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-					if (!$("#class").val().includes('All classes'))  // TODO
+					if (!$("#class").val().includes('All classes')) { // TODO
 						boo.setName($("#class").val());
+						var proj = Projects.findOne({_id: Session.get("activeProject")});
+						boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+					}
 					boo.setInstanceAlias(i_name);
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				}, loc);				
-
-
-
 			
 		}		
 	},

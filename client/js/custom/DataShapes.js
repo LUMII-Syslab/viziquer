@@ -185,6 +185,7 @@ return {
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
 		pp_rels: true,
+		hide_individuals: false, 
 		tree: {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
@@ -231,6 +232,7 @@ dataShapes = {
 				var info = await callWithGet('info/');
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
+				this.schema.hide_individuals = schema_info.hide_individuals;
 
 				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'dbo:Person';
@@ -282,7 +284,6 @@ dataShapes = {
 		if (s !== "" && s !== undefined )
 		{
 			params.main.endpointUrl = this.schema.endpoint;
-			params.main.namedGraph  = this.schema.uri;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 

@@ -106,8 +106,8 @@
 </template>
 
 <template name="schemaInstances">
-
     <div class="col-sm-12">
+	{{#if showI }}
         <div class="dd" id="nestable">
 			<div class="col-sm-12">
 				<select class="form-control" id="class" >
@@ -130,8 +130,10 @@
 
             </ol>
         </div><!-- dd -->
+	{{else}}
+		<div class="describe">The values ​​of the individuals are not informative</div>
+	{{/if}}
     </div>
-
 </template>
 
 <template name="subSchemaInstances">
