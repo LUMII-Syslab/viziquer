@@ -182,6 +182,7 @@ return {
 		resolvedPropertiesF: {},
 		treeTopsC: {}, 
 		treeTopsP: {}, 
+		namespaces: [],
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
 		pp_rels: true,
@@ -298,7 +299,13 @@ dataShapes = {
 	getNamespaces : async function(params = {}) {
 		// *** console.log("------------getNamespaces ------------------")
 		//dataShapes.getNamespaces()
-		return await this.callServerFunction("getNamespaces", {main:params});
+		if ( this.schema.namespaces.length > 0)
+			return this.schema.namespaces;
+		else {
+			var rr = await this.callServerFunction("getNamespaces", {main:params});
+			this.schema.namespaces = rr;
+			return rr;
+		}
 	},
 	getClasses : async function(params = {}, vq_obj = null) {
 		// *** console.log("------------GetClasses------------------")
