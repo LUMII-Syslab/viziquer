@@ -35,6 +35,7 @@ Interpreter.customMethods({
 	AddSubquery: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
+		Template.AddLink.Count.set(startCount);
 		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
 		})
@@ -60,6 +61,7 @@ Interpreter.customMethods({
 		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
 		$('input[id=goto-wizard]').attr('checked', false);
 		$('#goto-wizard').removeAttr("disabled");
+		$("#mySearch")[0].value = "";
 		$("#add-link-form").modal("show");
 	},
 
