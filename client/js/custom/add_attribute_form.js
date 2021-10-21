@@ -19,9 +19,9 @@ Interpreter.customMethods({
 		Template.AddAttribute.Count.set(startCount);
 		Template.AddAttribute.CountAssoc.set(startCount);
 		var attributes = await getAttributes()
-		var associations = await getAssociations()
+		// var associations = await getAssociations()
 		Template.AddAttribute.attrList.set(attributes);
-		Template.AddAttribute.linkList.set(associations);
+		// Template.AddAttribute.linkList.set(associations);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		$("#add-attribute-form").modal("show");
 		$('input[name=stack-checkbox]').attr('checked',false);
@@ -101,8 +101,9 @@ Template.AddAttribute.events({
 			}
 		  });
 		};
-		var attributes = await getAttributes();
-		var associations = await getAssociations();
+		var value = $("#mySearch-attribute").val().toLowerCase();
+		var attributes = await getAttributes(value);
+		var associations = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attributes);
 		Template.AddAttribute.linkList.set(associations);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
@@ -116,6 +117,29 @@ Template.AddAttribute.events({
 		 buttonn.each(function () {
 			$(this)[0].className = "button button-required";
 		  });
+		  
+		return;
+	},
+	
+	"click #show-class-associations": async function(e) {
+		 var x = document.getElementById("class-associations");
+		  if (x.style.display !== "none") {
+			x.style.display = "none";
+		  } else {
+			var value = $("#mySearch-attribute").val().toLowerCase();
+			var associations = await getAssociations(value)
+			Template.AddAttribute.linkList.set(associations);
+			x.style.display = "block";
+		  }
+		  var y = document.getElementById("more-associations-button");
+		  console.log("IIIIIIIIIIII", y.style.display, y.complete)
+		  if (x.style.display === "none") {
+			y.style.display = "none";
+		  } else if (x.style.display !== "none" && y.complete !== "true") {
+			y.style.display = "block";
+		  } else {
+			y.style.display = "none";
+		  }
 		  
 		return;
 	},
@@ -278,9 +302,9 @@ Template.AddAttribute.events({
 				};
 
 		Utilities.callMeteorMethod("removeCompartment", list);
-		
-		var attr_list = await getAttributes();
-		var link_list = await getAssociations();
+		var value = $("#mySearch-attribute").val().toLowerCase();
+		var attr_list = await getAttributes(value);
+		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
 		Template.AddAttribute.linkList.set(link_list);
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
@@ -599,10 +623,16 @@ async function getAssociations(filter){
 			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
 
 			var prop = await dataShapes.getProperties(param, vq_obj)
-			prop = prop["data"];
 			
-			if(prop["complete"] == true) $("#more-associations-button")[0].style.display = "none";
-			else  $("#more-associations-button")[0].style.display = "block";
+			if(prop["complete"] == true) {
+				$("#more-associations-button")[0].complete = "true";
+				$("#more-associations-button")[0].style.display = "none";
+			}
+			else {
+				$("#more-associations-button")[0].complete = "false";
+			}
+			
+			prop = prop["data"];
 			
 			for(var cl in prop){
 				var prefix;

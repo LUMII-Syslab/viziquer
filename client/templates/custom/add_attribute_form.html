@@ -164,7 +164,7 @@
 						 </div>
                     </form>
 					
-					<button onclick="showAssociations()">[+]</button>
+					<button id="show-class-associations">[+]</button>
 					<form class="form-horizontal" role="form">
 						<div class="form-group-associations form-group"  id="class-associations" style="display: none">
 
@@ -180,7 +180,7 @@
 							
                         </div>
 						<div>
-						<a style="display: none; width: 53px;" id="more-associations-button" class="btn btn-xs btn-success button-new"><i>More..</i></a>
+						<a style="width: 53px;" id="more-associations-button" class="btn btn-xs btn-success button-new" complete="false"><i>More..</i></a>
 						</div>
 					</form>
                 </div>
@@ -202,25 +202,7 @@ To change the attribute to a helper (exclude from selection), save the attribute
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-
     </div><!-- /.modal -->
-	<script>
-function showAssociations() {
-  var x = document.getElementById("class-associations");
-  if (x.style.display !== "none") {
-	x.style.display = "none";
-  } else {
-    x.style.display = "block";
-  }
-  var x = document.getElementById("more-associations-button");
-  if (x.style.display !== "none") {
-	x.style.display = "none";
-  } else {
-    x.style.display = "block";
-  }
-}
-</script>
-
 </template>
 
 <template name="AddNewAttribute">
