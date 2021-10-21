@@ -60,15 +60,23 @@ function getName(o) {
 }
 
 function setNS() {
-	if ($("#dbo").is(":checked"))
+	if ($("#dbo").is(":checked")) {
 		dataShapes.schema.tree.dbo = true;
-	else
+		Template.schemaTree.NsP.set(true);
+	}
+	else {
 		dataShapes.schema.tree.dbo = false;
+		Template.schemaTree.NsP.set(false);
+	}
 		
-	if ($("#yago").is(":checked"))
+	if ($("#yago").is(":checked")) {
 		dataShapes.schema.tree.yago = true;
-	else
+		Template.schemaTree.NsM.set(true);
+	}
+	else {
 		dataShapes.schema.tree.yago = false;
+		Template.schemaTree.NsM.set(false);
+	}
 }
 
 function setBC() {

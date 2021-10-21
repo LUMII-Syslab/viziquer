@@ -145,6 +145,9 @@ const findElementDataForIndividual = (vq_obj) => {
 }
 
 const classes = [
+'All classes U',
+'All classes T',
+'All classes LN',
 'dbo:Person', 
 'dbo:Place', 
 'dbo:Location', 
@@ -219,6 +222,7 @@ dataShapes = {
 		return await rr;
 	},
 	changeActiveProject : async function(proj_id) {
+		//console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
 		this.schema = getEmptySchema();
 		if (proj !== undefined) {
@@ -255,9 +259,9 @@ dataShapes = {
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 				}
-				this.schema.tree.classes.unshift('All classes LN');  // TODO
-				this.schema.tree.classes.unshift('All classes T');  // TODO
-				this.schema.tree.classes.unshift('All classes U');  // TODO
+				//this.schema.tree.classes.unshift('All classes LN');  // TODO
+				//this.schema.tree.classes.unshift('All classes T');  // TODO
+				//this.schema.tree.classes.unshift('All classes U');  // TODO
 			}
 		}
 	},
