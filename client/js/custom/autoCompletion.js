@@ -84,7 +84,12 @@ autoCompletionAddCondition = async function(e) {
 	grammarType = "class"
 	symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
-}
+},
+
+autoCompletionClass = async function(e) {
+	grammarType = "className"
+	await autoCompletion(e);
+},
 
 autoCompletionAddAttribute = async function(e) {
 	grammarType = "attribute"
@@ -112,7 +117,7 @@ autoCompletionGroupBy = async function(e) {
 
 autoCompletionInstance = async function(e) {
 	grammarType = "instance"
-	symbolTable = await generateSymbolTableAC();
+	// symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 

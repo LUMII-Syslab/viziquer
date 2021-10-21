@@ -1,0 +1,40 @@
+
+<template name="AddClassName">
+<style>
+    div.modal-body {
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+</style>
+
+	<!-- Modal for new document -->
+    <div id="add-class-name-form" class="modal fade">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Class Name</h4>
+                </div>
+                <div class="modal-body">
+				
+					<form>
+						<div class="form-group" style="margin-bottom:10px;">
+							<label>Class Name</label>
+							<input id="class-name-field" type="text" class="form-control">
+							<span class="help-block">Use Ctrl+Space for text auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i></span>	
+						</div>
+		   
+	                </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancel-add-class-name" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="ok-add-class-name" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+
+
+</template>
