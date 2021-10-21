@@ -185,6 +185,7 @@ return {
 		resolvedPropertiesF: {},
 		treeTopsC: {}, 
 		treeTopsP: {}, 
+		localNS: "",
 		namespaces: [],
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
@@ -195,9 +196,10 @@ return {
 			countP:MAX_TREE_ANSWERS, 
 			countI:MAX_IND_ANSWERS, 
 			plus:TREE_PLUS,
-			nsInclude: true,			
+			nsInclude: true,
 			dbo: true, 
 			yago: false, 
+			local: false, 
 			dbp: true, 
 			filterC: '', 
 			filterP: '', 
@@ -238,6 +240,10 @@ dataShapes = {
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
 				this.schema.hide_individuals = schema_info.hide_individuals;
+				
+				var ns = await this.getNamespaces();
+				this.schema.namespaces = ns;
+				this.schema.localNS = ns.filter(function(n){ return n.is_local == true})[0].name;
 
 				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'dbo:Person';
@@ -251,7 +257,16 @@ dataShapes = {
 					this.schema.tree.classes = c_list;
 					this.schema.tree.dbo = false;
 				}
-				else {
+				else if (schema_info.tree_profile === 'BasicL') {
+					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
+					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
+					this.schema.tree.class = c_list[0];
+					this.schema.tree.classes = c_list;
+					this.schema.tree.nsInclude = false;
+					this.schema.tree.dbo = false;
+					this.schema.tree.local = true;
+				}
+				else  {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];

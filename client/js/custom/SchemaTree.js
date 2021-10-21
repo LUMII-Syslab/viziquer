@@ -9,6 +9,7 @@ Template.schemaTree.F1 = new ReactiveVar("");
 Template.schemaTree.NsInclude = new ReactiveVar("");
 Template.schemaTree.NsP = new ReactiveVar("");
 Template.schemaTree.NsM = new ReactiveVar("");
+Template.schemaTree.NsL = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
 Template.schemaInstances.IsBigClass = new ReactiveVar("");
 Template.schemaInstances.Class = new ReactiveVar("");
@@ -31,6 +32,9 @@ Template.schemaTree.helpers({
 	},
 	dbo: function() {
 		return Template.schemaTree.NsP.get();
+	},
+	local: function() {
+		return Template.schemaTree.NsL.get();
 	},
 	yago: function() {
 		return Template.schemaTree.NsM.get();
@@ -68,6 +72,15 @@ function setNS() {
 		dataShapes.schema.tree.dbo = false;
 		Template.schemaTree.NsP.set(false);
 	}
+	
+	if ($("#local").is(":checked")) {
+		dataShapes.schema.tree.local = true;
+		Template.schemaTree.NsL.set(true);
+	}
+	else {
+		dataShapes.schema.tree.local = false;
+		Template.schemaTree.NsL.set(false);
+	}
 		
 	if ($("#yago").is(":checked")) {
 		dataShapes.schema.tree.yago = true;
@@ -77,6 +90,7 @@ function setNS() {
 		dataShapes.schema.tree.yago = false;
 		Template.schemaTree.NsM.set(false);
 	}
+	
 }
 
 function setBC() {
@@ -102,12 +116,14 @@ async function setTreeTop (filter = '', plus = 0) {
 
 	}
 
-	if ( dataShapes.schema.tree.dbo || dataShapes.schema.tree.yago) {
+	if ( dataShapes.schema.tree.dbo || dataShapes.schema.tree.yago || dataShapes.schema.tree.local ) {
 		var namespaces = {};
 		if (dataShapes.schema.tree.dbo)
 			namespaces.in = ['dbo'];
 		if (dataShapes.schema.tree.yago)
 			namespaces.notIn = ['yago'];
+		if (dataShapes.schema.tree.local)
+			namespaces.in = [dataShapes.schema.localNS];
 		params.namespaces = namespaces;
 	} 
 	
@@ -346,6 +362,12 @@ Template.schemaTree.events({
 		Template.schemaTree.F1.set($('#filter_text').val());
 		await useFilter ();
 	},
+	'click #local': async function(e) {
+		//Template.schemaTree.Count.set(startCount)
+		setNS();
+		Template.schemaTree.F1.set($('#filter_text').val());
+		await useFilter ();
+	},
 	'click #yago': async function(e) {
 		//Template.schemaTree.Count.set(startCount)
 		setNS();
@@ -364,6 +386,7 @@ Template.schemaTree.events({
 		Template.schemaTree.Empty.set(false);
 		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
 		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
+		Template.schemaTree.NsL.set(dataShapes.schema.tree.local);
 		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
@@ -394,6 +417,7 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaTree.Empty.set(false);
 		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
 		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
+		Template.schemaTree.NsL.set(dataShapes.schema.tree.local);
 		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);		
 

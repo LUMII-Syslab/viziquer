@@ -19,6 +19,12 @@
 				<span class="custom-checkbox"></span>
 				Exclude yago:
 			</label>
+			{{else}}
+			<label class="form-check-label">
+				<input class="form-check-input" name = "local" id="local" type="checkbox" checked={{local}}>
+				<span class="custom-checkbox"></span>
+				Only local classes
+			</label>
 			{{/if}}
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
