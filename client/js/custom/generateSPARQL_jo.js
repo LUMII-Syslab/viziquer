@@ -537,12 +537,25 @@ function generateIds(rootClass, knownPrefixes){
 	else rootClassId = rootClassId.replace(/ /g, '_');
 
 	if (checkIfIsURI(rootClassId) == "prefix_form") {
-		var prefix = rootClassId.substring(0, rootClassId.indexOf(":"))
-		
-		for(var kp in knownPrefixes){
-			if(knownPrefixes[kp]["name"] == prefix) {
-				prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
-				break;
+		if(rootClassId.indexOf("(") !== -1 || rootClassId.indexOf(")") !== -1){
+				
+			var prefix = rootClassId.substring(0, rootClassId.indexOf(":"));
+			var name = rootClassId.substring(rootClassId.indexOf(":")+1);
+			for(var kp in knownPrefixes){
+				if(knownPrefixes[kp]["name"] == prefix) {
+					prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
+					rootClassId = knownPrefixes[kp]["value"] + name;
+					break;
+				}
+			}
+		} else {
+			var prefix = rootClassId.substring(0, rootClassId.indexOf(":"))
+			
+			for(var kp in knownPrefixes){
+				if(knownPrefixes[kp]["name"] == prefix) {
+					prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
+					break;
+				}
 			}
 		}
 	}
@@ -618,7 +631,22 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	}
 	// if instance is defined, use it
 	else if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") !="") {
-		idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+		var rootClassId = clazz["instanceAlias"];
+		if (checkIfIsURI(rootClassId) == "prefix_form") {
+			if(rootClassId.indexOf("(") !== -1 || rootClassId.indexOf(")") !== -1){
+				
+				var prefix = rootClassId.substring(0, rootClassId.indexOf(":"));
+				var name = rootClassId.substring(rootClassId.indexOf(":")+1);
+				for(var kp in knownPrefixes){
+					if(knownPrefixes[kp]["name"] == prefix) {
+						prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
+						rootClassId = knownPrefixes[kp]["value"] + name;
+						break;
+					}
+				}
+				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:rootClassId, unionId:unionClass};
+			} 
+		} else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
 	}
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
