@@ -16,6 +16,7 @@ const MAX_ANSWERS = 30;
 const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
+const BIG_CLASS_CNT = 500000;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -145,7 +146,7 @@ const findElementDataForIndividual = (vq_obj) => {
 }
 
 const classes = [
-'All classes U',
+'All classes',
 'All classes T',
 'All classes LN',
 'dbo:Person', 
@@ -168,14 +169,6 @@ const classes = [
 'skos:Concept'
 ];
 
-const b_classes = [
-'skos:Concept',
-'foaf:Document',
-'owl:Thing',
-'dbo:TimePeriod',
-'dbo:Agent'
-];
-
 const getEmptySchema  = () => {
 return {
 		empty: true,
@@ -189,6 +182,7 @@ return {
 		namespaces: [],
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
+		big_class_cnt: BIG_CLASS_CNT,
 		pp_rels: true,
 		hide_individuals: false, 
 		tree: {
@@ -207,8 +201,8 @@ return {
 			pKind: 'All properties', 
 			topClass: 0, 
 			classPath: [],
+			class: '',
 			classes: [],
-			b_classes: []			
 		}
 	}
 }
@@ -246,9 +240,8 @@ dataShapes = {
 				this.schema.localNS = ns.filter(function(n){ return n.is_local == true})[0].name;
 
 				if (schema_info.tree_profile === 'DBpedia') {
-					this.schema.tree.class = 'dbo:Person';
+					this.schema.tree.class = 'All classes';
 					this.schema.tree.classes = classes;
-					this.schema.tree.b_classes = b_classes;
 				}
 				else if (schema_info.tree_profile === 'DBpediaL') {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
@@ -274,9 +267,6 @@ dataShapes = {
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 				}
-				//this.schema.tree.classes.unshift('All classes LN');  // TODO
-				//this.schema.tree.classes.unshift('All classes T');  // TODO
-				//this.schema.tree.classes.unshift('All classes U');  // TODO
 			}
 		}
 	},
@@ -313,7 +303,7 @@ dataShapes = {
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
 		console.log(rr)
 		console.log(Date.now() - startTime)
-		return await rr;
+		return rr;
 	},
 	getNamespaces : async function(params = {}) {
 		// *** console.log("------------getNamespaces ------------------")
@@ -462,10 +452,14 @@ dataShapes = {
 			allParams.element = findElementDataForIndividual(vq_obj);
 
 		//console.log(allParams)
-		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined )
+		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
 			rr = await this.callServerFunction("getIndividuals", allParams);
+			if (rr.error != undefined)
+				rr = []
+		}
 		else
 			rr = [];
+			
 		return rr;
 	},
 	getTreeIndividuals : async function(params = {}, className) {
@@ -473,8 +467,12 @@ dataShapes = {
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 		var allParams = {main: params, element:{className: className}};
-
-		return await this.callServerFunction("getTreeIndividuals", allParams);
+		
+		rr = await this.callServerFunction("getTreeIndividuals", allParams);
+		if (rr.error != undefined)
+			rr = [];
+			
+		return rr;
 	},
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")

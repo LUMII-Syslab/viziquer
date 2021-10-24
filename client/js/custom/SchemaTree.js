@@ -93,10 +93,16 @@ function setNS() {
 	
 }
 
-function setBC() {
+async function setBC() {
 	const c = dataShapes.schema.tree.class;
     //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); 
-	const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
+	//const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
+	let cc = {data:[]};
+	if ( !c.includes('All classes'))
+		cc = await dataShapes.resolveClassByName({name: c})
+	let r = false;
+	if ( cc.data.length > 0 && cc.data[0].cnt > dataShapes.schema.big_class_cnt)
+		r = true;
 	Template.schemaInstances.IsBigClass.set(r);
 }
 
@@ -243,7 +249,7 @@ async function  useFilterI (plus = 0) {
 		var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
 		if (iFull.length === dataShapes.schema.tree.countI)
 			instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
-			
+		
 		Template.schemaInstances.Instances.set(instances);
 	}
 }
@@ -399,6 +405,7 @@ Template.schemaTree.events({
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
+		await setBC()
 		await useFilterI ();	
 	},	
 	
@@ -424,7 +431,6 @@ Template.schemaTree.rendered = async function() {
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
 		await useFilter ();		
 	}
-
 	//Template.schemaTree.ClassPath.set([]);
 }
 
@@ -450,8 +456,8 @@ Template.schemaInstances.rendered = async function() {
 	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 	Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
-	setBC();
-	await useFilterI ();
+	await setBC();
+	await useFilterI();
 }
 
 Template.schemaFilter.helpers({

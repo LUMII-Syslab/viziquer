@@ -891,7 +891,7 @@ Template.ontologySettings.helpers({
 	},
 	
 	schemas: function() {
-		var ss = Template.ontologySettings.schemas.get();;
+		var ss = Template.ontologySettings.schemas.get();
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		var s = "";
 		if (proj) { s = proj.schema; } ;		

@@ -484,6 +484,14 @@ runCompletion = async function (text, act_elem2){
 	return [];
 }
 
+function isURI(text) {
+  if(text.indexOf("://") != -1)
+    return 3;
+  else
+    if(text.indexOf(":") != -1) return 4;
+  return 0;
+};
+
 runCompletionNew = async function  (text, fullText, cursorPosition){
 		
 	if(grammarType == "className"){
@@ -512,7 +520,8 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 
 				vq_obj = new VQ_Element(selected_elem_id);
 				var individual =  vq_obj.getInstanceAlias();
-				if (individual !== null && individual !== undefined) params.uriIndividual = individual;
+				if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+					params.uriIndividual = individual;
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
