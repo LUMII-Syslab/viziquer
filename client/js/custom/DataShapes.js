@@ -147,8 +147,6 @@ const findElementDataForIndividual = (vq_obj) => {
 
 const classes = [
 'All classes',
-'All classes T',
-'All classes LN',
 'dbo:Person', 
 'dbo:Place', 
 'dbo:Location', 
@@ -244,35 +242,29 @@ dataShapes = {
 					this.schema.tree.classes = classes;
 				}
 				else if (schema_info.tree_profile === 'DBpediaL') {
-					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
-					this.schema.tree.class = c_list[0];
-					this.schema.tree.classes = c_list;
 					this.schema.tree.dbo = false;
 				}
 				else if (schema_info.tree_profile === 'BasicL') {
-					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
-					this.schema.tree.class = c_list[0];
-					this.schema.tree.classes = c_list;
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 					this.schema.tree.local = true;
 				}
 				else  {
+					this.schema.tree.nsInclude = false;
+					this.schema.tree.dbo = false;
+				}
+				if (schema_info.tree_profile !== 'DBpedia' && !this.schema.hide_individuals) {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];
 					this.schema.tree.classes = c_list;
-					this.schema.tree.nsInclude = false;
-					this.schema.tree.dbo = false;
 				}
 			}
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		console.log("---------callServerFunction--------------" + funcName)
-		console.log(params)
+		//~~console.log("---------callServerFunction--------------" + funcName)
+		//~~console.log(params)
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
 		var s = this.schema.schema;
@@ -301,8 +293,8 @@ dataShapes = {
 		}
 		else
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
-		console.log(rr)
-		console.log(Date.now() - startTime)
+		//~~console.log(rr)
+		//~~console.log(Date.now() - startTime)
 		return rr;
 	},
 	getNamespaces : async function(params = {}) {
