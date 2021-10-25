@@ -412,7 +412,7 @@ Template.schemaTree.events({
 });
 
 Template.schemaTree.rendered = async function() {
-	console.log("-----rendered schemaTree----")
+	//console.log("-----rendered schemaTree----")
 
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);

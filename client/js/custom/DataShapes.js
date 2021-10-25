@@ -147,8 +147,6 @@ const findElementDataForIndividual = (vq_obj) => {
 
 const classes = [
 'All classes',
-'All classes T',
-'All classes LN',
 'dbo:Person', 
 'dbo:Place', 
 'dbo:Location', 
@@ -271,8 +269,8 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		console.log("---------callServerFunction--------------" + funcName)
-		console.log(params)
+		//~~console.log("---------callServerFunction--------------" + funcName)
+		//~~console.log(params)
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
 		var s = this.schema.schema;
@@ -301,8 +299,8 @@ dataShapes = {
 		}
 		else
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
-		console.log(rr)
-		console.log(Date.now() - startTime)
+		//~~console.log(rr)
+		//~~console.log(Date.now() - startTime)
 		return rr;
 	},
 	getNamespaces : async function(params = {}) {
