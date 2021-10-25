@@ -242,28 +242,22 @@ dataShapes = {
 					this.schema.tree.classes = classes;
 				}
 				else if (schema_info.tree_profile === 'DBpediaL') {
-					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
-					this.schema.tree.class = c_list[0];
-					this.schema.tree.classes = c_list;
 					this.schema.tree.dbo = false;
 				}
 				else if (schema_info.tree_profile === 'BasicL') {
-					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
-					this.schema.tree.class = c_list[0];
-					this.schema.tree.classes = c_list;
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 					this.schema.tree.local = true;
 				}
 				else  {
+					this.schema.tree.nsInclude = false;
+					this.schema.tree.dbo = false;
+				}
+				if (schema_info.tree_profile !== 'DBpedia' && !this.schema.hide_individuals) {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];
 					this.schema.tree.classes = c_list;
-					this.schema.tree.nsInclude = false;
-					this.schema.tree.dbo = false;
 				}
 			}
 		}

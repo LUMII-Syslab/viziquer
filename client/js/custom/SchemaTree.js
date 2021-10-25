@@ -23,6 +23,11 @@ Template.schemaInstances.showI = new ReactiveVar("");
 //const startCount = 30;
 //const plusCount = 20;
 
+Template.schemaTree.onDestroyed(function() {
+	Template.schemaTree.Classes.set([]);
+	Template.schemaTree.NsP.set(false);
+});
+
 Template.schemaTree.helpers({
 	classes: function() {
 		return Template.schemaTree.Classes.get();
@@ -98,7 +103,7 @@ async function setBC() {
     //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); 
 	//const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
 	let cc = {data:[]};
-	if ( !c.includes('All classes'))
+	if ( !c.includes('All classes') && c!= '')
 		cc = await dataShapes.resolveClassByName({name: c})
 	let r = false;
 	if ( cc.data.length > 0 && cc.data[0].cnt > dataShapes.schema.big_class_cnt)
