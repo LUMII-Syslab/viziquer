@@ -390,15 +390,21 @@ function generateAbstractTable(parsedQuery, allClasses, variableList, parentNode
 							break;
 						}
 					} else if(Object.keys(classes).length > 1){
-						if(expression["aggregation"].toLowerCase() == "count") {
-							if(distinct == "") aggregationExp = "count(.)";
-							else  aggregationExp = "count_distinct(.)";
-						}
-						var aggregateInfo = {
-							"exp":aggregationExp,
-							"alias":alias
-						}
 						for (var clazz in classesTable){
+							if(expression["aggregation"].toLowerCase() == "count") {
+								if(classesTable[clazz]["variableName"] !== expression["expression"]){
+									if(distinct == "") aggregationExp = "count("+expression["expression"].substring(1)+")";
+									else  aggregationExp = "count_distinct("+expression["expression"].substring(1)+")";;
+								} else {
+									if(distinct == "") aggregationExp = "count(.)";
+									else  aggregationExp = "count_distinct(.)";
+								}
+							}
+							var aggregateInfo = {
+								"exp":aggregationExp,
+								"alias":alias
+							}
+							
 							classesTable[clazz] = addAggrigateToClass(classesTable[clazz], aggregateInfo);
 
 							break;
