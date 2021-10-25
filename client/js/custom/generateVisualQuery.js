@@ -515,15 +515,22 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							break;
 						}
 					} else if(Object.keys(classes).length > 1){
-						if(expression["aggregation"].toLowerCase() == "count") {
-							if(distinct == "") aggregationExp = "count(.)";
-							else  aggregationExp = "count_distinct(.)";
-						}
-						var aggregateInfo = {
-							"exp":aggregationExp,
-							"alias":alias
-						}
+						
 						for (var clazz in classesTable){
+							if(expression["aggregation"].toLowerCase() == "count") {
+								if(classesTable[clazz]["variableName"] !== expression["expression"]){
+									if(distinct == "") aggregationExp = "count("+expression["expression"].substring(1)+")";
+									else  aggregationExp = "count_distinct("+expression["expression"].substring(1)+")";;
+								} else {
+									if(distinct == "") aggregationExp = "count(.)";
+									else  aggregationExp = "count_distinct(.)";
+								}
+							}
+							var aggregateInfo = {
+								"exp":aggregationExp,
+								"alias":alias
+							}
+							
 							classesTable[clazz] = addAggrigateToClass(classesTable[clazz], aggregateInfo);
 
 							break;
@@ -2052,7 +2059,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									if(underSubQuery != true){
 										var aggregations = abstractTable["classesTable"][clazz]["aggregations"];
 										for(var aggr in aggregations){
-										
 											if(aggregations[aggr]["exp"].toLowerCase() == "count(.)"){
 												var cn = abstractTable["classesTable"][clazz]["instanceAlias"];
 												if(typeof cn === 'undefined' || cn == null) cn = abstractTable["classesTable"][clazz]["identification"]["short_name"];
