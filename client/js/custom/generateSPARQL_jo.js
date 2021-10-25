@@ -645,8 +645,8 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 					}
 				}
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:rootClassId, unionId:unionClass};
-			} 
-		} else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+			} else {idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};}
+		} else {idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};}
 	}
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
@@ -698,6 +698,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		// if given class name is not in the table, use it
 		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
 	}
+	
 	var className = idTable[clazz["identification"]["_id"]]["name"];
 	var linkType = "palin";
 	if(clazz["linkType"] != "REQUIRED" || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) linkType = "notPlain";
