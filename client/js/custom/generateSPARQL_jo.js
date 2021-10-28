@@ -1153,7 +1153,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(underNotLink != true && clazz["variableName"].startsWith("?") == false)sparqlTable["variableName"] = "?" + varName;
 
 		if(typeof fieldNames[attrname] === 'undefined') fieldNames[varName] = [];
-		fieldNames[varName][clazz["identification"]["_id"]] = idTable[clazz["identification"]["_id"]];
+		var aliasTable = {};
+		aliasTable[varName] = idTable[clazz["identification"]["_id"]];
+		fieldNames[varName][clazz["identification"]["_id"]] = aliasTable;
 	}
 	else if(clazz["identification"]["local_name"] != "[ ]" && clazz["isUnion"] != true && clazz["isUnit"] != true && clazz["identification"]["local_name"] != "[ + ]" && clazz["identification"]["local_name"] != null && clazz["identification"]["local_name"] != "" && clazz["identification"]["local_name"] != "(no_class)") {
 		var instAlias = clazz["instanceAlias"]
@@ -1265,7 +1267,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					counter++;
 				} else {
 					if(typeof fieldNames[alias] === 'undefined') fieldNames[alias] = [];
-					fieldNames[alias][clazz["identification"]["_id"]] = alias;
+					var aliasTable = {};
+					aliasTable[alias] =  alias;
+					fieldNames[alias][clazz["identification"]["_id"]] = aliasTable;
 				}
 
 				//agregation in class
@@ -1285,13 +1289,17 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 								var classes = [];
 								if(typeof variableNamesAll[tempAlias]["classes"] !== 'undefined') classes = variableNamesAll[tempAlias]["classes"];
-								classes[clazz["identification"]["_id"]] = tempAlias + "_" + count;
+								var aliasTable = {};
+								aliasTable[tempAlias] =  tempAlias + "_" + count;
+								classes[clazz["identification"]["_id"]] = aliasTable;
 								variableNamesAll[tempAlias]["classes"] = classes;
 							}
 							else {
 								alias = tempAlias;
 								var classes = []
-								classes[clazz["identification"]["_id"]] = tempAlias;
+								var aliasTable = {};
+								aliasTable[tempAlias] =  tempAlias;
+								classes[clazz["identification"]["_id"]] = aliasTable;
 								variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false, "classes":classes};
 							}
 
@@ -1474,13 +1482,18 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 							var classes = [];
 							if(typeof variableNamesAll[tempAlias]["classes"] !== 'undefined') classes = variableNamesAll[tempAlias]["classes"];
-							classes[clazz["identification"]["_id"]] = alias;
+							
+							var aliasTable = {};
+							aliasTable[tempAlias] =  alias;
+							classes[clazz["identification"]["_id"]] = aliasTable;
 							variableNamesAll[tempAlias]["classes"] = classes;
 						}
 						else {
 							alias = tempAlias;
 							var classes = []
-							classes[clazz["identification"]["_id"]] = tempAlias;
+							var aliasTable = {};
+							aliasTable[tempAlias] =  tempAlias;
+							classes[clazz["identification"]["_id"]] = aliasTable;
 							variableNamesAll[tempAlias] = {"alias":tempAlias, "nameIsTaken":true, counter:0, "isVar" : false, "classes" : classes};
 						}
 
@@ -1490,7 +1503,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					}
 				}
 				if(typeof fieldNames[alias] === 'undefined') fieldNames[alias] = [];
-				fieldNames[alias][clazz["identification"]["_id"]] = alias;
+				var aliasTable = {};
+				aliasTable[alias] =  alias;
+				fieldNames[alias][clazz["identification"]["_id"]] = aliasTable;
 
 				//aggregateTriples only in main class or subselect main class
 				if(rootClassId == idTable[clazz["identification"]["_id"]] || clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) {
@@ -1549,11 +1564,12 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 			}
 			for (var attrname in result["expressionLevelNames"]) {
-				if(typeof result["expressionLevelNames"][attrname] === 'string') {
+				// if(typeof result["expressionLevelNames"][attrname] === 'string') {
+				if(typeof result["expressionLevelNames"][attrname] === 'object') {
 					if(typeof variableNamesAll[attrname] === 'undefined') {
 						var classes = []
 						classes[clazz["identification"]["_id"]] = result["expressionLevelNames"][attrname];
-						variableNamesAll[attrname] = {"alias": result["expressionLevelNames"][attrname], "nameIsTaken": true, counter:0, "isVar" : false, "classes":classes};
+						variableNamesAll[attrname] = {"alias": result["expressionLevelNames"][attrname][attrname], "nameIsTaken": true, counter:0, "isVar" : false, "classes":classes};
 					}
 				}
 			}
@@ -1581,7 +1597,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			//if(typeof variableNamesAll[attrname] === 'undefined')
 				var classes = [];
 				classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
-				variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"], "classes" : classes};
+				variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"][attrname], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"], "classes" : classes};
 		}
 	}
 	_.each(clazz["children"],function(subclazz) {
@@ -1595,7 +1611,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
 			if(typeof temp["variableNamesAll"][attrname] === 'string') {
-				variableNamesClass[attrname] = {"alias": temp["variableNamesAll"][attrname]["alias"], "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
+				var aliasTable = {};
+				aliasTable[attrname] =  temp["variableNamesAll"][attrname]["alias"];
+				variableNamesClass[attrname] = {"alias": aliasTable, "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
 				//variableNamesClass[attrname] = {"alias":temp["variableNamesAll"][attrname], "isvar" : false};
 			}
 		}
@@ -1634,9 +1652,11 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 								if(typeof variableNamesAll[vn]=== 'undefined'){
 									//expressionLevelNames[vn] = vn;
 									preditate = " ?" + vn;
-									variableNamesClass[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+									var aliasTable = {};
+									aliasTable[vn] =  tempAlias;
+									variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
 									var classes = [];
-									classes[clazz["identification"]["_id"]] = tempAlias;
+									classes[clazz["identification"]["_id"]] = aliasTable;
 									variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes" : classes};
 									//alias = tempAlias;
 								} else {
@@ -1644,13 +1664,17 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 									//expressionLevelNames[vn] = vn + "_" +count;
 									preditate = " ?" + vn + "_" +count;
 									variableNamesAll[vn]["counter"] = count;
-
+									
+									var aliasTable = {};
+									aliasTable[vn] =  tempAlias + "_" +count;
+									
 									var classes = [];
 									if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-									classes[clazz["identification"]["_id"]] = tempAlias + "_" +count;
+									classes[clazz["identification"]["_id"]] = aliasTable;
 									variableNamesAll[vn]["classes"] = classes;
 
-									variableNamesClass[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
+									
+									variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
 									//alias = tempAlias + "_" +count;
 								}
 							} else {
@@ -1658,10 +1682,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 								//expressionLevelNames[vn] = vn + "_" +count;
 								preditate = " ?" + vn + "_" +count;
 								variableNamesClass[vn]["counter"] = count;
-
+								
+								var aliasTable = {};
+								aliasTable[vn] =  tempAlias + "_" +count;
+								
 								var classes = [];
 								if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-								classes[clazz["identification"]["_id"]] = tempAlias + "_" +count;
+								classes[clazz["identification"]["_id"]] = aliasTable;
 
 								variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"], "classes" : classes};
 								//alias = tempAlias + "_" +count;
@@ -1852,7 +1879,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			if(typeof variableNamesAll[attrname]["classes"] !== 'undefined') classes = variableNamesAll[attrname]["classes"];
 			classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
 
-			variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"], "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"], "classes" : classes};
+			variableNamesAll[attrname] = {"alias": attrname, "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"], "classes" : classes};
 		}
 	}
 
@@ -1914,23 +1941,25 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				var orderName = order["exp"];
 				if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
 				if(typeof fieldNames[orderName] !== 'undefined'){
+
+					// var result = fieldNames[orderName][rootClass_id][order["exp"]];
 					var result = fieldNames[orderName][rootClass_id];
 					if(typeof result === 'undefined'){
 						if(typeof symbolTable[rootClass_id] !== 'undefined' && typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
 							for(var attrName in symbolTable[rootClass_id][orderName]){
 								if(typeof symbolTable[rootClass_id][orderName][attrName]["upBySubQuery"] !== "undefined" && symbolTable[rootClass_id][orderName][attrName]["upBySubQuery"] == 1){
-									result =  fieldNames[orderName][symbolTable[rootClass_id][orderName][attrName]["context"]];
+									result =  fieldNames[orderName][symbolTable[rootClass_id][orderName][attrName]["context"]][order["exp"]];
 									break;
 								}
 							}
 						}
 						if(typeof result === 'undefined'){
 							for (var ordr in fieldNames[orderName]) {
-								result = fieldNames[orderName][ordr];
+								result = fieldNames[orderName][ordr][order["exp"]];
 								break;
 							}
 						}
-					}
+					} else result = fieldNames[orderName][rootClass_id][order["exp"]];
 
 
 
@@ -2007,10 +2036,10 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				var result = fieldNames[groupName][rootClass_id];
 				if(typeof result === 'undefined'){
 					for (var ordr in fieldNames[groupName]) {
-						result = fieldNames[groupName][ordr];
+						result = fieldNames[groupName][ordr][group["exp"]];
 						break;
 					}
-				}
+				} else result = fieldNames[groupName][rootClass_id][group["exp"]];
 				//orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
 				orderGroupBy.push("?" + result);
 			} else if(typeof symbolTable[rootClass_id][groupName] !== 'undefined'){

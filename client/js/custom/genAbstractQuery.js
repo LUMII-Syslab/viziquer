@@ -607,8 +607,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"]
          ) {
             var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
-
-			if (var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
+			if (var_obj["kind"] !== null && var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
               var expression = f.exp;
 			        if (f.alias) expression = f.alias;
 			        var condition = {exp:"EXISTS(" + expression + ")"};

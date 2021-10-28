@@ -431,7 +431,7 @@ vq_grammar_parser = (function() {
         peg$c391 = { type: "class", value: "[eE]", description: "[eE]" },
         peg$c392 = /^[+\-]/,
         peg$c393 = { type: "class", value: "[+-]", description: "[+-]" },
-        peg$c394 = async function(DOUBLE) {return {Number:DOUBLE.join("")}},
+        peg$c394 = async function(DOUBLE) {return {Number:makeVar(DOUBLE)}},
         peg$c395 = async function(INTEGER) {return {Number:INTEGER.join("")}},
         peg$c396 = async function(Number) {return {Number:Number.join("")}},
         peg$c397 = async function(Var) {return {VariableName:makeVar(Var)}},
@@ -448,7 +448,7 @@ vq_grammar_parser = (function() {
         peg$c408 = "\u201D",
         peg$c409 = { type: "literal", value: "\u201D", description: "\"\\u201D\"" },
         peg$c410 = async function() {return '"'},
-        peg$c411 = async function(Path) {return pathOrReference(Path)},
+        peg$c411 = async function(Path) {return await pathOrReference(Path)},
         peg$c412 = async function(PathProperty, Substring, FunctionBETWEEN, FunctionLike) {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c413 = "[",
         peg$c414 = { type: "literal", value: "[", description: "\"[\"" },
@@ -13104,19 +13104,15 @@ vq_grammar_parser = (function() {
               s6 = peg$FAILED;
               if (peg$silentFails === 0) { await peg$fail(peg$c373); }
             }
-            if (s6 !== peg$FAILED) {
-              while (s6 !== peg$FAILED) {
-                s5.push(s6);
-                if (peg$c372.test(input.charAt(peg$currPos))) {
-                  s6 = input.charAt(peg$currPos);
-                  peg$currPos++;
-                } else {
-                  s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c373); }
-                }
+            while (s6 !== peg$FAILED) {
+              s5.push(s6);
+              if (peg$c372.test(input.charAt(peg$currPos))) {
+                s6 = input.charAt(peg$currPos);
+                peg$currPos++;
+              } else {
+                s6 = peg$FAILED;
+                if (peg$silentFails === 0) { await peg$fail(peg$c373); }
               }
-            } else {
-              s5 = peg$FAILED;
             }
             if (s5 !== peg$FAILED) {
               s4 = [s4, s5];
@@ -13282,19 +13278,15 @@ vq_grammar_parser = (function() {
               s6 = peg$FAILED;
               if (peg$silentFails === 0) { await peg$fail(peg$c373); }
             }
-            if (s6 !== peg$FAILED) {
-              while (s6 !== peg$FAILED) {
-                s5.push(s6);
-                if (peg$c372.test(input.charAt(peg$currPos))) {
-                  s6 = input.charAt(peg$currPos);
-                  peg$currPos++;
-                } else {
-                  s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c373); }
-                }
+            while (s6 !== peg$FAILED) {
+              s5.push(s6);
+              if (peg$c372.test(input.charAt(peg$currPos))) {
+                s6 = input.charAt(peg$currPos);
+                peg$currPos++;
+              } else {
+                s6 = peg$FAILED;
+                if (peg$silentFails === 0) { await peg$fail(peg$c373); }
               }
-            } else {
-              s5 = peg$FAILED;
             }
             if (s5 !== peg$FAILED) {
               s4 = [s4, s5];
