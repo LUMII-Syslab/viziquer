@@ -2876,7 +2876,8 @@
                   }
                 ],
                 "dialogTabId": "Exf3sEg8fpo7hYYRc",
-                "label": "Instance"
+                "label": "Instance",
+				"description": "Use Ctrl+Space for text auto-completion"
               }
             },
             {

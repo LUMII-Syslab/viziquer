@@ -64,7 +64,10 @@ Interpreter.customMethods({
 	
 	instanceAutoCompletion: async function(e, compart) {
 		grammarType = "instance"
-		await autoCompletion(e);
+		let ev = e.originalEvent;
+		if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
+			await autoCompletion(e);
+		}	
 	},
 
 });
@@ -117,8 +120,10 @@ autoCompletionGroupBy = async function(e) {
 
 autoCompletionInstance = async function(e) {
 	grammarType = "instance"
-	// symbolTable = await generateSymbolTableAC();
-	await autoCompletion(e);
+	let ev = e.originalEvent;
+	if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
+		await autoCompletion(e);
+	}	
 },
 
 autoCompletion = async function(e) {
