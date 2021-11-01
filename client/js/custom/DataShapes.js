@@ -221,7 +221,7 @@ dataShapes = {
 		this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
-				this.schema.schema =  proj.schema;
+				this.schema.schemaName =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
@@ -230,12 +230,15 @@ dataShapes = {
 				
 				var info = await callWithGet('info/');
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
+				this.schema.schema = schema_info.schema;
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
 				this.schema.hide_individuals = schema_info.hide_individuals;
 				
 				var ns = await this.getNamespaces();
 				this.schema.namespaces = ns;
-				this.schema.localNS = ns.filter(function(n){ return n.is_local == true})[0].name;
+				var local_ns = ns.filter(function(n){ return n.is_local == true});
+				if ( local_ns.length > 0 )
+					this.schema.localNS = local_ns[0].name;
 
 				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'All classes';

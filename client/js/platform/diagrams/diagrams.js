@@ -911,8 +911,9 @@ Template.ontologySettings.helpers({
 			act = proj.useStringLiteralConversion;
 		}
 		var list = [{name:'SIMPLE'}, {name:'TYPED'}, {name:'OFF'}];
-		var selected = list.filter(function(o){ return o.name == act})[0];
-		selected["selected"] = "selected";
+		var selected = list.filter(function(o){ return o.name == act});
+		if ( selected.length > 0 )
+			selected[0]["selected"] = "selected";
 		return list;
 	},
 

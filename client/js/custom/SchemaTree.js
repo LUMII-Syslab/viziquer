@@ -103,7 +103,7 @@ async function setBC() {
     //const r = ( c == 'skos:Concept' || c == 'foaf:Document' || c == 'owl:Thing' ||  c == 'dbo:TimePeriod' ||  c == 'dbo:Agent' ? true : false); 
 	//const r = (dataShapes.schema.tree.b_classes.filter(i => i == c).length !== 0)
 	let cc = {data:[]};
-	if ( !c.includes('All classes') && c!= '')
+	if ( c !== undefined && !c.includes('All classes') && c!= '')
 		cc = await dataShapes.resolveClassByName({name: c})
 	let r = false;
 	if ( cc.data.length > 0 && cc.data[0].cnt > dataShapes.schema.big_class_cnt)
@@ -189,22 +189,22 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 
 async function  useFilter (plus = 0) {
 	//var text = $('#filter_text').val().toLowerCase();
-	var text = Template.schemaTree.F1.get().toLowerCase();
+	var text = Template.schemaTree.F1.get();
 	dataShapes.schema.tree.filterC = text;
 	// ** setNS();
 	var treeTop = Template.schemaTree.Classes.get();
 	
 	if ( dataShapes.schema.tree.topClass != 0 ) 
-		await setTreeSubClasses ([treeTop[1]], true, text);
+		await setTreeSubClasses ([treeTop[1]], true, text.toLowerCase());
 	else 
-		await setTreeTop(text, plus);
+		await setTreeTop(text.toLowerCase(), plus);
 }
 
 async function  useFilterP (plus = 0) {
 	//var text = $('#filter_text2').val().toLowerCase();
-	var text = Template.schemaFilter.F2.get().toLowerCase();
+	var text = Template.schemaFilter.F2.get();
 	dataShapes.schema.tree.filterP = text;
-	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text};
+	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text.toLowerCase()};
 	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
 		params.orderByPrefix = `case when ns_id = 2 then 0 
