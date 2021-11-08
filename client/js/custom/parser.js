@@ -671,7 +671,7 @@ getPathFullGrammar = function(expressionTable){
 				var namespace = expressionTable[key]["var"]["type"]["Namespace"]
 				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 				
-				// prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":"] = "<"+namespace+">"
+				prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">"
 				variable = expressionTable[key];
 				visited = 1;
 			} else {
