@@ -761,7 +761,7 @@ Template.ontologySettings.onDestroyed(function() {
 
 Template.ontologySettings.events({
 
-	'click #ok-ontology-settings' : function(e, templ) {
+	'click #ok-ontology-settings' : async function(e, templ) {
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -785,7 +785,7 @@ Template.ontologySettings.events({
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
-		dataShapes.changeActiveProject(Session.get("activeProject"));
+		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		
 	},
 
