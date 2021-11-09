@@ -127,8 +127,8 @@ const findElementDataForProperty = (vq_obj) => {
 		params.className = class_name;
 
 	var pList = {in: [], out: []};	
-	if (dataShapes.schema.use_pp_rels) 
-		pList = getPList(vq_obj);
+	//if (dataShapes.schema.use_pp_rels) 
+	pList = getPList(vq_obj);
 	
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
@@ -181,7 +181,7 @@ return {
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
 		big_class_cnt: BIG_CLASS_CNT,
-		pp_rels: true,
+		use_pp_rels: false,
 		hide_individuals: false, 
 		tree: {
 			countC:MAX_TREE_ANSWERS, 
@@ -290,6 +290,7 @@ dataShapes = {
 		if (s !== "" && s !== undefined )
 		{
 			params.main.endpointUrl = this.schema.endpoint;
+			params.main.use_pp_rels = this.schema.use_pp_rels;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
@@ -385,12 +386,6 @@ dataShapes = {
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
 		return await this.callServerFunction("getProperties", allParams);
 	},
-	getNextProperties : async function(params = {}) {
-		// *** console.log("------------getNextProperties---"+ params.name +"---------------")
-		//dataShapes.getNextProperties({name: 'restingPlacePosition'})  
-		//dataShapes.getNextProperties({name: 'http://dbpedia.org/ontology/years'})
-		return await this.callServerFunction("getNextProperties",{main: params});
-	},	
 	getPropertiesFull : async function(params = {}) {
 		// *** console.log("------------GetProperties------------------")
 		// *** dataShapes.getProperties({main: {propertyKind:'Object'}, element:{className: 'umbel-rc:Park'}})
