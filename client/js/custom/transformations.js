@@ -976,7 +976,7 @@ Interpreter.customMethods({
 				y = mouse_pos["y"];
 			}
 		
-		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
+		Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		
 		for(var query in queries){
 			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x, y);
@@ -993,7 +993,7 @@ Interpreter.customMethods({
 			// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		// } catch (error) {
 		  // var x = 10;
-		  // Interpreter.customExtensionPoints.generateVisualQuery(query_text, x);
+		  // Interpreter.customExtensionPoints.generateVisualQuery(query_text, x, y);
 		// }
 		
 		

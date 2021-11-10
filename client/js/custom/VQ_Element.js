@@ -2721,6 +2721,11 @@ VQ_Element.prototype = {
     var name = this.getName();
 		return (name && name.charAt(0)=='?');
   },
+  // determines whether a class rather than blank node is searched
+  isBlankNode: function() {
+    var alias = this.getInstanceAlias();
+		return (alias && alias.charAt(0)=='_');
+  },
   // gets class variable name (e.g. X for ?X)
   getVariableName: function() {
     if (this.isVariable()) {return this.getName().substr(1)} else { return null }
@@ -2946,8 +2951,6 @@ VQ_Element.prototype = {
   },
   // string, bool -->
   addOrdering: function(exp,isDescending) {
-    console.log("OOOOOOOOOO", exp,isDescending)
-	
 	this.addCompartmentSubCompartments("OrderBy",[
       {name:"Name",value:exp},
       {name:"Desc",value:this.boolToString(isDescending)},

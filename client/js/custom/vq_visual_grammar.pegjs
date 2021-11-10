@@ -5,9 +5,10 @@
 	Main = (Var / NumberValue / BooleanLiteral / RDFLiteral / StringQuotes  / IRIREFName)
 	//Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 	space = ((" ")*) {return }
-	Var = (VAR_All / VAR1 / VAR2) 
+	Var = (VAR_All / VAR1 / VAR2 / VAR3) 
 	VAR1 = "?" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
 	VAR2 = "$" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
+	VAR3 = "_:" Var:VARNAME {return {value:"_"+makeVar(Var), type:"varName", isBlankNode:"true"}}
 	VAR_All = "*" {return {value:"*", type:"varName"}}
 	VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 	
@@ -24,18 +25,19 @@
 	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()] / "[" / "]")+)
 	stringEmpty = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()&] / "[" / "]")*)
 	
-	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer";
+	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer" / "http://www.w3.org/2001/XMLSchema#double";
 	BooleanIRI = "http://www.w3.org/2001/XMLSchema#boolean";
 	
 	Number = Number1 / Number2
-	Number1 = "'" Number:[0-9]+ "'" {return Number}
-	Number2 = '"' Number:[0-9]+ '"' {return Number}
+	Number1 = "'" Number:[0-9eE]+ "'" {return Number}
+	Number2 = '"' Number:[0-9eE]+ '"' {return Number}
 	
-	RDFLiteral = (RDFLiteral:(RDFLiteralA/RDFLiteralB/RDFLiteralC/RDFLiteralD)) {return {value:makeVar(RDFLiteral), type:"RDFLiteral"}}
+	RDFLiteral = (RDFLiteral:(RDFLiteralA/RDFLiteralB/RDFLiteralC/RDFLiteralD/RDFLiteralE)) {return {value:makeVar(RDFLiteral), type:"RDFLiteral"}}
 	RDFLiteralA = String:((STRING_LITERAL1  / STRING_LITERAL2) LANGTAG) {return makeVar(String)}
 	RDFLiteralC = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#date" {return makeVar(String) + "^^xsd:date"}
 	RDFLiteralB = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#dateTime" {return makeVar(String) + "^^xsd:dateTime"}
-	RDFLiteralD = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:iri {return makeVar(String) + "^^<" +makeVar(iri)+">"}
+	RDFLiteralD = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#string" {return makeVar(String)}
+	RDFLiteralE = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:iri {return makeVar(String) + "^^<" +makeVar(iri)+">"}
 	
 	LANGTAG = "@" string
 	

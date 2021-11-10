@@ -1197,6 +1197,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		}
 	}
 
+	
 	//attributes
 	_.each(clazz["fields"],function(field) {
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
@@ -1397,7 +1398,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	})
 	classSimpleTriples = classSimpleTriples.concat(classExpressionTriples);
 	classSimpleTriples = classSimpleTriples.concat(classFunctionTriples);
-	sparqlTable["simpleTriples"] = classSimpleTriples;
+	if(clazz["isBlankNode"] != true)sparqlTable["simpleTriples"] = classSimpleTriples;
+	else sparqlTable["blankNodeTriples"] = classSimpleTriples;
 
 	var isMultipleAllowedAggregation = false;
 	var isMultipleAllowedCardinality = false;
@@ -1606,7 +1608,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 
 		var temp = forAbstractQueryTable(attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
-
+		
 		messages = messages.concat(temp["messages"]);
 		counter = temp["counter"];
 		for (var attrname in temp["variableNamesAll"]) {
@@ -1738,7 +1740,23 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					else if (clazz["isUnion"] == true && parentClass == null) object = null;
 					else object = idTable[parentClass["identification"]["_id"]];
 					subject = idTable[subclazz["identification"]["_id"]];
-				} else {
+				} else if(subclazz["isBlankNode"] == true){
+					if(clazz["isUnion"] != true) subject = instance;
+					else if (clazz["isUnion"] == true && parentClass == null) subject = null;
+					else subject = idTable[parentClass["identification"]["_id"]];
+					blankNodeName = idTable[subclazz["identification"]["_id"]];
+					
+					object = "[";
+					var blankNodes = [];
+					for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
+						for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){
+							blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""))
+						}
+					}
+
+					object = object + blankNodes.join(";");
+					object = object+ "]";
+				}else {
 					if(clazz["isUnion"] != true) subject = instance;
 					else if (clazz["isUnion"] == true && parentClass == null) subject = null;
 					else subject = idTable[parentClass["identification"]["_id"]];
@@ -1756,8 +1774,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					if(objectName.indexOf("://") != -1) objectName = "<" + objectName + ">";
 					else if(objectName.indexOf(":") != -1){
 						//TODO add prefix
-					} else objectName = "?" + objectName;
-
+					} else if(subclazz["isBlankNode"] != true) objectName = "?" + objectName;
+					
 					temp["sparqlTable"]["linkTriple"] = subjectName +  preditate + " " + objectName + ".";
 				} else{
 					if(preditate == null || preditate.replace(" ", "") =="") {
