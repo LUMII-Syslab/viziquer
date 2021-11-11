@@ -17,6 +17,8 @@ const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
+const LONG_ANSWER = 3000;
+const MakeLog = false;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -183,6 +185,8 @@ return {
 		big_class_cnt: BIG_CLASS_CNT,
 		use_pp_rels: false,
 		hide_individuals: false, 
+		deferred_properties: 'false',
+		log: [],
 		tree: {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
@@ -243,6 +247,7 @@ dataShapes = {
 				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'All classes';
 					this.schema.tree.classes = classes;
+					this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
 				}
 				else if (schema_info.tree_profile === 'DBpediaL') {
 					this.schema.tree.dbo = false;
@@ -256,6 +261,7 @@ dataShapes = {
 					this.schema.tree.nsInclude = false;
 					this.schema.tree.dbo = false;
 				}
+				
 				if (schema_info.tree_profile !== 'DBpedia' && !this.schema.hide_individuals) {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
@@ -291,6 +297,7 @@ dataShapes = {
 		{
 			params.main.endpointUrl = this.schema.endpoint;
 			params.main.use_pp_rels = this.schema.use_pp_rels;
+			params.main.makeLog = MakeLog;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
@@ -301,7 +308,11 @@ dataShapes = {
 		
 		if ( rr.data ) 
 			console.log(rr)
-		console.log(Date.now() - startTime)
+		const time = Date.now() - startTime
+		console.log(time)
+		if ( MakeLog && time > LONG_ANSWER ) 
+			this.schema.log.push(`${funcName};${time};${JSON.stringify(params.element)};${rr.sql};${rr.sql2}`);
+		
 		return rr;
 	},
 	getNamespaces : async function(params = {}) {
@@ -379,6 +390,7 @@ dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', filter: 'aa'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
+		params.deferred_properties = this.schema.deferred_properties;
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForProperty(vq_obj);
@@ -399,7 +411,7 @@ dataShapes = {
 		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element: { className:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, element:{className: 'CareerStation'}, elementOE:{otherEndClassName:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'All', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'}, element:{className: 'CareerStation'}})
-		
+		params.main.deferred_properties = this.schema.deferred_properties;
 		return await this.callServerFunction("getProperties", params);
 	},
 	checkProperty : async function(params = {}) {
@@ -413,7 +425,7 @@ dataShapes = {
 		function makeTreeName(params) {
 			var nList = [];
 			nList.push(params.propertyKind);
-			if ( params.orderByPrefix !== undefined && params.orderByPrefix !== undefined )
+			if ( params.basicOrder !== undefined && params.basicOrder )
 				nList.push('Basic');
 			else
 				nList.push('Full');
@@ -512,6 +524,14 @@ dataShapes = {
 				this.schema.resolvedPropertiesF[params.name] = 1;
 		}
 		return rr;
+	},
+	printLog : async function() {
+		const info = this.schema.log.join("\r\n");
+		var link = document.createElement("a"); 
+		link.setAttribute("download", "LOG.txt");
+		link.href = URL.createObjectURL(new Blob([info], {type: "application/json;charset=utf-8;"}));
+		document.body.appendChild(link);
+		link.click();
 	},
 };
 

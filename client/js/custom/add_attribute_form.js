@@ -532,6 +532,7 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		//param.namespaces = {notIn: ['dbp']};;
 		//param.orderByPrefix = 'case when ns_id = 2 then 0 else 1 end desc,';
+		param.basicOrder = true;
 		param.orderByPrefix = `case when ns_id = 2 then 0 
 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 

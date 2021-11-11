@@ -207,6 +207,7 @@ async function  useFilterP (plus = 0) {
 	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text.toLowerCase()};
 	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
+		params.basicOrder = true;
 		params.orderByPrefix = `case when ns_id = 2 then 0 
 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
 or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
@@ -247,15 +248,18 @@ async function  useFilterI (plus = 0) {
 
 		dataShapes.schema.tree.class = className;
 		
-		Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
-
-		var iFull = await dataShapes.getTreeIndividuals(params, className);  
-
-		var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-		if (iFull.length === dataShapes.schema.tree.countI)
-			instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+		if (!className.includes('All classes') || text != '') {
 		
-		Template.schemaInstances.Instances.set(instances);
+			Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+
+			var iFull = await dataShapes.getTreeIndividuals(params, className);  
+
+			var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
+			if (iFull.length === dataShapes.schema.tree.countI)
+				instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+			
+			Template.schemaInstances.Instances.set(instances);
+		}
 	}
 }
 
