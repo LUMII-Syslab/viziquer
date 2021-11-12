@@ -184,8 +184,6 @@ Template.SelectTargetClass.events({
 		classes = classes.data;
 		
 		_.each(classes, function(e){
-			
-			console.log("CCCCCCCCCCCCC", e)
 			var prefix;
 			if(e.class_is_local == true || e.prefix == "")prefix = "";
 			else prefix = e.prefix+":";

@@ -3160,6 +3160,7 @@ vq_property_path_grammar_completion_parser = (function() {
           
           async function pathOrReference(o) {
       		var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
+			
           	var propertyName = "";
           	if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
           	if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
@@ -3174,6 +3175,7 @@ vq_property_path_grammar_completion_parser = (function() {
           	// if (varibleName != "") params.filter=varibleName;
       		
       		var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
@@ -3193,7 +3195,9 @@ vq_property_path_grammar_completion_parser = (function() {
           };
           
           async function afterVar(o) {
-			var pathParts = options.text.split(/[.\/]/);
+			var loc = await location();
+			var textEnd = loc.end.offset;
+			var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
       		var varibleName = makeVar(o);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
       		var isInv = false;
@@ -3225,6 +3229,7 @@ vq_property_path_grammar_completion_parser = (function() {
     			if(pathParts[0].startsWith("^"))isInv = true;
       		}
           	var props = await dataShapes.getPropertiesFull(params);
+
           	props = props["data"];
       		
           	for(var pr in props){
@@ -3243,9 +3248,9 @@ vq_property_path_grammar_completion_parser = (function() {
           };
           
           async function getInverseAssociations(o){
-
-      		var pathParts = options.text.split(/[.\/]/);
-      		// var varibleName = makeVar(o);
+			var loc = await location();
+			var textEnd = loc.end.offset;
+      		var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
       		if(pathParts.length > 1){
       			 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
@@ -3260,6 +3265,7 @@ vq_property_path_grammar_completion_parser = (function() {
       		}
 
           	var props = await dataShapes.getPropertiesFull(params);
+
           	props = props["data"];
           	for(var pr in props){
           		var prefix;

@@ -35,7 +35,7 @@
           	if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
           	if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
           	var targetSourceClass = "targetClass";
-          	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
+          	// if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 
       		var params = {propertyKind:'Object'};
           	// if (fullText != "") params.filter = fullText;
@@ -45,6 +45,7 @@
           	// if (varibleName != "") params.filter=varibleName;
       		
       		var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
@@ -64,6 +65,9 @@
           };
           
           async function afterVar(o) {
+			var loc = await location();
+			var textEnd = loc.end.offset;
+			var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
 			var pathParts = options.text.split(/[.\/]/);
       		var varibleName = makeVar(o);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
@@ -114,8 +118,9 @@
           };
           
           async function getInverseAssociations(o){
-
-      		var pathParts = options.text.split(/[.\/]/);
+			var loc = await location();
+			var textEnd = loc.end.offset;
+      		var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
       		// var varibleName = makeVar(o);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
       		if(pathParts.length > 1){

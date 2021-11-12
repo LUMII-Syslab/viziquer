@@ -228,7 +228,9 @@
             };
 						  
 			async function getInverseAssociations(o){
-				var pathParts = options.text.split(/[.\/]/);
+				var loc = await location();
+				var textEnd = loc.end.offset;
+				var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
         		// var varibleName = makeVar(o);
         		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
         		if(pathParts.length > 1){
@@ -263,7 +265,7 @@
             	var targetSourceClass = "targetClass";
             	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 
-				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		var props= await dataShapes.getPropertiesFull(p);
 
             	props = props["data"];
@@ -277,7 +279,7 @@
             		await addContinuation(await location(), propName, 100, false, 1, "end");
             	}
 							
-				var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+				var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		var props= await dataShapes.getPropertiesFull(p);
 
             	props = props["data"];
@@ -317,14 +319,19 @@
     			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = new VQ_Element(selected_elem_id)
     			}
-						
-				var pathParts = options.text.split(/[.\/]/);
+				var loc = await location();
+				var textEnd = loc.end.offset;
+				var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
         		var varibleName = makeVar(o);
         		var params = {main:{propertyKind:'Data',"limit": 30}}
         		var isInv = false;
     						
         		if(pathParts.length > 1){
-        			params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+					
+					var varName = pathParts[pathParts.length-2];
+					if(varName.startsWith("^")){
+						params.element = {"pList": {"out": [{"name": varName.substring(1), "type": "out"}]}}
+					} else params.element = {"pList": {"in": [{"name": varName, "type": "in"}]}}
     				params.main.filter=pathParts[pathParts.length-1];
     				if(pathParts[pathParts.length-1].startsWith("^")){
     					isInv = true;
@@ -367,7 +374,7 @@
             			propName = "^"+propName;
             		}
             		if(isInv == false){
-						await addContinuation(await location(), propName, 100, false, 2);
+						await addContinuation(await location(), propName, 100, false, 2, "end");
 					}else if(isInv == true && props[pr].mark === 'in'){
 						await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
 					}
@@ -421,7 +428,9 @@
 					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = new VQ_Element(selected_elem_id)
 					}
-					var pathParts = options.text.split(/[.\/]/);
+					var loc = await location();
+					var textEnd = loc.end.offset;
+					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
 							
 					var prop;
 					if(pathParts.length > 1){
