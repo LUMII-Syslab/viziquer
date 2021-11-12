@@ -532,17 +532,24 @@ dataShapes = {
 		}
 		return rr;
 	},
-	printLog : async function() {
-		var link = document.createElement("a"); 
-		link.setAttribute("download", "LOG.txt");
-		link.href = URL.createObjectURL(new Blob([this.schema.log.join("\r\n")], {type: "application/json;charset=utf-8;"}));
-		document.body.appendChild(link);
-		link.click();
-		var link2 = document.createElement("a"); 
-		link2.setAttribute("download", "FULL_LOG.txt");
-		link2.href = URL.createObjectURL(new Blob([this.schema.fullLog.join("\r\n")], {type: "application/json;charset=utf-8;"}));
-		document.body.appendChild(link2);
-		link2.click();
+	printLog : function() {
+		if ( this.schema.log.length > 0 ) {
+			var link = document.createElement("a"); 
+			link.setAttribute("download", "LOG.txt");
+			link.href = URL.createObjectURL(new Blob([this.schema.log.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+			document.body.appendChild(link);
+			link.click();
+		}
+		if ( this.schema.fullLog.length > 0 ) {
+			var link2 = document.createElement("a"); 
+			link2.setAttribute("download", "FULL_LOG.txt");
+			link2.href = URL.createObjectURL(new Blob([this.schema.fullLog.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+			document.body.appendChild(link2);
+			link2.click();
+			}
+		this.clearLog();
+	},
+	clearLog : function() {
 		this.schema.log = [];
 		this.schema.fullLog = [];
 	},
