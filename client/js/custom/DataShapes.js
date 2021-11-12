@@ -18,7 +18,7 @@ const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
-const MakeLog = false;
+const MakeLog = true;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -184,9 +184,11 @@ return {
 		limit: MAX_ANSWERS,
 		big_class_cnt: BIG_CLASS_CNT,
 		use_pp_rels: false,
+		simple_prompt: false,
 		hide_individuals: false, 
 		deferred_properties: 'false',
 		log: [],
+		fullLog: [],
 		tree: {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
@@ -236,6 +238,7 @@ dataShapes = {
 				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
 				this.schema.schema = schema_info.schema;
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
+				this.schema.simple_prompt = schema_info.simple_prompt;
 				this.schema.hide_individuals = schema_info.hide_individuals;
 				
 				var ns = await this.getNamespaces();
@@ -297,6 +300,7 @@ dataShapes = {
 		{
 			params.main.endpointUrl = this.schema.endpoint;
 			params.main.use_pp_rels = this.schema.use_pp_rels;
+			params.main.simple_prompt = this.schema.simple_prompt;
 			params.main.makeLog = MakeLog;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
@@ -310,8 +314,11 @@ dataShapes = {
 			console.log(rr)
 		const time = Date.now() - startTime
 		console.log(time)
-		if ( MakeLog && time > LONG_ANSWER ) 
-			this.schema.log.push(`${funcName};${time};${JSON.stringify(params.element)};${rr.sql};${rr.sql2}`);
+		if ( MakeLog ) {
+			this.schema.fullLog.push(`${funcName};${time}`);
+			if ( time > LONG_ANSWER ) 
+				this.schema.log.push(`${funcName};${time};${JSON.stringify(params.element)};${rr.sql};${rr.sql2}`);
+		}
 		
 		return rr;
 	},
@@ -526,12 +533,18 @@ dataShapes = {
 		return rr;
 	},
 	printLog : async function() {
-		const info = this.schema.log.join("\r\n");
 		var link = document.createElement("a"); 
 		link.setAttribute("download", "LOG.txt");
-		link.href = URL.createObjectURL(new Blob([info], {type: "application/json;charset=utf-8;"}));
+		link.href = URL.createObjectURL(new Blob([this.schema.log.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 		document.body.appendChild(link);
 		link.click();
+		var link2 = document.createElement("a"); 
+		link2.setAttribute("download", "FULL_LOG.txt");
+		link2.href = URL.createObjectURL(new Blob([this.schema.fullLog.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+		document.body.appendChild(link2);
+		link2.click();
+		this.schema.log = [];
+		this.schema.fullLog = [];
 	},
 };
 
