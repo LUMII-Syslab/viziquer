@@ -248,18 +248,28 @@ async function  useFilterI (plus = 0) {
 
 		dataShapes.schema.tree.class = className;
 		
-		if (!className.includes('All classes') || text != '') {
-		
-			Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+		//if (!className.includes('All classes') || text != '') {
+			//Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+			
+			if ( text != '' ) {
+				params.individualMode = 'Direct';
+				var iFull = await dataShapes.getTreeIndividuals(params, className);  
+				var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
+				instances.push({ch_count: 0, children: [], data_id: "...", localName: "Waiting full answer..."});
+				Template.schemaInstances.Instances.set(instances);
+			}
+			else
+				Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+			
+			params.individualMode = 'All';
+			iFull = await dataShapes.getTreeIndividuals(params, className);  
 
-			var iFull = await dataShapes.getTreeIndividuals(params, className);  
-
-			var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-			if (iFull.length === dataShapes.schema.tree.countI)
-				instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
+			instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
+			//if (iFull.length === dataShapes.schema.tree.countI)
+			//	instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 			
 			Template.schemaInstances.Instances.set(instances);
-		}
+		//}
 	}
 }
 

@@ -302,6 +302,7 @@ dataShapes = {
 			params.main.use_pp_rels = this.schema.use_pp_rels;
 			params.main.simple_prompt = this.schema.simple_prompt;
 			params.main.makeLog = MakeLog;
+			params.main.schemaName = this.schema.schemaName;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
@@ -317,7 +318,7 @@ dataShapes = {
 		if ( MakeLog ) {
 			this.schema.fullLog.push(`${funcName};${time}`);
 			if ( time > LONG_ANSWER ) 
-				this.schema.log.push(`${funcName};${time};${JSON.stringify(params.element)};${rr.sql};${rr.sql2}`);
+				this.schema.log.push(`${funcName};${time};${params.main.filter};${JSON.stringify(params.element)};${rr.sql};${rr.sql2}`);
 		}
 		
 		return rr;
