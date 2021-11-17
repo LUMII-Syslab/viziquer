@@ -370,8 +370,7 @@ Template.AddLink.events({
 		// var name = obj.attr("name");
 		// if(typeof name === "undefined") 
 		var name = $(e.target).closest(".association").attr("name");
-		var line_direct = obj.attr("line_direct");
-		if(typeof line_direct === "undefined") line_direct = $(e.target).closest(".association").attr("line_direct");
+		var line_direct = $(e.target).closest(".association").attr("line_direct");
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 			
