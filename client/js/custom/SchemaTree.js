@@ -241,6 +241,10 @@ async function  useFilterI (plus = 0) {
 	//var text = $('#filter_text3').val();
 	if (Template.schemaInstances.showI.get()) {
 		var text = Template.schemaInstances.F3.get();
+		if ( text.indexOf(':') > -1 ) {
+			text = text.substring(text.indexOf(':')+1, text.length);
+			Template.schemaInstances.F3.set(text);
+		}
 		dataShapes.schema.tree.filterI = text;
 		var params = { limit: dataShapes.schema.tree.countI, filter:text};
 		//var className = $("#class").val();
@@ -261,6 +265,9 @@ async function  useFilterI (plus = 0) {
 			else
 				Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
 			
+			if ( text == '' && className.includes('All classes'))
+				params.filter = 'one'; // Noklusētais filtrs, lai ir kaut kas puslīdz sakarīgs
+			
 			params.individualMode = 'All';
 			iFull = await dataShapes.getTreeIndividuals(params, className);  
 
@@ -269,7 +276,7 @@ async function  useFilterI (plus = 0) {
 			//	instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 			
 			Template.schemaInstances.Instances.set(instances);
-		//}
+		// }
 	}
 }
 
@@ -644,6 +651,7 @@ Template.schemaInstances.helpers({
 	},
 });
 
+
 Template.schemaInstances.events({
 	"dblclick .class-body": async function(e) {
 		var i_name = $(e.target).closest(".class-body").attr("value");
@@ -654,6 +662,7 @@ Template.schemaInstances.events({
 			await useFilterI();
 		}
 		else if (i_name !== "wait") {
+			var className = Template.schemaInstances.Class.get();
 			const BLACK_HEADER_HEIGHT = 45;
 			const DEFAULT_BOX_WIDTH = 194;
 			const DEFAULT_BOX_HEIGHT = 66;
@@ -676,11 +685,12 @@ Template.schemaInstances.events({
 					 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-					if (!$("#class").val().includes('All classes')) { // TODO
-						boo.setName($("#class").val());
-						var proj = Projects.findOne({_id: Session.get("activeProject")});
-						boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
-					}
+					if (!className.includes('All classes')) 
+						boo.setName(className);
+					else	
+						boo.setName('');
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 					boo.setInstanceAlias(i_name);
 				}, loc);				
 			
@@ -699,8 +709,8 @@ Template.schemaInstances.events({
 	'click #class': async function(e) {
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class) {
-			//Template.schemaInstances.F3.set('');  //TODO
-			//dataShapes.schema.tree.filterI = '';  //TODO
+			Template.schemaInstances.F3.set('');  
+			dataShapes.schema.tree.filterI = '';  
 			dataShapes.schema.tree.class = className;
 			Template.schemaInstances.Class.set(className);
 			setBC();
