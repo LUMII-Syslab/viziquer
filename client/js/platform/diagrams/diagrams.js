@@ -756,6 +756,7 @@ Template.ontologySettings.onCreated(function() {
 
 Template.ontologySettings.onDestroyed(function() {
 	Session.set("msg", undefined);
+	
 });
 
 
@@ -826,6 +827,8 @@ Template.ontologySettings.events({
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);
 	 }
+	 Template.ontologySettings.uri.set(proj.uri);
+	 Template.ontologySettings.endpoint.set(proj.endpoint);
 
 	},
 
@@ -865,29 +868,57 @@ Template.ontologySettings.events({
 		});
 
 	},
+	'click #dss-schema' : function(e) {
+		var schema = $("#dss-schema").val();
+		var schema_info = Template.ontologySettings.schemas.get().filter(function(o){ return o.name == schema});
+		if ( schema_info.length > 0 && schema_info[0].name != "") {
+			//if ( Template.ontologySettings.endpoint.get() == "" || Template.ontologySettings.endpoint.get() == undefined ) {
+			Template.ontologySettings.endpoint.set(schema_info[0].sparql_url);
+			//}
+			if ( schema_info[0].named_graph != undefined || schema_info[0].named_graph != null ) {
+				//if ( Template.ontologySettings.uri.get() == "" || Template.ontologySettings.uri.get() == undefined )
+				Template.ontologySettings.uri.set(schema_info[0].named_graph);
+			}
+			else
+				Template.ontologySettings.uri.set("");
+		}
+		if ( schema_info.length > 0 && schema_info[0].name == "") {
+			Template.ontologySettings.endpoint.set("");
+			Template.ontologySettings.uri.set("");
+		}
+	},
 
 });
 
 Template.ontologySettings.schemas = new ReactiveVar([{name: ""}]);
+Template.ontologySettings.uri = new ReactiveVar("");
+Template.ontologySettings.endpoint = new ReactiveVar("");
 Template.ontologySettings.rendered = async function() {
 	var rr = await dataShapes.getOntologies();  
 	Template.ontologySettings.schemas.set(rr);
+	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	if (proj) {
+		Template.ontologySettings.uri.set(proj.uri);
+		Template.ontologySettings.endpoint.set(proj.endpoint);
+	}
 }
 
 Template.ontologySettings.helpers({
 
 	uri: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.uri;
-		}
+		return Template.ontologySettings.uri.get();
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		// if (proj) {
+		//	return proj.uri;
+		// }
 	},
 
 	endpoint: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.endpoint;
-		}
+		return Template.ontologySettings.endpoint.get();
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		// if (proj) {
+		//	return endpoint;
+		// }
 	},
 	
 	schemas: function() {

@@ -192,7 +192,7 @@ async function  useFilter (plus = 0) {
 	var text = Template.schemaTree.F1.get();
 	dataShapes.schema.tree.filterC = text;
 	// ** setNS();
-	var treeTop = Template.schemaTree.Classes.get();
+	var treeTop = Template.schemaTree.Classes.get();  
 	
 	if ( dataShapes.schema.tree.topClass != 0 ) 
 		await setTreeSubClasses ([treeTop[1]], true, text.toLowerCase());
@@ -452,8 +452,8 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
 		Template.schemaTree.NsL.set(dataShapes.schema.tree.local);
 		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago);
-		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);		
-
+		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
+		Template.schemaTree.Classes.set(dataShapes.schema.tree.classPath);
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
 		await useFilter ();		
 	}
