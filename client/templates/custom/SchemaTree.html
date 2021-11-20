@@ -122,10 +122,11 @@
 					{{/each}}
 				</select>
 			</div>
+			<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
+			<input id="filter_text3" type="text" class="form-control"  value={{f3}}>
 			{{#if isBigClass  }}
 				<div class="describe">Large class selected, results may come very slowly</div>
 			{{/if}}
-			<input id="filter_text3" type="text" class="form-control"  value={{f3}}>
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">

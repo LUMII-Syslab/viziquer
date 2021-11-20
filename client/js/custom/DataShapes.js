@@ -221,6 +221,23 @@ dataShapes = {
 		// *** console.log(rr)
 		return await rr;
 	},
+	findPropertiesIds : async function(direct_role, indirect_role, prop_list = []) {
+		var id_list = [];
+		async function addProperty(propertyName) {
+			if (propertyName != '' && propertyName != undefined && propertyName != null ) {
+				var prop = await dataShapes.resolvePropertyByName({name: propertyName});
+				if (prop.data.length > 0)
+					id_list.push(prop.data[0].id);
+			}
+		}
+		
+		await addProperty(direct_role);
+		await addProperty(indirect_role);
+		for (const element of prop_list) {
+			await addProperty(element);
+		}
+		return await id_list;
+	},
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
@@ -240,6 +257,8 @@ dataShapes = {
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
 				this.schema.simple_prompt = schema_info.simple_prompt;
 				this.schema.hide_individuals = schema_info.hide_individuals;
+				var prop_id_list = await dataShapes.findPropertiesIds(schema_info.direct_role, schema_info.indirect_role);
+				this.schema.deferred_properties = `id in ( ${prop_id_list})`;
 				
 				var ns = await this.getNamespaces();
 				this.schema.namespaces = ns;
@@ -250,7 +269,9 @@ dataShapes = {
 				if (schema_info.tree_profile === 'DBpedia') {
 					this.schema.tree.class = 'All classes';
 					this.schema.tree.classes = classes;
-					this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
+					//this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
+					var prop_id_list2 = await dataShapes.findPropertiesIds(schema_info.direct_role, schema_info.indirect_role, ['dct:subject', 'owl:sameAs', 'prov:wasDerivedFrom']);
+					this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
 				}
 				else if (schema_info.tree_profile === 'DBpediaL') {
 					this.schema.tree.dbo = false;

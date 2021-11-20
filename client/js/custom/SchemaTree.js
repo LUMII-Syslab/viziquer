@@ -208,9 +208,6 @@ async function  useFilterP (plus = 0) {
 	var col = 'cnt_x';
 	if ($("#dbp").is(":checked") ) {
 		params.basicOrder = true;
-		params.orderByPrefix = `case when ns_id = 2 then 0 
-else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject'
-or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`; 
 	}
 	if ( $("#propType").val() === 'Object properties' ) {
 		params.propertyKind = 'Object';
@@ -466,12 +463,7 @@ Template.schemaFilter.rendered = async function() {
 	Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
 	Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
 	await useFilterP ();
-	
-	//var pFull = await dataShapes.getTreeProperties({propertyKind:'All', limit: dataShapes.schema.tree.countP, orderByPrefix: `case when ns_id = 2 then 0 else case when display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom' then 1 else 2 end end desc,`});
-	//var properties = _.map(pFull.data, function(p) {return {ch_count: 0, children: [], data_id: getName(p), localName: getNameF(p)}});
-	//if ( pFull.complete === false)
-	//	properties.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});	
-	//Template.schemaFilter.Properties.set(properties);
+
 }
 
 Template.schemaInstances.rendered = async function() {
