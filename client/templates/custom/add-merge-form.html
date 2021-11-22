@@ -69,7 +69,7 @@
 		
     </style>
     <!-- Modal for new document -->
-    <div id="merge-values-form" class="modal fade">
+    <div id="merge-values-form" class="modal fade" data-backdrop="static" data-keyboard="false">
         
         <div class="modal-dialog">
             <div class="modal-content">
@@ -112,7 +112,7 @@
 				    {{/if}}
 					<div class="merge-values-expression">
 						<p style="color:purple">What to merge/aggregate</p>
-						<input class="form-control" type="text" name="expression-merge" value="{{expression}}" style="width:83%;display: inline-block;">
+						<input class="form-control" type="text" name="expression-merge" autocomplete="off" value="{{expression}}" style="width:83%;display: inline-block;">
 						<a id="extra-options-button-merge" class="btn btn-xs btn-success"><i>Extra Options</i></a>
 					</div>
 					
@@ -178,7 +178,7 @@
                         
                          <form>
                             <p style="color:purple">Give name to result: </p>
-                            <input class="form-control" type="text" id="merge-alias-name" value="{{mergeAlias}}" ><br>
+                            <input class="form-control" type="text" id="merge-alias-name" autocomplete="off" value="{{mergeAlias}}" ><br>
                         </form>
 						
                         
@@ -235,7 +235,7 @@
                         
                         <form>
                             <p style="color:purple">Give name to result: </p>
-                            <input class="form-control" type="text" id="merge-alias-name" value="{{mergeAlias}}" ><br>
+                            <input class="form-control" type="text" id="merge-alias-name" autocomplete="off" value="{{mergeAlias}}" ><br>
                         </form>
 						
 						{{#if isNotRootClass}}

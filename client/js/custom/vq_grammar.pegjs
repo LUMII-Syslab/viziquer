@@ -502,7 +502,7 @@
 
 			iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 
-			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / "%" / [0-9])* ">") {return {IRIREF:makeVar(IRIREF)}}
+			IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / "(" / ")" / "%" / [0-9])* ">") {return {IRIREF:makeVar(IRIREF)}}
 
 			PrefixedName = PrefixedName:(PNAME_LN) {return {PrefixedName:PrefixedName}}
 

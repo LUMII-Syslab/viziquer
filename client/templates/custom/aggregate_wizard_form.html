@@ -48,7 +48,7 @@
 		}
     </style>
     <!-- Modal for new document -->
-    <div id="aggregate-wizard-form" class="modal fade" onload="getDefaultName()">
+    <div id="aggregate-wizard-form" class="modal fade" data-backdrop="static" data-keyboard="false" onload="getDefaultName()">
         
         <div class="modal-dialog">
             <div class="modal-content">
@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-body">                
                     <form class="form-horizontal" role="form">                       
-                        <form>
+                        <form autocomplete="off">
                             <p style="color:purple">What to aggregate:  
 							<!-- <div class="help-tip">
                                 <p>Field or expression. Leave blank for class instance aggregation. </p>

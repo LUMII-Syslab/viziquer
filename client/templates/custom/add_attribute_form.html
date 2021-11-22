@@ -94,7 +94,7 @@
 </style>
 
 	<!-- Modal for new document -->
-    <div id="add-attribute-form" class="modal fade">
+    <div id="add-attribute-form" class="modal fade" data-backdrop="static" data-keyboard="false">
 
         <div class="modal-dialog">
             <div class="modal-content">
@@ -103,7 +103,7 @@
                     <h4 class="modal-title">Add Attributes</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal" autocomplete="off" role="form">
 						
 						<div class="form-group">
 							<table class="table table-striped" style="margin-bottom:0px;margin-left:10px;margin-right:10px;width:95%;">
@@ -207,7 +207,7 @@ To change the attribute to a helper (exclude from selection), save the attribute
 
 <template name="AddNewAttribute">
 	<!-- Modal for new document -->
-    <div id="add-new-attribute-form" class="modal fade">
+    <div id="add-new-attribute-form" class="modal fade" data-backdrop="static" data-keyboard="false">
 
         <div class="modal-dialog">
             <div class="modal-content">
@@ -216,7 +216,7 @@ To change the attribute to a helper (exclude from selection), save the attribute
                     <h4 class="modal-title">Attributes</h4>
                 </div>
                 <div class="modal-body multi-field" attributeid="{{attributeid}}">
-	                <form>
+	                <form autocomplete="off">
 						<div class="form-group compart-type" style="margin-bottom:10px;">
 							<label>Alias</label>
 							<input id="add-new-attribute-alias" class="form-control dialog-input input-sm" value="{{alias}}">

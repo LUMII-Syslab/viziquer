@@ -6,7 +6,7 @@
 			{{#if empty }}
 				<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
 			{{else}}
-			<input id="filter_text" type="text" class="form-control" value={{f1}} >
+			<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			{{#if nsInclude }}
 			<label class="form-check-label">
@@ -71,7 +71,7 @@
 				  <option>Data properties</option>
 				</select>
 			</div>
-			<input id="filter_text2" type="text" class="form-control"  value={{f2}} >
+			<input id="filter_text2" type="text" class="form-control" autocomplete="off" value={{f2}} >
 			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<label class="form-check-label">
 				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
@@ -123,7 +123,7 @@
 				</select>
 			</div>
 			<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
-			<input id="filter_text3" type="text" class="form-control"  value={{f3}}>
+			<input id="filter_text3" type="text" class="form-control" autocomplete="off" value={{f3}}>
 			{{#if isBigClass  }}
 				<div class="describe">Large class selected, results may come very slowly</div>
 			{{/if}}

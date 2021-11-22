@@ -451,6 +451,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
+			if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
+				var prefix = strURI.substring(0, strURI.indexOf(":"));
+				var name = strURI.substring(strURI.indexOf(":")+1);
+				var prefixes = query.prefixes;
+				for(var kp in prefixes){
+					if(prefixes[kp]["name"] == prefix) {
+						strURI = "<"+prefixes[kp]["value"]+name+">";
+						break;
+					}
+				}
+			}
             var condition = {exp:"(this) = " + strURI};
 			      await parseExpObject(condition, obj_class.identification);
 			      obj_class.conditions.push(condition);

@@ -8,7 +8,7 @@
 </style>
 
 	<!-- Modal for new document -->
-    <div id="add-class-name-form" class="modal fade">
+    <div id="add-class-name-form" class="modal fade" data-backdrop="static" data-keyboard="false">
 
         <div class="modal-dialog">
             <div class="modal-content">
@@ -17,8 +17,7 @@
                     <h4 class="modal-title">Class Name</h4>
                 </div>
                 <div class="modal-body">
-				
-					<form>
+					<form autocomplete="off">
 						<div class="form-group" style="margin-bottom:10px;">
 							<label>Class Name</label>
 							<input id="class-name-field" type="text" class="form-control">

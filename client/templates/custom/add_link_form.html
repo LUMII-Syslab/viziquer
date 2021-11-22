@@ -78,7 +78,7 @@
 </style>
 
 	<!-- Modal for new document -->
-    <div id="add-link-form" class="modal fade">
+    <div id="add-link-form" class="modal fade" data-backdrop="static" data-keyboard="false">
         
         <div class="modal-dialog" style="width:750px">
             <div class="modal-content">
@@ -249,21 +249,21 @@
 
 
 	<!-- Modal for new document -->
-    <div id="build-path-form" class="modal fade">
+    <div id="build-path-form" class="modal fade" data-backdrop="static" data-keyboard="false">
         
         <div class="modal-dialog" style="width:750px">
-            <div class="modal-content">
+            <div class="modal-content" >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Add Link</h4>
                 </div>
-
-                <div style="margin-left:15px;margin-right:15px;">
-					<p>Property path</p>
-                    <input type="text" class="form-control dialog-combobox input-sm" id="build-path-input">
-					<span class="help-block">Use Ctrl+Space for text auto-completion</span>
-                </div>
-
+				<form autocomplete="off">
+					<div style="margin-left:15px;margin-right:15px;" >
+						<p>Property path</p>
+						<input type="text" class="form-control dialog-combobox input-sm" id="build-path-input">
+						<span class="help-block">Use Ctrl+Space for text auto-completion</span>
+					</div>
+				</form>
                 <div class="modal-footer" style="clear: both;">
                     <button id="cancel-build-path" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-build-path" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
@@ -279,7 +279,7 @@
 
 
 	<!-- Modal for new document -->
-    <div id="select-class-form" class="modal fade">
+    <div id="select-class-form" class="modal fade" data-backdrop="static" data-keyboard="false">
         
         <div class="modal-dialog" style="width:550px;">
             <div class="modal-content">
@@ -290,10 +290,11 @@
 
 
                  <div class="form-group" >
-				 
+					<form autocomplete="off">
 					<div class="searchBox" id="searchBox">   				
 						<input class="form-control" id="class-search" type="text" placeholder="Search.." style="display: inline-block;">
 					</div>
+					</form>
 					<div style="height:420px; overflow-y: scroll;">
                               <div class="col-lg-10 targetClass" name="(no_class)" className="(no_class)">
                                     <label class="label-radio">

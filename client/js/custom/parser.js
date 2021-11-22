@@ -1064,17 +1064,82 @@ function transformBetweenLike(expressionTable){
 			temp=null;
 		}
 		
+		//BETWEEN
+		if (key == "ConditionalAndExpression" &&
+		typeof expressionTable[key][0]!== 'undefined' && expressionTable[key][0]["RelationalExpression"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]["PrefixedName"]!== 'undefined' &&
+		typeof expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]["PrefixedName"]["FunctionBETWEEN"]!== 'undefined' &&
+		expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]["PrefixedName"]["FunctionBETWEEN"]!= null 
+		){	
+			var temp = expressionTable[key][0];
+			var pe = expressionTable[key][0]["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"];
+			
+			expressionTable["ConditionalAndExpression"] = [ {
+                  "RelationalExpression" : {
+                    "NumericExpressionL" : {
+                      "AdditiveExpression" : {
+                        "MultiplicativeExpression" : {
+                          "UnaryExpression" : {
+                            "PrimaryExpression" : pe,
+                          },
+                          "UnaryExpressionList" : []
+                        },
+                        "MultiplicativeExpressionList" : []
+                      },
+                    },
+                    "Relation" : ">=",
+                    "NumericExpressionR" : temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]["PrefixedName"]["FunctionBETWEEN"]["BetweenExpressionL"],
+                    
+                  }
+                }, 
+				[
+                    [
+                        null,
+						{
+                            "ANDOriginal": "&&",
+                        },
+						null,
+                        {
+                                "RelationalExpression": {
+                                  "NumericExpressionL": {
+                                    "AdditiveExpression": {
+                                      "MultiplicativeExpression": {
+                                        "UnaryExpression": {
+                                          "PrimaryExpression": pe,
+										}, 
+										"UnaryExpressionList": []
+                                       },
+									   "MultiplicativeExpressionList": []
+                                      },
+                                    },
+                                  "Relation": "<=",
+                                  "NumericExpressionR": temp["RelationalExpression"]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["iri"]["PrefixedName"]["FunctionBETWEEN"]["BetweenExpressionR"],
+                                 }, 
+                        }
+                    ]
+                ]
+		 ]
+			temp=null;
+		}
+		
 		if(typeof expressionTable[key] == 'object'){
 			transformBetweenLike(expressionTable[key]);
 		}
 		
 		 if (key == "PrimaryExpression" && typeof expressionTable[key]["FunctionLike"]!== 'undefined' && expressionTable[key]["FunctionLike"] != null) {
+			 
 			 var t = expressionTable[key];
 			 var regaxExpression = "";
 			 var regaxExpression = expressionTable[key]["FunctionLike"]["string"];
 			 if (expressionTable[key]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
 			 if (expressionTable[key]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
-			
+			 
 			 expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
@@ -1133,6 +1198,77 @@ function transformBetweenLike(expressionTable){
                                      } ]
                                  } ]
                              }
+		}
+		if (key == "PrimaryExpression" && 
+			typeof expressionTable[key]["iri"]!== 'undefined' && 
+			typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined' && 
+			typeof expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]!== 'undefined' && 
+			expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"] != null) {
+			 
+			 var t = expressionTable[key];
+			 var regaxExpression = "";
+			 var regaxExpression = expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["string"];
+			 if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
+			 if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
+			
+			 expressionTable["PrimaryExpression"] = {
+                               "RegexExpression" : [
+                            	   "REGEX",
+                                   "(",
+                                   {
+                                   "OrExpression" : [ {
+                                      "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : t
+                                                           },
+                                                           "UnaryExpressionList" :[]
+                                                         },
+                                                         "MultiplicativeExpressionList" : []
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 }, 
+                                 {
+                                     "Comma": ","
+                                 },
+                                 {
+                                   "OrExpression" : [ {
+                                       "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : {
+                                                               "RDFLiteral" : { 
+                                                            	   "String":'"' + regaxExpression  + '"'
+                                                            	}
+                                                             }
+                                                           },
+                                                           "UnaryExpressionList" : {}
+                                                         },
+                                                         "MultiplicativeExpressionList" : {}
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 } ]
+                             } 
 		}
 	}
 	return expressionTable
