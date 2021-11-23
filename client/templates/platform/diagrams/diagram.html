@@ -470,7 +470,7 @@
     <li class="context-menu-item-li">
 
         {{#if subMenu}}
-            <a class="context-menu-item sub-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{data}}" index="{{index}}">{{item}} <i class="fa fa-play pull-right" style="padding-top: 2px; font-size: 10px; color: rgb(119, 119, 119);"></i></a>
+            <a class="context-menu-item sub-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{item}}" index="{{index}}">{{item}} <i class="fa fa-play pull-right" style="padding-top: 2px; font-size: 10px; color: rgb(119, 119, 119);"></i></a>
             <ul class="dropdown-menu sub-menu" role="menu" style="display:none; position:absolute; left:0px; top:0px;">
 
                 {{#each subMenu}}
@@ -479,7 +479,7 @@
             </ul>
 
         {{else}}
-            <a class="context-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{data}}" index="{{index}}">{{item}}</a>
+            <a class="context-menu-item" tabindex="-1" href="#" procedure="{{procedure}}" data="{{item}}" index="{{index}}">{{item}}</a>
 
         {{/if}}
 

@@ -35,32 +35,36 @@ ContextMenu.prototype = {
 		}
 	},
 
-	selectMenuItem: function(indexes) {
-
-		var menu = this.menu[indexes[0]];
-
-		//selecting the menu
-		if (_.isNumber(indexes[1])) {
-			menu = menu.subMenu[indexes[1]];
+	selectMenuItem: function(indexes, procedure = '') {
+		if ( procedure != '' && procedure != undefined) {
+			Interpreter.execute(procedure);
 		}
-		
-		if (menu) {
+		else {
+			var menu = this.menu[indexes[0]];
 
-			if (menu["func"]) {
-				menu["func"].apply(this, this.params);
+			//selecting the menu
+			if (_.isNumber(indexes[1])) {
+				menu = menu.subMenu[indexes[1]];
 			}
+			
+			if (menu) {
 
-			else if (menu["procedure"]) {
-				Interpreter.execute(menu["procedure"]);
+				if (menu["func"]) {
+					menu["func"].apply(this, this.params);
+				}
+
+				else if (menu["procedure"]) {
+					Interpreter.execute(menu["procedure"]);
+				}
+
+				else {
+					console.error("Error: No context menu function");
+				}
 			}
 
 			else {
 				console.error("Error: No context menu function");
-			}
-		}
-
-		else {
-			console.error("Error: No context menu function");
+			}		
 		}
 
 		this.hide();
@@ -165,13 +169,26 @@ Template.contextMenuTemplate.helpers({
 
 			//if menu
 			if (menu && menu.length > 0) {
-
+				console.log(menu)
 				properties["menu"] = _.map(menu, function(item, i) {
 										item.index = i;
 
 										if (item.subMenu) {
 											item.subMenu = _.map(item.subMenu, function(menu_item, i) {
 													menu_item.index = i;
+													
+													if (menu_item.subMenu) {
+													
+														if (dataShapes.schema.hide_individuals == true) {
+															menu_item.subMenu = menu_item.subMenu.filter(function(m){ return m.procedure != 'AddUriName'; });
+														}
+								
+														menu_item.subMenu = _.map(menu_item.subMenu, function(menu_item_3, i) {
+																menu_item_3.index = i;
+																return menu_item_3;
+															});
+													}
+											
 													return menu_item;
 												});
 										}
@@ -201,30 +218,30 @@ Template.contextMenuTemplate.events({
 		if (sub_menu.length > 0) {
 			var parent_menu_parent = sub_menu.closest(".context-menu-item-li");
 			var parent_menu = parent_menu_parent.find(".context-menu-item");
-
 			var parent_index = Number(parent_menu.attr("index"));
-
 			indexes.push(parent_index);
+			
 		}
 
 		var index = Number(menu_item.attr("index"));
 
 		if (_.isNumber(index)) {
 			indexes.push(index);
-			_contextMenu.selectMenuItem(indexes);
+			_contextMenu.selectMenuItem(indexes, menu_item.attr("procedure"));
 		}
 	},
 
 	'mouseover .context-menu-item': function(e) {
-
 		var context_menu_item = $(e.target).closest(".context-menu-item");
+		//console.log("tekošais...")
+		//console.log(context_menu_item.attr("data"))
 
 		var context_menu_obj = $("#contextMenu");
 		var context_menu_pos = context_menu_obj.position();
 
 		var context_menu_width = context_menu_obj.width();
 
-		var sub_menu_pos_x = context_menu_width - 5;
+		var sub_menu_pos_x = context_menu_width - 20;
 		var sub_menu_pos_y = context_menu_item.position().top - 8;
 
 		//sub-menu class name
@@ -239,14 +256,15 @@ Template.contextMenuTemplate.events({
 			if (j_obj.is(parent_context_menu)) {
 				return;
 			}
-	
-			j_obj.css({display: "none"});
+			j_obj.css({display: "none"});  // **********
 		});
-
-
+		
 		//if there is a sub-menu, then computing its position
 		var child_menu = context_menu_item.closest(".context-menu-item-li").find("." + sub_menu_name);
+
 		if (child_menu.length > 0) {
+			//console.log("Beerni ir")
+			//console.log(child_menu)
 		    child_menu.css({left: sub_menu_pos_x, top: sub_menu_pos_y, display: "inline"});
 		}
 

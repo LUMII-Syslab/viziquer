@@ -2180,13 +2180,13 @@ Schemas.ElementTypes = new SimpleSchema({
         optional: true,
     },
 
-		"contextMenu.$.subMenu": {
-				type: [Object],
-				label: "ElementTypes.contextMenu.$.subMenu",
-				optional: true,
-		},
+	"contextMenu.$.subMenu": {
+			type: [Object],
+			label: "ElementTypes.contextMenu.$.subMenu",
+			optional: true,
+	},
 
-		"contextMenu.$.subMenu.$.item": {
+	"contextMenu.$.subMenu.$.item": {
         type: String,
         label: "ElementTypes.contextMenu.$.subMenu.$.item",
     },
@@ -2194,6 +2194,21 @@ Schemas.ElementTypes = new SimpleSchema({
     "contextMenu.$.subMenu.$.procedure": {
         type: String,
         label: "ElementTypes.contextMenu.$.subMenu.$.procedure",
+    },
+	"contextMenu.$.subMenu.$.subMenu": {
+			type: [Object],
+			label: "ElementTypes.contextMenu.$.subMenu.$.subMenu",
+			optional: true,
+	},
+
+	"contextMenu.$.subMenu.$.subMenu.$.item": {
+        type: String,
+        label: "ElementTypes.contextMenu.$.subMenu.$.subMenu.$.item",
+    },
+
+    "contextMenu.$.subMenu.$.subMenu.$.procedure": {
+        type: String,
+        label: "ElementTypes.contextMenu.$.subMenu.$.subMenu.$.procedure",
     },
 
     readModeContextMenu: {
