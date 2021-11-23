@@ -59,6 +59,44 @@ const callWithGet = async (funcName) => {
 }
 
 // ***********************************************************************************
+// string -> int
+// function checks if the text is uri
+// 0 - not URI, 3 - full form, 4 - short form
+function isURI(text) {
+  if(text.indexOf("://") != -1)
+    return 3;
+  else
+    if(text.indexOf(":") != -1) return 4;
+  return 0;
+};
+
+const getPListI = (vq_obj) => {
+	var pListI = {};
+	var link_list =  vq_obj.getLinks();
+	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	_.each(link_list_filtered, function(link) {
+		if (link.type === 'out' && link.name !== null && link.name !== undefined ) {
+			var eE = new VQ_Element(link.eE);
+			var individual =  eE.getInstanceAlias();
+			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
+				pListI.type = link.type;
+				pListI.name = link.name;
+				pListI.uriIndividual = individual;
+			}
+		}
+		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
+			var sE = new VQ_Element(link.sE);
+			var individual =  sE.getInstanceAlias();
+			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
+				pListI.type = link.type;
+				pListI.name = link.name;
+				pListI.uriIndividual = individual;
+			}
+		}
+	});
+	return pListI;	
+}
+
 const getPList = (vq_obj) => {
 	var pList = {in: [], out: []};
 	var field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
@@ -97,17 +135,6 @@ const getPList = (vq_obj) => {
 	return pList;
 }
 
-// string -> int
-// function checks if the text is uri
-// 0 - not URI, 3 - full form, 4 - short form
-function isURI(text) {
-  if(text.indexOf("://") != -1)
-    return 3;
-  else
-    if(text.indexOf(":") != -1) return 4;
-  return 0;
-};
-
 const findElementDataForClass = (vq_obj) => {
 	var params = {}
 	var individual =  vq_obj.getInstanceAlias();
@@ -131,8 +158,11 @@ const findElementDataForProperty = (vq_obj) => {
 	var pList = {in: [], out: []};	
 	//if (dataShapes.schema.use_pp_rels) 
 	pList = getPList(vq_obj);
-	
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+
+	var pListI = getPListI(vq_obj);
+	if ( pListI.type != undefined) params.pListI = pListI;
+	 
 	return params;
 }
 
@@ -144,6 +174,10 @@ const findElementDataForIndividual = (vq_obj) => {
 
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
+	
+	var pListI = getPListI(vq_obj);
+	if ( pListI.type != undefined) params.pListI = pListI;
+	
 	return params;
 }
 
