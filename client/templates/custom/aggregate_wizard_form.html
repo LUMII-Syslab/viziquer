@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-body">                
                     <form class="form-horizontal" role="form">                       
-                        <form autocomplete="off">
+                        <form autocomplete="off" onsubmit="return false;">
                             <p style="color:purple">What to aggregate:  
 							<!-- <div class="help-tip">
                                 <p>Field or expression. Leave blank for class instance aggregation. </p>
@@ -100,7 +100,7 @@
 						</div>
 						
 						
-						<form class="function-radio-list" style="width:55%">
+						<form class="function-radio-list" style="width:55%" autocomplete="off" onsubmit="return false;">
                             <p style="color:purple">Function: </p>
                                     <label class="label-radio inline label-aggregate">
                                         <input id="aggregate-count" type="radio" name="aggregate-list-radio" value="count" {{selectedCount}}>
@@ -145,7 +145,7 @@
 		
                         </form>      
 						
-						<form>
+						<form onsubmit="return false;" autocomplete="off">
                             <p style="color:purple">Result name (alias): </p>
                             <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
 							<!-- <input type="text" id="alias-name-aggr"><br> -->
@@ -153,20 +153,20 @@
 
                         <hr>
 
-                        <form style="display: {{showDisplay}};"> <!-- style="color: lightgrey !important;" -->
+                        <form style="display: {{showDisplay}};" onsubmit="return false;"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Display result (in host node)</p> 
 							<a id="add-conditions-button" class="btn btn-xs btn-success"><i>Add conditions</i></a>
                         </form>
 
-                        <form id="result-at-least" style="display: none; margin-bottom: 0px;"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
+                        <form id="result-at-least" style="display: none; margin-bottom: 0px;" onsubmit="return false;"> <!-- style="margin-top: 6px; margin-bottom: 6px; color: lightgrey !important;" -->
                             <label><p style="color:purple">Result at least (&gt;=): &emsp;</p> </label>
                             <input class="form-control" id="results_least" type="number" pattern="[0-9]" step="any" required>
                             <!-- <span class="validity"></span>   -->
                         </form>
 
-                        <form id="result-at-most" style="display: none; margin-bottom: 10px;"> <!-- style="color: lightgrey !important;" -->
+                        <form id="result-at-most" style="display: none; margin-bottom: 10px;" onsubmit="return false;"> <!-- style="color: lightgrey !important;" -->
                             <label><p style="color:purple">Result at most (&lt;=):&emsp;</p> </label>
                             <input class="form-control" id="results-most" type="number" pattern="[0-9]" step="any" required>
                             <!-- <span class="validity"></span>   -->

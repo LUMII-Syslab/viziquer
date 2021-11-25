@@ -91,7 +91,7 @@
                     <hr>
 
                     <div class="modal-bodyCC">
-                        <form id="radioList" class="form-horizontal" role="form">
+                        <form id="radioList" class="form-horizontal" role="form" onsubmit="return false;">
                             <p id="chain_text" style="font-size:16px; margin-left:10px;">Please choose the chain:</p>
                             <div class="form-group" id="chain-list">
                             {{#each linkList}}
@@ -206,7 +206,7 @@
                     <div id="settings" style="display:block; overflow: hidden;">
                         <p>Path's direction</p>                        
                         <div class="col-lg-10 elements">                               
-                            <form id="direction-settings"> 
+                            <form id="direction-settings" onsubmit="return false;"> 
                                 {{#if addLongLinkS.data}}
                                     <label class="label-radio">                                            
                                         <input type="radio" name = "path-radio" value="{{fromToClass.fromID}}" style="font-size:14px" checked>
@@ -231,12 +231,12 @@
                         <label id="max_length_text" for="max_length"><p>Path length limit:</p> </label>
                         <input id="max_length" type="number" min="1" pattern="[0-9]" value="{{pathLength}}" required>
                         <span class="validity"></span>
-                        <form style="padding-left: 50px;">
+                        <form style="padding-left: 50px;" onsubmit="return false;">
                             <input type="checkbox" id="default-max-length">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Use default length limit</p>
                         </form>
-                        <form style="padding-left: 50px;">
+                        <form style="padding-left: 50px;" onsubmit="return false;">
                             <input type="checkbox" id="great-max-length">
                             <span class="custom-checkbox"></span>
                             <p style="display:inline;">Allow very long pathes (length > 5)</p>
