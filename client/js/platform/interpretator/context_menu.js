@@ -169,16 +169,15 @@ Template.contextMenuTemplate.helpers({
 
 			//if menu
 			if (menu && menu.length > 0) {
-				console.log(menu)
+
 				properties["menu"] = _.map(menu, function(item, i) {
 										item.index = i;
-
+										
 										if (item.subMenu) {
 											item.subMenu = _.map(item.subMenu, function(menu_item, i) {
 													menu_item.index = i;
 													
 													if (menu_item.subMenu) {
-													
 														if (dataShapes.schema.hide_individuals == true) {
 															menu_item.subMenu = menu_item.subMenu.filter(function(m){ return m.procedure != 'AddUriName'; });
 														}
@@ -195,6 +194,7 @@ Template.contextMenuTemplate.helpers({
 
 										return item;
 									});
+
 				return properties;
 			}
 		}
@@ -233,19 +233,21 @@ Template.contextMenuTemplate.events({
 
 	'mouseover .context-menu-item': function(e) {
 		var context_menu_item = $(e.target).closest(".context-menu-item");
-		//console.log("tekošais...")
-		//console.log(context_menu_item.attr("data"))
 
 		var context_menu_obj = $("#contextMenu");
 		var context_menu_pos = context_menu_obj.position();
-
 		var context_menu_width = context_menu_obj.width();
 
-		var sub_menu_pos_x = context_menu_width - 20;
+		var sub_menu_pos_x = context_menu_width - 5;
 		var sub_menu_pos_y = context_menu_item.position().top - 8;
+		if ( context_menu_item.attr("level") == '2') 
+			sub_menu_pos_x = sub_menu_pos_x -15;
 
 		//sub-menu class name
 		var sub_menu_name = "sub-menu";
+		var sub_sub_menu_name = "sub-sub-menu";
+		if ( context_menu_item.attr("level") == '2') 
+			sub_menu_name = "sub-sub-menu";
 
 		var parent_context_menu = context_menu_item.closest("." + sub_menu_name);
 
@@ -256,17 +258,22 @@ Template.contextMenuTemplate.events({
 			if (j_obj.is(parent_context_menu)) {
 				return;
 			}
-			j_obj.css({display: "none"});  // **********
+			j_obj.css({display: "none"});  
 		});
+		
+		if (( context_menu_item.attr("level") == '1') ) {
+			$("." + sub_sub_menu_name).each(function(i, obj) {
+				var j_obj = $(obj)
+				j_obj.css({display: "none"});  
+			});		
+		}
 		
 		//if there is a sub-menu, then computing its position
 		var child_menu = context_menu_item.closest(".context-menu-item-li").find("." + sub_menu_name);
 
 		if (child_menu.length > 0) {
-			//console.log("Beerni ir")
-			//console.log(child_menu)
-		    child_menu.css({left: sub_menu_pos_x, top: sub_menu_pos_y, display: "inline"});
-		}
+			child_menu.css({left: sub_menu_pos_x, top: sub_menu_pos_y, display: "inline"});
+		}			
 
 	},
 

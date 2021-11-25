@@ -138,7 +138,6 @@ function get_event_functions() {
 	        else {
 	        	menu = get_context_menu_list(elem_type, "readModeContextMenu", "dynamicReadModeContextMenu");
 	        };
-					console.log(menu);
 
 			Interpreter.processContextMenu(data.ev, elem_type[menu.attrName]);
 	    },
