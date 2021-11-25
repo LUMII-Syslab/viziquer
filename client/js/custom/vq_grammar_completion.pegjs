@@ -550,8 +550,8 @@
 
 			UnaryExpressionList = space ((mult "*") / (div "/")) space UnaryExpression 
 
-			PrimaryExpression = BooleanLiteral / BuiltInCall /  RDFLiteral / BrackettedExpression / QName/ iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName  / LN
-			PrimaryExpression2 = BooleanLiteral / BuiltInCall2 /  RDFLiteral / BrackettedExpression / iriOrFunction / NumericLiteral / Var / DoubleSquareBracketName / QName / LN
+			PrimaryExpression = BooleanLiteral  / BuiltInCall / QName / iriOrFunction/  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName  / LN
+			PrimaryExpression2 = BooleanLiteral / iriOrFunction / BuiltInCall2 /  RDFLiteral / BrackettedExpression /  NumericLiteral / Var / DoubleSquareBracketName / QName / LN
 
 			BooleanLiteral = (TRUE / FALSE) 
 			
@@ -566,8 +566,8 @@
 
 			BrackettedExpression = (br_open "(" space  Expression space br_close")") 
 
-			BuiltInCall = Aggregate / FunctionExpression / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
-			BuiltInCall2 = Aggregate  / HASMAX / HASRANK / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall = Aggregate / FunctionExpression / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
+			BuiltInCall2 = Aggregate / RegexExpression / SubstringExpression / SubstringBifExpression / StrReplaceExpression / ExistsFunc / NotExistsFunc
 
 			Aggregate = (AggregateAO / AggregateA / AggregateB / AggregateC / AggregateD / AggregateE / AggregateF) 
 
@@ -670,8 +670,8 @@
 			FunctionCOALESCE = PrimaryExpression2 space dubble_question "??" space PrimaryExpression2 
 			
 			FunctionExpressionLANGMATCHES = FunctionExpressionLANGMATCHESA / FunctionExpressionLANGMATCHESB
-			FunctionExpressionLANGMATCHESA = (QName / LN) LANGTAG_MUL 
-			FunctionExpressionLANGMATCHESB = (QName / LN) LANGTAG 
+			FunctionExpressionLANGMATCHESA = (PrefixedName / QName / LN) LANGTAG_MUL 
+			FunctionExpressionLANGMATCHESB = (PrefixedName / QName / LN) LANGTAG 
 			
 			
 			BOUNDFunction =  BOUND br_open "(" space PrimaryExpression space br_open ")"
