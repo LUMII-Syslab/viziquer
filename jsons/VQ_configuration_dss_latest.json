@@ -1045,17 +1045,7 @@
 					{
 						
 						"item": "Simple (attribute) ...",
-						"procedure": "AddAttribute",
-						"subMenu": [
-							{
-								"item": "(select this) ",
-								"procedure": "AddSelectThis"
-							},
-							{
-								"item": "Add attribute ...",
-								"procedure": "AddAttribute"
-							}
-						]
+						"procedure": "AddAttribute"
 					},
 					{
 						"item": "Aggregate ...",
@@ -1066,8 +1056,22 @@
 						"procedure": "AddCondition"
 					},
 					{
-						"item": "Explain ...",
-						"procedure": "ExplainField"
+						"item": "Extra ...",
+						"procedure": "ExplainField",
+						"subMenu": [
+							{
+								"item": "URI (Individual) ...",
+								"procedure": "AddUriName"
+							},
+							{
+								"item": "Class Name ...",
+								"procedure": "AddClassName"
+							},
+							{
+								"item": "Explain ...",
+								"procedure": "ExplainField"
+							}		
+						]
 					}
                 ]
               },
