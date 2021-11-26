@@ -791,7 +791,7 @@ Template.diagramEditor.onRendered(function() {
 
 Template.diagramEditor.onDestroyed(function() {
 
-	console.log("on destroy diagram editor")
+	//console.log("on destroy diagram editor")
 
 
 	var list = {diagramId: Session.get("activeDiagram")};

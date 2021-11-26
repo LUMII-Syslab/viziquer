@@ -18,7 +18,8 @@ const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
-const MakeLog = true;
+const MakeLog = false;
+const ConsoleLog = false;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -330,8 +331,10 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		console.log("---------callServerFunction--------------" + funcName)
-		console.log(params)
+		if ( ConsoleLog ) {
+			console.log("---------callServerFunction--------------" + funcName)
+			console.log(params)
+		}
 
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
@@ -365,11 +368,13 @@ dataShapes = {
 		}
 		else
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
-		
-		if ( rr.data ) 
-			console.log(rr)
+
 		const time = Date.now() - startTime
-		console.log(time)
+		if ( ConsoleLog ) {			
+			if ( rr.data ) 
+				console.log(rr)
+			console.log(time)
+		}
 		if ( MakeLog ) {
 			this.schema.fullLog.push(`${funcName};${time}`);
 			if ( time > LONG_ANSWER ) 
