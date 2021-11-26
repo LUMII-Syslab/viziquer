@@ -2884,7 +2884,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					
 					//property = 5
 					//propety = "string"
-					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
+					// filter as triple
+					if(visited != 1 && Usestringliteralconversion == "OFF" && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
 					((((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME") 
 					    || typeof left["Path"] !== 'undefined' 
 						|| typeof left["Reference"] !== 'undefined'
@@ -2921,7 +2922,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
-						visited = 1;						
+						visited = 1;										
 					}
 					
 					if(visited != 1){
