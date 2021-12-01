@@ -148,7 +148,6 @@ function uploadProject(list) {
 														schema: project_data.schema,
 													}});
 
-
 			_.each(data.diagrams, function(diagram) {
 
 				var tool = Tools.findOne({_id: project.toolId,});
@@ -171,10 +170,8 @@ function uploadProject(list) {
 
 				var diagram_type = DiagramTypes.findOne({_id: diagram_type_id, toolId: tool_id,});
 				if (!diagram_type) {
-
-					diagram_type = DiagramTypes.findOne({_id: diagram_type_id,});
+					//diagram_type = DiagramTypes.findOne({_id: diagram_type_id,});
 					if (!diagram_type) {
-
 						var diagram_type_name = diagram.diagramTypeName;
 						diagram_type = DiagramTypes.findOne({name: diagram_type_name, toolId: tool_id,});
 						if (!diagram_type) {
@@ -207,7 +204,7 @@ function uploadProject(list) {
 					var element_type = ElementTypes.findOne({_id: elem_type_id, toolId: tool_id,});
 					if (!element_type) {
 
-						element_type = ElementTypes.findOne({_id: elem_type_id,});
+						//element_type = ElementTypes.findOne({_id: elem_type_id,});
 						if (!element_type) {
 
 							var element_type_name = element.elementTypeName;
@@ -249,7 +246,7 @@ function uploadProject(list) {
 						var compart_type = CompartmentTypes.findOne({_id: compart_type_id, toolId: tool_id,});
 						if (!compart_type) {
 
-							compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
+							//compart_type = CompartmentTypes.findOne({_id: compart_type_id,});
 							if (!compart_type) {
 
 								var compart_type_name = compartment.compartmentTypeName;
@@ -292,7 +289,7 @@ function uploadProject(list) {
 				_.extend(schema, {projectId: project_id});
 				Schema.batchInsert([schema]);
 			}
-
+			
 		}
 }
 
