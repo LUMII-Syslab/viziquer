@@ -203,7 +203,7 @@ function isDateVarSymbolTable(symbolTable, expression, dateType){
 	for(var key in symbolTable){
 		if(typeof symbolTable[expression] !== 'undefined' && 
 			symbolTable[expression]["type"] != null
-			&& dateType.indexOf(symbolTable[expression]["type"]["type"]) > -1) value = true;
+			&& dateType.indexOf(symbolTable[expression]["type"]["data_type"]) > -1) value = true;
 		
 	}
 	return value;
@@ -212,8 +212,8 @@ function isDateVarSymbolTable(symbolTable, expression, dateType){
 // if add symbolTable
 isDateVar = function(v, dateType, symbolTable){
 	if(typeof v["var"] !== 'undefined'){
-		if((v["var"]["type"]!=null && dateType.indexOf(v["var"]["type"]["type"])> -1) || isDateVarSymbolTable(symbolTable, v["var"]["name"], dateType) == true) return true;
-		// if((v["var"]["type"]!=null && v["var"]["type"]["type"] == dateType) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && symbolTable[v["var"]["name"]]["type"]["type"] == dateType)) return true;
+		if((v["var"]["type"]!=null && dateType.indexOf(v["var"]["type"]["data_type"])> -1) || isDateVarSymbolTable(symbolTable, v["var"]["name"], dateType) == true) return true;
+		// if((v["var"]["type"]!=null && v["var"]["type"]["data_type"] == dateType) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && symbolTable[v["var"]["name"]]["type"]["data_type"] == dateType)) return true;
 		else return false;
 	}
 	if(typeof v["RDFLiteral"] !== 'undefined'){
@@ -222,12 +222,18 @@ isDateVar = function(v, dateType, symbolTable){
 		else return false;
 	}
 	if(typeof v["iri"] !== 'undefined' && typeof v["iri"]["PrefixedName"] !== 'undefined'){
-		if(dateType.indexOf(v["iri"]["PrefixedName"]['var']['name'].toLowerCase()) > -1) return true;
+		if(dateType.indexOf(v["iri"]["PrefixedName"]['var']["type"]["data_type"]) > -1) return true;
 		// if( v["iri"]["PrefixedName"]['var']['name'].toLowerCase() == dateType.toLowerCase()) return true;
 		else return false;
 	}
 	if(typeof v["Path"] !== 'undefined'){
-		if((v["PrimaryExpression"]["var"]["type"]!=null && dateType.indexOf(v["PrimaryExpression"]["var"]["type"]["type"]) > -1) || isDateVarSymbolTable(symbolTable, v["PrimaryExpression"]["var"]["name"], dateType) == true) return true;
+		if((v["PrimaryExpression"]["var"]["type"]!=null && dateType.indexOf(v["PrimaryExpression"]["var"]["type"]["data_type"]) > -1) || isDateVarSymbolTable(symbolTable, v["PrimaryExpression"]["var"]["name"], dateType) == true) return true;
+		else return false;
+	}
+	if(typeof v["PathProperty"] !== 'undefined'){
+		var path = getPathFullGrammar(v["PathProperty"]);
+		if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
+		if((path["variable"]["var"]["type"]!=null && dateType.indexOf(path["variable"]["var"]["type"]["data_type"]) > -1) || isDateVarSymbolTable(symbolTable, path["variable"]["var"]["name"], dateType) == true) return true;
 		else return false;
 	}
 	return false
