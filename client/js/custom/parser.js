@@ -322,7 +322,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		if(typeof variableNamesClass[varName] === 'undefined' || (typeof variableNamesClass[varName] !== 'undefined' && (variableNamesClass[varName]["isVar"] != true ||
 			variableData["type"] != null && false)))applyExistsToFilter = true;
 		// if(typeof variableNamesClass[varName] === 'undefined' || (typeof variableNamesClass[varName] !== 'undefined' && (variableNamesClass[varName]["isVar"] != true ||
-			// variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))))applyExistsToFilter = true;
+			// variableData["type"] != null && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))))applyExistsToFilter = true;
 		//??????????????????????????????????????
 		if(generateNewName != null && generateNewName == true ){
 			 // console.log("2aaaa", varName);
@@ -635,7 +635,7 @@ getPathFullGrammar = function(expressionTable){
 				if(typeof expressionTable[key]["var"]["type"]["property_type"] !== 'undefined' && expressionTable[key]["var"]["type"]["property_type"] == "OBJECT_PROPERTY") {isPath = true;}
 				// if(typeof expressionTable[key]["var"]["type"]["parentType"] !== 'undefined' && expressionTable[key]["var"]["type"]["parentType"] != null) 
 				// {isPath = false;
-				if(expressionTable[key]["var"]["type"]["maxCardinality"] != 1) {cardinality = -1;}
+				if(expressionTable[key]["var"]["type"]["max_cardinality"] != 1) {cardinality = -1;}
 				// }
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
 				path = path + pathPart;
@@ -662,7 +662,7 @@ getPathFullGrammar = function(expressionTable){
 		//PrefixedName
 		if(key == "PrefixedName"){
 			if(typeof expressionTable[key]["var"]["type"] !== 'undefined' && expressionTable[key]["var"]["type"] != null){	
-				if(expressionTable[key]["var"]["type"]["maxCardinality"] != 1) {cardinality = -1;}
+				if(expressionTable[key]["var"]["type"]["max_cardinality"] != 1) {cardinality = -1;}
 				if(typeof expressionTable[key]["var"]["type"]["parentType"] !== 'undefined' && expressionTable[key]["var"]["type"]["parentType"] != null) isPath = false;
 				
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
@@ -1361,8 +1361,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						
 						var variableData = expressionTable[key]["var"];
 						if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-						|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-						else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+						|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+						else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 							inFilter = null;
 							applyExistsToFilter = false;
 						}
@@ -1461,8 +1461,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						if(generateTriples == true && substringvar['type'] != null && path != null) {
 							var inFilter = false;
 							if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && ((variableNamesClass[substringvar["name"]]["isVar"] != true 
-							|| substringvar["type"] != null) && (typeof substringvar["type"]["maxCardinality"] === 'undefined' || substringvar["type"]["maxCardinality"] > 1 || substringvar["type"]["maxCardinality"] == -1))) inFilter = true;
-								else if((parseType == "condition") && substringvar["type"]["maxCardinality"] == 1){
+							|| substringvar["type"] != null) && (typeof substringvar["type"]["max_cardinality"] === 'undefined' || substringvar["type"]["max_cardinality"] > 1 || substringvar["type"]["max_cardinality"] == -1))) inFilter = true;
+								else if((parseType == "condition") && substringvar["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 							}
@@ -1531,8 +1531,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								//var parhCardinality = calculatePathCardinality()
 
 								if(typeof expressionTable[key]["PrimaryExpression"] !== 'undefined' && typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
-								|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-								else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1 && path["cardinality"] == 1){
+								|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+								else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1 && path["cardinality"] == 1){
 									inFilter = null;
 									applyExistsToFilter = false;
 								}
@@ -1614,8 +1614,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					if(generateTriples == true && substringvar['type'] != null && path != null) {
 						var inFilter = false;
 						if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && ((variableNamesClass[substringvar["name"]]["isVar"] != true 
-						|| substringvar["type"] != null) && (typeof substringvar["type"]["maxCardinality"] === 'undefined' || substringvar["type"]["maxCardinality"] > 1 || substringvar["type"]["maxCardinality"] == -1))) inFilter = true;
-						else if((parseType == "condition") && substringvar["type"]["maxCardinality"] == 1){
+						|| substringvar["type"] != null) && (typeof substringvar["type"]["max_cardinality"] === 'undefined' || substringvar["type"]["max_cardinality"] > 1 || substringvar["type"]["max_cardinality"] == -1))) inFilter = true;
+						else if((parseType == "condition") && substringvar["type"]["max_cardinality"] == 1){
 							inFilter = null;
 							applyExistsToFilter = false;
 						}
@@ -1677,8 +1677,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var inFilter = false;
 							var variableData = expressionTable[key]["PrimaryExpression"]["var"];
 							if(typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
-							|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-							else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+							|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 							}
@@ -1899,13 +1899,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						var inFilter = false;
 						var variableData = expressionTable[key];
 						// if(typeof variableNamesClass[varName] !== 'undefined' && (variableNamesClass[varName]["isVar"] != true 
-						// || variableData["type"] != null && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
+						// || variableData["type"] != null && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
 						if(typeof variableNamesClass[varName] !== 'undefined' 
 						&& (
 							(variableNamesClass[varName]["isVar"] != true || variableData["type"] != null) 
-							&& (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1)
+							&& (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1)
 						)) inFilter = true;
-						else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+						else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 							inFilter = null;
 							applyExistsToFilter = false;
 						}
@@ -2428,8 +2428,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							// || variableData["type"] != null && false)) inFilter = true;
 							// console.log("11", inFilter);
 							if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
-							|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-							else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+							|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 							}
@@ -2486,8 +2486,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							// || variableData["type"] != null && false)) inFilter = true;
 							// console.log("11", inFilter);
 							if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
-							|| variableData["type"] != null) && (typeof variableData["type"]["maxCardinality"] === 'undefined' || variableData["type"]["maxCardinality"] > 1 || variableData["type"]["maxCardinality"] == -1))) inFilter = true;
-							else if((parseType == "condition") && variableData["type"]["maxCardinality"] == 1){
+							|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 							}
@@ -3643,12 +3643,12 @@ countMaxExpressionCardinality = function (expressionTable){
 		if(key == "var") {	
 			//if type information is known
 			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
-				//if maxCardinality is known
-				if(typeof expressionTable[key]['type']['maxCardinality'] !== 'undefined' && expressionTable[key]['type']['maxCardinality'] != null){
-					if(expressionTable[key]['type']['maxCardinality'] == -1 || expressionTable[key]['type']['maxCardinality'] > 1) {
+				//if max_cardinality is known
+				if(typeof expressionTable[key]['type']['max_cardinality'] !== 'undefined' && expressionTable[key]['type']['max_cardinality'] != null){
+					if(expressionTable[key]['type']['max_cardinality'] == -1 || expressionTable[key]['type']['max_cardinality'] > 1) {
 						isMultiple = true;
 					}
-				//if maxCardinality not known
+				//if max_cardinality not known
 				} else {
 					isMultiple = true;
 				}

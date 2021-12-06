@@ -102,7 +102,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	
 	if (obj_class.instanceAlias) {
       var type =  await resolveClassByName(obj_class.identification.local_name)
-	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.maxCardinality !== "undefined") {type["maxCardinality"] = obj_class.linkIdentification.maxCardinality}
+	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
 	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
@@ -124,7 +124,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
               // var attr_list = cl.getAllAttributes();
               // attr_list.forEach(async function(attr) {
                 // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                // var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                // var attr_is_simple = attr_info && attr_info["max_cardinality"] && attr_info["max_cardinality"]==1;
                 // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               // });
 
@@ -136,7 +136,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
               // var attr_list = cl.getAllAttributes()
               // attr_list.forEach(async function(attr) {
                 // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                // var attr_is_simple = attr_info && attr_info["maxCardinality"] && attr_info["maxCardinality"]==1;
+                // var attr_is_simple = attr_info && attr_info["max_cardinality"] && attr_info["max_cardinality"]==1;
                 // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
               // });
 
@@ -565,7 +565,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
            if (f.alias) {
             
 			 var type = null;
-			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {maxCardinality : 1};
+			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {max_cardinality : 1};
 			  updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", type);
            } else {
              // no alias

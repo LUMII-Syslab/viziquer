@@ -2993,22 +2993,22 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 		if(key == "var") {
 			//if type information is known
 			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
-				//if maxCardinality is known
-				if(typeof expressionTable[key]['type']['maxCardinality'] !== 'undefined' && expressionTable[key]['type']['maxCardinality'] != null){
-					if(expressionTable[key]['type']['maxCardinality'] == -1 || expressionTable[key]['type']['maxCardinality'] > 1) {
+				//if max_cardinality is known
+				if(typeof expressionTable[key]['type']['max_cardinality'] !== 'undefined' && expressionTable[key]['type']['max_cardinality'] != null){
+					if(expressionTable[key]['type']['max_cardinality'] == -1 || expressionTable[key]['type']['max_cardinality'] > 1) {
 						isMultipleAllowedCardinality = true;
 					}
-				//if maxCardinality not known
+				//if max_cardinality not known
 				} else {
 					isMultipleAllowedCardinality = true;
 				}
-			//symbolTable has maxCardinality
+			//symbolTable has max_cardinality
 			}else if (typeof symbolTable[expressionTable[key]["name"]] !== 'undefined'){
 				var symbolUsage = symbolTable[expressionTable[key]["name"]];
 				var found = false;
 				for(var symbol in symbolUsage){
-					if(typeof symbolUsage[symbol]["type"] !== "undefined" && typeof symbolUsage[symbol]["type"]["maxCardinality"] !== "undefined" && symbolUsage[symbol]["type"]["maxCardinality"] != null){ 
-						if(symbolUsage[symbol]['type']['maxCardinality'] == -1 || symbolUsage[symbol]['type']['maxCardinality'] > 1){
+					if(typeof symbolUsage[symbol]["type"] !== "undefined" && typeof symbolUsage[symbol]["type"]["max_cardinality"] !== "undefined" && symbolUsage[symbol]["type"]["max_cardinality"] != null){ 
+						if(symbolUsage[symbol]['type']['max_cardinality'] == -1 || symbolUsage[symbol]['type']['max_cardinality'] > 1){
 							isMultipleAllowedCardinality = true;
 						}
 						found = true;
