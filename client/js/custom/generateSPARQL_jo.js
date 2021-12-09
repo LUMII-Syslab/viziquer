@@ -2017,12 +2017,22 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-						 messages = messages.concat(result["messages"]);
+						
+						messages = messages.concat(result["messages"]);
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 							 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
 							 orderGroupBy.push(result["exp"]);
 							 orderTripleTable.push(result["triples"]);
-						 } else {
+						 } else if(order["exp"] == "(select this)"){
+							 descendingStart = "";
+							 descendingEnd = "";
+							 if(order["isDescending"] == true) {
+								descendingStart = "DESC("
+								descendingEnd = ")"
+							 }
+							 
+							 orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
+						 }else {
 							 descendingStart = "(";
 							 descendingEnd = ")";
 							 if(order["isDescending"] == true) {
