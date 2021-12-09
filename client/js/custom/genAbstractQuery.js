@@ -677,6 +677,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
     var visited = {};
     var condition_links = [];
 	var messages = [];
+	var warnings = [];
     visited[e._id()]=e._id();
 
     // Next auxilary functions
@@ -809,7 +810,14 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset()  });
-                };
+                } else {
+					var orderingss = elem.getOrderings()
+					if(orderingss.length > 0){
+						for(var order in orderingss){
+							warnings.push("Order by clause '" + orderingss[order]["fulltext"] + "' ignored since it is not placed in the main query node")
+						}					
+					}
+				};
                 if (elem.isSubQueryRoot()) {
                   _.extend(linkedElem_obj,{ distinct:elem.isDistinct() });
                 };
@@ -893,6 +901,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
     });
 	
 	if(messages.length > 0)query_in_abstract_syntax["messages"] = messages;
+	if(warnings.length > 0)query_in_abstract_syntax["warnings"] = warnings;
 	
     return query_in_abstract_syntax;
   });

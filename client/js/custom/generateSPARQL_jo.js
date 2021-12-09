@@ -23,18 +23,19 @@ Interpreter.customMethods({
     };
     _.each(queries,async function(q) {
 		if(typeof q.messages !== "undefined"){
-		Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
-	  }
-      else{
-         //console.log(JSON.stringify(q,null,2));
-     var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
-		 var rootClass = abstractQueryTable["root"];
-		 var result = generateSPARQLtext(abstractQueryTable);
-		 // console.log(result["SPARQL_text"]);
-		 Session.set("generatedSparql", result["SPARQL_text"]);
-     setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+			Interpreter.showErrorMsg(q.messages.join(" // "), -3);  
+		  }
+		  else{
+			 //console.log(JSON.stringify(q,null,2));
+			Interpreter.showErrorMsg(q.warnings.join(" // "), -3);  
+			var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
+			 var rootClass = abstractQueryTable["root"];
+			 var result = generateSPARQLtext(abstractQueryTable);
+			 // console.log(result["SPARQL_text"]);
+			 Session.set("generatedSparql", result["SPARQL_text"]);
+		 setText_In_SPARQL_Editor(result["SPARQL_text"], result);
 
-	  if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		  if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
 	  }
     })
   },
@@ -59,6 +60,7 @@ Interpreter.customMethods({
 	  }
       else{
 			 //console.log(JSON.stringify(q,null,2));
+			 Interpreter.showErrorMsg(q.warnings.join(" // "), -3);  
 		 var abstractQueryTable =  await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
@@ -117,6 +119,7 @@ Interpreter.customMethods({
 		  }
 		  else{
             //console.log(JSON.stringify(q,null,2));
+			Interpreter.showErrorMsg(q.warnings.join(" // "), -3);  
 		   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
@@ -194,6 +197,7 @@ Interpreter.customMethods({
 		  }
 		  else{
             //console.log(JSON.stringify(q,null,2));
+			Interpreter.showErrorMsg(q.warnings.join(" // "), -3);  
 		   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
@@ -364,6 +368,7 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 	  }
       else{
 		  // console.log(JSON.stringify(q,null,2));
+		  Interpreter.showErrorMsg(q.warnings.join(" // "), -3);  
 	   var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 	   // console.log(abstractQueryTable, JSON.stringify(abstractQueryTable,null,2));
 	   var rootClass = abstractQueryTable["root"];

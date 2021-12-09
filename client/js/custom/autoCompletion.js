@@ -597,24 +597,41 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			return [];
 		}
 		
-		var order_by_list = [];
+		var compart_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: act_comp["elementTypeId"]});
+ 		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+		
+		
+		if(compart.input == "query"){
+			var tempSymbolTable = await generateSymbolTable();
+			var symbolTable = tempSymbolTable["symbolTable"];
+			var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
+			
+			for (var key in rootSymbolTable) {
+				for(var k in rootSymbolTable[key]){
+					if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") c["suggestions"].push({name: key , priority:100, type:3});
+				}
+			}
+			
+			for (var key in symbolTable) {
+				for(var k in symbolTable[key]){
+					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
+				}
+			}
+		} else {
+			var tempSymbolTable = await generateSymbolTable();
+			var abstractQueryTable = tempSymbolTable["abstractQueryTable"];
+			
+			if(findClassInAbstractQueryTable(act_elem, abstractQueryTable).isGlobalSubQuery == true){
+				var symbolTable = tempSymbolTable["symbolTable"];
 	
-		var tempSymbolTable = await generateSymbolTable();
-		var symbolTable = tempSymbolTable["symbolTable"];
-		var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
-		
-		for (var key in rootSymbolTable) {
-			for(var k in rootSymbolTable[key]){
-				if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") c["suggestions"].push({name: key , priority:100, type:3});
+				for (var key in symbolTable) {
+					for(var k in symbolTable[key]){
+						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
+					}
+				}	
 			}
-		}
 		
-		for (var key in symbolTable) {
-			for(var k in symbolTable[key]){
-				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
-			}
 		}
-
 		return c;
 	}
 	else if(grammarType == "group"){
@@ -1040,4 +1057,15 @@ function chechCompartmentChange(){
 			// console.log("compart", compart)
 		}
 	}
+}
+
+function findClassInAbstractQueryTable(elemId, abstractQueryTable){
+	var clazz;
+	if(abstractQueryTable["identification"]["_id"] == elemId) clazz = abstractQueryTable;
+	else{
+		for(child in abstractQueryTable["children"]){
+			clazz = findClassInAbstractQueryTable(elemId, abstractQueryTable["children"][child])
+		}
+	}
+	return clazz;
 }
