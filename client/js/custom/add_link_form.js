@@ -946,7 +946,8 @@ async function getAllAssociations(){
 								colorLetters = colorLetters.concat("color: purple");
 							} else {
 								//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
-								var maxCard = e.max_cardinality;
+								var maxCard = e.x_max_cardinality;
+								
 								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
 									cardinality = cardinality.concat("[*]");
 									colorLetters = colorLetters.concat("color: purple");
