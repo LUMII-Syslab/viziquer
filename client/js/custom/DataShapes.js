@@ -182,6 +182,25 @@ const findElementDataForIndividual = (vq_obj) => {
 	return params;
 }
 
+//const sparqlGetIndividualClasses = async (params, uriIndividual) => {
+const findPropertiesIds = async (direct_class_role, indirect_class_role, prop_list = []) => {
+		var id_list = [];
+		async function addProperty(propertyName) {
+			if (propertyName != '' && propertyName != undefined && propertyName != null ) {
+				var prop = await dataShapes.resolvePropertyByName({name: propertyName});
+				if (prop.data.length > 0)
+					id_list.push(prop.data[0].id);
+			}
+		}
+		
+		await addProperty(direct_class_role);
+		await addProperty(indirect_class_role);
+		for (const element of prop_list) {
+			await addProperty(element);
+		}
+		return await id_list;
+}
+
 const classes = [
 'All classes',
 'dbo:Person', 
@@ -213,11 +232,9 @@ return {
 		resolvedPropertiesF: {},
 		treeTopsC: {}, 
 		treeTopsP: {}, 
-		localNS: "",
 		namespaces: [],
 		showPrefixes: "false", 
 		limit: MAX_ANSWERS,
-		big_class_cnt: BIG_CLASS_CNT,
 		use_pp_rels: false,
 		simple_prompt: false,
 		hide_individuals: false, 
@@ -228,7 +245,9 @@ return {
 			countC:MAX_TREE_ANSWERS, 
 			countP:MAX_TREE_ANSWERS, 
 			countI:MAX_IND_ANSWERS, 
+			big_class_cnt: BIG_CLASS_CNT,
 			plus:TREE_PLUS,
+			ns: [],
 			nsInclude: true,
 			dbo: true, 
 			yago: false, 
@@ -252,26 +271,9 @@ dataShapes = {
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
-		rr.unshift({name:""});
+		rr.unshift({display_name:""});
 		// *** console.log(rr)
 		return await rr;
-	},
-	findPropertiesIds : async function(direct_role, indirect_role, prop_list = []) {
-		var id_list = [];
-		async function addProperty(propertyName) {
-			if (propertyName != '' && propertyName != undefined && propertyName != null ) {
-				var prop = await dataShapes.resolvePropertyByName({name: propertyName});
-				if (prop.data.length > 0)
-					id_list.push(prop.data[0].id);
-			}
-		}
-		
-		await addProperty(direct_role);
-		await addProperty(indirect_role);
-		for (const element of prop_list) {
-			await addProperty(element);
-		}
-		return await id_list;
 	},
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
@@ -287,41 +289,40 @@ dataShapes = {
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
 				var info = await callWithGet('info/');
-				var schema_info = info.filter(function(o){ return o.name == proj.schema})[0];
-				this.schema.schema = schema_info.schema;
+				var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
+				this.schema.schema = schema_info.db_schema_name;
 				this.schema.use_pp_rels = schema_info.use_pp_rels;
 				this.schema.simple_prompt = schema_info.simple_prompt;
 				this.schema.hide_individuals = schema_info.hide_individuals;
-				var prop_id_list = await dataShapes.findPropertiesIds(schema_info.direct_role, schema_info.indirect_role);
+				var prop_id_list = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role);
 				this.schema.deferred_properties = `id in ( ${prop_id_list})`;
 				
 				var ns = await this.getNamespaces();
 				this.schema.namespaces = ns;
 				var local_ns = ns.filter(function(n){ return n.is_local == true});
-				if ( local_ns.length > 0 )
-					this.schema.localNS = local_ns[0].name;
+				//if ( local_ns.length > 0 )
+				//	this.schema.localNS = local_ns[0].name;
+					
+				this.schema.tree.ns = schema_info.profile_data.ns;
+				_.each(this.schema.tree.ns, function (ns, i) {
+					ns.index = i;
+					if ( ns.isLocal == true) {
+						if ( local_ns.length > 0 )
+							ns.name = local_ns[0].name;
+						else
+							ns.name = '';
+					}
+				});
 
-				if (schema_info.tree_profile === 'DBpedia') {
+				if (schema_info.profile_data.schema === 'dbpedia') {
 					this.schema.tree.class = 'All classes';
 					this.schema.tree.classes = classes;
 					//this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
-					var prop_id_list2 = await dataShapes.findPropertiesIds(schema_info.direct_role, schema_info.indirect_role, ['dct:subject', 'owl:sameAs', 'prov:wasDerivedFrom']);
+					var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['dct:subject', 'owl:sameAs', 'prov:wasDerivedFrom']);
 					this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
 				}
-				else if (schema_info.tree_profile === 'DBpediaL') {
-					this.schema.tree.dbo = false;
-				}
-				else if (schema_info.tree_profile === 'BasicL') {
-					this.schema.tree.nsInclude = false;
-					this.schema.tree.dbo = false;
-					this.schema.tree.local = true;
-				}
-				else  {
-					this.schema.tree.nsInclude = false;
-					this.schema.tree.dbo = false;
-				}
 				
-				if (schema_info.tree_profile !== 'DBpedia' && !this.schema.hide_individuals) {
+				if (schema_info.profile_data.schema !== 'dbpedia' && !this.schema.hide_individuals) {
 					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 					this.schema.tree.class = c_list[0];

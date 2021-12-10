@@ -6,10 +6,7 @@ Template.schemaFilter.BL = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
 Template.schemaTree.Empty = new ReactiveVar("");
 Template.schemaTree.F1 = new ReactiveVar("");
-Template.schemaTree.NsInclude = new ReactiveVar("");
-Template.schemaTree.NsP = new ReactiveVar("");
-Template.schemaTree.NsM = new ReactiveVar("");
-Template.schemaTree.NsL = new ReactiveVar("");
+Template.schemaTree.Ns = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
 Template.schemaInstances.IsBigClass = new ReactiveVar("");
 Template.schemaInstances.Class = new ReactiveVar("");
@@ -25,24 +22,15 @@ Template.schemaInstances.showI = new ReactiveVar("");
 
 Template.schemaTree.onDestroyed(function() {
 	Template.schemaTree.Classes.set([]);
-	Template.schemaTree.NsP.set(false);
+	Template.schemaTree.Ns.set([]);
 });
 
 Template.schemaTree.helpers({
 	classes: function() {
 		return Template.schemaTree.Classes.get();
 	},
-	nsInclude: function() {
-		return Template.schemaTree.NsInclude.get();
-	},
-	dbo: function() {
-		return Template.schemaTree.NsP.get();
-	},
-	local: function() {
-		return Template.schemaTree.NsL.get();
-	},
-	yago: function() {
-		return Template.schemaTree.NsM.get();
+	ns: function() {
+		return Template.schemaTree.Ns.get(); 
 	},
 	f1: function() {
 		return Template.schemaTree.F1.get();
@@ -68,34 +56,25 @@ function getName(o) {
 
 }
 
-function setNS() {
-	if ($("#dbo").is(":checked")) {
-		dataShapes.schema.tree.dbo = true;
-		Template.schemaTree.NsP.set(true);
-	}
-	else {
-		dataShapes.schema.tree.dbo = false;
-		Template.schemaTree.NsP.set(false);
-	}
-	
-	if ($("#local").is(":checked")) {
-		dataShapes.schema.tree.local = true;
-		Template.schemaTree.NsL.set(true);
-	}
-	else {
-		dataShapes.schema.tree.local = false;
-		Template.schemaTree.NsL.set(false);
-	}
-		
-	if ($("#yago").is(":checked")) {
-		dataShapes.schema.tree.yago = true;
-		Template.schemaTree.NsM.set(true);
-	}
-	else {
-		dataShapes.schema.tree.yago = false;
-		Template.schemaTree.NsM.set(false);
-	}
-	
+function getNS() {
+	var namespaces = {};
+	_.each(dataShapes.schema.tree.ns, function(ns) {
+		if (ns.type == 'in' && ns.checked)
+			namespaces.in = [];
+		if (ns.type == 'notIn' && ns.checked)
+			namespaces.notIn = [];
+
+	});
+	_.each(dataShapes.schema.tree.ns, function(ns) {
+		if (ns.checked) {
+			if (ns.type == 'in')
+				namespaces.in.push(ns.name);
+			else
+				namespaces.notIn.push(ns.name);
+		}
+	});
+	return namespaces;
+
 }
 
 async function setBC() {
@@ -106,7 +85,7 @@ async function setBC() {
 	if ( c !== undefined && !c.includes('All classes') && c!= '')
 		cc = await dataShapes.resolveClassByName({name: c})
 	let r = false;
-	if ( cc.data.length > 0 && cc.data[0].cnt > dataShapes.schema.big_class_cnt)
+	if ( cc.data.length > 0 && cc.data[0].cnt > dataShapes.schema.tree.big_class_cnt)
 		r = true;
 	Template.schemaInstances.IsBigClass.set(r);
 }
@@ -127,7 +106,12 @@ async function setTreeTop (filter = '', plus = 0) {
 
 	}
 
-	if ( dataShapes.schema.tree.dbo || dataShapes.schema.tree.yago || dataShapes.schema.tree.local ) {
+	var namespaces = getNS();
+	
+	if (namespaces.in != undefined || namespaces.notIn != undefined)
+		params.namespaces = namespaces;
+		
+	/*if ( dataShapes.schema.tree.dbo || dataShapes.schema.tree.yago || dataShapes.schema.tree.local ) {
 		var namespaces = {};
 		if (dataShapes.schema.tree.dbo)
 			namespaces.in = ['dbo'];
@@ -136,16 +120,8 @@ async function setTreeTop (filter = '', plus = 0) {
 		if (dataShapes.schema.tree.local)
 			namespaces.in = [dataShapes.schema.localNS];
 		params.namespaces = namespaces;
-	} 
-	
-	/*if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
-		var namespaces = {};
-		if ($("#dbo").is(":checked"))
-			namespaces.in = [;;dbo];
-		if ($("#yago").is(":checked"))
-			namespaces.notIn = ['yago'];
-		params.namespaces = namespaces;
 	} */
+	
 	
 	var clFull = await dataShapes.getTreeClasses({main:params});
 	var classes = _.map(clFull.data, function(cl) {return {ch_count: Number(cl.has_subclasses), node_id: cl.id, children: [], data_id: getName(cl), localName: getNameF(cl)}});
@@ -165,7 +141,10 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 	if ( filter !== '')
 		params.filter = filter;
 
-	if ( nsPlus) {
+	var namespaces = getNS();
+	if ( nsPlus && (namespaces.in != undefined || namespaces.notIn != undefined)) 
+		params.namespaces = namespaces;
+	/*if ( nsPlus) {
 		if ($("#dbo").is(":checked") || $("#yago").is(":checked")) {
 			var namespaces = {};
 			if ($("#dbo").is(":checked"))
@@ -174,7 +153,7 @@ async function setTreeSubClasses (cc, nsPlus, filter = '') {
 				namespaces.notIn = ['yago'];
 			params.namespaces = namespaces;
 		}	
-	}
+	} */
 	params.classId =  dataShapes.schema.tree.topClass;
 	//var clSub = await dataShapes.getTreeClasses({main:params, element:{classId: dataShapes.schema.tree.topClass}});
 	var clSub = await dataShapes.getTreeClasses({main:params});
@@ -323,6 +302,12 @@ Template.schemaTree.events({
 	'click .class-body': async function(e) {
 		console.log(e)
 	},
+	"click .form-check-input": async function(e) {
+		var index = $(e.target).closest(".form-check-input").attr("index");
+		dataShapes.schema.tree.ns[index].checked = $(e.target).is(":checked");
+		Template.schemaTree.F1.set($('#filter_text').val());
+		await useFilter ();
+	},
 	"dblclick .class-body": async function(e) {
 		var class_name = $(e.target).closest(".class-body").attr("value");
 
@@ -413,10 +398,7 @@ Template.schemaTree.events({
 	'click #reload': async function(e){
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		Template.schemaTree.Empty.set(false);
-		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
-		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
-		Template.schemaTree.NsL.set(dataShapes.schema.tree.local);
-		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago	);
+		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
 		Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
@@ -441,14 +423,11 @@ Template.schemaTree.rendered = async function() {
 	//Template.schemaTree.Count.set(startCount);
 	if (dataShapes.schema.empty) {
 		Template.schemaTree.Empty.set(true);
-		Template.schemaTree.NsInclude.set(false);
+		// *** Template.schemaTree.NsInclude.set(false);
 	}
 	else {
 		Template.schemaTree.Empty.set(false);
-		Template.schemaTree.NsInclude.set(dataShapes.schema.tree.nsInclude);
-		Template.schemaTree.NsP.set(dataShapes.schema.tree.dbo);
-		Template.schemaTree.NsL.set(dataShapes.schema.tree.local);
-		Template.schemaTree.NsM.set(dataShapes.schema.tree.yago);
+		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		Template.schemaTree.Classes.set(dataShapes.schema.tree.classPath);
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;

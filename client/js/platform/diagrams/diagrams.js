@@ -739,7 +739,12 @@ Template.uploadProject.events({
 });
 
 
-
+Template.ontologySettings.schemas = new ReactiveVar([{name: ""}]);
+Template.ontologySettings.uri = new ReactiveVar("");
+Template.ontologySettings.endpoint = new ReactiveVar("");
+Template.ontologySettings.queryEngineType = new ReactiveVar("");
+Template.ontologySettings.directClassMembershipRole = new ReactiveVar("");
+Template.ontologySettings.indirectClassMembershipRole = new ReactiveVar("");
 
 Template.ontologySettings.helpers({
 
@@ -829,6 +834,9 @@ Template.ontologySettings.events({
 	 }
 	 Template.ontologySettings.uri.set(proj.uri);
 	 Template.ontologySettings.endpoint.set(proj.endpoint);
+	 Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
+	 Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
+	 Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
 
 	},
 
@@ -870,36 +878,36 @@ Template.ontologySettings.events({
 	},
 	'click #dss-schema' : function(e) {
 		var schema = $("#dss-schema").val();
-		var schema_info = Template.ontologySettings.schemas.get().filter(function(o){ return o.name == schema});
-		if ( schema_info.length > 0 && schema_info[0].name != "") {
-			//if ( Template.ontologySettings.endpoint.get() == "" || Template.ontologySettings.endpoint.get() == undefined ) {
+		var schema_info = Template.ontologySettings.schemas.get().filter(function(o){ return o.display_name == schema});
+		if ( schema_info.length > 0 && schema_info[0].display_name != "") {
 			Template.ontologySettings.endpoint.set(schema_info[0].sparql_url);
-			//}
-			if ( schema_info[0].named_graph != undefined || schema_info[0].named_graph != null ) {
-				//if ( Template.ontologySettings.uri.get() == "" || Template.ontologySettings.uri.get() == undefined )
-				Template.ontologySettings.uri.set(schema_info[0].named_graph);
-			}
-			else
-				Template.ontologySettings.uri.set("");
+			Template.ontologySettings.uri.set(schema_info[0].named_graph);
+			Template.ontologySettings.queryEngineType.set(schema_info[0].endpoint_type);
+			Template.ontologySettings.directClassMembershipRole.set(schema_info[0].direct_class_role);
+			Template.ontologySettings.indirectClassMembershipRole.set(schema_info[0].indirect_class_role);
 		}
-		if ( schema_info.length > 0 && schema_info[0].name == "") {
+		if ( schema_info.length > 0 && schema_info[0].display_name == "") {
 			Template.ontologySettings.endpoint.set("");
 			Template.ontologySettings.uri.set("");
+			Template.ontologySettings.queryEngineType.set("");
+			Template.ontologySettings.directClassMembershipRole.set("");
+			Template.ontologySettings.indirectClassMembershipRole.set("");
 		}
 	},
 
 });
 
-Template.ontologySettings.schemas = new ReactiveVar([{name: ""}]);
-Template.ontologySettings.uri = new ReactiveVar("");
-Template.ontologySettings.endpoint = new ReactiveVar("");
+
 Template.ontologySettings.rendered = async function() {
-	var rr = await dataShapes.getOntologies();  
+	var rr = await dataShapes.getOntologies(); 
 	Template.ontologySettings.schemas.set(rr);
 	var proj = Projects.findOne({_id: Session.get("activeProject")});
 	if (proj) {
 		Template.ontologySettings.uri.set(proj.uri);
 		Template.ontologySettings.endpoint.set(proj.endpoint);
+		Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
+		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
+		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
 	}
 }
 
@@ -927,7 +935,7 @@ Template.ontologySettings.helpers({
 		var s = "";
 		if (proj) { s = proj.schema; } ;		
 		for (var i=0;i<ss.length;i++) {
-			if (ss[i]["name"] == s ) {
+			if (ss[i]["display_name"] == s ) {
 				ss[i]["selected"] = "selected";
 				break;
 			}
@@ -949,13 +957,13 @@ Template.ontologySettings.helpers({
 	},
 
 	queryEngineTypeList: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		var act = 'VIRTUOSO';
-		if (proj) {
-			act = proj.queryEngineType;
-		}
+		//var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var act = Template.ontologySettings.queryEngineType.get();
+		//if (proj) {
+		//	act = proj.queryEngineType;
+		//}
 		var list = [];
-		if ( act == 'VIRTUOSO') {
+		if ( act == 'virtuoso' || act == 'VIRTUOSO') {
 			list.push({name: 'VIRTUOSO', selected: 'selected'});
 			list.push({name: 'GENERAL'});
 		}
@@ -986,16 +994,18 @@ Template.ontologySettings.helpers({
 		}
 	},
 	directClassMembershipRole: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.directClassMembershipRole;
-		}
+		return Template.ontologySettings.directClassMembershipRole.get();
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		// if (proj) {
+		// 	return proj.directClassMembershipRole;
+		// }
 	},
 	indirectClassMembershipRole: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.indirectClassMembershipRole;
-		}
+		return Template.ontologySettings.indirectClassMembershipRole.get();
+		//var proj = Projects.findOne({_id: Session.get("activeProject")});
+		//if (proj) {
+		//	return proj.indirectClassMembershipRole;
+		// }
 	},
 	showCardinalities: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
