@@ -8,24 +8,15 @@
 			{{else}}
 			<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
 			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
-			{{#if nsInclude }}
-			<label class="form-check-label">
-				<input class="form-check-input" name = "dbo" id="dbo" type="checkbox" checked={{dbo}}>
-				<span class="custom-checkbox"></span>
-				Only from dbo:
-			</label>
-			<label class="form-check-label">
-				<input class="form-check-input" name = "yago" id="yago" type="checkbox" checked={{yago}}>
-				<span class="custom-checkbox"></span>
-				Exclude yago:
-			</label>
-			{{else}}
-			<label class="form-check-label">
-				<input class="form-check-input" name = "local" id="local" type="checkbox" checked={{local}}>
-				<span class="custom-checkbox"></span>
-				Only local classes
-			</label>
-			{{/if}}
+
+			{{#each ns}}
+				<label class="form-check-label">
+					<input class="form-check-input" name = {{name}} index={{index}} type="checkbox" checked={{checked}}>
+					<span class="custom-checkbox"></span>
+					{{caption}}
+				</label>
+			{{/each}}
+
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
 
