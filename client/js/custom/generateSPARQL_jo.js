@@ -2007,6 +2007,17 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						}
 
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
+				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
+					var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					descendingStart = "";
+							 descendingEnd = "";
+							 if(order["isDescending"] == true) {
+								descendingStart = "DESC("
+								descendingEnd = ")"
+							 }
+							 
+					orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
+					orderGroupBy.push(result["exp"]);
 				} else {
 					if(typeof order["parsed_exp"] === 'undefined'){
 						messages.push({

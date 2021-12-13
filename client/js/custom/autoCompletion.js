@@ -614,20 +614,10 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			
 			for (var key in symbolTable) {
 				for(var k in symbolTable[key]){
-					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
+					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "CLASS_ALIAS") c["suggestions"].push({name: key, priority:100, type:3});
 				}
 			}
 						
-			if (Elements.findOne({_id: act_elem})){ //Because in case of deleted element ID is still "activeElement"
-
-				vq_obj = new VQ_Element(act_elem);
-				var individual =  vq_obj.getInstanceAlias();
-				
-				// if (individual !== null && individual !== undefined && isURI(individual) == 0) {
-					c["suggestions"].push({name: "(select this)" , priority:100, type:3});
-				// }
-				
-			}		
 			
 		} else {
 			var tempSymbolTable = await generateSymbolTable();
@@ -638,19 +628,9 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 	
 				for (var key in symbolTable) {
 					for(var k in symbolTable[key]){
-						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") c["suggestions"].push({name: key, priority:100, type:3});
+						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "CLASS_ALIAS") c["suggestions"].push({name: key, priority:100, type:3});
 					}
 				}
-				if (Elements.findOne({_id: act_elem})){ //Because in case of deleted element ID is still "activeElement"
-
-					vq_obj = new VQ_Element(act_elem);
-					var individual =  vq_obj.getInstanceAlias();
-					
-					// if (individual !== null && individual !== undefined && isURI(individual) == 0) {
-						c["suggestions"].push({name: "(select this)" , priority:100, type:3});
-					// }
-					
-				}		
 			}
 		
 		}
