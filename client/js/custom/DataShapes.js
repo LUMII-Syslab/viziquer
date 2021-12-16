@@ -289,44 +289,47 @@ dataShapes = {
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
 				var info = await callWithGet('info/');
-				var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
-				this.schema.schema = schema_info.db_schema_name;
-				this.schema.use_pp_rels = schema_info.use_pp_rels;
-				this.schema.simple_prompt = schema_info.simple_prompt;
-				this.schema.hide_individuals = schema_info.hide_individuals;
-				var prop_id_list = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role);
-				this.schema.deferred_properties = `id in ( ${prop_id_list})`;
-				
-				var ns = await this.getNamespaces();
-				this.schema.namespaces = ns;
-				var local_ns = ns.filter(function(n){ return n.is_local == true});
-				//if ( local_ns.length > 0 )
-				//	this.schema.localNS = local_ns[0].name;
+				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
+					var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
+					this.schema.schema = schema_info.db_schema_name;
+					this.schema.use_pp_rels = schema_info.use_pp_rels;
+					this.schema.simple_prompt = schema_info.simple_prompt;
+					this.schema.hide_individuals = schema_info.hide_instances;
+					var prop_id_list = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role);
+					if (prop_id_list.length>0)
+						this.schema.deferred_properties = `id in ( ${prop_id_list})`;
 					
-				this.schema.tree.ns = schema_info.profile_data.ns;
-				_.each(this.schema.tree.ns, function (ns, i) {
-					ns.index = i;
-					if ( ns.isLocal == true) {
-						if ( local_ns.length > 0 )
-							ns.name = local_ns[0].name;
-						else
-							ns.name = '';
-					}
-				});
+					var ns = await this.getNamespaces();
+					this.schema.namespaces = ns;
+					var local_ns = ns.filter(function(n){ return n.is_local == true});
+					//if ( local_ns.length > 0 )
+					//	this.schema.localNS = local_ns[0].name;
+						
+					this.schema.tree.ns = schema_info.profile_data.ns;
+					_.each(this.schema.tree.ns, function (ns, i) {
+						ns.index = i;
+						if ( ns.isLocal == true) {
+							if ( local_ns.length > 0 )
+								ns.name = local_ns[0].name;
+							else
+								ns.name = '';
+						}
+					});
 
-				if (schema_info.profile_data.schema === 'dbpedia') {
-					this.schema.tree.class = 'All classes';
-					this.schema.tree.classes = classes;
-					//this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
-					var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['dct:subject', 'owl:sameAs', 'prov:wasDerivedFrom']);
-					this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
-				}
-				
-				if (schema_info.profile_data.schema !== 'dbpedia' && !this.schema.hide_individuals) {
-					var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-					var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
-					this.schema.tree.class = c_list[0];
-					this.schema.tree.classes = c_list;
+					if (schema_info.profile_data.schema === 'dbpedia') {
+						this.schema.tree.class = 'All classes';
+						this.schema.tree.classes = classes;
+						//this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
+						var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['dct:subject', 'owl:sameAs', 'prov:wasDerivedFrom']);
+						this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
+					}
+					
+					if (schema_info.profile_data.schema !== 'dbpedia' && !this.schema.hide_individuals) {
+						var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
+						var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
+						this.schema.tree.class = c_list[0];
+						this.schema.tree.classes = c_list;
+					}
 				}
 			}
 		}
