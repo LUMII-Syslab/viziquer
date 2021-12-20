@@ -928,14 +928,20 @@ function generateSPARQLtext(abstractQueryTable){
 			 temp = temp.concat(whereInfo["filters"]);
 			 temp = temp.concat(whereInfo["links"]);
 			 messages = messages.concat(whereInfo["messages"]);
-
-			 var classMembership;
+			
+			var classMembership;
 			if(typeof rootClass["indirectClassMembership"] !== 'undefined' && rootClass["indirectClassMembership"] == true && typeof parameterTable["indirectClassMembershipRole"] !== 'undefined' && parameterTable["indirectClassMembershipRole"] != null && parameterTable["indirectClassMembershipRole"] != ""){
 				classMembership =  parameterTable["indirectClassMembershipRole"];
-				//todo prefix
+				var prefixMembership = getPrefixFromClassMembership(classMembership);
+				for (var prefix in prefixMembership) {
+					if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
+				}
 			}else if(typeof rootClass["indirectClassMembership"] === 'undefined' || rootClass["indirectClassMembership"] != true && typeof parameterTable["directClassMembershipRole"] !== 'undefined' && parameterTable["directClassMembershipRole"] != null && parameterTable["directClassMembershipRole"] != ""){
 				classMembership =  parameterTable["directClassMembershipRole"];
-				//todo prefix
+				var prefixMembership = getPrefixFromClassMembership(classMembership);
+				for (var prefix in prefixMembership) {
+					if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
+				}
 			} else {
 				classMembership = "a";
 				// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
@@ -1051,7 +1057,8 @@ function getPrefixFromClassMembership(classMembership){
        "dbo:":"http://dbpedia.org/ontology/",
        "xhtml:":"http://www.w3.org/1999/xhtml/vocab#",
        "dbpprop:":"http://dbpedia.org/property/",
-       "dcterms:":"http://purl.org/dc/terms/"
+       "dcterms:":"http://purl.org/dc/terms/",
+	   "wdt:": "http://www.wikidata.org/prop/direct/"
 }
 
 	var prefixes = [];
