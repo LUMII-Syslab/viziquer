@@ -1,5 +1,5 @@
 (function() {
-vq_grammar_completion_parser = (function() {
+vq_grammar_completion_parser = (function() {											
   "use strict";
 
   /*
@@ -15981,12 +15981,39 @@ vq_grammar_completion_parser = (function() {
                   if (peg$silentFails === 0) { await peg$fail(peg$c47); }
                 }
                 if (s3 === peg$FAILED) {
-                  if (peg$c238.test(input.charAt(peg$currPos))) {
-                    s3 = input.charAt(peg$currPos);
+                  if (input.charCodeAt(peg$currPos) === 45) {
+                    s3 = peg$c40;
                     peg$currPos++;
                   } else {
                     s3 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c239); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c41); }
+                  }
+                  if (s3 === peg$FAILED) {
+                    if (input.charCodeAt(peg$currPos) === 40) {
+                      s3 = peg$c54;
+                      peg$currPos++;
+                    } else {
+                      s3 = peg$FAILED;
+                      if (peg$silentFails === 0) { await peg$fail(peg$c55); }
+                    }
+                    if (s3 === peg$FAILED) {
+                      if (input.charCodeAt(peg$currPos) === 41) {
+                        s3 = peg$c56;
+                        peg$currPos++;
+                      } else {
+                        s3 = peg$FAILED;
+                        if (peg$silentFails === 0) { await peg$fail(peg$c57); }
+                      }
+                      if (s3 === peg$FAILED) {
+                        if (peg$c238.test(input.charAt(peg$currPos))) {
+                          s3 = input.charAt(peg$currPos);
+                          peg$currPos++;
+                        } else {
+                          s3 = peg$FAILED;
+                          if (peg$silentFails === 0) { await peg$fail(peg$c239); }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -16035,12 +16062,39 @@ vq_grammar_completion_parser = (function() {
                     if (peg$silentFails === 0) { await peg$fail(peg$c47); }
                   }
                   if (s3 === peg$FAILED) {
-                    if (peg$c238.test(input.charAt(peg$currPos))) {
-                      s3 = input.charAt(peg$currPos);
+                    if (input.charCodeAt(peg$currPos) === 45) {
+                      s3 = peg$c40;
                       peg$currPos++;
                     } else {
                       s3 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c239); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c41); }
+                    }
+                    if (s3 === peg$FAILED) {
+                      if (input.charCodeAt(peg$currPos) === 40) {
+                        s3 = peg$c54;
+                        peg$currPos++;
+                      } else {
+                        s3 = peg$FAILED;
+                        if (peg$silentFails === 0) { await peg$fail(peg$c55); }
+                      }
+                      if (s3 === peg$FAILED) {
+                        if (input.charCodeAt(peg$currPos) === 41) {
+                          s3 = peg$c56;
+                          peg$currPos++;
+                        } else {
+                          s3 = peg$FAILED;
+                          if (peg$silentFails === 0) { await peg$fail(peg$c57); }
+                        }
+                        if (s3 === peg$FAILED) {
+                          if (peg$c238.test(input.charAt(peg$currPos))) {
+                            s3 = input.charAt(peg$currPos);
+                            peg$currPos++;
+                          } else {
+                            s3 = peg$FAILED;
+                            if (peg$silentFails === 0) { await peg$fail(peg$c239); }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -20804,4 +20858,4 @@ vq_grammar_completion_parser = (function() {
     parse:       peg$parse
   };
 })()
-}).call(this);
+}).call(this);			  

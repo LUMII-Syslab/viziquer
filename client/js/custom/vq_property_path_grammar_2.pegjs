@@ -90,15 +90,15 @@
 			PathElt2 = "^" PathElt:PathElt {return {inv:"^", PathElt:PathElt}}
 			PathElt3 = "inv"i "(" (PathElt:PathElt) ")" {return {inv:"^", PathElt:PathElt}}
 			PathElt = PathPrimary:PathPrimary PathMod:PathMod? {return {PathPrimary:PathPrimary, PathMod:PathMod}}
-			PathPrimary =  ("!" PathNegatedPropertySet)/ iri / (BRACKET:"(" space Path space ")") / LName/ "a" 
+			PathPrimary =  ("!" PathNegatedPropertySet)/ DoubleSquareBracketName/ iri / (BRACKET:"(" space Path space ")")  / LName/ "a" 
 			PathNegatedPropertySet = PathNegatedPropertySet:(PathNegatedPropertySet2 / PathNegatedPropertySet1){return {PathNegatedPropertySet:PathNegatedPropertySet}}
 			PathNegatedPropertySet1 = PathOneInPropertySet:PathOneInPropertySet {return {PathOneInPropertySet:PathOneInPropertySet}}
 			PathNegatedPropertySet2 = PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted {return {PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted}}
 			PathNegatedPropertySetBracketted = ("(" (space PathOneInPropertySet (space VERTICAL space PathOneInPropertySet)*)? space ")")
 			PathOneInPropertySet = PathOneInPropertySet3 / PathOneInPropertySet1 / PathOneInPropertySet2
-			PathOneInPropertySet1 = iriOra:(iri  / LName/ 'a') {return {inv:"", iriOra:iriOra}}
-			PathOneInPropertySet2 = "^" iriOra:(iri  / LName/ 'a') {return {inv:"^", iriOra:iriOra}}
-			PathOneInPropertySet3 = "inv"i "(" iriOra:(iri / LName/ 'a' ) ")" {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet1 = iriOra:(DoubleSquareBracketName / iri  /LName/ 'a') {return {inv:"", iriOra:iriOra}}
+			PathOneInPropertySet2 = "^" iriOra:(DoubleSquareBracketName / iri  /LName/ 'a') {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet3 = "inv"i "(" iriOra:(DoubleSquareBracketName / iri/ LName/ 'a' ) ")" {return {inv:"^", iriOra:iriOra}}
 			PathMod = ("?" / "*" / "+")
 			
 			iri = IRIREF / PrefixedName
@@ -109,10 +109,15 @@
 			LName = (LName:(Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			PN_PREFIX = Chars_String_prefix
 			
+			DoubleSquareBracketName = LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			squarePrefix = Chars_String_prefix ":"
+			squareVariable = "[["  Chars_String_square  "]]"
+			
 			VAR = Var:(("??" / "?") VARNAME){return {VariableName:makeVar(Var)}}
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
 			
-			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
+			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "(" / ")" / [0-9])*)
+			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])* (("..") [0-9]*)?)
 			space = ((" ")*) {return }
 			
 			VERTICAL = "|" {return {Alternative:"|"}}

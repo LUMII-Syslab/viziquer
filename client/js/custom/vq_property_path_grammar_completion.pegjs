@@ -329,15 +329,15 @@
 			PathElt2 = Check PathElt:PathElt {return {inv:"^", PathElt:PathElt}}
 			PathElt3 = Inv br_open "(" (PathElt:PathElt) br_close ")" {return {inv:"^", PathElt:PathElt}}
 			PathElt = PathPrimary:PathPrimary PathMod:PathMod? {return {PathPrimary:PathPrimary, PathMod:PathMod}}
-			PathPrimary =  (exclamation "!" PathNegatedPropertySet)/ iri / (br_open BRACKET:"(" space Path space br_close ")") / LName/ (a_c "a" )
+			PathPrimary =  (exclamation "!" PathNegatedPropertySet)/ DoubleSquareBracketName / iri / (br_open BRACKET:"(" space Path space br_close ")") / LName/ (a_c "a" )
 			PathNegatedPropertySet = PathNegatedPropertySet:(PathNegatedPropertySet2 / PathNegatedPropertySet1){return {PathNegatedPropertySet:PathNegatedPropertySet}}
 			PathNegatedPropertySet1 = PathOneInPropertySet:PathOneInPropertySet {return {PathOneInPropertySet:PathOneInPropertySet}}
 			PathNegatedPropertySet2 = PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted {return {PathNegatedPropertySetBracketted:PathNegatedPropertySetBracketted}}
 			PathNegatedPropertySetBracketted = (br_open"(" (space PathOneInPropertySet (space VERTICAL space PathOneInPropertySet)*)? space br_close")")
 			PathOneInPropertySet = PathOneInPropertySet3 / PathOneInPropertySet1 / PathOneInPropertySet2
-			PathOneInPropertySet1 = iriOra:(iri  / LName/ (a_c 'a')) {return {inv:"", iriOra:iriOra}}
-			PathOneInPropertySet2 = Check iriOra:(iri  / LName/ (a_c 'a')) {return {inv:"^", iriOra:iriOra}}
-			PathOneInPropertySet3 = Inv br_open"(" iriOra:(iri / LName/ (a_c 'a') ) br_close ")" {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet1 = iriOra:(DoubleSquareBracketName / iri  / LName/ (a_c 'a')) {return {inv:"", iriOra:iriOra}}
+			PathOneInPropertySet2 = Check iriOra:(DoubleSquareBracketName / iri  / LName/ (a_c 'a')) {return {inv:"^", iriOra:iriOra}}
+			PathOneInPropertySet3 = Inv br_open"(" iriOra:(DoubleSquareBracketName / iri / LName/ (a_c 'a') ) br_close ")" {return {inv:"^", iriOra:iriOra}}
 			PathMod = ((question "?") / (mult "*") / (plus "+"))
 			Check = check_c "^" {return getInverseAssociations("^")}
 			Inv = inv_c "inv"i {return getInverseAssociations("inv")}
@@ -349,6 +349,11 @@
 			PNAME_LN = (PNAME_NS:PNAME_NS  LName:Chars_String_variable) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
 			LName = (LName:(Chars_String_variable)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			PN_PREFIX = Chars_String_prefix
+			
+			DoubleSquareBracketName = Var:(squarePrefix? squareVariable) {return afterVar(Var)}
+			squarePrefix = Chars_String_prefix colon ":"
+			squareVariable = double_squere_br_open "[["  Chars_String_square  double_squere_br_close "]]"
+			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "(" / ")" / [0-9])*)
 			
 			VAR = Var:(((questionquestion "??") / (question "?") ) VARNAME){return {VariableName:makeVar(Var)}}
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)
@@ -381,5 +386,7 @@
 			more = "" {addContinuation(location(), ">", 50, 4);}
 			colon = "" {addContinuation(location(), ":", 50, 4);}
 			space_c = "" {addContinuation(location(), " ", 10, 4);}
+			double_squere_br_open = "" {addContinuation(location(), "[[", 50, 4);}
+			double_squere_br_close = "" {addContinuation(location(), "]]", 50, 4);}
 			
 			end = "" {error(returnContinuation()); return;}

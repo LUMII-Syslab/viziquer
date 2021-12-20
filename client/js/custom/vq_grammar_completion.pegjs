@@ -874,7 +874,7 @@
 			DoubleSquareBracketName = variables_c Var:(squarePrefix? squareVariable) {return afterVar(Var)}
 			squarePrefix = Chars_String_prefix colon_cc":"
 			squareVariable = double_squere_br_open "[["  Chars_String_square  double_squere_br_close "]]"
-			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" /"." /" "/"/" / [0-9])*)
+			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "(" / ")" / [0-9])*)
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
 			space = ((" ")*) 

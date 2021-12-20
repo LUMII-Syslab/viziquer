@@ -132,7 +132,6 @@ Template.AddAttribute.events({
 			x.style.display = "block";
 		  }
 		  var y = document.getElementById("more-associations-button");
-		  console.log("IIIIIIIIIIII", y.style.display, y.complete)
 		  if (x.style.display === "none") {
 			y.style.display = "none";
 		  } else if (x.style.display !== "none" && y.complete !== "true") {
