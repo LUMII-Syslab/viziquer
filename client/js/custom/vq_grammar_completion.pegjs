@@ -489,8 +489,12 @@
 
 			Main = (space  ((("(*attr)" / "(*sub)")) / Expression) space)? end
 			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr
-			ValueScope = (curv_br_open "{" (ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) curv_br_close "}")
+
+			ValueScope = (curv_br_open"{" (ValueScopeA / ValueScopeB / ValueScopeC) curv_br_close "}")
 			ValueScopeA = (INTEGER two_dots ".." INTEGER)
+			ValueScopeC = ((UNDEF / PrimaryExpression) (comma_c Comma space (UNDEF / PrimaryExpression))*)
+			ValueScopeB = (Scope (comma_c Comma space Scope)*)
+			Scope = (br_open"(" space ((UNDEF / PrimaryExpression) (comma_c Comma space (UNDEF / PrimaryExpression))*) space br_close ")")
 
 			classExpr = ((dot ".") / ("(.)") / (select_this"(select this)" / this_c "(this)"))
 
@@ -599,6 +603,7 @@
 			
 			FunctionExpression = (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / FunctionExpressionLANGMATCHES / FunctionCOALESCE / BOUNDFunction / NilFunction / BNODEFunction)
 
+			UNDEF = undef_c "UNDEF"i
 			STR = str_c "STR"i 
 			LANG = lang_c "LANG"i 
 			DATATYPE = datatype_c "DATATYPE"i 
@@ -935,6 +940,7 @@
 			semi_colon = "" {addContinuation(location(), ";", 10, false, 4);}
 			equal = "" {addContinuation(location(), "=", 90, false, 4);}
 			comma_c = "" {addContinuation(location(), ",", 10, false, 4);}
+			undef_c = "" {addContinuation(location(), "UNDEF", 65, false, 4);}
 			str_c = "" {addContinuation(location(), "STR", 65, false, 4);}
 			lang_c = "" {addContinuation(location(), "LANG", 55, false, 4);}
 			datatype_c = "" {addContinuation(location(), "DATATYPE", 55, false, 4);}

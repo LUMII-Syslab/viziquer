@@ -243,9 +243,9 @@
 			//ValueScope = ("{" ValueScope:(ValueScopeA / (NumericLiteral (Comma space NumericLiteral)*)) "}") {return {ValueScope:ValueScope}}
 			ValueScope = ("{" ValueScope:(ValueScopeA / ValueScopeB / ValueScopeC) "}") {return {ValueScope:ValueScope}}
 			ValueScopeA = (IntStart:INTEGER ".." IntEnd:INTEGER) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
-			ValueScopeC = (PrimaryExpression (Comma space PrimaryExpression)*)
-			ValueScopeB = (Scope (Comma space Scope)*)
-			Scope = ("(" space PrimaryExpression (Comma space PrimaryExpression)* space ")")
+			ValueScopeC = ((UNDEF / PrimaryExpression) (Comma2 space (UNDEF / PrimaryExpression))*)
+			ValueScopeB = (Scope (Comma2 space Scope)*)
+			Scope = ("(" space Scope:((UNDEF / PrimaryExpression) (Comma2 space (UNDEF / PrimaryExpression))*) space ")"){return {Scope: Scope}}
 
 			classExpr = ("(.)" / "."/ "(select this)" / "(this)") {return {classExpr: "true"}}
 
@@ -355,6 +355,7 @@
 
 			FunctionExpression = FunctionExpression: (FunctionExpressionC / FunctionExpressionA / FunctionExpressionB / IFFunction / FunctionExpressionD / FunctionExpressionLANGMATCHES / FunctionCOALESCE / BOUNDFunction / NilFunction / BNODEFunction) {return {FunctionExpression:FunctionExpression}}
 
+			UNDEF = "UNDEF"i {return {UNDEF:"UNDEF"}}
 			STR = "STR"i {return "STR"}
 			LANG = "LANG"i {return "LANG"}
 			DATATYPE = "DATATYPE"i {return "DATATYPE"}
@@ -497,6 +498,7 @@
 			ExpressionList4 = ("{" space IntStart:INTEGER space ".." space IntEnd:INTEGER space "}" ) {return transformExpressionIntegerScopeToList(IntStart, IntEnd)}
 
 			Comma = Comma:"," {return {Comma:Comma}}
+			Comma2 = Comma:"," {return {Space:" "}}
 
 			LANGTAG = "@" string
 			LANGTAG_MUL = "@" "(" LANGTAG_MUL:(string2 (LANGTAG_LIST)*) ")" {return LANGTAG_MUL}

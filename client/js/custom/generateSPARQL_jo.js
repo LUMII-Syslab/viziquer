@@ -1248,7 +1248,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					});
 				}
 			} else{
-			if(field["alias"] != null && field["alias"].replace(" ", "") !="" && field["alias"].indexOf(" ") >= 0) {
+			if(field["alias"] != null && field["alias"].replace(" ", "") !="" && field["alias"].indexOf(" ") >= 0 && field["alias"].indexOf(",") == -1) {
 				messages.push({
 					"type" : "Error",
 						"message" : "Whitespace characters not allowed in property alias " + field["alias"],
@@ -2197,7 +2197,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
-						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ?')) timeExpression.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
+						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ')) timeExpression.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 						else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) timeExpression.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 						else timeExpression.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 					}
@@ -2211,7 +2211,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
-						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ?')){ 
+						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ')){ 
 							attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 						}else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) {
 							attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
