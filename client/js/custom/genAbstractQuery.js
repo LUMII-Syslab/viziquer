@@ -462,10 +462,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					}
 				}
 			}
-            var condition = {exp:"(this) = " + strURI};
+			if(obj_class.identification.local_name != null){
+				var condition = {exp:"(this) = " + strURI};
 			      await parseExpObject(condition, obj_class.identification);
 			      obj_class.conditions.push(condition);
-            obj_class.instanceAlias = null;
+            
+			}
+			// obj_class.instanceAlias = null;
           } else {
              f.exp=obj_class.instanceAlias;
           }
@@ -475,7 +478,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
       if (f.groupValues) {
         f.exp="GROUP_CONCAT("+f.exp+")";
       };
-
+		if(obj_class.instanceAlias != null && obj_class.identification.local_name == null && (f.exp=="(.)" || f.exp=="(select this)")){
+			
+		} else{
          await parseExpObject(f, obj_class.identification);
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
@@ -626,7 +631,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			        obj_class.conditions.push(condition);
             }
          } 
-		
+		}
 		
     }
 	// );

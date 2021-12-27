@@ -598,6 +598,7 @@ function generateIds(rootClass, knownPrefixes){
 		var unionClass = null;
 		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
 		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes);
+		counter = temp["counter"];
 		idTable.concat(temp["idTable"]);
 		prefixTable.concat(temp["prefixTable"]);
 		for(pr in temp["prefixTable"]){
@@ -734,6 +735,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		} else unionClass = null;
 
 		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes);
+
 		idTable.concat(temp["idTable"]);
 		for(pr in temp["prefixTable"]){
 			prefixTable[pr] = temp["prefixTable"][pr];
@@ -957,7 +959,16 @@ function generateSPARQLtext(abstractQueryTable){
 			 var temp = temp.filter(function (el, i, arr) {
 				return arr.indexOf(el) === i;
 			});
-
+			
+			
+			if(temp.length == 0){
+			messages.push({
+						"type" : "Error",
+						"message" : "Insufficient information for query generation. Add a link, an attribute, or a class name",
+						"listOfElementId" : [rootClass["identification"]["_id"]],
+						"isBlocking" : true
+					});
+			}
 			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval)  + "\n}";
 			 // if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
@@ -1231,7 +1242,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		} else if(field["exp"] == "[*sub]") {
 			sparqlTable["getSubQueryResults"] = true;
 		} else {
-			if(typeof field["parsed_exp"] === 'undefined'){
+			if(typeof field["parsed_exp"] === 'undefined' && field["exp"] != "(select this)"){
 				if(field["exp"].replace(/ /g, '') == "") {
 					messages.push({
 						"type" : "Error",
@@ -2193,6 +2204,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	for (var expression in sparqlTable["simpleTriples"]){
 		var generateTimeFunctionForVirtuoso = true;
 		if(generateTimeFunctionForVirtuoso == true && sparqlTable["simpleTriples"][expression]["isTimeFunction"] == true){
+			var classTriple = sparqlTable["classTriple"];
+			if(typeof classTriple === 'undefined') classTriple = "";
+			else classTriple = classTriple + "\n" +SPARQL_interval;
+			
 			var timeExpression = [];
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
@@ -2205,7 +2220,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			}
 			if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bind"]);
 			if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bound"]);
-			attributesAggerations.push("OPTIONAL{" + "\n"+SPARQL_interval + sparqlTable["classTriple"] + "\n"+SPARQL_interval + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
+			attributesAggerations.push("OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
 		}
 		else {
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){

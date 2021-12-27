@@ -185,7 +185,7 @@ Template.SelectTargetClass.events({
 		
 		_.each(classes, function(e){
 			var prefix;
-			if(e.class_is_local == true || e.prefix == "")prefix = "";
+			if(e.is_local == true || e.prefix == "")prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;
 			if(e.principal_class == 2) e.clr = "color: purple";
@@ -397,7 +397,7 @@ Template.AddLink.events({
 	
 		_.each(classes, function(e){
 			var prefix;
-			if(e.class_is_local == true || e.prefix == "")prefix = "";
+			if(e.is_local == true || e.prefix == "")prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;	
 
@@ -923,7 +923,7 @@ async function getAllAssociations(){
 					
 					if (e.class_iri !== undefined && e.class_iri !== null) {
 						var prefix;
-						if(e.class_is_local == true)prefix = "";
+						if(e.is_local == true)prefix = "";
 						else prefix = e.class_prefix+":";
 						e.short_class_name = prefix + e.class_display_name;						
 					}
