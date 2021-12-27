@@ -99,7 +99,7 @@
 		{{#if input}}
 			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
-				<input type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
+				<input autocomplete="off" type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 				placeholder="{{_placeholder}}" >
 			</div>
