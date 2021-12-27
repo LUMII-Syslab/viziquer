@@ -292,6 +292,7 @@ dataShapes = {
 				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
 					var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
 					this.schema.schema = schema_info.db_schema_name;
+					this.schema.schemaType = schema_info.schema_name;
 					this.schema.use_pp_rels = schema_info.use_pp_rels;
 					this.schema.simple_prompt = schema_info.simple_prompt;
 					this.schema.hide_individuals = schema_info.hide_instances;
@@ -375,8 +376,10 @@ dataShapes = {
 
 		const time = Date.now() - startTime
 		if ( ConsoleLog ) {			
-			if ( rr.data ) 
+			if ( rr.data ) {
 				console.log(rr)
+				//console.log(rr.data.map(v => v.prefix + ':' + v.display_name))
+			}
 			console.log(time)
 		}
 		if ( MakeLog ) {

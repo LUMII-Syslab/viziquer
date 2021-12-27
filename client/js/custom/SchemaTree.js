@@ -300,7 +300,7 @@ Template.schemaTree.events({
 		}
 	},
 	'click .class-body': async function(e) {
-		console.log(e)
+		// console.log(e)
 	},
 	"click .form-check-input": async function(e) {
 		var index = $(e.target).closest(".form-check-input").attr("index");
