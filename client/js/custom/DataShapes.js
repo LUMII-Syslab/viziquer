@@ -76,7 +76,17 @@ const getPListI = (vq_obj) => {
 	var link_list =  vq_obj.getLinks();
 	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
-		if (link.type === 'out' && link.name !== null && link.name !== undefined ) {
+		link.typeO = link.type;
+		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
+			link.name = link.name.substring(1,link.name.length);
+			if (link.type === 'in')
+				link.type = 'out';
+			else
+				link.type = 'in';
+		}
+	})
+	_.each(link_list_filtered, function(link) {
+		if (link.typeO === 'out' && link.name !== null && link.name !== undefined ) {
 			var eE = new VQ_Element(link.eE);
 			var individual =  eE.getInstanceAlias();
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
@@ -85,7 +95,7 @@ const getPListI = (vq_obj) => {
 				pListI.uriIndividual = individual;
 			}
 		}
-		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
+		if (link.typeO === 'in' && link.name !== null && link.name !== undefined ) {
 			var sE = new VQ_Element(link.sE);
 			var individual =  sE.getInstanceAlias();
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
@@ -106,6 +116,15 @@ const getPList = (vq_obj) => {
 	var link_list =  vq_obj.getLinks();
 
 	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	_.each(link_list_filtered, function(link) {
+		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
+			link.name = link.name.substring(1,link.name.length);
+			if (link.type === 'in')
+				link.type = 'out';
+			else
+				link.type = 'in';
+		}
+	})
 	_.each(link_list_filtered, function(link) {
 		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
 			if ( link.t === 'REQUIRED' ) {
