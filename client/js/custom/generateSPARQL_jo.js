@@ -1955,7 +1955,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable){
 
-	//console.log("orderings", orderings)
+	// console.log("orderings", orderings)
 	// console.log("fieldNames", fieldNames)
 	 // console.log("symbolTable", symbolTable)
 
@@ -1991,28 +1991,32 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				}
 				var orderName = order["exp"];
 				if(orderName.search(":") != -1) orderName = orderName.substring(orderName.search(":")+1);
-				if(typeof fieldNames[orderName] !== 'undefined'){
+				var reserverNames = ["constructor", "length", "prototype"];
+				
+				var orderNameRep = orderName;
+				if(reserverNames.indexOf(orderNameRep) != -1) orderNameRep = orderNameRep + " ";
+				
+				
+				if(typeof fieldNames[orderNameRep] !== 'undefined'){
 
 					// var result = fieldNames[orderName][rootClass_id][order["exp"]];
-					var result = fieldNames[orderName][rootClass_id];
+					var result = fieldNames[orderNameRep][rootClass_id];
 					if(typeof result === 'undefined'){
 						if(typeof symbolTable[rootClass_id] !== 'undefined' && typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
 							for(var attrName in symbolTable[rootClass_id][orderName]){
 								if(typeof symbolTable[rootClass_id][orderName][attrName]["upBySubQuery"] !== "undefined" && symbolTable[rootClass_id][orderName][attrName]["upBySubQuery"] == 1){
-									result =  fieldNames[orderName][symbolTable[rootClass_id][orderName][attrName]["context"]][order["exp"]];
+									result =  fieldNames[orderNameRep][symbolTable[rootClass_id][orderName][attrName]["context"]][order["exp"]];
 									break;
 								}
 							}
 						}
 						if(typeof result === 'undefined'){
-							for (var ordr in fieldNames[orderName]) {
-								result = fieldNames[orderName][ordr][order["exp"]];
+							for (var ordr in fieldNames[orderNameRep]) {
+								result = fieldNames[orderNameRep][ordr][order["exp"]];
 								break;
 							}
 						}
-					} else result = fieldNames[orderName][rootClass_id][order["exp"]];
-
-
+					} else result = fieldNames[orderNameRep][rootClass_id][order["exp"]];
 
 					if(!result.startsWith("?")) result = "?" + result;
 					orderTable.push(descendingStart +  result + descendingEnd + " ");
@@ -2104,6 +2108,11 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 		if(group["exp"] != null && group["exp"].replace(" ", "") !=""){
 			var groupName = group["exp"];
 			if(groupName.search(":") != -1) groupName = groupName.substring(groupName.search(":")+1);
+			var groupNameOrig = groupName;
+			
+			var reserverNames = ["constructor", "length", "prototype"];
+			if(reserverNames.indexOf(groupName) !== -1) groupName = groupName + " ";
+			
 			if(typeof fieldNames[groupName] !== 'undefined'){
 				var result = fieldNames[groupName][rootClass_id];
 				if(typeof result === 'undefined'){
@@ -2114,8 +2123,8 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				} else result = fieldNames[groupName][rootClass_id][group["exp"]];
 				//orderTable.push(descendingStart +  "?" + result + descendingEnd + " ");
 				orderGroupBy.push("?" + result);
-			} else if(typeof symbolTable[rootClass_id][groupName] !== 'undefined'){
-				var result =  groupName;
+			} else if(typeof symbolTable[rootClass_id][groupNameOrig] !== 'undefined'){
+				var result =  groupNameOrig;
 				orderGroupBy.push("?" + result);
 			} else {
 				if(typeof group["parsed_exp"] === 'undefined'){
@@ -2150,6 +2159,7 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	orderGroupBy = orderGroupBy.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
+	
 	return {"triples":groupTripleTable, "messages":messages, "groupings":orderGroupBy};
 }
 

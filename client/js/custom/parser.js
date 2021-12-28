@@ -210,7 +210,10 @@ function createTriples(tripleTable, tripleType){
 // varName - given variable
 // alias - given variable alias
 function setVariableName(varName, alias, variableData, generateNewName){
-
+	
+	var reserverNames = ["constructor", "length", "prototype"];
+	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
+	
 	var isPropertyFromSubQuery = null;
 	var isOwnProperty = false;
 	var variableDataName = variableData["name"];
@@ -264,7 +267,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		}
 	}
 	
-	var varNameRep = varName.replace(/-/g, '_');
+	var varNameRep = varName.replace(/-/g, '_').replace(/ /g, '');
 	if(alias != null) {
 	 // console.log("1111", varName, alias);
 		var aliasSet = false;
@@ -367,7 +370,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			   // console.log("2cccc", varName, isSimpleVariableForNameDef);
 			//if not used in given expression
 			if(typeof expressionLevelNames[varName] === 'undefined' || typeof expressionLevelNames[varName] === 'function' || typeof expressionLevelNames[varName][variableDataName] === "undefined"){
-				  // console.log("2c 1", varName);
+				  // console.log("2c 1", varName, variableNamesClass, typeof variableNamesClass[varName], variableNamesClass["length"]);
 				//if not used in class scope
 				if(typeof variableNamesClass[varName] === 'undefined'|| typeof variableNamesClass[varName] === 'function'){
 					  // console.log("2c 11", varName);
@@ -487,6 +490,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 							// console.log("2c 1211", varName);
 							var count = 0;
 							if(typeof  attributesNames[varName] !== 'undefined'){
+								
 								if(typeof attributesNames[varName] !== "function" && typeof attributesNames[varName]["classes"][classID] !== 'undefined')varNameRep = attributesNames[varName]["classes"][classID]["name"];
 								count = attributesNames[varName]["counter"];
 							}
