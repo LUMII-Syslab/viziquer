@@ -1510,6 +1510,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						if(indexCole != -1 && indexCole < endIndex) endIndex = indexCole;
 
 						var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+						if(result["exp"].indexOf("?") == -1) tempAlias = result["exp"].substring(result["exp"].indexOf(":")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
 						if(typeof variableNamesAll[tempAlias] !== 'undefined') {
 							var count = variableNamesAll[tempAlias]["counter"] + 1;
 							variableNamesAll[tempAlias]["counter"]  = count;
@@ -1522,6 +1523,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 							aliasTable[tempAlias] =  alias;
 							classes[clazz["identification"]["_id"]] = aliasTable;
 							variableNamesAll[tempAlias]["classes"] = classes;
+							
 						}
 						else {
 							alias = tempAlias;
@@ -1555,7 +1557,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					sparqlTable["aggregateTriples"].push(triple);
 					//MAIN SELECT agregate variables
 					if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
-
+					
 					for (var variable in result["variables"]){
 						if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
 					}
@@ -1783,10 +1785,15 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					var blankNodes = [];
 					for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
 						for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){
-							blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""))
+							blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""));
 						}
 					}
-
+					
+					for(var triple in  temp["sparqlTable"]["filterTriples"]){
+						for(var t in  temp["sparqlTable"]["filterTriples"][triple]["triple"]){
+							blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
+						}
+					}
 					object = object + blankNodes.join(";");
 					object = object+ "]";
 				}else {
@@ -2272,22 +2279,24 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	if(sparqlTable["fullSPARQL"]!= null){
 		if(sparqlTable["fullSPARQL"].toLowerCase().startsWith("select ") != true) attributesAggerations.push(sparqlTable["fullSPARQL"]);
 	}
-
+	
 	// filterTriples
-	for (var expression in sparqlTable["filterTriples"]){
-		if(typeof sparqlTable["filterTriples"][expression] === 'object'){
-			for (var triple in sparqlTable["filterTriples"][expression]["triple"]){
-				if(typeof sparqlTable["filterTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push(sparqlTable["filterTriples"][expression]["triple"][triple]);
+	if(sparqlTable["class"].startsWith("?_") != true){
+		for (var expression in sparqlTable["filterTriples"]){
+			if(typeof sparqlTable["filterTriples"][expression] === 'object'){
+				for (var triple in sparqlTable["filterTriples"][expression]["triple"]){
+					if(typeof sparqlTable["filterTriples"][expression]["triple"][triple] === 'string') attributesAggerations.push(sparqlTable["filterTriples"][expression]["triple"][triple]);
+				}
 			}
+			if(typeof sparqlTable["filterTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bind"]);
+			if(typeof sparqlTable["filterTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bound"]);
 		}
-		if(typeof sparqlTable["filterTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bind"]);
-		if(typeof sparqlTable["filterTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["filterTriples"][expression]["bound"]);
-	}
 
-	//filters
-	for (var expression in sparqlTable["filters"]){
-		if(typeof sparqlTable["filters"][expression] === 'string'){
-			filters.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
+		//filters
+		for (var expression in sparqlTable["filters"]){
+			if(typeof sparqlTable["filters"][expression] === 'string'){
+				filters.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
+			}
 		}
 	}
 

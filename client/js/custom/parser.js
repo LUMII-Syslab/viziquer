@@ -179,6 +179,7 @@ function createTriples(tripleTable, tripleType){
 		tripleEnd = "}";
 	}
 	_.each(tripleTable,function(triple) {
+		var dot = ".";
 		if(typeof triple["BIND"] === 'string') triples.push(triple["BIND"]);
 		else if(typeof triple["VALUES"] === 'string') triples.push(triple["VALUES"]);
 		else{
@@ -186,7 +187,10 @@ function createTriples(tripleTable, tripleType){
 			if(objectName.indexOf("://") != -1 && objectName.indexOf("<") != 0) objectName = "<" + objectName + ">";
 			else if(objectName.indexOf(":") != -1) {
 				//TODO add prefix to table
-			} else objectName = "?"+objectName;
+			} else if(objectName.startsWith("_")){
+				objectName = "";
+				dot = "";
+			}else objectName = "?"+objectName;
 			if(tripleType == "out"){
 				if(parseType == "attribute") {
 					var triple = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
@@ -196,9 +200,9 @@ function createTriples(tripleTable, tripleType){
 					triples.push(triple);
 				}
 				
-				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + "." );
+				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
 			} else {
-				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + "." );
+				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
 			}
 		//	triples.push("?" + triple["object"] + " " + triple["prefixedName"] + " " + triple["var"] + "." );
 		}
@@ -1823,11 +1827,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			visited = 1;
 		}
 		
-		if (key == "classExpr"){
+		if (key == "classExpr"){	
 			if(alias != null && alias != "") {
 				SPARQLstring = SPARQLstring + "?" + alias;
 				variableTable.push("?" + alias);
 				if(className != alias)tripleTable.push({"BIND":"BIND(?" + className + " AS ?" + alias + ")"})
+			} else if(isAggregate == true && className.indexOf(":") != -1){
+				// counter++;
+				// SPARQLstring = SPARQLstring + "?" + "expr_"+counter;
+				// variableTable.push("?" + "expr_"+counter);
+				// tripleTable.push({"BIND":"BIND(" + className + " AS ?" + "expr_"+counter + ")"})
+				// counter++;
+				SPARQLstring = SPARQLstring + className;
+				variableTable.push( className);
 			}else {
 				SPARQLstring = SPARQLstring + "?" + className;
 				variableTable.push("?" + className);
@@ -2044,7 +2056,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 				}
 			// }
-
 			visited = 1
 		}
 		
@@ -3012,7 +3023,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					//property = 5
 					//propety = "string"
 					// filter as triple
-					if(visited != 1 && Usestringliteralconversion == "OFF" && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
+					if(visited != 1 && (Usestringliteralconversion == "OFF" || className.startsWith("_")) && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
 					((((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME") 
 					    || typeof left["Path"] !== 'undefined' 
 						|| typeof left["Reference"] !== 'undefined'
@@ -3055,9 +3066,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					if(visited != 1){
 						var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 						var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
-
-					
-						
+		
 						if(typeof expressionTable[key]["NumericExpressionL"] !== "undefined") SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						else if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
 								if(alias!=null)SPARQLstring =  "?" +alias;
