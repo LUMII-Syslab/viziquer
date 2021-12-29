@@ -525,7 +525,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	if(starInSelect == true){
 		variables = variables.concat(tempN["selectStarList"]);
 		variables = variables.filter(function (el, i, arr) {
-			return arr.indexOf(el) === i && el !== "*";
+			return arr.indexOf(el) === i && el !== "*" && el.startsWith("_:") != true;
 		});
 	}
 	
@@ -2543,13 +2543,16 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	}
 	// type=operation
 	if(where["type"] == "operation"){
-		//realtion or atithmetic
+		//relation or atithmetic
 		if(checkIfRelation(where["operator"]) != -1 || chechIfArithmetic(where["operator"]) != -1){	
 			if(typeof where["args"][0] == 'string') {
 				var arg1 = generateArgument(where["args"][0]);
 				if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
 				var argValue = arg1["value"];
-				if(arg1["type"] == "iri" && checkIfRelation(where["operator"]) != -1) argValue = "<"+argValue+">";
+				if(arg1["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
+					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33);
+					else argValue = "<"+argValue+">";
+				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;	
 			}
@@ -2569,7 +2572,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				var arg2 = generateArgument(where["args"][1]);
 				if(arg2["type"] == "varName") viziQuerExpr["exprVariables"].push(arg2["value"]);
 				var argValue = arg2["value"];
-				if(arg2["type"] == "iri" && checkIfRelation(where["operator"]) != -1) argValue = "<"+argValue+">";
+				if(arg2["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
+					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33)
+					else argValue = "<"+argValue+">";
+				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;
 			}
@@ -2583,7 +2589,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		//zero argumentFunctions
 		else if(where["args"].length == 0){
-			console.log("WWWWWWWWWWWWWWWDDDDDDDDDDDDD")
+			
 			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]  + where["operator"] + "()";
 		}//one argumentFunctions
 		else if(checkIfOneArgunemtFunctuion(where["operator"]) != -1){

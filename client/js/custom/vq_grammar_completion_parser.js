@@ -1,5 +1,5 @@
 (function() {
-vq_grammar_completion_parser = (function() {											
+vq_grammar_completion_parser = (function() {			
   "use strict";
 
   /*
@@ -16319,28 +16319,37 @@ vq_grammar_completion_parser = (function() {
                     if (peg$silentFails === 0) { await peg$fail(peg$c45); }
                   }
                   if (s3 === peg$FAILED) {
-                    if (input.charCodeAt(peg$currPos) === 40) {
-                      s3 = peg$c16;
+                    if (input.charCodeAt(peg$currPos) === 44) {
+                      s3 = peg$c82;
                       peg$currPos++;
                     } else {
                       s3 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c83); }
                     }
                     if (s3 === peg$FAILED) {
-                      if (input.charCodeAt(peg$currPos) === 41) {
-                        s3 = peg$c18;
+                      if (input.charCodeAt(peg$currPos) === 40) {
+                        s3 = peg$c16;
                         peg$currPos++;
                       } else {
                         s3 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+                        if (peg$silentFails === 0) { await peg$fail(peg$c17); }
                       }
                       if (s3 === peg$FAILED) {
-                        if (peg$c240.test(input.charAt(peg$currPos))) {
-                          s3 = input.charAt(peg$currPos);
+                        if (input.charCodeAt(peg$currPos) === 41) {
+                          s3 = peg$c18;
                           peg$currPos++;
                         } else {
                           s3 = peg$FAILED;
-                          if (peg$silentFails === 0) { await peg$fail(peg$c241); }
+                          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+                        }
+                        if (s3 === peg$FAILED) {
+                          if (peg$c240.test(input.charAt(peg$currPos))) {
+                            s3 = input.charAt(peg$currPos);
+                            peg$currPos++;
+                          } else {
+                            s3 = peg$FAILED;
+                            if (peg$silentFails === 0) { await peg$fail(peg$c241); }
+                          }
                         }
                       }
                     }
@@ -16400,28 +16409,37 @@ vq_grammar_completion_parser = (function() {
                       if (peg$silentFails === 0) { await peg$fail(peg$c45); }
                     }
                     if (s3 === peg$FAILED) {
-                      if (input.charCodeAt(peg$currPos) === 40) {
-                        s3 = peg$c16;
+                      if (input.charCodeAt(peg$currPos) === 44) {
+                        s3 = peg$c82;
                         peg$currPos++;
                       } else {
                         s3 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+                        if (peg$silentFails === 0) { await peg$fail(peg$c83); }
                       }
                       if (s3 === peg$FAILED) {
-                        if (input.charCodeAt(peg$currPos) === 41) {
-                          s3 = peg$c18;
+                        if (input.charCodeAt(peg$currPos) === 40) {
+                          s3 = peg$c16;
                           peg$currPos++;
                         } else {
                           s3 = peg$FAILED;
-                          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+                          if (peg$silentFails === 0) { await peg$fail(peg$c17); }
                         }
                         if (s3 === peg$FAILED) {
-                          if (peg$c240.test(input.charAt(peg$currPos))) {
-                            s3 = input.charAt(peg$currPos);
+                          if (input.charCodeAt(peg$currPos) === 41) {
+                            s3 = peg$c18;
                             peg$currPos++;
                           } else {
                             s3 = peg$FAILED;
-                            if (peg$silentFails === 0) { await peg$fail(peg$c241); }
+                            if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+                          }
+                          if (s3 === peg$FAILED) {
+                            if (peg$c240.test(input.charAt(peg$currPos))) {
+                              s3 = input.charAt(peg$currPos);
+                              peg$currPos++;
+                            } else {
+                              s3 = peg$FAILED;
+                              if (peg$silentFails === 0) { await peg$fail(peg$c241); }
+                            }
                           }
                         }
                       }
@@ -21213,4 +21231,4 @@ vq_grammar_completion_parser = (function() {
     parse:       peg$parse
   };
 })()
-}).call(this);		
+}).call(this);					
