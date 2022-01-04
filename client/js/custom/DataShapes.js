@@ -86,7 +86,7 @@ const getPListI = (vq_obj) => {
 		}
 	})
 	_.each(link_list_filtered, function(link) {
-		if (link.typeO === 'out' && link.name !== null && link.name !== undefined ) {
+		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
 			var eE = new VQ_Element(link.eE);
 			var individual =  eE.getInstanceAlias();
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
@@ -95,7 +95,7 @@ const getPListI = (vq_obj) => {
 				pListI.uriIndividual = individual;
 			}
 		}
-		if (link.typeO === 'in' && link.name !== null && link.name !== undefined ) {
+		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
 			var sE = new VQ_Element(link.sE);
 			var individual =  sE.getInstanceAlias();
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
@@ -355,7 +355,7 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		if ( ConsoleLog ) {
+		if ( ConsoleLog && funcName != 'resolvePropertyByName') {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
 		}
@@ -394,7 +394,7 @@ dataShapes = {
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
 
 		const time = Date.now() - startTime
-		if ( ConsoleLog ) {			
+		if ( ConsoleLog && funcName != 'resolvePropertyByName') {			
 			if ( rr.data ) {
 				console.log(rr)
 				//console.log(rr.data.map(v => v.prefix + ':' + v.display_name))
