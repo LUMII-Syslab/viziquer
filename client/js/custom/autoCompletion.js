@@ -614,7 +614,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			
 			for (var key in symbolTable) {
 				for(var k in symbolTable[key]){
-					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "CLASS_ALIAS") c["suggestions"].push({name: key, priority:100, type:3});
+					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || (symbolTable[key][k]["kind"] == "CLASS_ALIAS" && isURI(key) == 0)) c["suggestions"].push({name: key, priority:100, type:3});
 				}
 			}
 						
@@ -628,12 +628,17 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 	
 				for (var key in symbolTable) {
 					for(var k in symbolTable[key]){
-						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "CLASS_ALIAS") c["suggestions"].push({name: key, priority:100, type:3});
+						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || (symbolTable[key][k]["kind"] == "CLASS_ALIAS" && isURI(key) == 0)) c["suggestions"].push({name: key, priority:100, type:3});
 					}
 				}
 			}
 		
 		}
+		
+		c["suggestions"] = c["suggestions"].filter(function(obj, index, self) { 
+			return index === self.findIndex(function(t) { return t['name'] === obj['name'] });
+		});
+		
 		return c;
 	}
 	else if(grammarType == "group"){
