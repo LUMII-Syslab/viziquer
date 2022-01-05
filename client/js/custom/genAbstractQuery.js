@@ -463,6 +463,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				}
 			}
 			if(obj_class.identification.local_name != null){
+				obj_class.instanceAlias = obj_class.identification.display_name;
 				var condition = {exp:"(this) = " + strURI};
 			      await parseExpObject(condition, obj_class.identification);
 			      obj_class.conditions.push(condition);
