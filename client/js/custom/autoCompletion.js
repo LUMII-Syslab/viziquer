@@ -127,6 +127,7 @@ autoCompletionInstance = async function(e) {
 },
 
 autoCompletion = async function(e) {
+	
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
 	// if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
@@ -305,57 +306,58 @@ function autocomplete(inp, continuations) {
 
 	ss.sort((a, b) => b.priority - a.priority);
 
-	/*create a DIV element that will contain the items (values):*/
-    a = document.createElement("DIV");
+	if(inp.parentNode.id.length > 0 && inp.parentNode.nodeName == "DIV"){
+		/*create a DIV element that will contain the items (values):*/
+		a = document.createElement("DIV");
 
-	a.style.display = 'block';
-	a.style.position = 'auto';
-	a.style.width = '100%';
-	a.style.maxHeight = '200px';
-	a.style.overflow = 'hidden';
-	a.style.overflowY = 'auto';
-	a.style.listStyle = 'none';
-	a.style.padding = '2px';
-	a.style.margin = 0;
-	a.style.border = '1px solid #bbb';
-	a.style.backgroundColor = '#efefef';
-	a.style.boxShadow = '0px 0px 6px 1px rgba(128,128,128,0.3)';
-	a.style.borderRadius = '4px';
+		a.style.display = 'block';
+		a.style.position = 'auto';
+		a.style.width = '100%';
+		a.style.maxHeight = '200px';
+		a.style.overflow = 'hidden';
+		a.style.overflowY = 'auto';
+		a.style.listStyle = 'none';
+		a.style.padding = '2px';
+		a.style.margin = 0;
+		a.style.border = '1px solid #bbb';
+		a.style.backgroundColor = '#efefef';
+		a.style.boxShadow = '0px 0px 6px 1px rgba(128,128,128,0.3)';
+		a.style.borderRadius = '4px';
 
-    a.setAttribute("id", "autocomplete-list");
-	a.setAttribute("class", "autocomplete-items");
+		a.setAttribute("id", "autocomplete-list");
+		a.setAttribute("class", "autocomplete-items");
 
-    /*append the DIV element as a child of the autocomplete container:*/
-    inp.parentNode.appendChild(a);
+		/*append the DIV element as a child of the autocomplete container:*/
+		inp.parentNode.appendChild(a);
+		
+		for (let [i, sugg] of ss.entries()) {
+			/*create a DIV element for each matching element:*/
+			b = document.createElement("DIV");
 
-	for (let [i, sugg] of ss.entries()) {
-        /*create a DIV element for each matching element:*/
-		b = document.createElement("DIV");
+			b.innerHTML = `<span style='color: #808080'>${continuations.prefix}</span><span style='font-weight: 900; color: ${colorForType(sugg.type)}'>${sugg.name}</span>`;
+			b.innerHTML += ` <span style='color: #c0c0c0; float: right'>(${descriptionForType(sugg.type)})</span>`;
+			/*insert a input field that will hold the current array item's value:*/
+			b.innerHTML += `<input type='hidden' value='${sugg.name}' name='suggestion'>`;
+			b.innerHTML += `<input type='hidden' value='${continuations.prefix}' name='prefix'>`;
 
-        b.innerHTML = `<span style='color: #808080'>${continuations.prefix}</span><span style='font-weight: 900; color: ${colorForType(sugg.type)}'>${sugg.name}</span>`;
-        b.innerHTML += ` <span style='color: #c0c0c0; float: right'>(${descriptionForType(sugg.type)})</span>`;
-        /*insert a input field that will hold the current array item's value:*/
-		b.innerHTML += `<input type='hidden' value='${sugg.name}' name='suggestion'>`;
-		b.innerHTML += `<input type='hidden' value='${continuations.prefix}' name='prefix'>`;
+			/*execute a function when someone clicks on the item value (DIV element):*/
+			b.addEventListener("click", function(e) {
+				/*insert the value for the autocomplete text field:*/
+				// var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value, cursorPosition);
+				// inp.value = inputValue;
+				updateInputValue(inp, continuations.prefix, sugg.name);
+				/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
+				closeAllLists();
+				inp.focus();
+			});
 
-        /*execute a function when someone clicks on the item value (DIV element):*/
-		b.addEventListener("click", function(e) {
-			/*insert the value for the autocomplete text field:*/
-			// var inputValue = generateInputValue(inp.value, this.getElementsByTagName("input")[0].value, cursorPosition);
-			// inp.value = inputValue;
-			updateInputValue(inp, continuations.prefix, sugg.name);
-			/*close the list of autocompleted values,(or any other open lists of autocompleted values:*/
-			closeAllLists();
-			inp.focus();
-		});
+			if (i === currentFocus) b.style.backgroundColor = '#f8c26c';
+			a.appendChild(b);
+		}
 
-		if (i === currentFocus) b.style.backgroundColor = '#f8c26c';
-        a.appendChild(b);
+		inp.removeEventListener("keydown", keyDownHandler);
+		inp.addEventListener("keydown", keyDownHandler);
 	}
-
-	inp.removeEventListener("keydown", keyDownHandler);
-	inp.addEventListener("keydown", keyDownHandler);
-
 }
 
 //function to classify an item as selected
@@ -1031,20 +1033,21 @@ function getContinuationsNew(text, length, continuations) {
 }
 
 function errorMessage(message, elem){
-	m = document.createElement("DIV");
+	if(elem.parentNode.id.length > 0 && elem.parentNode.nodeName == "DIV"){
+		m = document.createElement("DIV");
 
-	m.style.color = '#691715';
-    m.style.background= '#feded9';
-    m.style.border= '1px solid #fc8675';
-   	m.style.display = 'block';
-	m.style.position = 'auto';
+		m.style.color = '#691715';
+		m.style.background= '#feded9';
+		m.style.border= '1px solid #fc8675';
+		m.style.display = 'block';
+		m.style.position = 'auto';
 
 
-    m.setAttribute("id", "message");
-    m.setAttribute("class", "message");
-    m.innerHTML += "<label>" + message + "</label>";
-    elem.parentNode.insertBefore(m, elem);
-
+		m.setAttribute("id", "message");
+		m.setAttribute("class", "message");
+		m.innerHTML += "<label>" + message + "</label>";
+		elem.parentNode.insertBefore(m, elem);
+	}
 }
 
 function removeMessage(){
