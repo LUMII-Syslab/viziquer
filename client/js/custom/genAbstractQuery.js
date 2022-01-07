@@ -802,6 +802,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                     variableName:elem.getVariableName(),
                     groupByThis:elem.isGroupByThis(),
                     indirectClassMembership: elem.isIndirectClassMembership(),
+					labelServiceLanguages: elem.isLabelServiceLanguages(),				
                     // should not add the link which was used to get to the elem
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                     fields: elem.getFields(),
@@ -815,7 +816,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                                              groupings: elem.getGroupings(),
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
-                                             offset:elem.getOffset()  });
+                                             offset:elem.getOffset() });
                 } else {
 					var orderingss = elem.getOrderings()
 					if(orderingss.length > 0){
@@ -857,6 +858,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 		  if (proj.completeRDFBoxesInDatetimeFunctions) {
             proj_params.completeRDFBoxesInDatetimeFunctions = proj.completeRDFBoxesInDatetimeFunctions;
           };
+		  if (proj.enableWikibaseLabelServices) {
+            proj_params.enableWikibaseLabelServices = proj.enableWikibaseLabelServices;
+          };
 		  if (proj.endpointUsername) {
             proj_params.endpointUsername = proj.endpointUsername;
           };
@@ -881,6 +885,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
       orderings: e.getOrderings(),
       groupings: e.getGroupings(),
       indirectClassMembership: e.isIndirectClassMembership(),
+      labelServiceLanguages: e.isLabelServiceLanguages(),
       distinct:e.isDistinct(),
       selectAll:e.isSelectAll(),
       groupByThis:e.isGroupByThis(),

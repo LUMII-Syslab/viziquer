@@ -488,7 +488,7 @@
 		}
 
 			Main = (space  ((("(*attr)" / "(*sub)")) / Expression) space)? end
-			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr
+			Expression = (unit"[ ]") / (union "[ + ]") / (no_class "(no_class)")  / ValueScope / ConditionalOrExpressionA / classExpr / star "*"
 
 			ValueScope = (curv_br_open"{" (ValueScopeA / ValueScopeB / ValueScopeC) curv_br_close "}")
 			ValueScopeA = (INTEGER two_dots ".." INTEGER)
@@ -1022,6 +1022,7 @@
 			between_c = "" {addContinuation(location(), "BETWEEN", 30, true, 4);}
 			int_c = "" {addContinuation(location(), "", 1, false, 4);}
 			string_c = "" {addContinuation(location(), "", 1, false, 4);}
+			star = "" {addContinuation(location(), "", 1, false, 4);}
 			colon_c = "" {addContinuation(location(), "", 30, false, 4);}
 			vertical_c = "" {addContinuation(location(), "|", 10, false, 4);}
 			colon_cc = "" {addContinuation(location(), ":", 10, false, 4);}

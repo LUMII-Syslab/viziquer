@@ -272,6 +272,11 @@ Schemas.Projects = new SimpleSchema({
  			 label: "Projects.completeRDFBoxesInDatetimeFunctions",
  			 optional: true,
  	    },
+		enableWikibaseLabelServices: {
+ 			 type: String,
+ 			 label: "Projects.enableWikibaseLabelServices",
+ 			 optional: true,
+ 	    },
 		endpointUsername: {
  			 type: String,
  			 label: "Projects.endpointUsername",

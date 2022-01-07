@@ -786,6 +786,7 @@ Template.ontologySettings.events({
 					showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
+					enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val()
 				};
@@ -829,6 +830,7 @@ Template.ontologySettings.events({
 		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
+		 $("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);
 	 }
@@ -1041,6 +1043,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
+		}
+	},
+	enableWikibaseLabelServices: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.enableWikibaseLabelServices=="true");
 		}
 	},
 	endpointUsername: function() {

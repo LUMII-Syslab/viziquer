@@ -2056,7 +2056,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 				}
 			// }
-			visited = 1
+			visited = 1;
+		}
+		
+		if(expressionTable[key] == "*"){
+			SPARQLstring = SPARQLstring + "*";
+			visited = 1;
 		}
 		
 		if (key == "RelationalExpression") {

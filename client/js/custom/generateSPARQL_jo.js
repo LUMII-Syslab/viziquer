@@ -969,7 +969,17 @@ function generateSPARQLtext(abstractQueryTable){
 						"isBlocking" : true
 					});
 			}
-			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval)  + "\n}";
+			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval);
+			 
+			  //Label Service Languages
+			 if (rootClass["labelServiceLanguages"] != null) {
+				SPARQL_text = SPARQL_text + '\n  SERVICE wikibase:label {bd:serviceParam wikibase:language "'+rootClass["labelServiceLanguages"]+'" .}';
+				prefixTable["wikibase:"] = "<http://wikiba.se/ontology#>";
+				prefixTable["bd:"] = "<http://www.bigdata.com/rdf#>";
+			 }
+			 
+			 
+			 SPARQL_text = SPARQL_text + "\n}";
 			 // if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
 
@@ -1008,6 +1018,11 @@ function generateSPARQLtext(abstractQueryTable){
 						"isBlocking" : false
 					});
 				}
+			 }
+			 
+			 //Label Service Languages
+			 if (rootClass["labelServiceLanguages"] != null) {
+				SPARQL_text + '\n SERVICE wikibase:label {bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .}' + rootClass["labelServiceLanguages"];
 			 }
 
 			 //Prefixes
@@ -1170,7 +1185,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	sparqlTable["variableReferenceCandidate"] = []; // list with candidates to reference
 	sparqlTable["classMembership"] = classMembership; // class Membership role
 	sparqlTable["groupByThis"] = clazz["groupByThis"]; // group By This class
-	sparqlTable["getSubQueryResults"] = false; // group By This class
+	sparqlTable["getSubQueryResults"] = false; // getSubQueryResults
+	sparqlTable["labelServiceLanguages"] = clazz["labelServiceLanguages"]; // labelServiceLanguages
 
 	var classSimpleTriples = [];
 	var classExpressionTriples = [];
@@ -1511,6 +1527,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 						var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
 						if(result["exp"].indexOf("?") == -1) tempAlias = result["exp"].substring(result["exp"].indexOf(":")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
+						if(result["exp"].indexOf("?") == -1 && result["exp"].indexOf("*") != -1) {console.log("uuuuuuuuuuuuu");tempAlias = result["exp"].substring(0, result["exp"].indexOf("(")) + "_all";}
+						
 						if(typeof variableNamesAll[tempAlias] !== 'undefined') {
 							var count = variableNamesAll[tempAlias]["counter"] + 1;
 							variableNamesAll[tempAlias]["counter"]  = count;
@@ -2450,7 +2468,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							}
 
 
-							subQuery = subQuery +SPARQL_interval_sub_temp+temp.join("\n"+SPARQL_interval_sub_temp)  + "}";
+							subQuery = subQuery +SPARQL_interval_sub_temp+temp.join("\n"+SPARQL_interval_sub_temp);
+							
+							 //Label Service Languages
+							 if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {
+								subQuery = subQuery + '\n'+SPARQL_interval_sub_temp+'SERVICE wikibase:label {bd:serviceParam wikibase:language "'+sparqlTable["subClasses"][subclass]["labelServiceLanguages"]+'" .}\n'+SPARQL_interval_sub_temp;
+							 }
+							
+							
+							subQuery = subQuery + "}";
 
 
 							if(groupBy != "") groupBy = "\n"+SPARQL_interval+"GROUP BY " + groupBy;
@@ -2509,7 +2535,14 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								var distinct = "";
 								if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
 								
-								var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}}"
+								var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2);
+								//Label Service Languages
+								 if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {
+									subQuery = subQuery + '\n'+SPARQL_interval+'SERVICE wikibase:label {bd:serviceParam wikibase:language "'+sparqlTable["subClasses"][subclass]["labelServiceLanguages"]+'" .}\n'+SPARQL_interval;
+								 }
+								
+								
+								subQuery = subQuery + "}}";
 								whereInfo.unshift(subQuery);
 							}
 						}

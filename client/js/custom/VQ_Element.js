@@ -2773,6 +2773,15 @@ VQ_Element.prototype = {
     this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
     this.setLinkQueryType(type);
   },
+  isLabelServiceLanguages: function() {
+    var useLabelService = this.getCompartmentValue("Use Label Service");
+    var labelServiceLanguages = this.getCompartmentValue("Label Service Languages");
+	if(useLabelService == "true"){
+		if(labelServiceLanguages == null || labelServiceLanguages.replace(/ /g, "") == "") labelServiceLanguages = "[AUTO_LANGUAGE],en";
+		return labelServiceLanguages;
+	}
+	return null;
+  },
   // determines whether the indirect class membership should be used (if configured) by translator
   isIndirectClassMembership: function() {
     return this.getCompartmentValue("indirectClassMembership")=="true";
@@ -2813,6 +2822,15 @@ VQ_Element.prototype = {
   setDistinct: function(distinct) {
     var distinctS = this.boolToString(distinct)
     this.setCompartmentValueAuto("Distinct",distinctS)
+  },
+  //bool ->
+  setUseLabelService: function(useLabelService) {
+    var useLabelServiceS = this.boolToString(useLabelService)
+    this.setCompartmentValueAuto("Use Label Service",useLabelServiceS)
+  },
+  // string -->
+  setLabelServiceLanguages: function(labelServiceLanguages) {
+    this.setCompartmentValueAuto("Label Service Languages",labelServiceLanguages)
   },
   // determines whether the class has select all property
   isSelectAll: function() {

@@ -61,6 +61,10 @@ Interpreter.customMethods({
 		grammarType = "group"
 		await autoCompletion(e);
 	},
+	languageAutoCompletion: async function(e, compart) {
+		grammarType = "language"
+		await autoCompletion(e);
+	},
 	
 	instanceAutoCompletion: async function(e, compart) {
 		grammarType = "instance"
@@ -784,6 +788,12 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					var className = compart["input"];
 					var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
+				};
+			}else if(grammarType == "language"){
+				var name_list = [];
+				//var act_elem = Session.get("activeElement");
+				if (act_elem) {
+					var parsed_exp = vq_language_grammar_completion.parse(text);
 				};
 			} else {
 

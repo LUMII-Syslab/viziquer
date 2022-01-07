@@ -976,7 +976,7 @@ Interpreter.customMethods({
 				y = mouse_pos["y"];
 			}
 		
-		Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
+		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		
 		for(var query in queries){
 			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x, y);
@@ -990,6 +990,24 @@ Interpreter.customMethods({
 		// var query_text = yasqe3.getValue();	
 		// try {
 		    // var queries = JSON.parse(query_text);
+			
+			// var jsonText = [];
+			
+			// for(var q in queries.questions){
+				// var questionJson = {};
+				// questionJson["id"] = queries.questions[q]["id"];
+				// for(var qq in queries.questions[q]["question"]){
+					// if(queries.questions[q]["question"][qq]["language"] == "en"){
+						// questionJson["question"] = queries.questions[q]["question"][qq]["string"];
+					// }
+				// }
+				// questionJson["sparql"] = queries.questions[q]["query"]["sparql"];
+				// jsonText[queries.questions[q]["id"]] = questionJson;
+			// }
+			
+			// console.log(JSON.stringify(jsonText, 0, 2));
+			
+			
 			// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		// } catch (error) {
 		  // var x = 10;
@@ -1268,6 +1286,15 @@ Interpreter.customMethods({
 
 			  if(directClassMembershipRole == indirectClassMembershipRole) return false;
 			  return true;
+		}
+		return false;
+	},
+	
+	
+	setIsVisibleForLabelService: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});		
+		if (proj) {
+			if (proj.enableWikibaseLabelServices == "true") return true;
 		}
 		return false;
 	},
