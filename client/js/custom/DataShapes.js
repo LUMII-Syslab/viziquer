@@ -350,6 +350,10 @@ dataShapes = {
 						this.schema.tree.class = c_list[0];
 						this.schema.tree.classes = c_list;
 					}
+					
+					if (schema_info.schema_name === 'wikidata')
+						this.schema.simple_prompt = true;
+					
 				}
 			}
 		}
