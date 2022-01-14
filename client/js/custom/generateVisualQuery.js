@@ -2599,6 +2599,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				var argValue = arg1["value"];
 				if(arg1["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
 					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33);
+					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43);
 					else argValue = "<"+argValue+">";
 				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
@@ -2622,6 +2623,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				var argValue = arg2["value"];
 				if(arg2["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
 					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33)
+					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43)
 					else argValue = "<"+argValue+">";
 				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
@@ -4722,16 +4724,27 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								if(indirectClassMembershipRole == pathText.join(".")){
 									// console.log("iiii", indirectClassMembershipRole, pathText.join("."))
 									
-									// if(typeof nodeList[triples[triple]["object"]] !== 'undefined'){
-										// var objectClasses = nodeList[triples[triple]["object"]]["uses"];
-										// for(var oclass in objectClasses){
-											// var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
-											// for(var sclass in subjectClasses){
+									if(typeof nodeList[triples[triple]["object"]] !== 'undefined'){
+										var objectClasses = nodeList[triples[triple]["object"]]["uses"];
+										for(var oclass in objectClasses){
+											var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
+											for(var sclass in subjectClasses){
 												
-												// console.log("WWWWWWWWW", oclass, sclass, classesTable)
-											// }
-										// }
-									// }
+												
+												// classesTable[sclass]["identification"]
+												var identification = await dataShapes.resolveClassByName({name: classesTable[oclass]["instanceAlias"]})
+												if(identification.complete == true) {
+													var sn = identification.data[0].display_name;
+													if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
+													classesTable[sclass]["identification"] = identification.data[0];
+													classesTable[sclass]["identification"]["short_name"] = sn;
+													
+													 delete classesTable[oclass];
+												}
+												// console.log("WWWWWWWWW", identification, oclass, sclass, classesTable, classesTable[oclass], classesTable[sclass])
+											}
+										}
+									}
 								} else{
 
 									// var linkResolved = pathPropertyResolved.data[0];

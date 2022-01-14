@@ -443,7 +443,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
 	for (const f of obj_class.fields){
     // await obj_class.fields.forEach(async function(f) {
-      // CAUTION!!!!! Hack for (.)
+     
+	  if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != null && f.attributeCondition != ""){
+		var variableName = f.exp;
+		if (f.alias!=null && f.alias!="")variableName = f.alias;
+		var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeCondition, {"variable":variableName});
+		var condition = {exp:conditionExpression};
+		await parseExpObject(condition, obj_class.identification);
+		obj_class.conditions.push(condition);
+	  }
+	  // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
@@ -465,8 +474,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			if(obj_class.identification.local_name != null){
 				obj_class.instanceAlias = obj_class.identification.display_name;
 				var condition = {exp:"(this) = " + strURI};
-			      await parseExpObject(condition, obj_class.identification);
-			      obj_class.conditions.push(condition);
+			    await parseExpObject(condition, obj_class.identification);
+			    obj_class.conditions.push(condition);
             
 			}
 			// obj_class.instanceAlias = null;

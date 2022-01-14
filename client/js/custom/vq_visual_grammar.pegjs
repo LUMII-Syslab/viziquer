@@ -1,5 +1,11 @@
 {
 	function makeVar(o) {return makeString(o);};
+	function makeIRI(o) {
+		var iri = makeString(o);
+		if(iri.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) return "rdf:" + iri.substring(43);
+		else if(iri.startsWith("http://www.w3.org/2001/XMLSchema#")) return "xsd:" + iri.substring(33);
+		return "<"+iri+">";
+	};
 }
 
 	Main = (Var / NumberValue / BooleanLiteral / RDFLiteral / StringQuotes  / IRIREFName)
@@ -37,7 +43,7 @@
 	RDFLiteralC = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#date" {return makeVar(String) + "^^xsd:date"}
 	RDFLiteralB = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#dateTime" {return makeVar(String) + "^^xsd:dateTime"}
 	RDFLiteralD = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:"http://www.w3.org/2001/XMLSchema#string" {return makeVar(String)}
-	RDFLiteralE = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:iri {return makeVar(String) + "^^<" +makeVar(iri)+">"}
+	RDFLiteralE = String:((STRING_LITERAL1  / STRING_LITERAL2)) "^^" iri:iri {return makeVar(String) + "^^" +makeIRI(iri)}
 	
 	LANGTAG = "@" string
 	

@@ -2904,6 +2904,7 @@ VQ_Element.prototype = {
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
     {title:"Prefixes",name:"Prefixes"},
+    {title:"attributeCondition",name:"AttributeCondition"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);

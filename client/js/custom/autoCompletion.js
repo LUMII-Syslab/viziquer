@@ -41,6 +41,10 @@ Interpreter.customMethods({
 		symbolTable = await generateSymbolTableAC();
 		await autoCompletion(e);
 	},
+	
+	attributeConditionAutoCompletion: async function(e, compart) {
+		grammarType = "attributeCondition"
+	},
 
 	linkAutoCompletion: async function(e, compart) {
 		grammarType = "link"
