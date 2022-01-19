@@ -398,6 +398,7 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 // Executes the given Sparql end shows result in the GUI
 function executeSparqlString(sparql, paging_info) {
   // Default Data Set Name (Graph IRI) and SPARQL endpoint url
+ 
   var graph_iri = "";
   var endpoint = "http://185.23.162.167:8833/sparql";
 
@@ -500,7 +501,8 @@ function executeSparqlString(sparql, paging_info) {
           if (res.error && res.error.response) {
              msg = ": "+res.error.response.content;
           };
-          Interpreter.showErrorMsg("SPARQL execution failed" + msg,-3);
+
+          Interpreter.showErrorMsg("SPARQL execution failed" + msg.substring(0, 1000),-3);
       };
 
     }
@@ -543,10 +545,21 @@ function generateIds(rootClass, knownPrefixes){
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
-		rootClassId = rootClass["identification"]["local_name"];
-		if (checkIfIsURI(rootClassId) == "full_form") rootClassId = "expr";
-		if (checkIfIsURI(rootClassId) == "prefix_form") {
-			rootClassId = rootClassId.substr(rootClassId.indexOf(":")+1);
+		if(rootClass["identification"]["display_name"].startsWith("[[")){
+			var textPart = rootClass["identification"]['display_name'].substring(2);
+			if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+			else textPart = textPart.substring(0, textPart.length - 2);
+			textPart = textPart.trim();
+			if(textPart.match(/([\s]+)/g).length <3 ){
+				rootClassId = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+			} else rootClassId = rootClass["identification"]["local_name"];
+		
+		} else {
+			rootClassId = rootClass["identification"]["local_name"];
+			if (checkIfIsURI(rootClassId) == "full_form") rootClassId = "expr";
+			if (checkIfIsURI(rootClassId) == "prefix_form") {
+				rootClassId = rootClassId.substr(rootClassId.indexOf(":")+1);
+			}
 		}
 	}
 	else rootClassId = rootClassId.replace(/ /g, '_');
@@ -587,8 +600,6 @@ function generateIds(rootClass, knownPrefixes){
 	}
 	// idTable[rootClass["identification"]["_id"]] = rootClassId;
 	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
-
-
 
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
@@ -690,7 +701,6 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		counter++;
 	}
 	else{
-		//TODO container name
 		var foundInIdTable = false;
 		if(parentClassIsUnion == true){
 			for(var key in idTable) {
@@ -704,15 +714,38 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		if(foundInIdTable == false){
 			for(var key in idTable) {
 				// if given class name is in the table, add counter to the class name
-				if(idTable[key]["name"] == clazz["identification"]["local_name"]){
+				var className= clazz["identification"]["local_name"];
+				if( clazz["identification"]['display_name'].startsWith("[[")){
+					var textPart = clazz["identification"]['display_name'].substring(2);
+					if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+					else textPart = textPart.substring(0, textPart.length - 2);
+					textPart = textPart.trim();
+					if(textPart.match(/([\s]+)/g).length <3 ){
+						textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+					} else textPart = clazz["identification"]["local_name"];
+					className = textPart;
+				} 
+				
+				if(idTable[key]["name"] == className){
 					foundInIdTable = true;
-					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
+					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:className.replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
 					counter++;
 				}
 			}
 		}
 		// if given class name is not in the table, use it
-		if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
+		if(foundInIdTable == false) {
+			if( clazz["identification"]['display_name'].startsWith("[[")){
+				var textPart = clazz["identification"]['display_name'].substring(2);
+				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+				else textPart = textPart.substring(0, textPart.length - 2);
+				textPart = textPart.trim();
+				if(textPart.match(/([\s]+)/g).length <3 ){
+					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+				} else textPart = clazz["identification"]["local_name"].replace(/-/g, '_');
+				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:textPart, unionId:unionClass};
+			} else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
+		}
 	}
 	
 	var className = idTable[clazz["identification"]["_id"]]["name"];
@@ -820,7 +853,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 messages = messages.concat(tempAttrNames["messages"]);
 
 		 var result = forAbstractQueryTable(attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
-
+		
 		 messages = messages.concat(result["messages"]);
 
 		 sparqlTable = result["sparqlTable"];
@@ -859,6 +892,10 @@ function generateSPARQLtext(abstractQueryTable){
 			 var selectResult = generateSELECT(sparqlTable, false);
 			 var tempSelect = selectResult["select"];
 			 tempSelect = tempSelect.concat(selectResult["aggregate"]);
+			 
+			 if (rootClass["labelServiceLanguages"] != null) {
+				tempSelect = tempSelect.concat(selectResult["selectLabels"]);
+			 }
 
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ");
 			  
@@ -1020,10 +1057,7 @@ function generateSPARQLtext(abstractQueryTable){
 				}
 			 }
 			 
-			 //Label Service Languages
-			 if (rootClass["labelServiceLanguages"] != null) {
-				SPARQL_text + '\n SERVICE wikibase:label {bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .}' + rootClass["labelServiceLanguages"];
-			 }
+			 
 
 			 //Prefixes
 			 var prefixes = "";
@@ -1173,6 +1207,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	sparqlTable["conditionLinks"] = []; //links with condition label for given class
 	sparqlTable["selectMain"] = []; // select values from given class for upper SELECT level
 	sparqlTable["selectMain"]["simpleVariables"] = []; // select value for simple fields from 'Attributes'
+	sparqlTable["selectMain"]["labelVariables"] = []; // select value for labels from 'Attributes'
 	sparqlTable["selectMain"]["aggregateVariables"] = []; // select value for fields from 'Aggregates'
 	sparqlTable["selectMain"]["referenceVariables"] = []; // list with candidates to reference
 	sparqlTable["innerDistinct"] = []; // select values from given class for upper DISTINCT level
@@ -1286,7 +1321,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				}
 				// console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
 				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
-
+				
 				messages = messages.concat(result["messages"]);
 				// console.log("ATTRIBUTE", result);
 				sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
@@ -1401,6 +1436,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 							if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["simpleVariables"].push(result["variables"][variable]);
 						}
 					}
+					if(underNotLink != true && field["addLabel"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});	
+					}
 				}
 
 				//expression in expression
@@ -1418,6 +1456,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 							if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["simpleVariables"].push(result["variables"][variable]);
 						}
 					}
+					if(underNotLink != true && field["addLabel"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});
+					}
 				}
 				//simple triples
 				else {
@@ -1434,11 +1475,17 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 						// MAIN SELECT simple variables (not undet NOT link and is not internal)
 						if(underNotLink != true && (field["isInternal"] != true || field["exp"].startsWith("?"))){
-							if(field["exp"].startsWith("??") == false){
+							if(field["exp"].startsWith("??") == false ){
 								sparqlTable["selectMain"]["simpleVariables"].push({"alias": alias, "value" : alias});
 								for (var variable in result["variables"]){
 									if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["simpleVariables"].push(result["variables"][variable]);
 								}
+							}
+						}
+						if(underNotLink != true){
+							if(field["exp"].startsWith("??") == false && field["addLabel"] == true){
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});
+								
 							}
 						}
 				}
@@ -1527,7 +1574,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 						var tempAlias = result["exp"].substring(result["exp"].indexOf("?")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
 						if(result["exp"].indexOf("?") == -1) tempAlias = result["exp"].substring(result["exp"].indexOf(":")+1, endIndex) + "_" + result["exp"].substring(0, result["exp"].indexOf("("));
-						if(result["exp"].indexOf("?") == -1 && result["exp"].indexOf("*") != -1) {console.log("uuuuuuuuuuuuu");tempAlias = result["exp"].substring(0, result["exp"].indexOf("(")) + "_all";}
+						if(result["exp"].indexOf("?") == -1 && result["exp"].indexOf("*") != -1) {tempAlias = result["exp"].substring(0, result["exp"].indexOf("(")) + "_all";}
 						
 						if(typeof variableNamesAll[tempAlias] !== 'undefined') {
 							var count = variableNamesAll[tempAlias]["counter"] + 1;
@@ -2358,7 +2405,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					
 					if(sparqlTable["getSubQueryResults"] == true) {
 						subSelectResult = subSelectResult.concat(selectResult["select"]);
-						subSelectResult = subSelectResult.concat(selectResult["aggregateAliases"]);
+						subSelectResult = subSelectResult.concat(selectResult["aggregateAliases"]);	
 					}
 
 					//reference candidates
@@ -2380,6 +2427,11 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					var tempSelect = refTable;
 					tempSelect= tempSelect.concat(selectResult["select"]);
 					tempSelect= tempSelect.concat(selectResult["aggregate"]);
+					
+					if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {
+							tempSelect = tempSelect.concat(selectResult["selectLabels"]);
+					}
+					
 					tempSelect= tempSelect.concat(wheresubInfo["subSelectResult"]);
 
 					if(sparqlTable["subClasses"][subclass]["linkType"] != "NOT"){
@@ -2871,6 +2923,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 
 function generateSELECT(sparqlTable, forSingleClass){
 	selectInfo = [];
+	selectLabels = [];
 	variableReferenceInfo = [];
 	aggregateSelectInfo = [];
 	aggregateAliases = [];
@@ -2885,6 +2938,11 @@ function generateSELECT(sparqlTable, forSingleClass){
 		if(typeof sparqlTable["selectMain"]["simpleVariables"][number]["alias"] === 'string') {
 			selectInfo.push(sparqlTable["selectMain"]["simpleVariables"][number]["alias"]);
 			groupBy.push(sparqlTable["selectMain"]["simpleVariables"][number]["alias"]);
+		}
+	}
+	for (var number in sparqlTable["selectMain"]["labelVariables"]){
+		if(typeof sparqlTable["selectMain"]["labelVariables"][number]["alias"] === 'string') {
+			selectLabels.push(sparqlTable["selectMain"]["labelVariables"][number]["alias"]);
 		}
 	}
 	for (var number in sparqlTable["innerDistinct"]["simpleVariables"]){
@@ -2944,6 +3002,9 @@ function generateSELECT(sparqlTable, forSingleClass){
 	var selectInfo = selectInfo.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
+	var selectLabels = selectLabels.filter(function (el, i, arr) {
+		return arr.indexOf(el) === i;
+	});
 	var aggregateSelectInfo = aggregateSelectInfo.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
@@ -2965,6 +3026,7 @@ function generateSELECT(sparqlTable, forSingleClass){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object' && sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true) {
 				var temp = generateSELECT(sparqlTable["subClasses"][subclass], forSingleClass);
 				selectInfo = selectInfo.concat(temp["select"]);
+				selectLabels = selectLabels.concat(temp["selectLabels"]);
 				variableReferenceCandidate = variableReferenceCandidate.concat(temp["variableReferenceCandidate"]);
 				variableReferenceInfo = variableReferenceInfo.concat(temp["variableReference"]);
 				innerDistinctInfo = innerDistinctInfo.concat(temp["innerDistinct"]);
@@ -2976,7 +3038,7 @@ function generateSELECT(sparqlTable, forSingleClass){
 		}
 	}
 
-	return {"select":selectInfo, "innerDistinct":innerDistinctInfo, "aggregate":aggregateSelectInfo, "groupBy":groupBy, "variableReference":variableReferenceInfo, "variableReferenceCandidate":variableReferenceCandidate, "aggregateAliases":aggregateAliases};
+	return {"select":selectInfo, "innerDistinct":innerDistinctInfo, "selectLabels":selectLabels, "aggregate":aggregateSelectInfo, "groupBy":groupBy, "variableReference":variableReferenceInfo, "variableReferenceCandidate":variableReferenceCandidate, "aggregateAliases":aggregateAliases};
 }
 
 function checkIfIsURI(text){

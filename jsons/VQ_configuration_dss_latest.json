@@ -1734,6 +1734,40 @@
                         "subCompartmentTypes": []
                       },
 					  {
+                        "_id": "ei4nwnr7jkrgukafpu7khqck",
+                        "index": 12,
+                        "name": "Add Label",
+						"label": "Add Label",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+						"extensionPoints": [
+						  {
+							"extensionPoint": "isVisible",
+							"procedure": "setIsVisibleForLabelService"
+						  }
+						],
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": " {+label}"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
                         "_id": "i794avqh6vh6aa1cakgfrvni",
                         "index": 3,
                         "name": "Prefixes",
@@ -2406,7 +2440,8 @@
                     "extensionPoint": "dynamicSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue"
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": "VQsetIndirectClassMembershipDefaultValue"
                   },
                   {
                     "extensionPoint": "dynamicDropDown"

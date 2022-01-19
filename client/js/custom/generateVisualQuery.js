@@ -28,9 +28,12 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 				else if(dirRole == "wdt:P31") directClassMembershipRole = "http://www.wikidata.org/prop/direct/P31";
 				else directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 			  };
-			  if (proj.indirectClassMembershipRole) {
+			   if (proj.indirectClassMembershipRole) {
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
+				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
 			  }; 
+			  
 			  
 		 }
 	  
@@ -156,7 +159,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		}
 		visitedClasses[ startClass["name"]] = true;
 		// Generate tree ViziQuer query structure, from class and link tables 
-		var generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, []);
+		var generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
 		
 		classesTable = generateClassCtructuretemp.clazz;
 		conditionLinks = generateClassCtructuretemp.conditionLinks;													 
@@ -260,8 +263,6 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
 		
-		// console.log("variableList", variableList);
-
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = await generateAbstractTable(parsedQuery, [], variableList, []);
 		
@@ -368,7 +369,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		visitedClasses[ startClass["name"]] = true;
 
 		// Generate tree ViziQuer query structure, from class and link tables 
-		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, []);
+		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
 	
 		
 		classesTable = generateClassCtructuretemp.clazz;
@@ -586,7 +587,10 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	for(var key in variables){
 		
 		if(typeof variables[key] === 'string'){
+			if(serviceLabelLang != "" && variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined"){
 				
+			} else {
+			
 			var isVariable = false;
 			for(var link in linkTable){
 				if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
@@ -610,17 +614,22 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				//add class as attribute
 				var parsedClass = vq_visual_grammar.parse(variables[key])["value"];
 				var identification = await dataShapes.resolveClassByName({name: parsedClass});
+				
+				var addLabel = false;
+				if(typeof variableList[variables[key]+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+	
 				var attributeInfo = {
 					"alias":"",
 					"identification":identification.data[0],
-					"exp":"(select this)"
+					"exp":"(select this)",
+					"addLabel":addLabel
 				}
 				if(identification.complete == true) {
 					var sn = identification.data[0].display_name;
 					if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
 					attributeInfo.identification.short_name = sn;
 				}
-				
+		
 				for(var clazz in classes){
 					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
 				}
@@ -692,20 +701,26 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						var attrAlias = attributeInfoTemp["alias"];
 						if(attrAlias == "" && typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["short_name"].indexOf(":")!= -1) attrAlias = attributeInfoTemp["identification"]["local_name"];
 						
+						var addLabel = false;
+						if(typeof variableList["?"+attrAlias+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+						
 						var attributeInfo = {
 							"alias":attrAlias,
 							"identification":attributeInfoTemp["identification"],
 							"requireValues":attributeInfoTemp["requireValues"],
 							"isInternal":false,
 							"groupValues":false,
-							"exp":exp
+							"exp":exp,
+							"addLabel":addLabel
 						}
 						
 						if(attributeTable[attribute]["class"] != attribute){
 						classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
+
 						attributeTable[attribute]["seen"] = true;}
 					}
 				}
+			}
 			}
 			
 		} else if(typeof variables[key] === 'object'){
@@ -940,6 +955,37 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					for(var attribute in attributes){
 						if(((attributeTable[attribute]["identification"]!= null && attributeTable[attribute]["alias"] == attributeTable[attribute]["identification"]["local_name"]) || attributeTable[attribute]["alias"] == "") && inSameClass == true)attributeTable[attribute]["seen"] = true;
 					}
+				}
+			}
+		}	
+	}
+	
+	for(var key in variables){	
+		if(typeof variables[key] === 'string' && serviceLabelLang != "" && variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined"){
+			var classes = findByVariableName(classesTable, variables[key].substring(0, variables[key].length-5));
+			for(var clazz in classes){
+				if(typeof nodeList[classes[clazz]["variableName"]] !== "undefined"){
+					var fields = classes[clazz]["fields"];
+					var selectThisFound = false;
+					for(var field in fields){
+						if(fields[field]["exp"] == "(select this)"){
+							selectThisFound = true;
+							break;
+						}
+					}
+					if(selectThisFound == false){
+						var attributeInfo = {
+								"alias":"",
+								"identification":null,
+								"requireValues":false,
+								"isInternal":true,
+								"groupValues":false,
+								"exp":"(select this)",
+								"addLabel":true
+						} 
+						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+					}
+					
 				}
 			}
 		}
@@ -4334,6 +4380,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					if(typeof nodeList[triples[triple]["object"]] === "undefined" || Object.keys(nodeList[triples[triple]["object"]]["uses"]).length == 0){
 						if(typeof nodeList[triples[triple]["object"]] === "undefined") nodeList[triples[triple]["object"]] = createNodeListInstance(nodeList, triples[triple]["object"]);
 						var instanceAlias = await generateInstanceAlias(objectNameParsed);
+						
 						if(typeof parentNodeList[triples[triple]["object"]] === 'undefined'){
 							if(typeof allClasses[objectNameParsed] === 'undefined'){
 								classesTable[objectNameParsed] = {
@@ -4729,7 +4776,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										for(var oclass in objectClasses){
 											var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
 											for(var sclass in subjectClasses){
-												
+												// Indirect Class Membership
 												
 												// classesTable[sclass]["identification"]
 												var identification = await dataShapes.resolveClassByName({name: classesTable[oclass]["instanceAlias"]})
@@ -4738,6 +4785,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
 													classesTable[sclass]["identification"] = identification.data[0];
 													classesTable[sclass]["identification"]["short_name"] = sn;
+													classesTable[sclass]["indirectClassMembership"] = true;
 													
 													 delete classesTable[oclass];
 												}
@@ -5212,7 +5260,7 @@ function addAggrigateToClass(classesTable, identification){
 }
 
 // Generate tree like ViziQuer query structure, from class and link tables 
-function generateClassCtructure(clazz, className, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks){
+function generateClassCtructure(clazz, className, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList){
 
 	// In link table find all links with a subject or an object as given the class. Add class from opposite link end and link information, as given class children.
 	clazz.c_id = className;
@@ -5222,7 +5270,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false){	
 
 				linkTable[linkName]["isVisited"] = true;
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks);
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 				visitedClasses = tempAddClass["visitedClasses"];
 
 				conditionLinks = tempAddClass["conditionLinks"];
@@ -5260,18 +5308,24 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						var requred = true;
 						if(linkTable[linkName]["linkType"] == "OPTIONAL") requred = false;
 						var internal = true;
-						if(typeof childerenClass["fields"] !== 'undefined' && childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)")internal = false;
-						
+						var addLabel = false;
 						var attrAlias = childerenClass["instanceAlias"];
+						if(typeof childerenClass["fields"] !== 'undefined' && childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)"){
+							internal = false;
+							addLabel = childerenClass["fields"][0]["addLabel"];
+						} else if(typeof variableList["?"+attrAlias+"Label"] !== "undefined"){
+							addLabel = true;
+						}
+						
+						
 						if(attrAlias == exp) attrAlias = "";
-						
-						
 						var attributeInfo = {
 							"alias":attrAlias,
 							"identification":null,
 							"exp":exp,
 							"requireValues":requred,
-							"isInternal":internal
+							"isInternal":internal,
+							"addLabel":addLabel
 						}
 						clazz = addAttributeToClass(clazz, attributeInfo);
 						
@@ -5319,7 +5373,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 
 				linkTable[linkName]["isVisited"] = true;
 				clazz["children"] = addChildren(clazz);
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks)
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList)
 				visitedClasses = tempAddClass["visitedClasses"];
 				conditionLinks = tempAddClass["conditionLinks"];
 				
@@ -5390,14 +5444,14 @@ function addConditionLinks(clazz){
 	return clazz["conditionLinks"];
 }
 
-function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks){
+function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList){
 
 	childrenClass["isInverse"] = isInverse;
 	childrenClass["linkIdentification"] = linkInformation["linkIdentification"];
 	childrenClass["linkType"] = linkInformation["linkType"];
 	childrenClass["isSubQuery"] = linkInformation["isSubQuery"];
 	childrenClass["isGlobalSubQuery"] = linkInformation["isGlobalSubQuery"];
-	generateClassCtructureTemp = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks);
+	generateClassCtructureTemp = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 	childrenClass = generateClassCtructureTemp.clazz;
 	return {childrenClass:childrenClass, visitedClasses:visitedClasses, conditionLinks:conditionLinks};
 }
@@ -5555,6 +5609,10 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 		if(className != null && className != "") classBox.setName(className);
 		classBox.setClassStyle(nodeType);
 		if(instanceAlias != null) classBox.setInstanceAlias(instanceAlias);
+		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) classBox.setIndirectClassMembership(true);
+		else classBox.setIndirectClassMembership(false);
+		
+		// setIndirectClassMembership
 
 		// console.log("nodeType = ", nodeType);
 		// console.log("instanceAlias = ", instanceAlias);
@@ -5584,9 +5642,10 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 			var requireValues = field["requireValues"];
 			var isInternal = field["isInternal"];
 			var groupValues = field["groupValues"]; // false
-
+			var addLabel = field["addLabel"]; // false
+			
 			//add attribute to class
-			classBox.addField(expression,alias,requireValues,groupValues,isInternal);
+			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel);
 
 		})
 
@@ -5646,7 +5705,7 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 		var serviceLabelLang = clazz["serviceLabelLang"];
 		if(typeof serviceLabelLang !== "undefined" && serviceLabelLang !== ""){
 			classBox.setUseLabelService(true);
-			classBox.setLabelServiceLanguages(serviceLabelLang);
+			if(serviceLabelLang != "[AUTO_LANGUAGE],en")classBox.setLabelServiceLanguages(serviceLabelLang);
 		}
 		
 		//selectAll

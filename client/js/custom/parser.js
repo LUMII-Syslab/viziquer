@@ -1849,8 +1849,16 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		 
 		if(key == "var") {			
 			var varName 
-			
-			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1 && expressionTable[key]['type']['display_name'].indexOf("[[") !== -1) varName = expressionTable[key]['type']['local_name'];
+			if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[[") !== -1){
+				var textPart = expressionTable[key]['type']['display_name'].substring(2);
+				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+				else textPart = textPart.substring(0, textPart.length - 2);
+				textPart = textPart.trim();
+				if(textPart.match(/([\s]+)/g).length <3 ){
+					alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+					varName = expressionTable[key]['type']['local_name'];
+				} else varName = expressionTable[key]['type']['local_name'];
+			} else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['local_name'];
 			else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['display_name'];
 			// if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['local_name'] !== null && typeof expressionTable[key]['type']['local_name'] !== 'undefined' ) varName = expressionTable[key]['type']['local_name'];
 			else varName = expressionTable[key]["name"];

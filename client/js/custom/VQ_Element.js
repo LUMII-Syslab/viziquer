@@ -2788,23 +2788,23 @@ VQ_Element.prototype = {
   },
   // bool ->
   setIndirectClassMembership: function(indirect) {
-    var indirectS = "false";
+	var indirectS = "false";
 	if (indirect) {
 		// if indirectClassMembership parameter is set, execute dynamicDefaultValue ExtensionPoint, to set default value
 		var ct = CompartmentTypes.findOne({name: "indirectClassMembership", elementTypeId: this.obj["elementTypeId"]});
 		var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", ct);
 		if (proc_name && proc_name != "") {
 			if(Interpreter.execute(proc_name, [""])) {
-				this.setNameValue(".. "+this.getName());
+				if(this.getName() !== null)this.setNameValue(".. "+this.getName());
 				indirectS = "true";
 			}
-			else this.setNameValue(this.getName());
+			else if(this.getName() !== null) this.setNameValue(this.getName());
 		}
 		else {
-			this.setNameValue(this.getName());
+			if(this.getName() !== null) this.setNameValue(this.getName());
 		}
 	} else {
-      this.setNameValue(this.getName());
+      if(this.getName() !== null) this.setNameValue(this.getName());
     };
 	// if (indirect) {
       // this.setNameValue(".. "+this.getName());
@@ -2906,6 +2906,7 @@ VQ_Element.prototype = {
     {title:"Prefixes",name:"Prefixes"},
     {title:"attributeCondition",name:"AttributeCondition"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
+    {title:"addLabel",name:"Add Label",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
 	
@@ -2926,7 +2927,7 @@ VQ_Element.prototype = {
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
-  addField: function(exp,alias,requireValues,groupValues,isInternal) {
+  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,condition) {
     
 	var prefixesValue = "";
 	if(isInternal == true) prefixesValue = "h";
@@ -2936,7 +2937,9 @@ VQ_Element.prototype = {
 	this.addCompartmentSubCompartments("Attributes",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
+      {name:"AttributeCondition",value:condition},
       {name:"Require Values",value:this.boolToString(requireValues)},
+      {name:"Add Label",value:this.boolToString(addLabel)},
       {name:"GroupValues",value:this.boolToString(groupValues)},
       {name:"IsInternal",value:this.boolToString(isInternal)},
       {name:"Prefixes",value:prefixesValue,input:prefixesValue}
