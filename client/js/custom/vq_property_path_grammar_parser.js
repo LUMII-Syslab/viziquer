@@ -97,10 +97,10 @@ vq_property_path_grammar_parser = (function() {
         peg$c57 = async function(PNAME_NS, LName) {return {var:{name:makeVar(LName),type:await resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:await resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}},
         peg$c58 = async function(LName) {return {var:{name:makeVar(LName),type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
         peg$c59 = async function(LName) {return {var:{name:makeVar(LName), type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
-        peg$c60 = "[[",
-        peg$c61 = { type: "literal", value: "[[", description: "\"[[\"" },
-        peg$c62 = "]]",
-        peg$c63 = { type: "literal", value: "]]", description: "\"]]\"" },
+        peg$c60 = "[",
+        peg$c61 = { type: "literal", value: "[", description: "\"[\"" },
+        peg$c62 = "]",
+        peg$c63 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c64 = "??",
         peg$c65 = { type: "literal", value: "??", description: "\"??\"" },
         peg$c66 = async function(Var) {return {VariableName:makeVar(Var)}},
@@ -1739,9 +1739,9 @@ vq_property_path_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c60) {
+      if (input.charCodeAt(peg$currPos) === 91) {
         s1 = peg$c60;
-        peg$currPos += 2;
+        peg$currPos++;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { await peg$fail(peg$c61); }
@@ -1749,9 +1749,9 @@ vq_property_path_grammar_parser = (function() {
       if (s1 !== peg$FAILED) {
         s2 = await peg$parseChars_String_square();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c62) {
+          if (input.charCodeAt(peg$currPos) === 93) {
             s3 = peg$c62;
-            peg$currPos += 2;
+            peg$currPos++;
           } else {
             s3 = peg$FAILED;
             if (peg$silentFails === 0) { await peg$fail(peg$c63); }

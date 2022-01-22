@@ -812,7 +812,7 @@
 			
 			////////////////////////////////////////////////////////////////
 			Path = (space PathProperty:(PathAlternative) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?)
-			PathBr = squere_br_open "[" space PathProperty:(PathAlternativeBr) Substring:Substring space squere_br_close "]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? 
+			PathBr = double_squere_br_open "[[" space PathProperty:(PathAlternativeBr) Substring:Substring double_squere_br_close "]]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? 
 			PathAlternative = PathAlternative:(PathSequence (space VERTICAL space PathSequence)*) {return {PathAlternative:PathAlternative}}
 			PathAlternativeBr = PathAlternative:(PathSequenceBr (space VERTICAL space PathSequenceBr)*) {return {PathAlternative:PathAlternative}}
 			PathSequence = PathSequence:(PEPS)+ PathEltOrInverse {return {PathSequence:PathSequence}}
@@ -851,14 +851,14 @@
 
 			QNameReference = QNameA:(QNameC  / QNameA)
 			QNameA = ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix_LName)) Substring:Substring  space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
-			QNameC = squere_br_open "[" space ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix))  Substring:Substring space squere_br_close "]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
+			QNameC = double_squere_br_open "[[" space ReferenceDot PrimaryExpression:(Chars_String_variables / (Chars_String_prefix))  Substring:Substring space double_squere_br_close "]]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?
 			ReferenceDot =  Reference: Reference dot_path "." {return referenceNames(Reference)}
 			Reference= references_c Chars_String:Chars_String {return makeVar(Chars_String)} 
 			
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])* (("..") [0-9]+)?)
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])* (("..") [0-9]+)?)	
 			Chars_String_prefix_LName = LName:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" /"." / [0-9])*) {return ifObjectDataProperty(LName)}
-			Chars_String_variables = (squere_br_open "[" Chars_String_variable squere_br_close "]")
+			Chars_String_variables = (double_squere_br_open "[[" Chars_String_variable double_squere_br_close "]]")
 			Chars_String_variable = variables_c Var:Chars_String_prefix {return afterVar(Var)} 
 			
 																																																			//atributs vai associacija
@@ -878,7 +878,7 @@
 			
 			DoubleSquareBracketName = variables_c Var:(squarePrefix? squareVariable) {return afterVar(Var)}
 			squarePrefix = Chars_String_prefix colon_cc":"
-			squareVariable = double_squere_br_open "[["  Chars_String_square  double_squere_br_close "]]"
+			squareVariable = squere_br_open "["  Chars_String_square  squere_br_close "]"
 			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "," / "(" / ")" / [0-9])*)
 			
 			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")

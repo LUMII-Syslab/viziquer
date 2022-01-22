@@ -455,10 +455,10 @@ vq_grammar_parser = (function() {
         peg$c415 = async function() {return '"'},
         peg$c416 = async function(Path) {return await pathOrReference(Path)},
         peg$c417 = async function(PathProperty, Substring, FunctionBETWEEN, FunctionLike) {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c418 = "[",
-        peg$c419 = { type: "literal", value: "[", description: "\"[\"" },
-        peg$c420 = "]",
-        peg$c421 = { type: "literal", value: "]", description: "\"]\"" },
+        peg$c418 = "[[",
+        peg$c419 = { type: "literal", value: "[[", description: "\"[[\"" },
+        peg$c420 = "]]",
+        peg$c421 = { type: "literal", value: "]]", description: "\"]]\"" },
         peg$c422 = async function(PathAlternative) {return {PathAlternative:PathAlternative}},
         peg$c423 = async function(PathSequence) {return {PathSequence:PathSequence}},
         peg$c424 = async function(PathEltOrInverse) {return {PathEltOrInverse:PathEltOrInverse}},
@@ -483,16 +483,16 @@ vq_grammar_parser = (function() {
         peg$c443 = " ",
         peg$c444 = { type: "literal", value: " ", description: "\" \"" },
         peg$c445 = async function(Chars_String_variables) {return Chars_String_variables},
-        peg$c446 = async function(ref, PropertyReference, LName, PathMod, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(LName), ref:ref, type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c447 = { type: "literal", value: "INV", description: "\"INV\"" },
-        peg$c448 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c449 = async function(ref, PropertyReference, INV, PNAME_NS, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c450 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c451 = async function(LName) {return {var:{name:makeVar(LName), type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
-        peg$c452 = "[[",
-        peg$c453 = { type: "literal", value: "[[", description: "\"[[\"" },
-        peg$c454 = "]]",
-        peg$c455 = { type: "literal", value: "]]", description: "\"]]\"" },
+        peg$c446 = "[",
+        peg$c447 = { type: "literal", value: "[", description: "\"[\"" },
+        peg$c448 = "]",
+        peg$c449 = { type: "literal", value: "]", description: "\"]\"" },
+        peg$c450 = async function(ref, PropertyReference, LName, PathMod, Substring, FunctionBETWEEN, FunctionLike) {return {var:{name:makeVar(LName), ref:ref, type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c451 = { type: "literal", value: "INV", description: "\"INV\"" },
+        peg$c452 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c453 = async function(ref, PropertyReference, INV, PNAME_NS, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c454 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c455 = async function(LName) {return {var:{name:makeVar(LName), type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
         peg$c456 = "!=",
         peg$c457 = { type: "literal", value: "!=", description: "\"!=\"" },
         peg$c458 = "<>",
@@ -11751,9 +11751,9 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      if (input.charCodeAt(peg$currPos) === 91) {
+      if (input.substr(peg$currPos, 2) === peg$c418) {
         s1 = peg$c418;
-        peg$currPos++;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { await peg$fail(peg$c419); }
@@ -11767,9 +11767,9 @@ vq_grammar_parser = (function() {
             if (s4 !== peg$FAILED) {
               s5 = await peg$parsespace();
               if (s5 !== peg$FAILED) {
-                if (input.charCodeAt(peg$currPos) === 93) {
+                if (input.substr(peg$currPos, 2) === peg$c420) {
                   s6 = peg$c420;
-                  peg$currPos++;
+                  peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
                   if (peg$silentFails === 0) { await peg$fail(peg$c421); }
@@ -13761,9 +13761,9 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      if (input.charCodeAt(peg$currPos) === 91) {
+      if (input.substr(peg$currPos, 2) === peg$c418) {
         s1 = peg$c418;
-        peg$currPos++;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { await peg$fail(peg$c419); }
@@ -13771,9 +13771,9 @@ vq_grammar_parser = (function() {
       if (s1 !== peg$FAILED) {
         s2 = await peg$parseChars_String_prefix();
         if (s2 !== peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 93) {
+          if (input.substr(peg$currPos, 2) === peg$c420) {
             s3 = peg$c420;
-            peg$currPos++;
+            peg$currPos += 2;
           } else {
             s3 = peg$FAILED;
             if (peg$silentFails === 0) { await peg$fail(peg$c421); }
@@ -13842,11 +13842,11 @@ vq_grammar_parser = (function() {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 91) {
-        s1 = peg$c418;
+        s1 = peg$c446;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c419); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c447); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -13895,11 +13895,11 @@ vq_grammar_parser = (function() {
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 93) {
-            s3 = peg$c420;
+            s3 = peg$c448;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c421); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c449); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -14001,7 +14001,7 @@ vq_grammar_parser = (function() {
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = await peg$c446(s1, s2, s3, s4, s5, s7, s8);
+                      s1 = await peg$c450(s1, s2, s3, s4, s5, s7, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -14075,7 +14075,7 @@ vq_grammar_parser = (function() {
             peg$currPos += 3;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c447); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c451); }
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 40) {
@@ -14111,7 +14111,7 @@ vq_grammar_parser = (function() {
                         }
                         if (s10 !== peg$FAILED) {
                           peg$savedPos = s0;
-                          s1 = await peg$c448(s1, s2, s3, s5, s7, s9, s10);
+                          s1 = await peg$c452(s1, s2, s3, s5, s7, s9, s10);
                           s0 = s1;
                         } else {
                           peg$currPos = s0;
@@ -14193,7 +14193,7 @@ vq_grammar_parser = (function() {
             peg$currPos += 3;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c447); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c451); }
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 40) {
@@ -14231,7 +14231,7 @@ vq_grammar_parser = (function() {
                           }
                           if (s11 !== peg$FAILED) {
                             peg$savedPos = s0;
-                            s1 = await peg$c449(s1, s2, s3, s5, s6, s8, s10, s11);
+                            s1 = await peg$c453(s1, s2, s3, s5, s6, s8, s10, s11);
                             s0 = s1;
                           } else {
                             peg$currPos = s0;
@@ -14337,7 +14337,7 @@ vq_grammar_parser = (function() {
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = await peg$c450(s1, s2, s3, s4, s5, s7, s8);
+                      s1 = await peg$c454(s1, s2, s3, s4, s5, s7, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -14410,7 +14410,7 @@ vq_grammar_parser = (function() {
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c451(s1);
+        s1 = await peg$c455(s1);
       }
       s0 = s1;
 
@@ -14471,22 +14471,22 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c452) {
-        s1 = peg$c452;
-        peg$currPos += 2;
+      if (input.charCodeAt(peg$currPos) === 91) {
+        s1 = peg$c446;
+        peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c453); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c447); }
       }
       if (s1 !== peg$FAILED) {
         s2 = await peg$parseChars_String_square();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c454) {
-            s3 = peg$c454;
-            peg$currPos += 2;
+          if (input.charCodeAt(peg$currPos) === 93) {
+            s3 = peg$c448;
+            peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c455); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c449); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -15361,6 +15361,7 @@ vq_grammar_parser = (function() {
     			// returns type of the identifier from symbol table. Null if does not exist.
     			async function resolveTypeFromSymbolTable(id) {
     				var context = options.context._id;
+					
 
     				if(typeof options.symbol_table[context] === 'undefined') return null;
 
@@ -15408,7 +15409,12 @@ vq_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
     			async function resolveTypeFromSchemaForClass(id) {
-    				var cls = await dataShapes.resolveClassByName({name: id})
+    				
+					// if(options.schemaName == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						// id = "wd:"+id;
+					// }
+
+					var cls = await dataShapes.resolveClassByName({name: id})
     				if(cls["complite"] == false) return null;
     				if(cls["data"].length > 0){
     					return cls["data"][0];
@@ -15419,7 +15425,10 @@ vq_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
     			async function resolveTypeFromSchemaForAttributeAndLink(id) {
-    				
+    				// if(options.schemaName == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						// id = "wdt:"+id;
+					// }
+
     				var aorl = await dataShapes.resolvePropertyByName({name: id})
     				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
     				if(aorl["complite"] == false) return null;

@@ -349,10 +349,10 @@
 			PNAME_LN = (PNAME_NS:PNAME_NS  LName:Chars_String_variable) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
 			LName = (LName:(Chars_String_variable)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			PN_PREFIX = Chars_String_prefix
-			
+		 
 			DoubleSquareBracketName = Var:(squarePrefix? squareVariable) {return afterVar(Var)}
 			squarePrefix = Chars_String_prefix colon ":"
-			squareVariable = double_squere_br_open "[["  Chars_String_square  double_squere_br_close "]]"
+			squareVariable = double_squere_br_open "["  Chars_String_square  double_squere_br_close "]"
 			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "(" / ")" / [0-9])*)
 			
 			VAR = Var:(((questionquestion "??") / (question "?") ) VARNAME){return {VariableName:makeVar(Var)}}
@@ -386,7 +386,7 @@
 			more = "" {addContinuation(location(), ">", 50, 4);}
 			colon = "" {addContinuation(location(), ":", 50, 4);}
 			space_c = "" {addContinuation(location(), " ", 10, 4);}
-			double_squere_br_open = "" {addContinuation(location(), "[[", 50, 4);}
-			double_squere_br_close = "" {addContinuation(location(), "]]", 50, 4);}
+			double_squere_br_open = "" {addContinuation(location(), "[", 50, 4);}
+			double_squere_br_close = "" {addContinuation(location(), "]", 50, 4);}
 			
 			end = "" {error(returnContinuation()); return;}

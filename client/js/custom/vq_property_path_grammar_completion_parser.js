@@ -99,10 +99,10 @@ vq_property_path_grammar_completion_parser = (function() {
         peg$c59 = async function(PNAME_NS, LName) {return {var:{name:makeVar(LName),type:await resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:await resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}},
         peg$c60 = async function(LName) {return {var:{name:makeVar(LName),type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
         peg$c61 = async function(Var) {return await afterVar(Var)},
-        peg$c62 = "[[",
-        peg$c63 = { type: "literal", value: "[[", description: "\"[[\"" },
-        peg$c64 = "]]",
-        peg$c65 = { type: "literal", value: "]]", description: "\"]]\"" },
+        peg$c62 = "[",
+        peg$c63 = { type: "literal", value: "[", description: "\"[\"" },
+        peg$c64 = "]",
+        peg$c65 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c66 = " ",
         peg$c67 = { type: "literal", value: " ", description: "\" \"" },
         peg$c68 = "??",
@@ -134,8 +134,8 @@ vq_property_path_grammar_completion_parser = (function() {
         peg$c94 = async function() {await addContinuation(await location(), ">", 50, 4);},
         peg$c95 = async function() {await addContinuation(await location(), ":", 50, 4);},
         peg$c96 = async function() {await addContinuation(await location(), " ", 10, 4);},
-        peg$c97 = async function() {await addContinuation(await location(), "[[", 50, 4);},
-        peg$c98 = async function() {await addContinuation(await location(), "]]", 50, 4);},
+        peg$c97 = async function() {await addContinuation(await location(), "[", 50, 4);},
+        peg$c98 = async function() {await addContinuation(await location(), "]", 50, 4);},
         peg$c99 = async function() {await error(await returnContinuation()); return;},
 
         peg$currPos          = 0,
@@ -2068,9 +2068,9 @@ vq_property_path_grammar_completion_parser = (function() {
       s0 = peg$currPos;
       s1 = await peg$parsedouble_squere_br_open();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c62) {
+        if (input.charCodeAt(peg$currPos) === 91) {
           s2 = peg$c62;
-          peg$currPos += 2;
+          peg$currPos++;
         } else {
           s2 = peg$FAILED;
           if (peg$silentFails === 0) { await peg$fail(peg$c63); }
@@ -2080,9 +2080,9 @@ vq_property_path_grammar_completion_parser = (function() {
           if (s3 !== peg$FAILED) {
             s4 = await peg$parsedouble_squere_br_close();
             if (s4 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c64) {
+              if (input.charCodeAt(peg$currPos) === 93) {
                 s5 = peg$c64;
-                peg$currPos += 2;
+                peg$currPos++;
               } else {
                 s5 = peg$FAILED;
                 if (peg$silentFails === 0) { await peg$fail(peg$c65); }
@@ -3572,7 +3572,7 @@ vq_property_path_grammar_completion_parser = (function() {
           options = arguments[1];
         			//console.log(options);
         			
-      var continuations = {};
+		  var continuations = {};
           
           function makeArray(value){
           	if (continuations[value]==null) {

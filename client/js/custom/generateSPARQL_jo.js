@@ -545,12 +545,15 @@ function generateIds(rootClass, knownPrefixes){
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
-		if(rootClass["identification"]["display_name"].startsWith("[[")){
-			var textPart = rootClass["identification"]['display_name'].substring(2);
+		// if(rootClass["identification"]["display_name"].startsWith("[[")){
+		if(typeof rootClass["identification"]["display_name"] !== 'undefined' && rootClass["identification"]["display_name"].startsWith("[")){
+			var textPart = rootClass["identification"]['display_name'].substring(1);
 			if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
-			else textPart = textPart.substring(0, textPart.length - 2);
+			else textPart = textPart.substring(0, textPart.length - 1);
 			textPart = textPart.trim();
-			if(textPart.match(/([\s]+)/g).length <3 ){
+			var t = textPart.match(/([\s]+)/g);
+					
+			if(t == null || t.length <3 ){
 				rootClassId = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 			} else rootClassId = rootClass["identification"]["local_name"];
 		
@@ -715,12 +718,16 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			for(var key in idTable) {
 				// if given class name is in the table, add counter to the class name
 				var className= clazz["identification"]["local_name"];
-				if( clazz["identification"]['display_name'].startsWith("[[")){
-					var textPart = clazz["identification"]['display_name'].substring(2);
+				// if( clazz["identification"]['display_name'].startsWith("[[")){
+				if(typeof clazz["identification"]["display_name"] !== 'undefined' && clazz["identification"]['display_name'].startsWith("[")){
+					var textPart = clazz["identification"]['display_name'].substring(1);
 					if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
-					else textPart = textPart.substring(0, textPart.length - 2);
+					else textPart = textPart.substring(0, textPart.length - 1);
 					textPart = textPart.trim();
-					if(textPart.match(/([\s]+)/g).length <3 ){
+					
+					var t = textPart.match(/([\s]+)/g);
+					
+					if(t == null || t.length <3 ){
 						textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 					} else textPart = clazz["identification"]["local_name"];
 					className = textPart;
@@ -735,12 +742,15 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		}
 		// if given class name is not in the table, use it
 		if(foundInIdTable == false) {
-			if( clazz["identification"]['display_name'].startsWith("[[")){
-				var textPart = clazz["identification"]['display_name'].substring(2);
+			// if( clazz["identification"]['display_name'].startsWith("[[")){
+			if(typeof clazz["identification"]["display_name"] !== 'undefined' && clazz["identification"]['display_name'].startsWith("[")){
+				var textPart = clazz["identification"]['display_name'].substring(1);
 				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
-				else textPart = textPart.substring(0, textPart.length - 2);
+				else textPart = textPart.substring(0, textPart.length - 1);
 				textPart = textPart.trim();
-				if(textPart.match(/([\s]+)/g).length <3 ){
+				var t = textPart.match(/([\s]+)/g);
+					
+				if(t == null || t.length <3 ){
 					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				} else textPart = clazz["identification"]["local_name"].replace(/-/g, '_');
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:textPart, unionId:unionClass};

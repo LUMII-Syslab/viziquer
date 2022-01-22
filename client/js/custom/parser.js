@@ -633,7 +633,8 @@ getPathFullGrammar = function(expressionTable){
 				if(expressionTable[key]["var"]["type"]["max_cardinality"] != 1) {cardinality = -1;}
 				// }
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
-				if(expressionTable[key]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
+				// if(expressionTable[key]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
+				if(expressionTable[key]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
 				path = path + pathPart;
 				
 				// var namespace = expressionTable[key]["var"]["type"]["Namespace"]
@@ -662,7 +663,8 @@ getPathFullGrammar = function(expressionTable){
 				else if(expressionTable[key]["var"]["type"]["object_cnt"] > 0 ){isPath = true;}
 				
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
-				if(expressionTable[key]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
+				// if(expressionTable[key]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
+				if(expressionTable[key]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
 				
 				path = path + pathPart;
 				
@@ -1849,12 +1851,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		 
 		if(key == "var") {			
 			var varName 
-			if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[[") !== -1){
-				var textPart = expressionTable[key]['type']['display_name'].substring(2);
+			// if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[[") !== -1){
+			if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[") !== -1){
+				var textPart = expressionTable[key]['type']['display_name'].substring(1);
 				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
-				else textPart = textPart.substring(0, textPart.length - 2);
+				else textPart = textPart.substring(0, textPart.length - 1);
 				textPart = textPart.trim();
-				if(textPart.match(/([\s]+)/g).length <3 ){
+				var t = textPart.match(/([\s]+)/g);
+				
+				if(t == null || t.length <3 ){
 					alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 					varName = expressionTable[key]['type']['local_name'];
 				} else varName = expressionTable[key]['type']['local_name'];
@@ -1863,7 +1868,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			// if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['local_name'] !== null && typeof expressionTable[key]['type']['local_name'] !== 'undefined' ) varName = expressionTable[key]['type']['local_name'];
 			else varName = expressionTable[key]["name"];
 			
-			if(varName.startsWith("[[") && varName.endsWith("]]")) varName = varName.substring(2, varName.length-2);
+			// if(varName.startsWith("[[") && varName.endsWith("]]")) varName = varName.substring(2, varName.length-2);
+			if(varName.startsWith("[") && varName.endsWith("]")) varName = varName.substring(2, varName.length-2);
 			if(expressionTable[key]['kind'] !== null){
 					
 				var pathMod = "";
@@ -3607,7 +3613,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				SPARQLstring = SPARQLstring + expressionTable[key]["IRIREF"];
 			} else if(typeof expressionTable[key]["PrefixedName"]!== 'undefined'){
 				var pathPart = expressionTable[key]["PrefixedName"]["var"]["name"];
-				if(expressionTable[key]["PrefixedName"]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["PrefixedName"]["var"]["type"]["local_name"];
+				// if(expressionTable[key]["PrefixedName"]["var"]["name"].indexOf("[[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["PrefixedName"]["var"]["type"]["local_name"];
+				if(expressionTable[key]["PrefixedName"]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["PrefixedName"]["var"]["type"]["local_name"];
 				
 				SPARQLstring = SPARQLstring + pathPart;
 				

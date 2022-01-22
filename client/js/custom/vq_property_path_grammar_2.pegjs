@@ -111,7 +111,7 @@
 			
 			DoubleSquareBracketName = LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			squarePrefix = Chars_String_prefix ":"
-			squareVariable = "[["  Chars_String_square  "]]"
+			squareVariable = "["  Chars_String_square  "]"
 			
 			VAR = Var:(("??" / "?") VARNAME){return {VariableName:makeVar(Var)}}
 			VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])*)

@@ -568,7 +568,7 @@
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			Path = (space PathProperty:(PathAlternative) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			PathBr = "[" space PathProperty:(PathAlternativeBr) Substring:Substring space "]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			PathBr = "[[" space PathProperty:(PathAlternativeBr) Substring:Substring space "]]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? {return {PathProperty:PathProperty, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 			PathAlternative = PathAlternative:(PathSequence (space VERTICAL space PathSequence)*) {return {PathAlternative:PathAlternative}}
 			PathAlternativeBr = PathAlternative:(PathSequenceBr (space VERTICAL space PathSequenceBr)*) {return {PathAlternative:PathAlternative}}
 			PathSequence = PathSequence:(PathEltOrInverse (PATH_SYMBOL PathEltOrInverse)+ ){return {PathSequence:PathSequence}}
@@ -602,7 +602,7 @@
 			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-"/ "," / "(" / ")" / [0-9])*)
 			Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])* (("..") [0-9]*)?)
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-" / [0-9])* (("..") [0-9]*)?)
-			Chars_String_variables = ("[" Chars_String_variables:Chars_String_prefix "]") {return Chars_String_variables}
+			Chars_String_variables = ("[[" Chars_String_variables:Chars_String_prefix "]]") {return Chars_String_variables}
 																																																//atributs vai associacija
 			LN =((LNameINV / LNameINV2  / LNameINV3 / LName) )
 			
@@ -618,7 +618,7 @@
 
 			DoubleSquareBracketName = LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			squarePrefix = Chars_String_prefix ":"
-			squareVariable = "[["  Chars_String_square  "]]"
+			squareVariable = "["  Chars_String_square  "]"
 			
 
 			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"

@@ -30,8 +30,10 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			  };
 			   if (proj.indirectClassMembershipRole) {
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
-				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
-				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				// if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				// if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)]].wdt:[subclass of(P279)]*";
 			  }; 
 			  
 			  
@@ -253,8 +255,10 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			  };
 			   if (proj.indirectClassMembershipRole) {
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
-				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
-				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				// if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				// if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
+				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
 			  }; 
 			  
 			  
