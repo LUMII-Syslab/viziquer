@@ -389,6 +389,7 @@ dataShapes = {
 			params.main.simple_prompt = this.schema.simple_prompt;
 			params.main.makeLog = MakeLog;
 			params.main.schemaName = this.schema.schemaName;
+			params.main.schemaType = this.schema.schemaType;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
