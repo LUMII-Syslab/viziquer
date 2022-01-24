@@ -416,7 +416,13 @@ function updateInputValue(input, prefix, suggestion) {
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
 		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
 		if(typeof compart !== "undefined"){
-			Dialog.updateCompartmentValue(compart_type, newValue, newValue, compart["_id"]);
+
+			var elem = new VQ_Element(act_elem);
+            if (elem.isIndirectClassMembership()) {
+				Dialog.updateCompartmentValue(compart_type, newValue, ".. "+newValue, compart["_id"]);
+			} else {
+				Dialog.updateCompartmentValue(compart_type, newValue, newValue, compart["_id"]);
+			};
 		}
 	}
 }

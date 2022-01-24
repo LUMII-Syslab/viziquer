@@ -669,7 +669,12 @@ Interpreter.customMethods({
 	VQsetClassName: function(params) {
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
-			 var elem = new VQ_Element(c["elementId"]);
+			var elem = new VQ_Element(c["elementId"]);
+			if (elem.isIndirectClassMembership() && elem.getName() !== null && elem.getName() !== "") {
+				elem.setNameValue(".. "+elem.getName());
+			} else {
+				if (elem.getName() !== null)elem.setNameValue(elem.getName());
+			};
        _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
 					link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
 			 });
@@ -679,16 +684,16 @@ Interpreter.customMethods({
 	VQsetClassNameValue: function(params) {
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
-			      var elem = new VQ_Element(c["elementId"]);
-            if (elem.isIndirectClassMembership()) {
-							elem.setNameValue(".. "+elem.getName());
-						} else {
-							elem.setNameValue(elem.getName());
-						};
+			var elem = new VQ_Element(c["elementId"]);
+            if (elem.isIndirectClassMembership() && typeof elem.getName() !== "undefined" && elem.getName() !== null && elem.getName() !== "") {
+				elem.setNameValue(".. "+elem.getName());
+			} else {
+				if (typeof elem.getName() !== "undefined" && elem.getName() !== null)elem.setNameValue(elem.getName());
+			};
 		};
 	},
 
-	VQsetIndirectClassMembershipDefaultValue: function(params) {
+	VQsetIndirectClassMembershipDefaultValue: function(params) {		
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		// console.log("A1");
 		if (proj && proj.indirectClassMembershipRole) {
