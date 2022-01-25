@@ -35,9 +35,18 @@
 					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
 					prop = prop["data"];
 					
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = null;
+					if (proj) {
+						if (proj.schema) {
+							schemaName = proj.schema;
+						};
+					}
+					
 					for(var cl in prop){
 						var prefix;
-						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 						else prefix = prop[cl]["prefix"]+":";
 
 						var propName = prefix+prop[cl]["display_name"]
@@ -68,10 +77,19 @@
     					
     			var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, act_el);
     			prop = prop["data"];
+				
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = null;
+				if (proj) {
+					if (proj.schema) {
+						schemaName = proj.schema;
+					};
+				}
     			
     			for(var cl in prop){
     				var prefix;
-    				if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+    				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
     				else prefix = prop[cl]["prefix"]+":";
 
     				var propName = prefix+prop[cl]["display_name"]
@@ -241,10 +259,19 @@
 
 				var props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
+				
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = null;
+				if (proj) {
+					if (proj.schema) {
+						schemaName = proj.schema;
+					};
+				}
 
             	for(var pr in props){
             		var prefix;
-            		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
             		else prefix = props[pr]["prefix"]+":";
             						
             		var propName = prefix+props[pr]["display_name"];
@@ -267,11 +294,20 @@
 
 				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		var props= await dataShapes.getPropertiesFull(p);
+				
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = null;
+				if (proj) {
+					if (proj.schema) {
+						schemaName = proj.schema;
+					};
+				}
 
             	props = props["data"];
             	for(var pr in props){
             		var prefix;
-            		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
             		else prefix = props[pr]["prefix"]+":";
             						
             		var propName = prefix+props[pr]["display_name"];
@@ -349,12 +385,25 @@
     	
     				if(pathParts[0].startsWith("^"))isInv = true;
         		}
+				
+				var props = await dataShapes.getPropertiesFull(params);
+				props = props["data"];
+					
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = null;
+				if (proj) {
+					if (proj.schema) {
+						schemaName = proj.schema;
+					};
+				}
+				
 				if(isInv == false){
-					var props = await dataShapes.getPropertiesFull(params);
-					props = props["data"];
+					
+					
 					for(var pr in props){
 						var prefix;
-						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 						var propName = prefix+props[pr]["display_name"];
 						await addContinuation(await location(), propName, 100, false, 1);
@@ -366,7 +415,8 @@
 				props = props["data"];
 				for(var pr in props){
             		var prefix;
-            		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
             		else prefix = props[pr]["prefix"]+":";
             						
             		var propName = prefix+props[pr]["display_name"];
@@ -397,10 +447,19 @@
 
             		var props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
+					
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = null;
+					if (proj) {
+						if (proj.schema) {
+							schemaName = proj.schema;
+						};
+					}
 
             		for(var pr in props){
             			var prefix;
-            			if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            			if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
             			else prefix = props[pr]["prefix"]+":";
             						
             			var propName = prefix+props[pr]["display_name"];
@@ -412,7 +471,8 @@
 
             		for(var pr in props){
             			var prefix;
-            			if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+            			if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
             			else prefix = props[pr]["prefix"]+":";
             						
             			var propName = prefix+props[pr]["display_name"];
@@ -448,9 +508,18 @@
 							
 					prop = prop["data"];
 					
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = null;
+					if (proj) {
+						if (proj.schema) {
+							schemaName = proj.schema;
+						};
+					}
+					
 					for(var cl in prop){
 						var prefix;
-						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 						else prefix = prop[cl]["prefix"]+":";
 
 						var propName = prefix+prop[cl]["display_name"]
@@ -474,7 +543,8 @@
 					
 					for(var cl in prop){
 						var prefix;
-						if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 						else prefix = prop[cl]["prefix"]+":";
 
 						var propName = prefix+prop[cl]["display_name"]

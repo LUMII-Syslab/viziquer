@@ -572,9 +572,18 @@ async function getAttributes(filter){
 			
 			prop = prop["data"];
 			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
+			
 			for(var cl in prop){
 				var prefix;
-				if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 				else prefix = prop[cl]["prefix"]+":";
 				attr_list.push({name: prefix+prop[cl]["display_name"]})
 			}
@@ -629,9 +638,18 @@ async function getAssociations(filter){
 			
 			prop = prop["data"];
 			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
+			
 			for(var cl in prop){
 				var prefix;
-				if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 				else prefix = prop[cl]["prefix"]+":";
 				attr_list.push({name: prefix+prop[cl]["display_name"]})
 			}

@@ -168,7 +168,16 @@ Template.SelectTargetClass.events({
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = null;
+		if (proj) {
+			if (proj.schema) {
+				schemaName = proj.schema;
+			};
+		}
+		
 		var params = {};
+		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
 			if(line_direct == "=>") {
 				params = {
 					"main": {"limit": 30,  "filter": f},
@@ -183,9 +192,17 @@ Template.SelectTargetClass.events({
 		var classes = await dataShapes.getClassesFull(params);
 		classes = classes.data;
 		
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = null;
+		if (proj) {
+			if (proj.schema) {
+				schemaName = proj.schema;
+			};
+		}
+		
 		_.each(classes, function(e){
 			var prefix;
-			if(e.is_local == true || e.prefix == "")prefix = "";
+			if(e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;
 			if(e.principal_class == 2) e.clr = "color: purple";
@@ -373,6 +390,14 @@ Template.AddLink.events({
 		var line_direct = $(e.target).closest(".association").attr("line_direct");
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
+		
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = null;
+		if (proj) {
+			if (proj.schema) {
+				schemaName = proj.schema;
+			};
+		}
 			
 		var classes;
 		if(name == "==" || name == "++") {
@@ -380,6 +405,9 @@ Template.AddLink.events({
 		}
 		else {
 			var params = {};
+			
+			if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
+			
 			if(line_direct == "=>") {
 				params = {
 					"main": {"limit": 30},
@@ -392,12 +420,13 @@ Template.AddLink.events({
 				}
 			}
 			classes = await dataShapes.getClassesFull(params);
+			
 		}
 		classes = classes.data;
 	
 		_.each(classes, function(e){
 			var prefix;
-			if(e.is_local == true || e.prefix == "")prefix = "";
+			if(e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;	
 
@@ -910,6 +939,14 @@ async function getAllAssociations(){
 				
 				var allAssociations = prop["data"];
 				
+				var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = null;
+				if (proj) {
+					if (proj.schema) {
+						schemaName = proj.schema;
+					};
+				}
+				
 				_.each(allAssociations, function(e){
 					if ( e.mark === 'out') {
 						e.type = '=>';
@@ -923,7 +960,7 @@ async function getAllAssociations(){
 					
 					if (e.class_iri !== undefined && e.class_iri !== null) {
 						var prefix;
-						if(e.is_local == true)prefix = "";
+						if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
 						else prefix = e.class_prefix+":";
 						e.short_class_name = prefix + e.class_display_name;						
 					}
@@ -974,7 +1011,7 @@ async function getAllAssociations(){
 					
 					//prefix:name
 					var prefix;
-					if(e.is_local == true)prefix = "";
+					if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))prefix = "";
 					else prefix = e.prefix+":";
 					var eName = prefix + e.display_name;
 					

@@ -3613,12 +3613,21 @@ vq_property_path_grammar_completion_parser = (function() {
       		var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
 			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
           	props = props["data"];
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -3665,12 +3674,21 @@ vq_property_path_grammar_completion_parser = (function() {
     			if(pathParts[0].startsWith("^"))isInv = true;
       		}
           	var props = await dataShapes.getPropertiesFull(params);
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
 
           	props = props["data"];
       		
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -3701,11 +3719,20 @@ vq_property_path_grammar_completion_parser = (function() {
       		}
 
           	var props = await dataShapes.getPropertiesFull(params);
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
 
           	props = props["data"];
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -3736,10 +3763,19 @@ vq_property_path_grammar_completion_parser = (function() {
 							props = await dataShapes.getPropertiesFull(params);
 					}
 					props = props["data"];
+					
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = null;
+					if (proj) {
+						if (proj.schema) {
+							schemaName = proj.schema;
+						};
+					}
 	
 					for(var pr in props){
 						var prefix;
-						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
 						var propName = prefix+props[pr]["display_name"];

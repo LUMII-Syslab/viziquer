@@ -8,6 +8,7 @@ var counter = 0;
 VQ_Elements = {};
 var directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 var indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+var schemaName = null;
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -15,6 +16,14 @@ Interpreter.customMethods({
 generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  x = xx;
 	  y = yy;
+	  
+	  var proj = Projects.findOne({_id: Session.get("activeProject")});
+	  if (proj) {
+		if (proj.schema) {
+			schemaName = proj.schema;
+			schemaName = schemaName.toLowerCase();
+		};
+	  }
 	  
 	  directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	  indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -32,8 +41,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
 				// if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
 				// if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
-				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
-				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)]].wdt:[subclass of(P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 			  }; 
 			  
 			  
@@ -236,6 +245,15 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
+		  
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+	    if (proj) {
+		  if (proj.schema) {
+			schemaName = proj.schema;
+			schemaName = schemaName.toLowerCase();
+		  };
+	    }  
+		  
 		x = xx;
 		y = yy;
 		counter = 0;
@@ -257,8 +275,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
 				// if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
 				// if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
-				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
-				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[instance of(P31)].wdt:[subclass of(P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
+				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 			  }; 
 			  
 			  
@@ -614,7 +632,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			var classes = findByVariableName(classesTable, variables[key]);
 			// var classes2 = findByShortName(classesTable, variables[key]);
 			if(Object.keys(classes).length > 0){
-
+				
 				//add class as attribute
 				var parsedClass = vq_visual_grammar.parse(variables[key])["value"];
 				var identification = await dataShapes.resolveClassByName({name: parsedClass});
@@ -630,10 +648,11 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				}
 				if(identification.complete == true) {
 					var sn = identification.data[0].display_name;
-					if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
-					attributeInfo.identification.short_name = sn;
+					
+					if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
+					else if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
+					attributeInfo.identification.short_name = sn;	
 				}
-		
 				for(var clazz in classes){
 					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
 				}
@@ -1361,7 +1380,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					var attributeResolved = await dataShapes.resolvePropertyByName({name: where["values"][v][vv]});
 					if(attributeResolved.complete == true){
 						var sn = attributeResolved.data[0].display_name;
-						if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
+						if(schemaName == "wikidata" && attributeResolved.data[0].prefix == "wdt"){}
+						else if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
 						vData[vv] = sn;
 					} else vData[vv] = "<"+parsedValue["value"]+">";
 				} else vData[vv] = parsedValue["value"];
@@ -2861,7 +2881,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(dataPropertyResolved.complete==true){
 					
 					var sn = dataPropertyResolved.data[0].display_name;
-					if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && dataPropertyResolved.data[0].prefix == "wdt"){}
+					else if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
 					dataPropertyResolved.data[0].short_name = sn;
 					
 					if(dataPropertyResolved.data[0].data_cnt == 0){
@@ -3046,7 +3067,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					exprVariables = [];
 					
 					var sn = dataPropertyResolved.data[0].display_name;
-					if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && dataPropertyResolved.data[0].prefix == "wdt"){}
+					else if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
 					dataPropertyResolved.data[0].short_name = sn;
 					
 					// dataPropertyResolved.data[0]["short_name"] = dataPropertyResolved.data[0]["prefix"] +":"+ dataPropertyResolved.data[0]["display_name"];
@@ -3168,7 +3190,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								if(dataPropertyResolved.complete == true && dataPropertyResolved.data[0].data_cnt> 0 && dataPropertyResolved.data[0].object_cnt == 0){
 									
 									var sn = dataPropertyResolved.data[0].display_name;
-									if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
+									if(schemaName == "wikidata" && dataPropertyResolved.data[0].prefix == "wdt"){}
+									else if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
 									dataPropertyResolved.data[0].short_name = sn;
 									
 									
@@ -3923,8 +3946,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				// classResolved.short_name = classResolved.prefix +":"+ classResolved.display_name;
 				
 				var sn = classResolved.display_name;
-				if(classResolved.is_local != true)sn = classResolved.prefix+ ":" + sn;
+				if(schemaName == "wikidata" && classResolved.prefix == "wd"){}
+				else if(classResolved.is_local != true)sn = classResolved.prefix+ ":" + sn;
 				classResolved.short_name = sn;
+
 				
 			}
 			var subjectNameParsed = vq_visual_grammar.parse(triples[triple]["subject"]);
@@ -4088,7 +4113,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			if(propertyResolved.complete == true) {
 				//propertyResolved.data[0].short_name = propertyResolved.data[0].prefix + ":" + propertyResolved.data[0].display_name;
 				var sn = propertyResolved.data[0].display_name;
-				if(propertyResolved.data[0].is_local != true)sn = propertyResolved.data[0].prefix+ ":" + sn;
+				if(schemaName == "wikidata" && propertyResolved.data[0].prefix == "wdt"){}
+				else if(propertyResolved.data[0].is_local != true)sn = propertyResolved.data[0].prefix+ ":" + sn;
 				propertyResolved.data[0].short_name = sn;
 			}
 			
@@ -4181,7 +4207,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				if(pathPropertyResolved.complete == true) {
 					// pathPropertyResolved.data[0].short_name = pathPropertyResolved.data[0].prefix + ":" + pathPropertyResolved.data[0].display_name;
 					var sn = pathPropertyResolved.data[0].display_name;
-					if(pathPropertyResolved.data[0].is_local != true)sn = pathPropertyResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && pathPropertyResolved.data[0].prefix == "wdt"){}
+					else if(pathPropertyResolved.data[0].is_local != true)sn = pathPropertyResolved.data[0].prefix+ ":" + sn;
 					pathPropertyResolved.data[0].short_name = sn;
 				}
 			
@@ -4456,7 +4483,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			if(attributeResolved.complete == true) {
 				// attributeResolved.data[0].short_name = attributeResolved.data[0].prefix + ":" + attributeResolved.data[0].display_name;	
 				var sn = attributeResolved.data[0].display_name;
-				if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
+				if(schemaName == "wikidata" && attributeResolved.data[0].prefix == "wdt"){}
+				else if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
 				attributeResolved.data[0].short_name = sn;
 			}
 			if((objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") 
@@ -4579,7 +4607,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						if(attributeResolved.complete == true) {
 							//attributeResolved.data[0].short_name = attributeResolved.data[0].prefix + ":" + attributeResolved.data[0].display_name;
 							var sn = attributeResolved.data[0].display_name;
-							if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
+							if(schemaName == "wikidata" && attributeResolved.data[0].prefix == "wdt"){}
+							else if(attributeResolved.data[0].is_local != true )sn = attributeResolved.data[0].prefix+ ":" + sn;
 							attributeResolved.data[0].short_name = sn;
 						}
 						// if not OP and is DP
@@ -4706,7 +4735,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				} else if(typeof triples[triple]["predicate"] == "object"){
 					//property path
 					if(typeof triples[triple]["predicate"]["type"] !== "undefined" && triples[triple]["predicate"]["type"] == "path"){
-	
+						
 						var alias = "";
 
 						if(triples[triple]["predicate"]["pathType"] == "/"){
@@ -4720,7 +4749,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								// pathPropertyResolved.data[0].short_name = pathPropertyResolved.data[0].prefix + ":" + pathPropertyResolved.data[0].display_name;
 								
 								var sn = pathPropertyResolved.data[0].display_name;
-								if(pathPropertyResolved.data[0].is_local != true)sn = pathPropertyResolved.data[0].prefix+ ":" + sn;
+								if(schemaName == "wikidata" && pathPropertyResolved.data[0].prefix == "wdt"){}
+								else if(pathPropertyResolved.data[0].is_local != true)sn = pathPropertyResolved.data[0].prefix+ ":" + sn;
 								pathPropertyResolved.data[0].short_name = sn;
 							}
 							
@@ -4733,7 +4763,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										if(linkResolved.complete == true) {
 											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 											var sn = linkResolved.data[0].display_name;
-											if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 											linkResolved.data[0].short_name = sn;
 										}
 										
@@ -4747,7 +4778,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										if(linkResolved.complete == true) {
 											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 											var sn = linkResolved.data[0].display_name;
-											if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 											linkResolved.data[0].short_name = sn;
 										}
 										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
@@ -4761,7 +4793,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 										if(linkResolved.complete == true) {
 											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 											var sn = linkResolved.data[0].display_name;
-											if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 											linkResolved.data[0].short_name = sn;
 										}
 										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
@@ -4786,7 +4819,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												var identification = await dataShapes.resolveClassByName({name: classesTable[oclass]["instanceAlias"]})
 												if(identification.complete == true) {
 													var sn = identification.data[0].display_name;
-													if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
+													if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
+													else if(identification.data[0].is_local != true )sn = identification.data[0].prefix+ ":" + sn;
 													classesTable[sclass]["identification"] = identification.data[0];
 													classesTable[sclass]["identification"]["short_name"] = sn;
 													classesTable[sclass]["indirectClassMembership"] = true;
@@ -4839,7 +4873,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											if(linkResolved.complete == true) {
 												// linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 												var sn = linkResolved.data[0].display_name;
-												if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+												if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+												else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
 											//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]);
@@ -4851,7 +4886,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											if(linkResolved.complete == true) {
 												//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 												var sn = linkResolved.data[0].display_name;
-												if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+												if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+												else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
 											//var linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]);
@@ -4865,7 +4901,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											if(linkResolved.complete == true) {
 												//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 												var sn = linkResolved.data[0].display_name;
-												if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+												if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+												else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
 											//linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
@@ -4878,7 +4915,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											if(linkResolved.complete == true) {
 												//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
 												var sn = linkResolved.data[0].display_name;
-												if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+												if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+												else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
 											//linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0]);
@@ -5090,7 +5128,8 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 		if(linkResolved.complete == true) {
 			//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
 			var sn = linkResolved.data[0].display_name;
-			if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+			if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+			else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 			linkResolved.data[0].short_name = sn;
 		}
 		if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0){
@@ -5109,7 +5148,8 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
 					var sn = linkResolved.data[0].display_name;
-					if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+					else if(linkResolved.data[0].is_local != true )sn = linkResolved.data[0].prefix+ ":" + sn;
 					linkResolved.data[0].short_name = sn;
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) pathText.push(buildPathElement(linkResolved.data[0]));
@@ -5130,7 +5170,8 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
 					var sn = linkResolved.data[0].display_name;
-					if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+					else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 					linkResolved.data[0].short_name = sn;
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) pathText.push("^" + buildPathElement(linkResolved.data[0]));
@@ -5155,7 +5196,8 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
 					var sn = linkResolved.data[0].display_name;
-					if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+					if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+					else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
 					linkResolved.data[0].short_name = sn;
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) propertyPathText = propertyPathText + "^" + buildPathElement(linkResolved.data[0]);
@@ -5571,7 +5613,7 @@ function checkIfOrAndInFilter(expression, value){
 }
 
 function buildPathElement(pathElement){
-	if(pathElement["prefix"] == "") return pathElement["display_name"];
+	if(pathElement["prefix"] == "" || (schemaName == "wikidata" && pathElement["prefix"] == "wdt")) return pathElement["display_name"];
 	else return pathElement["prefix"]+":"+pathElement["display_name"];
 }
 

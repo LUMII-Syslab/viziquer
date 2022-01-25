@@ -2513,6 +2513,9 @@ vq_property_path_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
     			async function resolveTypeFromSchemaForClass(id) {
+					if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						id = "wd:"+id;
+					}
 					var cls = await dataShapes.resolveClassByName({name: id})
 					if(cls["complite"] == false) return null;
 					if(cls["data"].length > 0){
@@ -2524,6 +2527,9 @@ vq_property_path_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
     			async function resolveTypeFromSchemaForAttributeAndLink(id) {
+					if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						id = "wdt:"+id;
+					}
 					var aorl = await dataShapes.resolvePropertyByName({name: id})
 	
 					if(aorl["complite"] == false) return null;

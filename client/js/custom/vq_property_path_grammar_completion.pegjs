@@ -7,7 +7,7 @@
       options = arguments[1];
         			//console.log(options);
         			
-      var continuations = {};
+		  var continuations = {};
           
           function makeArray(value){
           	if (continuations[value]==null) {
@@ -31,11 +31,12 @@
           
           async function pathOrReference(o) {
       		var pathPrimary = o.PathEltOrInverse.PathElt.PathPrimary;
+			
           	var propertyName = "";
           	if(typeof pathPrimary.var !== 'undefined') propertyName = pathPrimary.var.name;
           	if(typeof pathPrimary.PrefixedName !== 'undefined') propertyName = pathPrimary.PrefixedName.Prefix + pathPrimary.PrefixedName.var.name;
           	var targetSourceClass = "targetClass";
-          	// if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
+          	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 
       		var params = {propertyKind:'Object'};
           	// if (fullText != "") params.filter = fullText;
@@ -47,12 +48,21 @@
       		var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
 			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
           	props = props["data"];
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -68,7 +78,6 @@
 			var loc = await location();
 			var textEnd = loc.end.offset;
 			var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-			var pathParts = options.text.split(/[.\/]/);
       		var varibleName = makeVar(o);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
       		var isInv = false;
@@ -100,11 +109,21 @@
     			if(pathParts[0].startsWith("^"))isInv = true;
       		}
           	var props = await dataShapes.getPropertiesFull(params);
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
+
           	props = props["data"];
       		
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -121,7 +140,6 @@
 			var loc = await location();
 			var textEnd = loc.end.offset;
       		var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-      		// var varibleName = makeVar(o);
       		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
       		if(pathParts.length > 1){
       			 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
@@ -136,10 +154,20 @@
       		}
 
           	var props = await dataShapes.getPropertiesFull(params);
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
+
           	props = props["data"];
           	for(var pr in props){
           		var prefix;
-          		if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+					|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt"))prefix = "";
           		else prefix = props[pr]["prefix"]+":";
           			
           		var propName = prefix+props[pr]["display_name"];
@@ -170,10 +198,19 @@
 							props = await dataShapes.getPropertiesFull(params);
 					}
 					props = props["data"];
+					
+					var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = null;
+					if (proj) {
+						if (proj.schema) {
+							schemaName = proj.schema;
+						};
+					}
 	
 					for(var pr in props){
 						var prefix;
-						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
 						var propName = prefix+props[pr]["display_name"];

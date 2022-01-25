@@ -291,8 +291,15 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, symbol_table:symbol_table, exprType:exprType, context:context});
-		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:null, symbol_table:symbol_table, exprType:exprType, context:context});
+		  var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = null;
+		  if (proj) {
+			  if (proj.schema) {
+				schemaName = proj.schema;
+			  };
+		  }
+		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
+		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -309,10 +316,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parsePathExpression(str_expr, context) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  // var parsed_exp = vq_property_path_grammar.parse(str_expr, {schema:schema, symbol_table:symbol_table});
-		  var schema = new VQ_Schema();
-		  // var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context._id});
-		  var parsed_exp = await vq_property_path_grammar_parser.parse(str_expr, {schema:schema, symbol_table:symbol_table, context:context._id});
+		  // var schema = new VQ_Schema();
+		  var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = null;
+		  if (proj) {
+			  if (proj.schema) {
+				schemaName = proj.schema;
+			  };
+		  }
+  
+		  // var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, schemaName:schemaName, symbol_table:symbol_table, context:context._id});
+		  var parsed_exp = await vq_property_path_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context._id});
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
     } catch (e) {
@@ -343,8 +357,15 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
 		if(parse_obj != "[*sub]"){
 			try {
-			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
-			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
+			  var proj = Projects.findOne({_id: Session.get("activeProject")});
+			  var schemaName = null;
+			  if (proj) {
+				  if (proj.schema) {
+					schemaName = proj.schema;
+				  };
+			  }
+			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
+			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
 			  // TODO: error handling
@@ -875,6 +896,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
           };
 		  if (proj.endpointPassword) {
             proj_params.endpointPassword = proj.endpointPassword;
+          };
+		  if (proj.schema) {
+            proj_params.schema = proj.schema;
           };
           return proj_params;
      }

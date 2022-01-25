@@ -550,10 +550,26 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			
 			cls = cls["data"];
 			
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = null;
+			if (proj) {
+				if (proj.schema) {
+					schemaName = proj.schema;
+				};
+			}
+			
 			for(var cl in cls){
 				var prefix;
-				if(cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
+				if((cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") || 
+				(schemaName.toLowerCase() == "wikidata" && cls[cl]["prefix"] == "wd"))prefix = "";
+				
+				
 				else prefix = cls[cl]["prefix"]+":";
+				
+				console.log("schemaName", schemaName);
+				console.log("prefix", cls[cl]["prefix"] );
+				
 				var type = 3;
 				if (cls[cl].principal_class === 0)
 					type = 0;
@@ -562,8 +578,6 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 			return c;
 	}
 	// else if(grammarType == "link"){
-		
-		// console.log("LLLLLLLLLLLLLLLLLLLLLLLL")
 		
 		// var p = {};
 		// p["prefix"] = "";
