@@ -3586,7 +3586,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		var patterns = where["patterns"];
 		var nodeLitsTemp = [];
 		var parenNodeLitsTemp;
-		if(patterns.length > 1){
+		if(patterns.length > 1 || (patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp")){
 			parenNodeLitsTemp = nodeList;
 			var collectNodeListTemp  = await collectNodeList(patterns, true);
 			var temp  = collectNodeListTemp["nodeList"];
@@ -3641,6 +3641,17 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				for(var node in parenNodeLitsTemp){
 					if(typeof parenNodeLitsTemp[node]["uses"][linkTableAdded[link]["subject"]] !== 'undefined' || typeof parenNodeLitsTemp[node]["uses"][linkTableAdded[link]["object"]] !== 'undefined'){
 						linkTableAdded[link]["isGlobalSubQuery"] = true;
+						linkTableAdded[link]["linkType"] = "NOT";
+						break;
+					}
+				}
+			}
+		}
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp"){
+			//find links outside subquery
+			for(var link in linkTableAdded){
+				for(var node in parenNodeLitsTemp){
+					if(typeof parenNodeLitsTemp[node]["uses"][linkTableAdded[link]["subject"]] !== 'undefined' || typeof parenNodeLitsTemp[node]["uses"][linkTableAdded[link]["object"]] !== 'undefined'){
 						linkTableAdded[link]["linkType"] = "NOT";
 						break;
 					}

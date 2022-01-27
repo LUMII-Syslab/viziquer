@@ -2953,6 +2953,7 @@ function generateSELECT(sparqlTable, forSingleClass){
 	for (var number in sparqlTable["selectMain"]["labelVariables"]){
 		if(typeof sparqlTable["selectMain"]["labelVariables"][number]["alias"] === 'string') {
 			selectLabels.push(sparqlTable["selectMain"]["labelVariables"][number]["alias"]);
+			groupBy.push(sparqlTable["selectMain"]["labelVariables"][number]["alias"])
 		}
 	}
 	for (var number in sparqlTable["innerDistinct"]["simpleVariables"]){
