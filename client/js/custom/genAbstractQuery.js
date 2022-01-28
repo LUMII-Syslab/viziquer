@@ -823,7 +823,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                     isSubQuery: link.link.isSubQuery(),
                     isGlobalSubQuery: link.link.isGlobalSubQuery(),
                     identification: { _id: elem._id(), local_name: elem.getName()},
-                    instanceAlias: elem.getInstanceAlias(),
+                    instanceAlias: replaceSymbols(elem.getInstanceAlias()),
                     isVariable:elem.isVariable(),
                     isBlankNode:elem.isBlankNode(),
                     isUnion:elem.isUnion(),
@@ -905,7 +905,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
    };
     var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), local_name: e.getName()},
-      instanceAlias: e.getInstanceAlias(),
+      instanceAlias:replaceSymbols(e.getInstanceAlias()),
       isVariable:e.isVariable(),
       isBlankNode:e.isBlankNode(),
       isUnion:e.isUnion(),
@@ -973,3 +973,7 @@ function replaceArithmetics(parse_obj_table, sign){
 	return parse_obj
 }
 
+function replaceSymbols(instanceAlias){
+	if(instanceAlias != null && isURI(instanceAlias) == 4) instanceAlias = instanceAlias.replace(/,/g, '\\,');
+	return instanceAlias
+}
