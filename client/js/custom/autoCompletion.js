@@ -140,7 +140,9 @@ autoCompletion = async function(e) {
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
 	// if (!isAutocompletionActive() && e.keyCode !== 27 && e.keyCode !== 9) {
 	if (isAutocompletionKey(e) && !isAutocompletionActive()) {
+		await delay(1);
 		var elem = document.activeElement;
+
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
 		var continuations = await runCompletionNew(textBefore, text, textBefore.length);
@@ -163,6 +165,8 @@ autoCompletionCleanup = function() {
 	removeMessage();
 	closeAllLists();
 }
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const isAutocompletionActive = function() {
 	const aList = document.getElementById('autocomplete-list');
@@ -514,7 +518,7 @@ function isURI(text) {
 };
 
 runCompletionNew = async function  (text, fullText, cursorPosition){
-		
+
 	if(grammarType == "className"){
 			
 			/*try {
@@ -563,13 +567,9 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 				var prefix;
 				if((cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") || 
 				(schemaName.toLowerCase() == "wikidata" && cls[cl]["prefix"] == "wd"))prefix = "";
-				
-				
+							
 				else prefix = cls[cl]["prefix"]+":";
-				
-				console.log("schemaName", schemaName);
-				console.log("prefix", cls[cl]["prefix"] );
-				
+	
 				var type = 3;
 				if (cls[cl].principal_class === 0)
 					type = 0;
