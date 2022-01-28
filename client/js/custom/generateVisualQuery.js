@@ -2861,7 +2861,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		//not exists
 		else if(where["operator"] == "notexists"){
 			
-		
+			
+			
 			var nodeLitsTemp = [];
 			
 			if(where["args"].length == 1 && where["args"][0]["type"] == "bgp" && where["args"][0]["triples"].length == 1){
@@ -2890,29 +2891,41 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						var classesS = findByVariableName(classesTable, where["args"][0]["triples"][0]["subject"])
 						var classesO = findByVariableName(classesTable, where["args"][0]["triples"][0]["object"])
 						
-						var classS;
-						var classO;
+						if(classesO.length == 0 || classesS.length == 0 ){
+							var temp = await generateTypebgp(where["args"][0]["triples"], nodeLitsTemp, nodeList, classesTable, attributeTable, linkTable, bgptype, allClasses, generateOnlyExpression, variableList);
+							for(var clazz in temp["classTableAdded"]){
+								for(var link in linkTable){
+									if(linkTable[link]["subject"] == temp["classTableAdded"][clazz] || linkTable[link]["object"] == temp["classTableAdded"][clazz]) {
+										linkTable[link]["linkType"] = "NOT";
+									}
+								}
+							}		
+						} else {
 						
-						for (var clazz in classesS){
-							classS = clazz;
-							break;
-						}
-						for (var clazz in classesO){
-							classO = clazz;
-							break;
-						}
-						
-						var link = {
-							"linkIdentification":dataPropertyResolved.data[0],
-							"object":classO,
-							"subject":classS,
-							"isVisited":false,
-							"linkType":"NOT",
-							"isSubQuery":false,
-							"isGlobalSubQuery":false,
-						}
+							var classS;
+							var classO;
+							
+							for (var clazz in classesS){
+								classS = clazz;
+								break;
+							}
+							for (var clazz in classesO){
+								classO = clazz;
+								break;
+							}
+							
+							var link = {
+								"linkIdentification":dataPropertyResolved.data[0],
+								"object":classO,
+								"subject":classS,
+								"isVisited":false,
+								"linkType":"NOT",
+								"isSubQuery":false,
+								"isGlobalSubQuery":false,
+							}
 
-						linkTable.push(link);
+							linkTable.push(link);
+						}
 						
 					} else {
 						// dataPropertyResolved.data[0]["short_name"] = dataPropertyResolved.data[0]["prefix"]+":"+dataPropertyResolved.data[0]["display_name"];
@@ -3582,7 +3595,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	// type = minus
 	if(where["type"] == "minus"){
 		
-		
 		var patterns = where["patterns"];
 		var nodeLitsTemp = [];
 		var parenNodeLitsTemp;
@@ -3600,6 +3612,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			
 		var classTableTemp = [];
 		var linkTableTemp = [];
+		var directClassMembershipRoleTemp = directClassMembershipRole;
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate == directClassMembershipRole){
+			directClassMembershipRole = "";
+		}
+		
 
 		for(var pattern in patterns){
 			if(typeof patterns[pattern]["type"] !== "undefined" && patterns[pattern]["type"] == "bgp"){
@@ -3633,6 +3650,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				linkTableTemp = linkTableTemp.concat(temp["linkTableAdded"]);
 				bindTable = temp["bindTable"];
 			}
+		}
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate == directClassMembershipRole){
+			directClassMembershipRole = directClassMembershipRoleTemp;
 		}
 		
 		if(patterns.length > 1){
@@ -4498,7 +4518,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				else if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
 				attributeResolved.data[0].short_name = sn;
 			}
-			if((objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") 
+			if(typeof triples[triple]["predicate"] == "string" && (objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") 
 			||( bgptype != "optionalLink" 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["subject"])).length > 0 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["object"])).length == 0 
@@ -4511,7 +4531,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"]);
 				//var attributeResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
 				//if(attributeResolved == null) attributeResolved = schema.resolveLinkByName(triples[triple]["predicate"]);
-
+				
 				// filter as triple
 				if(objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral"){
 					exprVariables = [];
@@ -4744,6 +4764,9 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						}
 					}
 				} else if(typeof triples[triple]["predicate"] == "object"){
+					
+					
+					
 					//property path
 					if(typeof triples[triple]["predicate"]["type"] !== "undefined" && triples[triple]["predicate"]["type"] == "path"){
 						
@@ -4875,6 +4898,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							}
 							// attribute
 							else if(pathPropertyResolved.complete == true && pathPropertyResolved.data[0].data_cnt > 0){
+								
 								for(var item in triples[triple]["predicate"]["items"]){
 									if(typeof triples[triple]["predicate"]["items"][item] == "string"){
 										
@@ -4942,34 +4966,51 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								//id identification.localName not equeals to subject - use alias
 								if(attrResolved["local_name"] != objectNameParsed["value"]) alias = objectNameParsed["value"];
 								
-								var requireValues = true;
-								if(bgptype == "optional") requireValues = false;
-				
-								var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
-								for(var sclass in subjectClasses){
-									if(typeof attributeTable[objectNameParsed["value"]] === 'undefined'){
-										attributeTable[objectNameParsed["value"]] = {
-											"class":sclass,
-											"variableName":objectNameParsed["value"],
-											"identification":attrResolved,
-											"alias":alias,
-											"requireValues":requireValues,
-											"exp":pathText.join("."),
-											"seen":false
-										};
-										attributeTableAdded.push(objectNameParsed["value"]);
-									} else if(findAttributeInAttributeTable(attributeTable, objectNameParsed["value"], triples[triple]["object"], attrResolved) == null){
-										attributeTable[objectNameParsed["value"]+counter] = {
-											"class":sclass,
-											"variableName":objectNameParsed["value"],
-											"identification":attrResolved,
-											"alias":alias,
-											"requireValues":requireValues,
-											"exp":pathText.join("."),
-											"seen":false
-										};
-										attributeTableAdded.push(objectNameParsed["value"]+counter);
-										counter++;
+								
+								
+								// filter as triple in property path
+								if(objectNameParsed.type === "string"){
+									var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
+									for(var sclass in subjectClasses){
+										var expr = pathText.join(".") + " = " + triples[triple]["object"];
+										if(typeof classesTable[sclass] !== "undefined"){
+											if(typeof classesTable[sclass]["conditions"] === 'undefined') {
+												classesTable[sclass]["conditions"] = [];
+											}
+											classesTable[sclass]["conditions"].push(expr);
+										}
+									}
+								}else {
+								
+									var requireValues = true;
+									if(bgptype == "optional") requireValues = false;
+					
+									var subjectClasses = nodeList[triples[triple]["subject"]]["uses"];
+									for(var sclass in subjectClasses){
+										if(typeof attributeTable[objectNameParsed["value"]] === 'undefined'){
+											attributeTable[objectNameParsed["value"]] = {
+												"class":sclass,
+												"variableName":objectNameParsed["value"],
+												"identification":attrResolved,
+												"alias":alias,
+												"requireValues":requireValues,
+												"exp":pathText.join("."),
+												"seen":false
+											};
+											attributeTableAdded.push(objectNameParsed["value"]);
+										} else if(findAttributeInAttributeTable(attributeTable, objectNameParsed["value"], triples[triple]["object"], attrResolved) == null){
+											attributeTable[objectNameParsed["value"]+counter] = {
+												"class":sclass,
+												"variableName":objectNameParsed["value"],
+												"identification":attrResolved,
+												"alias":alias,
+												"requireValues":requireValues,
+												"exp":pathText.join("."),
+												"seen":false
+											};
+											attributeTableAdded.push(objectNameParsed["value"]+counter);
+											counter++;
+										}
 									}
 								}
 							}	
@@ -5369,6 +5410,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						var attrAlias = childerenClass["instanceAlias"];
 						if(typeof childerenClass["fields"] !== 'undefined' && childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)"){
 							internal = false;
+							if(typeof childerenClass["fields"][0]["isInternal"] !== "undefined") internal = childerenClass["fields"][0]["isInternal"];
 							addLabel = childerenClass["fields"][0]["addLabel"];
 						} else if(typeof variableList["?"+attrAlias+"Label"] !== "undefined"){
 							addLabel = true;
@@ -5856,6 +5898,7 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 }
 
 async function generateInstanceAlias(uri){
+	
 	var splittedUri = splitURI(uri);
 	if(splittedUri == null) return uri;
 	
