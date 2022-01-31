@@ -31,6 +31,7 @@ Interpreter.customMethods({
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
 resolveTypesAndBuildSymbolTable = async function (query) {
+	
   // TODO: This is not efficient to recreate schema each time
   // var schema = new VQ_Schema();
   // Adding default namespace
@@ -431,6 +432,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function resolveClassExpressions(obj_class, parent_class) {
 
   if (parent_class) {
+	  
+	  if(obj_class.graph){
+		  var prefixes = query.prefixes;		
+		  obj_class.graph = getGraphFullForm(obj_class.graph, prefixes);
+	  }
+	  
+	  
       var pc_st = symbol_table[parent_class.identification._id];
       var oc_st = symbol_table[obj_class.identification._id];
 
@@ -815,6 +823,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
           if (!visited[elem._id()] && !link.link.isConditional()
               && _.any(element_list, function(el) {return el.isEqualTo(elem)})
               && _.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
+				  
               visited[elem._id()]=elem._id();
               _.extend(linkedElem_obj,
                 {
@@ -822,6 +831,8 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                     linkType: link.link.getType(),
                     isSubQuery: link.link.isSubQuery(),
                     isGlobalSubQuery: link.link.isGlobalSubQuery(),
+					graph: link.link.getGraph(),
+					graphInstruction: link.link.getGraphInstruction(),
                     identification: { _id: elem._id(), local_name: elem.getName()},
                     instanceAlias: replaceSymbols(elem.getInstanceAlias()),
                     isVariable:elem.isVariable(),
@@ -891,6 +902,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 		  if (proj.enableWikibaseLabelServices) {
             proj_params.enableWikibaseLabelServices = proj.enableWikibaseLabelServices;
           };
+		  if (proj.showGraphServiceCompartments) {
+            proj_params.showGraphServiceCompartments = proj.showGraphServiceCompartments;
+          };
 		  if (proj.endpointUsername) {
             proj_params.endpointUsername = proj.endpointUsername;
           };
@@ -903,6 +917,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
           return proj_params;
      }
    };
+   
     var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), local_name: e.getName()},
       instanceAlias:replaceSymbols(e.getInstanceAlias()),
@@ -976,4 +991,23 @@ function replaceArithmetics(parse_obj_table, sign){
 function replaceSymbols(instanceAlias){
 	if(instanceAlias != null && isURI(instanceAlias) == 4) instanceAlias = instanceAlias.replace(/,/g, '\\,');
 	return instanceAlias
+}
+
+function getGraphFullForm(graph, prefixes){
+
+	var graphIsUri = isURI(graph)
+	if(graphIsUri == 4){
+		var prefix = graph.substring(0, graph.indexOf(":"));
+		var name = graph.substring(graph.indexOf(":")+1);
+		for(var kp in prefixes){
+			if(prefixes[kp]["name"] == prefix) {
+				graph = "<"+prefixes[kp]["value"]+name+">";
+				break;
+			}
+		}
+	} else if(graphIsUri == 3 && graph.startsWith("<") == false && graph.endsWith(">") == false){
+		graph = "<"+graph+">";
+	}
+	
+	return graph
 }

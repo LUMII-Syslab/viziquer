@@ -47,7 +47,7 @@
 	
 	LANGTAG = "@" string
 	
-	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "%" / "(" / ")" / "/" / "'" / "-" / "," / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
+	IRIREFName = IRIREF:(("http://" / "https://")([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "%" / "(" / ")" / "/" / "'" / "-" / "," / "\\" / [0-9])*) {return {value:makeVar(IRIREF), type:"iri"}}
 	
 	iri = (IRIREF: IRIREF / PrefixedName: PrefixedName)
 	//IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / [0-9])* ">") {return makeVar(IRIREF)}

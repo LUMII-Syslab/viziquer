@@ -18,6 +18,7 @@ Meteor.methods({
 																										 showPrefixesForAllNames: list.showPrefixesForAllNames,
 																										 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,
 																										 completeRDFBoxesInDatetimeFunctions: list.completeRDFBoxesInDatetimeFunctions,
+																										 showGraphServiceCompartments: list.showGraphServiceCompartments,
 																										 enableWikibaseLabelServices: list.enableWikibaseLabelServices,
 																										 simpleConditionImplementation: list.simpleConditionImplementation,
 																										 endpointUsername: list.endpointUsername,

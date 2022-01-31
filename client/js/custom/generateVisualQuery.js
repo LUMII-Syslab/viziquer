@@ -487,8 +487,12 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	//where
 	var where = parsedQuery["where"];
 	
+	var nodeWhere = parsedQuery["where"];
+	
+	if(where.length == 1 && typeof where[0]["type"] !== "undefined" && (where[0]["type"] == "graph" || where[0]["type"] == "service")) nodeWhere = where[0]["patterns"];
+	
 	// Create a list of nodes in a current query scope 
-	var tempN = await collectNodeList(where);
+	var tempN = await collectNodeList(nodeWhere);
 	var nodeList = tempN["nodeList"];
 	
 	// var plainVariables = getWhereTriplesPlainVaribles(where);													  
@@ -3338,6 +3342,58 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")";
 		}	
 	}
+	if(where["type"] == "graph" || where["type"] == "service"){
+		var nodeLitsTemp = nodeList;
+		var patterns =  where["patterns"];
+		var collectNodeListTemp = await collectNodeList(patterns);
+		var temp  = collectNodeListTemp["nodeList"];
+		
+		var linkTableTemp = [];
+		
+		var nodeLestsMatches = true;
+		if(Object.keys(nodeList).length != Object.keys(temp).length) nodeLestsMatches = false;
+		else if(Object.keys(nodeList).length > 0 && Object.keys(nodeList).length == Object.keys(temp).length){
+			for(var key in temp){
+				if(typeof nodeList[key] == "undefined"){
+					nodeLestsMatches = false;
+					break;
+				}
+			}
+		}
+		
+		if(nodeLestsMatches == true){
+			nodeLitsTemp = parentNodeList;
+		}
+		for(var pattern in where["patterns"]){
+			
+			var wherePartTemp = await parseSPARQLjsStructureWhere(where["patterns"][pattern], temp, nodeLitsTemp, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
+			classesTable = wherePartTemp["classesTable"];
+			attributeTable = wherePartTemp["attributeTable"];
+			linkTable = wherePartTemp["linkTable"];
+			filterTable = wherePartTemp["filterTable"];
+			bindTable = wherePartTemp["bindTable"];
+			linkTableTemp = linkTableTemp.concat(wherePartTemp["linkTableAdded"]);
+		}
+		
+		for(var link in linkTableTemp){
+			var object = linkTableTemp[link]["object"];
+			var subject = linkTableTemp[link]["subject"];
+			var objectVarName = classesTable[object]["variableName"];
+			var subjectVarName = classesTable[subject]["variableName"];
+			
+			var graphName = await generateInstanceAlias(where.name);
+			
+			if(typeof nodeLitsTemp[objectVarName] === "undefined" && typeof nodeLitsTemp[subjectVarName] !== "undefined"){
+				linkTableTemp[link]["graphInstruction"] = where["type"].toUpperCase();
+				linkTableTemp[link]["graph"] = graphName;
+			}
+			
+			if(typeof nodeLitsTemp[objectVarName] !== "undefined" && typeof nodeLitsTemp[subjectVarName] === "undefined"){
+				linkTableTemp[link]["graphInstruction"] = where["type"].toUpperCase();;
+				linkTableTemp[link]["graph"] = graphName;
+			}
+		}	
+	}
 	// type=subquery
 	if((where["type"] == "group" || where["type"] == "optional") && typeof where["patterns"][0]["queryType"] != "undefined"){
 		
@@ -4010,8 +4066,9 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						"notInSchema": "true"
 					}
 				}
-				instanceAlias = subjectNameParsed["value"];
+				instanceAlias = subjectNameParsed["value"].replace(/\\,/g, ",");
 			}
+			instanceAlias = instanceAlias.replace(/\\,/g, ",");
 			
 			if(typeof classesTable[subjectNameParsed["value"]] === 'undefined'){
 				if(typeof parentNodeList[triples[triple]["subject"]] === 'undefined'){
@@ -5368,7 +5425,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 			if(linkTable[linkName]["subject"] == className && linkTable[linkName]["isVisited"] == false){	
 
 				linkTable[linkName]["isVisited"] = true;
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], linkTable[linkName]["graph"], linkTable[linkName]["graphInstruction"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 				visitedClasses = tempAddClass["visitedClasses"];
 
 				conditionLinks = tempAddClass["conditionLinks"];
@@ -5472,7 +5529,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 
 				linkTable[linkName]["isVisited"] = true;
 				clazz["children"] = addChildren(clazz);
-				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList)
+				var tempAddClass = addClass(classesTable[linkTable[linkName]["subject"]],linkTable[linkName], linkTable[linkName]["subject"],  linkTable[linkName]["linkIdentification"], linkTable[linkName]["graph"], linkTable[linkName]["graphInstruction"], true, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList)
 				visitedClasses = tempAddClass["visitedClasses"];
 				conditionLinks = tempAddClass["conditionLinks"];
 				
@@ -5543,13 +5600,15 @@ function addConditionLinks(clazz){
 	return clazz["conditionLinks"];
 }
 
-function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList){
+function addClass(childrenClass, linkInformation, childrenClassName, linkIdentification, graph, graphInstruction, isInverse, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList){
 
 	childrenClass["isInverse"] = isInverse;
 	childrenClass["linkIdentification"] = linkInformation["linkIdentification"];
 	childrenClass["linkType"] = linkInformation["linkType"];
 	childrenClass["isSubQuery"] = linkInformation["isSubQuery"];
 	childrenClass["isGlobalSubQuery"] = linkInformation["isGlobalSubQuery"];
+	childrenClass["graph"] = linkInformation["graph"];
+	childrenClass["graphInstruction"] = linkInformation["graphInstruction"];
 	generateClassCtructureTemp = generateClassCtructure(childrenClass, childrenClassName, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
 	childrenClass = generateClassCtructureTemp.clazz;
 	return {childrenClass:childrenClass, visitedClasses:visitedClasses, conditionLinks:conditionLinks};
@@ -5843,7 +5902,10 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 			if(isGlobalSubQuery == true) linkQueryType = "GLOBAL_SUBQUERY";
 
 			var isInverse = clazz["isInverse"];
-
+			var graph = clazz["graph"];
+			var graphInstruction = clazz["graphInstruction"];
+			
+			// console.log("  graph = ", clazz["graph"]);
 			// console.log("  linkName = ", linkName);
 			// console.log("  linkType = ", linkType);
 			// console.log("  isSubQuery = ", isSubQuery);
@@ -5861,6 +5923,10 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
+					if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
+						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+						linkLine.setGraphInstruction(graphInstruction);
+					}
 				}, locLink, true, parentClass, classBox);
 			} else {
 				locLink = [coordX, newPosition.y, coordX, coordY];
@@ -5868,6 +5934,10 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
+					if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
+						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+						linkLine.setGraphInstruction(graphInstruction);
+					}
 				}, locLink, true, classBox, parentClass);
 			}
 		}

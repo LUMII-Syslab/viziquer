@@ -2730,6 +2730,22 @@ VQ_Element.prototype = {
   getVariableName: function() {
     if (this.isVariable()) {return this.getName().substr(1)} else { return null }
   },
+  
+  getGraph: function() {
+    return this.getCompartmentValue("Graph")
+  },
+  
+  setGraph: function(name, input) {
+      this.setCompartmentValue("Graph",name,input);
+  },
+  
+  getGraphInstruction: function() {
+    return this.getCompartmentValue("Graph instruction")
+  },
+  
+  setGraphInstruction: function(instruction) {
+	this.setCompartmentValue("Graph instruction",instruction,instruction);
+  },
   // determines whether the link is subquery link
   isSubQuery: function() {
     return this.getCompartmentValue("Subquery Link")=="true"
@@ -2962,6 +2978,19 @@ VQ_Element.prototype = {
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
 	  {name:"Require Values",value:this.boolToString(requireValues)},
+    ])
+  },
+  // returns an array of aggregate attributes: expression, stereotype, alias, etc. ...
+  getGraphs: function() {
+    return this.getMultiCompartmentSubCompartmentValues("Graphs",
+    [{title:"graph",name:"Graph"},
+    {title:"graphInstruction",name:"Graph instruction"}]);
+  },
+  // string, string -->
+  addGraph: function(graph,graphInstruction) {
+    this.addCompartmentSubCompartments("Graph",[
+      {name:"Graph",value:graph},
+      {name:"Graph instruction",value:graphInstruction},
     ])
   },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]

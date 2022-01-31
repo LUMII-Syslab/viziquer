@@ -177,6 +177,12 @@ Interpreter.customMethods({
 	VQsetIsOptionalAttribute: function() {
 		console.log("is optional enetered");
 	},
+  VQgetGraphInstructions: function() {
+	return  [
+	{input:"GRAPH",value:"GRAPH"},
+	{input:"SERVICE",value:"SERVICE"}
+	]
+  },
   VQgetAggregateNames: function() {
 
 		 var act_elem = Session.get("activeElement");
@@ -763,6 +769,27 @@ Interpreter.customMethods({
 		return [val.value]
 	},
 	
+	VQsetGraphPrefix: function(val) {
+		var act_elem = Session.get("activeElement");
+		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+ 		var compart_type = CompartmentTypes.findOne({name: "Graph instruction", elementTypeId: act_el["elementTypeId"]});
+		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});	
+		if (compart) return "{"+compart.value+": ";
+		return "{";
+	},
+	
+	VQsetGraphPrefixFromInstructions: function(params) {
+
+			var act_elem = Session.get("activeElement");
+			var elem = new VQ_Element(act_elem);
+
+            if (typeof elem.getGraph() !== "undefined" && elem.getGraph() !== null && elem.getGraph() !== "") {
+				var instrunction = params.value;
+				if(instrunction!= null && instrunction != "") instrunction = instrunction+": ";
+				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
+			} 
+	},
+	
 	VQgetOrderByFields: async function(val) {
 		//	 console.log("order by")
 		//atribute value for class
@@ -1300,6 +1327,14 @@ Interpreter.customMethods({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});		
 		if (proj) {
 			if (proj.enableWikibaseLabelServices == "true") return true;
+		}
+		return false;
+	},
+	
+	setIsVisibleForGraphFields: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});		
+		if (proj) {
+			if (proj.showGraphServiceCompartments == "true") return true;
 		}
 		return false;
 	},

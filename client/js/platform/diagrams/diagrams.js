@@ -786,6 +786,7 @@ Template.ontologySettings.events({
 					showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
 					showPrefixesForAllNonLocalNames: $("#show-prefixes-for-all-non-local-names").is(":checked"),
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
+					showGraphServiceCompartments: $("#show-graph-service-compartments").is(":checked"),
 					enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val()
@@ -830,6 +831,7 @@ Template.ontologySettings.events({
 		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
 		 $("#show-prefixes-for-all-non-local-names").prop("checked", proj.showPrefixesForAllNonLocalNames=="true");
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
+		 $("#show-graph-service-compartments").prop("checked", proj.showGraphServiceCompartments=="true");
 		 $("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);
@@ -1043,6 +1045,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
+		}
+	},
+	showGraphServiceCompartments: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.showGraphServiceCompartments=="true");
 		}
 	},
 	enableWikibaseLabelServices: function() {

@@ -277,6 +277,11 @@ Schemas.Projects = new SimpleSchema({
  			 label: "Projects.enableWikibaseLabelServices",
  			 optional: true,
  	    },
+		showGraphServiceCompartments: {
+ 			 type: String,
+ 			 label: "Projects.showGraphServiceCompartments",
+ 			 optional: true,
+ 	    },
 		endpointUsername: {
  			 type: String,
  			 label: "Projects.endpointUsername",

@@ -882,7 +882,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 // if root class is Union
 		 if(rootClass["isUnion"] == true){
 			
-			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable, SPARQL_interval);
+			var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable, SPARQL_interval, parameterTable);
 			SPARQL_text = unionResult["result"];
 	
 			messages = messages.concat(unionResult["messages"]);
@@ -907,7 +907,7 @@ function generateSPARQLtext(abstractQueryTable){
 				tempSelect = tempSelect.concat(selectResult["selectLabels"]);
 			 }
 
-			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ");
+			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
 			  
 			 tempSelect= tempSelect.concat(whereInfo["subSelectResult"]);
 			 
@@ -1232,6 +1232,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	sparqlTable["groupByThis"] = clazz["groupByThis"]; // group By This class
 	sparqlTable["getSubQueryResults"] = false; // getSubQueryResults
 	sparqlTable["labelServiceLanguages"] = clazz["labelServiceLanguages"]; // labelServiceLanguages
+	sparqlTable["graph"] = clazz["graph"]; // graph
+	sparqlTable["graphInstruction"] = clazz["graphInstruction"]; // graphInstruction
 
 	var classSimpleTriples = [];
 	var classExpressionTriples = [];
@@ -2277,7 +2279,7 @@ function getTriple(result, alias, required, notAgrageted){
 
 // genrerate SPARQL WHERE info
 // sparqlTable - table with sparql parts
-function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPARQL_interval){
+function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPARQL_interval, parameterTable){
 
 	var whereInfo = [];
 	var filters = [];
@@ -2391,7 +2393,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		for (var subclass in sparqlTable["subClasses"]){
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				if(sparqlTable["subClasses"][subclass]["isUnion"] == true) {
-					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval)
+					var unionResult = getUNIONClasses(sparqlTable["subClasses"][subclass], sparqlTable["class"], sparqlTable["classTriple"], false, referenceTable, SPARQL_interval, parameterTable)
 
 					if(sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == false && sparqlTable["subClasses"][subclass]["isSubQuery"] == false){
 						if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") unionResult["result"] = "OPTIONAL{\n" + unionResult["result"] + "\n}";
@@ -2404,7 +2406,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					var SPARQL_interval_temp = SPARQL_interval;
 					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) SPARQL_interval_temp = SPARQL_interval_temp+"  ";
 					
-					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp);
+					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable);
 					filters = filters.concat(temp["filters"]);
 					links = links.concat(temp["links"]);
 					whereInfo = whereInfo.concat(temp["triples"]);
@@ -2426,7 +2428,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 						}
 					}
 
-					var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval+"  ");
+					var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
 					if(sparqlTable["getSubQueryResults"] == true) subSelectResult = subSelectResult.concat(wheresubInfo["subSelectResult"]);
 
 					var temp = wheresubInfo["triples"];
@@ -2657,6 +2659,17 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		filters = [];
 		links = [];
 	}
+	
+	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["graph"] === 'string' && sparqlTable["graph"] != "" && typeof sparqlTable["graphInstruction"] === 'string' && sparqlTable["graphInstruction"] != "" ){	
+		whereInfo = whereInfo.concat(filters);
+		whereInfo = whereInfo.concat(links);
+		SPARQL_interval = SPARQL_interval + "  ";
+		var tempString = sparqlTable["graphInstruction"] + " "+ sparqlTable["graph"] + " {"+ "\n"+SPARQL_interval + whereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
+		whereInfo = [];
+		whereInfo.push(tempString);
+		filters = [];
+		links = [];
+	}
 	whereInfo.concat(ws);
 	filters.concat(fil);
 	links.concat(lin);
@@ -2707,7 +2720,7 @@ function findSubQueryMainClass(referenceTable, subQueryMainClass){
 	return result;
 }
 
-function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable, SPARQL_interval){
+function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, generateUpperSelect, referenceTable, SPARQL_interval, parameterTable){
 	var whereInfo = [];
 	var unionsubSELECTstaterents = [];
 	var unionGroupStaterents = [];
@@ -2730,7 +2743,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 			if(typeof sparqlTable["subClasses"][subclass] === 'object') {
 				var selectResult = generateSELECT(sparqlTable["subClasses"][subclass], false);
 				//console.log("QQQQQQQQQQQQQQQ", selectResult, parentClassInstance);
-				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval);
+				var wheresubInfo = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], [], [], [], referenceTable, SPARQL_interval, parameterTable);
 
 				var temp = wheresubInfo["triples"];
 				temp = temp.concat(wheresubInfo["filters"]);
