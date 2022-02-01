@@ -4068,7 +4068,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				}
 				instanceAlias = subjectNameParsed["value"].replace(/\\,/g, ",");
 			}
-			instanceAlias = instanceAlias.replace(/\\,/g, ",");
+			if(instanceAlias != null) instanceAlias = instanceAlias.replace(/\\,/g, ",");
 			
 			if(typeof classesTable[subjectNameParsed["value"]] === 'undefined'){
 				if(typeof parentNodeList[triples[triple]["subject"]] === 'undefined'){
