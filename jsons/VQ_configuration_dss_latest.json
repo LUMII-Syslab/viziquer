@@ -1639,6 +1639,48 @@
                     },
                     "subCompartmentTypes": [
                       {
+                        "_id": "4myxmzuqpuosoyj4o6y1m0sd",
+                        "index": 0,
+                        "name": "Graph instruction",
+                        "extensionPoints": [
+                          {
+							 "extensionPoint": "dynamicDropDown",
+							 "procedure": "VQgetGraphInstructions"
+						  },
+						  {
+							"extensionPoint": "isVisible",
+							"procedure": "setIsVisibleForGraphFields"
+						  }
+                        ],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Graph instruction"
+                      },
+					  {
+                        "_id": "su465uh97s8gf52uaamk58gv",
+                        "index": 1,
+                        "name": "Graph",
+                        "label": "Graph",
+                        "extensionPoints": [
+						  {
+							"extensionPoint": "isVisible",
+							"procedure": "setIsVisibleForGraphFields"
+						  }
+						],
+                        "prefix": null,
+					    "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
                         "_id": "479fc64e382dc2d31bcc0755",
                         "index": 7,
                         "name": "Field Name",

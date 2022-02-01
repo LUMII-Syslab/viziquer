@@ -1437,7 +1437,14 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				else if(result["isFunction"] == true) {
 					//functionTriples
 					//sparqlTable["functionTriples"].push(getTriple(result, alias, field["requireValues"], true));
-					classFunctionTriples.push(getTriple(result, alias, field["requireValues"], true));
+					
+					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
+					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								tripleTemp["graph"] = field["graph"];
+								tripleTemp["graphInstruction"] = field["graphInstruction"];
+							}
+					
+					classExpressionTriples.push(tripleTemp);
 
 					//MAIN SELECT function variables (not undet NOT link and is not internal)
 					if(underNotLink != true && field["isInternal"] != true){
@@ -1457,7 +1464,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				else if(result["isExpression"] == true) {
 					//expressionTriples
 					//sparqlTable["expressionTriples"].push(getTriple(result, alias, field["requireValues"], true));
-					classExpressionTriples.push(getTriple(result, alias, field["requireValues"], true));
+					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
+					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								tripleTemp["graph"] = field["graph"];
+								tripleTemp["graphInstruction"] = field["graphInstruction"];
+							}
+					
+					classExpressionTriples.push(tripleTemp);
 
 					// MAIN SELECT expression variables (not undet NOT link and is not internal)
 					if(underNotLink != true && field["isInternal"] != true){
@@ -1481,6 +1494,10 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						tempTripleTable["triple"] = [];
 						for (var triple in result["triples"]){
 							if(typeof result["triples"][triple] === 'string')tempTripleTable["triple"].push(result["triples"][triple]);
+							if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								tempTripleTable["graph"] = field["graph"];
+								tempTripleTable["graphInstruction"] = field["graphInstruction"];
+							}
 						}
 						//sparqlTable["simpleTriples"].push(tempTripleTable);
 						classSimpleTriples.push(tempTripleTable);
@@ -2314,24 +2331,41 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			}
 			if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bind"]);
 			if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bound"]);
-			attributesAggerations.push("OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
+				attributesAggerations.push(sparqlTable["simpleTriples"][expression]["graphInstruction"] + " " + sparqlTable["simpleTriples"][expression]["graph"] + " {"+ "OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}" + "}");
+			}
+			else attributesAggerations.push("OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
 		}
 		else {
+			var attributeTripleTemp;
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
 						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ')){ 
-							attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
+							attributeTripleTemp = sparqlTable["simpleTriples"][expression]["triple"][triple];
 						}else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) {
-							attributesAggerations.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
+							attributeTripleTemp = sparqlTable["simpleTriples"][expression]["triple"][triple];
 						}else {
-							attributesAggerations.push("OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}");
+							attributeTripleTemp = "OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}";
 						}
 					}
+					
 				}
 			}
-			if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bind"]);
-			if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bound"]);
+			
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
+				var tripleTebleTemp = [];
+				tripleTebleTemp.push(attributeTripleTemp);
+				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bind"]);
+				if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bound"]);
+				attributesAggerations.push(sparqlTable["simpleTriples"][expression]["graphInstruction"] + " " + sparqlTable["simpleTriples"][expression]["graph"] + " {"+ tripleTebleTemp.join(" ") + "}");
+			} else{
+			
+				if(attributeTripleTemp != null) attributesAggerations.push(attributeTripleTemp);
+				
+				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bind"]);
+				if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bound"]);
+			}
 		}
 	}
 
@@ -2673,7 +2707,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	whereInfo.concat(ws);
 	filters.concat(fil);
 	links.concat(lin);
-
+	
 	return {"triples" : whereInfo, "filters" : filters, "links":links, "messages":messages, "subSelectResult":subSelectResult}
 }
 

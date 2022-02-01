@@ -2923,6 +2923,8 @@ VQ_Element.prototype = {
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
     {title:"Prefixes",name:"Prefixes"},
+    {title:"graph",name:"Graph"},
+    {title:"graphInstruction",name:"Graph instruction"},
     {title:"attributeCondition",name:"AttributeCondition"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
     {title:"addLabel",name:"Add Label",transformer:function(v) {return v=="true"}},
@@ -2946,17 +2948,22 @@ VQ_Element.prototype = {
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
-  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,condition) {
+  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,graph,graphInstruction,condition) {
     
 	var prefixesValue = "";
+	var graphPrefixValue = "";
+	if(graph != null && graph !="" && graphInstruction != null && graphInstruction != "") graphPrefixValue = "{" + graphInstruction + ": " + graph + "} ";
 	if(isInternal == true) prefixesValue = "h";
 	if(requireValues == true) prefixesValue = prefixesValue + "+";
 	if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+	prefixesValue = graphPrefixValue + prefixesValue;
 	
 	this.addCompartmentSubCompartments("Attributes",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
       {name:"AttributeCondition",value:condition},
+      {name:"Graph",value:graph, input:""},
+      {name:"Graph instruction",value:graphInstruction,input:""},
       {name:"Require Values",value:this.boolToString(requireValues)},
       {name:"Add Label",value:this.boolToString(addLabel)},
       {name:"GroupValues",value:this.boolToString(groupValues)},
@@ -3590,8 +3597,8 @@ VQ_Element.prototype = {
             if (sub_c["inputType"]["type"] == "checkbox") {
                 mapped_value = _.find(sub_c["inputType"]["values"], function(s) { return transformer(sc.value) == s["input"]})["value"];
             };
+			if(typeof sc.input !== "undefined") mapped_value = sc.input;
              sc_value = Dialog.buildCompartmentValue(sub_c,  transformer(sc.value), mapped_value);
-
              c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["input"] = transformer(sc.value);
              c_to_create["compartment"]["subCompartments"][compartment_name][compartment_name][sc.name]["value"] = sc_value;
             //

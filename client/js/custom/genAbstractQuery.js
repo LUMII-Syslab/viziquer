@@ -472,6 +472,11 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
 	for (const f of obj_class.fields){
     // await obj_class.fields.forEach(async function(f) {
+		
+	  if(f.graph){
+		  var prefixes = query.prefixes;		
+		  f.graph = getGraphFullForm(f.graph, prefixes);
+	  }
      
 	  if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != null && f.attributeCondition != ""){
 		var variableName = f.exp;

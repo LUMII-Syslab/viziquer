@@ -194,6 +194,7 @@ Template.show_multi_field_form.events({
 		var sub_compart_tree = {};
 
 		var multi_field = form.find(".multi-field");
+		
 		var res = Dialog.buildSubCompartmentTree(multi_field, compart_type, sub_compart_tree);
 		
 		var input = res;
@@ -201,10 +202,20 @@ Template.show_multi_field_form.events({
 		
 		if(typeof sub_compart_tree["Attributes"] !== "undefined"){
 			var prefixesValue = "";
-	
+			var graphPrefixes = "";
+			if(sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"];
+			if(sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] + ": " + graphPrefixes;
+			if(graphPrefixes != "") graphPrefixes = "{" + graphPrefixes + "} ";
+			
+			value = value.substring((sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"]+sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"]).length)
+			
+			sub_compart_tree["Attributes"]["Attributes"]["Graph"]["value"] = "";
+			sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["value"] = "";
+			
 			if(sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
 			if(sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
 			if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+			prefixesValue = graphPrefixes + prefixesValue;
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Prefixes"] !== "undefined"){
 				sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
 				sub_compart_tree["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;

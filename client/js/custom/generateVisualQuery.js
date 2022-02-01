@@ -738,7 +738,9 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							"isInternal":false,
 							"groupValues":false,
 							"exp":exp,
-							"addLabel":addLabel
+							"addLabel":addLabel,
+							"graph":attributeInfoTemp["graph"],
+							"graphInstruction":attributeInfoTemp["graphInstruction"],
 						}
 						
 						if(attributeTable[attribute]["class"] != attribute){
@@ -1046,7 +1048,9 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						"requireValues":attributeInfoTemp["requireValues"],
 						"isInternal":true,
 						"groupValues":false,
-						"exp":exp
+						"exp":exp,
+						"graph":attributeInfoTemp["graph"],
+						"graphInstruction":attributeInfoTemp["graphInstruction"],
 				} 
 				classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
 			}
@@ -3349,6 +3353,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		var temp  = collectNodeListTemp["nodeList"];
 		
 		var linkTableTemp = [];
+		var attributeTableTemp = [];
 		
 		var nodeLestsMatches = true;
 		if(Object.keys(nodeList).length != Object.keys(temp).length) nodeLestsMatches = false;
@@ -3364,8 +3369,12 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		if(nodeLestsMatches == true){
 			nodeLitsTemp = parentNodeList;
 		}
+		if(Object.keys(nodeLitsTemp).length == 0) nodeLitsTemp = nodeList;
+		
 		for(var pattern in where["patterns"]){
-			
+			for(var clazz in classesTable){
+				allClasses[clazz] = classesTable[clazz];
+			}
 			var wherePartTemp = await parseSPARQLjsStructureWhere(where["patterns"][pattern], temp, nodeLitsTemp, classesTable, filterTable, attributeTable, linkTable, "plain", allClasses, variableList, null, bindTable);
 			classesTable = wherePartTemp["classesTable"];
 			attributeTable = wherePartTemp["attributeTable"];
@@ -3373,8 +3382,24 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			filterTable = wherePartTemp["filterTable"];
 			bindTable = wherePartTemp["bindTable"];
 			linkTableTemp = linkTableTemp.concat(wherePartTemp["linkTableAdded"]);
+			attributeTableTemp = attributeTableTemp.concat(wherePartTemp["attributeTableAdded"]);
+			var graphName = await generateInstanceAlias(where.name);
+			// if(wherePartTemp.attributeTableAdded.length > 0 && wherePartTemp.classTableAdded.length == 0 && linkTableTemp.length == 0){
+				// for(var attr in wherePartTemp.attributeTableAdded){
+					// attributeTable[wherePartTemp.attributeTableAdded[attr]]["graphInstruction"] = where["type"].toUpperCase();
+					// attributeTable[wherePartTemp.attributeTableAdded[attr]]["graph"] = graphName;
+				// }
+			// }
+			
 		}
-		
+
+		if(linkTableTemp.length == 0){
+			for(var attr in attributeTableTemp){
+				attributeTable[attributeTableTemp[attr]]["graphInstruction"] = where["type"].toUpperCase();
+				attributeTable[attributeTableTemp[attr]]["graph"] = graphName;
+			}
+		}
+
 		for(var link in linkTableTemp){
 			var object = linkTableTemp[link]["object"];
 			var subject = linkTableTemp[link]["subject"];
@@ -5394,6 +5419,7 @@ function generateArgument(argument){
 }
 
 function addAttributeToClass(classesTable, identification){
+
 	if(typeof classesTable["fields"] === 'undefined')classesTable["fields"] = [];
 	
 	var fieldExists = false;
@@ -5473,7 +5499,6 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							addLabel = true;
 						}
 						
-						
 						if(attrAlias == exp) attrAlias = "";
 						var attributeInfo = {
 							"alias":attrAlias,
@@ -5481,7 +5506,9 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							"exp":exp,
 							"requireValues":requred,
 							"isInternal":internal,
-							"addLabel":addLabel
+							"addLabel":addLabel,
+							"graph":linkTable[linkName]["graph"],
+							"graphInstruction":linkTable[linkName]["graphInstruction"]
 						}
 						clazz = addAttributeToClass(clazz, attributeInfo);
 						
@@ -5800,10 +5827,12 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 			var requireValues = field["requireValues"];
 			var isInternal = field["isInternal"];
 			var groupValues = field["groupValues"]; // false
-			var addLabel = field["addLabel"]; // false
+			var addLabel = field["addLabel"];
+			var graph = field["graph"];
+			var graphInstruction = field["graphInstruction"];
 			
 			//add attribute to class
-			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel);
+			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel,graph,graphInstruction);
 
 		})
 
