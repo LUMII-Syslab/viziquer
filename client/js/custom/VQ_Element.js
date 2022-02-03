@@ -2928,6 +2928,8 @@ VQ_Element.prototype = {
     {title:"attributeCondition",name:"AttributeCondition"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
     {title:"addLabel",name:"Add Label",transformer:function(v) {return v=="true"}},
+    {title:"addAltLabel",name:"Add AltLabel",transformer:function(v) {return v=="true"}},
+    {title:"addDescription",name:"Add Description",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
 	
@@ -2948,7 +2950,7 @@ VQ_Element.prototype = {
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
-  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,graph,graphInstruction,condition) {
+  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction,condition) {
     
 	var prefixesValue = "";
 	var graphPrefixValue = "";
@@ -2966,6 +2968,8 @@ VQ_Element.prototype = {
       {name:"Graph instruction",value:graphInstruction,input:""},
       {name:"Require Values",value:this.boolToString(requireValues)},
       {name:"Add Label",value:this.boolToString(addLabel)},
+      {name:"Add AltLabel",value:this.boolToString(addAltLabel)},
+      {name:"Add Description",value:this.boolToString(addDescription)},
       {name:"GroupValues",value:this.boolToString(groupValues)},
       {name:"IsInternal",value:this.boolToString(isInternal)},
       {name:"Prefixes",value:prefixesValue,input:prefixesValue}

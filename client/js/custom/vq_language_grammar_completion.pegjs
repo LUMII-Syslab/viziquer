@@ -23,6 +23,7 @@
           	continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type};
           }
           function returnContinuation(){
+		  continuations["time"] = options.time
           	return JSON.stringify(continuations,null,2);
           }
 

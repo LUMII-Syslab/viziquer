@@ -20870,6 +20870,7 @@ options = arguments[1];
         	}
         			
         	async function returnContinuation(){
+				continuations["time"] =  options.time;
         		return JSON.stringify(continuations,null,2);
         	}
 

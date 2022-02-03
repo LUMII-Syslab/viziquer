@@ -1,5 +1,6 @@
 var symbolTable = {};
 var grammarType = "class";
+var time;
 
 /*'
 "
@@ -32,12 +33,16 @@ Interpreter.customMethods({
 
 	conditionAutoCompletion: async function(e, compart) {
 		grammarType = "class"
+		const d = new Date();
+		time = d.getTime();
 		symbolTable = await generateSymbolTableAC();
 		await autoCompletion(e);
 	},
 
 	attributeAutoCompletion: async function(e, compart) {
 		grammarType = "attribute"
+		const d = new Date();
+		time = d.getTime();
 		symbolTable = await generateSymbolTableAC();
 		await autoCompletion(e);
 	},
@@ -48,6 +53,8 @@ Interpreter.customMethods({
 
 	linkAutoCompletion: async function(e, compart) {
 		grammarType = "link"
+		const d = new Date();
+		time = d.getTime();
 		await autoCompletion(e);
 	},
 	
@@ -93,6 +100,8 @@ generateSymbolTableAC = async function() {
 
 autoCompletionAddCondition = async function(e) {
 	grammarType = "class"
+	const d = new Date();
+		time = d.getTime();
 	symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
@@ -104,12 +113,16 @@ autoCompletionClass = async function(e) {
 
 autoCompletionAddAttribute = async function(e) {
 	grammarType = "attribute"
+	const d = new Date();
+	time = d.getTime();
 	symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
 autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
+	const d = new Date();
+	time = d.getTime();
 	symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
@@ -152,6 +165,8 @@ autoCompletion = async function(e) {
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
 			//autocomplete(elem, continuations);
+		} else if(typeof continuations == "string" &&  continuations == "leaveOldRessult"){
+			
 		}else{
 			elem.addEventListener("keyup", keyUpHandler);
 			elem.addEventListener("click", clickHandler);
@@ -518,7 +533,7 @@ function isURI(text) {
 };
 
 runCompletionNew = async function  (text, fullText, cursorPosition){
-
+	
 	if(grammarType == "className"){
 			
 			/*try {
@@ -788,6 +803,9 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 	}
 	else {
 		var act_elem = Session.get("activeElement");
+		
+		
+		
 		try {
 			// var schema = new VQ_Schema();
 			
@@ -799,7 +817,7 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					if (vq_link.isLink()) {
 						// console.log("PPPPPPPPP", fullText, text)
 						// var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-						var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 						
 					};
 				};
@@ -811,13 +829,13 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
 					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					var className = compart["input"];
-					var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
+					var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
 				};
 			}else if(grammarType == "language"){
 				var name_list = [];
 				//var act_elem = Session.get("activeElement");
 				if (act_elem) {
-					var parsed_exp = vq_language_grammar_completion.parse(text);
+					var parsed_exp = vq_language_grammar_completion.parse(text, {time:time});
 				};
 			} else {
 
@@ -835,14 +853,17 @@ runCompletionNew = async function  (text, fullText, cursorPosition){
 					symbolTable = tempSymbolTable["symbolTable"];
 				}
 				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-				var parsed_exp = await vq_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				var parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
 			// console.log(com);
 			// console.log(JSON.stringify(com["message"], null, 2));
 			// console.log(JSON.parse(com["message"]));
-			var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
-			return c;
+			var cont = JSON.parse(com["message"]);
+			if(time == cont.time){
+				var c = getContinuationsNew(text, text.length, cont);			
+				return c;
+			} else {return "leaveOldRessult"}
 		}
 	}
 	return [];

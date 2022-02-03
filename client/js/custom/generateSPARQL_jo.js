@@ -1458,6 +1458,12 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					if(underNotLink != true && field["addLabel"] == true){
 						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});	
 					}
+					if(underNotLink != true && field["addAltLabel"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"AltLabel", "value" : alias+"AltLabel"});	
+					}
+					if(underNotLink != true && field["addDescription"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Description", "value" : alias+"Description"});	
+					}
 				}
 
 				//expression in expression
@@ -1483,6 +1489,12 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					}
 					if(underNotLink != true && field["addLabel"] == true){
 						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});
+					}
+					if(underNotLink != true && field["addAltLabel"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"AltLabel", "value" : alias+"AltLabel"});	
+					}
+					if(underNotLink != true && field["addDescription"] == true){
+						sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Description", "value" : alias+"Description"});	
 					}
 				}
 				//simple triples
@@ -1513,8 +1525,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						}
 						if(underNotLink != true){
 							if(field["exp"].startsWith("??") == false && field["addLabel"] == true){
-								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});
-								
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});	
+							}
+							if(field["exp"].startsWith("??") == false && field["addAltLabel"] == true){
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"AltLabel", "value" : alias+"AltLabel"});	
+							}
+							if(field["exp"].startsWith("??") == false &&  field["addDescription"] == true){
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Description", "value" : alias+"Description"});	
 							}
 						}
 				}
@@ -2141,7 +2158,9 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 
 					orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
 					orderGroupBy.push(result["exp"]);
-				} else if(orderName.endsWith("Label") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 5)] !== 'undefined'){
+				} else if((orderName.endsWith("Label") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 5)] !== 'undefined')
+					||(orderName.endsWith("AltLabel") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 8)] !== 'undefined')
+					||(orderName.endsWith("Description") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 11)] !== 'undefined')){
 					descendingStart = "";
 							 descendingEnd = "";
 							 if(order["isDescending"] == true) {

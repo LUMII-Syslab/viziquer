@@ -1810,6 +1810,74 @@
                         "subCompartmentTypes": []
                       },
 					  {
+                        "_id": "6jgrxqzflfupw4bd4xl8ecww",
+                        "index": 13,
+                        "name": "Add AltLabel",
+						"label": "Add AltLabel",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+						"extensionPoints": [
+						  {
+							"extensionPoint": "isVisible",
+							"procedure": "setIsVisibleForLabelService"
+						  }
+						],
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": " {+altLabel}"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "uj4iv0ld54ic8dx6be432nbe",
+                        "index": 14,
+                        "name": "Add Description",
+						"label": "Add Description",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+						"extensionPoints": [
+						  {
+							"extensionPoint": "isVisible",
+							"procedure": "setIsVisibleForLabelService"
+						  }
+						],
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": " {+description}"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
                         "_id": "i794avqh6vh6aa1cakgfrvni",
                         "index": 3,
                         "name": "Prefixes",

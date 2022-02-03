@@ -3588,6 +3588,7 @@ vq_property_path_grammar_completion_parser = (function() {
           	continuations[place[position]["offset"]][continuation]={name:continuation, priority:priority, type:type};
           }
           async function returnContinuation(){
+			  continuations["time"] = options.time
           	return JSON.stringify(continuations,null,2);
           }
 
