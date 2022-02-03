@@ -2141,6 +2141,16 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 
 					orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
 					orderGroupBy.push(result["exp"]);
+				} else if(orderName.endsWith("Label") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 5)] !== 'undefined'){
+					descendingStart = "";
+							 descendingEnd = "";
+							 if(order["isDescending"] == true) {
+								descendingStart = "DESC("
+								descendingEnd = ")"
+							 }
+							 
+					orderTable.push(descendingStart + "?"+orderName + descendingEnd + " ");
+					orderGroupBy.push("?"+orderName);
 				} else {
 					if(typeof order["parsed_exp"] === 'undefined'){
 						messages.push({
@@ -2151,6 +2161,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+						
 						
 						messages = messages.concat(result["messages"]);
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){

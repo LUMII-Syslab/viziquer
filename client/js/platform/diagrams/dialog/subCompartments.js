@@ -203,14 +203,15 @@ Template.show_multi_field_form.events({
 		if(typeof sub_compart_tree["Attributes"] !== "undefined"){
 			var prefixesValue = "";
 			var graphPrefixes = "";
-			if(sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"];
-			if(sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] + ": " + graphPrefixes;
+			
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"];
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] != "") graphPrefixes = sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] + ": " + graphPrefixes;
 			if(graphPrefixes != "") graphPrefixes = "{" + graphPrefixes + "} ";
 			
-			value = value.substring((sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"]+sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"]).length)
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"] !== "undefined" && typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"] !== "undefined")value = value.substring((sub_compart_tree["Attributes"]["Attributes"]["Graph"]["input"]+sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["input"]).length)
 			
-			sub_compart_tree["Attributes"]["Attributes"]["Graph"]["value"] = "";
-			sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["value"] = "";
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined")sub_compart_tree["Attributes"]["Attributes"]["Graph"]["value"] = "";
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined")sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["value"] = "";
 			
 			if(sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
 			if(sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";

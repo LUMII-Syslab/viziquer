@@ -3686,12 +3686,21 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 }
 
 
-countCardinality = function(str_expr, context){	 
+countCardinality = async function(str_expr, context){	 
 	var schema = new VQ_Schema();
 
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}, context:context});
+		  
+		  var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = null;
+		  if (proj) {
+			  if (proj.schema) {
+				schemaName = proj.schema;
+			  };
+		  }
+		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:{}, context:context});
+		  // var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}, context:context});
 		  var cardinality = countMaxExpressionCardinality(parsed_exp, -1);
 		  
 		  if(cardinality["isAggregation"] == true) return 1;

@@ -21,8 +21,6 @@ Interpreter.customMethods({
 		if(requireField[0].checked) Template.AddMergeValues.require.set("checked");
 		else Template.AddMergeValues.require.set("");
 		
-		console.log(requireField.checked, requireField[0].checked)
-		
 		//var hideField = getHide(e);
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
@@ -38,8 +36,6 @@ Interpreter.customMethods({
 		Template.AddMergeValues.attribute.set(e);
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
-		
-		console.log("eeeee", Template.AddMergeValues.distinct.get())
 		
 		var card = countCardinality(expr, Session.get("activeElement"))
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
