@@ -367,6 +367,8 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.helper.set("");
 		Template.AddNewAttribute.selectThis.set("");
 		Template.AddNewAttribute.attributeid.set("newAttribute");
+		
+		autoCompletionCleanup();
 
 		$("#add-new-attribute-form").modal("show");
 		return;
@@ -381,7 +383,10 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
 		var selectThis = "";
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") == "(select this)")selectThis = "disabled";
-		Template.AddNewAttribute.selectThis.set(selectThis);		
+		Template.AddNewAttribute.selectThis.set(selectThis);
+
+		autoCompletionCleanup();
+		
 		$("#add-new-attribute-form").modal("show");
 		return;
 	},

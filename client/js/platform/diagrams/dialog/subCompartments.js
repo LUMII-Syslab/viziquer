@@ -71,6 +71,9 @@ Template.multiField.events({
 
 
 	'click .add-multi-field': function(e, templ) {
+		
+		autoCompletionCleanup()
+		
 		e.preventDefault();
 
 		var src = $(e.target);
@@ -90,6 +93,8 @@ Template.multiField.events({
 	},
 
 	'click .edit-multi-field': function(e, templ) {
+		
+		autoCompletionCleanup()
 
 		e.preventDefault();
 

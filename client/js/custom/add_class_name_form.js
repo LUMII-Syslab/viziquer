@@ -1,5 +1,7 @@
 Interpreter.customMethods({
 	AddClassName: function () {
+		
+		autoCompletionCleanup()
 
 		$("#add-class-name-form").modal("show");
 		$('#class-name-field').val('');

@@ -1,6 +1,8 @@
 Interpreter.customMethods({
 	AddUriName: function () {
 
+		autoCompletionCleanup();
+
 		$("#add-uri-form").modal("show");
 		$('#uri-name-field').val('');
 		

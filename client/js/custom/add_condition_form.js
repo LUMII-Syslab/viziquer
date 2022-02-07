@@ -1,5 +1,7 @@
 Interpreter.customMethods({
 	AddCondition: function () {
+		
+		autoCompletionCleanup()
 
 		$("#add-condition-form").modal("show");
 		$('#condition-expression').val('');

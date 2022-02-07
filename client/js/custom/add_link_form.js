@@ -443,6 +443,8 @@ Template.AddLink.events({
 		
 		Template.SelectTargetClass.classes.set(classes);
 		
+		autoCompletionCleanup();
+		
 		$("#class-search")[0].value = "";
 		$('[name=class-list-radio]').removeAttr('checked');
 		$("#select-class-form").modal("show");
@@ -500,6 +502,9 @@ Template.AddLink.events({
 	
 	
 	"click #build-path-button": function() {
+		
+		autoCompletionCleanup()
+		
 		$("#build-path-form").modal("show");
 	},
 

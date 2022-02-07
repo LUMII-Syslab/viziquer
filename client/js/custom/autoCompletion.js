@@ -35,7 +35,7 @@ Interpreter.customMethods({
 		grammarType = "class"
 		const d = new Date();
 		time = d.getTime();
-		symbolTable = await generateSymbolTableAC();
+		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 		await autoCompletion(e);
 	},
 
@@ -43,7 +43,7 @@ Interpreter.customMethods({
 		grammarType = "attribute"
 		const d = new Date();
 		time = d.getTime();
-		symbolTable = await generateSymbolTableAC();
+		if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 		await autoCompletion(e);
 	},
 	
@@ -101,8 +101,8 @@ generateSymbolTableAC = async function() {
 autoCompletionAddCondition = async function(e) {
 	grammarType = "class"
 	const d = new Date();
-		time = d.getTime();
-	symbolTable = await generateSymbolTableAC();
+	time = d.getTime();
+	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
@@ -115,7 +115,7 @@ autoCompletionAddAttribute = async function(e) {
 	grammarType = "attribute"
 	const d = new Date();
 	time = d.getTime();
-	symbolTable = await generateSymbolTableAC();
+	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
@@ -123,19 +123,19 @@ autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	const d = new Date();
 	time = d.getTime();
-	symbolTable = await generateSymbolTableAC();
+	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
 autoCompletionOrderBy = async function(e) {
 	grammarType = "order"
-	symbolTable = await generateSymbolTableAC();
+	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
 autoCompletionGroupBy = async function(e) {
 	grammarType = "group"
-	symbolTable = await generateSymbolTableAC();
+	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
 
@@ -158,7 +158,7 @@ autoCompletion = async function(e) {
 
 		var text = e.originalEvent.target.value;
 		var textBefore = text.substring(0, elem.selectionStart);
-		var continuations = await runCompletionNew(textBefore, text, textBefore.length);
+		var continuations = await runCompletionNew(textBefore, text, textBefore.length, symbolTable);
 
 		if(typeof continuations == "string" && continuations.startsWith("ERROR")){
 			errorMessage(continuations, elem);
@@ -179,6 +179,7 @@ autoCompletionCleanup = function() {
 	// console.log('auto completion cleanup');
 	removeMessage();
 	closeAllLists();
+	symbolTable = null;
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -206,41 +207,36 @@ const isAutocompletionKey = function(e) {
 	return ev.location === 0 && !AUTOCOMPLETE_EXCLUSIONS.includes(ev.key);
 }
 
-async function keyUpHandler(e){
+async function requestAndProcessContinuations(textBefore, text, cursorPosition, symbolTable) {
+	var continuations = await runCompletionNew(textBefore, text, textBefore.length, symbolTable);
 
-	if(e.keyCode === 8){
+	if (typeof continuations == "string" && continuations.startsWith("ERROR")){
+		errorMessage(continuations,  document.activeElement);
+		closeAllLists();
+	}else{
+		autocomplete(document.activeElement, continuations);
+	}
+}
+
+var requestAndProcessContinuationsDebounced = _.debounce(requestAndProcessContinuations, 300);
+
+async function keyUpHandler(e){
+	if (e.keyCode === 8){
 		var m = document.getElementById("message");
 		if(m != null) {
 			removeMessage();
 			var text = e.target.value;
-			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
-			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
-
-			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
-				errorMessage(continuations,  document.activeElement);
-				closeAllLists();
-			}else{
-				autocomplete(document.activeElement, continuations);
-			}
+			requestAndProcessContinuationsDebounced(textBefore, text, textBefore.length, symbolTable);
 		}
 	}
 
-	if(e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9 && e.keyCode !== 27){
+	if (e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9 && e.keyCode !== 27){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
-
 			removeMessage();
 			var text = e.target.value;
-			// var continuations = runCompletion(text, Session.get("activeElement"));
 			var textBefore = text.substring(0, e.target.selectionStart);
-			var continuations = await runCompletionNew(textBefore, text, textBefore.length);
-
-			if(typeof continuations == "string" && continuations.startsWith("ERROR")){
-				errorMessage(continuations,  document.activeElement);
-				closeAllLists();
-			}else{
-				autocomplete(document.activeElement, continuations);
-			}
+			requestAndProcessContinuationsDebounced(textBefore, text, textBefore.length, symbolTable);
 		}
 	}
 }
@@ -250,6 +246,8 @@ function keyDownHandler(e){
 	if (!isAutocompletionActive()) return;
 	const aList = document.getElementById("autocomplete-list");
 	const listItems = aList.getElementsByTagName("div");
+	
+	// console.log("currentFocus", currentFocus, listItems[currentFocus], e.target.value)
 
 	if (e.keyCode === 40) {//arrow down
 		e.preventDefault();
@@ -407,6 +405,7 @@ function removeActive(x) {
 function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document, except the one passed as an argument:*/
     var x = document.getElementsByClassName("autocomplete-items");
+	
     for (var i = 0; i < x.length; i++) {
       if (elmnt != x[i] && elmnt != document.activeElement) {
         x[i].parentNode.removeChild(x[i]);
@@ -532,8 +531,8 @@ function isURI(text) {
   return 0;
 };
 
-runCompletionNew = async function  (text, fullText, cursorPosition){
-	
+runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
+
 	if(grammarType == "className"){
 			
 			/*try {

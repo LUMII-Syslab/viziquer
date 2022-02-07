@@ -329,8 +329,8 @@ vq_grammar_completion_parser = (function() {
         peg$c289 = async function(PathEltOrInverse) {return await pathOrReference(PathEltOrInverse)},
         peg$c290 = async function(Reference) {return await referenceNames(Reference)},
         peg$c291 = async function(Chars_String) {return makeVar(Chars_String)},
-        peg$c292 = async function(INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c293 = async function(INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c292 = async function(INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), type:await resolveType(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
+        peg$c293 = async function(INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), type:await resolveType(makeVar(LName))}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c294 = "[",
         peg$c295 = { type: "literal", value: "[", description: "\"[\"" },
         peg$c296 = "]",
@@ -20818,12 +20818,12 @@ options = arguments[1];
 					await getPropertyAlias(place, 93);
 				}
    			}
-        	async function getPropertyAlias(place, priority){
+        	async function getPropertyAlias(place, priority){	
         		var selected_elem_id = Session.get("activeElement");
         		for (var  key in options["symbol_table"]) {	
         			for (var symbol in options["symbol_table"][key]) {
-        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){
-        					if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);;
+        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){		
+        					if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);
         				}
         			}	
         		}
@@ -20881,10 +20881,11 @@ options = arguments[1];
         	// returns type of the identifier from symbol table. Null if does not exist.
         	async function resolveTypeFromSymbolTable(id) {
             	var context = options.context._id;
-    						
-            	if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
-
-            	var st_row = options.symbol_table[context][id];
+            	// if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+				
+				
+				
+            	var st_row = options.symbol_table[id];
             	if (st_row) {
             		if(st_row.length == 0) return null;
             		if(st_row.length == 1){
@@ -20907,9 +20908,9 @@ options = arguments[1];
             async function resolveKindFromSymbolTable(id) {
             	var context = options.context._id;
 
-            	if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+            	// if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
 
-            	var st_row = options.symbol_table[context][id];
+            	var st_row = options.symbol_table[id];
             	if (st_row) {
             		if(st_row.length == 0) return null;
             		if(st_row.length == 1){
@@ -20942,7 +20943,7 @@ options = arguments[1];
             // string -> idObject
             // returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
             async function resolveTypeFromSchemaForAttributeAndLink(id) {
-            				
+
             	var aorl = await dataShapes.resolvePropertyByName({name: id})
             	// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
             	if(aorl["complite"] == false) return null;
@@ -20960,8 +20961,7 @@ options = arguments[1];
             // string -> idObject
             // returns type of the identifier from schema. Looks everywhere. First in the symbol table,
             // then in schema. Null if does not exist
-            async function resolveType(id) {
-            			  
+            async function resolveType(id) {          			  
             	if(id !== "undefined"){
 					var t=await resolveTypeFromSymbolTable(id);
             		if (!t) {
