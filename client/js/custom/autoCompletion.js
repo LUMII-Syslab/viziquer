@@ -247,7 +247,8 @@ function keyDownHandler(e){
 	const aList = document.getElementById("autocomplete-list");
 	const listItems = aList.getElementsByTagName("div");
 	
-	// console.log("currentFocus", currentFocus, listItems[currentFocus], e.target.value)
+	
+	
 
 	if (e.keyCode === 40) {//arrow down
 		e.preventDefault();
@@ -258,12 +259,18 @@ function keyDownHandler(e){
 		currentFocus--;
 		addActive(listItems);
 	} else if (e.keyCode === 13) { //ENTER
-		e.preventDefault();
-		e.stopPropagation();
-		if (currentFocus === -1) currentFocus = 0;
-		if (currentFocus > -1) {
-			if (listItems) listItems[currentFocus].click();
+		var text = e.target.value;
+		var textBefore = text.substring(0, e.target.selectionStart);
+		var sug = listItems[currentFocus].querySelector('input[name="prefix"]').value + listItems[currentFocus].querySelector('input[name="suggestion"]').value;
+		if(sug.startsWith(textBefore)){
+			e.preventDefault();
+			e.stopPropagation();
+			if (currentFocus === -1) currentFocus = 0;
+			if (currentFocus > -1) {
+				if (listItems) listItems[currentFocus].click();
+			}
 		}
+		
 	} else if (e.keyCode === 9) { //TAB
 		e.preventDefault();
 		if (currentFocus === -1) currentFocus = 0;

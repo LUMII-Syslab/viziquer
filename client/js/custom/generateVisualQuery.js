@@ -726,6 +726,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						"groupValues":false,
 						"exp":bindTable[parsedAttribute]["exp"]
 					}
+					bindTable[parsedAttribute]["seen"] = true;
 
 					for (var clazz in classesTable){
 						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
@@ -1018,9 +1019,9 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	
 	for(var key in variables){	
 		if(typeof variables[key] === 'string' && serviceLabelLang != "" && 
-		(variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined")
+		((variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined")
 		 || (variables[key].endsWith("AltLabel") == true && typeof variableList[variables[key].substring(0, variables[key].length-8)] !== "undefined")
-		 || (variables[key].endsWith("Description") == true && typeof variableList[variables[key].substring(0, variables[key].length-11)] !== "undefined")
+		 || (variables[key].endsWith("Description") == true && typeof variableList[variables[key].substring(0, variables[key].length-11)] !== "undefined"))
 		){
 			var classes = findByVariableName(classesTable, variables[key].substring(0, variables[key].length-5));
 			var addLabel = false;
@@ -1061,6 +1062,25 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 		}
 	}
 	// console.log("attributeTable",attributeTable)
+	
+	//internal binds
+	for(var bind in bindTable){
+		if(typeof bindTable[bind]["seen"] === "undefined"){
+
+			var attributeInfo = {
+						"alias":bindTable[bind]["alias"],
+						"identification":null,
+						"requireValues":false,
+						"isInternal":true,
+						"groupValues":false,
+						"exp":bindTable[bind]["exp"]
+			}
+			for (var clazz in classesTable){
+				classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+				break;
+			}
+		}
+	}
 
 	//internal attributes
 	for(var attribute in attributeTable){
@@ -2641,6 +2661,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	}
 	// type=bind
 	if(where["type"] == "bind"){
+
 		var temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
@@ -2651,13 +2672,17 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		bindTable = temp["bindTable"];
 		viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 		viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
+		
+		var bindExpr = viziQuerExpr["exprString"];
+		if(bindExpr == "" && typeof where["expression"] === "string") bindExpr = "`" + await generateInstanceAlias(where["expression"]);
+		
 		var attributeInfo = {
 			"alias":where["variable"].substring(1),
 			"identification":null,
 			"requireValues":false,
 			"isInternal":false,
 			"groupValues":false,
-			"exp":viziQuerExpr["exprString"]
+			"exp":bindExpr
 		}
 		bindTable[where["variable"].substring(1)] = attributeInfo;
 		
@@ -2666,11 +2691,13 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			for (var attribute in attributes){
 				classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
 				variableList[where["variable"]] = "seen";
+				bindTable[where["variable"].substring(1)]["seen"] = true;
 			}
 		}
 		if(typeof classesTable[viziQuerExpr["exprVariables"][0]] !== 'undefined'){
 			classesTable[viziQuerExpr["exprVariables"][0]] = addAttributeToClass(classesTable[viziQuerExpr["exprVariables"][0]], attributeInfo);
 			variableList[where["variable"]] = "seen";
+			bindTable[where["variable"].substring(1)]["seen"] = true;
 		}
 		
 		// console.log("variableList", variableList);

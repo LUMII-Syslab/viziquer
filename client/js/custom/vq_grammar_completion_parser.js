@@ -20822,9 +20822,11 @@ options = arguments[1];
         		var selected_elem_id = Session.get("activeElement");
         		for (var  key in options["symbol_table"]) {	
         			for (var symbol in options["symbol_table"][key]) {
-        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){		
-        					if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);
-        				}
+        				if(options["symbol_table"][key][symbol]["context"] != selected_elem_id){				
+							if(options["symbol_table"][key][symbol]["upBySubQuery"] == 1 && (typeof options["symbol_table"][key][symbol]["distanceFromClass"] === "undefined" || options["symbol_table"][key][symbol]["distanceFromClass"] <= 1 ))await addContinuation(place, key, priority, false, 3);
+        				} else if(options["symbol_table"][key][symbol]["kind"] !== null && options["symbol_table"][key][symbol]["kind"] == "PROPERTY_ALIAS") {
+							await addContinuation(place, key, priority, false, 3);		
+						}
         			}	
         		}
         	}
@@ -20961,7 +20963,7 @@ options = arguments[1];
             // string -> idObject
             // returns type of the identifier from schema. Looks everywhere. First in the symbol table,
             // then in schema. Null if does not exist
-            async function resolveType(id) {          			  
+            async function resolveType(id) {           			  
             	if(id !== "undefined"){
 					var t=await resolveTypeFromSymbolTable(id);
             		if (!t) {
