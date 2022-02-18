@@ -121,11 +121,15 @@
 			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 			<div class="describe">Double-click an item to start a query from it</div>
             <ol class="dd-list">
-
+			{{#if isWD }}	
+				{{#each instances}}
+				{{> subSchemaInstancesWD}}
+				{{/each}}
+			{{else}}
 				{{#each instances}}
 				{{> subSchemaInstances}}
-				{{/each}}
-
+				{{/each}}			
+			{{/if}}
             </ol>
         </div><!-- dd -->
 	{{else}}
@@ -133,23 +137,16 @@
 	{{/if}}
     </div>
 </template>
+<template name="subSchemaInstancesWD">
+    <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
+        <div class="class-body dd-handle" data-toggle="tooltip" title={{description}} value={{localName}} style="height:45px" >{{localName}} <br> <div class="describe">{{description}}</div> </div>
+    </li>
+
+</template>
 
 <template name="subSchemaInstances">
     <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
-	{{#if ch_count  }}
-		<button class="toggle-tree-button expand" node-id="{{node_id}}"  type="button">Expand</button>
-	{{/if}}	
-
-         <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
         <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
-
-        <ol class="dd-list attributes-list" style="display: {{display}}; " >
-
-            {{#each children}}
-                {{> subTree}}
-            {{/each}}
-
-        </ol>
     </li>
 
 </template>

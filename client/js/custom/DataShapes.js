@@ -13,7 +13,7 @@ const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
 });
 // ***********************************************************************************
 const MAX_ANSWERS = 30;
-const MAX_IND_ANSWERS = 100;
+const MAX_IND_ANSWERS = 50;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
@@ -42,6 +42,8 @@ const callWithPost = async (funcName, data = {}) => {
     }
 }
 
+// https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en
+
 const callWithGet = async (funcName) => {
 	try {
         const schemaServerUrl = await getSchemaServerUrl();
@@ -59,6 +61,21 @@ const callWithGet = async (funcName) => {
     }
 }
 
+const callWithGetWD = async (filter) => {
+	try {
+		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en', {
+			method: 'GET',
+			mode: 'no-cors',
+			cache: 'no-cache'
+		});
+		console.log(response)
+		return await response.json();
+	}
+	catch(err) {
+        console.error(err)
+		return {};
+    }
+}
 // ***********************************************************************************
 // string -> int
 // function checks if the text is uri
@@ -92,7 +109,7 @@ const getPListI = (vq_obj) => {
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
 				pListI.type = link.type;
 				pListI.name = link.name;
-				pListI.uriIndividual = individual;
+				pListI.uriIndividual = dataShapes.getIndividualName(individual);;
 			}
 		}
 		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
@@ -101,7 +118,7 @@ const getPListI = (vq_obj) => {
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
 				pListI.type = link.type;
 				pListI.name = link.name;
-				pListI.uriIndividual = individual;
+				pListI.uriIndividual = dataShapes.getIndividualName(individual);;
 			}
 		}
 	});
@@ -111,6 +128,10 @@ const getPListI = (vq_obj) => {
 const getPList = (vq_obj) => {
 	var pList = {in: [], out: []};
 	var field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
+	_.each(field_list, function(link) {
+		if (link.name !== null && link.name !== undefined && link.name.indexOf('@') != -1)
+			link.name = link.name.substring(0,link.name.indexOf('@'));		
+	})
 	if (field_list.length > 0) pList.out = field_list;
 
 	var link_list =  vq_obj.getLinks();
@@ -159,7 +180,7 @@ const findElementDataForClass = (vq_obj) => {
 	var params = {}
 	var individual =  vq_obj.getInstanceAlias();
 	if (individual !== null && individual !== undefined && isURI(individual) != 0) 
-		params.uriIndividual = individual;
+		params.uriIndividual = dataShapes.getIndividualName(individual);;
 
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
@@ -171,7 +192,7 @@ const findElementDataForProperty = (vq_obj) => {
 	var individual =  vq_obj.getInstanceAlias();
 	var class_name = vq_obj.getName();
 	if (individual !== null && individual !== undefined && isURI(individual) != 0)
-		params.uriIndividual = individual;
+		params.uriIndividual = dataShapes.getIndividualName(individual);;
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
@@ -238,6 +259,28 @@ const classes = [
 'dbo:Agent', 
 'dbo:TimePeriod', 
 'owl:Thing', 
+'foaf:Document', 
+'skos:Concept'
+];
+
+const classesWD = [
+'All classes',
+'[scholarly article (Q13442814)]', 
+'[Wikimedia category (Q4167836)]', 
+'[star (Q523)]', 
+'[galaxy (Q318)]',
+'[street (Q79007)]', 
+'[painting (Q3305213)]', 
+'[mountain (Q8502)]', 
+'[collection (Q2668072)]', 
+'[family name (Q101352)]', 
+'[river (Q4022)]', 
+'[hill (Q54050)]', 
+'[building (Q41176)]', 
+'[album (Q482994)]', 
+'[film (Q11424)]', 
+'[lake (Q23397)]', 
+'[literary work (Q7725634)]', 
 'foaf:Document', 
 'skos:Concept'
 ];
@@ -343,15 +386,18 @@ dataShapes = {
 						var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['owl:sameAs', 'prov:wasDerivedFrom']);
 						this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
 					}
-					
-					if (schema_info.profile_data.schema !== 'dbpedia' && !this.schema.hide_individuals) {
+					else if (this.schema.schemaType === 'wikidata') {
+						this.schema.tree.class = 'All classes';
+						this.schema.tree.classes = classesWD;
+					}
+					else if (!this.schema.hide_individuals) {
 						var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
 						var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 						this.schema.tree.class = c_list[0];
 						this.schema.tree.classes = c_list;
 					}
 					
-					if (schema_info.schema_name === 'wikidata')
+					if (this.schema.schemaType === 'wikidata')
 						this.schema.simple_prompt = true;
 					
 				}
@@ -551,6 +597,9 @@ dataShapes = {
 		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
+		if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
+			params.filter = '';  
+
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForIndividual(vq_obj);
@@ -579,6 +628,11 @@ dataShapes = {
 			rr = [];
 			
 		return rr;
+	},
+	getTreeIndividualsAll : async function(filter) {
+		var rr = await callWithGetWD(filter);
+		console.log(rr)
+		
 	},
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")
@@ -624,6 +678,15 @@ dataShapes = {
 		}
 		return rr;
 	},
+	resolveIndividualByName : async function(params = {}) {
+		//dataShapes.resolveIndividualByName({name: 'http://www.wikidata.org/entity/Q34770'})
+		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
+		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'})
+		
+		var rr;
+		rr = await this.callServerFunction("resolveIndividualByName", {main: params});
+		return rr;
+	},
 	printLog : function() {
 		if ( this.schema.log.length > 0 ) {
 			var link = document.createElement("a"); 
@@ -645,6 +708,16 @@ dataShapes = {
 		this.schema.log = [];
 		this.schema.fullLog = [];
 	},
+	getIndividualName: function(localName) {
+		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
+		if ( localName.indexOf('[') != -1){
+			const prefix = localName.substring(0,localName.indexOf(':'));  // TODO padomāt, vai nebūs arī bez prafiksa
+			const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
+			return `${prefix}:${name}`;
+		}
+		else
+			return localName;
+	}
 };
 
 // ***********************************************************************************

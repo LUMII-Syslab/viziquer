@@ -567,7 +567,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 				vq_obj = new VQ_Element(selected_elem_id);
 				var individual =  vq_obj.getInstanceAlias();
 				if (individual !== null && individual !== undefined && isURI(individual) != 0) 
-					params.uriIndividual = individual;
+					params.uriIndividual = dataShapes.getIndividualName(individual);
 				//params.onlyPropsInSchema =  true;  // Šis dod tikai galvenās klases un strādā ātrāk.
 			}			
 			
@@ -797,7 +797,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 		var inst = await dataShapes.getIndividuals(params, act_el); 
 
 		if (fullText != "" ){
-			if ( inst.length === 0 || inst.length > 0 && inst[0] !== "dbr:"+fullText )
+			if ( inst.length === 0 || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schemaType == 'dbpedia')
 				c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
 		}
 			

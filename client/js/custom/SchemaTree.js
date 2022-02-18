@@ -13,6 +13,7 @@ Template.schemaInstances.Class = new ReactiveVar("");
 Template.schemaInstances.Classes = new ReactiveVar("");
 Template.schemaInstances.F3 = new ReactiveVar("");
 Template.schemaInstances.showI = new ReactiveVar("");
+Template.schemaInstances.isWD = new ReactiveVar("");
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
@@ -217,6 +218,7 @@ async function  useFilterI (plus = 0) {
 	//var text = $('#filter_text3').val();
 	if (Template.schemaInstances.showI.get()) {
 		var text = Template.schemaInstances.F3.get();
+		var instances;
 		if ( text.indexOf(':') > -1 ) {
 			text = text.substring(text.indexOf(':')+1, text.length);
 			Template.schemaInstances.F3.set(text);
@@ -231,23 +233,29 @@ async function  useFilterI (plus = 0) {
 		//if (!className.includes('All classes') || text != '') {
 			//Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
 			
-			if ( text != '' ) {
+			if ( text != '' ) { //&& dataShapes.schema.schemaType !== 'wikidata') {
 				params.individualMode = 'Direct';
 				var iFull = await dataShapes.getTreeIndividuals(params, className);  
-				var instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
-				instances.push({ch_count: 0, children: [], data_id: "...", localName: "Waiting full answer..."});
+				if (dataShapes.schema.schemaType === 'wikidata')
+					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
+				else
+					instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
+
+				instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});
 				Template.schemaInstances.Instances.set(instances);
 			}
 			else
-				Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
+				Template.schemaInstances.Instances.set([{ data_id: "wait", localName: "Waiting answer...", description: ''}]);
 			
 			if ( text == '' && className.includes('All classes'))
-				params.filter = 'one'; // Noklusētais filtrs, lai ir kaut kas puslīdz sakarīgs
+				params.filter = 'First'; // Noklusētais filtrs, lai ir kaut kas puslīdz sakarīgs (bija 'one')
 			
 			params.individualMode = 'All';
 			iFull = await dataShapes.getTreeIndividuals(params, className);  
-
-			instances = _.map(iFull, function(p) {return {ch_count: 0, children: [], data_id: p, localName: p}});
+			if (dataShapes.schema.schemaType === 'wikidata')
+				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}}); 
+			else
+				instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
 			//if (iFull.length === dataShapes.schema.tree.countI)
 			//	instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
 			
@@ -409,6 +417,7 @@ Template.schemaTree.events({
 		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
+		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
 		await setBC()
 		await useFilterI ();	
@@ -452,6 +461,7 @@ Template.schemaInstances.rendered = async function() {
 	Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
 	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 	Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
+	Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
 	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
 	await setBC();
 	await useFilterI();
@@ -619,6 +629,9 @@ Template.schemaInstances.helpers({
 	},
 	showI: function() {
 		return Template.schemaInstances.showI.get();
+	},
+	isWD: function() {
+		return Template.schemaInstances.isWD.get();
 	},
 });
 
