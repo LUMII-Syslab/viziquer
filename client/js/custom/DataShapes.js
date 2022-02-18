@@ -63,7 +63,7 @@ const callWithGet = async (funcName) => {
 
 const callWithGetWD = async (filter) => {
 	try {
-		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en', {
+		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en&format=json', {
 			method: 'GET',
 			mode: 'no-cors',
 			cache: 'no-cache'
