@@ -63,12 +63,16 @@ const callWithGet = async (funcName) => {
 
 const callWithGetWD = async (filter) => {
 	try {
-		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en&format=json', {
+		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en&format=json&origin=*', {
 			method: 'GET',
-			mode: 'no-cors',
+			// mode: 'no-cors',
 			cache: 'no-cache'
 		});
-		console.log(response)
+		console.log(response);
+		if (!response.ok) {
+			console.log('neveiksmīgs wd izsaukums');
+			return {};
+		}
 		return await response.json();
 	}
 	catch(err) {
