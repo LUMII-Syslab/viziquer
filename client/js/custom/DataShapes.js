@@ -42,8 +42,6 @@ const callWithPost = async (funcName, data = {}) => {
     }
 }
 
-// https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en
-
 const callWithGet = async (funcName) => {
 	try {
         const schemaServerUrl = await getSchemaServerUrl();
@@ -60,15 +58,16 @@ const callWithGet = async (funcName) => {
 		return {};
     }
 }
-
-const callWithGetWD = async (filter) => {
+//'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Q633795&language=en&limit=50&format=json&origin=*'
+const callWithGetWD = async (filter, limit) => {
+	var callText = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${filter}&language=en&limit=${limit}&format=json&origin=*`;
 	try {
-		const response = await window.fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search=riga&language=en&format=json&origin=*', {
+		const response = await window.fetch(callText, {
 			method: 'GET',
 			// mode: 'no-cors',
 			cache: 'no-cache'
 		});
-		console.log(response);
+		//console.log(response);
 		if (!response.ok) {
 			console.log('neveiksmīgs wd izsaukums');
 			return {};
@@ -633,10 +632,18 @@ dataShapes = {
 			
 		return rr;
 	},
-	getTreeIndividualsAll : async function(filter) {
-		var rr = await callWithGetWD(filter);
-		console.log(rr)
-		
+	getTreeIndividualsWD : async function(filter) {
+		var rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
+		if (rr.success == 1) {
+			var rez = _.map(rr.search, function(p) {
+				// TODO jāpaskatās, kāds īsti ir ns
+				var localName = `wd:[${p.label} (${p.id})]`;				
+				return {localName:localName , description: p.description}
+			});
+			return rez;
+		}
+		else
+			return [];
 	},
 	resolveClassByName : async function(params = {}) {
 		// *** console.log("------------resolveClassByName---"+ params.name +"---------------")

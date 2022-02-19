@@ -215,52 +215,74 @@ async function  useFilterP (plus = 0) {
 }
 
 async function  useFilterI (plus = 0) {
-	//var text = $('#filter_text3').val();
+
 	if (Template.schemaInstances.showI.get()) {
 		var text = Template.schemaInstances.F3.get();
 		var instances;
+		var iFull;
 		if ( text.indexOf(':') > -1 ) {
 			text = text.substring(text.indexOf(':')+1, text.length);
 			Template.schemaInstances.F3.set(text);
 		}
 		dataShapes.schema.tree.filterI = text;
 		var params = { limit: dataShapes.schema.tree.countI, filter:text};
-		//var className = $("#class").val();
 		var className = Template.schemaInstances.Class.get();
 
 		dataShapes.schema.tree.class = className;
 		
-		//if (!className.includes('All classes') || text != '') {
-			//Template.schemaInstances.Instances.set([{ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."}]);
-			
-			if ( text != '' ) { //&& dataShapes.schema.schemaType !== 'wikidata') {
+		if (className.includes('All classes')) {
+			if ( text == '' ) {
+				params.filter = 'First';
+				text = 'First';
+			}
+					
+			if (dataShapes.schema.schemaType === 'wikidata') {
+				iFull = await dataShapes.getTreeIndividualsWD(text);
+				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
+				Template.schemaInstances.Instances.set(instances);	
+			}
+			else {
 				params.individualMode = 'Direct';
-				var iFull = await dataShapes.getTreeIndividuals(params, className);  
-				if (dataShapes.schema.schemaType === 'wikidata')
+				iFull = await dataShapes.getTreeIndividuals(params, className);  
+				instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
+				instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});	
+				Template.schemaInstances.Instances.set(instances);
+				params.individualMode = 'All';
+				iFull = await dataShapes.getTreeIndividuals(params, className);  
+				instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
+				Template.schemaInstances.Instances.set(instances);	
+			}
+		}
+		else {
+			if ( text != '' ) { //&& dataShapes.schema.schemaType !== 'wikidata') {
+				if ( dataShapes.schema.schemaType === 'wikidata') {
+					params.individualMode = 'Direct';
+					iFull = await dataShapes.getTreeIndividuals(params, className);
+					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
+					Template.schemaInstances.Instances.set(instances);
+				}
+				else {
+					params.individualMode = 'Direct';
+					iFull = await dataShapes.getTreeIndividuals(params, className);  
+					instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
+					instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});	
+					Template.schemaInstances.Instances.set(instances);
+					params.individualMode = 'All';
+					iFull = await dataShapes.getTreeIndividuals(params, className);  
+					instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
+					Template.schemaInstances.Instances.set(instances);	
+				}
+			}
+			else {				
+				Template.schemaInstances.Instances.set([{ data_id: "wait", localName: "Waiting answer...", description: ''}]);
+				iFull = await dataShapes.getTreeIndividuals(params, className);
+				if ( dataShapes.schema.schemaType === 'wikidata') 
 					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
 				else
-					instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
-
-				instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});
+					instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
 				Template.schemaInstances.Instances.set(instances);
 			}
-			else
-				Template.schemaInstances.Instances.set([{ data_id: "wait", localName: "Waiting answer...", description: ''}]);
-			
-			if ( text == '' && className.includes('All classes'))
-				params.filter = 'First'; // Noklusētais filtrs, lai ir kaut kas puslīdz sakarīgs (bija 'one')
-			
-			params.individualMode = 'All';
-			iFull = await dataShapes.getTreeIndividuals(params, className);  
-			if (dataShapes.schema.schemaType === 'wikidata')
-				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}}); 
-			else
-				instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
-			//if (iFull.length === dataShapes.schema.tree.countI)
-			//	instances.push({ch_count: 0, children: [], data_id: "...", localName: "More ..."});
-			
-			Template.schemaInstances.Instances.set(instances);
-		// }
+		}
 	}
 }
 
