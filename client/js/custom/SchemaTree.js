@@ -227,6 +227,8 @@ async function  useFilterI (plus = 0) {
 		dataShapes.schema.tree.filterI = text;
 		var params = { limit: dataShapes.schema.tree.countI, filter:text};
 		var className = Template.schemaInstances.Class.get();
+		if ( dataShapes.schema.schemaType === 'wikidata') 
+			className = 'All classes';
 
 		dataShapes.schema.tree.class = className;
 		

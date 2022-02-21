@@ -203,10 +203,12 @@ const findElementDataForProperty = (vq_obj) => {
 	//if (dataShapes.schema.use_pp_rels) 
 	pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
-
-	var pListI = getPListI(vq_obj);
-	if ( pListI.type != undefined) params.pListI = pListI;
-	 
+	
+	if (dataShapes.schema.schemaType === 'wikidata') {
+		var pListI = getPListI(vq_obj);
+		if ( pListI.type != undefined) params.pListI = pListI;
+	}
+	
 	return params;
 }
 
@@ -219,8 +221,10 @@ const findElementDataForIndividual = (vq_obj) => {
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	var pListI = getPListI(vq_obj);
-	if ( pListI.type != undefined) params.pListI = pListI;
+	if (dataShapes.schema.schemaType === 'wikidata') {
+		var pListI = getPListI(vq_obj);
+		if ( pListI.type != undefined) params.pListI = pListI;
+	}
 	
 	return params;
 }
@@ -620,7 +624,6 @@ dataShapes = {
 	},
 	getTreeIndividuals : async function(params = {}, className) {
 		// *** console.log("------------getTreeIndividuals ------------------")
-		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr = [];
 		var allParams = {main: params, element:{className: className}};
 		

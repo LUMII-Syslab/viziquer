@@ -106,14 +106,17 @@
     <div class="col-sm-12">
 	{{#if showI }}
         <div class="dd" id="nestable">
-			<div class="col-sm-12">
-				<select class="form-control" id="class" >
-					{{#each classes}}
-						<option style="height:30px" {{selected}} value="{{name}}">{{name}}</option>
-					{{/each}}
-				</select>
-			</div>
-			<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
+			{{#if isWD }}
+			{{else}}
+				<div class="col-sm-12">
+					<select class="form-control" id="class" >
+						{{#each classes}}
+							<option style="height:30px" {{selected}} value="{{name}}">{{name}}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
+			{{/if}}
 			<input id="filter_text3" type="text" class="form-control" autocomplete="off" value={{f3}}>
 			{{#if isBigClass  }}
 				<div class="describe">Large class selected, results may come very slowly</div>
