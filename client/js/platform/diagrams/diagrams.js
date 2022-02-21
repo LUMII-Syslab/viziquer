@@ -745,6 +745,7 @@ Template.ontologySettings.endpoint = new ReactiveVar("");
 Template.ontologySettings.queryEngineType = new ReactiveVar("");
 Template.ontologySettings.directClassMembershipRole = new ReactiveVar("");
 Template.ontologySettings.indirectClassMembershipRole = new ReactiveVar("");
+Template.ontologySettings.graphs = new ReactiveVar([]);
 
 Template.ontologySettings.helpers({
 
@@ -768,7 +769,24 @@ Template.ontologySettings.onDestroyed(function() {
 Template.ontologySettings.events({
 
 	'click #ok-ontology-settings' : async function(e, templ) {
+		
+		
+		var myRows = [];
+		var $headers = $("th");
+		var $rows = $("tbody tr").each(function(index) {
+		  $cells = $(this).find("td");
+		  myRows[index] = {};
+		  $cells.each(function(cellIndex) {
+			  if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){
+				  myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+			  }
+		  });
+		  myRows[index]["index"] = index;
+		});
 
+		// console.log(JSON.stringify(myRows));
+		
+		
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 					uri: $("#ontology-uri").val(),
@@ -789,7 +807,8 @@ Template.ontologySettings.events({
 					showGraphServiceCompartments: $("#show-graph-service-compartments").is(":checked"),
 					enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
-					endpointPassword: $("#endpoint-password").val()
+					endpointPassword: $("#endpoint-password").val(),
+					graphsInstructions: JSON.stringify(myRows)
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
@@ -841,6 +860,7 @@ Template.ontologySettings.events({
 	 Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
 	 Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 	 Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
+	 Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
 
 	},
 
@@ -898,6 +918,45 @@ Template.ontologySettings.events({
 			Template.ontologySettings.indirectClassMembershipRole.set("");
 		}
 	},
+	
+	//adds context menu item
+	'click #add-graph-menu-item': function(e) {
+		var graphs = Template.ontologySettings.graphs.get();
+		graphs.push({index: graphs.length, Instruction: "", Graph: ""});
+		Template.ontologySettings.graphs.set(graphs);
+	},
+
+	//removes context menu item
+	'click .remove-graph-menu-item': function(e) {
+		
+		var index = e.target.parentElement.parentElement.parentElement.rowIndex;
+		if(typeof index === "undefined") index = e.target.parentElement.parentElement.parentElement.parentElement.rowIndex;
+		index--;
+		
+		var myRows = [];
+		var $headers = $("th");
+		var $rows = $("tbody tr").each(function(index) {
+		  $cells = $(this).find("td");
+		  myRows[index] = {};
+		  $cells.each(function(cellIndex) {
+			  if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){
+				  myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
+			  }
+		  });
+		  myRows[index]["index"] = index;
+		});
+		
+		var graphsT = [];
+		var i = 0;
+		for(var graph in myRows){
+			if(myRows[graph]["index"] !== index) {
+				graphsT.push({index:i, Instruction:myRows[graph]["Instruction"], Graph:myRows[graph]["Graph"]})
+				i++;
+			}
+		}
+		
+		Template.ontologySettings.graphs.set(graphsT);
+	},
 
 });
 
@@ -912,6 +971,9 @@ Template.ontologySettings.rendered = async function() {
 		Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
 		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
+		
+		if(typeof proj.graphsInstructions !== "undefined") Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+		else Template.ontologySettings.graphs.set([]);
 	}
 }
 
@@ -1052,6 +1114,14 @@ Template.ontologySettings.helpers({
 		if (proj) {
 			return (proj.showGraphServiceCompartments=="true");
 		}
+	},
+	graphs: function() {
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		// if (proj) {
+			// return (proj.showGraphServiceCompartments=="true");
+		// }
+		return Template.ontologySettings.graphs.get();
+		// return [{instruction:"dbpedia", graph:"http://dbpedia.org"}, {instruction:"wikidata", graph:"http://wikidata.org"}]
 	},
 	enableWikibaseLabelServices: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});

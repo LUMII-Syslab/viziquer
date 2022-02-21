@@ -2754,6 +2754,10 @@ VQ_Element.prototype = {
   isGlobalSubQuery: function() {
     return this.getCompartmentValue("Global Subquery Link")=="true"
   },
+  // determines whether the link is graph to contents link
+  isGraphToContents: function() {
+    return this.getCompartmentValue("Graph to contents")=="true"
+  },
   // determines whether the link is PLAIN
   isPlain: function() {
     return !(this.isSubQuery() || this.isGlobalSubQuery() || this.isConditional())
@@ -2779,13 +2783,13 @@ VQ_Element.prototype = {
   isRequired: function() {
     return this.getType()=="REQUIRED"
   },
-  // Gets link's nesting (query) type: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
+  // Gets link's nesting (query) type: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION,GRAPH
   getNestingType: function() {
     return this.getCompartmentValueValue("NestingType");
   },
   // string  -->
   setNestingType: function(type) {
-    var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Subquery","GLOBAL_SUBQUERY":"Subquery, Global", "CONDITION":"Non-structure (extra join) link"};
+    var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Subquery","GLOBAL_SUBQUERY":"Subquery, Global", "CONDITION":"Non-structure (extra join) link", "GRAPH":"Graph to contents"};
     this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
     this.setLinkQueryType(type);
   },
@@ -3361,18 +3365,20 @@ VQ_Element.prototype = {
 		 }
 	},
 
-	// sets link type. Possible values: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
+	// sets link type. Possible values: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION, GRAPH
 	setLinkQueryType: function(value) {
 		 if (this.isLink()) {
         // By default link is PLAIN
 				var setSub = "false";
 				var setGSub = "false";
 				var setCond = "false";
+				var setGraph = "false";
         var root_dir =this.getRootDirection();
 				if (value=="SUBQUERY") {
 					  setSub = "true";
 						setGSub = "false";
 						setCond = "false";
+						setGraph = "false";
 
 						if (root_dir=="start") {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
@@ -3424,6 +3430,7 @@ VQ_Element.prototype = {
 					  setSub = "false";
 						setGSub = "true";
 						setCond = "false";
+						setGraph = "false";
 
 						if (root_dir=="start") {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
@@ -3451,6 +3458,7 @@ VQ_Element.prototype = {
 				} else if (value=="CONDITION") {
 					  setSub = "false";
 						setGSub = "false";
+						setGraph = "false";
 						setCond = "true";
 						this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Diamond"},
 																 {attrName:"startShapeStyle.fill",attrValue:"#ffffff"},
@@ -3464,7 +3472,36 @@ VQ_Element.prototype = {
 						if (this.isOptional()) {
 									this.setLinkType("REQUIRED");
 						};
-				} else {
+				} else if (value=="GRAPH") {
+					  setSub = "false";
+						setGSub = "false";
+						setCond = "false";
+						setGraph = "true";
+
+						if (root_dir=="start") {
+							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Diamond"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"startShapeStyle.radius",attrValue:18},
+																		{attrName:"endShapeStyle.shape",attrValue:"None"},
+																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																	  {attrName:"endShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:5},
+																	]);
+
+						} else if (root_dir=="end") {
+							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Diamond"},
+																		{attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"endShapeStyle.radius",attrValue:18},
+																		{attrName:"startShapeStyle.shape",attrValue:"None"},
+																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
+																		{attrName:"startShapeStyle.radius",attrValue:8},
+																		{attrName:"elementStyle.strokeWidth",attrValue:5},
+																	]);
+						};
+						//if (this.isNegation()) {
+						//	this.setLinkType("REQUIRED");
+						//};
+				}  else {
 					this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"None"},
 															 {attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 															 {attrName:"startShapeStyle.radius",attrValue:8},
@@ -3478,6 +3515,7 @@ VQ_Element.prototype = {
 			  this.setCompartmentValue("Subquery Link",setSub," ");
 				this.setCompartmentValue("Global Subquery Link",setGSub," ");
 				this.setCompartmentValue("Condition Link",setCond," ");
+				this.setCompartmentValue("Graph to contents",setGraph," ");
 		 }
 	},
 

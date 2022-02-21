@@ -794,7 +794,8 @@ vq_variable_grammar_parser = (function() {
 
     			
     			async function checkIfVariable(Variable) {
-    				var v=makeVar(Variable)
+    				
+					var v=makeVar(Variable)
     				if(await resolveType(v) == null ) return v.replace(/-/g, " - ");
     				return Variable;
     			};

@@ -15425,28 +15425,21 @@ vq_grammar_parser = (function() {
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
     			async function resolveTypeFromSchemaForAttributeAndLink(id) {
-    				if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
-						id = "wdt:"+id;
-					}
+    				// if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						// id = "wdt:"+id;
+					// }
 
-    				var aorl = await dataShapes.resolvePropertyByName({name: id})
-    				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-    				if(aorl["complite"] == false) return null;
-    				var res = aorl["data"][0];
-    				if(res){
-    					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
-    					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
-    					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
-    					return res;
-    				}
-    				// if (!res) { 
-    					// res = options.schema.resolveLinkByName(id); 
-    					// if (res) res["property_type"] = "OBJECT_PROPERTY"
+    				// var aorl = await dataShapes.resolvePropertyByName({name: id})
+
+    				// if(aorl["complite"] == false) return null;
+    				// var res = aorl["data"][0];
+    				// if(res){
+    					// if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+    					// else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+    					// else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
+    					// return res;
     				// }
-    				// else {
-    						// res["parentType"] = aorl[1];
-    						// res["property_type"] = "DATA_PROPERTY";
-    				// };
+    				
     				
     				return null
     			};
@@ -15455,48 +15448,48 @@ vq_grammar_parser = (function() {
     			// then in schema. Null if does not exist
     			async function resolveType(id) {
     			  
-    			  if(id !== "undefined"){
-    			  var t=await resolveTypeFromSymbolTable(id);
-    				if (!t) {
-    					if (options.exprType) {
-    					  t= await resolveTypeFromSchemaForClass(id);
-    					  if (!t) {
-    						  t=await resolveTypeFromSchemaForAttributeAndLink(id)
-    					  }
-    					} else {
-    					  t=await resolveTypeFromSchemaForAttributeAndLink(id);
-    					  if (!t) {
-    						  t=await resolveTypeFromSchemaForClass(id)
-    					  }
-    					}
+    			  // if(id !== "undefined"){
+    			  // var t=await resolveTypeFromSymbolTable(id);
+    				// if (!t) {
+    					// if (options.exprType) {
+    					  // t= await resolveTypeFromSchemaForClass(id);
+    					  // if (!t) {
+    						  // t=await resolveTypeFromSchemaForAttributeAndLink(id)
+    					  // }
+    					// } else {
+    					  // t=await resolveTypeFromSchemaForAttributeAndLink(id);
+    					  // if (!t) {
+    						  // t=await resolveTypeFromSchemaForClass(id)
+    					  // }
+    					// }
 
-    				}
-    			  return t;}
+    				// }
+    			  // return t;}
     			  return null;
     			};
               //string -> string
         			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
          	   async function resolveKind(id) {
-    				if(id !== "undefined"){
-        				    var k=await resolveKindFromSymbolTable(id);
-        						if (!k) {
-        						  if (options.exprType) {
-        							  if (await resolveTypeFromSchemaForClass(id)) {
-        									 k="CLASS_NAME";
-        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-        									 k="PROPERTY_NAME";
-        							  }
-        							} else {
-        							  if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-        									k="PROPERTY_NAME";
-        							  } else if (await resolveTypeFromSchemaForClass(id)) {
-        									k="CLASS_NAME";
-        							 }
-        							}
+    				// if(id !== "undefined"){
+        				    // var k=await resolveKindFromSymbolTable(id);
+        						// if (!k) {
+        						  // if (options.exprType) {
+        							  // if (await resolveTypeFromSchemaForClass(id)) {
+        									 // k="CLASS_NAME";
+        							  // } else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+        									 // k="PROPERTY_NAME";
+        							  // }
+        							// } else {
+        							  // if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
+        									// k="PROPERTY_NAME";
+        							  // } else if (await resolveTypeFromSchemaForClass(id)) {
+        									// k="CLASS_NAME";
+        							 // }
+        							// }
 
-        					  }
-        						return k;
-    				}
+        					  // }
+        						// return k;
+    				// }
     				return null
         		  };
     			function pathOrReference(o) {
@@ -15504,77 +15497,77 @@ vq_grammar_parser = (function() {
             // It does not make sense calculate this every time function is called, but ...
     				// console.log("oooooooooooo", o, options.symbol_table, options.symbol_table[options.context._id])
 
-    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
-    					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "BIND_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
-    				){
+    				// if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
+    					// (o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "BIND_ALIAS" ||
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
+    				// ){
 
-    					return {Reference:
-    						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    						type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    					var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
-    					Substring : o["Substring"],
-    					FunctionBETWEEN : o["FunctionBETWEEN"],
-    					FunctionLike : o["FunctionLike"]
-    					}
+    					// return {Reference:
+    						// {name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    						// type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    					// var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+    					// Substring : o["Substring"],
+    					// FunctionBETWEEN : o["FunctionBETWEEN"],
+    					// FunctionLike : o["FunctionLike"]
+    					// }
 
-    				}
+    				// }
     				
-    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] === "undefined" 
-    				){
-    					var simbolTable = options.symbol_table[options.context._id][o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"]];
+    				// if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
+    					// o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
+    					// typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] === "undefined" 
+    				// ){
+    					// var simbolTable = options.symbol_table[options.context._id][o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"]];
 
-    					for (var symbol in simbolTable) {
-    						if(simbolTable[symbol]["kind"] == "CLASS_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "BIND_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "PROPERTY_ALIAS"){
+    					// for (var symbol in simbolTable) {
+    						// if(simbolTable[symbol]["kind"] == "CLASS_ALIAS" ||
+    						// simbolTable[symbol]["kind"] == "BIND_ALIAS" ||
+    						// simbolTable[symbol]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
+    						// simbolTable[symbol]["kind"] == "PROPERTY_ALIAS"){
 								
-								if(typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"] !== "undefined"){
-									return {Reference:
-    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"]["var"],
-    								Substring : o["Substring"],
-    								FunctionBETWEEN : o["FunctionBETWEEN"],
-    								FunctionLike : o["FunctionLike"]
-    							}
-								}
+								// if(typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"] !== "undefined"){
+									// return {Reference:
+    								// {name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    								// type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    								// var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"]["var"],
+    								// Substring : o["Substring"],
+    								// FunctionBETWEEN : o["FunctionBETWEEN"],
+    								// FunctionLike : o["FunctionLike"]
+    							// }
+								// }
 								
-    							return {Reference:
-    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
-    								Substring : o["Substring"],
-    								FunctionBETWEEN : o["FunctionBETWEEN"],
-    								FunctionLike : o["FunctionLike"]
-    							}
-    						}
-    					}
+    							// return {Reference:
+    								// {name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    								// type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    								// var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+    								// Substring : o["Substring"],
+    								// FunctionBETWEEN : o["FunctionBETWEEN"],
+    								// FunctionLike : o["FunctionLike"]
+    							// }
+    						// }
+    					// }
     					
-    				}
+    				// }
 
     				return o;
     			};

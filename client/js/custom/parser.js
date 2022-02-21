@@ -760,6 +760,11 @@ function transformIriForValues(expressionTable){
 			delete expressionTable[key];
 		}
 		
+		if(key == "var"){
+			expressionTable["varValues"] = expressionTable[key];
+			delete expressionTable[key];
+		}
+		
 		if(typeof expressionTable[key] == 'object'){
 			transformIriForValues(expressionTable[key]);
 		}
@@ -1349,7 +1354,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					var path = getPathFullGrammar(expressionTable[key]["ReferencePath"]);
 					//var variable = setVariableName(path["variable"]["var"]["name"]);
 					var variable = setVariableName(path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, path["variable"]["var"])
-					
 					if(generateTriples == true && path["variable"]["var"]['type'] != null) {
 						var inFilter = false;
 						//if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isvar"] != true) inFilter = true;
@@ -1421,8 +1425,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		//PathFull
 		if(key  == "PrimaryExpression" && typeof expressionTable[key]["PathProperty"] !== 'undefined'){
 			var path = getPathFullGrammar(expressionTable[key]["PathProperty"]);
-			
-			console.log("PPPPPPPPPPPPPP", path);
 			
 			if(path["isPath"] != true && parseType != "condition"){
 				
@@ -1540,7 +1542,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								applyExistsToFilter = true;
 							}
 							var variable = setVariableName(variableStructure["var"]["name"], alias, variableStructure["var"], generateNewName)
-							
+	
 							variableTable.push("?" + variable);
 							if(generateTriples == true && variableStructure["var"]['type'] != null && path != null) {
 								var inFilter = false;
@@ -1625,6 +1627,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				else{
 				
 					var variable = setVariableName(substringvar["name"], alias, substringvar);
+
 					variableTable.push("?" + variable);
 					if(generateTriples == true && substringvar['type'] != null && path != null) {
 						var inFilter = false;
@@ -1848,11 +1851,18 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			}
 			visited = 1;
 		}
-		 
+		
+		if(key == "varValues") {
+			if(typeof expressionTable[key]["type"] !== "undefined" && expressionTable[key]["type"] != null){
+				SPARQLstring = SPARQLstring + expressionTable[key]["type"]["prefix"] + ":" + expressionTable[key]["type"]["local_name"];
+			} else {
+				SPARQLstring = SPARQLstring + expressionTable[key]["name"];
+			}
+		}
 		if(key == "var") {			
 			var varName 
 			// if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[[") !== -1){
-			if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[") !== -1){
+			if((alias == null || alias == "") && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]["kind"] != "PROPERTY_ALIAS" && expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[") !== -1){
 				var textPart = expressionTable[key]['type']['display_name'].substring(1);
 				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
 				else textPart = textPart.substring(0, textPart.length - 1);
@@ -1905,6 +1915,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							
 				if(variableToUse == null && expressionTable[key]["ref"] == null) variable = setVariableName(varName, alias, expressionTable[key]);
 				else variable = variableToUse;
+
 				if(variable == null) variable = variableToUse;
 				variable = variable.replace("/", "_")
 				SPARQLstring = SPARQLstring + "?" + variable;
@@ -2668,6 +2679,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								if(knownNamespaces[varName.substring(0,varName.indexOf(":")+1)] != null) prefixTable[varName.substring(0, varName.indexOf(":")+1)] = "<"+ knownNamespaces[varName.substring(0, varName.indexOf(":")+1)]+">";
 								if(varName.indexOf(":") != -1) varName = varName.substring(varName.indexOf(":")+1);
 								varName = setVariableName(varName, null,variable);
+
 								var inFilter = true;
 								if(isSimpleFilter) {
 									tripleTable.push({"var":"?"+varName, "prefixedName":variable["name"], "object":className, "inFilter":inFilter});
@@ -2773,6 +2785,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 									SPARQLstring = SPARQLstring  + valueString; 
 								} else if(variable["type"] != null){
 									var name = setVariableName(expression["PrefixedName"]["Name"], alias, variable);
+
 									var namespace = variable["type"]["Namespace"]
 									prefixTable[getPrefix(variable["type"]["prefix"]) + ":"] = "<"+namespace+">"
 									// prefixTable[getPrefix(variable["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(variable["type"]["prefix"])+":"]+">";
@@ -2894,6 +2907,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							var varName = variable["name"];
 							varName = setVariableName(varName, null,variable);
+
 							if(isSimpleFilter && typeof variable["type"] !== 'undefined' && variable["type"] != null) {
 								
 								var namespace = variable["type"]["Namespace"]
@@ -3591,7 +3605,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			}
 			
 			expressionTable[key] = transformIriForValues(expressionTable[key]);
-
+			
 			var temp = isExpression;
 			isExpression = true;
 			if(tempAlias.indexOf("(") != -1) tripleTable.push({"VALUES":"VALUES " + tempAlias + " {" + generateExpression(expressionTable[key], "", className, classSchemaName, null, generateTriples, isSimpleVariable, isUnderInRelation) + "}"});
@@ -3687,18 +3701,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 
 
 countCardinality = async function(str_expr, context){	 
-	var schema = new VQ_Schema();
+	// var schema = new VQ_Schema();
 
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  
 		  var proj = Projects.findOne({_id: Session.get("activeProject")});
-		  var schemaName = null;
-		  if (proj) {
-			  if (proj.schema) {
-				schemaName = proj.schema;
-			  };
-		  }
+		  // var schemaName = null;
+		  // if (proj) {
+			  // if (proj.schema) {
+				// schemaName = proj.schema;
+			  // };
+		  // }
+		  var schemaName = dataShapes.schema.schemaType;
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:{}, context:context});
 		  // var parsed_exp = vq_grammar.parse(str_expr, {schema:schema, symbol_table:{}, context:context});
 		  var cardinality = countMaxExpressionCardinality(parsed_exp, -1);

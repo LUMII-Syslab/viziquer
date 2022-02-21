@@ -936,8 +936,23 @@ function generateSPARQLtext(abstractQueryTable){
 					"isBlocking" : true
 				});
 			 }
+				
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+				var graphService = null;
 
+				for(var g in rootClass["graphs"]){
+					if(rootClass["graphs"][g]["graphInstruction"] == "FROM" || rootClass["graphs"][g]["graphInstruction"] == "FROM NAMED"){
+						SPARQL_text =  SPARQL_text +"\n"+ rootClass["graphs"][g]["graphInstruction"] + " " + rootClass["graphs"][g]["graph"] ;
+					} else if(graphService == null) {
+						graphService = rootClass["graphs"][g];
+					}
+				}
+			}
 			 SPARQL_text = SPARQL_text + " WHERE{\n";
+			 
+			 if(graphService != null){
+				 SPARQL_text = SPARQL_text + graphService["graphInstruction"] + " " + graphService["graph"] + " {\n";
+			 }
 
 			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable);
 
@@ -1025,7 +1040,9 @@ function generateSPARQLtext(abstractQueryTable){
 				prefixTable["bd:"] = "<http://www.bigdata.com/rdf#>";
 			 }
 			 
-			 
+			 if(graphService != null){
+				 SPARQL_text = SPARQL_text + "\n}";
+			 }
 			 SPARQL_text = SPARQL_text + "\n}";
 			 // if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
@@ -1234,6 +1251,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	sparqlTable["labelServiceLanguages"] = clazz["labelServiceLanguages"]; // labelServiceLanguages
 	sparqlTable["graph"] = clazz["graph"]; // graph
 	sparqlTable["graphInstruction"] = clazz["graphInstruction"]; // graphInstruction
+	sparqlTable["graphs"] = clazz["graphs"]; // graphInstruction
 
 	var classSimpleTriples = [];
 	var classExpressionTriples = [];
@@ -1773,8 +1791,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		//if(typeof subclazz["linkIdentification"]["local_name"] !== 'undefined'){
 
 			// if((subclazz["linkIdentification"]["local_name"] == null || subclazz["linkIdentification"]["local_name"] == "") && subclazz["identification"]["local_name"] != "[ ]" && subclazz["isUnion"] != true && subclazz["isUnit"] != true && subclazz["identification"]["local_name"] != "[ + ]") {
-			if(subclazz["linkIdentification"]["local_name"] == null || subclazz["linkIdentification"]["local_name"] == "") {
-				//console.log(subclazz, clazz);
+			if((subclazz["linkIdentification"]["local_name"] == null || subclazz["linkIdentification"]["local_name"] == "") && subclazz["isGraphToContents"] != true) {
+				console.log(subclazz, clazz);
 				// clazz["identification"]["_id"]
 				//Interpreter.showErrorMsg("Empty link label in the query.\nUse label '++' for query link without instance relation.\nTo hide the default link name, use Extra->'Hide default link name' check box.")
 				messages.push({
@@ -1967,6 +1985,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 			// if(subclazz["identification"]["local_name"] == "(no_class)" || (subclazz["instanceAlias"] == null && (subclazz["identification"]["local_name"] == "" || subclazz["identification"]["local_name"] == null))) temp["sparqlTable"]["linkType"] = "REQUIRED";
 			temp["sparqlTable"]["isSubQuery"] = subclazz["isSubQuery"];
 			temp["sparqlTable"]["isGlobalSubQuery"] = subclazz["isGlobalSubQuery"];
+			temp["sparqlTable"]["isGraphToContents"] = subclazz["isGraphToContents"];
 
 			if(subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true){
 				 //HAVING
@@ -2149,6 +2168,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
 				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
 					var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					
 					descendingStart = "";
 							 descendingEnd = "";
 							 if(order["isDescending"] == true) {
@@ -2180,8 +2200,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-						
-						
+
 						messages = messages.concat(result["messages"]);
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 							 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
@@ -2207,13 +2226,21 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
 							 //orderGroupBy.push(result["exp"]);
 							 orderTripleTable.push(result["triples"]);
-
+							var isExplicitSelectionFields = true;
+							for(var field in result["variables"]){
+								if(typeof referenceTable[result["variables"][field].substring(1)] === "undefined"){
+									isExplicitSelectionFields = false;
+									break;
+								}
+							}
+							if(isExplicitSelectionFields != true){
 							 messages.push({
 								"type" : "Warning",
 								"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
 								"listOfElementId":[rootClass_id],
 								"isBlocking" : false
 							 });
+							}
 						 }
 					}
 				}
@@ -2466,7 +2493,25 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					whereInfo.push(unionResult["result"]);
 					messages = messages.concat(unionResult["messages"]);
 				}
+				else if (sparqlTable["subClasses"][subclass]["isGraphToContents"] == true){
+					
+					var SPARQL_interval_temp = SPARQL_interval;
+					if(typeof sparqlTable["subClasses"][subclass]["linkType"] === 'string' && (sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL" || sparqlTable["subClasses"][subclass]["linkType"] == "NOT")) {SPARQL_interval_temp = SPARQL_interval_temp+"  ";}
+					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) {SPARQL_interval_temp = SPARQL_interval_temp+"  ";}
+					var graphString = "GRAPH " + sparqlTable["class"] + "{\n"+ SPARQL_interval;
+					
+					var temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable);
+					graphString = graphString + temp["triples"].join("\n" +SPARQL_interval);
+					graphString = graphString + temp["filters"].join("\n"+SPARQL_interval);
+					graphString = graphString + temp["links"].join("\n"+SPARQL_interval);
+
+					messages = messages.concat(temp["messages"]);
+					graphString = graphString + "\n"+SPARQL_interval.substring(2)+"}";
+					whereInfo.push(graphString);
+					
+				}
 				else if(sparqlTable["subClasses"][subclass]["isSubQuery"] != true && sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] != true){
+						
 					var SPARQL_interval_temp = SPARQL_interval;
 					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) SPARQL_interval_temp = SPARQL_interval_temp+"  ";
 					
@@ -2538,7 +2583,30 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							// subQuery = subQuery + parentClass + tempSelect.join(" ") + " WHERE{\n";
 							
 							var SPARQL_interval_sub = SPARQL_interval.substring(2);
+							
+							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+								
+								for(var g in sparqlTable["subClasses"][subclass]["graphs"]){
+									if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
+										subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
+									}
+								}
+							}
+							
+							
 							subQuery = subQuery + tempSelect.join(" ") + " WHERE{\n";
+							
+							var graphFound = false;
+							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+								
+								for(var g in sparqlTable["subClasses"][subclass]["graphs"]){
+									if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "GRAPH" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "SERVICE"){
+										subQuery = subQuery + SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + " {"+ "\n";
+										graphFound = true;
+										break;
+									}
+								}
+							}
 
 
 							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL"){
@@ -2603,6 +2671,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								subQuery = subQuery + '\n'+SPARQL_interval_sub_temp+'SERVICE wikibase:label {bd:serviceParam wikibase:language "'+sparqlTable["subClasses"][subclass]["labelServiceLanguages"]+'" .}\n'+SPARQL_interval_sub_temp;
 							 }
 							
+							if(graphFound == true) subQuery = subQuery+"\n"+ SPARQL_interval.substring(2)+ "}";
 							
 							subQuery = subQuery + "}";
 
@@ -3190,7 +3259,7 @@ function checkIfOptionalReferenceParse(field, expressionTable, isSimpleVariable,
 		}
 
 
-		if(key == "var" &&  isSimpleVariable != true && aliasFieldsOptional.includes(expressionTable[key]["name"])){
+		if(key == "var" && (typeof expressionTable[key]["type"] !== "undefined" && expressionTable[key]["type"] !== null && typeof expressionTable[key]["type"]["property_type"] !== "undefined" && expressionTable[key]["type"]["property_type"].indexOf("CLASS") != -1) && isSimpleVariable != true && aliasFieldsOptional.includes(expressionTable[key]["name"])){
 			messages.push({
 					"type" : "Error",
 					"message" : "Reference to optional field " + expressionTable[key]["name"] + " from a field expression " + field.fulltext + " not allowed. To use the reference, mark " + expressionTable[key]["name"] + " as required (check the 'Require Values' box)",

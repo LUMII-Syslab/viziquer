@@ -3615,13 +3615,7 @@ vq_property_path_grammar_completion_parser = (function() {
 			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			var schemaName = dataShapes.schema.schemaType;
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
           	props = props["data"];
@@ -3676,13 +3670,7 @@ vq_property_path_grammar_completion_parser = (function() {
       		}
           	var props = await dataShapes.getPropertiesFull(params);
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			var schemaName = dataShapes.schema.schemaType;
 
           	props = props["data"];
       		
@@ -3721,13 +3709,7 @@ vq_property_path_grammar_completion_parser = (function() {
 
           	var props = await dataShapes.getPropertiesFull(params);
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			var schemaName = dataShapes.schema.schemaType;
 
           	props = props["data"];
           	for(var pr in props){
@@ -3765,13 +3747,7 @@ vq_property_path_grammar_completion_parser = (function() {
 					}
 					props = props["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					var schemaName = null;
-					if (proj) {
-						if (proj.schema) {
-							schemaName = proj.schema;
-						};
-					}
+					var schemaName = dataShapes.schema.schemaType;
 	
 					for(var pr in props){
 						var prefix;

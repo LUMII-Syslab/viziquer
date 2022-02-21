@@ -17,13 +17,15 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  x = xx;
 	  y = yy;
 	  
-	  var proj = Projects.findOne({_id: Session.get("activeProject")});
-	  if (proj) {
-		if (proj.schema) {
-			schemaName = proj.schema;
-			schemaName = schemaName.toLowerCase();
-		};
-	  }
+	  // var proj = Projects.findOne({_id: Session.get("activeProject")});
+	  // if (proj) {
+		// if (proj.schema) {
+			// schemaName = proj.schema;
+			// schemaName = schemaName.toLowerCase();
+		// };
+	  // }
+	  
+	  schemaName = dataShapes.schema.schemaType;
 	  
 	  directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	  indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -247,13 +249,14 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		  
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-	    if (proj) {
-		  if (proj.schema) {
-			schemaName = proj.schema;
-			schemaName = schemaName.toLowerCase();
-		  };
-	    }  
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+	    // if (proj) {
+		  // if (proj.schema) {
+			// schemaName = proj.schema;
+			// schemaName = schemaName.toLowerCase();
+		  // };
+	    // }  
+		schemaName = dataShapes.schema.schemaType;
 		  
 		x = xx;
 		y = yy;
@@ -1426,6 +1429,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	
 	//type=values
 	if(where["type"] == "values" || typeof where["values"] !== 'undefined'){
+		
+		
+		
 		var values = [];
 		for(var v in where["values"]){
 			values = values.concat(Object.keys(where["values"][v]));
@@ -1445,14 +1451,29 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	
 			for(var vv in where["values"][v]){
 				var parsedValue = vq_visual_grammar.parse(where["values"][v][vv]);
+				
 				if(parsedValue["type"] == "iri") {
 					var attributeResolved = await dataShapes.resolvePropertyByName({name: where["values"][v][vv]});
+					
 					if(attributeResolved.complete == true){
 						var sn = attributeResolved.data[0].display_name;
 						if(schemaName == "wikidata" && attributeResolved.data[0].prefix == "wdt"){}
 						else if(attributeResolved.data[0].is_local != true)sn = attributeResolved.data[0].prefix+ ":" + sn;
 						vData[vv] = sn;
-					} else vData[vv] = "<"+parsedValue["value"]+">";
+					} else {
+						var classResolved = await dataShapes.resolveClassByName({name: where["values"][v][vv]});
+						if(classResolved.complete == true){
+							var sn = classResolved.data[0].display_name;
+							if(schemaName == "wikidata" && classResolved.data[0].prefix == "wd"){}
+							else if(classResolved.data[0].is_local != true)sn = classResolved.data[0].prefix+ ":" + sn;
+							vData[vv] = sn;
+						} else {
+							var uriResolved = await dataShapes.resolveIndividualByName({name: where["values"][v][vv]})
+							if(uriResolved.complete == true){
+								uri = uriResolved.data[0].localName;
+							} else vData[vv] = "<"+parsedValue["value"]+">";
+						}
+					}
 				} else vData[vv] = parsedValue["value"];
 			}
 			valueData.push(vData);
@@ -2741,6 +2762,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	if(where["type"] == "operation"){
 		//relation or atithmetic
 		if(checkIfRelation(where["operator"]) != -1 || chechIfArithmetic(where["operator"]) != -1){	
+				
 			if(typeof where["args"][0] == 'string') {
 				var arg1 = generateArgument(where["args"][0]);
 				if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
@@ -2748,7 +2770,12 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(arg1["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
 					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33);
 					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43);
-					else argValue = "<"+argValue+">";
+					else {
+						var uriResolved = await dataShapes.resolveIndividualByName({name: argValue})
+						if(uriResolved.complete == true){
+							argValue = uriResolved.data[0].localName;
+						} else argValue = "<"+argValue+">";
+					}
 				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;	
@@ -2772,7 +2799,12 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(arg2["type"] == "iri" && checkIfRelation(where["operator"]) != -1) {
 					if(argValue.startsWith("http://www.w3.org/2001/XMLSchema#")) argValue = "xsd:" + argValue.substring(33)
 					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43)
-					else argValue = "<"+argValue+">";
+					else {
+						var uriResolved = await dataShapes.resolveIndividualByName({name: argValue})
+						if(uriResolved.complete == true){
+							argValue = uriResolved.data[0].localName;
+						} else argValue = "<"+argValue+">";
+					}
 				}
 				//if(typeof attributeTable[argValue] !== 'undefined' && typeof attributeTable[argValue]["exp"] !== 'undefined') argValue = attributeTable[argValue]["exp"];
 				viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + argValue;
@@ -3513,7 +3545,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						|| (typeof classesTable[abstractTable["linkTable"][subLink]["object"]] !== 'undefined' && classesTable[abstractTable["linkTable"][subLink]["object"]]["variableName"] == node)){
 						if(linkFound==false){
 							var subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", nodeList[node]);
-							
 							pn = nodeList[node];
 							if(subSelectMainClass == null){
 								for(var subClass in abstractTable["classesTable"]){
@@ -3615,15 +3646,23 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							break;
 						}
 					}
-
+					
+					var isSubQuery = true;
+					var isGlobalSubQuery = false;
+					
+					if(typeof where["patterns"][0]["limit"] !== 'undefined' || typeof where["patterns"][0]["offset"] !== 'undefined' || abstractTable["orderTable"].length > 0){
+						isGlobalSubQuery = true;
+						isSubQuery = false;
+					}
+					
 					var link = {
 						"linkIdentification":{local_name: "++", short_name: "++"},
 						"object":object,
 						"subject":unionClass,
 						"isVisited":false,
 						"linkType":linkType,
-						"isSubQuery":true,
-						"isGlobalSubQuery":false,
+						"isSubQuery":isSubQuery,
+						"isGlobalSubQuery":isGlobalSubQuery,
 					}
 
 					linkTable.push(link);
@@ -3695,6 +3734,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		
 		var subSelectMainClass = findClassToConnect(abstractTable["classesTable"], abstractTable["linkTable"], null,"subject", pn);
+		
 		if(subSelectMainClass == null){
 			for(var subClass in abstractTable["classesTable"]){
 				subSelectMainClass = subClass;
@@ -3730,6 +3770,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 		}
 		
+		
 		abstractTable["classesTable"][subSelectMainClass]["orderings"] = abstractTable["orderTable"];
 		abstractTable["classesTable"][subSelectMainClass]["groupings"] = abstractTable["groupings"];
 		if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
@@ -3739,7 +3780,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		abstractTable["classesTable"][subSelectMainClass]["serviceLabelLang"] = abstractTable["serviceLabelLang"];
 		abstractTable["classesTable"][subSelectMainClass]["fullSPARQL"] = abstractTable["fullSPARQL"];
 		
-
 		for(var subClass in abstractTable["classesTable"]){
 			if(typeof classesTable[subClass] === 'undefined')classesTable[subClass] = abstractTable["classesTable"][subClass];
 		}
@@ -3839,7 +3879,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 
 
 function findClassToConnect(classesTable, linkTable, nodeList, type, parentNode){
-
+	
 	if(typeof parentNode !== "undefined" && parentNode != null){
 			for(var p in parentNode["uses"]){
 			for(var link in linkTable){
@@ -3866,12 +3906,15 @@ function findClassToConnect(classesTable, linkTable, nodeList, type, parentNode)
 			}
 		}
 	} else{
+		for(var clazz in classesTable){
+			if(typeof classesTable[clazz]["aggregations"] !== 'undefined') return clazz;
+		}
 		// for class table
 		for(var clazz in classesTable){
 			var linkFound = false;
 			// for link table
 			for(var link in linkTable){
-				// if link table in subquect or objact (based on type parameter) are equal to class, class is not the one
+				// if link table in subquect or object (based on type parameter) are equal to class, class is not the one
 				if(linkTable[link][type] == clazz){
 					linkFound = true;
 					break;
@@ -4137,8 +4180,11 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			}
 			var subjectNameParsed = vq_visual_grammar.parse(triples[triple]["subject"]);
 			
-			if(classResolvedR.complete == true && classResolved["local_name"] != subjectNameParsed["value"]) instanceAlias = subjectNameParsed["value"];
-
+			if(classResolvedR.complete == true && classResolved["local_name"] != subjectNameParsed["value"]){
+				instanceAlias = subjectNameParsed["value"];
+				if(subjectNameParsed["type"] == "iri") instanceAlias = await generateInstanceAlias(instanceAlias);
+			}
+	
 			if(classResolvedR.complete == false){
 				var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"])["value"];
 				
@@ -4993,7 +5039,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								
 								
 								if(indirectClassMembershipRole == pathText.join(".")){
-									// console.log("iiii", indirectClassMembershipRole, pathText.join("."))
 									
 									if(typeof nodeList[triples[triple]["object"]] !== 'undefined'){
 										var objectClasses = nodeList[triples[triple]["object"]]["uses"];
@@ -5005,6 +5050,9 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												// classesTable[sclass]["identification"]
 												var identification = await dataShapes.resolveClassByName({name: classesTable[oclass]["instanceAlias"]})
 												if(identification.complete == true) {
+													
+													
+									
 													var sn = identification.data[0].display_name;
 													if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
 													else if(identification.data[0].is_local != true )sn = identification.data[0].prefix+ ":" + sn;
@@ -5013,6 +5061,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													classesTable[sclass]["indirectClassMembership"] = true;
 													
 													 delete classesTable[oclass];
+												} else {
+													classesTable[sclass]["identification"] = {"short_name": "?"+oclass};
+													classesTable[sclass]["indirectClassMembership"] = true;
+													delete classesTable[oclass];
 												}
 												// console.log("WWWWWWWWW", identification, oclass, sclass, classesTable, classesTable[oclass], classesTable[sclass])
 											}
@@ -6078,17 +6130,24 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 
 async function generateInstanceAlias(uri){
 	
-	var splittedUri = splitURI(uri);
-	if(splittedUri == null) return uri;
+	var uriResolved = await dataShapes.resolveIndividualByName({name: uri})
+	if(uriResolved.complete == true){
+		uri = uriResolved.data[0].localName;
+	} else {
 	
-	//var prefixes = schema.getPrefixes()
-	var prefixes = await dataShapes.getNamespaces()
-	for(var key in prefixes){
-		if(prefixes[key]["value"] == splittedUri.namespace) {
-			if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
-			return prefixes[key]["name"]+":"+splittedUri.name;
+		var splittedUri = splitURI(uri);
+		if(splittedUri == null) return uri;
+		
+		//var prefixes = schema.getPrefixes()
+		var prefixes = await dataShapes.getNamespaces()
+		for(var key in prefixes){
+			if(prefixes[key]["value"] == splittedUri.namespace) {
+				if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
+				return prefixes[key]["name"]+":"+splittedUri.name;
+			}
 		}
 	}
+
 	return uri;
 }
 

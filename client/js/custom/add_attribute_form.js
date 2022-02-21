@@ -55,15 +55,17 @@ Template.AddAttribute.helpers({
 
 Template.AddAttribute.events({
 
-	"click #ok-add-attribute": function(e) {
+	"click #ok-add-attribute": async function(e) {
 
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
 		  var vq_obj = new VQ_Element(selected_elem_id);
- 
+			
+			
+			
 		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
-		  buttonn.each(function () {
+		  buttonn.each(async function () {
 		    
 			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
 				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
@@ -71,7 +73,29 @@ Template.AddAttribute.events({
 				else if(required.startsWith("fa fa-check")) required = false;
 				else return;
 				var name = $(this).attr("name");
-				vq_obj.addField(name,null,required,false,false);
+				
+				if(name == "(all properties)") {
+					
+					var abstractS = await generateSymbolTable();
+					var symbolTable = abstractS["symbolTableFull"];
+					var valCount = 0;
+					for(var el in symbolTable){
+						for(var s in symbolTable[el]){
+							if(s == "val" || s.startsWith("val_")) valCount++;
+						}
+					}
+					name = "?prop";
+					var alias = "val";
+
+					if(valCount > 0) {
+						name = name + "_" + valCount;
+						alias = alias + "_" + valCount;
+					}
+					
+					
+					vq_obj.addField(name,alias,required,false,false)
+					
+				} else vq_obj.addField(name,null,required,false,false);
 	
 				$(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].className = "button button-required";
 			}
@@ -88,7 +112,7 @@ Template.AddAttribute.events({
 		//Read user's choise
 		  var vq_obj = new VQ_Element(selected_elem_id);
 		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
-		  buttonn.each(function () {
+		  buttonn.each(async function () {
 		    
 			if($(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]')[0].getAttribute("disabled") != "true"){
 				var required = $(this).children('label[name="add-attribute"]').children('button[name="required-attribute-to-add"]').attr("class");
@@ -97,7 +121,29 @@ Template.AddAttribute.events({
 				else return;
 				
 				var name = $(this).attr("name");
-				vq_obj.addField(name,null,required,false,false);
+				if(name == "(all properties)") {
+					name = "?prop";
+					
+					var abstractS = await generateSymbolTable();
+					var symbolTable = abstractS["symbolTableFull"];
+					var valCount = 0;
+					for(var el in symbolTable){
+						for(var s in symbolTable[el]){
+							if(s == "val" || s.startsWith("val_")) valCount++;
+						}
+					}
+					name = "?prop";
+					var alias = "val";
+
+					if(valCount > 0) {
+						name = name + "_" + valCount;
+						alias = alias + "_" + valCount;
+					}
+					
+					
+					vq_obj.addField(name,alias,required,false,false);
+					
+				} else vq_obj.addField(name,null,required,false,false);
 			}
 		  });
 		};
@@ -550,12 +596,14 @@ async function getAttributes(filter){
 			
 			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
 			else attr_list.push({name:"(select this)"});
-						
-			attr_list.push({separator:"line"});
 			
-		
 			var abstractS = await generateSymbolTable();
 			var symbolTable = abstractS["symbolTable"];
+			
+			attr_list.push({name:"(all properties)"});
+			
+			attr_list.push({separator:"line"});
+			
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if(symbolTable[key][symbol]["context"] != selected_elem_id){
@@ -577,13 +625,13 @@ async function getAttributes(filter){
 			
 			prop = prop["data"];
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			// var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = dataShapes.schema.schemaType;
+			// if (proj) {
+				// if (proj.schema) {
+					// schemaName = proj.schema;
+				// };
+			// }
 			
 			for(var cl in prop){
 				var prefix;
@@ -603,7 +651,15 @@ async function getAttributes(filter){
 				var disabled = false;
 				var buttonClassName = "button button-required";
 				for(var field in field_list){
+
 					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
+						disabled = true; 
+						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
+						else buttonClassName = "fa fa-check button button-required";
+						break;
+					}
+					
+					if(attr.name == "(all properties)" && field_list[field]["exp"].startsWith("?")){
 						disabled = true; 
 						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
 						else buttonClassName = "fa fa-check button button-required";
@@ -643,13 +699,13 @@ async function getAssociations(filter){
 			
 			prop = prop["data"];
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			// var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = dataShapes.schema.schemaType;
+			// if (proj) {
+				// if (proj.schema) {
+					// schemaName = proj.schema;
+				// };
+			// }
 			
 			for(var cl in prop){
 				var prefix;

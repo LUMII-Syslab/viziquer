@@ -576,13 +576,13 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			cls = cls["data"];
 			
 			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = null;
-			if (proj) {
-				if (proj.schema) {
-					schemaName = proj.schema;
-				};
-			}
+			// var proj = Projects.findOne({_id: Session.get("activeProject")});
+			var schemaName = dataShapes.schema.schemaType;
+			// if (proj) {
+				// if (proj.schema) {
+					// schemaName = proj.schema;
+				// };
+			// }
 			
 			for(var cl in cls){
 				var prefix;

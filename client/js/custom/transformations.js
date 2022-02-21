@@ -183,6 +183,15 @@ Interpreter.customMethods({
 	{input:"SERVICE",value:"SERVICE"}
 	]
   },
+  
+  VQgetGraphInstructionsClass: function() {
+	return  [
+	{input:"FROM",value:"FROM"},
+	{input:"FROM NAMED",value:"FROM NAMED"},
+	{input:"GRAPH",value:"GRAPH"},
+	{input:"SERVICE",value:"SERVICE"}
+	]
+  },
   VQgetAggregateNames: function() {
 
 		 var act_elem = Session.get("activeElement");
@@ -525,6 +534,16 @@ Interpreter.customMethods({
 			 var input = params["input"];
 			 var lt = "PLAIN";
 			 if (input=="true") { lt="GLOBAL_SUBQUERY"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setNestingType(lt);
+		}
+	},
+	VQsetIsGraphToContents: function(params) {
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "PLAIN";
+			 if (input=="true") { lt="GRAPH"};
 			 var elem = new VQ_Element(c["elementId"]);
 			 elem.setNestingType(lt);
 		}
@@ -1614,6 +1633,6 @@ generateSymbolTable = async function() {
     }
 
 	// console.log(abstractQueryTable);
-	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"]};
-    return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"]};
+	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
+    return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
   }

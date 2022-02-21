@@ -20796,13 +20796,7 @@ options = arguments[1];
 					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
 					prop = prop["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					var schemaName = null;
-					if (proj) {
-						if (proj.schema) {
-							schemaName = proj.schema;
-						};
-					}
+					var schemaName = dataShapes.schema.schemaType;
 					
 					for(var cl in prop){
 						var prefix;
@@ -20841,13 +20835,7 @@ options = arguments[1];
     			var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, act_el);
     			prop = prop["data"];
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = null;
-				if (proj) {
-					if (proj.schema) {
-						schemaName = proj.schema;
-					};
-				}
+				var schemaName = dataShapes.schema.schemaType;
     			
     			for(var cl in prop){
     				var prefix;
@@ -21024,13 +21012,7 @@ options = arguments[1];
 				var props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = null;
-				if (proj) {
-					if (proj.schema) {
-						schemaName = proj.schema;
-					};
-				}
+				var schemaName = dataShapes.schema.schemaType;
 
             	for(var pr in props){
             		var prefix;
@@ -21059,13 +21041,7 @@ options = arguments[1];
 				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		var props= await dataShapes.getPropertiesFull(p);
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = null;
-				if (proj) {
-					if (proj.schema) {
-						schemaName = proj.schema;
-					};
-				}
+				var schemaName = dataShapes.schema.schemaType;
 
             	props = props["data"];
             	for(var pr in props){
@@ -21153,13 +21129,7 @@ options = arguments[1];
 				var props = await dataShapes.getPropertiesFull(params);
 				props = props["data"];
 					
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = null;
-				if (proj) {
-					if (proj.schema) {
-						schemaName = proj.schema;
-					};
-				}
+				var schemaName = dataShapes.schema.schemaType;
 				
 				if(isInv == false){
 					
@@ -21212,13 +21182,7 @@ options = arguments[1];
             		var props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					var schemaName = null;
-					if (proj) {
-						if (proj.schema) {
-							schemaName = proj.schema;
-						};
-					}
+					var schemaName = dataShapes.schema.schemaType;
 
             		for(var pr in props){
             			var prefix;
@@ -21272,13 +21236,7 @@ options = arguments[1];
 							
 					prop = prop["data"];
 					
-					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					var schemaName = null;
-					if (proj) {
-						if (proj.schema) {
-							schemaName = proj.schema;
-						};
-					}
+					var schemaName = dataShapes.schema.schemaType;
 					
 					for(var cl in prop){
 						var prefix;

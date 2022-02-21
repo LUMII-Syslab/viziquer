@@ -47,7 +47,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
   // string -->[IdObject]
   async function resolveClassByName(className) {
-    if(typeof className !== "undefined" && className !== null){
+    
+	if(typeof className !== "undefined" && className !== null){
 		var cls = await dataShapes.resolveClassByName({name: className})
 		if(cls["data"].length > 0){
 			return cls["data"][0];
@@ -74,19 +75,41 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
+	 
+	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
+	  
+	
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
 	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
+	var schemaName = await dataShapes.schema.schemaType;
 
-    var resCl = await resolveClassByName(obj_class.identification.local_name);
+	// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  // var schemaName = null;
+		  // if (proj) {
+			  // if (proj.schema) {
+				// schemaName = proj.schema;
+			  // };
+		  // }
+	var pr = "";
+	if(schemaName.toLowerCase() == "wikidata" && typeof obj_class.identification.local_name !== "undefined" && obj_class.identification.local_name != null && ((obj_class.identification.local_name.startsWith("[") && obj_class.identification.local_name.endsWith("]")) || obj_class.identification.local_name.indexOf(":") == -1)){
+		pr = "wd:";
+	}
+	var localName = obj_class.identification.local_name;
+	
+	if(typeof localName !== "undefined" && localName != null) localName = pr+localName;
+	
+    var resCl = await resolveClassByName(localName);
+	
+	
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
 
-	if(typeof obj_class.identification.prefix !== 'undefined' && obj_class.identification.prefix != "") prefix = obj_class.identification.prefix + ":";
+	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
 	
 	var display_name = prefix+obj_class.identification.display_name;
 	if(typeof obj_class.identification.display_name === "undefined") display_name = obj_class.identification.local_name;
@@ -96,13 +119,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     if (obj_class.linkIdentification) {
 		//parser need link with prefix
 		var prefix = "";
-		_.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
+		// _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
 		if(typeof obj_class.linkIdentification.Prefix !== 'undefined' && obj_class.linkIdentification.Prefix != "") prefix = obj_class.linkIdentification.Prefix + ":";
         _.extend(obj_class.linkIdentification, await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification))
     };
 	
 	if (obj_class.instanceAlias) {
-      var type =  await resolveClassByName(obj_class.identification.local_name)
+		var className = obj_class.identification.display_name;
+		if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
+		if(typeof className !== "undefined" && className != null) className = pr+className;
+		var type =  await resolveClassByName(className)
 	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
 	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
@@ -110,7 +136,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
     for (const cl of obj_class.conditionLinks) {
     // obj_class.conditionLinks.forEach(function(cl) {
-      _.extend(cl.identification,resolveLinkByName(cl.identification.local_name));
+      // _.extend(cl.identification,resolveLinkByName(cl.identification.local_name));
       _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
@@ -292,14 +318,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  var proj = Projects.findOne({_id: Session.get("activeProject")});
-		  var schemaName = null;
-		  if (proj) {
-			  if (proj.schema) {
-				schemaName = proj.schema;
-			  };
-		  }
+		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = await dataShapes.schema.schemaType;
+		  // if (proj) {
+			  // if (proj.schema) {
+				// schemaName = proj.schema;
+			  // };
+		  // }
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
+		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType);
+		  
 		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
@@ -318,13 +346,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  // var schema = new VQ_Schema();
-		  var proj = Projects.findOne({_id: Session.get("activeProject")});
-		  var schemaName = null;
-		  if (proj) {
-			  if (proj.schema) {
-				schemaName = proj.schema;
-			  };
-		  }
+		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
+		  var schemaName = await dataShapes.schema.schemaType;
+		  // if (proj) {
+			  // if (proj.schema) {
+				// schemaName = proj.schema;
+			  // };
+		  // }
   
 		  // var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, schemaName:schemaName, symbol_table:symbol_table, context:context._id});
 		  var parsed_exp = await vq_property_path_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context._id});
@@ -343,6 +371,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
+	   if(parse_obj.indexOf("-") != -1){
 	   try {
 		  // parse_obj = await vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
@@ -350,22 +379,25 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  // TODO: error handling
 		 // console.log(e)
 		}
-
-		if(parse_obj.startsWith("[") == false && parse_obj.endsWith("]") == false){
+	   }
+		if(parse_obj.startsWith("[[") == false && parse_obj.endsWith("]]") == false){
 			parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
 			parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
 		 }
 
 		if(parse_obj != "[*sub]"){
 			try {
-			  var proj = Projects.findOne({_id: Session.get("activeProject")});
-			  var schemaName = null;
-			  if (proj) {
-				  if (proj.schema) {
-					schemaName = proj.schema;
-				  };
-			  }
+			  // var proj = Projects.findOne({_id: Session.get("activeProject")});
+			 var schemaName = await dataShapes.schema.schemaType;
+			  // if (proj) {
+				  // if (proj.schema) {
+					// schemaName = proj.schema;
+				  // };
+			  // }
+			  
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
+			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context);
+			  
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
@@ -430,6 +462,14 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // JSON -->
   // Parses all expressions in the object and recursively in all children
   async function resolveClassExpressions(obj_class, parent_class) {
+	  // if(obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
+	
+	  if(obj_class.graphs){
+		  var prefixes = query.prefixes;
+		  for(var g in obj_class.graphs){
+			obj_class.graphs[g]["graph"] = getGraphFullForm(obj_class.graphs[g]["graph"], prefixes);
+		  }
+	  }
 
   if (parent_class) {
 	  
@@ -437,6 +477,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  var prefixes = query.prefixes;		
 		  obj_class.graph = getGraphFullForm(obj_class.graph, prefixes);
 	  }
+	  
+	 
 	  
 	  
       var pc_st = symbol_table[parent_class.identification._id];
@@ -494,6 +536,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
+			
 			if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
 				var prefix = strURI.substring(0, strURI.indexOf(":"));
 				var name = strURI.substring(strURI.indexOf(":")+1);
@@ -506,7 +549,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				}
 			}
 			if(obj_class.identification.local_name != null){
-				obj_class.instanceAlias = obj_class.identification.display_name;
+				obj_class.instanceAlias = obj_class.identification.display_name; 
+				
+				if(obj_class.instanceAlias.indexOf("[") !== -1 && obj_class.instanceAlias.indexOf("]") !== -1){
+					var textPart = obj_class.instanceAlias.substring(obj_class.instanceAlias.indexOf("[")+1);
+					if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+					else textPart = textPart.substring(0, textPart.length - 1);
+					textPart = textPart.trim();
+					obj_class.instanceAlias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+				}
+						
 				var condition = {exp:"(this) = " + strURI};
 			    await parseExpObject(condition, obj_class.identification);
 			    obj_class.conditions.push(condition);
@@ -712,6 +764,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
 genAbstractQueryForElementList = async function (element_id_list, virtual_root_id_list) {
+	
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
   // determine which elements are root elements
@@ -836,6 +889,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                     linkType: link.link.getType(),
                     isSubQuery: link.link.isSubQuery(),
                     isGlobalSubQuery: link.link.isGlobalSubQuery(),
+                    isGraphToContents: link.link.isGraphToContents(),
 					graph: link.link.getGraph(),
 					graphInstruction: link.link.getGraphInstruction(),
                     identification: { _id: elem._id(), local_name: elem.getName()},
@@ -853,6 +907,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                     conditionLinks:_.filter(_.map(_.filter(elem.getLinks(),function(l) {return !l.link.isEqualTo(link.link)}), genConditionalLink), function(l) {return l}),
                     fields: elem.getFields(),
                     aggregations: elem.getAggregateFields(),
+					
                     conditions: elem.getConditions(),
                     fullSPARQL: elem.getFullSPARQL(),
                     children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l})
@@ -863,6 +918,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                                              distinct:elem.isDistinct(),
                                              limit:elem.getLimit(),
                                              offset:elem.getOffset() });
+					if(link.link.getName() == "++" || link.link.getName() == "=="){
+						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
+					}
                 } else {
 					var orderingss = elem.getOrderings()
 					if(orderingss.length > 0){
@@ -871,8 +929,12 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 						}					
 					}
 				};
+					
                 if (elem.isSubQueryRoot()) {
                   _.extend(linkedElem_obj,{ distinct:elem.isDistinct() });
+				  if(link.link.getName() == "++" || link.link.getName() == "=="){
+						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
+					}
                 };
                 return linkedElem_obj;
             };
@@ -919,6 +981,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 		  if (proj.schema) {
             proj_params.schema = proj.schema;
           };
+		  if (proj.graphsInstructions) {
+            proj_params.graphsInstructions = proj.graphsInstructions;
+          };
           return proj_params;
      }
    };
@@ -934,6 +999,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
       conditionLinks:_.filter(_.map(e.getLinks(), genConditionalLink), function(l) {return l}),
       fields: e.getFields(),
       aggregations: e.getAggregateFields(),
+	  graphs: e.getGraphs(),
       conditions: e.getConditions(),
       orderings: e.getOrderings(),
       groupings: e.getGroupings(),
@@ -1000,6 +1066,15 @@ function replaceSymbols(instanceAlias){
 
 function getGraphFullForm(graph, prefixes){
 
+	 var proj = Projects.findOne({_id: Session.get("activeProject")});
+   	 if (proj && proj.graphsInstructions) {
+		
+		var graphs = JSON.parse(proj.graphsInstructions)
+		for(var g in graphs){
+			if(graphs[g]["Instruction"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Graph"]+">";
+		}
+     }
+	
 	var graphIsUri = isURI(graph)
 	if(graphIsUri == 4){
 		var prefix = graph.substring(0, graph.indexOf(":"));
@@ -1016,3 +1091,235 @@ function getGraphFullForm(graph, prefixes){
 	
 	return graph
 }
+
+async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType){
+	
+	for(var exp in parsed_exp){
+		if(exp == "var") {
+			parsed_exp[exp]["type"] = await resolveType(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName);
+			parsed_exp[exp]["kind"] = await resolveKind(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName);
+		}
+		
+		
+		if(typeof parsed_exp[exp] == 'object'){
+			await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType)
+		}
+		
+		if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
+			parsed_exp[exp] = pathOrReference(parsed_exp[exp], symbol_table, context)
+		}
+	}
+	
+	return parsed_exp;
+}
+
+async function resolveTypeFromSymbolTable(id, context, symbol_table) {
+    var context = context._id;
+
+    if(typeof symbol_table[context] === 'undefined') return null;
+
+    	var st_row = symbol_table[context][id];
+    	if (st_row) {
+    		if(st_row.length == 0) return null;
+    		if(st_row.length == 1){
+    				return st_row[0].type
+    		}
+    					if(st_row.length > 1){
+    						for (var symbol in st_row) {
+    							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+    						}
+    					}
+    					return st_row.type
+    				} else {
+    					return null
+    				}
+    				return null
+};
+    			// string -> idObject
+    			// returns kind of the identifier from symbol table. Null if does not exist.
+async function resolveKindFromSymbolTable(id, context, symbol_table) {
+    				var context = context._id;
+
+    				if(typeof symbol_table[context] === 'undefined') return null;
+
+    				var st_row = symbol_table[context][id];
+    				if (st_row) {
+    					if(st_row.length == 0) return null;
+    					if(st_row.length == 1){
+    						return st_row[0].kind
+    					}
+    					if(st_row.length > 1){
+    						for (var symbol in st_row) {
+    							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
+    						}
+    					}
+    					return st_row.kind
+    				} else {
+    					return null
+    				}
+    				return null
+};
+    			// string -> idObject
+    			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
+async function resolveTypeFromSchemaForClass(id, schemaName) {
+    				
+					if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						id = "wd:"+id;
+					}
+					
+					var cls = await dataShapes.resolveClassByName({name: id})
+    				if(cls["complite"] == false) return null;
+    				if(cls["data"].length > 0){
+    					return cls["data"][0];
+    				}
+    				
+    				return null;
+};
+    			// string -> idObject
+    			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
+async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
+    				if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
+						id = "wdt:"+id;
+					}
+
+    				var aorl = await dataShapes.resolvePropertyByName({name: id})
+
+    				if(aorl["complite"] == false) return null;
+    				var res = aorl["data"][0];
+    				if(res){
+    					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
+    					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
+    					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
+    					return res;
+    				}
+    				
+    				
+  return null
+};
+    			// string -> idObject
+    			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
+    			// then in schema. Null if does not exist
+async function resolveType(id, exprType, context, symbol_table, schemaName) {
+    			  if(id !== "undefined"){
+    			  var t=await resolveTypeFromSymbolTable(id, context, symbol_table);
+    				if (!t) {
+    					if (exprType) {
+    					  t= await resolveTypeFromSchemaForClass(id, schemaName);
+    					  if (!t) {
+    						  t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)
+    					  }
+    					} else {
+    					  t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
+    					  if (!t) {
+    						  t=await resolveTypeFromSchemaForClass(id, schemaName)
+    					  }
+    					}
+
+    				}
+    			  return t;}
+    return null;
+};
+              //string -> string
+        			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
+async function resolveKind(id, exprType, context, symbol_table, schemaName) {
+    				if(id !== "undefined"){
+        				    var k=await resolveKindFromSymbolTable(id, context, symbol_table);
+        						if (!k) {
+        						  if (exprType) {
+        							  if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									 k="CLASS_NAME";
+        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									 k="PROPERTY_NAME";
+        							  }
+        							} else {
+        							  if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									k="PROPERTY_NAME";
+        							  } else if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									k="CLASS_NAME";
+        							 }
+        							}
+
+        					  }
+        						return k;
+    				}
+    				return null
+};
+
+function pathOrReference(o, symbol_table, context) {
+    				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
+            // It does not make sense calculate this every time function is called, but ...
+    				// console.log("oooooooooooo", o, symbol_table, symbol_table[context._id], o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"])
+
+    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
+    					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "BIND_ALIAS" ||
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
+    				){
+    					return {Reference:
+    						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    						type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    					var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+    					Substring : o["Substring"],
+    					FunctionBETWEEN : o["FunctionBETWEEN"],
+    					FunctionLike : o["FunctionLike"]
+    					}
+
+    				}
+    				
+    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
+    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
+    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] === "undefined" 
+    				){
+    					var simbolTable = symbol_table[context._id][o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"]];
+
+    					for (var symbol in simbolTable) {
+    						if(simbolTable[symbol]["kind"] == "CLASS_ALIAS" ||
+    						simbolTable[symbol]["kind"] == "BIND_ALIAS" ||
+    						simbolTable[symbol]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
+    						simbolTable[symbol]["kind"] == "PROPERTY_ALIAS"){
+								
+								if(typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"] !== "undefined"){
+									return {Reference:
+    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"]["var"],
+    								Substring : o["Substring"],
+    								FunctionBETWEEN : o["FunctionBETWEEN"],
+    								FunctionLike : o["FunctionLike"]
+    							}
+								}
+								
+    							return {Reference:
+    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
+    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
+    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
+    								Substring : o["Substring"],
+    								FunctionBETWEEN : o["FunctionBETWEEN"],
+    								FunctionLike : o["FunctionLike"]
+    							}
+    						}
+    					}
+    					
+    				}
+
+    				return o;
+    			};

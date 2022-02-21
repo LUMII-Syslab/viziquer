@@ -168,13 +168,13 @@ Template.SelectTargetClass.events({
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		var schemaName = null;
-		if (proj) {
-			if (proj.schema) {
-				schemaName = proj.schema;
-			};
-		}
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = dataShapes.schema.schemaType;
+		// if (proj) {
+			// if (proj.schema) {
+				// schemaName = proj.schema;
+			// };
+		// }
 		
 		var params = {};
 		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
@@ -192,13 +192,13 @@ Template.SelectTargetClass.events({
 		var classes = await dataShapes.getClassesFull(params);
 		classes = classes.data;
 		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		var schemaName = null;
-		if (proj) {
-			if (proj.schema) {
-				schemaName = proj.schema;
-			};
-		}
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = dataShapes.schema.schemaType;
+		// if (proj) {
+			// if (proj.schema) {
+				// schemaName = proj.schema;
+			// };
+		// }
 		
 		_.each(classes, function(e){
 			var prefix;
@@ -391,13 +391,13 @@ Template.AddLink.events({
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		var schemaName = null;
-		if (proj) {
-			if (proj.schema) {
-				schemaName = proj.schema;
-			};
-		}
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});
+		var schemaName = dataShapes.schema.schemaType;
+		// if (proj) {
+			// if (proj.schema) {
+				// schemaName = proj.schema;
+			// };
+		// }
 			
 		var classes;
 		if(name == "==" || name == "++") {
@@ -944,13 +944,13 @@ async function getAllAssociations(){
 				
 				var allAssociations = prop["data"];
 				
-				var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = null;
-				if (proj) {
-					if (proj.schema) {
-						schemaName = proj.schema;
-					};
-				}
+				// var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = dataShapes.schema.schemaType;
+				// if (proj) {
+					// if (proj.schema) {
+						// schemaName = proj.schema;
+					// };
+				// }
 				
 				_.each(allAssociations, function(e){
 					if ( e.mark === 'out') {
