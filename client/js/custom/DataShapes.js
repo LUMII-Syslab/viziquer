@@ -19,7 +19,7 @@ const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
-const ConsoleLog = false;
+const ConsoleLog = true;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -347,6 +347,7 @@ dataShapes = {
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
+		console.log(proj)
 		this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
@@ -393,9 +394,9 @@ dataShapes = {
 						var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['owl:sameAs', 'prov:wasDerivedFrom']);
 						this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
 					}
-					else if (this.schema.schemaType === 'wikidata') {
+					else if (this.schema.schemaType === 'wikidata') {   
 						this.schema.tree.class = 'All classes';
-						this.schema.tree.classes = classesWD;
+						this.schema.tree.classes = [];
 					}
 					else if (!this.schema.hide_individuals) {
 						var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
@@ -696,7 +697,8 @@ dataShapes = {
 		//dataShapes.resolveIndividualByName({name: 'http://www.wikidata.org/entity/Q34770'})
 		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
 		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'})
-		
+		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
+		params.name = this.getIndividualName(params.name);
 		var rr;
 		rr = await this.callServerFunction("resolveIndividualByName", {main: params});
 		return rr;
