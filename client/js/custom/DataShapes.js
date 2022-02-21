@@ -19,7 +19,7 @@ const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
-const ConsoleLog = true;
+const ConsoleLog = false;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -204,7 +204,7 @@ const findElementDataForProperty = (vq_obj) => {
 	pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	if (dataShapes.schema.schemaType === 'wikidata') {
+	if (dataShapes.schema.schemaType !== 'wikidata') {
 		var pListI = getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
 	}
@@ -221,7 +221,7 @@ const findElementDataForIndividual = (vq_obj) => {
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	if (dataShapes.schema.schemaType === 'wikidata') {
+	if (dataShapes.schema.schemaType !== 'wikidata') {
 		var pListI = getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
 	}
@@ -347,7 +347,7 @@ dataShapes = {
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
-		console.log(proj)
+		//console.log(proj)
 		this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			if ( proj.schema !== undefined && proj.schema !== "") {
