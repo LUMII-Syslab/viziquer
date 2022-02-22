@@ -19,7 +19,7 @@ const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
-const ConsoleLog = false;
+const ConsoleLog = true;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -557,9 +557,6 @@ dataShapes = {
 		// *** dataShapes.getProperties({main: {propertyKind:'Data'}, element: {className: 'umbel-rc:Park'}})
 		// *** dataShapes.getProperties({main: {propertyKind:'Connect'}, element: {className: 'umbel-rc:Park'}, elementOE: {className: 'umbel-rc:Philosopher'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'All'}, element:{className: 'umbel-rc:Philosopher'}})
-		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, elemet:{uriIndividual: "http://dbpedia.org/resource/Gulliver's_World"}})
-		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, elemet: { riIndividual: "http://dbpedia.org/resource/Gulliver's_World"}, elementOE: {uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"}})
-		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element:{uriIndividual: "http://en.wikipedia.org/wiki/Gulliver's_World"}})
 		// *** dataShapes.getProperties({main:{propertyKind:'Object'}, element:{className: 'dbo:Tenure'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'ObjectExt'}, element: { className:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, element:{className: 'CareerStation'}, elementOE:{otherEndClassName:'umbel-rc:Crater'}})
@@ -642,7 +639,7 @@ dataShapes = {
 			var rez = _.map(rr.search, function(p) {
 				// TODO jāpaskatās, kāds īsti ir ns
 				var localName = `wd:[${p.label} (${p.id})]`;				
-				return {localName:localName , description: p.description}
+				return {localName:localName , description: p.description, iri:p.url, label:p.label}
 			});
 			return rez;
 		}
@@ -696,12 +693,31 @@ dataShapes = {
 	resolveIndividualByName : async function(params = {}) {
 		//dataShapes.resolveIndividualByName({name: 'http://www.wikidata.org/entity/Q34770'})
 		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
-		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'})
+		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'}) // dbpedia
 		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
+
 		params.name = this.getIndividualName(params.name);
-		var rr;
-		rr = await this.callServerFunction("resolveIndividualByName", {main: params});
-		return rr;
+		if (this.schema.schemaType === 'wikidata') {
+			var prefix = params.name.substring(0, params.name.indexOf(':')+1);
+			//var ns = '';
+			//_.each(this.schema.namespaces, function(n) {
+			//	if (params.name.indexOf(ns.value) == 0)
+			//		ns = n.value;
+			//});
+			var name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
+			var individuals = await this.getTreeIndividualsWD(name);
+
+			if (individuals.length == 0) 
+				return {complete: false, data:[]};
+			else   // TODO pārbaudīt, vai vienmēr ir labi ņemt pirmo
+				return {complete: true, data:[{name: params.name, localName: individuals[0].localName, label: individuals[0].label }]};
+
+		}
+		else {
+			var rr;
+			rr = await this.callServerFunction("resolveIndividualByName", {main: params});
+			return rr;		
+		}
 	},
 	printLog : function() {
 		if ( this.schema.log.length > 0 ) {
@@ -730,6 +746,18 @@ dataShapes = {
 			const prefix = localName.substring(0,localName.indexOf(':'));  // TODO padomāt, vai nebūs arī bez prafiksa
 			const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
 			return `${prefix}:${name}`;
+		}
+		else if (localName.indexOf('//') != -1) {
+			var name = '';
+			_.each(this.schema.namespaces, function(ns) {
+				if (localName.indexOf(ns.value) == 0)
+					name = `${ns.name}:${localName.replace(ns.value,'')}`;
+			});
+			
+			if (name != '') 
+				return name;
+			else
+				return localName;
 		}
 		else
 			return localName;
