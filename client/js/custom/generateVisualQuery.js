@@ -1469,7 +1469,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							vData[vv] = sn;
 						} else {
 							var uriResolved = await dataShapes.resolveIndividualByName({name: where["values"][v][vv]})
-							if(uriResolved.complete == true){
+							if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 								uri = uriResolved.data[0].localName;
 							} else vData[vv] = "<"+parsedValue["value"]+">";
 						}
@@ -2772,7 +2772,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43);
 					else {
 						var uriResolved = await dataShapes.resolveIndividualByName({name: argValue})
-						if(uriResolved.complete == true){
+
+						if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 							argValue = uriResolved.data[0].localName;
 						} else argValue = "<"+argValue+">";
 					}
@@ -2801,7 +2802,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					else if(argValue.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) argValue = "rdf:" + argValue.substring(43)
 					else {
 						var uriResolved = await dataShapes.resolveIndividualByName({name: argValue})
-						if(uriResolved.complete == true){
+
+						if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 							argValue = uriResolved.data[0].localName;
 						} else argValue = "<"+argValue+">";
 					}
@@ -4446,13 +4448,16 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				if(pathPropertyResolved.complete == true && pathPropertyResolved.data[0].object_cnt >0){
 					//subjest
 					var subjectNameParsed = vq_visual_grammar.parse(triples[triple]["subject"])["value"];
+					
+					var instanceAlias = await generateInstanceAlias(subjectNameParsed);
+					
 						if(Object.keys(nodeList[triples[triple]["subject"]]["uses"]).length == 0){
 							if(typeof parentNodeList[triples[triple]["subject"]] === 'undefined'){
 								if(typeof allClasses[subjectNameParsed] === 'undefined'){
 									classesTable[subjectNameParsed] = {
 										"variableName":triples[triple]["subject"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["subject"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -4464,7 +4469,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									classesTable[subjectNameParsed+counter] = {
 										"variableName":triples[triple]["subject"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["subject"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -4483,6 +4488,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					
 					//object
 					var objectNameParsed = vq_visual_grammar.parse(triples[triple]["object"])["value"];
+					var instanceAlias = await generateInstanceAlias(objectNameParsed);
 					if(findClassInClassTable(classesTable, objectNameParsed, triples[triple]["object"], nodeList) == null && findClassInClassTable(allClasses, objectNameParsed, triples[triple]["object"], nodeList) == null){
 						if(Object.keys(nodeList[triples[triple]["object"]]["uses"]).length == 0){
 							if(typeof parentNodeList[triples[triple]["object"]] === 'undefined'){
@@ -4490,7 +4496,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									classesTable[objectNameParsed] = {
 										"variableName":triples[triple]["object"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["object"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -4502,7 +4508,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									classesTable[objectNameParsed+counter] = {
 										"variableName":triples[triple]["object"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["object"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -4525,13 +4531,14 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				if(pathPropertyResolved.complete == true && pathPropertyResolved.data[0].data_cnt >0 && pathPropertyResolved.data[0].object_cnt == 0){
 					//subjest
 					var subjectNameParsed = vq_visual_grammar.parse(triples[triple]["subject"])["value"];
+					var instanceAlias = await generateInstanceAlias(subjectNameParsed);
 						if(Object.keys(nodeList[triples[triple]["subject"]]["uses"]).length == 0){
 							if(typeof parentNodeList[triples[triple]["subject"]] === 'undefined'){
 								if(typeof allClasses[subjectNameParsed] === 'undefined'){
 									classesTable[subjectNameParsed] = {
 										"variableName":triples[triple]["subject"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["subject"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -4543,7 +4550,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									classesTable[subjectNameParsed+counter] = {
 										"variableName":triples[triple]["subject"],
 										"identification":null,
-										"instanceAlias":vq_visual_grammar.parse(triples[triple]["subject"])["value"],
+										"instanceAlias":instanceAlias,
 										"isVariable":false,
 										"isUnit":false,
 										"isUnion":false
@@ -6129,16 +6136,27 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 }
 
 async function generateInstanceAlias(uri){
-	
-	var uriResolved = await dataShapes.resolveIndividualByName({name: uri})
-	if(uriResolved.complete == true){
-		uri = uriResolved.data[0].localName;
-	} else {
-	
+			
+	if(uri.indexOf(":") != -1){
+		var uriResolved = await dataShapes.resolveIndividualByName({name: uri})
+		if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
+			uri = uriResolved.data[0].localName;
+		} else {
+			var splittedUri = splitURI(uri);
+			if(splittedUri == null) return uri;
+			
+			var prefixes = await dataShapes.getNamespaces()
+			for(var key in prefixes){
+				if(prefixes[key]["value"] == splittedUri.namespace) {
+					if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
+					return prefixes[key]["name"]+":"+splittedUri.name;
+				}
+			}
+		}
+	}else {
 		var splittedUri = splitURI(uri);
 		if(splittedUri == null) return uri;
 		
-		//var prefixes = schema.getPrefixes()
 		var prefixes = await dataShapes.getNamespaces()
 		for(var key in prefixes){
 			if(prefixes[key]["value"] == splittedUri.namespace) {
