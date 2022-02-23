@@ -204,10 +204,10 @@ const findElementDataForProperty = (vq_obj) => {
 	pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	if (dataShapes.schema.schemaType !== 'wikidata') {
+	//if (dataShapes.schema.schemaType !== 'wikidata') {
 		var pListI = getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
-	}
+	// }
 	
 	return params;
 }
@@ -221,10 +221,10 @@ const findElementDataForIndividual = (vq_obj) => {
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	if (dataShapes.schema.schemaType !== 'wikidata') {
+	//if (dataShapes.schema.schemaType !== 'wikidata') {
 		var pListI = getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
-	}
+	// }
 	
 	return params;
 }
@@ -620,6 +620,19 @@ dataShapes = {
 			
 		return rr;
 	},
+	getIndividualsWD : async function(filter) {
+		var rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
+		if (rr.success == 1) {
+			var rez = _.map(rr.search, function(p) {
+				var localName = `wd:[${p.label} (${p.id})]`;				
+				return localName;
+			});
+			return rez;
+		}
+		else
+			return [];
+
+	},
 	getTreeIndividuals : async function(params = {}, className) {
 		// *** console.log("------------getTreeIndividuals ------------------")
 		var rr = [];
@@ -639,7 +652,7 @@ dataShapes = {
 			var rez = _.map(rr.search, function(p) {
 				// TODO jāpaskatās, kāds īsti ir ns
 				var localName = `wd:[${p.label} (${p.id})]`;				
-				return {localName:localName , description: p.description, iri:p.url, label:p.label}
+				return {localName:localName , description: p.description, iri:p.url, label:p.label};
 			});
 			return rez;
 		}
