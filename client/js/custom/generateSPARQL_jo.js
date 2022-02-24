@@ -1353,7 +1353,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
 				
 				messages = messages.concat(result["messages"]);
-				// console.log("ATTRIBUTE", result);
+				 // console.log("ATTRIBUTE", result, field);
+				 
+				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null){
+					 var resultC = parse_filter(field["attributeConditionSelection"], attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+					if(typeof result.triples[0] !== "undefined")result.triples[0] = result.triples[0] + " FILTER(" + resultC["exp"] + ")";
+				 }
+				 
 				sparqlTable["variableReferenceCandidate"].concat(result["referenceCandidateTable"]);
 				for (var reference in result["referenceCandidateTable"]){
 					if(typeof result["referenceCandidateTable"][reference] === 'string') sparqlTable["variableReferenceCandidate"].push(result["referenceCandidateTable"][reference])

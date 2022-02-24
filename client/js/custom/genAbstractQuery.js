@@ -527,6 +527,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		var condition = {exp:conditionExpression};
 		await parseExpObject(condition, obj_class.identification);
 		obj_class.conditions.push(condition);
+	  } 
+	  if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != null && f.attributeConditionSelection != ""){
+		var variableName = f.exp;
+		if (f.alias!=null && f.alias!="")variableName = f.alias;
+		var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeConditionSelection, {"variable":variableName});
+		var condition = {exp:conditionExpression};
+		await parseExpObject(condition, obj_class.identification);
+		
+		f.attributeConditionSelection = condition;
+		
+		// obj_class.conditions.push(condition);
 	  }
 	  // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {

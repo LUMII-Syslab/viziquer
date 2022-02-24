@@ -2930,6 +2930,7 @@ VQ_Element.prototype = {
     {title:"graph",name:"Graph"},
     {title:"graphInstruction",name:"Graph instruction"},
     {title:"attributeCondition",name:"AttributeCondition"},
+    {title:"attributeConditionSelection",name:"AttributeConditionSelection"},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
     {title:"addLabel",name:"Add Label",transformer:function(v) {return v=="true"}},
     {title:"addAltLabel",name:"Add AltLabel",transformer:function(v) {return v=="true"}},
@@ -2954,7 +2955,7 @@ VQ_Element.prototype = {
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
-  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction,condition) {
+  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction,condition,conditionSelection) {
     
 	var prefixesValue = "";
 	var graphPrefixValue = "";
@@ -2968,6 +2969,7 @@ VQ_Element.prototype = {
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
       {name:"AttributeCondition",value:condition},
+      {name:"AttributeConditionSelection",value:conditionSelection},
       {name:"Graph",value:graph, input:""},
       {name:"Graph instruction",value:graphInstruction,input:""},
       {name:"Require Values",value:this.boolToString(requireValues)},

@@ -49,11 +49,18 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			  
 			  
 		 }
-	  
+		 
+		  var prefixes = await dataShapes.getNamespaces();
+		
+			var prefixesText = [];
+			for(var p in prefixes){
+				prefixesText.push("PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">");
+			}
+
 	  // for(var query in queries){
      for (let query = 0; query < queries.length; query++) {
 		var text = queries[query]["sparql"];
-		
+		text = prefixesText.join("\n") + text;
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		// x = xx;
@@ -246,16 +253,19 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   },
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
+	
+	 var prefixes = await dataShapes.getNamespaces();
+		
+			var prefixesText = [];
+			for(var p in prefixes){
+				prefixesText.push("PREFIX " + prefixes[p]["name"] + ": <" + prefixes[p]["value"] + ">");
+			}
+		
+			text = prefixesText.join("\n") + text;
+	
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
-		  
-		// var proj = Projects.findOne({_id: Session.get("activeProject")});
-	    // if (proj) {
-		  // if (proj.schema) {
-			// schemaName = proj.schema;
-			// schemaName = schemaName.toLowerCase();
-		  // };
-	    // }  
+		
 		schemaName = dataShapes.schema.schemaType;
 		  
 		x = xx;

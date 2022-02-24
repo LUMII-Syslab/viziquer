@@ -1878,6 +1878,44 @@
                         "subCompartmentTypes": []
                       },
 					  {
+                        "_id": "frys21a6u6q2fby5160t0bqq",
+                        "index": 15,
+                        "name": "AttributeConditionSelection",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "attributeConditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": " @{",
+                        "suffix": "}",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Selection condition"
+                      },
+					  {
+                        "_id": "86r808goo31igpblysfa8zeh",
+                        "index": 16,
+                        "name": "AttributeCondition",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "attributeConditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": " !{",
+                        "suffix": "}",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Required condition"
+                      },
+					  {
                         "_id": "i794avqh6vh6aa1cakgfrvni",
                         "index": 3,
                         "name": "Prefixes",
