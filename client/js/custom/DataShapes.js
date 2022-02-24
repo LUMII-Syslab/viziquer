@@ -19,7 +19,7 @@ const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
-const ConsoleLog = true;
+const ConsoleLog = false;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
@@ -297,8 +297,10 @@ return {
 		empty: true,
 		resolvedClasses: {}, 
 		resolvedProperties: {}, 
+		resolvedIndividuals: {}, 
 		resolvedClassesF: {}, 
 		resolvedPropertiesF: {},
+		resolvedIndividualsF: {}, 
 		treeTopsC: {}, 
 		treeTopsP: {}, 
 		namespaces: [],
@@ -652,7 +654,7 @@ dataShapes = {
 			var rez = _.map(rr.search, function(p) {
 				// TODO jāpaskatās, kāds īsti ir ns
 				var localName = `wd:[${p.label} (${p.id})]`;				
-				return {localName:localName , description: p.description, iri:p.url, label:p.label};
+				return {localName:localName , description: p.description, iri:p.concepturi, label:p.label};
 			});
 			return rez;
 		}
@@ -710,27 +712,47 @@ dataShapes = {
 		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
 
 		params.name = this.getIndividualName(params.name);
-		if (this.schema.schemaType === 'wikidata') {
-			var prefix = params.name.substring(0, params.name.indexOf(':')+1);
-			//var ns = '';
-			//_.each(this.schema.namespaces, function(n) {
-			//	if (params.name.indexOf(ns.value) == 0)
-			//		ns = n.value;
-			//});
-			var name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
-			var individuals = await this.getTreeIndividualsWD(name);
-
-			if (individuals.length == 0) 
-				return {complete: false, data:[]};
-			else   // TODO pārbaudīt, vai vienmēr ir labi ņemt pirmo
-				return {complete: true, data:[{name: params.name, localName: individuals[0].localName, label: individuals[0].label }]};
-
+		var rr;
+		
+		if (this.schema.resolvedIndividuals[params.name] !== undefined || this.schema.resolvedIndividualsF[params.name] !== undefined) {
+			if (this.schema.resolvedIndividuals[params.name] !== undefined)
+				rr = { complete:true, data: [this.schema.resolvedIndividuals[params.name]]};
+			if (this.schema.resolvedIndividualsF[params.name] !== undefined)
+				rr = { complete:false, data: []};
 		}
 		else {
-			var rr;
-			rr = await this.callServerFunction("resolveIndividualByName", {main: params});
-			return rr;		
+			if (this.schema.schemaType === 'wikidata') {
+				var prefix = params.name.substring(0, params.name.indexOf(':')+1);
+				var iri = '';
+				_.each(this.schema.namespaces, function(n) {
+					if (params.name.indexOf(n.name) == 0)
+						iri = params.name.replace(':','').replace(n.name,n.value);
+				});
+				var name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
+				var individuals = await this.getTreeIndividualsWD(name);
+
+				if (individuals.length > 0) { 
+					var rez = {};
+					_.each(individuals, function(i) {
+						if (i.concepturi == iri)
+							rez = {name: params.name, localName: i.localName, label: i.label};
+					});
+					if ( rez.name != undefined) 
+						rr = {complete: true, data:[rez]};
+					else
+						rr = await this.callServerFunction("resolveIndividualByName", {main: params});  // TODO - vai tā darīt
+				}
+			}
+			else {
+				var rr = await this.callServerFunction("resolveIndividualByName", {main: params});
+			}
 		}
+		
+		if ( rr.complete )
+				this.schema.resolvedIndividuals[params.name] = rr.data[0];
+			else
+				this.schema.resolvedIndividualsF[params.name] = 1;
+		return rr;	
 	},
 	printLog : function() {
 		if ( this.schema.log.length > 0 ) {
