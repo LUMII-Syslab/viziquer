@@ -1263,7 +1263,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		// if(varName == "?") varName = "?class";
 		if(varName == "?") varName = instance;
 		if(clazz["variableName"].startsWith("?")) varName = varName.substr(1);
-		sparqlTable["classTriple"] = "?" + instance + " " + classMembership + " ?" + varName+ ".";
+		if(checkIfIsURI(instance) == "prefix_form" || checkIfIsURI(instance) == "full_form" ) sparqlTable["classTriple"] = instance + " " + classMembership + " ?" + varName+ ".";
+		else sparqlTable["classTriple"] = "?" + instance + " " + classMembership + " ?" + varName+ ".";
+		
 		if(underNotLink != true && clazz["variableName"].startsWith("?") == false)sparqlTable["variableName"] = "?" + varName;
 
 		if(typeof fieldNames[attrname] === 'undefined') fieldNames[varName] = [];
@@ -1355,7 +1357,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				messages = messages.concat(result["messages"]);
 				 // console.log("ATTRIBUTE", result, field);
 				 
-				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null){
+				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null && field["attributeConditionSelection"] !== ""){
 					 var resultC = parse_filter(field["attributeConditionSelection"], attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 					if(typeof result.triples[0] !== "undefined")result.triples[0] = result.triples[0] + " FILTER(" + resultC["exp"] + ")";
 				 }

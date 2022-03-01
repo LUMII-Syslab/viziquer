@@ -2,13 +2,7 @@ Interpreter.customMethods({
 	AddLink: async function () {
 		Interpreter.destroyErrorMsg();
 		var asc = [];
-		Template.AddLink.Count.set(startCount);
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
-		Template.AddLink.fullList.set(asc);
-		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		Template.AddLink.testAddLink.set({data: false});
+		
 		
 		var start_elem_id = Session.get("activeElement");			
 		var currentElement = new VQ_Element(start_elem_id);
@@ -23,6 +17,8 @@ Interpreter.customMethods({
 		
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
 		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
+		
+		Template.AddLink.fullList.set([{name: "", text: "Waiting answer...", wait: true}]);
 			
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
@@ -30,6 +26,19 @@ Interpreter.customMethods({
 		$('input[id=goto-wizard]').prop("disabled","disabled");	
 		$("#mySearch")[0].value = "";		
 		$("#add-link-form").modal("show");
+		
+		
+		Template.AddLink.Count.set(startCount);
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
+		})
+		Template.AddLink.fullList.set(asc);
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		Template.AddLink.testAddLink.set({data: false});
+		
+		// cc.pop();
+			// cc.push({ch_count: 0, children: [], data_id: "wait", localName: "Waiting answer..."});
+			// Template.schemaTree.Classes.set(cc);
 	},
 
 	AddSubquery: async function () {
@@ -85,7 +94,7 @@ Interpreter.customMethods({
         Create_VQ_Element(function(cl){
             cl.setName("[ + ]");
             var proj = Projects.findOne({_id: Session.get("activeProject")});
-            cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+            // cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
             cl.setClassStyle("condition");	                
         	locLink = [coordX, coordY, coordX, newPosition.y];                 
             Create_VQ_Element(function(lnk) {
@@ -301,7 +310,12 @@ Template.AddLink.events({
             Create_VQ_Element(function(cl){
                 cl.setName(class_name);
                 var proj = Projects.findOne({_id: Session.get("activeProject")});
-                cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+				
+				
+				
+                if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){				
+					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+				}
                 cl.setClassStyle("condition");
                 if (line_direct == "=>") {
                 	locLink = [coordX, coordY, coordX, newPosition.y];                 

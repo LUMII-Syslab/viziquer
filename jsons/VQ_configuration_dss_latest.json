@@ -2707,8 +2707,7 @@
                     "extensionPoint": "dynamicSuffix"
                   },
                   {
-                    "extensionPoint": "dynamicDefaultValue",
-                    "procedure": "VQsetIndirectClassMembershipDefaultValue"
+                    "extensionPoint": "dynamicDefaultValue"
                   },
                   {
                     "extensionPoint": "dynamicDropDown"

@@ -156,6 +156,13 @@
                         <div class="form-group">
                         <!-- {{#if testAddLink.data}}                    -->
                             {{#each fullList}}
+								{{#if wait}}
+                                <div class="col-lg-10 association" name="{{name}}">
+                                    <label class="label-radio">
+                                        <span> {{text}} </span>
+                                    </label>
+                                </div>
+                                {{/if}}
                                 {{#if show}}
                                 <div class="col-lg-10 association" name="{{name}}" className="{{class}}" line_direct="{{type}}">
                                     <label class="label-radio">

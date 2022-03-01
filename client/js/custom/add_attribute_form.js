@@ -18,12 +18,18 @@ Interpreter.customMethods({
 		// attribute-to-add
 		Template.AddAttribute.Count.set(startCount);
 		Template.AddAttribute.CountAssoc.set(startCount);
+		
+		// Template.AddAttribute.linkList.set(associations);
+		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		
+		Template.AddAttribute.attrList.set([{name: "Waiting answer...", wait: true}]);
+		
+		$("#add-attribute-form").modal("show");
+		
 		var attributes = await getAttributes()
 		// var associations = await getAssociations()
 		Template.AddAttribute.attrList.set(attributes);
-		// Template.AddAttribute.linkList.set(associations);
-		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
-		$("#add-attribute-form").modal("show");
+		
 		$('input[name=stack-checkbox]').attr('checked',false);
 		$('button[name=required-attribute]').html('\&nbsp;');
 		$("#class-associations")[0].style.display = "none";

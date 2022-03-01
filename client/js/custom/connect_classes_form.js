@@ -396,7 +396,7 @@ Template.ConnectClasses.events({
 	            Create_VQ_Element(function(cl){
 	                cl.setName(class_name);
 	                var proj = Projects.findOne({_id: Session.get("activeProject")});
-	                cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+	                if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
 	                cl.setClassStyle("condition");	                
                 	locLink = [coordX, coordY, coordX, newPosition.y];                 
 	                Create_VQ_Element(function(lnk) {
@@ -909,7 +909,7 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	    Create_VQ_Element(function(cl){
 	        cl.setName(chain[0].class);
 	        var proj = Projects.findOne({_id: Session.get("activeProject")});
-	        cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+	        if(typeof chain[0] !== "undefined" && chain[0] != null && chain[0] !== ""){cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);}
 	        cl.setClassStyle("condition");
 	        if (chain[0].direction == "=>") {
 	        	locLink = [coordX, coordY, coordX, newPosition.y];                 

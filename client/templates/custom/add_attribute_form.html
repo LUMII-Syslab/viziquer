@@ -109,6 +109,11 @@
 							<table class="table table-striped" style="margin-bottom:0px;margin-left:10px;margin-right:10px;width:95%;">
 									<tbody>
 										{{#each existingAttributes}}
+											{{#if wait}}
+											<tr class="attribute">
+												<td class="information">{{name}}</td>
+											</tr>
+											{{else}}
 											<tr class="attribute">
 												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}">{{fulltext}}</td>
 												<td class="pull-right">
@@ -119,6 +124,7 @@
 													<a class="btn btn-xs btn-danger remove-multi-field"><i id="attribute-delete-button" class="fa fa-trash-o"></i></a>
 												</td>
 											</tr>
+											{{/if}}
 										{{/each}}
 										
 									</tbody>

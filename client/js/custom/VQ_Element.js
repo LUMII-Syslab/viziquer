@@ -2813,19 +2813,20 @@ VQ_Element.prototype = {
 	if (indirect) {
 		// if indirectClassMembership parameter is set, execute dynamicDefaultValue ExtensionPoint, to set default value
 		var ct = CompartmentTypes.findOne({name: "indirectClassMembership", elementTypeId: this.obj["elementTypeId"]});
-		var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", ct);
-		if (proc_name && proc_name != "") {
-			if(Interpreter.execute(proc_name, [""])) {
+		// var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", ct);
+		// if (proc_name && proc_name != "") {
+			// if(Interpreter.execute(proc_name, [""])) {
 				if(this.getName() !== null && this.getName() !== ""){
-					this.setNameValue(".. "+this.getName());
+					this.setNameValue(".. "+this.getName());	
+					indirectS = "true";
 				}
-				indirectS = "true";
-			}
+				
+			// }
 			else if(this.getName() !== null) this.setNameValue(this.getName());
-		}
-		else {
-			if(this.getName() !== null) this.setNameValue(this.getName());
-		}
+		// }
+		// else {
+			// if(this.getName() !== null) this.setNameValue(this.getName());
+		// }
 	} else {
       if(this.getName() !== null) this.setNameValue(this.getName());
     };
