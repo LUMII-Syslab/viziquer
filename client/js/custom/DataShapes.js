@@ -710,7 +710,9 @@ dataShapes = {
 		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
 		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'}) // dbpedia
 		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
-
+		if (params.name.indexOf('<') != -1)
+			params.name = params.name.substring(1, params.name.length-1);
+		
 		params.name = this.getIndividualName(params.name);
 		var rr;
 		
@@ -721,7 +723,7 @@ dataShapes = {
 				rr = { complete:false, data: []};
 		}
 		else {
-			if (this.schema.schemaType === 'wikidata') {
+			if (this.schema.schemaType === 'wikidata' &&  params.name.indexOf('//') == -1) {
 				var prefix = params.name.substring(0, params.name.indexOf(':')+1);
 				var iri = '';
 				_.each(this.schema.namespaces, function(n) {
@@ -744,7 +746,7 @@ dataShapes = {
 				}
 			}
 			else {
-				var rr = await this.callServerFunction("resolveIndividualByName", {main: params});
+				rr = await this.callServerFunction("resolveIndividualByName", {main: params});
 			}
 		}
 		
@@ -785,7 +787,7 @@ dataShapes = {
 		else if (localName.indexOf('//') != -1) {
 			var name = '';
 			_.each(this.schema.namespaces, function(ns) {
-				if (localName.indexOf(ns.value) == 0)
+				if (localName.indexOf(ns.value) == 0 && localName.length > ns.value.length)
 					name = `${ns.name}:${localName.replace(ns.value,'')}`;
 			});
 			
