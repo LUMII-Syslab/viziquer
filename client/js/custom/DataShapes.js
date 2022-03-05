@@ -744,6 +744,9 @@ dataShapes = {
 					else
 						rr = await this.callServerFunction("resolveIndividualByName", {main: params});  // TODO - vai tā darīt
 				}
+				else {
+					rr = await this.callServerFunction("resolveIndividualByName", {main: params});
+				}
 			}
 			else {
 				rr = await this.callServerFunction("resolveIndividualByName", {main: params});
