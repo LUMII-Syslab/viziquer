@@ -1,5 +1,10 @@
 {
 	function makeVar(o) {return makeString(o);};
+	function makeVarVariable(o) {
+		var variable =  makeString(o);
+		if(variable.startsWith("_") == true) variable = variable.substring(1);
+		return variable;
+	};
 	function makeIRI(o) {
 		var iri = makeString(o);
 		if(iri.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) return "rdf:" + iri.substring(43);
@@ -12,8 +17,8 @@
 	//Chars_String = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)
 	space = ((" ")*) {return }
 	Var = (VAR_All / VAR1 / VAR2 / VAR3) 
-	VAR1 = "?" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
-	VAR2 = "$" Var:VARNAME {return {value:makeVar(Var), type:"varName"}}
+	VAR1 = "?" Var:VARNAME {return {value:makeVarVariable(Var), type:"varName"}}
+	VAR2 = "$" Var:VARNAME {return {value:makeVarVariable(Var), type:"varName"}}
 	VAR3 = "_:" Var:VARNAME {return {value:"_"+makeVar(Var), type:"varName", isBlankNode:"true"}}
 	VAR_All = "*" {return {value:"*", type:"varName"}}
 	VARNAME = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])*)

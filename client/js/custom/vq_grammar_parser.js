@@ -1,5 +1,5 @@
 (function() {
-vq_grammar_parser = (function() {													
+vq_grammar_parser = (function() {
   "use strict";
 
   /*
@@ -492,7 +492,7 @@ vq_grammar_parser = (function() {
         peg$c452 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c453 = async function(ref, PropertyReference, INV, PNAME_NS, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
         peg$c454 = async function(ref, PropertyReference, INV, LName, Substring, FunctionBETWEEN, FunctionLike) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:await resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}},
-        peg$c455 = async function(LName) {return {var:{name:makeVar(LName), type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName))}}},
+        peg$c455 = async function(PropertyReference, LName) {return {var:{name:makeVar(LName), type:await resolveType(makeVar(LName)), kind:await resolveKind(makeVar(LName)), PropertyReference:PropertyReference}}},
         peg$c456 = "!=",
         peg$c457 = { type: "literal", value: "!=", description: "\"!=\"" },
         peg$c458 = "<>",
@@ -14378,7 +14378,7 @@ vq_grammar_parser = (function() {
     }
 
     async function peg$parseDoubleSquareBracketName() {
-      var s0, s1, s2, s3;
+      var s0, s1, s2, s3, s4;
 
       var key    = peg$currPos * 271 + 258,
           cached = peg$resultsCache[key];
@@ -14390,29 +14390,41 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = peg$currPos;
-      s2 = await peg$parsesquarePrefix();
-      if (s2 === peg$FAILED) {
-        s2 = null;
-      }
-      if (s2 !== peg$FAILED) {
-        s3 = await peg$parsesquareVariable();
-        if (s3 !== peg$FAILED) {
-          s2 = [s2, s3];
-          s1 = s2;
-        } else {
-          peg$currPos = s1;
-          s1 = peg$FAILED;
-        }
-      } else {
-        peg$currPos = s1;
-        s1 = peg$FAILED;
+      s1 = await peg$parsePropertyReference();
+      if (s1 === peg$FAILED) {
+        s1 = null;
       }
       if (s1 !== peg$FAILED) {
-        peg$savedPos = s0;
-        s1 = await peg$c455(s1);
+        s2 = peg$currPos;
+        s3 = await peg$parsesquarePrefix();
+        if (s3 === peg$FAILED) {
+          s3 = null;
+        }
+        if (s3 !== peg$FAILED) {
+          s4 = await peg$parsesquareVariable();
+          if (s4 !== peg$FAILED) {
+            s3 = [s3, s4];
+            s2 = s3;
+          } else {
+            peg$currPos = s2;
+            s2 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s2;
+          s2 = peg$FAILED;
+        }
+        if (s2 !== peg$FAILED) {
+          peg$savedPos = s0;
+          s1 = await peg$c455(s1, s2);
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
       }
-      s0 = s1;
 
       peg$resultsCache[key] = { nextPos: peg$currPos, result: s0 };
 

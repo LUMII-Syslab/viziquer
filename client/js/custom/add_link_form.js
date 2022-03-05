@@ -45,10 +45,10 @@ Interpreter.customMethods({
 		Interpreter.destroyErrorMsg();
 		var asc = [];
 		Template.AddLink.Count.set(startCount);
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
-		Template.AddLink.fullList.set(asc);
+		
+		Template.AddLink.fullList.set([{name: "", text: "Waiting answer...", wait: true}]);
+		
+		
 		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
 		Template.AddLink.testAddLink.set({data: false});
 		
@@ -72,6 +72,11 @@ Interpreter.customMethods({
 		$('#goto-wizard').removeAttr("disabled");
 		$("#mySearch")[0].value = "";
 		$("#add-link-form").modal("show");
+		
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
+		})
+		Template.AddLink.fullList.set(asc);
 	},
 
 	AddUnion: function () {
@@ -412,7 +417,15 @@ Template.AddLink.events({
 				// schemaName = proj.schema;
 			// };
 		// }
-			
+		
+		Template.SelectTargetClass.classes.set([{text: "Waiting answer...", wait: true}]);
+		
+		autoCompletionCleanup();
+		
+		$("#class-search")[0].value = "";
+		$('[name=class-list-radio]').removeAttr('checked');
+		$("#select-class-form").modal("show");
+		
 		var classes;
 		if(name == "==" || name == "++") {
 			classes = await dataShapes.getClasses();
@@ -457,11 +470,7 @@ Template.AddLink.events({
 		
 		Template.SelectTargetClass.classes.set(classes);
 		
-		autoCompletionCleanup();
 		
-		$("#class-search")[0].value = "";
-		$('[name=class-list-radio]').removeAttr('checked');
-		$("#select-class-form").modal("show");
 	},
 
 	"click #add-long-link": function() {

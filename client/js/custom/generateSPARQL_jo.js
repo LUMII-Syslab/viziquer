@@ -3344,7 +3344,8 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 				var symbolUsage = symbolTable[expressionTable[key]["name"]];
 				var found = false;
 				for(var symbol in symbolUsage){
-					if(typeof symbolUsage[symbol]["type"] !== "undefined" && typeof symbolUsage[symbol]["type"]["max_cardinality"] !== "undefined" && symbolUsage[symbol]["type"]["max_cardinality"] != null){ 
+
+					if(typeof symbolUsage[symbol]["type"] !== "undefined" && symbolUsage[symbol]["type"] !== null && typeof symbolUsage[symbol]["type"]["max_cardinality"] !== "undefined" && symbolUsage[symbol]["type"]["max_cardinality"] != null){ 
 						if(symbolUsage[symbol]['type']['max_cardinality'] == -1 || symbolUsage[symbol]['type']['max_cardinality'] > 1){
 							isMultipleAllowedCardinality = true;
 						}

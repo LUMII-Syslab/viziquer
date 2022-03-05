@@ -623,7 +623,7 @@
 
 			LNameINV2 = (ref:"@"? PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			DoubleSquareBracketName = LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			DoubleSquareBracketName = PropertyReference:PropertyReference? LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PropertyReference:PropertyReference}}}
 			squarePrefix = Chars_String_prefix ":"
 			squareVariable = "["  Chars_String_square  "]"
 			

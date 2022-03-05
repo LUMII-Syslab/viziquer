@@ -2004,13 +2004,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						break;
 					}
 				}
-				
+				 	
 				messages.push({
 					"type" : "Error",
 					"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
 					"listOfElementId" : [clId],
 					"isBlocking" : true
 				});
+				
+				SPARQLstring = SPARQLstring + "?" + varName;
 				//Interpreter.showErrorMsg("Unrecognized variable '" + varName + "'. Please specify variable.");
 			}
 		}
@@ -2815,7 +2817,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							if(variable['PropertyReference'] != null){
 								
 								var name = setVariableName(variable["name"], alias, variable);
-									tripleTable.push({"BIND":"BIND(" + variable["type"]["prefix"]+":" + variable["name"] + " AS ?" + name + ")"})
+	
+								if(variable["name"].indexOf("[") != -1 && variable["name"].indexOf("]") != -1){
+									var prefix = "";
+									if(typeof variable["type"]["prefix"] !== "undefined") prefix = variable["type"]["prefix"]+":";
+									tripleTable.push({"BIND":"BIND(" + prefix + variable["type"]["local_name"] + " AS ?" + name + ")"})
+								} else tripleTable.push({"BIND":"BIND(" + variable["type"]["prefix"]+":" + variable["name"] + " AS ?" + name + ")"})
 									valueString = "?"+name;
 									SPARQLstring = SPARQLstring  + valueString; 
 								visited = 1;

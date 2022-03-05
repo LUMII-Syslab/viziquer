@@ -1186,6 +1186,27 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
     				
     				return null;
 };
+   			// string -> idObject
+    			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
+async function resolveTypeFromSchemaForIndividual(id, schemaName) {
+    				
+					if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")))){
+						id = "wd:"+id;
+						var cls = await dataShapes.resolveIndividualByName({name: id})
+						
+						if(cls["complite"] == false) return null;
+						if(cls["data"].length > 0){
+							cls["data"][0]["local_name"] = cls["data"][0]["name"];
+							return cls["data"][0];
+						}
+					}
+					
+					
+					
+					
+    				
+    				return null;
+};
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
 async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
@@ -1223,6 +1244,9 @@ async function resolveType(id, exprType, context, symbol_table, schemaName) {
     					  t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
     					  if (!t) {
     						  t=await resolveTypeFromSchemaForClass(id, schemaName)
+    					  }
+						  if (!t) {
+    						  t=await resolveTypeFromSchemaForIndividual(id, schemaName)
     					  }
     					}
 
