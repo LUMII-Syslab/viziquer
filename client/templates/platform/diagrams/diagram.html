@@ -95,7 +95,8 @@
             {{#with executedSparql}}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{#if limit_set}} Only 50 rows shown.{{/if}} Total number of rows: {{number_of_rows}}.
+                    {{#if limit_set}} Only 50 rows shown. Total number of rows: {{number_of_rows}}. {{/if}}
+					{{#if waiting}} Executes the query, waiting for results...{{/if}}
                 </div>
 
                 <div class="panel-body">

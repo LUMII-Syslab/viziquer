@@ -398,7 +398,8 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 // Executes the given Sparql end shows result in the GUI
 function executeSparqlString(sparql, paging_info) {
   // Default Data Set Name (Graph IRI) and SPARQL endpoint url
- 
+ Session.set("executedSparql", {limit_set:false, waiting:true, number_of_rows:0});
+ $('#vq-tab a[href="#executed"]').tab('show');
   var graph_iri = "";
   var endpoint = "http://185.23.162.167:8833/sparql";
 
