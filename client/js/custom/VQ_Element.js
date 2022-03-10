@@ -2794,12 +2794,12 @@ VQ_Element.prototype = {
     this.setLinkQueryType(type);
   },
   isLabelServiceLanguages: function() {
-    var useLabelService = this.getCompartmentValue("Use Label Service");
+    // var useLabelService = this.getCompartmentValue("Use Label Service");
     var labelServiceLanguages = this.getCompartmentValue("Label Service Languages");
-	if(useLabelService == "true"){
+	// if(useLabelService == "true"){
 		if(labelServiceLanguages == null || labelServiceLanguages.replace(/ /g, "") == "") labelServiceLanguages = "[AUTO_LANGUAGE],en";
 		return labelServiceLanguages;
-	}
+	// }
 	return null;
   },
   // determines whether the indirect class membership should be used (if configured) by translator
@@ -3023,10 +3023,13 @@ VQ_Element.prototype = {
   },
   // string, bool -->
   addOrdering: function(exp,isDescending) {
+	  
+	 
+	  
 	this.addCompartmentSubCompartments("OrderBy",[
       {name:"Name",value:exp},
       {name:"Desc",value:this.boolToString(isDescending)},
-    ])
+    ]) 
   },
   // --> [{fulltext:string, exp:string},...]
   // returns an array of orderings - expression and whether is descending

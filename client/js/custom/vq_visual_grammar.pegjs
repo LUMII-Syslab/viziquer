@@ -33,8 +33,8 @@
 	StringQuotes = StringQuotes:(STRING_LITERAL1  / STRING_LITERAL2) {return {value:makeVar(StringQuotes), type:"string"}}
 	STRING_LITERAL1 = "'" stringEmpty "'"
 	STRING_LITERAL2 = '"' stringEmpty '"'
-	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()] / "[" / "]")+)
-	stringEmpty = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()&] / "[" / "]" / "\\")*)
+	string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()+] / "[" / "]")+)
+	stringEmpty = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:;, ^$/*=()&+] / "[" / "]" / "\\")*)
 	
 	IntegerIRI = "http://www.w3.org/2001/XMLSchema#integer" / "http://www.w3.org/2001/XMLSchema#double";
 	BooleanIRI = "http://www.w3.org/2001/XMLSchema#boolean";

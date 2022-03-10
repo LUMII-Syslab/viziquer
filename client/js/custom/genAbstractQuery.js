@@ -1189,22 +1189,21 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
    			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 async function resolveTypeFromSchemaForIndividual(id, schemaName) {
-    				
-					if(schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")))){
+					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]")))){
 						id = "wd:"+id;
-						var cls = await dataShapes.resolveIndividualByName({name: id})
-						
-						if(cls["complite"] == false) return null;
-						if(cls["data"].length > 0){
-							cls["data"][0]["local_name"] = cls["data"][0]["name"];
-							return cls["data"][0];
+						// var cls = await dataShapes.resolveIndividualByName({name: id})
+						var cls = await dataShapes.getIndividualName(id)
+						if(cls != null && cls != ""){
+							return {local_name: cls.substring(3), prefix: "wd"};
 						}
+		
+						// if(cls["complite"] == false) return null;
+						// if(cls["data"].length > 0){
+							// cls["data"][0]["local_name"] = cls2.substring(3);
+							// cls["data"][0]["prefix"] = "wd";
+							// return cls["data"][0];
+						// }
 					}
-					
-					
-					
-					
-    				
     				return null;
 };
     			// string -> idObject
