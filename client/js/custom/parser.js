@@ -131,7 +131,9 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, classSch
 		
 		// if OpenLink Virtuoso && classTr != null && classTr != ""
 		if((typeof parameterTable["queryEngineType"] === 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO") && classTr != null && classTr != "") uniqueTriples.unshift(classTr);
-		if((typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == "true") || expr["allowResultMultiplication"] == true) uniqueTriples = uniqueTriples.concat(uniqueTriplesFilter);
+		if((typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == "true") || expr["allowResultMultiplication"] == true) {
+			uniqueTriples = uniqueTriples.concat(uniqueTriplesFilter);
+		}
 		else {
 			if(uniqueTriplesFilter.length != 0) result = "EXISTS{" + uniqueTriplesFilter.join("\n") + "\nFILTER(" + result + ")}";
 		}
@@ -198,8 +200,8 @@ function createTriples(tripleTable, tripleType){
 						triple = triple+ " FILTER("+attributeFilter+")";
 					}
 					triples.push(triple);
+					
 				}
-				
 				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
 			} else {
 				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
@@ -1913,18 +1915,21 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				// if variable from other class
 				if(expressionTable[key]['kind'] == "PROPERTY_NAME" || expressionTable[key]["ref"] != null){
 					var classHasProperty = false;
-					var st = symbolTable[classID][varName];
-					for(var symbol in st){
-						if(typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
-						typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
-						st[symbol]["type"]["parentType"]["short_name"] != classSchemaName
-						){
-							generateTriples = false;
-							variableToUse = st[symbol]["type"]["short_name"];
-						} else if (typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
-						typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
-						st[symbol]["type"]["parentType"]["short_name"] == classSchemaName){
-							classHasProperty = true;
+					
+					if(typeof symbolTable[classID] !== "undefined"){
+						var st = symbolTable[classID][varName];
+						for(var symbol in st){
+							if(typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
+							typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
+							st[symbol]["type"]["parentType"]["short_name"] != classSchemaName
+							){
+								generateTriples = false;
+								variableToUse = st[symbol]["type"]["short_name"];
+							} else if (typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
+							typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
+							st[symbol]["type"]["parentType"]["short_name"] == classSchemaName){
+								classHasProperty = true;
+							}
 						}
 					}
 					if(classHasProperty == true) {
@@ -1979,6 +1984,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 							inFilter = null;
 							applyExistsToFilter = false;
+							if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined') inFilter = true;
 						}
 						
 						var inv = "";
