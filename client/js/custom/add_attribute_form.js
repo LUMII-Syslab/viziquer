@@ -8,6 +8,16 @@ Template.AddNewAttribute.requireValues = new ReactiveVar("false");
 Template.AddNewAttribute.helper = new ReactiveVar("false");
 Template.AddNewAttribute.attributeid = new ReactiveVar("");
 Template.AddNewAttribute.selectThis = new ReactiveVar("");
+Template.AddNewAttribute.showLabel = new ReactiveVar("false");
+Template.AddNewAttribute.showGraph = new ReactiveVar("false");
+Template.AddNewAttribute.addLabel = new ReactiveVar("false");
+Template.AddNewAttribute.addAltLabel = new ReactiveVar("false");
+Template.AddNewAttribute.addDescription = new ReactiveVar("false");
+Template.AddNewAttribute.graphInstructionn = new ReactiveVar("");
+Template.AddNewAttribute.graphh = new ReactiveVar("");
+Template.AddNewAttribute.attributeConditionn = new ReactiveVar("");
+Template.AddNewAttribute.attributeConditionSelectionn = new ReactiveVar("");
+	
 Template.AddAttribute.Count = new ReactiveVar("")
 Template.AddAttribute.CountAssoc = new ReactiveVar("")
 const startCount = 30;
@@ -19,7 +29,22 @@ Interpreter.customMethods({
 		Template.AddAttribute.Count.set(startCount);
 		Template.AddAttribute.CountAssoc.set(startCount);
 		
-		// Template.AddAttribute.linkList.set(associations);
+		
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		 if (proj) {
+			  if (proj.enableWikibaseLabelServices=="true" && dataShapes.schema.schemaType === 'wikidata') {
+				Template.AddNewAttribute.showLabel.set(true)
+			  } else {
+				  Template.AddNewAttribute.showLabel.set(false)
+			  };
+			  if (proj.showGraphServiceCompartments=="true") {
+				Template.AddNewAttribute.showGraph.set(true)
+			  } else {
+				  Template.AddNewAttribute.showGraph.set(false)
+			  };
+			 
+		 }
+
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		
 		Template.AddAttribute.attrList.set([{name: "Waiting answer...", wait: true}]);
@@ -225,6 +250,14 @@ Template.AddAttribute.events({
 			
 				var prefixesValue = "";
 				
+				var graphInstruction = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graphInstruction");		
+				var graph = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graph");	
+		
+				var graphText = "";
+				if(graph != "" && graphInstruction != "" && graph != null && graphInstruction != null){
+					graphText = "{" + graphInstruction + ": " + graph + "} ";
+				}
+						
 				if(attributeInformation.getAttribute("helper") == "checked") prefixesValue = "h";
 				if(attributeInformation.getAttribute("requireValues") != "checked") {
 					prefixesValue = prefixesValue +  "+";
@@ -236,6 +269,8 @@ Template.AddAttribute.events({
 				}
 				
 				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+				
+				prefixesValue = graphText + prefixesValue;
 				
 				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				
@@ -271,6 +306,14 @@ Template.AddAttribute.events({
 			
 				var prefixesValue = "";
 				
+				var graphInstruction = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graphInstruction");		
+				var graph = $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graph");	
+		
+				var graphText = "";
+				if(graph != "" && graphInstruction != "" && graph != null && graphInstruction != null){
+					graphText = "{" + graphInstruction + ": " + graph + "} ";
+				}
+				
 				if(attributeInformation.getAttribute("helper") != "checked") {
 					prefixesValue = "h";
 					compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = "true";
@@ -284,6 +327,9 @@ Template.AddAttribute.events({
 				}
 				
 				if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
+				
+				prefixesValue = graphText + prefixesValue;
+				
 				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
@@ -416,6 +462,13 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.alias.set("");
 		Template.AddNewAttribute.expression.set("");
 		Template.AddNewAttribute.requireValues.set("");
+		Template.AddNewAttribute.addLabel.set("false");
+		Template.AddNewAttribute.addAltLabel.set("false");
+		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.graphInstructionn.set("");		
+		Template.AddNewAttribute.graphh.set("");		
+		Template.AddNewAttribute.attributeConditionn.set("");		
+		Template.AddNewAttribute.attributeConditionSelectionn.set("");	
 		Template.AddNewAttribute.helper.set("");
 		Template.AddNewAttribute.selectThis.set("");
 		Template.AddNewAttribute.attributeid.set("newAttribute");
@@ -430,9 +483,17 @@ Template.AddAttribute.events({
 		
 		Template.AddNewAttribute.alias.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("alias"));
 		Template.AddNewAttribute.expression.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression"));
+			
 		Template.AddNewAttribute.requireValues.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("requireValues"));
 		Template.AddNewAttribute.helper.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper"));		
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
+		Template.AddNewAttribute.addDescription.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addDescription"));		
+		Template.AddNewAttribute.addLabel.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addLabel"));		
+		Template.AddNewAttribute.addAltLabel.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addAltLabel"));		
+		Template.AddNewAttribute.graphInstructionn.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graphInstruction"));		
+		Template.AddNewAttribute.graphh.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graph"));		
+		Template.AddNewAttribute.attributeConditionn.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("attributeCondition"));		
+		Template.AddNewAttribute.attributeConditionSelectionn.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("attributeConditionSelection"));		
 		var selectThis = "";
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") == "(select this)")selectThis = "disabled";
 		Template.AddNewAttribute.selectThis.set(selectThis);
@@ -470,6 +531,36 @@ Template.AddNewAttribute.helpers({
 		return Template.AddNewAttribute.selectThis.get();
 	},
 	
+	addLabel: function() {
+		return Template.AddNewAttribute.addLabel.get();
+	},
+	addAltLabel: function() {
+		return Template.AddNewAttribute.addAltLabel.get();
+	},
+	addDescription: function() {
+		return Template.AddNewAttribute.addDescription.get();
+	},
+	
+	showLabel: function() {
+		return Template.AddNewAttribute.showLabel.get();
+	},
+	showGraph: function() {
+		return Template.AddNewAttribute.showGraph.get();
+	},
+	
+	graphInstruction: function() {
+		return Template.AddNewAttribute.graphInstructionn.get();
+	},
+	graph: function() {
+		return Template.AddNewAttribute.graphh.get();
+	},
+	attributeCondition: function() {
+		return Template.AddNewAttribute.attributeConditionn.get();
+	},
+	attributeConditionSelection: function() {
+		return Template.AddNewAttribute.attributeConditionSelectionn.get();
+	},
+	
 });
 
 Template.AddNewAttribute.events({
@@ -480,6 +571,23 @@ Template.AddNewAttribute.events({
 		var expression = document.getElementById("add-new-attribute-expression").value;
 		var requireValues = document.getElementById("add-new-attribute-requireValues").checked ;
 		var helper = document.getElementById("add-new-attribute-helper").checked ;
+		var addLabel = "";
+		var addAltLabel = "";
+		var addDescription = "";
+		var selectionCondition = "";
+		var requiredCondition = "";
+		var graph = "";
+		var graphInstruction = "";
+		
+		
+		if(document.getElementById("add-new-attribute-add-label") != null) addLabel = document.getElementById("add-new-attribute-add-label").checked;
+		if(document.getElementById("add-new-attribute-add-alt-label") != null) addAltLabel = document.getElementById("add-new-attribute-add-alt-label").checked;
+		if(document.getElementById("add-new-attribute-add-description") != null) addDescription = document.getElementById("add-new-attribute-add-description").checked;
+		if(document.getElementById("add-new-attribute-selection-condition") != null) selectionCondition = document.getElementById("add-new-attribute-selection-condition").value;
+		if(document.getElementById("add-new-attribute-required-condition") != null) requiredCondition = document.getElementById("add-new-attribute-required-condition").value;
+		if(document.getElementById("add-new-attribute-graph") != null) graph = document.getElementById("add-new-attribute-graph").value;
+		if(document.getElementById("add-new-attribute-graph-instruction") != null) graphInstruction = document.getElementById("add-new-attribute-graph-instruction").value;
+		
 		var fullText = "";
 		
 		var prefixesValue = "";
@@ -487,15 +595,42 @@ Template.AddNewAttribute.events({
 		if(requireValues == true) prefixesValue = prefixesValue + "+";
 		if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
 		
+		var graphText = "";
+		if(graph != "" && graphInstruction != ""){
+			graphText = "{" + graphInstruction + ": " + graph + "} ";
+		}
+		
+		prefixesValue = graphText + prefixesValue;
+				
 		fullText = prefixesValue;
 		if(alias != null && alias != "") fullText = fullText + alias + "<-";
 		fullText = fullText + expression;
-
+		
+		if(addLabel == true){
+			fullText = fullText + " {+label}";
+		}
+		
+		if(addAltLabel == true){
+			fullText = fullText + " {+altLabel}";
+		}
+		
+		if(addDescription == true){
+			fullText = fullText + " {+description}";
+		}
+		
+		if(selectionCondition != ""){
+			fullText = fullText + " @{" + selectionCondition + "}";
+		}
+		
+		if(requiredCondition != ""){
+			fullText = fullText + " !{" + requiredCondition + "}";
+		}
+		
 		if($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				var vq_obj = new VQ_Element(selected_elem_id);
-				vq_obj.addField(expression,alias,requireValues,false,helper);
+				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,requiredCondition,selectionCondition);
 			};
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		} else {
@@ -504,6 +639,14 @@ Template.AddNewAttribute.events({
 			attribute.setAttribute("expression", expression);
 			attribute.setAttribute("requireValues", requireValues);
 			attribute.setAttribute("helper", helper);
+			attribute.setAttribute("addLabel", addLabel);
+			attribute.setAttribute("addAltLabel", addAltLabel);
+			attribute.setAttribute("addDescription", addDescription);
+			attribute.setAttribute("selectionCondition", selectionCondition);
+			attribute.setAttribute("requiredCondition", requiredCondition);
+			attribute.setAttribute("graph", graph);
+			attribute.setAttribute("graphInstruction", graphInstruction);
+			
 			// attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
@@ -521,6 +664,13 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = helper.toString() ;
 				// if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
 				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = requireValues.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["Add Label"]["input"] = addLabel.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"]["input"] = addAltLabel.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["Add Description"]["input"] = addDescription.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"]["input"] = selectionCondition;
+				compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
+				compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
+				compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
 					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
@@ -541,11 +691,25 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.expression.set("");
 		Template.AddNewAttribute.requireValues.set("");
 		Template.AddNewAttribute.helper.set("");
+		Template.AddNewAttribute.addLabel.set("false");
+		Template.AddNewAttribute.addAltLabel.set("false");
+		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.graphInstructionn.set("");		
+		Template.AddNewAttribute.graphh.set("");		
+		Template.AddNewAttribute.attributeConditionn.set("");		
+		Template.AddNewAttribute.attributeConditionSelectionn.set("");
 			
 		document.getElementById("add-new-attribute-alias").value = "";
 		document.getElementById("add-new-attribute-expression").value = "";
 		document.getElementById("add-new-attribute-requireValues").checked = false;
 		document.getElementById("add-new-attribute-helper").checked = false;
+		if(document.getElementById("add-new-attribute-add-label") != null)document.getElementById("add-new-attribute-add-label").checked = false;
+		if(document.getElementById("add-new-attribute-add-alt-label") != null)document.getElementById("add-new-attribute-add-alt-label").checked = false;
+		if(document.getElementById("add-new-attribute-add-description") != null)document.getElementById("add-new-attribute-add-description").checked = false;
+		if(document.getElementById("add-new-attribute-graph") != null)document.getElementById("add-new-attribute-graph").value = "";
+		if(document.getElementById("add-new-attribute-graph-instruction") != null)document.getElementById("add-new-attribute-graph-instruction").value = "";
+		if(document.getElementById("add-new-attribute-selection-condition") != null)document.getElementById("add-new-attribute-selection-condition").value = "";
+		if(document.getElementById("add-new-attribute-required-condition") != null)document.getElementById("add-new-attribute-required-condition").value = "";
 	
 		return;
 	},
@@ -555,11 +719,26 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.expression.set("");
 		Template.AddNewAttribute.requireValues.set("");
 		Template.AddNewAttribute.helper.set("");
-		
+		Template.AddNewAttribute.addLabel.set("false");
+		Template.AddNewAttribute.addAltLabel.set("false");
+		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.graphInstructionn.set("");		
+		Template.AddNewAttribute.graphh.set("");		
+		Template.AddNewAttribute.attributeConditionn.set("");		
+		Template.AddNewAttribute.attributeConditionSelectionn.set("");
+			
 		document.getElementById("add-new-attribute-alias").value = "";
 		document.getElementById("add-new-attribute-expression").value = "";
 		document.getElementById("add-new-attribute-requireValues").checked = false;
 		document.getElementById("add-new-attribute-helper").checked = false;
+		
+		if(document.getElementById("add-new-attribute-add-label") != null)document.getElementById("add-new-attribute-add-label").checked = false;
+		if(document.getElementById("add-new-attribute-add-alt-label") != null)document.getElementById("add-new-attribute-add-alt-label").checked = false;
+		if(document.getElementById("add-new-attribute-add-description") != null)document.getElementById("add-new-attribute-add-description").checked = false;
+		if(document.getElementById("add-new-attribute-graph") != null)document.getElementById("add-new-attribute-graph").value = "";
+		if(document.getElementById("add-new-attribute-graph-instruction") != null)document.getElementById("add-new-attribute-graph-instruction").value = "";
+		if(document.getElementById("add-new-attribute-selection-condition") != null)document.getElementById("add-new-attribute-selection-condition").value = "";
+		if(document.getElementById("add-new-attribute-required-condition") != null)document.getElementById("add-new-attribute-required-condition").value = "";
 		
 		return;
 
@@ -576,6 +755,13 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.expression.set("");
 		Template.AddNewAttribute.requireValues.set("");
 		Template.AddNewAttribute.helper.set("");
+		Template.AddNewAttribute.addLabel.set("false");
+		Template.AddNewAttribute.addAltLabel.set("false");
+		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.graphInstructionn.set("");		
+		Template.AddNewAttribute.graphh.set("");		
+		Template.AddNewAttribute.attributeConditionn.set("");		
+		Template.AddNewAttribute.attributeConditionSelectionn.set("");
 	},
 });
 
@@ -772,6 +958,7 @@ function getExistingAttributes(){
 		
 		// var field_list = field_list.map(function(f) {
 		var field_list = vq_obj.getFields().map(function(f) {
+			
 			var al = f.alias;
 			if(al==null) al="";
 			var r = "";
@@ -788,10 +975,34 @@ function getExistingAttributes(){
 				hide = "checked";
 			}
 			
+			var addLabel = "false";
+			if(f.addLabel == true) {
+				addLabel = "checked";
+				fulltext = fulltext + " {+label}";
+			}
+			var addAltLabel = "false";
+			if(f.addAltLabel == true) {
+				addAltLabel = "checked";
+				fulltext = fulltext + " {+altLabel}";
+			}
+			var addDescription = "false";
+			if(f.addDescription == true) {
+				addDescription = "checked";
+				fulltext = fulltext + " {+description}";
+			}
+			if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != "") {
+				fulltext = fulltext + " @{" + f.attributeConditionSelection + "}";
+			}
+			
+			if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != "") {
+				fulltext = fulltext + " !{" + f.attributeCondition + "}";
+			}
+			
+			
 			var disabled = "";
 			if(f.exp == "(select this)") disabled = "disabled";
-			
-			return {name:f.exp, requireValues: r, fulltext:fulltext, al:al, hel:hide, id:f._id, disabled:disabled}});
+
+			return {name:f.exp, requireValues: r, fulltext:fulltext, al:al, hel:hide, id:f._id, disabled:disabled, addLabel:addLabel, addAltLabel:addAltLabel, addDescription:addDescription, attributeCondition:f.attributeCondition, attributeConditionSelection:f.attributeConditionSelection, graph:f.graph, graphInstruction:f.graphInstruction}});
 		return field_list;
 	}
 	return [];

@@ -115,7 +115,7 @@
 											</tr>
 											{{else}}
 											<tr class="attribute">
-												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}">{{fulltext}}</td>
+												<td class="information" name="{{id}}" alias="{{al}}" expression="{{name}}" requireValues="{{requireValues}}" helper="{{hel}}" addLabel="{{addLabel}}" addAltLabel="{{addAltLabel}}" addDescription="{{addDescription}}" graphInstruction="{{graphInstruction}}" graph="{{graph}}" attributeCondition="{{attributeCondition}}" attributeConditionSelection="{{attributeConditionSelection}}">{{fulltext}}</td>
 												<td class="pull-right">
 													<a class="btn btn-xs btn-warning edit-multi-field"><i id="attribute-extra-button" class="fa fa-pencil"></i></a>
 													<a class="btn btn-xs btn-default" {{disabled}}><i id="attribute-helper-button" class="fa" >helper</i></a>
@@ -223,6 +223,21 @@ To change the attribute to a helper (exclude from selection), save the attribute
                 </div>
                 <div class="modal-body multi-field" style="width: 550px" attributeid="{{attributeid}}">
 	                <form autocomplete="off">
+						{{#if showGraph}}
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label>Graph instruction</label>
+							<input id="add-new-attribute-graph-instruction" type="text" class="form-control dialog-combobox input-sm" list="graph-instruction-list" value="{{graphInstruction}}">
+								<datalist id="graph-instruction-list" class="datalist">
+										<option mappedvalue="GRAPH" input="GRAPH">GRAPH</option>
+										<option mappedvalue="SERVICE" input="SERVICE">SERVICE</option>
+								</datalist>
+						</div>
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label>Graph</label>
+							<input id="add-new-attribute-graph" autocomplete="off" class="form-control dialog-input input-sm" value="{{graph}}">
+						</div>
+						{{/if}}
+						
 						<div class="form-group compart-type" style="margin-bottom:10px;">
 							<label>Alias</label>
 							<input id="add-new-attribute-alias" class="form-control dialog-input input-sm" value="{{alias}}">
@@ -249,6 +264,38 @@ To change the attribute to a helper (exclude from selection), save the attribute
 								<span class="custom-checkbox"></span>
 								Helper (do not include in selection)
 							</label>
+						</div>
+						{{#if showLabel}}
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-label" type="checkbox" class="dialog-checkbox input-sm" {{addLabel}}>
+								<span class="custom-checkbox"></span>
+								Add Label
+							</label>
+						</div>
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-alt-label" type="checkbox" class="dialog-checkbox input-sm" {{addAltLabel}}>
+								<span class="custom-checkbox"></span>
+								Add AltLabel
+							</label>
+						</div>
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-add-description" type="checkbox" class="dialog-checkbox input-sm" {{addDescription}}>
+								<span class="custom-checkbox"></span>
+								Add Description
+							</label>
+						</div>
+						{{/if}}
+						
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label>Selection condition</label>
+							<input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-selection-condition" value="{{attributeCondition}}">
+						</div>
+						<div class="form-group compart-type" style="margin-bottom:10px;">
+							<label>Required condition</label>
+							<input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-required-condition" value="{{attributeConditionSelection}}">
 						</div>
    
 	                </form>
