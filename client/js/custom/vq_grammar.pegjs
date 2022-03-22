@@ -507,7 +507,7 @@
 			Comma = Comma:"," {return {Comma:Comma}}
 			Comma2 = Comma:"," {return {Space:" "}}
 
-			LANGTAG = "@" string
+			LANGTAG = "@" stringLang
 			LANGTAG_MUL = "@" "(" LANGTAG_MUL:(string2 (LANGTAG_LIST)*) ")" {return LANGTAG_MUL}
 			LANGTAG_LIST = (Comma:Comma space string:string2) {return string}
 
@@ -632,6 +632,7 @@
 			space = ((" ")*) {return }
 			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
+			stringLang = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9])+) {return {string: string.join("")}}
 			stringQ = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$()!@#%&*+?|/])+) {return {string: string.join("")}}
 			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
