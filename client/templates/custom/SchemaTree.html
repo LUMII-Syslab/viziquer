@@ -38,7 +38,7 @@
 	{{/if}}	
 
          <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
-        <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
+        <div class="class-body dd-handle" value={{data_id}} style="width: 100%; height: 100%">{{localName}} </div>
 
         <ol class="dd-list attributes-list" style="display: {{display}}; " >
 
@@ -89,7 +89,7 @@
 	{{/if}}	
 
          <!-- <button data-action="collapse" type="button" style="display: none;">Expand</button> -->
-        <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
+        <div class="class-body dd-handle" value={{data_id}} style="width: 100%; height: 100%">{{localName}} </div>
 
         <ol class="dd-list attributes-list" style="display: {{display}}; " >
 
@@ -142,14 +142,14 @@
 </template>
 <template name="subSchemaInstancesWD">
     <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
-        <div class="class-body dd-handle" data-toggle="tooltip" title={{description}} value={{localName}} style="height:45px" >{{localName}} <br> <div class="describe">{{description}}</div> </div>
+        <div class="class-body dd-handle" data-toggle="tooltip" title={{description}} value={{localName}} style="width: 100%; height: 100%">{{localName}} <br> <div class="describe">{{description}}</div> </div>
     </li>
 
 </template>
 
 <template name="subSchemaInstances">
     <li class="dd-item class-item" data-id="{{localName}}" style="margin-left: 0px;"  >
-        <div class="class-body dd-handle" value={{data_id}} >{{localName}} </div>
+        <div class="class-body dd-handle" value={{data_id}} style="width: 100%; height: 100%">{{localName}} </div>
     </li>
 
 </template>

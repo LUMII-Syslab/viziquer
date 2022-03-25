@@ -101,7 +101,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	var localName = obj_class.identification.local_name;
 	
 	if(typeof localName !== "undefined" && localName != null) localName = pr+localName;
-	
+		
     var resCl = await resolveClassByName(localName);
 	
 	
@@ -109,7 +109,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	//parser need class with prefix
 	var prefix = "";
 
-	if(typeof obj_class.identification.Prefix !== 'undefined' && obj_class.identification.Prefix != "") prefix = obj_class.identification.Prefix + ":";
+	if(typeof obj_class.identification.prefix !== 'undefined' && obj_class.identification.prefix != "") prefix = obj_class.identification.prefix + ":";
 	
 	var display_name = prefix+obj_class.identification.display_name;
 	if(typeof obj_class.identification.display_name === "undefined") display_name = obj_class.identification.local_name;
@@ -120,7 +120,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		//parser need link with prefix
 		var prefix = "";
 		// _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
-		if(typeof obj_class.linkIdentification.Prefix !== 'undefined' && obj_class.linkIdentification.Prefix != "") prefix = obj_class.linkIdentification.Prefix + ":";
+		if(typeof obj_class.linkIdentification.prefix !== 'undefined' && obj_class.linkIdentification.prefix != "") prefix = obj_class.linkIdentification.prefix + ":";
         _.extend(obj_class.linkIdentification, await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification))
     };
 	

@@ -2,7 +2,7 @@
 
 var x = 10;
 var y = 10;
-var width = 150;
+var width = 250;
 var height = 100;
 var counter = 0;
 VQ_Elements = {};
@@ -6412,7 +6412,7 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 
 		//distinct
 		var distinct = clazz["distinct"];
-		classBox.setDistinct(distinct);
+		if(typeof distinct !== "undefined")classBox.setDistinct(distinct);
 		// console.log("distinct = ", distinct);
 		
 		//serviceLabelLang

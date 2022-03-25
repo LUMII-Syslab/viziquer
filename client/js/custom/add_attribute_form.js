@@ -46,8 +46,10 @@ Interpreter.customMethods({
 		 }
 
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
+		var attributes = await getAttributes(null, true);
+		Template.AddAttribute.attrList.set(attributes);
 		
-		Template.AddAttribute.attrList.set([{name: "Waiting answer...", wait: true}]);
+		// Template.AddAttribute.attrList.set([{name: "Waiting answer...", wait: true}]);
 		
 		$("#add-attribute-form").modal("show");
 		
@@ -778,10 +780,10 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 	return param;
 }
 
-async function getAttributes(filter){
+async function getAttributes(filter, waiting){
 	var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-
+			
 			var attr_list = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
@@ -795,42 +797,46 @@ async function getAttributes(filter){
 			attr_list.push({name:"(all properties)"});
 			
 			attr_list.push({separator:"line"});
-			
-			for (var  key in symbolTable) {	
-				for (var symbol in symbolTable[key]) {
-					if(symbolTable[key][symbol]["context"] != selected_elem_id){
-						if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 )){
-							attr_list.push({name: key});
+			if(waiting == null){
+				for (var  key in symbolTable) {	
+					for (var symbol in symbolTable[key]) {
+						if(symbolTable[key][symbol]["context"] != selected_elem_id){
+							if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 )){
+								attr_list.push({name: key});
+							}
 						}
-					}
-				}	
-			}
-			
-			attr_list.push({separator:"line"});
+					}	
+				}
+				
+				attr_list.push({separator:"line"});
 
-			var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
+				var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
 
-			var prop = await dataShapes.getProperties(param, vq_obj);
+				var prop = await dataShapes.getProperties(param, vq_obj);
+				
+				if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
+				else $("#more-attributes-button")[0].style.display = "block";
+				
+				prop = prop["data"];
+				
+				// var proj = Projects.findOne({_id: Session.get("activeProject")});
+				var schemaName = dataShapes.schema.schemaType;
+				// if (proj) {
+					// if (proj.schema) {
+						// schemaName = proj.schema;
+					// };
+				// }
+				
+				for(var cl in prop){
+					var prefix;
+					if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+					else prefix = prop[cl]["prefix"]+":";
+					attr_list.push({name: prefix+prop[cl]["display_name"]})
+				}
 			
-			if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
-			else $("#more-attributes-button")[0].style.display = "block";
-			
-			prop = prop["data"];
-			
-			// var proj = Projects.findOne({_id: Session.get("activeProject")});
-			var schemaName = dataShapes.schema.schemaType;
-			// if (proj) {
-				// if (proj.schema) {
-					// schemaName = proj.schema;
-				// };
-			// }
-			
-			for(var cl in prop){
-				var prefix;
-				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-					|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-				else prefix = prop[cl]["prefix"]+":";
-				attr_list.push({name: prefix+prop[cl]["display_name"]})
+			} else {
+				attr_list.push({name: "Waiting answer...", wait: true});
 			}
 			
 			//remove duplicates

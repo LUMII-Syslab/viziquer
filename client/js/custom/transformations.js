@@ -1025,8 +1025,13 @@ Interpreter.customMethods({
 				var mouse_pos = mouse_state_obj.getMousePosition(e);
 				x = mouse_pos["x"];
 				y = mouse_pos["y"];
+
 			}
-		
+			if(x == 0 && y == 0){
+				x = e.evt.layerX;
+				y = e.evt.layerY;
+			}
+
 		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		
 		for(var query in queries){

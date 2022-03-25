@@ -918,7 +918,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 });
 			 
 			 SPARQL_text = SPARQL_text + tempSelect.join(" ");
-
+			 
 			if(tempSelect.length < 1) {
 				
 				var listOfElementId = [];
@@ -1552,14 +1552,16 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 							}
 						}
 						if(underNotLink != true){
+							var aliasLTemp = alias;
+							if(alias.indexOf(" ?") != -1) aliasLTemp = alias.substring(alias.indexOf(" ?") + 1);
 							if(field["exp"].startsWith("??") == false && field["addLabel"] == true){
-								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Label", "value" : alias+"Label"});	
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": aliasLTemp+"Label", "value" : aliasLTemp+"Label"});
 							}
 							if(field["exp"].startsWith("??") == false && field["addAltLabel"] == true){
-								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"AltLabel", "value" : alias+"AltLabel"});	
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": aliasLTemp+"AltLabel", "value" : aliasLTemp+"AltLabel"});	
 							}
 							if(field["exp"].startsWith("??") == false &&  field["addDescription"] == true){
-								sparqlTable["selectMain"]["labelVariables"].push({"alias": alias+"Description", "value" : alias+"Description"});	
+								sparqlTable["selectMain"]["labelVariables"].push({"alias": aliasLTemp+"Description", "value" : aliasLTemp+"Description"});	
 							}
 						}
 				}

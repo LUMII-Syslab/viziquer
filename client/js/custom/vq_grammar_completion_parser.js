@@ -21145,7 +21145,8 @@ options = arguments[1];
 				}
 				// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
 				params.main.propertyKind = 'ObjectExt'
-				var props = await dataShapes.getPropertiesFull(params);
+				var props = await dataShapes.getPropertiesFull(params);				
+				
 				props = props["data"];
 				for(var pr in props){
             		var prefix;
@@ -21158,7 +21159,7 @@ options = arguments[1];
             			propName = "^"+propName;
             		}
             		if(isInv == false){
-						await addContinuation(await location(), propName, 100, false, 2, "end");
+						await addContinuation(await location(), propName, 100, false, 2);
 					}else if(isInv == true && props[pr].mark === 'in'){
 						await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
 					}
