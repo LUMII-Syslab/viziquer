@@ -794,11 +794,11 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			act_el = new VQ_Element(selected_elem_id);
 		}
 		
-		var inst
-		if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
-			inst = await dataShapes.getIndividualsWD(fullText); 
-		else
-			inst = await dataShapes.getIndividuals(params, act_el);
+		var inst = await dataShapes.getIndividuals(params, act_el);
+		//if (dataShapes.schema.schemaType == 'wikidata' && fullText != "")
+		//	inst = await dataShapes.getIndividualsWD(fullText); 
+		//else
+		//	inst = await dataShapes.getIndividuals(params, act_el);
 
 		if (fullText != "" ){
 			if ( inst.length === 0 || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schemaType == 'dbpedia')

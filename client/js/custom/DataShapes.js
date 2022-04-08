@@ -415,10 +415,10 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		if ( ConsoleLog && funcName != 'resolvePropertyByName') {
+		// if ( ConsoleLog && funcName != 'resolvePropertyByName') {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
-		}
+		// }
 
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
@@ -604,8 +604,12 @@ dataShapes = {
 		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
-		if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
-			params.filter = '';  
+		
+		if (this.schema.schemaType == 'wikidata' && params.filter != "")
+			return await this.getIndividualsWD(params.filter); 
+		
+		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
+		//	params.filter = '';  
 
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
