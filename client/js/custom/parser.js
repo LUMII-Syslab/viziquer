@@ -140,6 +140,12 @@ parse_filter = function(expr, attribNames, clID, parsed_exp, className, classSch
 		// uniqueTriples = [];
 	}
 	
+	
+	if(uniqueTriples.length == 1 && uniqueTriples[0].startsWith("BIND(") && uniqueTriples[0].endsWith(result+")")){
+		result = uniqueTriples[0].substring(5, uniqueTriples[0].length-result.length-5);
+		uniqueTriples = [];
+	}
+	
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
@@ -164,7 +170,6 @@ parse_attrib = function(expr, attribNames, clID, parsed_exp, alias, className, c
 	
 	var result = generateExpression(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
-
 
 	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 
@@ -1737,6 +1742,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				
 				if(varName =="??" ) varName = "?data_property";
 				if(varName.startsWith("??")) varName = varName.substr(1);
+				
 				if(alias == "" || alias == null) tempAlias = varName+"_";
 				else tempAlias = "?"+alias;
 				
@@ -1794,7 +1800,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				if(isInternal !=true) SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn][vn] + " " + tempAlias;
 				else SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn][vn];
 
-				tripleTable.push({"var":alias, "prefixedName":"?"+expressionLevelNames[vn][vn], "object":className, "inFilter":false});
+				// tripleTable.push({"var":alias, "prefixedName":"?"+expressionLevelNames[vn][vn], "object":className, "inFilter":false});
+				tripleTable.push({"var":alias, "prefixedName":"?"+vn, "object":className, "inFilter":false});
+				
 				
 			} else {
 				if(alias == "" || alias == null) tempAlias = varName+"_";
@@ -2005,13 +2013,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							}
 						}
 				
-						if(isPropertyFromSubQuery == false || isOwnProperty == true) {
+						if((isPropertyFromSubQuery == false || isOwnProperty == true) && variableData["kind"] !== "BIND_ALIASS") {
 							tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
 						}
 						var namespace = expressionTable[key]["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 						// prefixTable[getPrefix(expressionTable[key]["type"]["prefix"]) + ":"] = "<"+namespace+">";
-						prefixTable[getPrefix(expressionTable[key]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["type"]["prefix"])+":"]+">";	
+						if(typeof expressionTable[key]["type"]["prefix"] !== "undefined") prefixTable[getPrefix(expressionTable[key]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["type"]["prefix"])+":"]+">";
+						
 					}
 					if(expressionTable[key]['kind'] == "CLASS_ALIAS" || expressionTable[key]['kind'] == "PROPERTY_ALIAS") referenceTable.push("?"+variable)
 				}
@@ -2049,7 +2058,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		}
 		if (key == "Additive" || key == "Unary") {
 			isExpression = true
-			SPARQLstring = SPARQLstring + expressionTable[key];
+			SPARQLstring = SPARQLstring + " "+ expressionTable[key] + " ";
 			visited = 1;
 		}
 		if (key == "RDFLiteral") {
@@ -2117,7 +2126,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			visited = 1;
 		}
 		
-		if(expressionTable[key] == "*"){
+		if(expressionTable[key] == "*" && visited != 1){
 			SPARQLstring = SPARQLstring + "*";
 			visited = 1;
 		}
@@ -3669,11 +3678,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				if(expressionTable[key]["PrefixedName"]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["PrefixedName"]["var"]["type"]["local_name"];
 				
 				SPARQLstring = SPARQLstring + pathPart;
+					
+				// var namespace = expressionTable[key]["PrefixedName"]["var"]["type"]["Namespace"]
+				// if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 				
-				var namespace = expressionTable[key]["PrefixedName"]["var"]["type"]["Namespace"]
-				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-				
-				prefixTable[getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"])+":"]+">"
+				if(expressionTable[key]["PrefixedName"]["var"]["type"] != null)prefixTable[getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["PrefixedName"]["var"]["type"]["prefix"])+":"]+">";
+				else if(typeof expressionTable[key]["PrefixedName"]["Prefix"] !== "undefined")prefixTable[expressionTable[key]["PrefixedName"]["Prefix"]] = "<"+knownNamespaces[getPrefix(expressionTable[key]["PrefixedName"]["Prefix"])]+">";
 			}
 			visited = 1;
 		}

@@ -318,7 +318,7 @@ Template.AddLink.events({
 				
 				
 				
-                if(typeof class_name !== "undefined" && class_name != null && class_name !== ""){				
+                if(typeof class_name !== "undefined" && class_name != null && class_name !== "" && class_name !== " "){				
 					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				}
                 cl.setClassStyle("condition");
@@ -464,7 +464,7 @@ Template.AddLink.events({
 		
 		classes = classes.filter(function(e) { return e.short_class_name !== class_name });
 		
-		if(class_name != null & class_name !== "" && class_name != " "){
+		if(class_name != null && class_name !== "" && class_name != " "){
 			classes.unshift({short_class_name:class_name, clr: "color: #777777"})
 		}
 		

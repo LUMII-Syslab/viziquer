@@ -701,7 +701,8 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 
 	}
 	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["local_name"] == null || clazz["identification"]["local_name"] == "" || clazz["identification"]["local_name"] == "(no_class)") || typeof clazz["identification"]["iri"] === 'undefined') {
-		idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"expr_"+counter, unionId:unionClass};
+		if(clazz["isUnit"] == true && typeof idTable[parentClassId] !== 'undefined')idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
+		else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"expr_"+counter, unionId:unionClass};
 		counter++;
 	}
 	else{
@@ -1897,8 +1898,6 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 							// var path = getPath(subclazz["linkIdentification"]["parsed_exp"]["PrimaryExpression"]["Path"]);
 							var path = getPathFullGrammar(subclazz["linkIdentification"]["parsed_exp"]);
 							
-							
-							
 							if(path["messages"].length > 0){
 								messages = messages.concat(path["messages"]);
 							} 
@@ -1915,7 +1914,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				if(subclazz["isInverse"] == true) {
 					if(clazz["isUnion"] != true) object = instance;
 					else if (clazz["isUnion"] == true && parentClass == null) object = null;
-					else object = idTable[parentClass["identification"]["_id"]];
+					else object = idTable[parentClass["identification"]["_id"]];					
 					subject = idTable[subclazz["identification"]["_id"]];
 				} else if(subclazz["isBlankNode"] == true){
 					if(clazz["isUnion"] != true) subject = instance;
@@ -2173,12 +2172,17 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 
 					var isAgretedAlias = false;
 					if(typeof symbolTable["root"] !== 'undefined' && typeof symbolTable["root"][orderName] !== 'undefined'){
-							for(var attrName in symbolTable["root"][orderName]){
-								if(symbolTable["root"][orderName][attrName]["kind"] == "AGGREGATE_ALIAS") isAgretedAlias = true;
-							}
+						for(var attrName in symbolTable["root"][orderName]){
+							if(symbolTable["root"][orderName][attrName]["kind"] == "AGGREGATE_ALIAS") isAgretedAlias = true;
 						}
+					}
+					
+					for(var attrName in symbolTable[rootClass_id][orderName]){
+						if(symbolTable[rootClass_id][orderName][attrName]["kind"] == "PROPERTY_ALIAS") isAgretedAlias = true;
+					}
 
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
+					
 				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
 					var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 					
@@ -2191,6 +2195,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							 
 					orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
 					orderGroupBy.push(result["exp"]);
+					
 				} else if((orderName.endsWith("Label") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 5)] !== 'undefined')
 					||(orderName.endsWith("AltLabel") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 8)] !== 'undefined')
 					||(orderName.endsWith("Description") && typeof symbolTable[rootClass_id][orderName.substring(0, orderName.length - 11)] !== 'undefined')){
@@ -2200,7 +2205,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 								descendingStart = "DESC("
 								descendingEnd = ")"
 							 }
-							 
+							
 					orderTable.push(descendingStart + "?"+orderName + descendingEnd + " ");
 					orderGroupBy.push("?"+orderName);
 				} else {
@@ -2213,12 +2218,18 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-
-						messages = messages.concat(result["messages"]);
+						
+						if(order["exp"].indexOf("Label") == -1 && order["exp"].indexOf("AltLabel") == -1 && order["exp"].indexOf("Description") == -1)messages = messages.concat(result["messages"]); 
+		
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
-							 orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
-							 orderGroupBy.push(result["exp"]);
-							 orderTripleTable.push(result["triples"]);
+							var orederExp = result["exp"];
+							if(result["triples"].length == 1 && result["triples"][0].startsWith("BIND(") && result["triples"][0].endsWith(result["exp"]+")")){
+								orederExp = result["triples"][0].substring(5, result["triples"][0].length-result["exp"].length-5);
+								result["triples"] = [];
+							}
+							orderTable.push(descendingStart +  orederExp + descendingEnd + " ");
+							orderGroupBy.push(orederExp);
+							orderTripleTable.push(result["triples"]);
 						 } else if(order["exp"] == "(select this)"){
 							 descendingStart = "";
 							 descendingEnd = "";
@@ -2236,17 +2247,23 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 								descendingEnd = ")"
 							 }
 							 
-							 orderTable.push(descendingStart + result["exp"] + descendingEnd + " ");
+							 var orederExp = result["exp"];
+							 if(result["triples"].length == 1 && result["triples"][0].startsWith("BIND(") && result["triples"][0].endsWith(result["exp"]+")")){
+								orederExp = result["triples"][0].substring(5, result["triples"][0].length-result["exp"].length-5);
+								result["triples"] = [];
+							 }
+							 orderTable.push(descendingStart + orederExp + descendingEnd + " ");
 							 //orderGroupBy.push(result["exp"]);
 							 orderTripleTable.push(result["triples"]);
 							var isExplicitSelectionFields = true;
 							for(var field in result["variables"]){
+
 								if(typeof referenceTable[result["variables"][field].substring(1)] === "undefined"){
 									isExplicitSelectionFields = false;
 									break;
 								}
 							}
-							if(isExplicitSelectionFields != true){
+							if(isExplicitSelectionFields != true && typeof symbolTable[rootClass_id][result["variables"][field].substring(1)] === "undefined"){
 							 messages.push({
 								"type" : "Warning",
 								"message" : "ORDER BY allowed only over explicit selection fields, " + order["exp"] + " is not a selection field",
@@ -2596,6 +2613,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							// subQuery = subQuery + parentClass + tempSelect.join(" ") + " WHERE{\n";
 							
 							var SPARQL_interval_sub = SPARQL_interval.substring(2);
+	
+							subQuery = subQuery + tempSelect.join(" ");
 							
 							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
 								
@@ -2606,8 +2625,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								}
 							}
 							
-							
-							subQuery = subQuery + tempSelect.join(" ") + " WHERE{\n";
+							subQuery = subQuery +" WHERE{\n";
 							
 							var graphFound = false;
 							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
@@ -2620,7 +2638,6 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 									}
 								}
 							}
-
 
 							if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL"){
 								// temp.push(sparqlTable["subClasses"][subclass]["classTriple"]);
@@ -2642,8 +2659,6 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							var temp = temp.filter(function (el, i, arr) {
 								return arr.indexOf(el) === i;
 							});
-
-
 
 							selectResult["groupBy"] = selectResult["groupBy"].concat(refTable);
 							selectResult["groupBy"] = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);

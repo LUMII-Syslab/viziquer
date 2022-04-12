@@ -3011,6 +3011,13 @@ VQ_Element.prototype = {
       {name:"Graph instruction",value:graphInstruction},
     ])
   },
+  
+  addGraphs: function(graph,graphInstruction) {
+    this.addCompartmentSubCompartments("Graphs",[
+      {name:"Graph",value:graph},
+      {name:"Graph instruction",value:graphInstruction},
+    ])
+  },
   // --> [{fulltext:string, exp:string, isDescending:bool},...]
   // returns an array of orderings - expression and whether is descending
   getOrderings: function() {

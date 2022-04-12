@@ -633,7 +633,8 @@
 			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}
 			stringLang = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9])+) {return {string: string.join("")}}
-			stringQ = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$()!@#%&*+?|/])+) {return {string: string.join("")}}
+			stringQ = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / slash / "[" / "]" / [-_.:, ^$()!@#%&*+?|/])*) {return {string: string.join("")}}
+			slash = "\\" {return "\\\\"}
 			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
 			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}

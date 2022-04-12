@@ -382,7 +382,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	   }
 		if(parse_obj.startsWith("[[") == false && parse_obj.endsWith("]]") == false){
 			parse_obj = replaceArithmetics(parse_obj.split("+"), "+");
-			parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
+			if(parse_obj.indexOf('"') == -1 && parse_obj.indexOf("'") == -1)parse_obj = replaceArithmetics(parse_obj.split("*"), "*");
 		 }
 
 		if(parse_obj != "[*sub]"){
@@ -942,7 +942,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 				};
 					
                 if (elem.isSubQueryRoot()) {
-                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct() });
+                  _.extend(linkedElem_obj,{ distinct:elem.isDistinct(), groupings: elem.getGroupings(), });
 				  if(link.link.getName() == "++" || link.link.getName() == "=="){
 						 _.extend(linkedElem_obj,{ graphs: elem.getGraphs() });
 					}
