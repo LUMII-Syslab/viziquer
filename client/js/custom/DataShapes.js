@@ -13,7 +13,7 @@ const getSchemaServerUrl = async () => new Promise((resolve, reject) => {
 });
 // ***********************************************************************************
 const MAX_ANSWERS = 30;
-const MAX_IND_ANSWERS = 50;
+const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
@@ -604,8 +604,12 @@ dataShapes = {
 		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
-		if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
-			params.filter = '';  
+
+		if (this.schema.schemaType == 'wikidata' && params.filter != undefined)
+			return await this.getIndividualsWD(params.filter); 
+		
+		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
+		//	params.filter = '';  
 
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
