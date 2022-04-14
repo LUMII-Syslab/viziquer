@@ -1581,7 +1581,6 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		_.each(clazz["aggregations"],function(field) {
 			
 			var aggregationParseResult = parseAggregationMultiple(field["parsed_exp"], symbolTable[clazz["identification"]["_id"]]);
-				
 			if(aggregationParseResult["isMultipleAllowedAggregation"] == true) {
 				isMultipleAllowedAggregation = true;
 				_.each(clazz["aggregations"],function(field2) {
@@ -2400,7 +2399,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 	// simpleTriples
 	for (var expression in sparqlTable["simpleTriples"]){
-		var generateTimeFunctionForVirtuoso = true;
+		var generateTimeFunctionForVirtuoso = false;
 		if(generateTimeFunctionForVirtuoso == true && sparqlTable["simpleTriples"][expression]["isTimeFunction"] == true){
 			var classTriple = sparqlTable["classTriple"];
 			if(typeof classTriple === 'undefined') classTriple = "";
@@ -3344,11 +3343,11 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 	var isMultipleAllowedCardinality = null;
 
 	for(var key in expressionTable){
-		if (key == "Aggregate" && typeof expressionTable[key] === "string"){
-			var aggregation = expressionTable[key].toLowerCase();
-			if(aggregation != "min" && aggregation != "max" && aggregation != "sample") isMultipleAllowedAggregation = true;
+		if(key == "Aggregate" && typeof expressionTable[key] === "object"){
+			var aggregation = expressionTable[key]["Aggregate"].toLowerCase();
+			if(aggregation != "min" && aggregation != "max" && aggregation != "sample" && expressionTable[key]["DISTINCT"] != "DISTINCT") isMultipleAllowedAggregation = true;
 		}
-
+		
 		if(key == "var") {
 			//if type information is known
 			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
@@ -3366,15 +3365,18 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 				var symbolUsage = symbolTable[expressionTable[key]["name"]];
 				var found = false;
 				for(var symbol in symbolUsage){
-
+					
 					if(typeof symbolUsage[symbol]["type"] !== "undefined" && symbolUsage[symbol]["type"] !== null && typeof symbolUsage[symbol]["type"]["max_cardinality"] !== "undefined" && symbolUsage[symbol]["type"]["max_cardinality"] != null){ 
 						if(symbolUsage[symbol]['type']['max_cardinality'] == -1 || symbolUsage[symbol]['type']['max_cardinality'] > 1){
-							isMultipleAllowedCardinality = true;
+							isMultipleAllowedCardinality = true;							
 						}
+						
 						found = true;
 					}
 				}
-				if(found == false)isMultipleAllowedCardinality = true;
+				if(found == false){
+					if(symbolUsage[symbol]['kind'].indexOf("_ALIAS") == -1) isMultipleAllowedCardinality = true;
+				}
 			// if type information not known
 			} else if(typeof expressionTable[key]['type'] === 'undefined' || expressionTable[key]['type'] == null )  {
 				isMultipleAllowedCardinality = true;

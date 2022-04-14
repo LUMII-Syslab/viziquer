@@ -693,7 +693,7 @@ getPathFullGrammar = function(expressionTable){
 						"type" : "Error",
 						"message" : "Undefined property '" +  path +"' can't be used in navigation expression",
 						// "listOfElementId" : [clId],
-						"isBlocking" : true
+						"isBlocking" : false
 					});
 				} else {
 					isPath = false;
@@ -1479,7 +1479,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							"type" : "Error",
 							"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
 							"listOfElementId" : [clId],
-							"isBlocking" : true
+							"isBlocking" : false
 						});
 					}
 					else{
@@ -1540,7 +1540,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								"type" : "Error",
 								"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
 								"listOfElementId" : [clId],
-								"isBlocking" : true
+								"isBlocking" : false
 							});
 						}
 						// else{
@@ -1635,7 +1635,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						"type" : "Error",
 						"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
 						"listOfElementId" : [clId],
-						"isBlocking" : true
+						"isBlocking" : false
 					});
 				}
 				else{
@@ -1699,7 +1699,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							"type" : "Error",
 							"message" : "Unrecognized variable '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "'. Please specify variable.",
 							"listOfElementId" : [clId],
-							"isBlocking" : true
+							"isBlocking" : false
 						});
 					}
 					else{
@@ -2049,7 +2049,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					"type" : "Error",
 					"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
 					"listOfElementId" : [clId],
-					"isBlocking" : true
+					"isBlocking" : false
 				});
 				
 				SPARQLstring = SPARQLstring + "?" + varName;

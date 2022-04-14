@@ -6528,7 +6528,7 @@ async function visualizeQuery(clazz, parentClass, queryId, queryQuestion){
 
 		//distinct
 		var distinct = clazz["distinct"];
-		if(typeof distinct !== "undefined")classBox.setDistinct(distinct);
+		if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"].length == 0))classBox.setDistinct(distinct);
 		// console.log("distinct = ", distinct);
 		
 		//serviceLabelLang
