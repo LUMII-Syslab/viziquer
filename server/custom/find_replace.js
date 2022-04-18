@@ -1,4 +1,5 @@
 // Dmitrija kods
+import { Promise } from 'meteor/promise';
 let ReplaceLineType;
 let DeleteBoxType;
 let apstaigatieReplace;
@@ -43,12 +44,14 @@ function cartesianProductOf(listOfMatches) {
 }// paņemts no https://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
 function createErrorMessage(error){
     // izveido izteiksmes ķļudas paziņojuma simbolu virkni no error objekta, kuru atgriež parseris
-    let msg = "Expected: ";
-    let expectedItems = _.pluck(error.expected, "value");
-    msg += expectedItems.join(" or ");
-    msg += " but found ";
+    let msg             = "Expected: ";
+    let expectedItems   = _.pluck(error.expected, "value");
+    msg                 += expectedItems.join(" or ");
+    msg                 += " but found ";
+
     if (error.found) msg += error.found
     else msg += " end of input"
+
     msg+= " at column " + error.location.start.column;
     return msg; // atgriež kļūdas paziņojumu izteiksmei
 }
@@ -79,6 +82,61 @@ function BreadthFirstSearch(ElementsArray){ // grafa apstaigāšana plašumā
     }
     else return false;
 }
+/***@RDBMS pieejas uzmetums */
+function findSingleElementMatches(findElement){ 
+    // const matches = Elements.find({
+    //     $and:[
+    //         {_id: {$ne: findElement._id}},
+    //         {elementTypeId: findElement.elementTypeId}
+    //     ]
+    // }).fetch();
+    
+    // const matches2  = Elements.rawCollection().aggregate([
+    //     {
+    //         $match: {
+    //             _id: {
+    //                 $ne:findElement._id
+    //             },
+    //             elementTypeId: findElement.elementTypeId
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: "$diagramId",
+    //         }
+    //     }
+    // ]).toArray()
+    const pipeline = [
+        {
+            $match: {
+                _id: {
+                    $ne:findElement._id
+                },
+                elementTypeId: findElement.elementTypeId
+            }
+        },
+        {
+            $group: {
+                _id: "$diagramId",
+            }
+        }
+    ];
+    const result = Promise.await(Elements.aggregate(pipeline).toArray());
+    // .then(response => {
+    //     console.log('promise has returned: ');
+    //     console.log(response);
+    // });
+
+    // console.log("Matches in RDBMS approach, match variable");
+    // _.each(matches, match=>{
+    //     console.log(match._id);
+    // })
+    
+    console.log("Matches in RDBMS approach, match2 variable");
+    console.log(result);
+    
+}
+/** */
 function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma validācija
     
     let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: diagramId, diagramTypeId: diagramTypeId}).fetch();
@@ -88,6 +146,13 @@ function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma valid�
             // ja kaut vienas speciālās aizvietošanas līnijas meklējamais un aizvietojošais fragments pārklājas, atgriež true
             let findElement     = Elements.findOne({_id: ReplaceLine.startElement});
             let replaceElement  = Elements.findOne({_id: ReplaceLine.endElement});
+            /**@move it to find diags function later */
+            findSingleElementMatches(findElement);
+            // findSingleElementMatches(findElement).then(response => {
+            //     groupedByDiagId = [...response];
+            // });
+            // console.log('returned from find single: ',groupedByDiagId);
+            /**@end of call */
             _.extend(findElement, {visited: false});
             _.extend(replaceElement, {visited: false});
             let FindGraph       = [findElement];
@@ -1173,5 +1238,5 @@ Meteor.methods({
         const diagram = Diagrams.findOne({_id: diagramId})
         if(!diagram) return false;
         else return true;
-    }
+    },
 })
