@@ -786,9 +786,21 @@ dataShapes = {
 	},
 	getIndividualName: function(localName) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
+		function getLastB(name){
+			var r = -1; 
+			var searchStrLen = 1;
+			var startIndex = 0;
+			var index;
+			while ((index = name.indexOf('(', startIndex)) > -1) {
+				r = index;
+				startIndex = index + searchStrLen;
+			}
+			return r;
+		}
 		if ( localName.indexOf('[') != -1){
 			const prefix = localName.substring(0,localName.indexOf(':'));  // TODO padomāt, vai nebūs arī bez prafiksa
-			const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
+			//const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
+			const name = localName.substring(getLastB(localName)+1,localName.length-2);
 			return `${prefix}:${name}`;
 		}
 		else if (localName.indexOf('//') != -1) {
