@@ -693,6 +693,8 @@ dataShapes = {
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		//dataShapes.resolvePropertyByName({name: 'http://dbpedia.org/ontology/years'})
 		var rr;
+		if ( typeof params.name !== "string" ) return { complete:false, data: []};
+		
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
 			if (this.schema.resolvedProperties[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedProperties[params.name]]};
