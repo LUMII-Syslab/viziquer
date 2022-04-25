@@ -1,5 +1,5 @@
 // Dmitrija kods
-import { Promise } from 'meteor/promise';
+
 let ReplaceLineType;
 let DeleteBoxType;
 let apstaigatieReplace;
@@ -83,29 +83,80 @@ function BreadthFirstSearch(ElementsArray){ // grafa apstaigāšana plašumā
     else return false;
 }
 /***@RDBMS pieejas uzmetums */
-function findSingleElementMatches(findElement){ 
-    // const matches = Elements.find({
-    //     $and:[
-    //         {_id: {$ne: findElement._id}},
-    //         {elementTypeId: findElement.elementTypeId}
-    //     ]
-    // }).fetch();
-    
-    // const matches2  = Elements.rawCollection().aggregate([
-    //     {
-    //         $match: {
-    //             _id: {
-    //                 $ne:findElement._id
-    //             },
-    //             elementTypeId: findElement.elementTypeId
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: "$diagramId",
-    //         }
-    //     }
-    // ]).toArray()
+function findByEdges(findGraph){
+    let edges = _.filter(findGraph, (element)=>{
+        return _.has(element, 'startElement')
+    });
+    _.each(edges, (edge) => {
+        _.extend(edge, {startElementObj: _.findWhere(findGraph, {_id: edge.startElement})})
+        _.extend(edge, {endElementObj: _.findWhere(findGraph, {_id: edge.endElement})})
+
+    })
+    const lookedUpNodes = [];
+    const pipeline = [
+        {
+            $match: {
+                _id: {
+                    $ne:edges[0]._id
+                },
+                elementTypeId: edges[0].elementTypeId
+            }
+        }
+    ];
+    /** @Katrai edge lookupot tās nodes, ja tās vēl nav lookupotas.  */
+    _.each(edges, (edge) => {
+        if(!_.contains(lookedUpNodes, edge.startElement)){
+            let lookupObj = {
+                $lookup: {
+                    from: 'Elements',
+                    // let: { startElementTypeId: edge.startElementObj.elementTypeId},
+                    pipeline: [
+                        {
+                            $match:{
+                                $expr: {
+                                    $and:[
+                                        { $eq: ['$_elementTypeId', edge.startElementObj.elementTypeId] },
+                                        { $eq: ['$_id', '$$startElement'] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'lookedUpStartNode'
+                }
+            }
+            pipeline.push(lookupObj);
+            lookedUpNodes.push(edge.startElement);
+        }
+        if(!_.contains(lookedUpNodes, edge.endElement)){
+            let lookupObj = {
+                $lookup: {
+                    from: 'Elements',
+                    // let: { startElementTypeId: edge.startElementObj.elementTypeId},
+                    pipeline: [
+                        {
+                            $match:{
+                                $expr: {
+                                    $and:[
+                                        { $eq: ['$_elementTypeId', edge.endElementObj.elementTypeId] },
+                                        { $eq: ['$_id', '$$endElement'] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'lookedUpEndNode'
+                }
+            }
+            pipeline.push(lookupObj);
+            lookedUpNodes.push(edge.endElement);
+        }
+    });
+    // what is next? can i just join in others? do i have to join each edge first?
+}
+function findSingleElementMatches(findElement){
+    // $lookup can be used for compartments and edge starttype and endType check
+    let elements =   [ findElement ];
     const pipeline = [
         {
             $match: {
@@ -118,25 +169,49 @@ function findSingleElementMatches(findElement){
         {
             $group: {
                 _id: "$diagramId",
+                elements: {$push: "$$ROOT"}
+            }
+        },
+        {
+            $lookup: {
+                from: "Diagrams",
+                localField: "_id",
+                foreignField: "_id",
+                as: "Diagrams"
+            }
+        },
+        // {
+        //     $replaceRoot: {
+        //         newRoot: {
+        //             $mergeObjects: [
+        //                 {
+        //                     $arrayElemAt: ["$Diagrams", 0]
+        //                 },
+        //                 "$$ROOT"
+        //             ]
+        //         }
+        //     }
+        // },
+        {
+            $project: {
+                Diagrams :{
+                    name:1
+                },
+                // this is only to make results in console more readable, this needs to be modified or removed lately
+                elements: {
+                    elementTypeId:1,
+                }
             }
         }
     ];
-    const result = Promise.await(Elements.aggregate(pipeline).toArray());
-    // .then(response => {
-    //     console.log('promise has returned: ');
-    //     console.log(response);
-    // });
-
-    // console.log("Matches in RDBMS approach, match variable");
-    // _.each(matches, match=>{
-    //     console.log(match._id);
-    // })
+    const result = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
     
     console.log("Matches in RDBMS approach, match2 variable");
-    console.log(result);
+    console.dir(result, {depth: null});
     
 }
-/** */
+/** @pieejas beigas */
+
 function checkQuery(diagramId, diagramTypeId){ // grafiskā pieprasījuma validācija
     
     let ReplaceLines    = Elements.find({elementTypeId: ReplaceLineType, diagramId: diagramId, diagramTypeId: diagramTypeId}).fetch();
@@ -240,6 +315,8 @@ function FindDiagMatches(diagParamList){
                 let Edges = getEdges(startFindElement._id);
                 if( Edges && _.size(Edges) > 0){
                     let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId, diagParamList.userId);
+                    // console.log('findResult')
+                    // console.log(findResult)
                     let duplicate = checkDuplicates(findResult, findElementIds);
                     if( duplicate.found == false ) findResults.push(findResult);
                     findElementIds = duplicate.findElementsIds;
@@ -247,6 +324,8 @@ function FindDiagMatches(diagParamList){
                 else{
                     let findResult = Meteor.call('findNode', startFindElement, diagParamList.userId);
                     findResults.push(findResult);
+                    // console.log('findResult')
+                    // console.dir(findResult, {depth: null})
                 } // ja nav, tad meklē pēc virsotnes
             });
             let startFindElementsIds = _.pluck(StartFindElements,'_id');
