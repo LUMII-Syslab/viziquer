@@ -11,14 +11,14 @@ const getFaasServerUrl = async () => new Promise((resolve, reject) => {
     })
 });
 // ***********************************************************************************
-const MAX_ANSWERS = 30;
-const MAX_IND_ANSWERS = 100;
-const MAX_TREE_ANSWERS = 30;
-const TREE_PLUS = 20;
-const BIG_CLASS_CNT = 500000;
-const LONG_ANSWER = 3000;
-const MakeLog = false;
-const ConsoleLog = false;
+// const MAX_ANSWERS = 30;
+// const MAX_IND_ANSWERS = 100;
+// const MAX_TREE_ANSWERS = 30;
+// const TREE_PLUS = 20;
+// const BIG_CLASS_CNT = 500000;
+// const LONG_ANSWER = 3000;
+// const MakeLog = false;
+// const ConsoleLog = false;
 // ***********************************************************************************
 const ALLOWED_NAMESPACES = ["wdt"];
 // ***********************************************************************************

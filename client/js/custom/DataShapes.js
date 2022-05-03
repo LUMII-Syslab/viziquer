@@ -562,7 +562,7 @@ dataShapes = {
 		return rr;
 	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
-		console.log("------------GetProperties------------------")
+		// *** console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
