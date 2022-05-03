@@ -58,28 +58,6 @@ const callWithGet = async (funcName) => {
 		return {};
     }
 }
-
-const callWithGetWDFAAS = async (filter, instanceOfClass, limit) => {
-	var callText = `http://localhost:59286/api/FindInstances?words=${filter}&instanceOf=${instanceOfClass}&limit=${limit}`
-	try {
-		const response = await window.fetch(callText, {
-			method: 'GET',
-			// mode: 'no-cors',
-			cache: 'no-cache'
-		});
-		//console.log(response);
-		if (!response.ok) {
-			console.log('neveiksmīgs wd izsaukums');
-			return { error: response };
-		}
-		return await response.json();
-	}
-	catch(err) {
-        console.error(err)
-		return {};
-    }
-}
-
 //'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Q633795&language=en&limit=50&format=json&origin=*'
 const callWithGetWD = async (filter, limit) => {
 	var callText = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${filter}&language=en&limit=${limit}&format=json&origin=*`;
@@ -560,7 +538,7 @@ dataShapes = {
 		return rr;
 	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
-		// *** console.log("------------GetProperties------------------")
+		console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
 		//dataShapes.getProperties({propertyKind:'Object'})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
@@ -573,7 +551,9 @@ dataShapes = {
 			allParams.element = findElementDataForProperty(vq_obj);
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
-		return await this.callServerFunction("getProperties", allParams);
+
+		return await faas.getIndividualProperties(allParams);
+		//return await this.callServerFunction("getProperties", allParams);
 	},
 	getPropertiesFull : async function(params = {}) {
 		// *** console.log("------------GetProperties------------------")
@@ -661,33 +641,6 @@ dataShapes = {
 		}
 		else
 			return [];
-
-	},
-	getIndividualsWDFAAS : async function(params = {}, vq_obj = null) {
-		var rr;
-
-		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
-			allParams.element = findElementDataForIndividual(vq_obj);
-
-		console.log(`allParams=${JSON.stringify(allParams)}`);
-		console.log(`vq_obj=${JSON.stringify(vq_obj)}`);
-		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			// class name parsing from text should be improved
-			rr = await callWithGetWDFAAS(allParams.main.filter, allParams.element.className.match(/Q\d+/), MAX_IND_ANSWERS);
-			console.log(`rr=${JSON.stringify(rr)}`);
-			if (rr.error != undefined)
-				rr = []
-		}
-		else
-			rr = [];
-		
-		// output text formated hopefully same way as other autocompletion data providers
-		return rr.map(item => {
-			let label=item.label || item.altlabel;
-			let text=(label?`[${label} (${item.id})]`:item.id);
-			return `wd:${text}`;
-		});
 	},
 	getTreeIndividuals : async function(params = {}, className) {
 		// *** console.log("------------getTreeIndividuals ------------------")
