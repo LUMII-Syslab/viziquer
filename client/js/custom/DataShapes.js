@@ -121,7 +121,7 @@ const getPListI = (vq_obj) => {
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
 				pListI.type = link.type;
 				pListI.name = link.name;
-				pListI.uriIndividual = dataShapes.getIndividualName(individual);;
+				pListI.uriIndividual = dataShapes.getIndividualName(individual);
 			}
 		}
 	});
@@ -145,9 +145,13 @@ const getPList = (vq_obj) => {
 			link.name = link.name.substring(1,link.name.length);
 			if (link.type === 'in')
 				link.type = 'out';
-			else
+			else 
 				link.type = 'in';
 		}
+		if (link.type === 'in')
+			link.element = link.sE;
+		else
+			link.element = link.eE
 	})
 	_.each(link_list_filtered, function(link) {
 		if (link.type === 'in' && link.name !== null && link.name !== undefined ) {
@@ -175,6 +179,26 @@ const getPList = (vq_obj) => {
 				}
 			}
 		}
+		
+		_.each(pList.in, function(link) {
+			var el = new VQ_Element(link.element);
+			var class_name = el.getName();
+			var individual =  el.getInstanceAlias();
+			if (class_name !== null && class_name !== undefined)
+				link.className = class_name;			
+			if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+				link.uriIndividual = dataShapes.getIndividualName(individual);
+		})
+
+		_.each(pList.out, function(link) {
+			var el = new VQ_Element(link.element);
+			var class_name = el.getName();
+			var individual =  el.getInstanceAlias();
+			if (class_name !== null && class_name !== undefined)
+				link.className = class_name;			
+			if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+				link.uriIndividual = dataShapes.getIndividualName(individual);
+		})
 	});
 	return pList;
 }

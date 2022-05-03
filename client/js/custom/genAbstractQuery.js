@@ -75,8 +75,12 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
-	 
-	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
+	 var schemaName = await dataShapes.schema.schemaType;
+	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1){ 
+		if(schemaName.toLowerCase() == "wikidata" && ((obj_class.instanceAlias.indexOf("[") > -1 && obj_class.instanceAlias.endsWith("]")))){
+		obj_class.instanceAlias = "wd:"+obj_class.instanceAlias;}
+		obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
+	}
 	  
 	
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
@@ -85,7 +89,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
-	var schemaName = await dataShapes.schema.schemaType;
+	
 
 	// var proj = Projects.findOne({_id: Session.get("activeProject")});
 		  // var schemaName = null;
@@ -544,10 +548,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
         } else{
+			
+			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
+		 
           if (instanceAliasIsURI) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
-			
+			 
 			if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
 				var prefix = strURI.substring(0, strURI.indexOf(":"));
 				var name = strURI.substring(strURI.indexOf(":")+1);
@@ -574,6 +581,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			    await parseExpObject(condition, obj_class.identification);
 			    obj_class.conditions.push(condition);
             
+			} else {
+				if(f.alias == "") f.alias = "expr";
+				await parseExpObject(f, obj_class.identification);
 			}
 			// obj_class.instanceAlias = null;
           } else {

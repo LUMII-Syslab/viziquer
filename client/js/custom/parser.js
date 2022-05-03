@@ -200,12 +200,13 @@ function createTriples(tripleTable, tripleType){
 			}else objectName = "?"+objectName;
 			if(tripleType == "out"){
 				if(parseType == "attribute") {
-					var triple = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
-					if(attributeFilter != ""){
-						triple = triple+ " FILTER("+attributeFilter+")";
+					if(!triple["prefixedName"].startsWith("undefined:")){
+						var triple = objectName + " " + triple["prefixedName"] + " " + triple["var"] + ".";
+						if(attributeFilter != ""){
+							triple = triple+ " FILTER("+attributeFilter+")";
+						}
+						triples.push(triple);
 					}
-					triples.push(triple);
-					
 				}
 				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
 			} else {
@@ -234,6 +235,8 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			var isNotJoinedClass = false;
 			var definedInJoinClass = null;
 			for(var key in symbolTable[classID][varName]){
+				if(typeof variableData["kind"] == "undefined" && symbolTable[classID][varName][key]["kind"] == "CLASS_ALIAS") variableData["kind"]  = "CLASS_ALIAS";
+	
 				if(symbolTable[classID][varName][key]["context"] != classID && typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"] != null && symbolTable[classID][varName][key]["type"]["parentType"] != null) isNotJoinedClass = true;
 				
 				if(typeof symbolTable[classID][varName][key]["type"] !== 'undefined' && symbolTable[classID][varName][key]["type"] != null && symbolTable[classID][varName][key]["type"]["parentType"] == null) {
@@ -282,7 +285,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	if(alias != null) {
 	 // console.log("1111", varName, alias);
 		var aliasSet = false;
-		for(var key in idTable){
+		/*for(var key in idTable){
 			if (idTable[key] == alias) {
 				var classes = [];
 				if(typeof variableNamesAll[alias] !== 'undefined' && typeof variableNamesAll[alias]["classes"] !== 'undefined') classes = variableNamesAll[alias]["classes"];
@@ -295,7 +298,7 @@ function setVariableName(varName, alias, variableData, generateNewName){
 				aliasSet = true;
 				break;
 			}
-		}
+		}*/
 		if (aliasSet == false) {
 			var classes = [];
 			if(typeof variableNamesAll[alias] !== 'undefined' && typeof variableNamesAll[alias]["classes"] !== 'undefined') classes = variableNamesAll[alias]["classes"];
@@ -311,7 +314,6 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	}
 	//if symbol table has variable with property upBySubQuery = 1
 	else if(isPropertyFromSubQuery != null && !isOwnProperty && typeof attributesNames[varName] != 'undefined'){
-		 // console.log("aaaaaaa", attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"], isPropertyFromSubQuery);
 		return attributesNames[varName]["classes"][isPropertyFromSubQuery]["name"];
 	}
 	
@@ -1851,7 +1853,11 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			if(alias != null && alias != "") {
 				SPARQLstring = SPARQLstring + "?" + alias;
 				variableTable.push("?" + alias);
-				if(className != alias)tripleTable.push({"BIND":"BIND(?" + className + " AS ?" + alias + ")"})
+				
+				var bindExpr = className;
+				if(className.indexOf(":") == -1)bindExpr = "?" + className;
+				
+				if(className != alias)tripleTable.push({"BIND":"BIND(" + bindExpr + " AS ?" + alias + ")"})
 			} else if(isAggregate == true && className.indexOf(":") != -1){
 				// counter++;
 				// SPARQLstring = SPARQLstring + "?" + "expr_"+counter;
@@ -3185,6 +3191,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		if (key == "NumericLiteral") {
 			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  '"' + expressionTable[key]['Number'] + '"';
 			else SPARQLstring = SPARQLstring + expressionTable[key]['Number'];
+			isExpression = true;
 			visited = 1;
 		}
 		if (key == "MultiplicativeExpression") {
@@ -3205,7 +3212,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			else{
 				if(typeof expressionTable[key]["UnaryExpression"]["Additive"]!== 'undefined'){
 					SPARQLstring = SPARQLstring  + expressionTable[key]["UnaryExpression"]["Additive"];
-					SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["UnaryExpression"]["PrimaryExpression"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+					var result = generateExpression({"PrimaryExpression":expressionTable[key]["UnaryExpression"]["PrimaryExpression"]}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+					if(tripleTable.length == 1 && typeof tripleTable[0]["BIND"] !== "undefined" && tripleTable[0]["BIND"].startsWith("BIND(") && tripleTable[0]["BIND"].endsWith(result+")")){
+						result = tripleTable[0]["BIND"].substring(5, tripleTable[0]["BIND"].length-result.length-5);
+						tripleTable = [];
+					}
+					SPARQLstring = SPARQLstring  + 	result;			
+	
 				}
 				else SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["UnaryExpression"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				if (typeof expressionTable[key]["UnaryExpressionList"]!== 'undefined'){
