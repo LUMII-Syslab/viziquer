@@ -12,7 +12,7 @@ const getFaasServerUrl = async () => new Promise((resolve, reject) => {
 });
 // ***********************************************************************************
 // const MAX_ANSWERS = 30;
-// const MAX_IND_ANSWERS = 100;
+const MAX_IND_ANSWERS = 100;
 // const MAX_TREE_ANSWERS = 30;
 // const TREE_PLUS = 20;
 // const BIG_CLASS_CNT = 500000;
@@ -23,12 +23,12 @@ const getFaasServerUrl = async () => new Promise((resolve, reject) => {
 const ALLOWED_NAMESPACES = ["wdt"];
 // ***********************************************************************************
 
-const callFAAS = async (callText) => {
+const callFAASGet = async (callText) => {
     // *** console.log("------------callFAAS ------------------");
     try {
         const faasServerUrl = await getFaasServerUrl();
         const url = faasServerUrl+callText;
-        console.log(`url=${url}`);
+        //console.log(`url=${url}`);
 
 		const response = await window.fetch(url, {
 			method: 'GET',
@@ -48,6 +48,32 @@ const callFAAS = async (callText) => {
     }
 }
 
+const callFAASPost = async (callText, data) => {
+    // *** console.log("------------callFAAS ------------------");
+    try {
+        const faasServerUrl = await getFaasServerUrl();
+        const url = faasServerUrl+callText;
+        //console.log(`url=${url}`);
+
+		const response = await window.fetch(url, {
+			method: 'POST',
+			// mode: 'no-cors',
+			cache: 'no-cache',
+            content: "application/json",
+            body: JSON.stringify(data)
+		});
+		//console.log(response);
+		if (!response.ok) {
+			console.log('neveiksmīgs wd izsaukums');
+			return { error: response };
+		}
+		return await response.json();
+	}
+	catch(err) {
+        console.error(err);
+		return {};
+    }
+}
 const callFAASFindInstances = async (faasIParams) => {
     // *** console.log("------------callFAASFindInstances ------------------");
 	// 'faasIParams' is result of function convertAllParamsToFindInstancesParams()
@@ -60,16 +86,18 @@ const callFAASFindInstances = async (faasIParams) => {
 	// 		limit: 100         // number of returned records
 	// 	}
 	
+    var arrlimit=500;
 	//var callText = `http://localhost:59286/api/FindInstances?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
 	var callText = `/FindInstances?` + new URLSearchParams({
 		words:      faasIParams.textFilter || '',
-		instanceOf: (faasIParams.instanceOf || []).join(' '),
-		inProp:     (faasIParams.inProperties || []).join(' AND '),
-		outProp:    (faasIParams.outProperties || []).join(' AND '),
-        id:         (faasIParams.id || []).join(' '),
-		limit:      faasIParams.limit || MAX_IND_ANSWERS
+		instanceOf: (faasIParams.instanceOf || []).slice(0,arrlimit).join(' '),
+		inProp:     (faasIParams.inProperties || []).slice(0,arrlimit).join(' AND '),
+		outProp:    (faasIParams.outProperties || []).slice(0,arrlimit).join(' AND '),
+        id:         (faasIParams.id || []).slice(0,arrlimit).join(' '),
+		limit:      faasIParams.limit || MAX_IND_ANSWERS,
+        dummy: false
 	});
-    return await callFAAS(callText);
+    return await callFAASGet(callText);
 }
 
 const callFAASGetProperty = async (id = []) => {
@@ -79,7 +107,7 @@ const callFAASGetProperty = async (id = []) => {
 		id: id.join(' '),
 		limit: id.length+1
 	});
-    return await callFAAS(callText);
+    return await callFAASGet(callText);
 }
 
 
@@ -93,45 +121,73 @@ const callFAASFindProperties = async (faasPParams) => {
 		id:         (faasPParams.id || []).join(' '),
 		limit:      faasPParams.limit || MAX_IND_ANSWERS
     });
-    return await callFAAS(callText);
+    return await callFAASGet(callText);
 }
 
 
 faas = {
+    fnDisplayName : function(id, label) {
+        return (label?`[${label} (${id})]`:id)
+    },
     mapEntityToVQInstances : function(item) {
+        return `wd:${faas.fnDisplayName(item.id, item.label)}`;
+    },
+    mapEntityToVQClasses : function(item) {
+        return {
+            prefix: "wd",
+            local_name: item.id,
+            display_name: faas.fnDisplayName(item.id, item.label),
+            is_local: true,
+            principal_class: 1
+        }
+    },
+    getClassesByProperties : async function(allParams = {}) {
 		// *** console.log("------------mapEntityToVQInstances ------------------");
-        let label=item.label;
-        let text=(label?`[${label} (${item.id})]`:item.id);
-        return `wd:${text}`;
+        var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
+        // at this moment is not improtant would it be in or out property
+        var prop = await callFAASFindProperties({id : faasParam.inProperties.concat(faasParam.outProperties)})
+
+        console.log(`prop=${JSON.stringify(prop)}`)
+        var instIds = [];
+        if (faasParam.inProperties.length > 0) {
+            prop.map(p=>p.domain).forEach(arr => { arr.forEach(ele => { instIds.push(ele); })})
+        } else {
+            prop.map(p=>p.range).forEach(arr => { arr.forEach(ele => { instIds.push(ele); })})
+        }
+        console.log(`instIds=${JSON.stringify(instIds)}`)
+        // only unique class IDs
+        instIds = instIds.filter((i,p) => instIds.indexOf(i) == p).map(i => { return `Q${i}` } );
+        console.log(`instIds fo;ter=${JSON.stringify(instIds)}`)
+
+        var faasIParam = {
+            words: "",
+            id: instIds
+        }
+        var inst = await callFAASFindInstances(faasIParam);
+        return {
+            data: inst.map(faas.mapEntityToVQClasses)
+        }
     },
     getProperties : async function (ids = []) {
 		// *** console.log("------------getProperties ------------------");
         return await callFAASGetProperty(ids);
     },
-	getIndividuals : async function(params = {}, vq_obj = null) {
+	getIndividuals : async function(allParams = {}) {
 		// *** console.log("------------getIndividuals ------------------");
 		var rr;
-
-		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
-			allParams.element = findElementDataForIndividual(vq_obj);
-
-		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
-			rr = await callFAASFindInstances(faasParam);
-			//console.log(`rr=${JSON.stringify(rr)}`);
-			if (rr.error != undefined)
-				rr = []
-		}
-		else
-			rr = [];
+        var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
+        rr = await callFAASFindInstances(faasParam);
+        //console.log(`rr=${JSON.stringify(rr)}`);
+        if (rr.error != undefined)
+            rr = [];
 		
 		// output text formated hopefully same way as other autocompletion data providers 
-		return rr.map(mapEntityToVQInstances);
+		return rr.map(this.mapEntityToVQInstances);
 	},
     getIndividualProperties : async function(allParams = {}) {
 		// *** console.log("------------getIndividualProperties ------------------");
 
+        // output result template
         rez = {
             "complete":false,
             "data":[],
@@ -141,34 +197,48 @@ faas = {
             return rez;
 
 		var faasIParam = await this.convertAllParamsToFindInstancesParams(allParams);
+        faasIParam.limit = MAX_IND_ANSWERS * 100; // get x10 more instances to retrieve more properties of different instances
 		var ins = await callFAASFindInstances(faasIParam);
         var ip =[], op=[];
+        // get unique list of properties both for `incoming` and `outgoing` properties
         _.forEach(ins, function(e) {
             ip = ip.concat(e.reverseProperties.map(p=>p.id).filter((p) => ip.indexOf(p) < 0));
-            op = ip.concat(e.properties.map(p=>p.id).filter((p) => ip.indexOf(p) < 0));
+            op = op.concat(e.properties.map(p=>p.id).filter((p) => op.indexOf(p) < 0));
         });
 
+        // build joint list of all property IDs and find property data. Duplicates here are ok. Lucene query will return just 1 instance per ID
         var faasPParam = {
             id:      ip.concat(op)
         }
 		var prop = await callFAASFindProperties(faasPParam);
         //console.log(`prop=${JSON.stringify(prop)}`);
+        
+        // function to build in/out properties for Viziquer
+        // both in and out properties might contain the same property.
+        function buildPropArray(faasPropsId = [], faasPropsArr = [], mark = "") {
+            // buildPropArray(["P1"],[{id:"P1",label="test"}],"in")
+            // buildPropArray(["P1"],[{id:"P1",label="test"}],"out")
+            return faasPropsId.map(pid => {
+                let s = faasPropsArr.find(x => x.id == pid); 
+                if (!s) return {};
+    
+                let label=s.label;
+                let text=(label?`[${label} (${pid})]`:pid);
+                return {
+                    mark: mark,
+                    x_max_cardinality: -1,
+                    class_iri: null,
+                    prefix: "wdt",
+                    display_name: text,
+                    local_name: pid
+                }
+            });
+        }
 
+        // results
         rez.complete = true;
         rez.error = "";
-        rez.data = prop.map(p => {
-            let label=p.label;
-
-            let text=(label?`[${label} (${p.id})]`:p.id);
-            return {
-                mark: (ip.includes(p.id)?"in":"out"),
-                x_max_cardinality: -1,
-                class_iri: null,
-                prefix: "wdt",
-                display_name: text,
-                local_name: p.id
-            }
-        });
+        rez.data = buildPropArray(ip, prop, "in").concat(buildPropArray(op, prop, "out"));
 
         return rez;
     },
@@ -228,8 +298,8 @@ faas = {
 			return rez;
         }
 
-		console.log(`allParams=${JSON.stringify(allParams)}` );
-        if (!allParams || !allParams.element || !allParams.element.className)
+		//console.log(`allParams=${JSON.stringify(allParams)}` );
+        if (!allParams || !allParams.element)
             return rez;
 
 		if (allParams.element.className)

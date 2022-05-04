@@ -528,7 +528,8 @@ dataShapes = {
 		// ***  dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
 		// ***  dataShapes.getClassesFull({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
 
-		return await this.callServerFunction("getClasses", params);
+		//return await this.callServerFunction("getClasses", params);
+		return await faas.getClassesByProperties(params);
 	},
 	getTreeClasses : async function(params) {
 		// *** console.log("------------GetTreeClasses------------------")
@@ -631,11 +632,9 @@ dataShapes = {
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 
-		if (this.schema.schemaType == 'wikidata' && params.filter != undefined) {
-			//return await this.getIndividualsWD(params.filter); 
-			return await this.getIndividualsWDFAAS(params, vq_obj); 
-		}
-		
+		// if (this.schema.schemaType == 'wikidata' && params.filter != undefined)
+		// 	return await this.getIndividualsWD(params.filter); 
+
 		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
 		//	params.filter = '';  
 
@@ -645,7 +644,10 @@ dataShapes = {
 
 		//console.log(allParams)
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			rr = await this.callServerFunction("getIndividuals", allParams);
+			if (this.schema.schemaType === 'wikidata')
+				rr = await faas.getIndividuals(allParams); 
+			else
+				rr = await this.callServerFunction("getIndividuals", allParams);
 			if (rr.error != undefined)
 				rr = []
 		}
