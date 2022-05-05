@@ -48,32 +48,6 @@ const callFAASGet = async (callText) => {
     }
 }
 
-const callFAASPost = async (callText, data) => {
-    // *** console.log("------------callFAAS ------------------");
-    try {
-        const faasServerUrl = await getFaasServerUrl();
-        const url = faasServerUrl+callText;
-        //console.log(`url=${url}`);
-
-		const response = await window.fetch(url, {
-			method: 'POST',
-			// mode: 'no-cors',
-			cache: 'no-cache',
-            content: "application/json",
-            body: JSON.stringify(data)
-		});
-		//console.log(response);
-		if (!response.ok) {
-			console.log('neveiksmīgs wd izsaukums');
-			return { error: response };
-		}
-		return await response.json();
-	}
-	catch(err) {
-        console.error(err);
-		return {};
-    }
-}
 const callFAASFindInstances = async (faasIParams) => {
     // *** console.log("------------callFAASFindInstances ------------------");
 	// 'faasIParams' is result of function convertAllParamsToFindInstancesParams()
@@ -83,7 +57,9 @@ const callFAASFindInstances = async (faasIParams) => {
 	// 		outProperties: [], // properties outgoing from instance
 	// 		textFilter: "",    // text to be found in the Labels/AltLabels
 	// 		id: [],            // exact IDs. might be useful while gathering properties 
-	// 		limit: 100         // number of returned records
+    //      idNot: [],         // exact IDs not to be in results
+    //      isType: "",        // class indicator. Currently available only `true` value
+    // 		limit: 100         // number of returned records
 	// 	}
 	
     var arrlimit=500;
@@ -94,22 +70,12 @@ const callFAASFindInstances = async (faasIParams) => {
 		inProp:     (faasIParams.inProperties || []).slice(0,arrlimit).join(' AND '),
 		outProp:    (faasIParams.outProperties || []).slice(0,arrlimit).join(' AND '),
         id:         (faasIParams.id || []).slice(0,arrlimit).join(' '),
-		limit:      faasIParams.limit || MAX_IND_ANSWERS,
-        dummy: false
+        idNot:      (faasIParams.idNot || []).slice(0,arrlimit).join(' '),
+        isType:     (faasIParams.isType || ""),
+        limit:      faasIParams.limit || MAX_IND_ANSWERS
 	});
     return await callFAASGet(callText);
 }
-
-const callFAASGetProperty = async (id = []) => {
-    // *** console.log("------------callFAASGetProperty ------------------");
-	//var callText = `http://localhost:59286/api/GetProperty?id=${id.join('%20')}&limit=${id.length+1}`
-	var callText = `/GetProperty?` + new URLSearchParams({
-		id: id.join(' '),
-		limit: id.length+1
-	});
-    return await callFAASGet(callText);
-}
-
 
 const callFAASFindProperties = async (faasPParams) => {
     // *** console.log("------------callFAASFindProperties ------------------");
@@ -119,11 +85,11 @@ const callFAASFindProperties = async (faasPParams) => {
 		domain:     (faasPParams.domain || []).join(' AND '),
 		range:      (faasPParams.range || []).join(' AND '),
 		id:         (faasPParams.id || []).join(' '),
+		idNot:      (faasPParams.idNot || []).join(' '),
 		limit:      faasPParams.limit || MAX_IND_ANSWERS
     });
     return await callFAASGet(callText);
 }
-
 
 faas = {
     fnDisplayName : function(id, label) {
@@ -141,23 +107,55 @@ faas = {
             principal_class: 1
         }
     },
-    getClassesByProperties : async function(allParams = {}) {
-		// *** console.log("------------mapEntityToVQInstances ------------------");
+    getClasses : async function (allParams = {}) {
+        // TO BE : analys expected output 
+		// *** console.log("------------getClasses ------------------");
+		var rr;
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
+        
+        // get info about instance first
+        if (faasParam.id.length != 0) {
+            var inst = await callFAASFindInstances(faasParam);
+            var cls = [];
+            inst.forEach(i => {
+                cls = cls.concat(i.parentTypes);
+            });
+            faasParam.id = cls;
+        }
+        
+        if (faasParam.id.length==0 && !faasParam.textFilter) {
+            rr = [{id:"Q0", label: "Noting Found"}];
+        } else {
+            rr = await callFAASFindInstances(faasParam);
+            if (rr.length == 0) rr = [{id:"Q0", label: "Noting Found"}];
+        }
+        //console.log(`rr=${JSON.stringify(rr)}`);
+        if (rr.error != undefined)
+            rr = [];
+		
+		// output text formated hopefully same way as other autocompletion data providers 
+        return {
+            data: rr.map(this.mapEntityToVQClasses)
+        }
+    },
+    getClassesFull : async function(allParams = {}) {
+		// *** console.log("------------getClassProperties ------------------");
+        var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
+        
         // at this moment is not improtant would it be in or out property
         var prop = await callFAASFindProperties({id : faasParam.inProperties.concat(faasParam.outProperties)})
 
-        console.log(`prop=${JSON.stringify(prop)}`)
+        //console.log(`prop=${JSON.stringify(prop)}`)
         var instIds = [];
         if (faasParam.inProperties.length > 0) {
             prop.map(p=>p.domain).forEach(arr => { arr.forEach(ele => { instIds.push(ele); })})
         } else {
             prop.map(p=>p.range).forEach(arr => { arr.forEach(ele => { instIds.push(ele); })})
         }
-        console.log(`instIds=${JSON.stringify(instIds)}`)
+        //console.log(`instIds=${JSON.stringify(instIds)}`)
         // only unique class IDs
         instIds = instIds.filter((i,p) => instIds.indexOf(i) == p).map(i => { return `Q${i}` } );
-        console.log(`instIds fo;ter=${JSON.stringify(instIds)}`)
+        //console.log(`instIds fo;ter=${JSON.stringify(instIds)}`)
 
         var faasIParam = {
             words: "",
@@ -165,12 +163,8 @@ faas = {
         }
         var inst = await callFAASFindInstances(faasIParam);
         return {
-            data: inst.map(faas.mapEntityToVQClasses)
+            data: inst.map(this.mapEntityToVQClasses)
         }
-    },
-    getProperties : async function (ids = []) {
-		// *** console.log("------------getProperties ------------------");
-        return await callFAASGetProperty(ids);
     },
 	getIndividuals : async function(allParams = {}) {
 		// *** console.log("------------getIndividuals ------------------");
@@ -197,6 +191,7 @@ faas = {
             return rez;
 
 		var faasIParam = await this.convertAllParamsToFindInstancesParams(allParams);
+
         faasIParam.limit = MAX_IND_ANSWERS * 100; // get x10 more instances to retrieve more properties of different instances
 		var ins = await callFAASFindInstances(faasIParam);
         var ip =[], op=[];
@@ -266,6 +261,8 @@ faas = {
 			outProperties: [],             // properties outgoing from instance
 			textFilter: "",                // text to be found in the Labels/AltLabels
             id: [],                        // exact IDs. might be useful while gathering properties 
+            idNot: [],                     // exact IDs not to be in results
+            isType: "",                    // class indicator. Currently available only `true` value
 			limit: MAX_IND_ANSWERS         // number of returned records
 		}
 

@@ -517,10 +517,11 @@ dataShapes = {
 			allParams.element = findElementDataForClass(vq_obj);
 			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
 		}
-		return await this.callServerFunction("getClasses", allParams);
+		//return await this.callServerFunction("getClasses", allParams);
+		return await faas.getClasses(allParams);
 	},
 	getClassesFull : async function(params = {}) {
-		// *** console.log("------------GetClasses------------------")
+		// *** console.log("------------getClassesFull------------------")
 		// ***  dataShapes.getClassesFull({main:{}, element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'}})
 		// ***  dataShapes.getClassesFull({{main:{},element: {uriIndividual: 'http://dbpedia.org/resource/Tivoli_Friheden'} })  -- visas ir yago klases
 		// ***  dataShapes.getClassesFull({{main:{},element: { pList: { out: [{name: 'educationalAuthority', type: 'out'}]}}})
@@ -529,7 +530,7 @@ dataShapes = {
 		// ***  dataShapes.getClassesFull({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
 
 		//return await this.callServerFunction("getClasses", params);
-		return await faas.getClassesByProperties(params);
+		return await faas.getClassesFull(params);
 	},
 	getTreeClasses : async function(params) {
 		// *** console.log("------------GetTreeClasses------------------")
@@ -642,17 +643,17 @@ dataShapes = {
 		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForIndividual(vq_obj);
 
-		//console.log(allParams)
-		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
+		//console.log(`allParams=${JSON.stringify(allParams)}`);
+		// if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
 			if (this.schema.schemaType === 'wikidata')
 				rr = await faas.getIndividuals(allParams); 
 			else
 				rr = await this.callServerFunction("getIndividuals", allParams);
 			if (rr.error != undefined)
 				rr = []
-		}
-		else
-			rr = [];
+		// }
+		// else
+		// 	rr = [];
 			
 		return rr;
 	},
