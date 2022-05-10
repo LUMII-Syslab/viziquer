@@ -121,7 +121,9 @@
                                                 {{#if literal}}
                                                   {{#if literal.[0]._}}
                                                 <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]._}}</div></td>
-                                                  {{else}}
+                                                  {{else if literal.[0].$}}
+                                                <td><div class="toolbar-item" attribute="item" contentEditable="true"></div></td>
+												{{else}}
                                                 <td><div class="toolbar-item" attribute="item" contentEditable="true">{{literal.[0]}}</div></td>
                                                   {{/if}}
                                                 {{else}}

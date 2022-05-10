@@ -710,6 +710,11 @@ dataShapes = {
 			else
 				this.schema.resolvedClassesF[params.name] = 1;
 		}
+		
+		if (rr.complete == true)
+			rr.name = `${rr.data[0].prefix}:${rr.data[0].local_name}`;
+		else
+			rr.name = this.getCPName(params.name, 'C');
 		return rr;
 	},
 	resolvePropertyByName : async function(params = {}) {
@@ -717,7 +722,7 @@ dataShapes = {
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		//dataShapes.resolvePropertyByName({name: 'http://dbpedia.org/ontology/years'})
 		var rr;
-		if ( typeof params.name !== "string" ) return { complete:false, data: []};
+		if ( typeof params.name !== "string" ) return { complete:false, name: '', data: []};
 		
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
 			if (this.schema.resolvedProperties[params.name] !== undefined)
@@ -733,6 +738,11 @@ dataShapes = {
 			else
 				this.schema.resolvedPropertiesF[params.name] = 1;
 		}
+
+		if (rr.complete == true)
+			rr.name = `${rr.data[0].prefix}:${rr.data[0].local_name}`;
+		else
+			rr.name = this.getCPName(params.name, 'P');
 		return rr;
 	},
 	resolveIndividualByName : async function(params = {}) {
@@ -809,6 +819,19 @@ dataShapes = {
 	clearLog : function() {
 		this.schema.log = [];
 		this.schema.fullLog = [];
+	},
+	getCPName: function(localName, type) {
+		//dataShapes.getCPName('http://dbpedia.org/ontology/Year', 'C') 
+		if (localName.indexOf('//') == -1 && localName.indexOf(':')) {
+			var ns = '';
+			if (this.schema.schemaType === 'wikidata' && type == 'P')
+				ns = 'wdt';
+			else
+				ns = this.schema.namespaces.filter(function(n){ return n.is_local == true})[0].name
+			localName = `${ns}:${localName}`;
+		}
+		var name = this.getIndividualName(localName);
+		return name;
 	},
 	getIndividualName: function(localName) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')

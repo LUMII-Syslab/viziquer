@@ -801,7 +801,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 		//	inst = await dataShapes.getIndividuals(params, act_el);
 
 		if (fullText != "" ){
-			if ( inst.length === 0 || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schemaType == 'dbpedia')
+			if ( inst.length === 0 && dataShapes.schema.schemaType == 'dbpedia' || inst.length > 0 && inst[0] !== "dbr:"+fullText && dataShapes.schema.schemaType == 'dbpedia')
 				c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
 		}
 			
