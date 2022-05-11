@@ -822,7 +822,7 @@ dataShapes = {
 	},
 	getCPName: function(localName, type) {
 		//dataShapes.getCPName('http://dbpedia.org/ontology/Year', 'C') 
-		if (localName.indexOf('//') == -1 && localName.indexOf(':')) {
+		if (localName.indexOf('//') == -1 && localName.indexOf(':' ) == -1) {
 			var ns = '';
 			if (this.schema.schemaType === 'wikidata' && type == 'P')
 				ns = 'wdt';
