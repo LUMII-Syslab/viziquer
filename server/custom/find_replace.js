@@ -211,7 +211,6 @@ function findGraphRdbms(findGraph){
                                             $and:[
                                                 { $eq: ['$elementTypeId', edge.elementTypeId] },
                                                 { $eq: ['$startElement', '$$startElementId'] },
-                                                { $eq: ['$endElement', '$$startElementId']},
                                                 // { $not: {$in: ['$_id', '$$foundIds']}}
                                             ]
                                         }
@@ -279,7 +278,92 @@ function findGraphRdbms(findGraph){
                                             { $expr:{$eq:["$findElementCompartmentsCount", {$size: '$findElementCompartments'}]} }
                                         ]
                                     }
-                                }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'Elements',
+                                        let : {findElementId: '$endElement', type: findNode.elementTypeId},
+                                            pipeline: [
+                                                {
+                                                    $match:{
+                                                        $expr: {
+                                                            $and:[
+                                                                { $eq: ['$_id', '$$findElementId']},
+                                                                { $eq: ['$elementTypeId','$$type']}
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                        as: 'node'
+                                    }
+                                },
+                                {
+                                    $unwind:{ path: '$node'}
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'Compartments',
+                                        let : {findElementId: findNode._id},
+                                            pipeline: [
+                                                {
+                                                    $match:{
+                                                        $expr: {
+                                                            $eq: ['$elementId', '$$findElementId']
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                        as: 'findElementCompartments'
+                                    }
+                                },
+                                {
+                                    $addFields: {
+                                        findElementCompartmentsCount: { $size: '$findElementCompartments'}
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'Compartments',
+                                        localField: 'node._id',
+                                        foreignField: 'elementId',
+                                        as: 'foundElementCompartments'
+                                    }
+                                },
+                                {
+                                    $addFields:{
+                                        findElementCompartments:{
+                                            $filter:{
+                                                input: '$findElementCompartments',
+                                                as: 'compartment',
+                                                cond:{
+                                                    $and: [
+                                                        { $in: ['$$compartment.compartmentTypeId', '$foundElementCompartments.compartmentTypeId'] },
+                                                        { $gt: [
+                                                            { $indexOfCP: 
+                                                            [
+                                                                {
+                                                                    $arrayElemAt: ['$foundElementCompartments.value', {$indexOfArray: ['$foundElementCompartments.compartmentTypeId','$$compartment.compartmentTypeId'] }]
+                                                                }, 
+                                                                '$$compartment.value'
+                                                            ]
+                                                        },
+                                                        -1]}
+                                                        
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    $match: {
+                                        $or: [
+                                            { findElementCompartmentsCount: {$eq: 0}},
+                                            { $expr:{$eq:["$findElementCompartmentsCount", {$size: '$findElementCompartments'}]} }
+                                        ]
+                                    }
+                                },
                             ],
                             as: 'lookedUpEdge'
                         }
@@ -299,10 +383,10 @@ function findGraphRdbms(findGraph){
                     pipeline.push(unwindStage);
                     const updateVisitedElementsFields = {
                         $addFields:{
-                            foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: edge._id, elementId: "$lookedUpEdge._id"} ] ] }, 
-                            elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpEdge._id" ] ] },
+                            foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: edge._id, elementId: "$lookedUpEdge._id"},{findElementId: findNode._id, elementId: "$lookedUpEdge.endElement"} ] ] }, 
+                            elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpEdge._id","lookedUpEdge.endElement" ] ] },
                         }
-                    }
+                    } // and endElemenet 
                     pipeline.push(updateVisitedElementsFields);
                 }
                 let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement, visited: false});
@@ -443,17 +527,13 @@ function findGraphRdbms(findGraph){
                     _.each(relatedIncomingFindEdges, (edge) => {
                         console.log('edge id ',edge._id);
                         let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement});
+                        
                         if(nextDepthNode.visited){
-                            if(FindNodes.length == 0){
-                                console.log('Find nodes is empty incoming');
-                                // startElemenet == matchedBackTrackingNode._id
-                                // endElmeent == lookedUpNode._id
-                                // $nin: ['$_id', '$$elementIds']
-                                // $unwind
+                            if( edge.startElement === edge.endElement) {
                                 const lookupEdgeStage = {
                                     $lookup:{
                                         from: 'Elements',
-                                        let : {startElementId: "$matchedBackTrackingNode._id", endElementId: '$lookedUpNode._id',foundIds: '$elementIds'},
+                                        let : {startElementId: "$lookedUpNode._id",foundIds: '$elementIds'},
                                         pipeline: [
                                             {
                                                 $match:{
@@ -461,7 +541,7 @@ function findGraphRdbms(findGraph){
                                                         $and:[
                                                             { $eq: ['$elementTypeId', edge.elementTypeId] },
                                                             { $eq: ['$startElement', '$$startElementId'] },
-                                                            { $eq: ['$endElement', '$$endElementId']},
+                                                            { $eq: ['$endElement', '$$startElementId'] },
                                                             // { $not: {$in: ['$_id', '$$foundIds']}}
                                                         ]
                                                     }
@@ -533,103 +613,199 @@ function findGraphRdbms(findGraph){
                                         ],
                                         as: 'lookedUpEdge'
                                     }
+                                    
                                 }
                                 pipeline.push(lookupEdgeStage);
-                                
                             }
-                            else{
-                                console.log('findNodes is not empty incoming')
-                                // startElement == lastMatchedPoppedNode._id
-                                // endElmeent == lookedUpNode._id
-                                // $nin: ['$_id', '$$elementIds']
-                                // unwind
-                                const lookupEdgeStage = {
-                                    $lookup:{
-                                        from: 'Elements',
-                                        let : {startElementId: "$lastMatchedPoppedNode._id", endElementId: '$lookedUpNode._id',foundIds: '$elementIds'},
-                                        pipeline: [
-                                            {
-                                                $match:{
-                                                    $expr: {
-                                                        $and:[
-                                                            { $eq: ['$elementTypeId', edge.elementTypeId] },
-                                                            { $eq: ['$startElement', '$$startElementId'] },
-                                                            { $eq: ['$endElement', '$$endElementId']},
-                                                            // { $not: {$in: ['$_id', '$$foundIds']}}
-                                                        ]
+                            else{ 
+                                if(FindNodes.length == 0){
+                                    console.log('Find nodes is empty incoming');
+                                    // startElemenet == matchedBackTrackingNode._id
+                                    // endElmeent == lookedUpNode._id
+                                    // $nin: ['$_id', '$$elementIds']
+                                    // $unwind
+                                    const lookupEdgeStage = {
+                                        $lookup:{
+                                            from: 'Elements',
+                                            let : {startElementId: "$matchedBackTrackingNode._id", endElementId: '$lookedUpNode._id',foundIds: '$elementIds'},
+                                            pipeline: [
+                                                {
+                                                    $match:{
+                                                        $expr: {
+                                                            $and:[
+                                                                { $eq: ['$elementTypeId', edge.elementTypeId] },
+                                                                { $eq: ['$startElement', '$$startElementId'] },
+                                                                { $eq: ['$endElement', '$$endElementId']},
+                                                                // { $not: {$in: ['$_id', '$$foundIds']}}
+                                                            ]
+                                                        }
                                                     }
-                                                }
-                                            },
-                                            {
-                                                $lookup: {
-                                                    from: 'Compartments',
-                                                    let : {findElementId: edge._id},
-                                                        pipeline: [
-                                                            {
-                                                                $match:{
-                                                                    $expr: {
-                                                                        $eq: ['$elementId', '$$findElementId']
+                                                },
+                                                {
+                                                    $lookup: {
+                                                        from: 'Compartments',
+                                                        let : {findElementId: edge._id},
+                                                            pipeline: [
+                                                                {
+                                                                    $match:{
+                                                                        $expr: {
+                                                                            $eq: ['$elementId', '$$findElementId']
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        ],
-                                                    as: 'findElementCompartments'
-                                                }
-                                            },
-                                            {
-                                                $addFields: {
-                                                    findElementCompartmentsCount: { $size: '$findElementCompartments'}
-                                                }
-                                            },
-                                            {
-                                                $lookup: {
-                                                    from: 'Compartments',
-                                                    localField: '_id',
-                                                    foreignField: 'elementId',
-                                                    as: 'foundElementCompartments'
-                                                }
-                                            },
-                                            {
-                                                $addFields:{
-                                                    findElementCompartments:{
-                                                        $filter:{
-                                                            input: '$findElementCompartments',
-                                                            as: 'compartment',
-                                                            cond:{
-                                                                $and: [
-                                                                    { $in: ['$$compartment.compartmentTypeId', '$foundElementCompartments.compartmentTypeId'] },
-                                                                    { $gt: [
-                                                                        { $indexOfCP: 
-                                                                        [
-                                                                            {
-                                                                                $arrayElemAt: ['$foundElementCompartments.value', {$indexOfArray: ['$foundElementCompartments.compartmentTypeId','$$compartment.compartmentTypeId'] }]
-                                                                            }, 
-                                                                            '$$compartment.value'
-                                                                        ]
-                                                                    },
-                                                                    -1]}
-                                                                    
-                                                                ]
+                                                            ],
+                                                        as: 'findElementCompartments'
+                                                    }
+                                                },
+                                                {
+                                                    $addFields: {
+                                                        findElementCompartmentsCount: { $size: '$findElementCompartments'}
+                                                    }
+                                                },
+                                                {
+                                                    $lookup: {
+                                                        from: 'Compartments',
+                                                        localField: '_id',
+                                                        foreignField: 'elementId',
+                                                        as: 'foundElementCompartments'
+                                                    }
+                                                },
+                                                {
+                                                    $addFields:{
+                                                        findElementCompartments:{
+                                                            $filter:{
+                                                                input: '$findElementCompartments',
+                                                                as: 'compartment',
+                                                                cond:{
+                                                                    $and: [
+                                                                        { $in: ['$$compartment.compartmentTypeId', '$foundElementCompartments.compartmentTypeId'] },
+                                                                        { $gt: [
+                                                                            { $indexOfCP: 
+                                                                            [
+                                                                                {
+                                                                                    $arrayElemAt: ['$foundElementCompartments.value', {$indexOfArray: ['$foundElementCompartments.compartmentTypeId','$$compartment.compartmentTypeId'] }]
+                                                                                }, 
+                                                                                '$$compartment.value'
+                                                                            ]
+                                                                        },
+                                                                        -1]}
+                                                                        
+                                                                    ]
+                                                                }
                                                             }
                                                         }
                                                     }
+                                                },
+                                                {
+                                                    $match: {
+                                                        $or: [
+                                                            { findElementCompartmentsCount: {$eq: 0}},
+                                                            { $expr:{$eq:["$findElementCompartmentsCount", {$size: '$findElementCompartments'}]} }
+                                                        ]
+                                                    }
                                                 }
-                                            },
-                                            {
-                                                $match: {
-                                                    $or: [
-                                                        { findElementCompartmentsCount: {$eq: 0}},
-                                                        { $expr:{$eq:["$findElementCompartmentsCount", {$size: '$findElementCompartments'}]} }
-                                                    ]
-                                                }
-                                            }
-                                        ],
-                                        as: 'lookedUpEdge'
+                                            ],
+                                            as: 'lookedUpEdge'
+                                        }
                                     }
+                                    pipeline.push(lookupEdgeStage);
+                                    
                                 }
-                                pipeline.push(lookupEdgeStage);
-                                
+                                else{
+                                    console.log('findNodes is not empty incoming')
+                                    // startElement == lastMatchedPoppedNode._id
+                                    // endElmeent == lookedUpNode._id
+                                    // $nin: ['$_id', '$$elementIds']
+                                    // unwind
+                                    const lookupEdgeStage = {
+                                        $lookup:{
+                                            from: 'Elements',
+                                            let : {startElementId: "$lastMatchedPoppedNode._id", endElementId: '$lookedUpNode._id',foundIds: '$elementIds'},
+                                            pipeline: [
+                                                {
+                                                    $match:{
+                                                        $expr: {
+                                                            $and:[
+                                                                { $eq: ['$elementTypeId', edge.elementTypeId] },
+                                                                { $eq: ['$startElement', '$$startElementId'] },
+                                                                { $eq: ['$endElement', '$$endElementId']},
+                                                                // { $not: {$in: ['$_id', '$$foundIds']}}
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    $lookup: {
+                                                        from: 'Compartments',
+                                                        let : {findElementId: edge._id},
+                                                            pipeline: [
+                                                                {
+                                                                    $match:{
+                                                                        $expr: {
+                                                                            $eq: ['$elementId', '$$findElementId']
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ],
+                                                        as: 'findElementCompartments'
+                                                    }
+                                                },
+                                                {
+                                                    $addFields: {
+                                                        findElementCompartmentsCount: { $size: '$findElementCompartments'}
+                                                    }
+                                                },
+                                                {
+                                                    $lookup: {
+                                                        from: 'Compartments',
+                                                        localField: '_id',
+                                                        foreignField: 'elementId',
+                                                        as: 'foundElementCompartments'
+                                                    }
+                                                },
+                                                {
+                                                    $addFields:{
+                                                        findElementCompartments:{
+                                                            $filter:{
+                                                                input: '$findElementCompartments',
+                                                                as: 'compartment',
+                                                                cond:{
+                                                                    $and: [
+                                                                        { $in: ['$$compartment.compartmentTypeId', '$foundElementCompartments.compartmentTypeId'] },
+                                                                        { $gt: [
+                                                                            { $indexOfCP: 
+                                                                            [
+                                                                                {
+                                                                                    $arrayElemAt: ['$foundElementCompartments.value', {$indexOfArray: ['$foundElementCompartments.compartmentTypeId','$$compartment.compartmentTypeId'] }]
+                                                                                }, 
+                                                                                '$$compartment.value'
+                                                                            ]
+                                                                        },
+                                                                        -1]}
+                                                                        
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    $match: {
+                                                        $or: [
+                                                            { findElementCompartmentsCount: {$eq: 0}},
+                                                            { $expr:{$eq:["$findElementCompartmentsCount", {$size: '$findElementCompartments'}]} }
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            as: 'lookedUpEdge'
+                                        }
+                                    }
+                                    pipeline.push(lookupEdgeStage);
+                                    
+                                }
                             }
+                            
                             const filterEmptyEdgesStage = {
                                 $match:{
                                     "lookedUpEdge":{$ne:[]}
@@ -661,7 +837,7 @@ function findGraphRdbms(findGraph){
                     _.each(relatedOutcomingFindEdges, (edge) => {
                         console.log(edge._id);
                         let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement});
-                        if(nextDepthNode.visited){
+                        if(nextDepthNode.visited && nextDepthNode._id !== findNode._id){
                             if(FindNodes.length == 0){
                                 console.log('Find nodes is empty outcoming');
                                 // endElemenet == matchedBackTrackingNode._id
@@ -896,7 +1072,7 @@ function findGraphRdbms(findGraph){
     }
     pipeline.push(groupStage);
     const result = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-    // console.dir(result[0], {depth: null});
+    console.dir(_.findWhere(result,{_id: 'xoESGK7Qe64vzxKNx'}), {depth: null});
     console.log('result size', result.length);
     console.log('found diagram ids ', _.pluck(result,'_id'));
 }
@@ -907,165 +1083,7 @@ function findByEdges(findElement){
     while( found ) { found = BreadthFirstSearch(findGraph)}
     
     findGraphRdbms(findGraph);
-    // let edges = _.filter(findGraph, (element)=>{
-    //     return _.has(element, 'startElement')
-    // });
-    // _.each(edges, (edge) => {
-    //     _.extend(edge, {startElementObj: _.findWhere(findGraph, {_id: edge.startElement})})
-    //     _.extend(edge, {endElementObj: _.findWhere(findGraph, {_id: edge.endElement})})
-
-    // })
     
-    
-    // const lookedUpNodes = []; // may be it is better to accumulate looked up edges to?
-    // const pipeline = [
-    //     {
-    //         $match: {
-    //             _id: {
-    //                 $ne:edges[0]._id
-    //             },
-    //             elementTypeId: edges[0].elementTypeId,
-    //             diagramId: { $ne: edges[0].diagramId}
-    //         }
-    //     },
-    //     {
-    //         $addFields:{
-    //             foundElements: [{findElement: edges[0]._id, elementId: "$_id"}],
-    //             elementIds: ["$_id"] 
-    //         }
-    //     },
-        
-    //     {
-    //         $lookup:{
-    //             from: 'Elements',
-    //             let : {startElementId: "$startElement"},
-    //             pipeline: [
-    //                 {
-    //                     $match:{
-    //                         $expr: {
-    //                             $and:[
-    //                                 { $eq: ['$elementTypeId', edges[0].startElementObj.elementTypeId] },
-    //                                 { $eq: ['$_id', '$$startElementId'] }
-    //                             ]
-    //                         }
-    //                     }
-    //                 }
-    //             ],
-    //             as: 'lookedUpStartNode'
-    //         },
-    //     },
-    //     { // filtrējam tos, kuriem neko neatrada
-    //         $match:{
-    //             "lookedUpStartNode":{$ne:[]}
-    //         }
-    //     },
-    //     {
-    //         $unwind:{
-    //             path: "$lookedUpStartNode"
-    //         }
-    //     },
-    //     // if endElement is not looked up already
-    //     { 
-    //         $addFields: { 
-    //             foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: edges[0].startElement, elementId: "$lookedUpStartNode._id"} ] ] }, 
-    //             elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpStartNode._id" ] ] }
-    //         } 
-    //     },
-    //     {
-    //         $lookup:{
-    //             from: 'Elements',
-    //             let : {endElementId: "$endElement"},
-    //             pipeline: [
-    //                 {
-    //                     $match:{
-    //                         $expr: {
-    //                             $and:[
-    //                                 { $eq: ['$elementTypeId', edges[0].endElementObj.elementTypeId] },
-    //                                 { $eq: ['$_id', '$$endElementId'] }
-    //                             ]
-    //                         }
-    //                     }
-    //                 }
-    //             ],
-    //             as: 'lookedUpEndNode'
-    //         },
-    //     },
-    //     { // filtrējam tos, kuriem neko neatrada
-    //         $match:{
-    //             "lookedUpEndNode":{$ne:[]}
-    //         }
-    //     },
-    //     {
-    //         $unwind:{
-    //             path: "$lookedUpEndNode"
-    //         }
-    //     },
-    //     { 
-    //         $addFields: { 
-    //             foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: edges[0].endElement, elementId: "$lookedUpEndNode._id"} ] ] },
-    //             elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpEndNode._id" ] ] }
-    //         } 
-    //     },
-    //     {// jaliek pasaas beigaas
-    //         $group: {
-    //             _id: "$diagramId",
-    //             elements: {$push: "$$ROOT"}
-    //         }
-    //     }
-    // ];
-    // const result = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-    // console.dir(result, {depth: null});
-    /** @Katrai edge lookupot tās nodes, ja tās vēl nav lookupotas.  
-    _.each(edges, (edge) => {
-        if(!_.contains(lookedUpNodes, edge.startElement)){
-            let lookupObj = {
-                $lookup: {
-                    from: 'Elements',
-                    // let: { startElementTypeId: edge.startElementObj.elementTypeId},
-                    pipeline: [
-                        {
-                            $match:{
-                                $expr: {
-                                    $and:[
-                                        { $eq: ['$_elementTypeId', edge.startElementObj.elementTypeId] },
-                                        { $eq: ['$_id', '$$startElement'] }
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: 'lookedUpStartNode'
-                }
-            }
-            pipeline.push(lookupObj);
-            lookedUpNodes.push(edge.startElement);
-        }
-        if(!_.contains(lookedUpNodes, edge.endElement)){
-            let lookupObj = {
-                $lookup: {
-                    from: 'Elements',
-                    // let: { startElementTypeId: edge.startElementObj.elementTypeId},
-                    pipeline: [
-                        {
-                            $match:{
-                                $expr: {
-                                    $and:[
-                                        { $eq: ['$_elementTypeId', edge.endElementObj.elementTypeId] },
-                                        { $eq: ['$_id', '$$endElement'] }
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: 'lookedUpEndNode'
-                }
-            }
-            pipeline.push(lookupObj);
-            lookedUpNodes.push(edge.endElement);
-        }
-    });
-    */
-    // what is next? can i just join in others? do i have to join each edge first?
 }
 function findSingleElementMatches(findElement){
     // $lookup can be used for compartments and edge starttype and endType check
@@ -1232,6 +1250,8 @@ function FindDiagMatches(diagParamList){
                     // console.log('findResult')
                     // console.log(findResult)
                     findByEdges(startFindElement);
+                    // console.log('find result sample: ');
+                    // console.dir(findResult[0],{depth:null});
                     let duplicate = checkDuplicates(findResult, findElementIds);
                     if( duplicate.found == false ) findResults.push(findResult);
                     findElementIds = duplicate.findElementsIds;
