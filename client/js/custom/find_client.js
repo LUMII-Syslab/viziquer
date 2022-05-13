@@ -105,7 +105,7 @@ Interpreter.customMethods({
             Utilities.callMeteorMethod(serverMethodName, diagParamList, function(response){
                 Session.set("DiagramErrorMsg", "");
                 Session.set("ExpErrors", []);
-                console.log(response);
+                //console.log(response);
                 if(_.has(response, "msg")){
                     Session.set("DiagramErrorMsg", response.msg);
                 }
@@ -120,7 +120,7 @@ Interpreter.customMethods({
                         editMode: true,
                         _id: Session.get("activeDiagram")
                     });
-                    console.log('resp', response);
+                    // console.log('resp', response);
                     console.timeEnd('Find_time');
                     if(_.size(response.result) == 0) Session.set("DiagramErrorMsg", "No results");
                 }
