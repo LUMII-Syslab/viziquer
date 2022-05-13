@@ -849,16 +849,18 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				expressionLevelNames[path["variable"]["name"]] = variable;
 				
 			}else if(typeof pe["var"] !== 'undefined') {
-				//variableNamesClass[pe["var"]["name"]] = pe["var"]["name"] + "_" + counter;
-				//variableNamesClass[pe["var"]["name"]] = {"alias" : pe["var"]["name"] + "_" + counter, "isvar" : false};
-				//variableNamesAll[pe["var"]["name"]+ "_" + counter] = pe["var"]["name"];
 				variable = setVariableName(pe["var"]["name"], alias, pe["var"], true);
 				prefixedName = getPrefix(pe["var"]["type"]["prefix"])+":"+pe["var"]["name"];
 				var namespace = pe["var"]["type"]["Namespace"];
 				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-				// prefixTable[getPrefix(pe["var"]["type"]["prefix"]) + ":"] = "<"+namespace+">";
 				prefixTable[getPrefix(pe["var"]["type"]["prefix"]) + ":"] = "<"+knownNamespaces[getPrefix(pe["var"]["type"]["prefix"])+":"]+">";
 
+			} else if(typeof pe["iri"] !== 'undefined' && typeof pe["ArgList"] === 'undefined'){
+				variable = setVariableName(pe["iri"]["PrefixedName"]["Name"], alias, pe["iri"]["PrefixedName"]["var"], true);
+				prefixedName = getPrefix(pe["iri"]["PrefixedName"]["Prefix"])+pe["iri"]["PrefixedName"]["Name"];
+				var namespace = pe["iri"]["PrefixedName"]["var"]["type"]["Namespace"];
+				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+				prefixTable[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])] = "<"+knownNamespaces[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])]+">";
 			}
 	return {"variable":variable, "prefixedName":prefixedName, "className":className};
 }
