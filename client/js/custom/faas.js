@@ -77,6 +77,40 @@ const callFAASFindInstances = async (faasIParams) => {
     return await callFAASGet(callText);
 }
 
+const callFAASFindClasses = async (faasIParams) => {
+    // *** console.log("------------callFAASClasses ------------------");
+	
+    var arrlimit=500;
+	//var callText = `http://localhost:59286/api/FindClasses?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
+	var callText = `/FindClasses?` + new URLSearchParams({
+		words:      faasIParams.textFilter || '',
+		instanceOf: (faasIParams.instanceOf || []).slice(0,arrlimit).join(' '),
+		inProp:     (faasIParams.inProperties || []).slice(0,arrlimit).join(' AND '),
+		outProp:    (faasIParams.outProperties || []).slice(0,arrlimit).join(' AND '),
+        id:         (faasIParams.id || []).slice(0,arrlimit).join(' '),
+        idNot:      (faasIParams.idNot || []).slice(0,arrlimit).join(' '),
+        limit:      faasIParams.limit || MAX_IND_ANSWERS
+	});
+    return await callFAASGet(callText);
+}
+
+const callFAASFindIndividuals = async (faasIParams) => {
+    // *** console.log("------------callFAASIndividuals ------------------");
+	
+    var arrlimit=500;
+	//var callText = `http://localhost:59286/api/FindIndividuals?words=${faasIParams.textFilter}&instanceOf=${faasIParams.instanceOf.join('%20')}&inProp=${faasIParams.inProperties.join('%20AND%20')}&outProp=${faasIParams.outProperties.join('%20AND%20')}&limit=${faasIParams.limit}`
+	var callText = `/FindIndividuals?` + new URLSearchParams({
+		words:      faasIParams.textFilter || '',
+		instanceOf: (faasIParams.instanceOf || []).slice(0,arrlimit).join(' '),
+		inProp:     (faasIParams.inProperties || []).slice(0,arrlimit).join(' AND '),
+		outProp:    (faasIParams.outProperties || []).slice(0,arrlimit).join(' AND '),
+        id:         (faasIParams.id || []).slice(0,arrlimit).join(' '),
+        idNot:      (faasIParams.idNot || []).slice(0,arrlimit).join(' '),
+        limit:      faasIParams.limit || MAX_IND_ANSWERS
+	});
+    return await callFAASGet(callText);
+}
+
 const callFAASFindProperties = async (faasPParams) => {
     // *** console.log("------------callFAASFindProperties ------------------");
 	//var callText = `http://localhost:59286/api/FindProperties?words=${faasPParams.textFilter}&domain=${faasPParams.domain.join('%20AND%20')}&range=${faasPParams.range.join('%20AND%20')}&id=${faasPParams.id.join('%20')}&limit=${faasPParams.limit}`
@@ -108,8 +142,8 @@ faas = {
         }
     },
     getClasses : async function (allParams = {}) {
-        // TO BE : analys expected output 
 		// *** console.log("------------getClasses ------------------");
+        //console.log(`getClasses allParams=${JSON.stringify(allParams)}`)
 		var rr;
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
         
@@ -126,7 +160,7 @@ faas = {
         if (faasParam.id.length==0 && !faasParam.textFilter) {
             rr = [{id:"Q0", label: "Noting Found"}];
         } else {
-            rr = await callFAASFindInstances(faasParam);
+            rr = await callFAASFindClasses(faasParam);
             if (rr.length == 0) rr = [{id:"Q0", label: "Noting Found"}];
         }
         //console.log(`rr=${JSON.stringify(rr)}`);
@@ -140,6 +174,7 @@ faas = {
     },
     getClassesFull : async function(allParams = {}) {
 		// *** console.log("------------getClassProperties ------------------");
+        //console.log(`getClassesFull allParams=${JSON.stringify(allParams)}`)
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
         
         // at this moment is not improtant would it be in or out property
@@ -161,16 +196,17 @@ faas = {
             words: "",
             id: instIds
         }
-        var inst = await callFAASFindInstances(faasIParam);
+        var inst = await callFAASFindClasses(faasIParam);
         return {
             data: inst.map(this.mapEntityToVQClasses)
         }
     },
 	getIndividuals : async function(allParams = {}) {
 		// *** console.log("------------getIndividuals ------------------");
+        //console.log(`getIndividuals allParams=${JSON.stringify(allParams)}`)
 		var rr;
         var faasParam = await this.convertAllParamsToFindInstancesParams(allParams);
-        rr = await callFAASFindInstances(faasParam);
+        rr = await callFAASFindIndividuals(faasParam);
         //console.log(`rr=${JSON.stringify(rr)}`);
         if (rr.error != undefined)
             rr = [];
@@ -180,6 +216,7 @@ faas = {
 	},
     getIndividualProperties : async function(allParams = {}) {
 		// *** console.log("------------getIndividualProperties ------------------");
+        //console.log(`getIndividualProperties allParams=${JSON.stringify(allParams)}`)
 
         // output result template
         rez = {
@@ -192,7 +229,9 @@ faas = {
 
 		var faasIParam = await this.convertAllParamsToFindInstancesParams(allParams);
 
-        faasIParam.limit = MAX_IND_ANSWERS * 100; // get x10 more instances to retrieve more properties of different instances
+        faasIParam.limit = MAX_IND_ANSWERS * 100; // get x100 more instances to retrieve more properties of different instances
+        // here we search instances only, because depending how much info is specified we can 
+        // get here either class or individual instance.
 		var ins = await callFAASFindInstances(faasIParam);
         var ip =[], op=[];
         // get unique list of properties both for `incoming` and `outgoing` properties
@@ -225,9 +264,10 @@ faas = {
                     class_iri: null,
                     prefix: "wdt",
                     display_name: text,
-                    local_name: pid
+                    local_name: pid,
+                    faas_rank: s.rank
                 }
-            });
+            }).sort((x,y)=>y.faas_rank - x.faas_rank);
         }
 
         // results
