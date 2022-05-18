@@ -5,10 +5,20 @@ The aim of the ViziQuer project is to provide visual/diagrammatic environment fo
 
 See http://viziquer.lumii.lv for the tool description.
 
+## Context
+
+For the use with the data shape server (DSS), the DSS server needs to be installed/accessible, as well (put the link in .env file, 
+following the pattern given in sample.env).
+
+See https://github.com/LUMII-Syslab/data-shape-server
+
+The DSS shall need a link to a PostGres SQL database, holding the data schemas for the endpoints to be queried. 
+
+The sample schemas are available and means for their creation are described at http://viziquer.lumii.lv
 
 ## Installation
 
-You can choose between running ViziQuer locally (from source) and running ViziQuer within a Docker environment
+You can choose between running ViziQuer locally (from source) and running ViziQuer within a Docker environment (upcoming for the DSS version)
 
 ### To setup ViziQuer locally
 
@@ -17,6 +27,15 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 1. To run Meteor, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
+
+
+
+## Configuration for the first use
+
+1. The first user that signs up to the tool instance shall get administrator rights (the rights to manage tool configurations)
+
+
+## Docker Environment Notes (currently applies to ViziQuer/web classic only)
 
 ### To run ViziQuer within a Docker environment on MacOs or Linux
 
@@ -30,10 +49,3 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 1. Create a volume for Mongo DB before the first use: `docker volume create --name=vqdata` (to avoid issues of Mongo DB not working from a shared Windows folder).
 1. Start the tool by `docker-compose -f docker-compose-windows.yml up`.
 1. Open browser and type `localhost:80`.
-
-## Configuration for the first use
-
-1. The first user that signs up to the tool instance shall get administrator rights (the rights to manage tool configurations)
-1. (Not necessary since 0.2.4) To create a tool and load ViziQuer configuration, go to Configurator (in panel on left) and create a tool, for example, ViziQuer and then click button _Import_.
-   Then choose the VQ tool configuration file (e.g. `vq_configuration_dump_vnn.json`) to upload from `./jsons` directory.
-   Since version 0.2.4, the tool configuration is loaded automatically from `jsons/VQ_configuration_latest.json`.

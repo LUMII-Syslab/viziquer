@@ -1497,12 +1497,19 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
 			
 			for(var attr in attributeTableAdded){
+				
+				var isInternal = false;
+				if(typeof variableList["?"+attributeTable[attributeTableAdded[attr]]["alias"]] !== 'undefined' && variableList["?"+attributeTable[attributeTableAdded[attr]]["alias"]] > 1){
+					isInternal = false;
+				} else isInternal = true;
+				
 				className = attributeTable[attributeTableAdded[attr]]["class"];
 				var attributeInfo = {
 					"alias":attributeTable[attributeTableAdded[attr]]["alias"],
 					"identification":attributeTable[attributeTableAdded[attr]]["identification"],
 					"exp": attributeTable[attributeTableAdded[attr]]["identification"]["short_name"]+"@"+ patterns[1]["expression"]["args"][1].replace(/\"/g,''),
-					"counter":attributeTable[attributeTableAdded[attr]]["counter"]
+					"counter":attributeTable[attributeTableAdded[attr]]["counter"],
+					"isInternal":isInternal,
 				}
 
 				var classes = findByVariableName(classesTable, "?"+className);

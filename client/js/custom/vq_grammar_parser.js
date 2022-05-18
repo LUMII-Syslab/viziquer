@@ -13260,94 +13260,12 @@ vq_grammar_parser = (function() {
               if (peg$silentFails === 0) { await peg$fail(peg$c24); }
             }
             if (s3 === peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 32) {
-                s3 = peg$c445;
+              if (input.charCodeAt(peg$currPos) === 39) {
+                s3 = peg$c407;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c446); }
-              }
-              if (s3 === peg$FAILED) {
-                if (input.charCodeAt(peg$currPos) === 47) {
-                  s3 = peg$c70;
-                  peg$currPos++;
-                } else {
-                  s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c71); }
-                }
-                if (s3 === peg$FAILED) {
-                  if (input.charCodeAt(peg$currPos) === 45) {
-                    s3 = peg$c62;
-                    peg$currPos++;
-                  } else {
-                    s3 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c63); }
-                  }
-                  if (s3 === peg$FAILED) {
-                    if (input.charCodeAt(peg$currPos) === 44) {
-                      s3 = peg$c126;
-                      peg$currPos++;
-                    } else {
-                      s3 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c127); }
-                    }
-                    if (s3 === peg$FAILED) {
-                      if (input.charCodeAt(peg$currPos) === 40) {
-                        s3 = peg$c16;
-                        peg$currPos++;
-                      } else {
-                        s3 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c17); }
-                      }
-                      if (s3 === peg$FAILED) {
-                        if (input.charCodeAt(peg$currPos) === 41) {
-                          s3 = peg$c18;
-                          peg$currPos++;
-                        } else {
-                          s3 = peg$FAILED;
-                          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
-                        }
-                        if (s3 === peg$FAILED) {
-                          if (peg$c377.test(input.charAt(peg$currPos))) {
-                            s3 = input.charAt(peg$currPos);
-                            peg$currPos++;
-                          } else {
-                            s3 = peg$FAILED;
-                            if (peg$silentFails === 0) { await peg$fail(peg$c378); }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        while (s3 !== peg$FAILED) {
-          s2.push(s3);
-          if (peg$c443.test(input.charAt(peg$currPos))) {
-            s3 = input.charAt(peg$currPos);
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c444); }
-          }
-          if (s3 === peg$FAILED) {
-            if (input.charCodeAt(peg$currPos) === 95) {
-              s3 = peg$c369;
-              peg$currPos++;
-            } else {
-              s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c370); }
-            }
-            if (s3 === peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 46) {
-                s3 = peg$c23;
-                peg$currPos++;
-              } else {
-                s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c24); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c408); }
               }
               if (s3 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 32) {
@@ -13404,6 +13322,106 @@ vq_grammar_parser = (function() {
                             } else {
                               s3 = peg$FAILED;
                               if (peg$silentFails === 0) { await peg$fail(peg$c378); }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          if (peg$c443.test(input.charAt(peg$currPos))) {
+            s3 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { await peg$fail(peg$c444); }
+          }
+          if (s3 === peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 95) {
+              s3 = peg$c369;
+              peg$currPos++;
+            } else {
+              s3 = peg$FAILED;
+              if (peg$silentFails === 0) { await peg$fail(peg$c370); }
+            }
+            if (s3 === peg$FAILED) {
+              if (input.charCodeAt(peg$currPos) === 46) {
+                s3 = peg$c23;
+                peg$currPos++;
+              } else {
+                s3 = peg$FAILED;
+                if (peg$silentFails === 0) { await peg$fail(peg$c24); }
+              }
+              if (s3 === peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 39) {
+                  s3 = peg$c407;
+                  peg$currPos++;
+                } else {
+                  s3 = peg$FAILED;
+                  if (peg$silentFails === 0) { await peg$fail(peg$c408); }
+                }
+                if (s3 === peg$FAILED) {
+                  if (input.charCodeAt(peg$currPos) === 32) {
+                    s3 = peg$c445;
+                    peg$currPos++;
+                  } else {
+                    s3 = peg$FAILED;
+                    if (peg$silentFails === 0) { await peg$fail(peg$c446); }
+                  }
+                  if (s3 === peg$FAILED) {
+                    if (input.charCodeAt(peg$currPos) === 47) {
+                      s3 = peg$c70;
+                      peg$currPos++;
+                    } else {
+                      s3 = peg$FAILED;
+                      if (peg$silentFails === 0) { await peg$fail(peg$c71); }
+                    }
+                    if (s3 === peg$FAILED) {
+                      if (input.charCodeAt(peg$currPos) === 45) {
+                        s3 = peg$c62;
+                        peg$currPos++;
+                      } else {
+                        s3 = peg$FAILED;
+                        if (peg$silentFails === 0) { await peg$fail(peg$c63); }
+                      }
+                      if (s3 === peg$FAILED) {
+                        if (input.charCodeAt(peg$currPos) === 44) {
+                          s3 = peg$c126;
+                          peg$currPos++;
+                        } else {
+                          s3 = peg$FAILED;
+                          if (peg$silentFails === 0) { await peg$fail(peg$c127); }
+                        }
+                        if (s3 === peg$FAILED) {
+                          if (input.charCodeAt(peg$currPos) === 40) {
+                            s3 = peg$c16;
+                            peg$currPos++;
+                          } else {
+                            s3 = peg$FAILED;
+                            if (peg$silentFails === 0) { await peg$fail(peg$c17); }
+                          }
+                          if (s3 === peg$FAILED) {
+                            if (input.charCodeAt(peg$currPos) === 41) {
+                              s3 = peg$c18;
+                              peg$currPos++;
+                            } else {
+                              s3 = peg$FAILED;
+                              if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+                            }
+                            if (s3 === peg$FAILED) {
+                              if (peg$c377.test(input.charAt(peg$currPos))) {
+                                s3 = input.charAt(peg$currPos);
+                                peg$currPos++;
+                              } else {
+                                s3 = peg$FAILED;
+                                if (peg$silentFails === 0) { await peg$fail(peg$c378); }
+                              }
                             }
                           }
                         }

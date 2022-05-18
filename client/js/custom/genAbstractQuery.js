@@ -52,6 +52,22 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		var cls = await dataShapes.resolveClassByName({name: className})
 		if(cls["data"].length > 0){
 			return cls["data"][0];
+		} else if(typeof cls["name"] !== "undefined" && className.indexOf("[ + ]") == -1 && className.indexOf("[ ]") == -1 && className.indexOf("?") == -1) {
+			var name = cls["name"];
+			var prefix;
+			var display_name = className;
+			if(display_name.indexOf(":") !== -1){
+				display_name = display_name.substring(display_name.indexOf(":")+1);
+			}
+			if(name.indexOf(":") !== -1){
+				prefix = name.substring(0, name.indexOf(":"));
+				name = name.substring(name.indexOf(":")+1);
+			}
+			return {
+				display_name: display_name,
+				local_name: name,
+				prefix:prefix
+			}
 		}
 	}
 	return null;
@@ -466,6 +482,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // JSON -->
   // Parses all expressions in the object and recursively in all children
   async function resolveClassExpressions(obj_class, parent_class) {
+	  
 	  // if(obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
 	
 	  if(obj_class.graphs){
@@ -567,7 +584,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				}
 			}
 			if(obj_class.identification.local_name != null){
-				obj_class.instanceAlias = obj_class.identification.display_name; 
+				obj_class.instanceAlias = obj_class.identification.display_name;
+				if(typeof obj_class.instanceAlias === "undefined") obj_class.instanceAlias = obj_class.identification.local_name;
 				
 				if(obj_class.instanceAlias.indexOf("[") !== -1 && obj_class.instanceAlias.indexOf("]") !== -1){
 					var textPart = obj_class.instanceAlias.substring(obj_class.instanceAlias.indexOf("[")+1);
@@ -1189,10 +1207,28 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
 					}
 					
 					var cls = await dataShapes.resolveClassByName({name: id})
+
     				if(cls["complite"] == false) return null;
     				if(cls["data"].length > 0){
     					return cls["data"][0];
-    				}
+    				}  else if(typeof cls["name"] !== "undefined" && id != "[ + ]" && id != "[ ]" && !id.startsWith("?") && schemaName.toLowerCase() == "wikidata" && id.indexOf("[") != -1 && id.endsWith("]")) {
+						var name = cls["name"];
+						var prefix;
+						var display_name = id;
+						if(display_name.indexOf(":") !== -1){
+							display_name = display_name.substring(display_name.indexOf(":")+1);
+						}
+						
+						if(name.indexOf(":") !== -1){
+							prefix = name.substring(0, name.indexOf(":"));
+							name = name.substring(name.indexOf(":")+1);
+						}
+						return {
+							display_name: display_name,
+							local_name: name,
+							prefix:prefix
+						}
+					}
     				
     				return null;
 };
@@ -1232,9 +1268,24 @@ async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
     					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
     					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
     					return res;
-    				}
-    				
-    				
+    				 } //else if(typeof aorl["name"] !== "undefined" && !aorl["name"].startsWith("?") && schemaName.toLowerCase() == "wikidata" && id.indexOf("[") != -1 && id.endsWith("]")) {
+						
+						// var name = aorl["name"];
+						// var prefix;
+						// var display_name = id;
+						// if(display_name.indexOf(":") !== -1){
+							// display_name = display_name.substring(display_name.indexOf(":")+1);
+						// }
+						// if(name.indexOf(":") !== -1){
+							// prefix = name.substring(0, name.indexOf(":"));
+							// name = name.substring(name.indexOf(":")+1);
+						// }
+						// return {
+							// display_name: display_name,
+							// local_name: name,
+							// prefix:prefix
+						// }
+					// }
   return null
 };
     			// string -> idObject
