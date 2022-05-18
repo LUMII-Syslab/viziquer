@@ -629,8 +629,8 @@ dataShapes = {
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 
-		if (this.schema.schemaType == 'wikidata' && params.filter != undefined)
-			return await this.getIndividualsWD(params.filter); 
+		//if (this.schema.schemaType == 'wikidata' && params.filter != undefined)
+		//	return await this.getIndividualsWD(params.filter); 
 		
 		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
 		//	params.filter = '';  
@@ -641,7 +641,10 @@ dataShapes = {
 
 		//console.log(allParams)
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			rr = await this.callServerFunction("getIndividuals", allParams);
+			if (this.schema.schemaType === 'wikidata')
+				rr = await faas.getIndividuals(allParams); 
+			else
+				rr = await this.callServerFunction("getIndividuals", allParams);
 			if (rr.error != undefined)
 				rr = []
 		}
