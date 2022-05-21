@@ -126,6 +126,9 @@ const callFAASFindProperties = async (faasPParams) => {
 }
 
 faas = {
+    getFaasServerUrl : async function() {
+        return await getFaasServerUrl();
+    },
     fnDisplayName : function(id, label) {
         return (label?`[${label} (${id})]`:id)
     },

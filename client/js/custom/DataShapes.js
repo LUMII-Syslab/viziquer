@@ -641,10 +641,16 @@ dataShapes = {
 
 		//console.log(allParams)
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			if (this.schema.schemaType === 'wikidata')
-				rr = await faas.getIndividuals(allParams); 
-			else
+			if (this.schema.schemaType === 'wikidata') {
+				if (await faas.getFaasServerUrl()) {
+					rr = await faas.getIndividuals(allParams); 
+				} else {
+					rr = await this.getIndividualsWD(params.filter);
+				}
+			} else {
 				rr = await this.callServerFunction("getIndividuals", allParams);
+			}
+				
 			if (rr.error != undefined)
 				rr = []
 		}
