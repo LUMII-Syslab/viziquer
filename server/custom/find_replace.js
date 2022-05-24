@@ -82,24 +82,21 @@ function BreadthFirstSearch(ElementsArray){ // grafa apstaigāšana plašumā
     }
     else return false;
 }
-/***@RDBMS pieejas uzmetums */
-function findGraphRdbms(findGraph){
+/***@find */
+function findSubGraphs(findGraph){
     // findGraph - meklejamais grafs
     _.each(findGraph, (element) => { 
         if(_.has(element, 'visited')) element.visited = false; // nomainam virsotnu apstaigashanas markerus
-        // else _.extend(element, {visitedEdge: false}); // uzstadam apstaigashanas markerus skautnes, lai nav jalookupo lieku reizi
     }); // markejam virsotnes ka neapstaigatas
-
+    
     let isFirstNode = true;
     let findNode = _.first(findGraph);
     let FindNodes = [findNode];
     const pipeline = [];
     
-    // pagaidam bez atributu parbaudes!!!
-    while(FindNodes.length > 0){ // next depth find Nodes
+    while(FindNodes.length > 0){ 
         findNode = FindNodes.pop();
-        // console.log('popped findNode id: ', findNode._id);
-        // console.log('is first: ', isFirstNode);
+        
         if(isFirstNode){
             findNode.visited = true;
             const matchStage = {
@@ -115,7 +112,7 @@ function findGraphRdbms(findGraph){
             const addTrackAuxFieldsStage = {
                 $addFields:{
                     foundElements: [{findElementId: findNode._id, elementId: "$_id", type: "node"}],
-                    elementIds: ["$_id"], // maybe lookedupnode will be good idea for checking edge connectivity
+                    elementIds: ["$_id"], 
                     lastMatchedPoppedNode: '$$ROOT',
                     matchedBackTrackingNode: '$$ROOT',
                     findElementId: findNode._id
@@ -123,7 +120,7 @@ function findGraphRdbms(findGraph){
             }
             pipeline.push(addTrackAuxFieldsStage);
             isFirstNode = false;
-            const lookupFindElementCompartments = { // NOT PUSHED TO PIPELINE
+            const lookupFindElementCompartments = {
                 $lookup: {
                     from: 'Compartments',
                     let : {findElementId: findNode._id},
@@ -140,13 +137,13 @@ function findGraphRdbms(findGraph){
                 }
             }
             pipeline.push(lookupFindElementCompartments)
-            const countStage = { // NOT PUSHED TO PIPELINE
+            const countStage = { 
                 $addFields: {
                     findElementCompartmentsCount: { $size: '$findElementCompartments'}
                 }
             }
             pipeline.push(countStage);
-            const lookupFoundElementCompartments = { // NOT PUSHED TO PIPELINE
+            const lookupFoundElementCompartments = { 
                 $lookup: {
                     from: 'Compartments',
                     localField: '_id',
@@ -164,12 +161,21 @@ function findGraphRdbms(findGraph){
                             as: 'compartment',
                             cond:{
                                 $and: [
-                                    { $in: ['$$compartment.compartmentTypeId', '$foundElementCompartments.compartmentTypeId'] },
+                                    { $in: ['$$compartment.compartmentTypeId', 
+                                    '$foundElementCompartments.compartmentTypeId'] },
                                     { $gt: [
                                         { $indexOfCP: 
                                         [
                                             {
-                                                $arrayElemAt: ['$foundElementCompartments.value', {$indexOfArray: ['$foundElementCompartments.compartmentTypeId','$$compartment.compartmentTypeId'] }]
+                                                $arrayElemAt: [
+                                                    '$foundElementCompartments.value', 
+                                                    {$indexOfArray: 
+                                                        [
+                                                            '$foundElementCompartments.compartmentTypeId',
+                                                            '$$compartment.compartmentTypeId'
+                                                        ] 
+                                                    }
+                                                ]
                                             }, 
                                             '$$compartment.value'
                                         ]
@@ -193,12 +199,11 @@ function findGraphRdbms(findGraph){
                 }
             }
             pipeline.push(matchFiltered);
-            /**@meklee pirmaas virsotnes */
+           
             const relatedIncomingFindEdges = _.where(findGraph, {endElement: findNode._id});
-            // console.log('related incoming edges',relatedIncomingFindEdges);
+           
             _.each(relatedIncomingFindEdges, (edge) =>{
-                // console.log('edge.endElement', edge.endElement);
-                // console.log('findNode._id', findNode._id)
+
                 if (edge.endElement === edge.startElement){
                     const lookupEdgeStage = {
                         $lookup:{
@@ -211,7 +216,7 @@ function findGraphRdbms(findGraph){
                                             $and:[
                                                 { $eq: ['$elementTypeId', edge.elementTypeId] },
                                                 { $eq: ['$startElement', '$$startElementId'] },
-                                                // { $not: {$in: ['$_id', '$$foundIds']}}
+                                                { $eq: ['$endElement', '$$startElementId']}
                                             ]
                                         }
                                     }
@@ -386,29 +391,21 @@ function findGraphRdbms(findGraph){
                             foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: edge._id, elementId: "$lookedUpEdge._id",type:"edge"},{findElementId: findNode._id, elementId: "$lookedUpEdge.endElement",type:"node"} ] ] }, 
                             elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpEdge._id","lookedUpEdge.endElement" ] ] },
                         }
-                    } // and endElemenet 
+                    }
                     pipeline.push(updateVisitedElementsFields);
                 }
                 let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement, visited: false});
                 if(nextDepthNode && typeof _.findWhere(FindNodes,{_id: nextDepthNode._id}) === 'undefined') FindNodes.push(nextDepthNode);
             })
             const relatedOutcomingFindEdges = _.where(findGraph, {startElement: findNode._id});
-            // console.log('related outcoming edges', relatedOutcomingFindEdges);
+            
             _.each(relatedOutcomingFindEdges, (edge) =>{
-                // console.log('edge.startElement', edge.startElement);
-                // console.log('findNode._id', findNode._id)
-                // edge.visitedEdge = true;
                 let nextDepthNode = _.findWhere(findGraph, {_id: edge.endElement, visited: false});
                 if(nextDepthNode && typeof _.findWhere(FindNodes,{_id: nextDepthNode._id}) === 'undefined') FindNodes.push(nextDepthNode);
             })
-            // console.log('FindNodes after first if',FindNodes);
-            // console.log('inter query');
-            // const subresult = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-            // console.dir(subresult, {depth: null});
 
         }
         else {
-            // console.log('FindNodes',FindNodes);
             
             if(findNode.visited === false){
                 findNode.visited = true;
@@ -508,24 +505,21 @@ function findGraphRdbms(findGraph){
                     }
                 }
                 pipeline.push(unwindStage);
-                // const subresult = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-                // console.dir(_.findWhere(subresult,{diagramId:"cY5Zc8u7d2E7XCKTH"}), {depth: null});
+                
                 const updateTrackingFields = {
                     $addFields:{
                         foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: findNode._id, elementId: "$lookedUpNode._id",type:"node"} ] ] }, 
                         elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpNode._id" ] ] },
-                        lastMatchedPoppedNode: '$lookedUpNode'
+                        // lastMatchedPoppedNode: '$lookedUpNode'
                     }
                 }
                 pipeline.push(updateTrackingFields);
                 const nextDepthFindNodes = [];
                 const relatedIncomingFindEdges = _.where(findGraph, {endElement: findNode._id});
-                // console.log('findNode id ',findNode._id);
-                // console.log('related incoming edges ', relatedIncomingFindEdges);
-                // console.log('related incoming edges size', relatedIncomingFindEdges.length);
+
                 if(relatedIncomingFindEdges.length > 0){
                     _.each(relatedIncomingFindEdges, (edge) => {
-                        // console.log('edge id ',edge._id);
+
                         let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement});
                         
                         if(nextDepthNode.visited){
@@ -618,12 +612,9 @@ function findGraphRdbms(findGraph){
                                 pipeline.push(lookupEdgeStage);
                             }
                             else{ 
+                            
                                 if(FindNodes.length == 0){
-                                    // console.log('Find nodes is empty incoming');
-                                    // startElemenet == matchedBackTrackingNode._id
-                                    // endElmeent == lookedUpNode._id
-                                    // $nin: ['$_id', '$$elementIds']
-                                    // $unwind
+
                                     const lookupEdgeStage = {
                                         $lookup:{
                                             from: 'Elements',
@@ -712,11 +703,7 @@ function findGraphRdbms(findGraph){
                                     
                                 }
                                 else{
-                                    // console.log('findNodes is not empty incoming')
-                                    // startElement == lastMatchedPoppedNode._id
-                                    // endElmeent == lookedUpNode._id
-                                    // $nin: ['$_id', '$$elementIds']
-                                    // unwind
+
                                     const lookupEdgeStage = {
                                         $lookup:{
                                             from: 'Elements',
@@ -826,24 +813,21 @@ function findGraphRdbms(findGraph){
                             }
                             pipeline.push(updateVisitedElementsFields);
                         }
-                        // do i need to push node only if it is not visited, so it is known when to update backtrackingNode field? no.
-                        // we push all, bu t in separate array, that later will be concatenated with findNodes
+                        
                         if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'})) nextDepthFindNodes.push(nextDepthNode);
                     })
                 }
                 const relatedOutcomingFindEdges = _.where(findGraph, {startElement: findNode._id});
-                // console.log('related outcoming edges ', relatedOutcomingFindEdges);
+                
                 if(relatedOutcomingFindEdges.length > 0){
                     _.each(relatedOutcomingFindEdges, (edge) => {
-                        // console.log(edge._id);
-                        let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement});
-                        if(nextDepthNode.visited && nextDepthNode._id !== findNode._id){
+                       
+                        let nextDepthNode = _.findWhere(findGraph, {_id: edge.endElement});
+                        
+                        if(nextDepthNode.visited && (edge.startElement !== edge.endElement)){
+                            // Cikliskās šķautnes šajā brīdī jau tika apstrādātas
                             if(FindNodes.length == 0){
-                                // console.log('Find nodes is empty outcoming');
-                                // endElemenet == matchedBackTrackingNode._id
-                                // startElmeent == lookedUpNode._id
-                                // $nin: ['$_id', '$$elementIds']
-                                // unwind
+
                                 const lookupEdgeStage = {
                                     $lookup:{
                                         from: 'Elements',
@@ -931,11 +915,7 @@ function findGraphRdbms(findGraph){
                                 pipeline.push(lookupEdgeStage);
                             }
                             else{
-                                // endElement == lastMatchedPoppedNode._id
-                                // startElmeent == lookedUpNode._id
-                                // $nin: ['$_id', '$$elementIds']
-                                // unwind
-                                // console.log('findNodes is not empty outcoming')
+                                console.log('findNodes is not empty outcoming')
                                 const lookupEdgeStage = {
                                     $lookup:{
                                         from: 'Elements',
@@ -1022,10 +1002,6 @@ function findGraphRdbms(findGraph){
                                 }
                                 pipeline.push(lookupEdgeStage);
                             }
-                            // const subresult = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-                            // console.dir(_.where(subresult,{diagramId:'xZe8Nu3ZP7kz5zPG6'}), {depth: null});
-                            // console.log('subresult size', subresult.length);
-                            // console.log('found diagram ids ', _.pluck(subresult,'_id'));
 
                             const filterEmptyEdgesStage = {
                                 $match:{
@@ -1050,7 +1026,13 @@ function findGraphRdbms(findGraph){
                         if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'})) nextDepthFindNodes.push(nextDepthNode);
                     })
                 }
-                // only then update backtracking field and concatenate FindNodes and nextDepthFindNodes
+                
+                const updateTrackingField = {
+                    $addFields:{
+                        lastMatchedPoppedNode: '$lookedUpNode'
+                    }
+                }
+                pipeline.push(updateTrackingField);
                 if(FindNodes.length === 0){
                     const updateBacktrackingFieldStage = {
                         $addFields:{
@@ -1063,7 +1045,7 @@ function findGraphRdbms(findGraph){
             }
         }
     }
-    // grouping results
+    
     const groupStage = {
         $group: {
             _id: "$diagramId",
@@ -1096,9 +1078,6 @@ function findGraphRdbms(findGraph){
     ];
     pipeline.push(...lookupDiagramName);
     const result = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-    // console.dir(_.findWhere(result,{diagramId: 'xoESGK7Qe64vzxKNx'}), {depth: null});
-    // console.log('result size', result.length);
-    // console.log('found diagram ids ', _.pluck(result,'diagramId'));
     return result;
 }
 function findByDbApproach(findElement){
@@ -1107,66 +1086,10 @@ function findByDbApproach(findElement){
     let found = BreadthFirstSearch(findGraph);
     while( found ) { found = BreadthFirstSearch(findGraph)}
     
-    return findGraphRdbms(findGraph);
+    return findSubGraphs(findGraph);
     
 }
-function findSingleElementMatches(findElement){
-    // $lookup can be used for compartments and edge starttype and endType check
-    // compartment filtering is not implemented!!
-    let elements =   [ findElement ];
-    const pipeline = [
-        {
-            $match: {
-                _id: {
-                    $ne:findElement._id
-                },
-                elementTypeId: findElement.elementTypeId
-            }
-        },
-        {
-            $group: {
-                _id: "$diagramId",
-                elements: {$push: "$$ROOT"}
-            }
-        },
-        {
-            $lookup: {
-                from: "Diagrams",
-                localField: "_id",
-                foreignField: "_id",
-                as: "Diagrams"
-            }
-        },
-        // {
-        //     $replaceRoot: {
-        //         newRoot: {
-        //             $mergeObjects: [
-        //                 {
-        //                     $arrayElemAt: ["$Diagrams", 0]
-        //                 },
-        //                 "$$ROOT"
-        //             ]
-        //         }
-        //     }
-        // },
-        {
-            $project: {
-                Diagrams :{
-                    name:1
-                },
-                // this is only to make results in console more readable, this needs to be modified or removed lately
-                elements: {
-                    elementTypeId:1,
-                }
-            }
-        }
-    ];
-    const result = Promise.await(Elements.rawCollection().aggregate(pipeline).toArray());
-    // do not forget about findElement, which is just single element passed as an argument in this function
-    console.log("Matches in RDBMS approach, match2 variable");
-    console.dir(result, {depth: null});
-    
-}
+
 /** @pieejas beigas */
 
 function checkQuery(diagramId, diagramTypeId ){ // grafiskā pieprasījuma validācija
@@ -1234,6 +1157,7 @@ function checkQuery(diagramId, diagramTypeId ){ // grafiskā pieprasījuma valid
 function checkDuplicates(findResult, findElementsIds){
     // pārbauda, vai matchā ir vienādi findElementId
     let duplicate = {};
+    // console.log(findResult);
     let findElements = _.uniq(_.flatten(_.map(findResult[0].matches, function(match){
         return _.map(match.elements, function(element){
             return element.findElementId;
@@ -1270,32 +1194,31 @@ function FindDiagMatches(diagParamList){
             // console.log('query check ok');
             _.each(StartFindElements, function(startFindElement){
                 /** @testing @instructions for both approaches:
-                 * for testing Elina's find, comment out lines 1275-1278
+                 * for testing Elina's find, comment out lines 1276-1278
                  * for testing Dmitrij's find, comment out lines 1279-1298
                  */
-                let findResult = findByDbApproach(startFindElement);
-                let duplicate = checkDuplicates(findResult, findElementIds);
-                if( duplicate.found == false ) findResults.push(findResult);
-                // let Edges = getEdges(startFindElement._id);
-                // if( Edges && _.size(Edges) > 0){
-                //     let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId, diagParamList.userId);
-                //     // console.log('findResult')
-                //     // console.log(findResult)
-                //     findByEdges(startFindElement);
-                //     // console.log('find result sample: ');
-                //     // console.dir(findResult[0],{depth:null});
-                //     let duplicate = checkDuplicates(findResult, findElementIds);
-                //     if( duplicate.found == false ) findResults.push(findResult);
-                //     findElementIds = duplicate.findElementsIds;
-                // } // ja ir atrastas šķautnes, tad meklē pēc šķautnes
-                // else{
-                //     let findResult = Meteor.call('findNode', startFindElement, diagParamList.userId);
-                //     findResults.push(findResult);
-                //     findSingleElementMatches(startFindElement);
+                // let findResult = findByDbApproach(startFindElement);
+                // let duplicate = checkDuplicates(findResult, findElementIds);
+                // if( duplicate.found == false ) findResults.push(findResult);
+                let Edges = getEdges(startFindElement._id);
+                if( Edges && _.size(Edges) > 0){
+                    let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId, diagParamList.userId);
+                     // console.log('findResult')
+                    //console.log(findResult)
+                    // findByEdges(startFindElement);
+                    // console.log('find result sample: ');
+                    // console.dir(findResult[0],{depth:null});
+                    let duplicate = checkDuplicates(findResult, findElementIds);
+                    if( duplicate.found == false ) findResults.push(findResult);
+                    findElementIds = duplicate.findElementsIds;
+                } // ja ir atrastas šķautnes, tad meklē pēc šķautnes
+                else{
+                    let findResult = Meteor.call('findNode', startFindElement, diagParamList.userId);
+                    findResults.push(findResult);
 
-                //     // console.log('findResult')
-                //     // console.dir(findResult, {depth: null})
-                // } // ja nav, tad meklē pēc virsotnes
+                    // console.log('findResult')
+                    // console.dir(findResult, {depth: null})
+                } // ja nav, tad meklē pēc virsotnes
             });
             let startFindElementsIds = _.pluck(StartFindElements,'_id');
             
@@ -2163,7 +2086,7 @@ function markConflictingMatches(matches, elementsToLookup) {
 }
 Meteor.methods({
     findDiags: function(diagParamList){
-        console.log(`Diagram id: ${diagParamList.diagramId}`);
+        
         return FindDiagMatches(diagParamList);
     },
     replaceInAllDiagrams: function(diagramsMatchData){
