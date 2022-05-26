@@ -625,31 +625,28 @@ dataShapes = {
 		return rr;
 	},
 	getIndividuals : async function(params = {}, vq_obj = null) {
+		var faasEnabled = await faas.isEnabled();
 		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
 		var rr;
 
-		//if (this.schema.schemaType == 'wikidata' && params.filter != undefined)
-		//	return await this.getIndividualsWD(params.filter); 
+		if (this.schema.schemaType == 'wikidata' && params.filter != undefined && faasEnabled == false)
+			return await this.getIndividualsWD(params.filter); 
 		
 		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
 		//	params.filter = '';  
 
 		var allParams = {main: params};
-		if ( vq_obj !== null && vq_obj !== undefined )
+		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForIndividual(vq_obj);
+		}
 
-		//console.log(allParams)
+		if (this.schema.schemaType === 'wikidata' && faasEnabled == true) {
+			return await faas.getIndividuals(allParams); 
+		}
+
 		if ( allParams.element.className !== undefined || allParams.element.pList !== undefined ) {
-			if (this.schema.schemaType === 'wikidata') {
-				if (await faas.getFaasServerUrl()) {
-					rr = await faas.getIndividuals(allParams); 
-				} else {
-					rr = await this.getIndividualsWD(params.filter);
-				}
-			} else {
-				rr = await this.callServerFunction("getIndividuals", allParams);
-			}
+			rr = await this.callServerFunction("getIndividuals", allParams);
 				
 			if (rr.error != undefined)
 				rr = []

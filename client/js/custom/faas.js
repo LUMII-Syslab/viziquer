@@ -1,6 +1,7 @@
 // ***********************************************************************************
 // const FAAS_SERVER_URL = 'http://localhost:59286/api';
 let _faasServerUrl = null;
+let _faasEnabled = undefined;
 const getFaasServerUrl = async () => new Promise((resolve, reject) => {
     Meteor.call('getEnvVariable', 'FAAS_SERVER_URL', (error, result) => {
         if (error) {
@@ -126,8 +127,12 @@ const callFAASFindProperties = async (faasPParams) => {
 }
 
 faas = {
-    getFaasServerUrl : async function() {
-        return await getFaasServerUrl();
+    isEnabled : async function() {
+        // .env variables are set once at the startup, thus it is ok to call FAAS url just once
+        if (_faasEnabled == undefined) {
+            _faasEnabled = ((await getFaasServerUrl())?true:false);
+        }
+        return _faasEnabled;
     },
     fnDisplayName : function(id, label) {
         return (label?`[${label} (${id})]`:id)
