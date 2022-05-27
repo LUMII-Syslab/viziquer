@@ -229,8 +229,8 @@ const findElementDataForProperty = (vq_obj) => {
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
 	//if (dataShapes.schema.schemaType !== 'wikidata') {
-		var pListI = getPListI(vq_obj);
-		if ( pListI.type != undefined) params.pListI = pListI;
+		// ** var pListI = getPListI(vq_obj);
+		// ** if ( pListI.type != undefined) params.pListI = pListI;
 	// }
 	
 	return params;
