@@ -619,7 +619,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
          await parseExpObject(f, obj_class.identification);
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
-		 // console.log("ffff",f,f.parsed_exp, JSON.stringify(f.parsed_exp,null,2) )
 
          var p = f.parsed_exp;
          // Don't know shorter/better way to check ...
@@ -949,6 +948,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 					
                     conditions: elem.getConditions(),
                     fullSPARQL: elem.getFullSPARQL(),
+					comment: elem.getComment(),
                     children: _.filter(_.map(elem.getLinks(), genLinkedElement), function(l) {return l})
                   });
                 if (elem.isGlobalSubQueryRoot()) {
@@ -1050,7 +1050,8 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
       limit:e.getLimit(),
       offset:e.getOffset(),
       fullSPARQL:e.getFullSPARQL(),
-      children: genLinkedElements(e)
+      children: genLinkedElements(e),
+	  comment: e.getComment() 
     },
      params: getProjectParams() };
     //console.log(condition_links);
@@ -1343,7 +1344,6 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName) {
 function pathOrReference(o, symbol_table, context) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
-    				// console.log("oooooooooooo", o, symbol_table, symbol_table[context._id], o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"])
 
     				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
