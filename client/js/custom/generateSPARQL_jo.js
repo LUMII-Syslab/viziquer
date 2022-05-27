@@ -397,6 +397,11 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 // string, {limit: , offset:, total_rows:} -->
 // Executes the given Sparql end shows result in the GUI
 function executeSparqlString(sparql, paging_info) {
+	var sparqlWithoutComments = sparql.split("\n")
+	 sparqlWithoutComments = sparqlWithoutComments.filter(function (el) {
+		return !el.trim().startsWith("#");
+	});
+	sparql = sparqlWithoutComments.join("\n");
   // Default Data Set Name (Graph IRI) and SPARQL endpoint url
  Session.set("executedSparql", {limit_set:false, waiting:true, number_of_rows:0});
  $('#vq-tab a[href="#executed"]').tab('show');
