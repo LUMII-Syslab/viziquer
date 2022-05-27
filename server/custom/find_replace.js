@@ -92,6 +92,8 @@ function findSubGraphs(findGraph){
     let isFirstNode = true;
     let findNode = _.first(findGraph);
     let FindNodes = [findNode];
+    let lastPoppedNode;
+    let backTrackingNodes = [];
     const pipeline = [];
     
     while(FindNodes.length > 0){ 
@@ -403,11 +405,12 @@ function findSubGraphs(findGraph){
                 let nextDepthNode = _.findWhere(findGraph, {_id: edge.endElement, visited: false});
                 if(nextDepthNode && typeof _.findWhere(FindNodes,{_id: nextDepthNode._id}) === 'undefined') FindNodes.push(nextDepthNode);
             })
-
+            if (FindNodes.length > 1) backTrackingNodes.push(findNode);
         }
         else {
             
             if(findNode.visited === false){
+                
                 findNode.visited = true;
                 const lookupNodeStage = {
                     $lookup:{
@@ -510,7 +513,6 @@ function findSubGraphs(findGraph){
                     $addFields:{
                         foundElements: { $concatArrays: [ "$foundElements", [ {findElementId: findNode._id, elementId: "$lookedUpNode._id",type:"node"} ] ] }, 
                         elementIds: { $concatArrays: [ "$elementIds", [ "$lookedUpNode._id" ] ] },
-                        // lastMatchedPoppedNode: '$lookedUpNode'
                     }
                 }
                 pipeline.push(updateTrackingFields);
@@ -523,6 +525,7 @@ function findSubGraphs(findGraph){
                         let nextDepthNode = _.findWhere(findGraph, {_id: edge.startElement});
                         
                         if(nextDepthNode.visited){
+                            
                             if( edge.startElement === edge.endElement) {
                                 const lookupEdgeStage = {
                                     $lookup:{
@@ -612,9 +615,10 @@ function findSubGraphs(findGraph){
                                 pipeline.push(lookupEdgeStage);
                             }
                             else{ 
-                            
-                                if(FindNodes.length == 0){
+                                if(nextDepthNode._id === backTrackingNodes[backTrackingNodes.length-1]._id) backTrackingNodes.pop();
 
+                                if(nextDepthNode._id !== lastPoppedNode._id){
+                                    
                                     const lookupEdgeStage = {
                                         $lookup:{
                                             from: 'Elements',
@@ -814,7 +818,7 @@ function findSubGraphs(findGraph){
                             pipeline.push(updateVisitedElementsFields);
                         }
                         
-                        if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'})) nextDepthFindNodes.push(nextDepthNode);
+                        if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'}) && !nextDepthNode.visited) nextDepthFindNodes.push(nextDepthNode);
                     })
                 }
                 const relatedOutcomingFindEdges = _.where(findGraph, {startElement: findNode._id});
@@ -825,8 +829,10 @@ function findSubGraphs(findGraph){
                         let nextDepthNode = _.findWhere(findGraph, {_id: edge.endElement});
                         
                         if(nextDepthNode.visited && (edge.startElement !== edge.endElement)){
+                            if(nextDepthNode._id === backTrackingNodes[backTrackingNodes.length-1]._id) backTrackingNodes.pop();
+
                             // Cikliskās šķautnes šajā brīdī jau tika apstrādātas
-                            if(FindNodes.length == 0){
+                            if(nextDepthNode._id !== lastPoppedNode._id){
 
                                 const lookupEdgeStage = {
                                     $lookup:{
@@ -915,7 +921,7 @@ function findSubGraphs(findGraph){
                                 pipeline.push(lookupEdgeStage);
                             }
                             else{
-                                console.log('findNodes is not empty outcoming')
+                                
                                 const lookupEdgeStage = {
                                     $lookup:{
                                         from: 'Elements',
@@ -1023,27 +1029,56 @@ function findSubGraphs(findGraph){
                             }
                             pipeline.push(updateVisitedElementsFields);
                         }
-                        if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'})) nextDepthFindNodes.push(nextDepthNode);
+                        if(typeof _.findWhere(nextDepthFindNodes,{_id: nextDepthNode._id === 'undefined'}) && !nextDepthNode.visited) nextDepthFindNodes.push(nextDepthNode);
                     })
                 }
-                
-                const updateTrackingField = {
-                    $addFields:{
-                        lastMatchedPoppedNode: '$lookedUpNode'
-                    }
-                }
-                pipeline.push(updateTrackingField);
-                if(FindNodes.length === 0){
-                    const updateBacktrackingFieldStage = {
+                if(nextDepthFindNodes.length > 1) backTrackingNodes.push(findNode);
+
+                if(nextDepthFindNodes.length > 0){
+                    const updateTrackingField = {
                         $addFields:{
-                            matchedBackTrackingNode: '$lastMatchedPoppedNode'
+                            lastMatchedPoppedNode: '$lookedUpNode'
                         }
                     }
-                    pipeline.push(updateBacktrackingFieldStage);
+                    pipeline.push(updateTrackingField);
+                }
+                
+                if(nextDepthFindNodes.length === 0){
+                    
+                    const backTrackingFindNode = backTrackingNodes.pop();
+                    const updateBacktrackingFieldStages = 
+                    [
+                        {
+                            $lookup:{
+                                from: 'Elements',
+                                let : {backTrackingFindNodeId: backTrackingFindNode._id},
+                                pipeline: [
+                                    {
+                                        $match:{
+                                            $expr: {
+                                                $eq: [
+                                                    '$_id', 
+                                                    {
+                                                        $arrayElemAt: ['$foundElements.elementId', {$indexOfArray: ['$foundElements.findElementId','$$backTrackingFindNodeId'] }]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ],
+                                as: 'matchedBackTrackingNode'
+                            }
+                        },
+                        {
+                            $unwind: { path: "$matchedBackTrackingNode"}
+                        }
+                    ];
+                    pipeline.push(updateBacktrackingFieldStages);
                 }
                 FindNodes = FindNodes.concat(nextDepthFindNodes);
             }
         }
+        lastPoppedNode = findNode;
     }
     
     const groupStage = {
@@ -1197,28 +1232,28 @@ function FindDiagMatches(diagParamList){
                  * for testing Elina's find, comment out lines 1276-1278
                  * for testing Dmitrij's find, comment out lines 1279-1298
                  */
-                // let findResult = findByDbApproach(startFindElement);
-                // let duplicate = checkDuplicates(findResult, findElementIds);
-                // if( duplicate.found == false ) findResults.push(findResult);
-                let Edges = getEdges(startFindElement._id);
-                if( Edges && _.size(Edges) > 0){
-                    let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId, diagParamList.userId);
-                     // console.log('findResult')
-                    //console.log(findResult)
-                    // findByEdges(startFindElement);
-                    // console.log('find result sample: ');
-                    // console.dir(findResult[0],{depth:null});
-                    let duplicate = checkDuplicates(findResult, findElementIds);
-                    if( duplicate.found == false ) findResults.push(findResult);
-                    findElementIds = duplicate.findElementsIds;
-                } // ja ir atrastas šķautnes, tad meklē pēc šķautnes
-                else{
-                    let findResult = Meteor.call('findNode', startFindElement, diagParamList.userId);
-                    findResults.push(findResult);
+                let findResult = findByDbApproach(startFindElement);
+                let duplicate = checkDuplicates(findResult, findElementIds);
+                if( duplicate.found == false ) findResults.push(findResult);
+                // let Edges = getEdges(startFindElement._id);
+                // if( Edges && _.size(Edges) > 0){
+                //     let findResult = Meteor.call('findEdge', _.first(Edges), diagParamList.diagramId, diagParamList.userId);
+                //      // console.log('findResult')
+                //     //console.log(findResult)
+                //     // findByEdges(startFindElement);
+                //     // console.log('find result sample: ');
+                //     // console.dir(findResult[0],{depth:null});
+                //     let duplicate = checkDuplicates(findResult, findElementIds);
+                //     if( duplicate.found == false ) findResults.push(findResult);
+                //     findElementIds = duplicate.findElementsIds;
+                // } // ja ir atrastas šķautnes, tad meklē pēc šķautnes
+                // else{
+                //     let findResult = Meteor.call('findNode', startFindElement, diagParamList.userId);
+                //     findResults.push(findResult);
 
-                    // console.log('findResult')
-                    // console.dir(findResult, {depth: null})
-                } // ja nav, tad meklē pēc virsotnes
+                //     // console.log('findResult')
+                //     // console.dir(findResult, {depth: null})
+                // } // ja nav, tad meklē pēc virsotnes
             });
             let startFindElementsIds = _.pluck(StartFindElements,'_id');
             
