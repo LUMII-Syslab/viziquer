@@ -1123,7 +1123,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 SPARQL_text = prefixes + SPARQL_text;
 			 
 			  if(typeof rootClass["comment"] !== "undefined" && rootClass["comment"] != null && rootClass["comment"] != ""){
-				  SPARQL_text = "# "+rootClass["comment"].replace("\n", "\n# ") + "\n" + SPARQL_text;
+				  SPARQL_text = "# "+rootClass["comment"].split("\n").join("\n# ") + "\n" + SPARQL_text;
 			 }
 			 
 		 }
