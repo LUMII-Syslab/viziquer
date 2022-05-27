@@ -582,7 +582,7 @@ function generateIds(rootClass, knownPrefixes){
 			for(var kp in knownPrefixes){
 				if(knownPrefixes[kp]["name"] == prefix) {
 					
-					if(rootClassId.indexOf(",") !== -1 || rootClassId.indexOf("'")){
+					if(rootClassId.indexOf(",") !== -1 || rootClassId.indexOf("'") !== -1){
 						rootClassId = "<"+knownPrefixes[kp]["value"]+ rootClassId.substring(rootClassId.indexOf(":")+1) +">";
 					} else prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
 					break;
@@ -677,7 +677,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:rootClassId, unionId:unionClass};
 			} else {
 				var className = clazz["instanceAlias"];
-				if(className.indexOf(",") !== -1 || className.indexOf("'")){
+				if(className.indexOf(",") !== -1 || className.indexOf("'") !== -1){
 					var prefix = className.substring(0, className.indexOf(":"));
 					for(var kp in knownPrefixes){
 						if(knownPrefixes[kp]["name"] == prefix) {
@@ -891,6 +891,8 @@ function generateSPARQLtext(abstractQueryTable){
 
 		 var SPARQL_text = "";
 		 var SPARQL_interval = "  ";
+		
+		
 
 		 // if root class is Union
 		 if(rootClass["isUnion"] == true){
@@ -1119,6 +1121,11 @@ function generateSPARQLtext(abstractQueryTable){
 				if(typeof prefixTable[prefix] === "string") prefixes = prefixes + "PREFIX " + prefix + " " + prefixTable[prefix] + "\n";
 			 }
 			 SPARQL_text = prefixes + SPARQL_text;
+			 
+			  if(typeof rootClass["comment"] !== "undefined" && rootClass["comment"] != null && rootClass["comment"] != ""){
+				  SPARQL_text = "# "+rootClass["comment"].split("\n").join("\n# ") + "\n" + SPARQL_text;
+			 }
+			 
 		 }
 
 		 var blocking = false;
@@ -1418,9 +1425,6 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				for (var prefix in result["prefixTable"]) {
 					if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
 				}
-
-				// console.log("variableNamesClass", variableNamesClass);
-				// console.log("variableNamesAll", variableNamesAll);
 
 				var alias = field["alias"];
 				if(alias == null || alias == "") {
@@ -1953,13 +1957,34 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					else object = idTable[parentClass["identification"]["_id"]];					
 					subject = idTable[subclazz["identification"]["_id"]];
 				} else if(subclazz["isBlankNode"] == true){
+					
+					
+					
+					
 					if(clazz["isUnion"] != true) subject = instance;
 					else if (clazz["isUnion"] == true && parentClass == null) subject = null;
 					else subject = idTable[parentClass["identification"]["_id"]];
 					blankNodeName = idTable[subclazz["identification"]["_id"]];
 					
-					if(typeof temp["sparqlTable"]["isParentBlankNode"] !== "undefined") object = temp["sparqlTable"]["class"];
+					if(typeof temp["sparqlTable"]["isParentBlankNode"] !== "undefined") {
+						object = temp["sparqlTable"]["class"];
+						var blankNodes = [];
+						for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
+							for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){
+								blankNodes.push(object + temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""));
+							}
+						}
+						
+						for(var triple in  temp["sparqlTable"]["filterTriples"]){
+							for(var t in  temp["sparqlTable"]["filterTriples"][triple]["triple"]){
+								blankNodes.push(object + temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
+							}
+						}
+						if(blankNodes.length > 0) object = object + ". " + blankNodes.join(". ");
+						
+					}
 					else{
+						
 						object = "[";
 						var blankNodes = [];
 						for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
@@ -2111,8 +2136,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 	for (var attrname in variableNamesClass) {
 		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string'){
-			//variableNamesAll[attrname] = variableNamesClass[attrname]["alias"];
-
+	
 			var classes = [];
 			if(typeof variableNamesAll[attrname]["classes"] !== 'undefined') classes = variableNamesAll[attrname]["classes"];
 			classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
@@ -2121,16 +2145,11 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		}
 	}
 
-	// console.log("variableNamesAll", variableNamesAll, variableNamesClass)
 	// console.log("sparqlTable", JSON.stringify(sparqlTable,null,2), sparqlTable)
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
 }
 
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable){
-
-	// console.log("orderings", orderings)
-	// console.log("fieldNames", fieldNames)
-	 // console.log("symbolTable", symbolTable)
 
 	var messages = [];
 	var orderTable = [];
@@ -2190,7 +2209,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							}
 						}
 					} else result = fieldNames[orderNameRep][rootClass_id][order["exp"]];
-
+					
 					if(!result.startsWith("?")) result = "?" + result;
 					orderTable.push(descendingStart +  result + descendingEnd + " ");
 

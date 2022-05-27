@@ -2731,6 +2731,14 @@ VQ_Element.prototype = {
     if (this.isVariable()) {return this.getName().substr(1)} else { return null }
   },
   
+  getComment: function() {
+    return this.getCompartmentValue("Comment")
+  },
+  
+  setComment: function(name, input) {
+      this.setCompartmentValue("Comment",name,input);
+  },
+  
   getGraph: function() {
     return this.getCompartmentValue("Graph")
   },
