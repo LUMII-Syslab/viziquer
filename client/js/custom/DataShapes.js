@@ -189,15 +189,17 @@ const getPList = (vq_obj) => {
 			if (individual !== null && individual !== undefined && isURI(individual) != 0) 
 				link.uriIndividual = dataShapes.getIndividualName(individual);
 		})
-
+		
 		_.each(pList.out, function(link) {
-			var el = new VQ_Element(link.element);
-			var class_name = el.getName();
-			var individual =  el.getInstanceAlias();
-			if (class_name !== null && class_name !== undefined)
-				link.className = class_name;			
-			if (individual !== null && individual !== undefined && isURI(individual) != 0) 
-				link.uriIndividual = dataShapes.getIndividualName(individual);
+			if (link.element !== undefined ) {
+				var el = new VQ_Element(link.element);
+				var class_name = el.getName();
+				var individual =  el.getInstanceAlias();
+				if (class_name !== null && class_name !== undefined)
+					link.className = class_name;			
+				if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+					link.uriIndividual = dataShapes.getIndividualName(individual);
+			}
 		})
 	});
 	return pList;
