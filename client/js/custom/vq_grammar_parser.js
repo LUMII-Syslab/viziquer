@@ -5850,25 +5850,25 @@ vq_grammar_parser = (function() {
       }
 
       s0 = peg$currPos;
-      s1 = await peg$parseSTR();
+      s1 = await peg$parseLANG();
       if (s1 === peg$FAILED) {
-        s1 = await peg$parseLANG();
+        s1 = await peg$parseDATATYPE();
         if (s1 === peg$FAILED) {
-          s1 = await peg$parseDATATYPE();
+          s1 = await peg$parseIRI();
           if (s1 === peg$FAILED) {
-            s1 = await peg$parseIRI();
+            s1 = await peg$parseURI();
             if (s1 === peg$FAILED) {
-              s1 = await peg$parseURI();
+              s1 = await peg$parseABS();
               if (s1 === peg$FAILED) {
-                s1 = await peg$parseABS();
+                s1 = await peg$parseCEIL();
                 if (s1 === peg$FAILED) {
-                  s1 = await peg$parseCEIL();
+                  s1 = await peg$parseFLOOR();
                   if (s1 === peg$FAILED) {
-                    s1 = await peg$parseFLOOR();
+                    s1 = await peg$parseROUND();
                     if (s1 === peg$FAILED) {
-                      s1 = await peg$parseROUND();
+                      s1 = await peg$parseSTRLEN();
                       if (s1 === peg$FAILED) {
-                        s1 = await peg$parseSTRLEN();
+                        s1 = await peg$parseSTR();
                         if (s1 === peg$FAILED) {
                           s1 = await peg$parseUCASE();
                           if (s1 === peg$FAILED) {
@@ -14871,12 +14871,12 @@ vq_grammar_parser = (function() {
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c367.test(input.charAt(peg$currPos))) {
+      if (peg$c443.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c368); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c444); }
       }
       if (s2 === peg$FAILED) {
         if (peg$c377.test(input.charAt(peg$currPos))) {
@@ -14919,12 +14919,12 @@ vq_grammar_parser = (function() {
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c367.test(input.charAt(peg$currPos))) {
+        if (peg$c443.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c368); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c444); }
         }
         if (s2 === peg$FAILED) {
           if (peg$c377.test(input.charAt(peg$currPos))) {

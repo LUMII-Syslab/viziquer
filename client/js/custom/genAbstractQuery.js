@@ -1,3 +1,5 @@
+var count = 0;
+
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
 
@@ -26,12 +28,13 @@ Interpreter.customMethods({
 });
 
 
+
 //[JSON] --> {root:[JSON], symbolTable:[some_name:{scope:?, type:?, elType:?} }]}
 // For the query in abstract syntax
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
 resolveTypesAndBuildSymbolTable = async function (query) {
-	
+	count = 0;
   // TODO: This is not efficient to recreate schema each time
   // var schema = new VQ_Schema();
   // Adding default namespace
@@ -391,7 +394,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parseExpObject(exp_obj, context) {
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
-	   if(parse_obj.indexOf("-") != -1){
+	   if(parse_obj.indexOf("-") !== -1 && parse_obj.indexOf("[") === -1 && parse_obj.indexOf("]") === -1){
 	   try {
 		  // parse_obj = await vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
@@ -491,6 +494,11 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			obj_class.graphs[g]["graph"] = getGraphFullForm(obj_class.graphs[g]["graph"], prefixes);
 		  }
 	  }
+
+	 if(obj_class.isBlankNode == true) {
+		 obj_class.instanceAlias = "_:name"+count;
+		 count++;
+	 }
 
   if (parent_class) {
 	  

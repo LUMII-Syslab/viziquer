@@ -2724,7 +2724,26 @@ VQ_Element.prototype = {
   // determines whether a class rather than blank node is searched
   isBlankNode: function() {
     var alias = this.getInstanceAlias();
-		return (alias && alias.charAt(0)=='_');
+    var className = this.getName();
+	var fields = this.getFields();
+	var isOptional = false;
+	for(var field in fields){
+		if(fields[field]["requireValues"] != true && fields[field]["exp"] != "(select this)"){
+			isOptional = true;
+			break;
+		}
+		if( this.getAggregateFields().length > 0) isOptional = true;
+	}
+	var links = this.getLinks();
+	for(var l in links){
+		if(!links[l].start && links[l].link.getType() != "REQUIRED"){
+			isOptional = true;
+			break;
+		}
+	}
+	
+	return (alias == null && className == null && isOptional == false);
+
   },
   // gets class variable name (e.g. X for ?X)
   getVariableName: function() {

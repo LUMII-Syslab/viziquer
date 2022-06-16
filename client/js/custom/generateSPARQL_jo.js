@@ -513,23 +513,35 @@ function executeSparqlString(sparql, paging_info) {
   })
 }
 
-
 // generate SPARQL for all queries
 async function GenerateSPARQL_for_all_queries(list_of_ids) {
   Interpreter.destroyErrorMsg();
   var queries =  await genAbstractQueryForElementList(list_of_ids);
-
+	var sparqlTable = [];
   // goes through all queries found within the list of VQ element ids
+  // for(var q in queries){
+	   // var abstractQueryTable = await resolveTypesAndBuildSymbolTable(queries[q]);
+
+	   // var result = generateSPARQLtext(abstractQueryTable);
+	   
+	   // var commentSplit = result["comment"].split(",")
+	   // sparqlTable[parseInt(commentSplit[0].substring(5), 10)] = result["SPARQL_text"]
+	   // console.log(parseInt(commentSplit[0].substring(5), 10))
+  // }
   _.each(queries, async function(q) {
 
    var abstractQueryTable = await resolveTypesAndBuildSymbolTable(q);
 
    var result = generateSPARQLtext(abstractQueryTable);
-
+   
    Session.set("generatedSparql", result["SPARQL_text"]);
    setText_In_SPARQL_Editor(result["SPARQL_text"])
-   // Interpreter.destroyErrorMsg();
+
   })
+  
+  // for(var v in sparqlTable){
+	  // console.log("----", v, sparqlTable[v]);
+  // }
 }
 
 function setText_In_SPARQL_Editor(text) {
@@ -897,7 +909,6 @@ function generateSPARQLtext(abstractQueryTable){
 		 var SPARQL_text = "";
 		 var SPARQL_interval = "  ";
 		
-		
 
 		 // if root class is Union
 		 if(rootClass["isUnion"] == true){
@@ -1151,7 +1162,9 @@ function generateSPARQLtext(abstractQueryTable){
 
 			Interpreter.showErrorMsg(showMessages.join(" // "), -3);
 		 }
-		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking};
+		 
+		 // console.log(rootClass["comment"], SPARQL_text);
+		 return {"SPARQL_text":SPARQL_text, "messages":messages, "blocking":blocking, "comment":rootClass["comment"]};
 }
 
 function getPrefix(emptyPrefix, givenPrefix){
@@ -1773,6 +1786,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					"isBlocking" : true
 				});
 		} else { 
+			
 			var result = parse_filter(condition, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result, condition["exp"]);
@@ -1812,7 +1826,28 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		}
 		// console.log("CONDITION", result["exp"], result, instance, sparqlTable["classTriple"]);
 	})
-
+	
+	if(clazz["isBlankNode"] == true && parentClass == null){
+		
+		var blankNodeName = idTable[clazz["identification"]["_id"]];
+		var object = "[";
+						var blankNodes = [];
+						for(var triple in  sparqlTable["blankNodeTriples"]){
+							for(var t in  sparqlTable["blankNodeTriples"][triple]["triple"]){
+								blankNodes.push(sparqlTable["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+							}
+						}
+						
+						for(var triple in  sparqlTable["filterTriples"]){
+							for(var t in  sparqlTable["filterTriples"][triple]["triple"]){
+								blankNodes.push(sparqlTable["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
+							}
+						}
+						object = object + blankNodes.join(";");
+						object = object+ "]";
+		sparqlTable["classTriple"] = object;
+		
+	}
 	//subClasses
 	if(clazz["children"].length > 0){
 		sparqlTable["subClasses"] = []; // class all sub classes
@@ -1962,10 +1997,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					else object = idTable[parentClass["identification"]["_id"]];					
 					subject = idTable[subclazz["identification"]["_id"]];
 				} else if(subclazz["isBlankNode"] == true){
-					
-					
-					
-					
+
 					if(clazz["isUnion"] != true) subject = instance;
 					else if (clazz["isUnion"] == true && parentClass == null) subject = null;
 					else subject = idTable[parentClass["identification"]["_id"]];
@@ -1973,10 +2005,11 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					
 					if(typeof temp["sparqlTable"]["isParentBlankNode"] !== "undefined") {
 						object = temp["sparqlTable"]["class"];
+						if(object.startsWith("?_:name"))object = object.substring(1);
 						var blankNodes = [];
 						for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
-							for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){
-								blankNodes.push(object + temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""));
+							for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){	
+								blankNodes.push(object + temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
 							}
 						}
 						
@@ -1985,7 +2018,8 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 								blankNodes.push(object + temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
 							}
 						}
-						if(blankNodes.length > 0) object = object + ". " + blankNodes.join(". ");
+						
+						if(blankNodes.length > 0) object = object + ". " + blankNodes.join(". ");	
 						
 					}
 					else{
@@ -1994,13 +2028,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 						var blankNodes = [];
 						for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
 							for(var t in  temp["sparqlTable"]["blankNodeTriples"][triple]["triple"]){
-								blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace("?"+blankNodeName, "").replace(".", ""));
+								blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
 							}
 						}
 						
 						for(var triple in  temp["sparqlTable"]["filterTriples"]){
 							for(var t in  temp["sparqlTable"]["filterTriples"][triple]["triple"]){
-								blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
+								blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
 							}
 						}
 						object = object + blankNodes.join(";");
@@ -2025,7 +2059,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					else if(objectName.indexOf(":") != -1){
 						//TODO add prefix
 					} else if(subclazz["isBlankNode"] != true) objectName = "?" + objectName;
-					
+					if(subclazz["isBlankNode"] == true && objectName.startsWith("?_:name")){
+						objectName = objectName.substring(1);
+					}	
 					temp["sparqlTable"]["linkTriple"] = subjectName +  preditate + " " + objectName + ".";
 				} else{
 					if(preditate == null || preditate.replace(" ", "") =="") {
@@ -2098,11 +2134,15 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		if(clazz["isSubQuery"] == true || clazz["isGlobalSubQuery"] == true) sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + idTable[condLink["target"]], "value" : "?" + idTable[condLink["target"]]});
 		var sourse, target;
 		if(condLink["isInverse"] == true) {
-			target = "?" + idTable[clazz["identification"]["_id"]];
-			sourse = "?" + idTable[condLink["target"]];
+			target = idTable[clazz["identification"]["_id"]];
+			if(target.indexOf(":") == -1) target = "?" + target;
+			sourse = idTable[condLink["target"]];
+			if(sourse.indexOf(":") == -1) sourse = "?" + sourse;
 		} else {
-			target = "?" + idTable[condLink["target"]];
-			sourse = "?" + idTable[clazz["identification"]["_id"]];
+			target = idTable[condLink["target"]];
+			if(target.indexOf(":") == -1) target = "?" + target;
+			sourse = idTable[clazz["identification"]["_id"]];
+			if(sourse.indexOf(":") == -1) sourse = "?" + sourse;
 		}
 		
 		var triple = "";
@@ -2155,7 +2195,9 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 }
 
 function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable){
-
+	
+	
+	
 	var messages = [];
 	var orderTable = [];
 	var orderTripleTable = [];
@@ -2265,6 +2307,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 					}else{
+
 						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 						
 						if(order["exp"].indexOf("Label") == -1 && order["exp"].indexOf("AltLabel") == -1 && order["exp"].indexOf("Description") == -1)messages = messages.concat(result["messages"]); 
