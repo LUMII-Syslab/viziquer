@@ -27,6 +27,12 @@
 		"description": "A mini-University toy project"
 	}, 
 	{
+		"caption": "Wikidata small sample",
+		"name": "Wikidata_small",
+		"link": "https://viziquer.lumii.lv/dss/resources/Wikidata_Small.json",
+		"description": "Visual queries over Wikidata"
+	}, 
+	{
 		"caption": "Wikidata sample project",
 		"name": "Wikidata_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/Wikidata_Sample.json",
