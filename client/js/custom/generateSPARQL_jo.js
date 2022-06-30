@@ -1525,13 +1525,14 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					//sparqlTable["functionTriples"].push(getTriple(result, alias, field["requireValues"], true));
 					
 					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
+
 					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
 								tripleTemp["graph"] = field["graph"];
 								tripleTemp["graphInstruction"] = field["graphInstruction"];
 							}
 					
 					classExpressionTriples.push(tripleTemp);
-
+					
 					//MAIN SELECT function variables (not undet NOT link and is not internal)
 					if(underNotLink != true && field["isInternal"] != true){
 						sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
@@ -2235,7 +2236,6 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 				var orderNameRep = orderName;
 				if(reserverNames.indexOf(orderNameRep) != -1) orderNameRep = orderNameRep + " ";
 				
-				
 				if(typeof fieldNames[orderNameRep] !== 'undefined'){
 
 					// var result = fieldNames[orderName][rootClass_id][order["exp"]];
@@ -2308,7 +2308,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 
-						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, symbolTable, false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 						
 						if(order["exp"].indexOf("Label") == -1 && order["exp"].indexOf("AltLabel") == -1 && order["exp"].indexOf("Description") == -1)messages = messages.concat(result["messages"]); 
 		
@@ -2374,6 +2374,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	orderTable = orderTable.filter(function (el, i, arr) {
 		return arr.indexOf(el) === i;
 	});
+	
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
@@ -2518,9 +2519,7 @@ function generateSPARQLWHEREInfo2(sparqlTable, ws, fil, lin, referenceTable, SPA
 			var attributeTripleTemp;
 			
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
-				
-				
-				
+
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
 						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(') || sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ')){ 
@@ -3033,13 +3032,12 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	for (var expression in sparqlTable["simpleTriples"]){
 		var generateTimeFunctionForVirtuoso = false;
 		if(generateTimeFunctionForVirtuoso == true && sparqlTable["simpleTriples"][expression]["isTimeFunction"] == true){
+			
 			var classTriple = sparqlTable["classTriple"];
 			if(typeof classTriple === 'undefined') classTriple = "";
 			else classTriple = classTriple + "\n" +SPARQL_interval;
 			
 			var timeExpression = [];
-			
-			
 			
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
@@ -3058,39 +3056,41 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			else attributesValues.push("OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
 		}
 		else {
-			var attributeTripleTemp;
+			var attributeTripleTemp = [];
 			
 			if(typeof sparqlTable["simpleTriples"][expression] === 'object'){
+				
 				for (var triple in sparqlTable["simpleTriples"][expression]["triple"]){
+					
 					if(typeof sparqlTable["simpleTriples"][expression]["triple"][triple] === 'string') {
 						if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('VALUES ')){ 
-							attributeTripleTemp = sparqlTable["simpleTriples"][expression]["triple"][triple];
+							attributeTripleTemp.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 						} else if(sparqlTable["simpleTriples"][expression]["triple"][triple].startsWith('BIND(')){ 
 							bind.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 							attributeTripleTemp = null;
 						}else if(sparqlTable["simpleTriples"][expression]["requireValues"] == true) {
-							attributeTripleTemp = sparqlTable["simpleTriples"][expression]["triple"][triple];
+							attributeTripleTemp.push(sparqlTable["simpleTriples"][expression]["triple"][triple]);
 						}else {
-							attributeTripleTemp = "OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}";
+							attributeTripleTemp.push("OPTIONAL{" + sparqlTable["simpleTriples"][expression]["triple"][triple] + "}");
 						}
-					}
-					
-				}
-			}
+					} 
+				}	
+			}	
 			
 			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
-				var tripleTebleTemp = [];
-				tripleTebleTemp.push(attributeTripleTemp);
+				tripleTebleTemp = tripleTebleTemp.concat(attributeTripleTemp);
 				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bind"]);
 				if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bound"]);
 				attributesValues.push(sparqlTable["simpleTriples"][expression]["graphInstruction"] + " " + sparqlTable["simpleTriples"][expression]["graph"] + " {"+ tripleTebleTemp.join(" ") + "}");
 			} else{
 			
-				if(attributeTripleTemp != null) attributesValues.push(attributeTripleTemp);
-				
+				if(attributeTripleTemp != null) attributesValues = attributesValues.concat(attributeTripleTemp);
+				var tripleTebleTemp = [];
 				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bind"]);
 				if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') bind.push(sparqlTable["simpleTriples"][expression]["bound"]);
 			}
+			
+			
 		}
 	}
 

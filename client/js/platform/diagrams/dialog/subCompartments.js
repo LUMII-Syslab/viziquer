@@ -218,8 +218,8 @@ Template.show_multi_field_form.events({
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph"] !== "undefined")sub_compart_tree["Attributes"]["Attributes"]["Graph"]["value"] = "";
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"] !== "undefined")sub_compart_tree["Attributes"]["Attributes"]["Graph instruction"]["value"] = "";
 			
-			if(sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
-			if(sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["IsInternal"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["IsInternal"]["input"] == "true") prefixesValue = "h";
+			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Require Values"] !== "undefined" && sub_compart_tree["Attributes"]["Attributes"]["Require Values"]["input"] == "true") prefixesValue = prefixesValue + "+";
 			if(prefixesValue != "") prefixesValue = "{" + prefixesValue + "} ";
 			prefixesValue = graphPrefixes + prefixesValue;
 			if(typeof sub_compart_tree["Attributes"]["Attributes"]["Prefixes"] !== "undefined"){
