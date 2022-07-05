@@ -2,7 +2,7 @@
 
 var x = 10;
 var y = 10;
-var width = 350;
+var width = 300;
 var height = 150;
 var counter = 0;
 VQ_Elements = {};
@@ -44,13 +44,10 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			  };
 			   if (proj.indirectClassMembershipRole) {
 				indirectClassMembershipRole = proj.indirectClassMembershipRole;
-				// if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
-				// if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "wdt:[[instance of(P31)]].wdt:[[subclass of(P279)]]*";
 				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 			  }; 
-			  
-			  
+  
 		 }
 		 
 		  var prefixes = await dataShapes.getNamespaces();
@@ -71,12 +68,11 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		y = yy;
 		counter = 0;
 		
-		// console.log("queryId:", queries[query]["id"], "--------------------------");
+		console.log("queryId:", queries[query]["id"], "--------------------------");
 		
 		parsedQuery = transformParsedQuery(parsedQuery);		
 		// console.log(JSON.stringify(parsedQuery, 0, 2));
-		// var schema = new VQ_Schema();
-		
+
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
 		
@@ -198,6 +194,8 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			visitedClasses[clazz] = false;
 		}
 		visitedClasses[ startClass["name"]] = true;
+		
+		
 		// Generate tree ViziQuer query structure, from class and link tables 
 		var generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
 		
@@ -208,8 +206,20 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		if(typeof classesTable["groupings"] !== "undefined") classesTable["groupings"] = classesTable["groupings"].concat( abstractTable["groupTable"]);
 		else classesTable["groupings"] = abstractTable["groupTable"];
 		if(typeof parsedQuery["limit"] !== 'undefined') classesTable["limit"] =  parsedQuery["limit"];
-		else if(parsedQuery["queryType"] == "ASK") classesTable["limit"] = 1;
-		if(typeof parsedQuery["offset"] !== 'undefined') classesTable["offset"] =  parsedQuery["offset"];
+		else if(parsedQuery["queryType"] == "ASK") {
+			classesTable["limit"] = 1;
+			var attributeInfo = {
+					"alias":"",
+					"identification":null,
+					"exp":"(select this)",
+					"addLabel":false,
+					"addAltLabel":false,
+					"addDescription":false,
+					"counter":0
+				}
+			startClass["class"] = addAttributeToClass(startClass["class"], attributeInfo);
+		};
+		if(typeof parsedQuery["offset"] !== 'undefined' && parsedQuery["offset"] != 0) classesTable["offset"] =  parsedQuery["offset"];
 		if(typeof parsedQuery["distinct"] !== 'undefined') classesTable["distinct"] =  parsedQuery["distinct"];
 		if(abstractTable["serviceLabelLang"] !== '') classesTable["serviceLabelLang"] =  abstractTable["serviceLabelLang"];
 		if(abstractTable["fullSPARQL"] !== '') classesTable["fullSPARQL"] =  abstractTable["fullSPARQL"];
@@ -270,14 +280,14 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 	  });
 	  
-		await delay(15000);
+		await delay(10000);
 		var idNumb = parseInt(queries[query]["id"], 10);
 		if(idNumb % 10 === 0) {
 			x = 10;
 			yy = yy + 1000;
 			y = yy;
 		} else {
-			x = x+500;
+			x = x+450;
 			y = yy;
 		}
 	  }
@@ -463,9 +473,21 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		if(typeof classesTable["groupings"] !== "undefined") classesTable["groupings"] = classesTable["groupings"].concat( abstractTable["groupTable"]);
 		else classesTable["groupings"] = abstractTable["groupTable"];
 		if(typeof parsedQuery["limit"] !== 'undefined') classesTable["limit"] =  parsedQuery["limit"];
-		else if(parsedQuery["queryType"] == "ASK") classesTable["limit"] = 1;
+		else if(parsedQuery["queryType"] == "ASK"){ 
+			classesTable["limit"] = 1;
+			var attributeInfo = {
+					"alias":"",
+					"identification":null,
+					"exp":"(select this)",
+					"addLabel":false,
+					"addAltLabel":false,
+					"addDescription":false,
+					"counter":0
+				}
+			startClass["class"] = addAttributeToClass(startClass["class"], attributeInfo);
+		}
 
-		if(typeof parsedQuery["offset"] !== 'undefined') classesTable["offset"] =  parsedQuery["offset"];
+		if(typeof parsedQuery["offset"] !== 'undefined'  && parsedQuery["offset"] != 0) classesTable["offset"] =  parsedQuery["offset"];
 		if(typeof parsedQuery["distinct"] !== 'undefined') classesTable["distinct"] =  parsedQuery["distinct"];
 		if(abstractTable["serviceLabelLang"] !== '') classesTable["serviceLabelLang"] =  abstractTable["serviceLabelLang"];
 		if(abstractTable["fullSPARQL"] !== '') classesTable["fullSPARQL"] =  abstractTable["fullSPARQL"];
@@ -1272,10 +1294,26 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					}
 					//fields
 					for(var field in classesTable[attributeTable[attribute]["class"]]["fields"]){
+						
 						if(classesTable[attributeTable[attribute]["class"]]["fields"][field]["alias"] != attributeInfoTemp["alias"] && classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] != "(select this)"){
-							if(classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].includes(attributeInfoTemp["alias"])) found = true;
-							if(typeof attributeInfoTemp["exp"] !== 'undefined') classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].replace(attributeInfoTemp["alias"], attributeInfoTemp["exp"])
-							else classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
+							var sss = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"];
+							
+							var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].split(/([\w|:]+)/)
+
+							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
+							if(replaceIndex != -1) {
+								 found = true;
+								 if(typeof attributeInfoTemp["exp"] !== 'undefined') attributeNameSplit[replaceIndex] = attributeInfoTemp["exp"];
+								 else attributeNameSplit[replaceIndex] = attributeInfoTemp["identification"]["short_name"];
+								 classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = attributeNameSplit.join("");
+								 // if(attributeInfoTemp.requireValues == true) classesTable[attributeTable[attribute]["class"]]["fields"][field]["requireValues"] = true;
+							}
+							// if(classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].includes(attributeInfoTemp["alias"])) {
+								// found = true;
+								// if(attributeInfoTemp.requireValues == true) classesTable[attributeTable[attribute]["class"]]["fields"][field]["requireValues"] = true;
+							// }
+							// if(typeof attributeInfoTemp["exp"] !== 'undefined') classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].replace(attributeInfoTemp["alias"], attributeInfoTemp["exp"])
+							// else classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
 						}
 					}
 				}
@@ -2430,7 +2468,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					isGlobalSubQuery = true;
 					isSubQuery = false;
 				}
-				if(typeof unionBlock["offset"] !== 'undefined') {
+				if(typeof unionBlock["offset"] !== 'undefined'  && unionBlock["offset"] != 0) {
 					classesTable[object]["offset"] =  unionBlock["offset"];
 					isGlobalSubQuery = true;
 					isSubQuery = false;
@@ -2886,7 +2924,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				abstractTable["classesTable"][subSelectMainClass]["groupings"] = abstractTable["groupings"];
 				abstractTable["classesTable"][subSelectMainClass]["graphs"] = abstractTable["fromTable"];
 				if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
-				if(typeof where["patterns"][0]["offset"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
+				if(typeof where["patterns"][0]["offset"] !== 'undefined' && where["patterns"][0]["offset"] != 0) abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
 				if(typeof where["patterns"][0]["distinct"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["distinct"] =  where["patterns"][0]["distinct"];
 		
 				if(typeof unionBlock["serviceLabelLang"] !== 'undefined' && unionBlock["serviceLabelLang"] != "") classesTable[object]["serviceLabelLang"] =  unionBlock["serviceLabelLang"];
@@ -3205,8 +3243,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					else {
 						argValue = await generateInstanceAlias(argValue)
 					}
-				} else if(arg2["type"] == "RDFLiteral" && arg2["value"].indexOf("^^") !== -1){
-					var uri = arg2["value"].substring(arg2["value"].indexOf("^^")+3, arg2["value"].length-1)
+				} else if(arg2["type"] == "RDFLiteral" && arg2["value"].indexOf("^^") !== -1){	
+					var uri = arg2["value"].substring(arg2["value"].indexOf("^^")+2, arg2["value"].length)
 					uri = await generateInstanceAlias(uri, false);	
 					argValue = arg2["value"].substring(0, arg2["value"].indexOf("^^")) + "^^" + uri;
 				}
@@ -4340,7 +4378,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	
 		abstractTable["classesTable"][subSelectMainClass]["graphs"] = abstractTable["fromTable"];
 		if(typeof where["patterns"][0]["limit"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["limit"] =  where["patterns"][0]["limit"];
-		if(typeof where["patterns"][0]["offset"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
+		if(typeof where["patterns"][0]["offset"] !== 'undefined' && where["patterns"][0]["offset"] != 0) abstractTable["classesTable"][subSelectMainClass]["offset"] =  where["patterns"][0]["offset"];
 		if(typeof where["patterns"][0]["distinct"] !== 'undefined') abstractTable["classesTable"][subSelectMainClass]["distinct"] =  where["patterns"][0]["distinct"];
 		
 		abstractTable["classesTable"][subSelectMainClass]["serviceLabelLang"] = abstractTable["serviceLabelLang"];
@@ -6450,8 +6488,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							for(var condition  in childerenClass["conditions"]){
 								if(typeof clazz["conditions"] === 'undefined') clazz["conditions"] = [];
 								if(typeof variableList["?" + attrAlias] !== "undefined" && variableList["?" + attrAlias] <=1){
-									
-									if(typeof variableList["?"+ attrAlias] !== "undefined" && childerenClass["conditions"][condition].indexOf(attrAlias) != -1 && childerenClass["conditions"][condition].indexOf(" != ") === -1) {
+									if(!exp.startsWith("?") && typeof variableList["?"+ attrAlias] !== "undefined" && childerenClass["conditions"][condition].indexOf(attrAlias) != -1 && childerenClass["conditions"][condition].indexOf(" != ") === -1) {
 										childerenClass["conditions"][condition] = childerenClass["conditions"][condition].replace(attrAlias, exp);
 										createAttribute = false;
 									}
@@ -6929,6 +6966,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		})
 		
 		//graphs
+		
 		_.each(clazz["graphs"],function(graphs) {
 			var graph = graphs["graph"];
 			var graphInstruction = graphs["graphInstruction"];
@@ -6937,17 +6975,20 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			classBox.addGraphs(graph, graphInstruction);
 		})
 		
+		
 		if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
 		
 		//groupBy
-		_.each(clazz["groupings"],function(group) {
-			var expression = group["exp"];
-			var isDescending = group["isDescending"];
+		
+		if(typeof clazz["aggregations"] !== "undefined"){
+			_.each(clazz["groupings"],function(group) {
+				var expression = group["exp"];
+				var isDescending = group["isDescending"];
 
-			//add group to class
-			classBox.addGrouping(group);
-		})
-
+				//add group to class
+				classBox.addGrouping(group);
+			})
+		}
 		//distinct
 		var distinct = clazz["distinct"];
 		if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"].length == 0))classBox.setDistinct(distinct);
@@ -6969,7 +7010,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 
 		//offset
 		var offset = clazz["offset"];
-		classBox.setOffset(offset);
+		if(offset != 0) classBox.setOffset(offset);
 
 		//full SPARQL
 		var fullSPARQL = clazz["fullSPARQL"];

@@ -3294,6 +3294,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["iri"]!== 'undefined') {
 			if (typeof expressionTable[key]["ArgList"]!== 'undefined' && expressionTable[key]["ArgList"]!= ''){
+				isFunction = true;
 				if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
 					SPARQLstring = SPARQLstring + expressionTable[key]["iri"]["PrefixedName"]['var']['name'];
 					if(knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] != null){
@@ -3316,6 +3317,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				
 				tripleTable.push({"BIND":"BIND(" + SPARQLstring + " AS ?" + alias + ")"})
 				SPARQLstring = "?"+alias;
+				// isFunction = true;
 			} else {
 				if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
 					var valueString = expressionTable[key]["iri"]["PrefixedName"]['var']['name'];

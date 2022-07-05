@@ -2645,7 +2645,7 @@
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "r4MZYEQtHdDWvwSfd",
                 "tabIndex": 400,
-                "index": 1038,
+                "index": 120,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Distinct",
@@ -2676,7 +2676,7 @@
                     "id": "828245acc3241ea17517a71b",
                     "style": {
                       "align": "left",
-                      "fill": "#000000",
+                      "fill": "#ffffff",
                       "padding": 2,
                       "placement": "start-left",
                       "visible": true,
