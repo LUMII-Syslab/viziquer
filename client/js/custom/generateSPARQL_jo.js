@@ -922,7 +922,13 @@ function generateSPARQLtext(abstractQueryTable){
 			for (var prefix in prefixTable){
 				if(typeof prefixTable[prefix] === "string") prefixes = prefixes + "PREFIX " + prefix + " " + prefixTable[prefix] + "\n";
 			}
-			SPARQL_text = prefixes + SPARQL_text;
+			var commentPrefixes = "";
+			if(typeof rootClass["comment"] !== "undefined" && rootClass["comment"] != null && rootClass["comment"] != ""){
+				commentPrefixes = "# "+rootClass["comment"].split("\n").join("\n# ") + "\n";	
+			}
+			commentPrefixes = commentPrefixes + prefixes;
+			SPARQL_text = commentPrefixes + SPARQL_text;
+			 
 		 } else{
 			SPARQL_text = "SELECT ";
 
@@ -1138,7 +1144,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 }
 			 SPARQL_text = prefixes + SPARQL_text;
 			 
-			  if(typeof rootClass["comment"] !== "undefined" && rootClass["comment"] != null && rootClass["comment"] != ""){
+			 if(typeof rootClass["comment"] !== "undefined" && rootClass["comment"] != null && rootClass["comment"] != ""){
 				  SPARQL_text = "# "+rootClass["comment"].split("\n").join("\n# ") + "\n" + SPARQL_text;
 			 }
 			 

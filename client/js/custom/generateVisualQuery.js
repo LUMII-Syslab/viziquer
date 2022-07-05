@@ -1286,20 +1286,29 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				if(variableList["?"+attribute] <= 1 ){
 					//conditions
 					for(var condition in classesTable[attributeTable[attribute]["class"]]["conditions"]){
-						if(!classesTable[attributeTable[attribute]["class"]]["conditions"][condition].includes(attributeInfoTemp["alias"]+")")){
-							if(classesTable[attributeTable[attribute]["class"]]["conditions"][condition].includes(attributeInfoTemp["alias"])) found = true;
-							if(typeof attributeInfoTemp["exp"] !== 'undefined') classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].replace(attributeInfoTemp["alias"], attributeInfoTemp["exp"]);
-							else classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
+						// if(!classesTable[attributeTable[attribute]["class"]]["conditions"][condition].includes(attributeInfoTemp["alias"]+")")){
+							// if(classesTable[attributeTable[attribute]["class"]]["conditions"][condition].includes(attributeInfoTemp["alias"])) found = true;
+							// if(typeof attributeInfoTemp["exp"] !== 'undefined') classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].replace(attributeInfoTemp["alias"], attributeInfoTemp["exp"]);
+							// else classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].replace(attributeInfoTemp["alias"], attributeInfoTemp["identification"]["short_name"]);
+						// }
+	
+						var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["conditions"][condition].split(/([\w|:]+)/)
+							
+						var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
+						if(replaceIndex != -1) {
+							found = true;
+							if(typeof attributeInfoTemp["exp"] !== 'undefined') attributeNameSplit[replaceIndex] = attributeInfoTemp["exp"];
+							else attributeNameSplit[replaceIndex] = attributeInfoTemp["identification"]["short_name"];
+							classesTable[attributeTable[attribute]["class"]]["conditions"][condition] = attributeNameSplit.join("");
 						}
 					}
 					//fields
 					for(var field in classesTable[attributeTable[attribute]["class"]]["fields"]){
 						
 						if(classesTable[attributeTable[attribute]["class"]]["fields"][field]["alias"] != attributeInfoTemp["alias"] && classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] != "(select this)"){
-							var sss = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"];
-							
+	
 							var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].split(/([\w|:]+)/)
-
+							
 							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
 							if(replaceIndex != -1) {
 								 found = true;
