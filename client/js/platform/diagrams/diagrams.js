@@ -661,8 +661,12 @@ Template.importOntology.events({
 
 });
 
-Template.uploadProject.helpers({
+Template.uploadProject.loading = new ReactiveVar(false);
 
+Template.uploadProject.helpers({
+	loading: function() {
+		return Template.uploadProject.loading.get();
+	},
 	projects: function() {
 		var result = null;
 		var tool_id = null;
@@ -695,7 +699,7 @@ Template.uploadProject.events({
 	'click #ok-upload-project' : function(e, templ) {
 
 		//hidding the form
-		$('#upload-project-form').modal("hide");
+		//$('#upload-project-form').modal("hide");
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -707,12 +711,20 @@ Template.uploadProject.events({
 		if (url_value) {
 			VQ_Schema_copy = null;
 			list.url = url_value;
-			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+			Template.uploadProject.loading.set(true);
+			Utilities.callMeteorMethod("uploadProjectDataByUrl", list, function() {
+				$('#upload-project-form').modal("hide");
+				Template.uploadProject.loading.set(false);
+			});
 		}
 		else if (url_value_from_list) {
 			VQ_Schema_copy = null;
 			list.url = url_value_from_list;
-			Utilities.callMeteorMethod("uploadProjectDataByUrl", list);
+			Template.uploadProject.loading.set(true);
+			Utilities.callMeteorMethod("uploadProjectDataByUrl", list, function() {
+				$('#upload-project-form').modal("hide");
+				Template.uploadProject.loading.set(false);
+			});
 		}
 		else {
 			var fileList = $("#projectfileList")[0].files;
@@ -724,7 +736,11 @@ Template.uploadProject.events({
 					var diagrams = JSON.parse(reader.result)
 					list.data = diagrams;
 					VQ_Schema_copy = null;
-					Utilities.callMeteorMethod("uploadProjectData", list);
+					Template.uploadProject.loading.set(true);
+					Utilities.callMeteorMethod("uploadProjectData", list,function() {
+						$('#upload-project-form').modal("hide");
+						Template.uploadProject.loading.set(false);
+					});
 				}
 
 				reader.onerror = function(error) {

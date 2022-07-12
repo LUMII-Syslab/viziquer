@@ -176,8 +176,12 @@ Template.structureRibbon.events({
 
 });
 
-Template.createProjectModal.helpers({
+Template.createProjectModal.loading = new ReactiveVar(false);
 
+Template.createProjectModal.helpers({
+	loading: function() {
+		return Template.createProjectModal.loading.get();
+	},
 	tools: function() {
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
 		var result = {tools:[]};
@@ -186,7 +190,7 @@ Template.createProjectModal.helpers({
 			result.tools.push({_id: t._id, name: t.name}); 
 		});
 		
-		if ( tools.count() > 0)
+		if ( tools.count() > 0) 
 			Session.set("tool", result.tools[0]._id);
 	
 		else
@@ -239,7 +243,7 @@ Template.createProjectModal.events({
 			document.getElementById("project-name-required").style.display = "none";
 			document.getElementById("project-name").style.borderColor = "#ccc";
 			
-			$("#add-project").modal("hide");
+			//$("#add-project").modal("hide");
 			
 			var tool_id = $("#tool").find(":selected").attr("id");
 			var icon_name = icon_name_obj.val();
@@ -266,8 +270,12 @@ Template.createProjectModal.events({
 			if ( type == "project" )
 				list.project_link = obj.attr("link")	
 			//console.log("Jauna projekta taisīšana");
-
-			Utilities.callMeteorMethod("insertProject", list);
+			Template.createProjectModal.loading.set(true);
+			Utilities.callMeteorMethod("insertProject", list, function() {
+				$("#add-project").modal("hide");
+				Template.createProjectModal.loading.set(false);
+			});
+			
 		} else {
 			
 			console.log(document.getElementById("project-name").style.borderColor)
@@ -278,7 +286,7 @@ Template.createProjectModal.events({
 	},
 	'click #tool' : function(e){
 		var tool_id = $("#tool").find(":selected").attr("id");
-		Session.set("tool", tool_id)
+		Session.set("tool", tool_id);
 	},
 });
 

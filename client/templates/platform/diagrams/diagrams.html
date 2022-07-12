@@ -367,6 +367,9 @@
                     <h4 class="modal-title">Upload</h4>
                 </div>
                 <div class="modal-body">
+				{{#if loading }}
+					<p style="color: black; font-size: 16px;"> Loading ... </p>
+				{{else}}
                     <div class="panel panel-default">
                         <div class="panel-tab clearfix">
                             <ul class="tab-bar">
@@ -432,11 +435,15 @@
                             </div>
                         </div>
                     </div>
+				{{/if}}
                 </div>
+				{{#if loading }}
+				{{else}}
                 <div class="modal-footer">
 				    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "close"}}</button>
                     <button id="ok-upload-project" type="button" class="btn btn-primary">Upload</button>
                 </div>
+				{{/if}}
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

@@ -135,6 +135,9 @@
                     <h4 class="modal-title">{{_ "add_project"}}</h4>
                 </div>
                 <div class="modal-body">
+				{{#if loading }}
+					<p style="color: black; font-size: 16px;"> Loading ... </p>
+				{{else}}
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <div class="col-sm-10" id="project-name-required" style="display: none;">
@@ -216,11 +219,15 @@
                         </div>
 
                     </form>  
+					{{/if}}
                 </div>
+				{{#if loading }}
+				{{else}}
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
                     <button id="create-project" type="button" class="btn btn-primary">{{_ "ok"}}</button>
                 </div>
+				{{/if}}
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
