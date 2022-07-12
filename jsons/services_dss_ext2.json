@@ -9,6 +9,12 @@
 		"description": "A simple project with some queries over DBPedia"
 	}, 
 	{
+		"caption": "DBPedia QALD 9 Queries",
+		"name": "DBPedia_qald_9",
+		"link": "https://viziquer.lumii.lv/dss/resources/DBPedia_QALD_9.json",
+		"description": "QALD 9 queries over DBPedia"
+	}, 
+	{
 		"caption": "Europeana sample project",
 		"name": "Europeana_sample",
 		"link": "https://viziquer.lumii.lv/dss/resources/Europeana_Sample.json",
