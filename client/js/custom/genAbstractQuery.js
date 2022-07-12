@@ -154,8 +154,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		var type =  await resolveClassByName(className)
 	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
 	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
+	
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
+	
+	if(obj_class.variableName != null){
+		var className = obj_class.identification.display_name;
+		if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
+		if(typeof className !== "undefined" && className != null) className = pr+className;
+		var type =  await resolveClassByName(className)
+		my_scope_table.CLASS_ALIAS.push({id:obj_class.variableName.replace("?", ""), type:type, context:obj_class.identification._id});
+	}
 
     for (const cl of obj_class.conditionLinks) {
     // obj_class.conditionLinks.forEach(function(cl) {

@@ -170,7 +170,7 @@ parse_attrib = function(expr, attribNames, clID, parsed_exp, alias, className, c
 	
 	var result = generateExpression(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
-
+	
 	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 
 }
@@ -195,7 +195,7 @@ function createTriples(tripleTable, tripleType){
 			if(objectName.indexOf("://") != -1 && objectName.indexOf("<") != 0) objectName = "<" + objectName + ">";
 			else if(objectName.indexOf(":") != -1) {
 				//TODO add prefix to table
-			} else if(objectName.startsWith("_")){
+			} else if(objectName.startsWith("_b")){
 				objectName = "";
 				dot = "";
 			}else objectName = "?"+objectName;

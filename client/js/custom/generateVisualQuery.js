@@ -280,7 +280,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 	  });
 	  
-		await delay(10000);
+		await delay(15000);
 		var idNumb = parseInt(queries[query]["id"], 10);
 		if(idNumb % 10 === 0) {
 			x = 10;
@@ -739,74 +739,118 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			){
 				
 			} else {
-			
-			var isVariable = false;
-			for(var link in linkTable){
-				if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
-					isVariable = true;
-					if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
-						linkTable[link]["linkIdentification"]["local_name"] = linkTable[link]["linkIdentification"]["local_name"].substring(1);
-						linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
+				
+				var isVariable = false;
+				for(var link in linkTable){
+					if(typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"].substring(1) == variables[key] || starInSelect == true)){
+						isVariable = true;
+						if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
+							linkTable[link]["linkIdentification"]["local_name"] = linkTable[link]["linkIdentification"]["local_name"].substring(1);
+							linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
+						}
+						
+						break;
 					}
-					
-					break;
 				}
-			}
-			
-			
-			if(typeof bindTable[variables[key].substring(1)] !== "undefined" && typeof bindTable[variables[key].substring(1)]["class"] !== "undefined"){	
-				var cl = classesTable[bindTable[variables[key].substring(1)]["class"]];
-				for(var field in cl["fields"]){
-					
-					if(typeof bindTable[cl["fields"][field]["alias"]] !== "undefined") cl["fields"][field]["isInternal"] = false;
-				}
-			}
-			
-			//check kind (Class, reference or Property)
-			//class
-			var classes2 = findByShortName(classesTable, "?"+variables[key]);
-			for(var clazz in classes2){
-				classesTable[clazz]["identification"]["short_name"] = classesTable[clazz]["identification"]["short_name"].substring(1);
-			}		
-			
-			var classes = findByVariableName(classesTable, variables[key]);
 				
-			// if(Object.keys(classes).length > 0 && typeof nodeList[variables[key]] !== "undefined"){
-			if(Object.keys(classes).length > 0){
-				//add class as attribute
-				var parsedClass = vq_visual_grammar.parse(variables[key])["value"];
-				var identification = await dataShapes.resolveClassByName({name: parsedClass});
 				
-				var addLabel = false;
-				if(typeof variableList[variables[key]+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
-				var addAltLabel = false;
-				if(typeof variableList[variables[key]+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
-				var addDescription = false;
-				if(typeof variableList[variables[key]+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
-	
-				var attributeInfo = {
-					"alias":"",
-					"identification":identification.data[0],
-					"exp":"(select this)",
-					"addLabel":addLabel,
-					"addAltLabel":addAltLabel,
-					"addDescription":addDescription,
-					"counter":0
+				if(typeof bindTable[variables[key].substring(1)] !== "undefined" && typeof bindTable[variables[key].substring(1)]["class"] !== "undefined"){	
+					var cl = classesTable[bindTable[variables[key].substring(1)]["class"]];
+					for(var field in cl["fields"]){
+						
+						if(typeof bindTable[cl["fields"][field]["alias"]] !== "undefined") cl["fields"][field]["isInternal"] = false;
+					}
 				}
+				
+				//check kind (Class, reference or Property)
+				//class
+				var classes2 = findByShortName(classesTable, "?"+variables[key]);
+				for(var clazz in classes2){
+					classesTable[clazz]["identification"]["short_name"] = classesTable[clazz]["identification"]["short_name"].substring(1);
+				}		
+				
+				var classes = findByVariableName(classesTable, variables[key]);
+					
+				// if(Object.keys(classes).length > 0 && typeof nodeList[variables[key]] !== "undefined"){
+				if(Object.keys(classes).length > 0){
+					//add class as attribute
+					var parsedClass = vq_visual_grammar.parse(variables[key])["value"];
+					var identification = await dataShapes.resolveClassByName({name: parsedClass});
+					
+					var addLabel = false;
+					if(typeof variableList[variables[key]+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+					var addAltLabel = false;
+					if(typeof variableList[variables[key]+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
+					var addDescription = false;
+					if(typeof variableList[variables[key]+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
+		
+					var attributeInfo = {
+						"alias":"",
+						"identification":identification.data[0],
+						"exp":"(select this)",
+						"addLabel":addLabel,
+						"addAltLabel":addAltLabel,
+						"addDescription":addDescription,
+						"counter":0
+					}
 
-				orderCounter++;
-				if(identification.complete == true) {
-					var sn = identification.data[0].display_name;
+					orderCounter++;
+					if(identification.complete == true) {
+						var sn = identification.data[0].display_name;
+						
+						if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
+						else if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
+						attributeInfo.identification.short_name = sn;	
+					}
+					for(var clazz in classes){
+						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+						// console.log("1", attributeInfo)
+					}
+					if(typeof nodeList[variables[key]] === "undefined"){
+						var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
+						if(typeof bindTable[parsedAttribute] === 'undefined'){		
+							if(isVariable == false && variableList[variables[key]] != 1){
+								var addLabel = false;
+								var addAltLabel = false;
+								var addDescription = false;
+								for(var k in variables){
+									if(typeof variables[k] === "string"){
+										if(variables[k].endsWith("Label") == true && variables[k].startsWith(variables[key])) addLabel = true;
+										if(variables[k].endsWith("AltLabel") == true && variables[k].startsWith(variables[key])) addAltLabel = true;
+										if(variables[k].endsWith("Description") == true && variables[k].startsWith(variables[key])) addDescription = true;
+									}
+								}
+								
+								var attributeInfo = {
+									"alias":"",
+									"identification":null,
+									"requireValues":false,
+									"isInternal":false,
+									"groupValues":false,
+									"exp":parsedAttribute,
+									"addLabel":addLabel,
+									"addAltLabel":addAltLabel,
+									"addDescription":addDescription,
+									"counter":orderCounter
+								}
+							
+								orderCounter++;
+
+								for (var clazz in classesTable){
+									classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+									// console.log("1,5", attributeInfo)
+									break;
+								}
+							} else if(variableList[variables[key]] == 1) {
+								// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
+							}
+						}
+					}
+				} else if (Object.keys(findByShortName(classesTable, variables[key])).length > 0){
 					
-					if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
-					else if(identification.data[0].is_local != true)sn = identification.data[0].prefix+ ":" + sn;
-					attributeInfo.identification.short_name = sn;	
 				}
-				for(var clazz in classes){
-					classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-					// console.log("1", attributeInfo)
-				}
-				if(typeof nodeList[variables[key]] === "undefined"){
+				//reference
+				else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined'){		
 					var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
 					if(typeof bindTable[parsedAttribute] === 'undefined'){		
 						if(isVariable == false && variableList[variables[key]] != 1){
@@ -838,134 +882,96 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 
 							for (var clazz in classesTable){
 								classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-								// console.log("1,5", attributeInfo)
+								// console.log("2", attributeInfo)
 								break;
 							}
 						} else if(variableList[variables[key]] == 1) {
 							// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
 						}
-					}
-				}
-			} else if (Object.keys(findByShortName(classesTable, variables[key])).length > 0){
-				
-			}
-			//reference
-			else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined'){		
-				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
-				if(typeof bindTable[parsedAttribute] === 'undefined'){		
-					if(isVariable == false && variableList[variables[key]] != 1){
-						var addLabel = false;
-						var addAltLabel = false;
-						var addDescription = false;
-						for(var k in variables){
-							if(typeof variables[k] === "string"){
-								if(variables[k].endsWith("Label") == true && variables[k].startsWith(variables[key])) addLabel = true;
-								if(variables[k].endsWith("AltLabel") == true && variables[k].startsWith(variables[key])) addAltLabel = true;
-								if(variables[k].endsWith("Description") == true && variables[k].startsWith(variables[key])) addDescription = true;
-							}
-						}
-						
+					} else if(variableList["?"+parsedAttribute] != "seen") {
+		
 						var attributeInfo = {
-							"alias":"",
+							"alias":bindTable[parsedAttribute]["alias"],
 							"identification":null,
 							"requireValues":false,
 							"isInternal":false,
 							"groupValues":false,
-							"exp":parsedAttribute,
-							"addLabel":addLabel,
-							"addAltLabel":addAltLabel,
-							"addDescription":addDescription,
+							"exp":bindTable[parsedAttribute]["exp"],
 							"counter":orderCounter
 						}
-					
+		
 						orderCounter++;
+						bindTable[parsedAttribute]["seen"] = true;
 
 						for (var clazz in classesTable){
 							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-							// console.log("2", attributeInfo)
+							// console.log("3", attributeInfo)
 							break;
 						}
-					} else if(variableList[variables[key]] == 1) {
-						// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
-					}
-				} else if(variableList["?"+parsedAttribute] != "seen") {
-	
-					var attributeInfo = {
-						"alias":bindTable[parsedAttribute]["alias"],
-						"identification":null,
-						"requireValues":false,
-						"isInternal":false,
-						"groupValues":false,
-						"exp":bindTable[parsedAttribute]["exp"],
-						"counter":orderCounter
-					}
-	
-					orderCounter++;
-					bindTable[parsedAttribute]["seen"] = true;
-
-					for (var clazz in classesTable){
-						classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-						// console.log("3", attributeInfo)
-						break;
 					}
 				}
-			}
-			
-			
-			//property
-			if(typeof attributeTable[vq_visual_grammar.parse(variables[key])["value"]] !== 'undefined') {
-				// add attribute
 				
-				var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
-				var attributes = findByVariableName(attributeTable, parsedAttribute);
 				
-				for(var attribute in attributes){
-					if(attributeTable[attribute]["seen"] != true){
-						var attributeInfoTemp = attributeTable[attribute];
-						var exp = attributeInfoTemp["identification"]["short_name"];
-						if(typeof attributeInfoTemp.exp !== 'undefined') exp = attributeInfoTemp.exp;
-						
-						var attrAlias = attributeInfoTemp["alias"];
-						if(attrAlias == "" && typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["short_name"].indexOf(":")!= -1) attrAlias = attributeInfoTemp["identification"]["local_name"];
-						
-						var addLabel = false;
-						if(typeof variableList["?"+attrAlias+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
-						var addAltLabel = false;
-						if(typeof variableList["?"+attrAlias+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
-						var addDescription = false;
-						if(typeof variableList["?"+attrAlias+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
-						
-						// if(typeof variableList["?"+attrAlias] !== 'undefined' && variableList["?"+attrAlias] <=1 ) attrAlias = "";
-						
-						var attributeInfo = {
-							"alias":attrAlias,
-							"identification":attributeInfoTemp["identification"],
-							"requireValues":attributeInfoTemp["requireValues"],
-							"isInternal":false,
-							"groupValues":false,
-							"exp":exp,
-							"addLabel":addLabel,
-							"addAltLabel":addAltLabel,
-							"addDescription":addDescription,
-							"graph":attributeInfoTemp["graph"],
-							"graphInstruction":attributeInfoTemp["graphInstruction"],
-							"counter":attributeInfoTemp["counter"]
-						}
+				//property
+				if(typeof attributeTable[vq_visual_grammar.parse(variables[key])["value"]] !== 'undefined') {
+					// add attribute
+					
+					var parsedAttribute = vq_visual_grammar.parse(variables[key])["value"];	
+					var attributes = findByVariableName(attributeTable, parsedAttribute);
+					
+					for(var attribute in attributes){
+						if(attributeTable[attribute]["seen"] != true){
+							var attributeInfoTemp = attributeTable[attribute];
+							var exp = attributeInfoTemp["identification"]["short_name"];
+							if(typeof attributeInfoTemp.exp !== 'undefined') exp = attributeInfoTemp.exp;
+							
+							var attrAlias = attributeInfoTemp["alias"];
+							if(attrAlias == "" && typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["short_name"].indexOf(":")!= -1) attrAlias = attributeInfoTemp["identification"]["local_name"];
+							
+							var addLabel = false;
+							if(typeof variableList["?"+attrAlias+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+							var addAltLabel = false;
+							if(typeof variableList["?"+attrAlias+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
+							var addDescription = false;
+							if(typeof variableList["?"+attrAlias+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
+							
+							// if(typeof variableList["?"+attrAlias] !== 'undefined' && variableList["?"+attrAlias] <=1 ) attrAlias = "";
+							
+							var attributeInfo = {
+								"alias":attrAlias,
+								"identification":attributeInfoTemp["identification"],
+								"requireValues":attributeInfoTemp["requireValues"],
+								"isInternal":false,
+								"groupValues":false,
+								"exp":exp,
+								"addLabel":addLabel,
+								"addAltLabel":addAltLabel,
+								"addDescription":addDescription,
+								"graph":attributeInfoTemp["graph"],
+								"graphInstruction":attributeInfoTemp["graphInstruction"],
+								"counter":attributeInfoTemp["counter"]
+							}
 
-						if(attributeTable[attribute]["class"] != attribute){
-							classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
-							// console.log("4", attributeInfo, variableList)
-							attributeTable[attribute]["seen"] = true;
+							if(attributeTable[attribute]["class"] != attribute){
+								classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
+								// console.log("4", attributeInfo, variableList)
+								attributeTable[attribute]["seen"] = true;
+							}
+						} else {
+							attributeTable[attribute]["isInternal"] = false;
 						}
-					} else {
-						attributeTable[attribute]["isInternal"] = false;
 					}
 				}
-			}
 			}
 			
 		} else if(typeof variables[key] === 'object'){
 			
+			if(typeof variableList[variables[key]["variable"]] !== "undefined" && variableList[variables[key]["variable"]] > 2) {	
+				variableList[variables[key]["variable"]] = variableList[variables[key]["variable"]] - 3;
+				variables[key]["variable"] = variables[key]["variable"]+"_expr";
+				variableList[variables[key]["variable"]] = 2;
+				
+			}
 			var alias = vq_visual_grammar.parse(variables[key]["variable"])["value"];
 			var expression = variables[key]["expression"];
 			//aggregation
@@ -6729,7 +6735,10 @@ async function getAllVariablesInQuery(expression, variableTable){
 				variableTable[t] = temp[t];
 			}
 		} else if(typeof expression[key] === 'string' && expression[key].startsWith("?")) {
-			
+			// var resolve = await dataShapes.resolvePropertyByName({name: expression[key].substring(1)})
+			// if(resolve.complete == true){
+				// expression[key] = expression[key] + "_" + counter;
+			// }
 			if(typeof variableTable[expression[key]] !== 'undefined') {
 				variableTable[expression[key]] = variableTable[expression[key]] + 1;
 			} else {
