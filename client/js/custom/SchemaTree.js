@@ -232,19 +232,19 @@ async function  useFilterI (plus = 0) {
 
 		dataShapes.schema.tree.class = className;
 		
-		if (className.includes('All classes')) {
+		if (className.includes('All classes')) { // 'All classes' ir tikai DBpedia un Wikidata
 			if ( text == '' ) {
 				params.filter = 'First';
 				text = 'First';
 			}
 					
-			if (dataShapes.schema.schemaType === 'wikidata') {
+			if (dataShapes.schema.schemaType === 'wikidata') { // Šis ir vienīgais wikidata zars, kas izpildās
 				iFull = await dataShapes.getTreeIndividualsWD(text);
 				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
 				Template.schemaInstances.Instances.set(instances);	
 			}
 			else {
-				params.individualMode = 'Direct';
+				params.individualMode = 'Direct';  // Vispirms meklē tiešās sakritības
 				iFull = await dataShapes.getTreeIndividuals(params, className);  
 				instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
 				instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});	
@@ -255,12 +255,13 @@ async function  useFilterI (plus = 0) {
 				Template.schemaInstances.Instances.set(instances);	
 			}
 		}
-		else {
-			if ( text != '' ) { //&& dataShapes.schema.schemaType !== 'wikidata') {
-				if ( dataShapes.schema.schemaType === 'wikidata') {
-					params.individualMode = 'Direct';
+		else {  // Zināma konkrēta klase ( wikidata klase vairs netiek ņemta vērā)
+			if ( text != '' ) { // Ir filtrs
+				if ( dataShapes.schema.schemaType === 'warsampo') {
+					instances = [{data_id: "...", localName: "Waiting ...", description: ''}];	
+					params.individualMode = 'All';
 					iFull = await dataShapes.getTreeIndividuals(params, className);
-					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
+					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: ''}});
 					Template.schemaInstances.Instances.set(instances);
 				}
 				else {
@@ -275,10 +276,10 @@ async function  useFilterI (plus = 0) {
 					Template.schemaInstances.Instances.set(instances);	
 				}
 			}
-			else {				
+			else { // ir klase, nav filtra		
 				Template.schemaInstances.Instances.set([{ data_id: "wait", localName: "Waiting answer...", description: ''}]);
 				iFull = await dataShapes.getTreeIndividuals(params, className);
-				if ( dataShapes.schema.schemaType === 'wikidata') 
+				if ( dataShapes.schema.schemaType === 'wikidata' || dataShapes.schema.schemaType === 'warsampo') 
 					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
 				else
 					instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
