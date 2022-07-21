@@ -1765,7 +1765,15 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					// if(field["requireValues"] != true) triple = "OPTIONAL{" + triple "}";
 					sparqlTable["aggregateTriples"].push(triple);
 					//MAIN SELECT agregate variables
-					if(result["exp"] != "")sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
+					if(result["exp"] != "" && field["helper"] != true)sparqlTable["selectMain"]["aggregateVariables"].push({"alias": "?" + alias, "value" : result["exp"]});
+					//hidden aggregation as bind
+					if(result["exp"] != "" && field["helper"] == true){
+						var aggrExpr = "BIND(" + result["exp"] + " AS ?" + alias + ")";
+						var triple = [];
+						triple["triple"] = [];
+						triple["triple"].push(aggrExpr);
+						sparqlTable["aggregateTriples"].push(triple);
+					}
 					
 					for (var variable in result["variables"]){
 						if(typeof result["variables"][variable] === 'string') sparqlTable["innerDistinct"]["aggregateVariables"].push(result["variables"][variable]);
@@ -1973,6 +1981,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					if(subclazz["linkType"] != 'NOT' && subclazz["linkIdentification"]["local_name"].startsWith('??') != true) temp["sparqlTable"]["linkVariableName"] = subclazz["linkIdentification"]["local_name"];
 				} else {
 					preditate = " " + getPrefix(emptyPrefix, subclazz["linkIdentification"]["Prefix"]) +":" + subclazz["linkIdentification"]["local_name"];
+					
 					if(typeof subclazz["linkIdentification"]["parsed_exp"] === 'undefined'){
 						messages.push({
 							"type" : "Error",

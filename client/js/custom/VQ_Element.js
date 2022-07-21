@@ -2728,7 +2728,7 @@ VQ_Element.prototype = {
 	var fields = this.getFields();
 	var isOptional = false;
 	for(var field in fields){
-		if(fields[field]["requireValues"] != true && fields[field]["exp"] != "(select this)"){
+		if(fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)"){
 			isOptional = true;
 			break;
 		}
@@ -2741,7 +2741,6 @@ VQ_Element.prototype = {
 			break;
 		}
 	}
-	
 	return (alias == null && className == null && isOptional == false);
 
   },
@@ -3015,14 +3014,16 @@ VQ_Element.prototype = {
     return this.getMultiCompartmentSubCompartmentValues("Aggregates",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
+	{title:"helper",name:"Helper",transformer:function(v) {return v=="true"}},
 	{title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}}]);
   },
   // string, string -->
-  addAggregateField: function(exp,alias,requireValues) {
+  addAggregateField: function(exp,alias,requireValues, helper) {
     this.addCompartmentSubCompartments("Aggregates",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
 	  {name:"Require Values",value:this.boolToString(requireValues)},
+	  {name:"Helper",value:this.boolToString(requireValues)},
     ])
   },
   // returns an array of aggregate attributes: expression, stereotype, alias, etc. ...

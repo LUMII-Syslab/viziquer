@@ -639,8 +639,9 @@ getPathFullGrammar = function(expressionTable){
 				if(expressionTable[key]["var"]["type"]["max_cardinality"] != 1) {cardinality = -1;}
 				
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
-				
+
 				if(expressionTable[key]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
+				if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) pathPart = "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 				path = path + pathPart;
 				
 				prTable[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["var"]["type"]["prefix"])+":"]+">";
@@ -667,7 +668,7 @@ getPathFullGrammar = function(expressionTable){
 				var pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
 				
 				if(expressionTable[key]["var"]["name"].indexOf("[") != -1 && typeof expressionTable[key]["var"]["type"] !== "undefined")pathPart =  getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["type"]["local_name"];
-		
+				if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) pathPart = "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 				path = path + pathPart;
 
 				var namespace = expressionTable[key]["var"]["type"]["Namespace"]
@@ -680,6 +681,7 @@ getPathFullGrammar = function(expressionTable){
 				cardinality = -1;
 				if(typeof expressionTable[key]["Prefix"] !== 'undefined'){
 					path = path + expressionTable[key]["Prefix"] + expressionTable[key]["var"]["name"];
+					if(expressionTable[key]["var"]["name"].indexOf("/") !== -1) pathPart = "<" + expressionTable[key]["var"]["type"]["iri"] +">";
 					if(knownNamespaces[expressionTable[key]["Prefix"]] != null){prTable[expressionTable[key]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["Prefix"]]+">";}
 					visited = 1;
 					variable = expressionTable[key];
@@ -1885,6 +1887,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
 							st[symbol]["type"]["parentType"]["short_name"] == classSchemaName){
 								classHasProperty = true;
+							} else if(expressionTable[key]["ref"] != null){
+								generateTriples = false;
+								variableToUse = varName;
 							}
 						}
 					}
@@ -1966,7 +1971,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 				
 						if((isPropertyFromSubQuery == false || isOwnProperty == true) && variableData["kind"] !== "BIND_ALIASS") {
-							tripleTable.push({"var":"?"+variable, "prefixedName":inv + getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName+pathMod, "object":className, "inFilter":inFilter});
+							var prefixedName = getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName;
+							if(varName.indexOf("/") !== -1) prefixedName = "<"+expressionTable[key]["type"]["iri"]+">";
+							tripleTable.push({"var":"?"+variable, "prefixedName":inv + prefixedName + pathMod, "object":className, "inFilter":inFilter});
 						}
 						var namespace = expressionTable[key]["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
