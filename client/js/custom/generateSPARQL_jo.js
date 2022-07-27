@@ -1179,39 +1179,41 @@ function getPrefix(emptyPrefix, givenPrefix){
 }
 
 function getPrefixFromClassMembership(classMembership){
-
-	var knownNamespaces = {
-	"foaf:":"http://xmlns.com/foaf/0.1/",
-       "owl:":"http://www.w3.org/2002/07/owl#",
-       "rdf:":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-       "rdfs:":"http://www.w3.org/2000/01/rdf-schema#",
-       "dbp:":"http://dbpedia.org/property/",
-       "skos:":"http://www.w3.org/2004/02/skos/core#",
-       "xsd:":"http://www.w3.org/2001/XMLSchema#",
-       "geo:":"http://www.w3.org/2003/01/geo/wgs84_pos#",
-       "sioc:":"http://rdfs.org/sioc/ns#",
-       "d2rq:":"http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#",
-       "rss:":"http://purl.org/rss/1.0/",
-       "test2:":"http://this.invalid/test2#",
-       "swrc:":"http://swrc.ontoware.org/ontology#",
-       "dbpedia:":"http://dbpedia.org/resource/",
-       "content:":"http://purl.org/rss/1.0/modules/content/",
-       "nie:":"http://www.semanticdesktop.org/ontologies/2007/01/19/nie#",
-       "gen:":"http://www.w3.org/2006/gen/ont#",
-       "dbo:":"http://dbpedia.org/ontology/",
-       "xhtml:":"http://www.w3.org/1999/xhtml/vocab#",
-       "dbpprop:":"http://dbpedia.org/property/",
-       "dcterms:":"http://purl.org/dc/terms/",
-	   "wdt:": "http://www.wikidata.org/prop/direct/"
-}
-
 	var prefixes = [];
-	var splitParts = classMembership.split("/")
-	for(var p in  splitParts){
-		var part = splitParts[p];
+	if(!classMembership.startsWith("<")){
+		var knownNamespaces = {
+		"foaf:":"http://xmlns.com/foaf/0.1/",
+		   "owl:":"http://www.w3.org/2002/07/owl#",
+		   "rdf:":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+		   "rdfs:":"http://www.w3.org/2000/01/rdf-schema#",
+		   "dbp:":"http://dbpedia.org/property/",
+		   "skos:":"http://www.w3.org/2004/02/skos/core#",
+		   "xsd:":"http://www.w3.org/2001/XMLSchema#",
+		   "geo:":"http://www.w3.org/2003/01/geo/wgs84_pos#",
+		   "sioc:":"http://rdfs.org/sioc/ns#",
+		   "d2rq:":"http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#",
+		   "rss:":"http://purl.org/rss/1.0/",
+		   "test2:":"http://this.invalid/test2#",
+		   "swrc:":"http://swrc.ontoware.org/ontology#",
+		   "dbpedia:":"http://dbpedia.org/resource/",
+		   "content:":"http://purl.org/rss/1.0/modules/content/",
+		   "nie:":"http://www.semanticdesktop.org/ontologies/2007/01/19/nie#",
+		   "gen:":"http://www.w3.org/2006/gen/ont#",
+		   "dbo:":"http://dbpedia.org/ontology/",
+		   "xhtml:":"http://www.w3.org/1999/xhtml/vocab#",
+		   "dbpprop:":"http://dbpedia.org/property/",
+		   "dcterms:":"http://purl.org/dc/terms/",
+		   "wdt:": "http://www.wikidata.org/prop/direct/"
+		}
 
-		if(part.indexOf(":") != -1) {
-			prefixes[part.substring(0, part.indexOf(":")+1)] = "<"+knownNamespaces[part.substring(0, part.indexOf(":")+1)]+">";
+		
+		var splitParts = classMembership.split("/")
+		for(var p in  splitParts){
+			var part = splitParts[p];
+
+			if(part.indexOf(":") != -1) {
+				prefixes[part.substring(0, part.indexOf(":")+1)] = "<"+knownNamespaces[part.substring(0, part.indexOf(":")+1)]+">";
+			}
 		}
 	}
 	return prefixes;
@@ -1240,12 +1242,14 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		var prefixMembership = getPrefixFromClassMembership(classMembership);
 		for (var prefix in prefixMembership) {
 			if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
+	
 		}
 	}else if(typeof clazz["indirectClassMembership"] === 'undefined' || clazz["indirectClassMembership"] != true && typeof parameterTable["directClassMembershipRole"] !== 'undefined' && parameterTable["directClassMembershipRole"] != null && parameterTable["directClassMembershipRole"] != ""){
 		classMembership =  parameterTable["directClassMembershipRole"];
 		var prefixMembership = getPrefixFromClassMembership(classMembership);
 		for (var prefix in prefixMembership) {
 			if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
+
 		}
 	} else {
 		classMembership = "a";

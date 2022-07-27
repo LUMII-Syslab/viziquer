@@ -57,6 +57,9 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		 isUnderUnion = false;
 		var text = queries[query]["sparql"];
 		text = prefixesText.join("\n") + text;
+		
+		text = prefixesText.join("\n") + text;
+		text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		// x = xx;
@@ -275,7 +278,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 	  });
 	  
-		await delay(15000);
+		await delay(20000);
 		var idNumb = parseInt(queries[query]["id"], 10);
 		if(idNumb % 10 === 0) {
 			x = 10;
@@ -300,6 +303,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			}
 		
 			text = prefixesText.join("\n") + text;
+			text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
@@ -1190,10 +1194,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			else if(expression["type"] == "functionCall"){
 				
 				var functionName = "<"+expression["function"]+">"
-				// var ignoreFunction = false;
-				// if(where["function"] == "http://www.w3.org/2001/XMLSchema#dateTime" || where["function"] == "http://www.w3.org/2001/XMLSchema#date" || where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
-				//if(where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") functionName = "xsd:decimal";
-				
+
 				var shortFunction = await generateInstanceAlias(expression["function"]);
 				if(shortFunction != expression["function"]) functionName = shortFunction;
 				var viziQuerExpr = {
@@ -1339,18 +1340,23 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			var attributeInfoTemp = attributeTable[attribute];
 			var found = false;
 			
+			
+			
 			//if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["max_cardinality"] == 1 && attributeInfoTemp["alias"] != ""){
 			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList["?"+attributeInfoTemp["alias"]] === "undefined" || variableList["?"+attributeInfoTemp["alias"]] <=1)){
+				
+				if(variableList["?"+attribute] <= 1 && typeof variableList["*"] == "undefined"){
 
-				if(variableList["?"+attribute] <= 1 && attributeInfoTemp["requireValues"] == true){
 					//orders
-					for(var order in orderTable){
-						if((orderTable[order]["exp"] == attribute || orderTable[order]["exp"] == "@"+ attribute) && typeof attributeInfoTemp["exp"] === 'undefined'){
-							found = true;
-							orderTable[order]["exp"] = attributeInfoTemp["identification"]["short_name"];
-							console.log("REPLACE ORDER {h}", orderTable[order]["exp"]);
+					if(attributeInfoTemp["requireValues"] == true){
+						for(var order in orderTable){
+							if((orderTable[order]["exp"] == attribute || orderTable[order]["exp"] == "@"+ attribute) && typeof attributeInfoTemp["exp"] === 'undefined'){
+								found = true;
+								orderTable[order]["exp"] = attributeInfoTemp["identification"]["short_name"];
+								console.log("REPLACE ORDER {h}", orderTable[order]["exp"]);
+							}
+							
 						}
-						
 					}
 					//conditions
 					for(var condition in classesTable[attributeTable[attribute]["class"]]["conditions"]){
@@ -1380,6 +1386,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 							var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].split(/([\w|:]+)/)
 							
 							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
+
 							if(replaceIndex != -1) {
 								if(replaceIndex > 0 && attributeNameSplit[replaceIndex-1].slice(-1) == "@") attributeNameSplit[replaceIndex-1] = attributeNameSplit[replaceIndex-1].substring(0, attributeNameSplit[replaceIndex-1].length-1)
 								 found = true;
@@ -2224,7 +2231,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				} else {
 					if(object != unionBlock["triples"][unionBlock["triples"].length-1]["object"]) onlybgp = false;
 				}
-				
+				if(typeof unionBlock["triples"][unionBlock["triples"].length-1]["predicate"] === "string" && unionBlock["triples"][unionBlock["triples"].length-1]["predicate"].startsWith("?")) onlybgp = false;
 			}
 			
 			for(var triple in unionBlock["triples"]){
@@ -2235,8 +2242,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		if(onlybgp == true){
 			console.log("UNION OPTIMIZATION")
-			
-			
+
 			var pathExpression = [];
 			for(var u in where["patterns"]){
 				var unionBlock = where["patterns"][u];
@@ -2245,11 +2251,97 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				for(var triple in unionBlock["triples"]){
 					
 					var dataPropertyResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]});
-					if(dataPropertyResolved.complete==true){
+					if(unionBlock["triples"][triple]["predicate"]["type"] == "path"){
+						var pathText = [];
+						if(unionBlock["triples"][triple]["predicate"]["pathType"] == "/"){
+						/////////////////////////////////////////////
+						for(var item in unionBlock["triples"][triple]["predicate"]["items"]){
+									if(typeof unionBlock["triples"][triple]["predicate"]["items"][item] == "string"){
+										//var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]);
+										var linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]});
+										
+										if(linkResolved.complete == true) {
+											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
+											var sn = linkResolved.data[0].display_name;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											linkResolved.data[0].short_name = sn;
+										}else {
+											var predicateParsed = vq_visual_grammar.parse(unionBlock["triples"][triple]["predicate"]["items"][item])["value"];
+											var alias = await generateInstanceAlias(predicateParsed, false)
+											pathText.push(alias);
+										}
+										
+										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]));
+									} 
+									// ^
+									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "^"){
+										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
+										var linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
+										
+										if(linkResolved.complete == true) {
+											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
+											var sn = linkResolved.data[0].display_name;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											linkResolved.data[0].short_name = sn;
+										}else {
+											var predicateParsed = vq_visual_grammar.parse(unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0])["value"];
+											var alias = await generateInstanceAlias(predicateParsed, false)
+											pathText.push("^" + alias);
+										}
+										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
+										if(linkResolved.complete == true)pathText.push("^" + buildPathElement(linkResolved.data[0]));
+									}
+									// *
+									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "*"){
+										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
+										var linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
+										
+										if(linkResolved.complete == true) {
+											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
+											var sn = linkResolved.data[0].display_name;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											linkResolved.data[0].short_name = sn;
+										}else {
+											var predicateParsed = vq_visual_grammar.parse(unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0])["value"];
+											var alias = await generateInstanceAlias(predicateParsed, false)
+											pathText.push(alias +"*");
+										}
+										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
+										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"*");
+									}// ?
+									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "?"){
+										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
+										var linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
+										
+										if(linkResolved.complete == true) {
+											//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
+											var sn = linkResolved.data[0].display_name;
+											if(schemaName == "wikidata" && linkResolved.data[0].prefix == "wdt"){}
+											else if(linkResolved.data[0].is_local != true)sn = linkResolved.data[0].prefix+ ":" + sn;
+											linkResolved.data[0].short_name = sn;
+										}else {
+											var predicateParsed = vq_visual_grammar.parse(unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0])["value"];
+											var alias = await generateInstanceAlias(predicateParsed, false)
+											pathText.push(alias +"?");
+										}
+										
+										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
+										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"?");
+									}
+								}
+								pathExpressionbgp.push(pathText.join("."))
+						}
+						/////////////////////////////////////////////
+					}
+					else if(dataPropertyResolved.complete==true){
 						var sn = dataPropertyResolved.data[0].display_name;
 						if(schemaName == "wikidata" && dataPropertyResolved.data[0].prefix == "wdt"){}
 						else if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
 						pathExpressionbgp.push(sn)
+						
 					} else {pathExpressionbgp.push(unionBlock["triples"][triple]["predicate"]);}
 				}
 				pathExpression.push(pathExpressionbgp.join("."));
@@ -5706,7 +5798,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					if(attributeResolved.complete == true) attrName = attributeResolved.data[0]["short_name"];
 					else attrName = await generateInstanceAlias(triples[triple]["predicate"]);
 					
-					if(attrName.indexOf("://") != -1) attrName = "<" + attrName + ">";
+					if(attrName.indexOf("://") != -1 && attrName.indexOf("<") == -1) attrName = "<" + attrName + ">";
 					
 					exprVariables.push(attrName);
 					
@@ -5831,7 +5923,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			
 							var predicateParsed = vq_visual_grammar.parse(triples[triple]["predicate"])["value"];
 							var linkName = await generateInstanceAlias(predicateParsed);
-							if(linkName.indexOf("://") != -1) linkName = "<"+linkName+">";
+							if(linkName.indexOf("://") != -1 && linkName.indexOf("<") == -1) linkName = "<"+linkName+">";
 							linkResolved = {
 								"display_name":linkName,
 								"short_name":linkName,
@@ -6972,8 +7064,11 @@ async function getAllVariablesInQuery(expression, variableTable){
 		if(typeof expression[key] === 'object'){
 			if(key == 'variables'){
 				var variables = expression[key];
+				var starInSelect = false;
+				
 				for(var variable in variables){
 					
+					if(variables[variable] == "*") variableTable[variables[variable]] = 10;
 					if(typeof variables[variable] === 'string' && await dataShapes.resolveClassByName({name: vq_visual_grammar.parse(variables[variable])["value"]}) == null){
 						variableTable[variables[variable]] = 0;
 					} else if(typeof variables[variable] === 'object'){
@@ -7380,6 +7475,7 @@ async function generateInstanceAlias(uri, resolve){
 					return prefixes[key]["name"]+":"+splittedUri.name;
 				}
 			}
+
 			return "<" + uri + ">";
 		}
 	}else {

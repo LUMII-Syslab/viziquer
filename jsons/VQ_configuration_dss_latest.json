@@ -1804,33 +1804,14 @@
                             "procedure": "attributeConditionAutoCompletion"
                           }
                         ],
-                        "prefix": " @{",
+                        "prefix": " {",
                         "suffix": "}",
                         "defaultValue": null,
                         "inputType": {
                           "type": "input"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Selection condition"
-                      },
-					  {
-                        "_id": "86r808goo31igpblysfa8zeh",
-                        "index": 16,
-                        "name": "AttributeCondition",
-                        "extensionPoints": [
-                          {
-                            "extensionPoint": "processKeyStroke",
-                            "procedure": "attributeConditionAutoCompletion"
-                          }
-                        ],
-                        "prefix": " !{",
-                        "suffix": "}",
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Required condition"
+                        "label": "Condition(s)"
                       },
 					  {
                         "_id": "i794avqh6vh6aa1cakgfrvni",

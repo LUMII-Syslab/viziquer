@@ -959,7 +959,7 @@
 			string2 = space_c (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+)
 			
 
-			LikeExpression = (space like_c 'LIKE'i space (likeString1 / likeString2)) 
+			LikeExpression = (space like_c ('LIKE'i / '~') space (likeString1 / likeString2)) 
 			likeString1 = (dubble_quote '"' percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? dubble_quote '"') 
 			likeString2 = (quote "'" percent "%"? ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+  percent"%"? quote "'") 
 
@@ -1085,7 +1085,7 @@
 			double_squere_br_open = "" {addContinuation(location(), "[[", 28, false, 4);}
 			double_squere_br_close = "" {addContinuation(location(), "]]", 28, false, 4);}
 			relations = "" {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);}
-			like_c = "" {addContinuation(location(), "LIKE", 30, true, 4);}
+			like_c = "" {addContinuation(location(), "LIKE", 30, true, 4); addContinuation(location(), "~", 30, true, 4);}
 			more = "" {addContinuation(location(), ">", 10, false, 4);}
 			less = "" {addContinuation(location(), "<", 10, false, 4);}
 			percent = "" {addContinuation(location(), "%", 10, false, 4);}

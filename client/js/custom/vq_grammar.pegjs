@@ -638,8 +638,12 @@
 			slash = "\\" {return "\\\\"}
 			string2 = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])+) {return string.join("")}
 
-			LikeExpression = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
+			LikeExpression = LikeExpressionA / LikeExpressionB
+			LikeExpressionA = ('LIKE'i space string:(likeString1 / likeString2)) {return string}
+			LikeExpressionB = ('~' space string:(likeString1B / likeString2B)) {return string}
 			likeString1 = (('"'/ '“' / '”') start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? ('"'/ '“' / '”')) {return {string: makeVar(string), start:start, end:end}}
 			likeString2 = ("'" start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? "'") {return {string: makeVar(string), start:start, end:end}}
+			likeString1B = (('"'/ '“' / '”')  string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ ('"'/ '“' / '”')) {return {string: makeVar(string), start:"%", end:"%"}}
+			likeString2B = ("'" string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ "'") {return {string: makeVar(string), start:"%", end:"%"}}
 
 			BetweenExpression = ('BETWEEN'i space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}

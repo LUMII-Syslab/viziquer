@@ -586,7 +586,7 @@ Template.AddNewAttribute.events({
 		if(document.getElementById("add-new-attribute-add-alt-label") != null) addAltLabel = document.getElementById("add-new-attribute-add-alt-label").checked;
 		if(document.getElementById("add-new-attribute-add-description") != null) addDescription = document.getElementById("add-new-attribute-add-description").checked;
 		if(document.getElementById("add-new-attribute-selection-condition") != null) selectionCondition = document.getElementById("add-new-attribute-selection-condition").value;
-		if(document.getElementById("add-new-attribute-required-condition") != null) requiredCondition = document.getElementById("add-new-attribute-required-condition").value;
+		// if(document.getElementById("add-new-attribute-required-condition") != null) requiredCondition = document.getElementById("add-new-attribute-required-condition").value;
 		if(document.getElementById("add-new-attribute-graph") != null) graph = document.getElementById("add-new-attribute-graph").value;
 		if(document.getElementById("add-new-attribute-graph-instruction") != null) graphInstruction = document.getElementById("add-new-attribute-graph-instruction").value;
 		
@@ -621,12 +621,12 @@ Template.AddNewAttribute.events({
 		}
 		
 		if(selectionCondition != ""){
-			fullText = fullText + " @{" + selectionCondition + "}";
+			fullText = fullText + " {" + selectionCondition + "}";
 		}
 		
-		if(requiredCondition != ""){
-			fullText = fullText + " !{" + requiredCondition + "}";
-		}
+		// if(requiredCondition != ""){
+			// fullText = fullText + " !{" + requiredCondition + "}";
+		// }
 		
 		if($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
 			var selected_elem_id = Session.get("activeElement");
@@ -645,7 +645,7 @@ Template.AddNewAttribute.events({
 			attribute.setAttribute("addAltLabel", addAltLabel);
 			attribute.setAttribute("addDescription", addDescription);
 			attribute.setAttribute("selectionCondition", selectionCondition);
-			attribute.setAttribute("requiredCondition", requiredCondition);
+			// attribute.setAttribute("requiredCondition", requiredCondition);
 			attribute.setAttribute("graph", graph);
 			attribute.setAttribute("graphInstruction", graphInstruction);
 			
@@ -670,7 +670,7 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"]["input"] = addAltLabel.toString() ;
 				compart.subCompartments["Attributes"]["Attributes"]["Add Description"]["input"] = addDescription.toString() ;
 				compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"]["input"] = selectionCondition;
-				compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
+				// compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
 				compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
 				compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
 				
@@ -997,12 +997,12 @@ function getExistingAttributes(){
 				fulltext = fulltext + " {+description}";
 			}
 			if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != "") {
-				fulltext = fulltext + " @{" + f.attributeConditionSelection + "}";
+				fulltext = fulltext + " {" + f.attributeConditionSelection + "}";
 			}
 			
-			if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != "") {
-				fulltext = fulltext + " !{" + f.attributeCondition + "}";
-			}
+			// if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != "") {
+				// fulltext = fulltext + " !{" + f.attributeCondition + "}";
+			// }
 			
 			
 			var disabled = "";
