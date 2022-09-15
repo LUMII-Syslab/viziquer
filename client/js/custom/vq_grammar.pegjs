@@ -549,7 +549,7 @@
 			NumericLiteralUnsigned = DOUBLE / DECIMAL / INTEGER
 			NumericLiteralPositive = DECIMAL_POSITIVE / DOUBLE_POSITIVE / INTEGER_POSITIVE
 			NumericLiteralNegative = DECIMAL_NEGATIVE / DOUBLE_NEGATIVE / INTEGER_NEGATIVE
-			DECIMAL = DECIMAL:([0-9]* "." [0-9]+) {return {Number:DECIMAL.join("")}}
+			DECIMAL = DECIMAL:([0-9]* "." [0-9]+) {return {Number:makeVar(DECIMAL)}}
 			// DOUBLE = DOUBLE:(([0-9]+ "." [0-9]* [eE] [+-]? [0-9]+) / ("." ([0-9])+ [eE] [+-]? [0-9]+) / (([0-9])+ [eE] [+-]? [0-9]+)) {return {Number:DOUBLE.join("")}}
 			DOUBLE = DOUBLE:(([0-9]+ "." [0-9]* [eE] [+-]? [0-9]+) / ("." ([0-9])+ [eE] [+-]? [0-9]+) / (([0-9])+ [eE] [+-]? [0-9]+)) {return {Number:makeVar(DOUBLE)}} 
 			INTEGER = INTEGER:[0-9]+ {return {Number:INTEGER.join("")}}

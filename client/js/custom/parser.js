@@ -1841,6 +1841,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				
 				if(t == null || t.length <3 ){
 					alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, ''); 
+					if(typeof variableNamesAll[expressionTable[key]['type']['local_name']] !== "undefined"){
+						alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '') + "_"+variableNamesAll[expressionTable[key]['type']['local_name']]["counter"]; 
+					}
 					aliasInfo = {};
 					aliasInfo[expressionTable[key]['type']['display_name']] = alias
 					
@@ -1900,7 +1903,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}
 				var variable;
 							
-				if(variableToUse == null && expressionTable[key]["ref"] == null) variable = setVariableName(varName, alias, expressionTable[key]);
+				if(variableToUse == null && expressionTable[key]["ref"] == null) {
+					variable = setVariableName(varName, alias, expressionTable[key]);
+				}
 				else variable = variableToUse;
 
 				if(variable == null) variable = variableToUse;
