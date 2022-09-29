@@ -2638,7 +2638,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	
 	//link
 	if(typeof sparqlTable["linkTriple"] === 'string'){
-		plainRequiredLinks.push(sparqlTable["linkTriple"]);
+		// plainRequiredLinks.push(sparqlTable["linkTriple"]);
+		classes.push(sparqlTable["linkTriple"]);
 	}
 	
 	//class triple

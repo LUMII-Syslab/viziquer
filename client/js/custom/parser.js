@@ -1171,11 +1171,18 @@ function transformBetweenLike(expressionTable){
 			 
 			 var t = expressionTable[key];
 			 var regaxExpression = "";
+			 var arg3 = null;
+			
 			 var regaxExpression = expressionTable[key]["FunctionLike"]["string"];
+			  if(typeof regaxExpression !== "string"){
+				  arg3 = expressionTable[key]["FunctionLike"]["case"];
+				  regaxExpression = regaxExpression["string"];
+			  }	 
+			 
 			 if (expressionTable[key]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
 			 if (expressionTable[key]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
-			 
-			 expressionTable["PrimaryExpression"] = {
+			 if(arg3 == null){
+				expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
                                    "(",
@@ -1233,6 +1240,97 @@ function transformBetweenLike(expressionTable){
                                      } ]
                                  } ]
                              }
+			} else {
+				expressionTable["PrimaryExpression"] = {
+                               "RegexExpression" : [
+                            	   "REGEX",
+                                   "(",
+                                   {
+                                   "OrExpression" : [ {
+                                      "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : t
+                                                           },
+                                                           "UnaryExpressionList" :[]
+                                                         },
+                                                         "MultiplicativeExpressionList" : []
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 }, 
+                                 {
+                                     "Comma": ","
+                                 },
+                                 {
+                                   "OrExpression" : [ {
+                                       "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : {
+                                                               "RDFLiteral" : { 
+                                                            	   "String":'"' + regaxExpression  + '"'
+                                                            	}
+                                                             }
+                                                           },
+                                                           "UnaryExpressionList" : {}
+                                                         },
+                                                         "MultiplicativeExpressionList" : {}
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 },
+								 {
+                                     "Comma": ","
+                                 },
+                                 {
+                                   "OrExpression" : [ {
+                                       "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : {
+                                                               "RDFLiteral" : { 
+                                                            	   "String":'"' + arg3  + '"'
+                                                            	}
+                                                             }
+                                                           },
+                                                           "UnaryExpressionList" : {}
+                                                         },
+                                                         "MultiplicativeExpressionList" : {}
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 }
+								 ]
+                             }
+			}
 		}
 		if (key == "PrimaryExpression" && 
 			typeof expressionTable[key]["iri"]!== 'undefined' && 

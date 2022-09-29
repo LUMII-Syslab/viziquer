@@ -1048,7 +1048,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
       identification: { _id: e._id(), local_name: e.getName()},
       instanceAlias:replaceSymbols(e.getInstanceAlias()),
       isVariable:e.isVariable(),
-      isBlankNode:false,
+      isBlankNode:e.isBlankNode(),
       isUnion:e.isUnion(),
       isUnit:e.isUnit(),
       variableName:e.getVariableName(),
