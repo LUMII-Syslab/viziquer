@@ -2068,6 +2068,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(typeof classesTable["?" + viziQuerExpr["exprVariables"][fil]] !== 'undefined') {
 					className = "?" + viziQuerExpr["exprVariables"][fil];
 					classes = findByVariableName(classesTable, "?"+className);
+
 				} else if(typeof  attributeTable[viziQuerExpr["exprVariables"][fil]] != 'undefined') {
 					className = attributeTable[viziQuerExpr["exprVariables"][fil]]["class"];
 					var attributeNames = findByVariableName(attributeTable, viziQuerExpr["exprVariables"][fil]);
@@ -2076,16 +2077,33 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						classes[classN] = classesTable[classN];
 					}
 					classes[className] = classesTable[className];
-					
-					
-					
+
 					if(classesTable[className]["variableName"].startsWith("?"))className = classesTable[className]["variableName"].substring(1);
 					else className = classesTable[className]["variableName"];
 
 				} 
 				else if(typeof classesTable[viziQuerExpr["exprVariables"][fil]] !== 'undefined') {
 					className = classesTable[viziQuerExpr["exprVariables"][fil]]["variableName"].substring(1);
-					classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
+					// classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
+
+					var classUnderOptional = false;
+					if(bgptype == "plain"){
+						for(var link in linkTable){
+							if(linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
+								classUnderOptional = true;
+								break;
+							}
+						}
+					}
+					if(classUnderOptional != true){
+						classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
+					} else {
+						for(var clazz in classesTable){
+							className = clazz;
+							break;
+						}
+						classes = findByVariableName(classesTable, "?"+className);
+					}
 				}	
 				else{
 					if(typeof className === 'undefined'){
@@ -2094,6 +2112,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							break;
 						}
 						classes = findByVariableName(classesTable, "?"+className);
+
 					}
 				}
 				
@@ -2117,12 +2136,13 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				if(generateOnlyExpression != true){
 					for (var clazz in classes){		
 						if((typeof nodeList["?"+className] !== 'undefined' && typeof nodeList["?"+className]["uses"][clazz] !== 'undefined') || typeof nodeList[className] !== 'undefined' && typeof nodeList[className]["uses"][clazz] !== 'undefined'){	
-							if(typeof classesTable[clazz]["conditions"] === 'undefined') {
-								classesTable[clazz]["conditions"] = [];
-							}
-							classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
-							filterAdded = true;
-							break;
+								if(typeof classesTable[clazz]["conditions"] === 'undefined') {
+									classesTable[clazz]["conditions"] = [];
+								}
+								classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
+								
+								filterAdded = true;
+								break;
 						} 					
 					}
 				}	
@@ -7124,6 +7144,40 @@ function getStartClass(classesTable, linkTable) {
   }
   
   if(classesWithAggregations.length == 1){
+	  
+	var classUnderOptional = false;
+	for(var link in linkTable){
+		if(linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == classesWithAggregations[0]["name"]) {
+			classUnderOptional = linkTable[link]["subject"];
+			break;
+		}
+	}
+	if(classUnderOptional != false){
+	  for (var clazz in classesTable){ 
+	   
+		var aggregations = classesWithAggregations[0]["class"]["aggregations"];
+		for(var aggr in aggregations){
+			if(aggregations[aggr]["exp"].toLowerCase() == "count(.)"){
+				// classesTable[mainClass["name"]]["aggregations"].push({exp:"count(" + classesWithAggregations[i]["name"] + ")", alias:aggregations[aggr]["alias"]});
+				var cn = classesWithAggregations[0]["class"]["instanceAlias"];
+				if(typeof cn === 'undefined' || cn == null) cn = classesWithAggregations[0]["class"]["identification"]["short_name"];
+				classesTable[clazz] = addAggrigateToClass(classesTable[clazz], {exp:"count(" + cn + ")", alias:aggregations[aggr]["alias"]});
+			} else if(aggregations[aggr]["exp"].toLowerCase() == "count_distinct(.)"){
+				// classesTable[mainClass["name"]]["aggregations"].push({exp:"count(" + classesWithAggregations[i]["name"] + ")", alias:aggregations[aggr]["alias"]});
+				var cn = classesWithAggregations[0]["class"]["instanceAlias"];
+				if(typeof cn === 'undefined' || cn == null) cn = classesWithAggregations[0]["class"]["identification"]["short_name"];
+				classesTable[clazz] = addAggrigateToClass(classesTable[clazz], {exp:"count_distinct(" + cn + ")", alias:aggregations[aggr]["alias"]});
+			} else {
+				// classesTable[mainClass["name"]]["aggregations"].push(aggregations[aggr]);
+				classesTable[clazz] = addAggrigateToClass(classesTable[clazz], aggregations[aggr]);
+			}
+		}
+		classesTable[classesWithAggregations[0]["name"]]["aggregations"] = null;
+		return {startClass:{"name":clazz, "class":classesTable[clazz]}, classesTable:classesTable};
+	  }
+	}
+
+
 	return {startClass:classesWithAggregations[0], classesTable:classesTable}
   }
   
@@ -7306,6 +7360,32 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 	var instanceAlias = clazz["instanceAlias"];
 	
 	if(instanceAlias != null && instanceAlias.startsWith("_b")) instanceAlias = null;
+	if(instanceAlias != null && instanceAlias.trim() != ""){
+	var proj = Projects.findOne({_id: Session.get("activeProject")});
+		 if (proj) {
+			//uri
+			if(isURI(instanceAlias) == 3 || isURI(instanceAlias) == 4) {
+				if(proj.decorateInstancePositionConstants == "true") instanceAlias = "=" + instanceAlias;
+			}
+			// number
+			else if(!isNaN(instanceAlias)) {
+				if(proj.decorateInstancePositionConstants == "true") instanceAlias = "=" + instanceAlias;
+			}
+			// string in quotes
+			else if(instanceAlias.startsWith("'") && instanceAlias.endsWith("'") || instanceAlias.startsWith('"') && instanceAlias.endsWith('"')) {
+				if(proj.decorateInstancePositionConstants == "true") instanceAlias = "=" + instanceAlias;
+			}
+			//display label
+			else if(instanceAlias.startsWith('[') && instanceAlias.endsWith(']')) {
+				if(proj.decorateInstancePositionConstants == "true") instanceAlias = "=" + instanceAlias;
+			}
+			//string
+			else if(instanceAlias.match(/^[0-9a-z_]+$/i)) {
+				if(proj.decorateInstancePositionVariable == "true") instanceAlias = "?" + instanceAlias;
+			}
+			else Interpreter.showErrorMsg("Instance identification '" + instanceAlias + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
+		}
+	}
 
 	//name
 	var className = "";

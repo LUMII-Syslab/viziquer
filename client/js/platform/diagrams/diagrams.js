@@ -815,6 +815,8 @@ Template.ontologySettings.events({
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
 					indirectClassMembershipRole: $("#indirect-class-membership-role").val(),
 					showCardinalities: $("#show-cardinalities").is(":checked"),
+					decorateInstancePositionVariable: $("#decorate-instance-position-variable").is(":checked"),
+					decorateInstancePositionConstants: $("#decorate-instance-position-constants").is(":checked"),
 					simpleConditionImplementation: $("#simple-condition-implementation").is(":checked"),
 					autoHideDefaultPropertyName: $("#auto-hide-default-property-name").is(":checked"),
 					showPrefixesForAllNames: $("#show-prefixes-for-all-names").is(":checked"),
@@ -861,6 +863,8 @@ Template.ontologySettings.events({
 		 $("#direct-class-membership-role").val(proj.directClassMembershipRole);
 		 $("#indirect-class-membership-role").val(proj.indirectClassMembershipRole);
 		 $("#show-cardinalities").prop("checked", proj.showCardinalities=="true");
+		 $("#decorate-instance-position-variable").prop("checked", proj.decorateInstancePositionVariable=="true");
+		 $("#decorate-instance-position-constants").prop("checked", proj.decorateInstancePositionConstants=="true");
 		 $("#simple-condition-implementation").prop("checked", proj.simpleConditionImplementation=="true");
 		 $("#auto-hide-default-property-name").prop("checked", proj.autoHideDefaultPropertyName=="true");
 		 $("#show-prefixes-for-all-names").prop("checked", proj.showPrefixesForAllNames=="true");
@@ -1093,6 +1097,18 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.showCardinalities=="true");
+		}
+	},
+	decorateInstancePositionVariable: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.decorateInstancePositionVariable=="true");
+		}
+	},
+	decorateInstancePositionConstants: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.decorateInstancePositionConstants=="true");
 		}
 	},
 	simpleConditionImplementation: function() {

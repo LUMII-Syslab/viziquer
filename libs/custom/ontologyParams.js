@@ -14,6 +14,8 @@ Meteor.methods({
 																										 directClassMembershipRole: list.directClassMembershipRole,
 																										 indirectClassMembershipRole: list.indirectClassMembershipRole,
 																										 showCardinalities: list.showCardinalities,
+																										 decorateInstancePositionVariable: list.decorateInstancePositionVariable,
+																										 decorateInstancePositionConstants: list.decorateInstancePositionConstants,
 																										 autoHideDefaultPropertyName: list.autoHideDefaultPropertyName,
 																										 showPrefixesForAllNames: list.showPrefixesForAllNames,
 																										 showPrefixesForAllNonLocalNames: list.showPrefixesForAllNonLocalNames,

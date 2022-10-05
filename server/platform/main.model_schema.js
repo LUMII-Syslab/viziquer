@@ -243,6 +243,18 @@ Schemas.Projects = new SimpleSchema({
  			 optional: true,
  	    },
 		
+		decorateInstancePositionVariable: {
+ 			 type: String,
+ 			 label: "Projects.decorateInstancePositionVariable",
+ 			 optional: true,
+ 	    },
+		
+		decorateInstancePositionConstants: {
+ 			 type: String,
+ 			 label: "Projects.decorateInstancePositionConstants",
+ 			 optional: true,
+ 	    },
+		
 		simpleConditionImplementation: {
  			 type: String,
  			 label: "Projects.simpleConditionImplementation",

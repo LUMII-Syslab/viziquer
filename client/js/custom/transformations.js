@@ -41,10 +41,41 @@ Interpreter.customMethods({
 	},
 	
 	VQsetGroupBy: function() {
+		
 		 var act_elem = Session.get("activeElement");
 		 var elem = new VQ_Element(act_elem);
 		 comp_val_inst = elem.getCompartmentValue("Instance");
 		 comp_val_group = elem.getCompartmentValue("Group by this");
+		 if(comp_val_inst != null){
+			 var proj = Projects.findOne({_id: Session.get("activeProject")});
+			 if (proj) {
+				Interpreter.destroyErrorMsg();
+				if(comp_val_inst!= null && !comp_val_inst.trim().startsWith("?") && !comp_val_inst.trim().startsWith("=")){
+					//uri
+					if(isURI(comp_val_inst) == 3 || isURI(comp_val_inst) == 4) {
+						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+					}
+					// number
+					else if(!isNaN(comp_val_inst)) {
+						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+					}
+					// string in quotes
+					else if(comp_val_inst.startsWith("'") && comp_val_inst.endsWith("'") || comp_val_inst.startsWith('"') && comp_val_inst.endsWith('"')) {
+						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+					}
+					//display label
+					else if(comp_val_inst.startsWith('[') && comp_val_inst.endsWith(']')) {
+						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+					}
+					//string
+					else if(comp_val_inst.match(/^[0-9a-z_]+$/i)) {
+						if(proj.decorateInstancePositionVariable == "true") comp_val_inst = "?" + comp_val_inst;
+					}
+					else Interpreter.showErrorMsg("Instance identification '" + comp_val_inst + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
+				} 	 
+			 }
+		 }
+		 
  		 if (comp_val_group == "true")
 		 {
 		   if (comp_val_inst == null )
@@ -1641,3 +1672,14 @@ generateSymbolTable = async function() {
 	if(Session.get("activeElement") != null && typeof abstractQueryTable["symbolTable"] !== 'undefined' && typeof abstractQueryTable["symbolTable"][Session.get("activeElement")] !== 'undefined')return {symbolTable:abstractQueryTable["symbolTable"][Session.get("activeElement")], rootSymbolTable:abstractQueryTable["symbolTable"]["root"], abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
     return {symbolTable:{}, rootSymbolTable:{}, abstractQueryTable:abstractQueryTable["root"], symbolTableFull:abstractQueryTable["symbolTable"]};
   }
+  
+  // string -> int
+// function checks if the text is uri
+// 0 - not URI, 3 - full form, 4 - short form
+isURI = function(text) {
+  if(text.indexOf("://") != -1)
+    return 3;
+  else
+    if(text.indexOf(":") != -1) return 4;
+  return 0;
+};

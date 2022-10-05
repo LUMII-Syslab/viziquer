@@ -34,10 +34,16 @@ Interpreter.customMethods({
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"]);
-			 Session.set("generatedSparql", result["SPARQL_text"]);
-		 setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+			
 
-		  if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		  if(result["blocking"] != true){
+			Session.set("generatedSparql", result["SPARQL_text"]);
+			setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+			executeSparqlString(result["SPARQL_text"]);
+		  } else {
+			   Session.set("generatedSparql", "");
+			   setText_In_SPARQL_Editor("", result);
+		  }
 	  }
     })
   },
@@ -69,10 +75,14 @@ Interpreter.customMethods({
 			 var rootClass = abstractQueryTable["root"];
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"], result);
-			 Session.set("generatedSparql", result["SPARQL_text"]);
-		 setText_In_SPARQL_Editor(result["SPARQL_text"]);
+			 
+		 
 
-		 if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		 if(result["blocking"] != true){
+			 Session.set("generatedSparql", result["SPARQL_text"]);
+			 setText_In_SPARQL_Editor(result["SPARQL_text"]);
+			 executeSparqlString(result["SPARQL_text"]);
+		 }
 	  }
     })
   },
@@ -131,10 +141,14 @@ Interpreter.customMethods({
 			 var result = generateSPARQLtext(abstractQueryTable);
 			 // console.log(result["SPARQL_text"]);
 
-		   Session.set("generatedSparql", result["SPARQL_text"]);
-		   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
-
-		   if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		   if(result["blocking"] != true){
+			   Session.set("generatedSparql", result["SPARQL_text"]);
+			   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+			   executeSparqlString(result["SPARQL_text"]);
+		   } else {
+			   Session.set("generatedSparql", "");
+			   setText_In_SPARQL_Editor("", result);
+		   }
 		}
        })
     } else {
@@ -212,9 +226,15 @@ Interpreter.customMethods({
 			 // console.log(result["SPARQL_text"]);
 
 		   Session.set("generatedSparql", result["SPARQL_text"]);
-		   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+		   
 
-		   if(result["blocking"] != true)executeSparqlString(result["SPARQL_text"]);
+		   if(result["blocking"] != true){
+			   setText_In_SPARQL_Editor(result["SPARQL_text"], result);
+			   executeSparqlString(result["SPARQL_text"]);
+		   } else {
+			   Session.set("generatedSparql", "");
+			   setText_In_SPARQL_Editor("", result);
+		   }
 	  }
        })
      } else {
@@ -384,9 +404,14 @@ async function GenerateSPARQL_for_ids(list_of_ids, root_elements_ids) {
 	   var rootClass = abstractQueryTable["root"];
 	  var result = generateSPARQLtext(abstractQueryTable);
 	  // console.log(result["SPARQL_text"]);
+	  if(result["blocking"] != true){
+		Session.set("generatedSparql", result["SPARQL_text"]);
+		setText_In_SPARQL_Editor(result["SPARQL_text"]);
+	  } else {
+		Session.set("generatedSparql", "");
+		setText_In_SPARQL_Editor("");
+	  }
 
-	   Session.set("generatedSparql", result["SPARQL_text"]);
-	   setText_In_SPARQL_Editor(result["SPARQL_text"]);
 
 	   $('#vq-tab a[href="#sparql"]').tab('show');
 	   // Interpreter.destroyErrorMsg();
@@ -435,9 +460,11 @@ function executeSparqlString(sparql, paging_info) {
                         paging_info: paging_info
               },
            };
+		   
 
   Utilities.callMeteorMethod("executeSparql", list, function(res) {
-    if (res.status == 200) {
+    
+	if (res.status == 200) {
 
       if (!paging_info || (paging_info && !paging_info.download)) {
         Session.set("executedSparql", res.result);
@@ -1235,6 +1262,14 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 
 	var messages = [];
 	var prefixTable = [];
+	if(clazz.instanceAlias != null && clazz.instanceIsConstant == false && clazz.instanceIsVariable == false){
+		messages.push({
+			"type" : "Error",
+			"message" : "Instance identification '"+clazz["instanceAlias"]+"' can not be interpreted as an identifier (variable) or a constant (URI, number, string)",
+			"listOfElementId" : [clazz["identification"]["_id"]],
+			"isBlocking" : true
+		});
+	}
 
 	var classMembership;
 	if(typeof clazz["indirectClassMembership"] !== 'undefined' && clazz["indirectClassMembership"] == true && typeof parameterTable["indirectClassMembershipRole"] !== 'undefined' && parameterTable["indirectClassMembershipRole"] != null && parameterTable["indirectClassMembershipRole"] != ""){

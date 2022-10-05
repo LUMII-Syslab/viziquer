@@ -95,12 +95,21 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
 	 var schemaName = await dataShapes.schema.schemaType;
-	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1){ 
-		if(schemaName.toLowerCase() == "wikidata" && ((obj_class.instanceAlias.indexOf("[") > -1 && obj_class.instanceAlias.endsWith("]")))){
-		obj_class.instanceAlias = "wd:"+obj_class.instanceAlias;}
-		obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
+	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1 && (obj_class.instanceIsConstant == true || obj_class.instanceIsVariable == true)){ 
+		if(schemaName.toLowerCase() == "wikidata" && obj_class.instanceAlias.indexOf(":") == -1 &&((obj_class.instanceAlias.indexOf("[") > -1 && obj_class.instanceAlias.endsWith("]")))){
+			obj_class.instanceAlias = "wd:"+obj_class.instanceAlias;
+		}	
+
+		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
+			// var uriResolved = await dataShapes.resolveIndividualByName({name: obj_class.instanceAlias});
+			// if(uriResolved.complete == true) return true;
+			// else Interpreter.showErrorMsg("Instance identification URI '" + obj_class.instanceAlias + "' can not be found in the schema", -3);
+			// console.log("uriResolved", uriResolved)
+			return true;
+		}
+		
+		obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
 	}
-	  
 	
     var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
@@ -586,10 +595,20 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
 		 
-          if (instanceAliasIsURI) {
+          if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
-			 
-			if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
+			 console.log("strURI", strURI)
+			 var schemaName = await dataShapes.schema.schemaType;
+			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
+						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
+						// var cls = await dataShapes.resolveIndividualByName({name: id})
+						var cls = await dataShapes.getIndividualName(strURI)
+						if(cls != null && cls != ""){
+							strURI = cls;
+						}
+
+			}
+			else if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
 				var prefix = strURI.substring(0, strURI.indexOf(":"));
 				var name = strURI.substring(strURI.indexOf(":")+1);
 				var prefixes = query.prefixes;
@@ -949,6 +968,8 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 					graphInstruction: link.link.getGraphInstruction(),
                     identification: { _id: elem._id(), local_name: elem.getName()},
                     instanceAlias: replaceSymbols(elem.getInstanceAlias()),
+					instanceIsConstant: checkIfInstanceIsConstantOrVariable(elem.getInstanceAlias(), "="),
+					instanceIsVariable: checkIfInstanceIsConstantOrVariable(elem.getInstanceAlias(), "?"),
                     isVariable:elem.isVariable(),
                     isBlankNode:elem.isBlankNode(),
                     isUnion:elem.isUnion(),
@@ -1047,6 +1068,8 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
     var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), local_name: e.getName()},
       instanceAlias:replaceSymbols(e.getInstanceAlias()),
+	  instanceIsConstant: checkIfInstanceIsConstantOrVariable(e.getInstanceAlias(), "="),
+	  instanceIsVariable: checkIfInstanceIsConstantOrVariable(e.getInstanceAlias(), "?"),
       isVariable:e.isVariable(),
       isBlankNode:e.isBlankNode(),
       isUnion:e.isUnion(),
@@ -1118,7 +1141,28 @@ function replaceArithmetics(parse_obj_table, sign){
 
 function replaceSymbols(instanceAlias){
 	if(instanceAlias != null && isURI(instanceAlias) == 4) instanceAlias = instanceAlias.replace(/,/g, '\\,');
+	if(instanceAlias != null && (instanceAlias.startsWith("=") || instanceAlias.startsWith("?"))) instanceAlias = instanceAlias.substring(1);
 	return instanceAlias
+}
+
+function checkIfInstanceIsConstantOrVariable(instanceAlias, instanceMode){
+	if(instanceAlias != null){
+		if(instanceAlias.startsWith(instanceMode)) return true;
+		if(instanceMode == "="){
+			//uri
+			if(isURI(instanceAlias) == 3 || isURI(instanceAlias) == 4) return true;
+			// number
+			if(!isNaN(instanceAlias)) return true;
+			// string in quotes
+			if(instanceAlias.startsWith("'") && instanceAlias.endsWith("'") || instanceAlias.startsWith('"') && instanceAlias.endsWith('"')) return true;
+			//display label
+			if(instanceAlias.startsWith('[') && instanceAlias.endsWith(']')) return true;
+		} else if(instanceMode == "?"){
+			//string
+			if(instanceAlias.match(/^[0-9a-z_]+$/i)) return true;
+		}
+	}
+	return false;
 }
 
 function getGraphFullForm(graph, prefixes){
@@ -1253,7 +1297,7 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
    			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
 async function resolveTypeFromSchemaForIndividual(id, schemaName) {
-					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]")))){
+					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]"))) ){
 						id = "wd:"+id;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
 						var cls = await dataShapes.getIndividualName(id)

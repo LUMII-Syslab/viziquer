@@ -3149,25 +3149,29 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					//propety = "string"
 					// filter as triple
 					
-					if(visited != 1 && (Usestringliteralconversion == "OFF" || className.startsWith("_")) && typeof expressionTable[key]['Relation'] !== 'undefined' && expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
-					((((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME") 
-					    || typeof left["Path"] !== 'undefined' 
-						|| typeof left["Reference"] !== 'undefined'
-						|| (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined')
-						) && typeof right["var"] === 'undefined' 
-						&& typeof right["Path"] === 'undefined' 
-						&& typeof right["Reference"] === 'undefined'
-						)
-					    ||(((typeof right["var"] !== 'undefined' && typeof right["var"]["kind"] !== 'undefined' && right["var"]["kind"] == "PROPERTY_NAME") 
-						|| typeof right["Path"] !== 'undefined' 
-						|| typeof right["Reference"] !== 'undefined'
-						)
-						&& typeof left["var"] === 'undefined' 
-						&& typeof left["Path"] === 'undefined' 
-						&& typeof left["Reference"] === 'undefined'
-						&& (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] === 'undefined')
-						)
-					)){
+					if(visited != 1 && (Usestringliteralconversion == "OFF" || className.startsWith("_")) 
+						&& typeof expressionTable[key]['Relation'] !== 'undefined' 
+						&& expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
+							(
+							   (((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME" && left["var"]["ref"] == null) 
+								|| typeof left["Path"] !== 'undefined' 
+								|| typeof left["Reference"] !== 'undefined'
+								|| (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined')
+								) && typeof right["var"] === 'undefined' 
+								&& typeof right["Path"] === 'undefined' 
+								&& typeof right["Reference"] === 'undefined'
+								)
+								||(((typeof right["var"] !== 'undefined' && typeof right["var"]["kind"] !== 'undefined' && right["var"]["kind"] == "PROPERTY_NAME") 
+								|| typeof right["Path"] !== 'undefined' 
+								|| typeof right["Reference"] !== 'undefined'
+								)
+								&& typeof left["var"] === 'undefined' 
+								&& typeof left["Path"] === 'undefined' 
+								&& typeof left["Reference"] === 'undefined'
+								&& (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] === 'undefined')
+								)
+							))
+					{
 						var tripleTableTemp = tripleTable;
 						tripleTable = [];
 						var VarL = generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
