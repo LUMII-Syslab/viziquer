@@ -63,6 +63,9 @@ Meteor.methods({
                 // ERROR - pass the original SPARQL to the server
                 _.extend(sparql_log_entry, {successfull:false, error_message:ex})
                 console.error(ex);
+				
+				options.params.params.query = buildEnhancedQuery(options.params.params.query, "SELECT", "SELECT * WHERE {", "} LIMIT 50");
+                limit_set = true;
             };
         }
 
@@ -344,8 +347,8 @@ var DO_CALL_PROD = function(method, url, options, cb) {
     }
 }
 
-// var DO_CALL = DO_CALL_DEBUG;
-var DO_CALL = DO_CALL_PROD;
+var DO_CALL = DO_CALL_DEBUG;
+//var DO_CALL = DO_CALL_PROD;
 
 // NOTE: Blazegraph does not like an empty value for the parameter 'default-graph-uri'.
 // NOTE: Blazegraph seems to like User-Agent.
