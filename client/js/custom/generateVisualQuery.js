@@ -100,6 +100,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 					startClass["class"]["conditions"] = [];
 				}
 				startClass["class"]["conditions"].push(abstractTable["filterTable"][fil]["filterString"])
+				// console.log("condition 5", abstractTable["filterTable"][fil]["filterString"])
 			}
 		}
 
@@ -377,6 +378,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 					startClass["class"]["conditions"] = [];
 				}
 				startClass["class"]["conditions"].push(abstractTable["filterTable"][fil]["filterString"])
+				// console.log("condition 6", abstractTable["filterTable"][fil]["filterString"])
 			}
 		}
 			
@@ -2059,17 +2061,16 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 			var filterAdded = false;
 			
-			
-	
 			var className;
 			for(var fil in viziQuerExpr["exprVariables"]){
 				var classes = [];
-				
+				// class name as property
 				if(typeof classesTable["?" + viziQuerExpr["exprVariables"][fil]] !== 'undefined') {
 					className = "?" + viziQuerExpr["exprVariables"][fil];
 					classes = findByVariableName(classesTable, "?"+className);
-
-				} else if(typeof  attributeTable[viziQuerExpr["exprVariables"][fil]] != 'undefined') {
+				} 
+				// attribute
+				else if(typeof  attributeTable[viziQuerExpr["exprVariables"][fil]] != 'undefined') {
 					className = attributeTable[viziQuerExpr["exprVariables"][fil]]["class"];
 					var attributeNames = findByVariableName(attributeTable, viziQuerExpr["exprVariables"][fil]);
 					for(var attributeName in attributeNames){
@@ -2082,6 +2083,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					else className = classesTable[className]["variableName"];
 
 				} 
+				//class name
 				else if(typeof classesTable[viziQuerExpr["exprVariables"][fil]] !== 'undefined') {
 					className = classesTable[viziQuerExpr["exprVariables"][fil]]["variableName"].substring(1);
 					// classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
@@ -2104,7 +2106,30 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						}
 						classes = findByVariableName(classesTable, "?"+className);
 					}
-				}	
+				}
+				// bind attribute
+				else if(typeof bindTable[viziQuerExpr["exprVariables"][fil]]  !== 'undefined'){
+					className = bindTable[viziQuerExpr["exprVariables"][fil]]["class"];
+					var classUnderOptional = false;
+					if(bgptype == "plain"){
+						for(var link in linkTable){
+							if(linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
+								classUnderOptional = true;
+								break;
+							}
+						}
+					}
+					if(classUnderOptional != true){
+						classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
+						
+					} else {
+						for(var clazz in classesTable){
+							className = clazz;
+							break;
+						}
+						classes = findByVariableName(classesTable, "?"+className);
+					}
+				}
 				else{
 					if(typeof className === 'undefined'){
 						for(var clazz in classesTable){
@@ -2112,7 +2137,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							break;
 						}
 						classes = findByVariableName(classesTable, "?"+className);
-
 					}
 				}
 				
@@ -2140,6 +2164,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									classesTable[clazz]["conditions"] = [];
 								}
 								classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
+								// console.log("condition 7", viziQuerExpr["exprString"])
 								
 								filterAdded = true;
 								break;
@@ -2157,6 +2182,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								classesTable[clazz]["conditions"] = [];
 							}
 							classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
+							// console.log("condition 8", viziQuerExpr["exprString"])
 							filterAdded = true;
 							break;
 						}
@@ -3528,14 +3554,26 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				bindTable[where["variable"].substring(1)]["class"] = attributeTable[attribute]["class"];
 			}
 		}
-		if(typeof classesTable[viziQuerExpr["exprVariables"][0]] !== 'undefined'){
-			classesTable[viziQuerExpr["exprVariables"][0]] = addAttributeToClass(classesTable[viziQuerExpr["exprVariables"][0]], attributeInfo);
-			// console.log("18", attributeInfo)
-			variableList[where["variable"]] = "seen";
-			bindTable[where["variable"].substring(1)]["seen"] = true;
-			bindTable[where["variable"].substring(1)]["class"] = viziQuerExpr["exprVariables"][0];
-		}
-		
+		if(typeof classesTable[viziQuerExpr["exprVariables"][0]] !== 'undefined'){		
+			var className = viziQuerExpr["exprVariables"][0];
+			var classUnderOptional = false;
+			if(bgptype == "plain"){
+				for(var link in linkTable){
+					if(linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
+						classUnderOptional = true;
+						break;
+					}
+				}
+			}
+
+			if(classUnderOptional != true){
+				classesTable[viziQuerExpr["exprVariables"][0]] = addAttributeToClass(classesTable[viziQuerExpr["exprVariables"][0]], attributeInfo);
+				// console.log("18", attributeInfo, bgptype)
+				variableList[where["variable"]] = "seen";
+				bindTable[where["variable"].substring(1)]["seen"] = true;
+				bindTable[where["variable"].substring(1)]["class"] = viziQuerExpr["exprVariables"][0];
+			} 
+		}	
 	}
 	// type=functionCall
 	if(where["type"] == "functionCall"){
@@ -5906,6 +5944,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						if(classTableAdded.indexOf(clazz) !== -1){
 							if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
 							classesTable[clazz]["conditions"].push(attrName+ " = " + objectNameParsed["value"]);
+							console.log("condition 1", attrName+ " = " + objectNameParsed["value"])
 							break;
 						}
 					}
@@ -6340,6 +6379,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													classesTable[className]["conditions"] = [];
 												}
 												classesTable[className]["conditions"].push(expr);
+												console.log("condition 2", expr)
 												// break;
 											// }
 										}
@@ -6452,6 +6492,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												classesTable[sclass]["conditions"] = [];
 											}
 											classesTable[sclass]["conditions"].push(expr);
+											console.log("condition 3", expr)
 											break;
 										}
 									}
@@ -6950,6 +6991,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 								}
 								if(!clazz["conditions"].includes(childerenClass["conditions"][condition])) {
 									clazz["conditions"].push(childerenClass["conditions"][condition]);
+									console.log("condition 4", childerenClass["conditions"][condition])
 								}
 							}
 						
