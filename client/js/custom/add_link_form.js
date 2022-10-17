@@ -7,12 +7,12 @@ Interpreter.customMethods({
 		var start_elem_id = Session.get("activeElement");			
 		var currentElement = new VQ_Element(start_elem_id);
 		var joinLinkDesc = "join information from the host node and the linked node";
-		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
+		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about its links";
 		
 		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
 		{
 			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its links";
 		}
 		
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
@@ -560,7 +560,7 @@ Template.AddLink.events({
 			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
 			if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") {
 				joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its links";
 			}
 		} else {
 			
@@ -579,14 +579,14 @@ Template.AddLink.events({
 					targetClassTextS = " to" + className;
 				}
 				joinLinkDesc = "join information from "+currentElement.getName()+" and its linked " + checkedName.attr("value") + targetClassText;
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about " + checkedName.attr("value") +" links " + targetClassTextS;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its " + checkedName.attr("value") +" links " + targetClassTextS;
 			} else {
 				if(className != null && className != "") {
 					targetClassText = " (from " + className + ")";
 					targetClassTextS = " from" + className;
 				}
 				joinLinkDesc = "join information from "+currentElement.getName()+" and its incoming link by " + checkedName.attr("value") + targetClassText;
-				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about incoming " + checkedName.attr("value")+" links" +targetClassTextS;
+				subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about its incoming " + checkedName.attr("value")+" links" +targetClassTextS;
 			}
 		}
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);
