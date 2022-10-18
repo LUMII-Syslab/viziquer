@@ -383,7 +383,14 @@ Template.AddLink.events({
 					$("#aggregate-wizard-form").modal("show");
 				} else {
 					//alert("No class selected - wizard may work unproperly");
-					Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+					// Interpreter.showErrorMsg("No proper link-class pair selected to proceed with Aggregate wizard.", -3);
+					Interpreter.destroyErrorMsg();
+					Template.AggregateWizard.defaultAlias.set("");
+					Template.AggregateWizard.showDisplay.set("block");
+					Template.AggregateWizard.fromAddLink.set(true);
+					Template.AggregateWizard.placeholder.set("(linked instance itself)");
+					
+					$("#aggregate-wizard-form").modal("show");
 				}
 			}
 
@@ -491,7 +498,7 @@ Template.AddLink.events({
 					var newStartClass = new VQ_Element(element.start.obj._id);
     			} else {
     				var newStartClass = new VQ_Element(element.end.obj._id);
-    			} console.log(newStartClass.getName());
+    			} 
     			Template.ConnectClasses.IDS.set({name: newStartClass.getName(), id: activeClass.obj["_id"]});						
 			}					
 		} else {
@@ -929,139 +936,144 @@ async function getAllAssociations(){
 			// _.each(ascDetails, function(e){
 			// 	if (e.max) hasCardinalities = true;
 			// })
-
+			
 			var className = startElement.getName();
-			
+				
 			if(typeof className === "undefined" || className === null) className= "";
-			
+				
 			// var schema = new VQ_Schema();
 			var proj = Projects.findOne({_id: Session.get("activeProject")});
+			if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
+				var newStartElement = startElement;
+				
+				if ((startElement.isUnion() || startElement.isUnit()) && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
+					if (startElement.getLinkToRoot()){
+						var element = startElement.getLinkToRoot().link.getElements();
+						if (startElement.getLinkToRoot().start) {
+							newStartElement = new VQ_Element(element.start.obj._id);
+							
+							className = newStartElement.getName();
+						} else {
+							newStartElement = new VQ_Element(element.end.obj._id);						
+							className = newStartElement.getName();
+						}						
+					}					
+				} 
 
-			if (startElement.isUnion() && !startElement.isRoot()) { // [ + ] element, that has link to upper class 
-				if (startElement.getLinkToRoot()){
-					var element = startElement.getLinkToRoot().link.getElements();
-					if (startElement.getLinkToRoot().start) {
-						var newStartClass = new VQ_Element(element.start.obj._id);						
-        				className = newStartClass.getName();
-        			} else {
-        				var newStartClass = new VQ_Element(element.end.obj._id);						
-        				className = newStartClass.getName();
-        			}						
-				}					
-			} 
+				// if (schema.classExist(className)) {
+					
+					// var allAssociations = schema.findClassByName(className).getAllAssociations();
 
-			// if (schema.classExist(className)) {
-				
-				// var allAssociations = schema.findClassByName(className).getAllAssociations();
+					var param = {propertyKind:'ObjectExt', linksWithTargets:true};
+					var filter = $("#mySearch").val().toLowerCase();
+					if(filter != null) param["filter"] = filter;
+					param["limit"] = Template.AddLink.Count.get();
 
-				var param = {propertyKind:'ObjectExt', linksWithTargets:true};
-				var filter = $("#mySearch").val().toLowerCase();
-				if(filter != null) param["filter"] = filter;
-				param["limit"] = Template.AddLink.Count.get();
-
-				if ($("#dbp_for_links").is(":checked") ) {
-					param.basicOrder = true;
-				}
-				
-				var prop = await dataShapes.getProperties(param, startElement);
-				
-				var allAssociations = prop["data"];
-				
-				// var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = dataShapes.schema.schemaType;
-				// if (proj) {
-					// if (proj.schema) {
-						// schemaName = proj.schema;
-					// };
-				// }
-				
-				_.each(allAssociations, function(e){
-					if ( e.mark === 'out') {
-						e.type = '=>';
-						e.is = "";
-						e.of = "";
-					} else {
-						e.type = '<=';
-						e.is = "is";
-						e.of = "of";
+					if ($("#dbp_for_links").is(":checked") ) {
+						param.basicOrder = true;
 					}
 					
-					if (e.class_iri !== undefined && e.class_iri !== null) {
-						var prefix;
-						if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
-						else prefix = e.class_prefix+":";
-						e.short_class_name = prefix + e.class_display_name;						
-					}
-					else
-						e.short_class_name = "";
+					var prop = await dataShapes.getProperties(param, newStartElement);
 					
-				});
+					var allAssociations = prop["data"];
+					
+					// var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = dataShapes.schema.schemaType;
+					// if (proj) {
+						// if (proj.schema) {
+							// schemaName = proj.schema;
+						// };
+					// }
+					
+					_.each(allAssociations, function(e){
+						if ( e.mark === 'out') {
+							e.type = '=>';
+							e.is = "";
+							e.of = "";
+						} else {
+							e.type = '<=';
+							e.is = "is";
+							e.of = "of";
+						}
+						
+						if (e.class_iri !== undefined && e.class_iri !== null) {
+							var prefix;
+							if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
+							else prefix = e.class_prefix+":";
+							e.short_class_name = prefix + e.class_display_name;						
+						}
+						else
+							e.short_class_name = "";
+						
+					});
 
-				//remove duplicates - moved to getAllAssociations()
-				//allAssociations = allAssociations.filter(function(obj, index, self) { 
-				//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
-				//});
-				_.each(allAssociations, function(e){
-					var cardinality = "";
-					var colorLetters = ""; 				
-					if (proj) {				
-						if (proj.showCardinalities=="true"){ 
-							if (e.type == "<=") {
-								cardinality = cardinality.concat("[*]");
-								colorLetters = colorLetters.concat("color: purple");
-							} else {
-								//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
-								var maxCard = e.x_max_cardinality;
-								
-								if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
+					//remove duplicates - moved to getAllAssociations()
+					//allAssociations = allAssociations.filter(function(obj, index, self) { 
+					//	return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
+					//});
+					_.each(allAssociations, function(e){
+						var cardinality = "";
+						var colorLetters = ""; 				
+						if (proj) {				
+							if (proj.showCardinalities=="true"){ 
+								if (e.type == "<=") {
 									cardinality = cardinality.concat("[*]");
 									colorLetters = colorLetters.concat("color: purple");
-								}
-							}
-							/*if (!hasCardinalities || e.type == "<=") { 
-								cardinality = cardinality.concat("[*]");
-								colorLetters = colorLetters.concat("color: purple");
-							} else {
-								_.each(ascDetails, function(d){
-									//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
-									if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
-										&& d.max == -1) {
+								} else {
+									//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
+									var maxCard = e.x_max_cardinality;
+									
+									if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
 										cardinality = cardinality.concat("[*]");
 										colorLetters = colorLetters.concat("color: purple");
 									}
-									//}
-								});
-								
-							}*/
+								}
+								/*if (!hasCardinalities || e.type == "<=") { 
+									cardinality = cardinality.concat("[*]");
+									colorLetters = colorLetters.concat("color: purple");
+								} else {
+									_.each(ascDetails, function(d){
+										//if (d.name == e.name && ((d.from == className && d.to == e.class && e.type == "=>") || (d.from == e.class && d.to == className && e.type == "<="))) { 
+										if (d.name == e.name && (d.from == className && d.to == e.class && e.type == "=>") 
+											&& d.max == -1) {
+											cardinality = cardinality.concat("[*]");
+											colorLetters = colorLetters.concat("color: purple");
+										}
+										//}
+									});
+									
+								}*/
+							}
+						} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
+						
+						
+						//prefix:name
+						var prefix;
+						if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))prefix = "";
+						else prefix = e.prefix+":";
+						var eName = prefix + e.display_name;
+						
+						
+						if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
+						else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
+						
+						if (e.class == className && e.type == "=>"){ //Link to itself
+							ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters, is:e.is, of:e.of});
 						}
-					} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
-					
-					
-					//prefix:name
-					var prefix;
-					if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))prefix = "";
-					else prefix = e.prefix+":";
-					var eName = prefix + e.display_name;
-					
-					
-					if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-					else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-					
-					if (e.class == className && e.type == "=>"){ //Link to itself
-						ascReverse.push({name: e.name, class: e.short_class_name, type: "<=", card: cardinality, clr: colorLetters, is:e.is, of:e.of});
-					}
-				});
-			// }
-
-			//default value for any case
+					});
+				// }
+			}
+				//default value for any case
 			if (proj){
-      			if (proj.showCardinalities=="true")
-      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""}); 
+				if (proj.showCardinalities=="true")
+					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""}); 
 				else {
-      				ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: "", is:"", of:""});
-      			}
-      		}
-      		asc = asc.concat(ascReverse);
+					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: "", is:"", of:""});
+				}
+			}
+			asc = asc.concat(ascReverse);
+			
+			
 
       		if (proj){
       			var selfName = "";
@@ -1087,11 +1099,13 @@ async function getAllAssociations(){
 						selfName = previousVQelement.getName();
 					}
 				}
-      			if (proj.showCardinalities=="true")
-      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""}); 
-				else {
-      				asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""});
-      			}
+				if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
+					if (proj.showCardinalities=="true")
+						asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""}); 
+					else {
+						asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""});
+					}
+				}
       		}
 
       		asc = asc.filter(function(obj, index, self) { 

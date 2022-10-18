@@ -20807,31 +20807,44 @@ options = arguments[1];
         		};
         	}
         	async function getProperties(place, priority){
-        				
 				if (options.text.split(/[.\/]/).length <= 1 && options.text.indexOf("^") ==-1){
 					var selected_elem_id = Session.get("activeElement");
 					var act_el;
 					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = new VQ_Element(selected_elem_id)
 						}
-							
-					var prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
-					prop = prop["data"];
-					
-					var schemaName = dataShapes.schema.schemaType;
-					
-					for(var cl in prop){
-						var prefix;
-						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-						else prefix = prop[cl]["prefix"]+":";
-
-						var propName = prefix+prop[cl]["display_name"]
-						await addContinuation(place, propName, 100, false, 1);
-					}
+					if((act_el.isUnit() != true && act_el.isUnion() != true) || !act_el.isRoot()) {
 						
-					await getAssociations(place, 95);
-					await getPropertyAlias(place, 93);
+						var newStartElement = act_el;
+						if ((act_el.isUnion() || act_el.isUnit()) && !act_el.isRoot()) { // [ + ] element, that has link to upper class 
+							if (act_el.getLinkToRoot()){
+								var element = act_el.getLinkToRoot().link.getElements();
+								if (act_el.getLinkToRoot().start) {
+									newStartElement = new VQ_Element(element.start.obj._id);
+								} else {
+									newStartElement = new VQ_Element(element.end.obj._id);						
+								}						
+							}					
+						}
+						
+						var prop = await dataShapes.getProperties({propertyKind:'Data'}, newStartElement);
+						prop = prop["data"];
+						
+						var schemaName = dataShapes.schema.schemaType;
+						
+						for(var cl in prop){
+							var prefix;
+							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							else prefix = prop[cl]["prefix"]+":";
+
+							var propName = prefix+prop[cl]["display_name"]
+							await addContinuation(place, propName, 100, false, 1);
+						}
+							
+						await getAssociations(place, 95);
+						await getPropertyAlias(place, 93);
+					}
 				}
    			}
         	async function getPropertyAlias(place, priority){	
@@ -20853,22 +20866,34 @@ options = arguments[1];
     			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = new VQ_Element(selected_elem_id)
     			}
-    					
-    			var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, act_el);
-    			prop = prop["data"];
-				
-				var schemaName = dataShapes.schema.schemaType;
-    			
-    			for(var cl in prop){
-    				var prefix;
-    				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-    				else prefix = prop[cl]["prefix"]+":";
+    			if((act_el.isUnit() != true && act_el.isUnion() != true) || !act_el.isRoot()) {	
+					var newStartElement = act_el;
+						if ((act_el.isUnion() || act_el.isUnit()) && !act_el.isRoot()) { // [ + ] element, that has link to upper class 
+							if (act_el.getLinkToRoot()){
+								var element = act_el.getLinkToRoot().link.getElements();
+								if (act_el.getLinkToRoot().start) {
+									newStartElement = new VQ_Element(element.start.obj._id);
+								} else {
+									newStartElement = new VQ_Element(element.end.obj._id);						
+								}						
+							}					
+					}
+					var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, newStartElement);
+					prop = prop["data"];
+					
+					var schemaName = dataShapes.schema.schemaType;
+					
+					for(var cl in prop){
+						var prefix;
+						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+						else prefix = prop[cl]["prefix"]+":";
 
-    				var propName = prefix+prop[cl]["display_name"]
-					if(prop[cl]["mark"] == "in") propName = "^" + propName;
-    				await addContinuation(place, propName, priority, false, 2);
-    			}
+						var propName = prefix+prop[cl]["display_name"]
+						if(prop[cl]["mark"] == "in") propName = "^" + propName;
+						await addContinuation(place, propName, priority, false, 2);
+					}
+				}
         	}
         			
         	async function addContinuation(place, continuation, priority, spaceBefore, type, start_end){
@@ -21117,75 +21142,93 @@ options = arguments[1];
     			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
     				act_el = new VQ_Element(selected_elem_id)
     			}
-				var loc = await location();
-				var textEnd = loc.end.offset;
-				var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-        		var varibleName = makeVar(o);
-        		var params = {main:{propertyKind:'Data',"limit": 30}}
-        		var isInv = false;
-    						
-        		if(pathParts.length > 1){
-					
-					var varName = pathParts[pathParts.length-2];
-					if(varName.startsWith("^")){
-						params.element = {"pList": {"out": [{"name": varName.substring(1), "type": "out"}]}}
-					} else params.element = {"pList": {"in": [{"name": varName, "type": "in"}]}}
-    				params.main.filter=pathParts[pathParts.length-1];
-    				if(pathParts[pathParts.length-1].startsWith("^")){
-    					isInv = true;
-    					params.main.filter=pathParts[pathParts.length-1].substr(1);
-						// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
-    				} else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
-						isInv = true;
-    					params.main.filter=pathParts[pathParts.length-1].substr(4);
-									 // params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+				if((act_el.isUnit() != true && act_el.isUnion() != true) || !act_el.isRoot()) {
+					var newStartElement = act_el;
+					var className = options.className;
+					if ((act_el.isUnion() || act_el.isUnit()) && !act_el.isRoot()) { // [ + ] element, that has link to upper class 
+						if (act_el.getLinkToRoot()){
+							var element = act_el.getLinkToRoot().link.getElements();
+							if (act_el.getLinkToRoot().start) {
+								newStartElement = new VQ_Element(element.start.obj._id);
+								className = newStartElement.getName();
+							} else {
+								newStartElement = new VQ_Element(element.end.obj._id);	
+								className = newStartElement.getName();									
+							}						
+						}					
 					}
-        		} else {
+					
+					
+					var loc = await location();
+					var textEnd = loc.end.offset;
+					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
+					var varibleName = makeVar(o);
+					var params = {main:{propertyKind:'Data',"limit": 30}}
+					var isInv = false;
+								
+					if(pathParts.length > 1){
+						
+						var varName = pathParts[pathParts.length-2];
+						if(varName.startsWith("^")){
+							params.element = {"pList": {"out": [{"name": varName.substring(1), "type": "out"}]}}
+						} else params.element = {"pList": {"in": [{"name": varName, "type": "in"}]}}
+						params.main.filter=pathParts[pathParts.length-1];
+						if(pathParts[pathParts.length-1].startsWith("^")){
+							isInv = true;
+							params.main.filter=pathParts[pathParts.length-1].substr(1);
+							// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+						} else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
+							isInv = true;
+							params.main.filter=pathParts[pathParts.length-1].substr(4);
+										 // params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+						}
+					} else {
 
-        			if (typeof options.className !== 'undefined') params.element = {className: options.className};
-        			if (varibleName != "") params.main.filter=varibleName;
-    	
-    				if(pathParts[0].startsWith("^"))isInv = true;
-        		}
-				
-				var props = await dataShapes.getPropertiesFull(params);
-				props = props["data"];
+						if (typeof className !== 'undefined') params.element = {className: className};
+						if (varibleName != "") params.main.filter=varibleName;
+			
+						if(pathParts[0].startsWith("^"))isInv = true;
+					}
 					
-				var schemaName = dataShapes.schema.schemaType;
-				
-				if(isInv == false){
+					var props = await dataShapes.getPropertiesFull(params);
+					props = props["data"];
+						
+					var schemaName = dataShapes.schema.schemaType;
 					
+					if(isInv == false){
+						
+						
+						for(var pr in props){
+							var prefix;
+							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							else prefix = props[pr]["prefix"]+":";
+							var propName = prefix+props[pr]["display_name"];
+							await addContinuation(await location(), propName, 100, false, 1);
+						}
+					}
+					// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+					params.main.propertyKind = 'ObjectExt'
+					var props = await dataShapes.getPropertiesFull(params);				
 					
+					props = props["data"];
 					for(var pr in props){
 						var prefix;
-						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
 							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
+										
 						var propName = prefix+props[pr]["display_name"];
-						await addContinuation(await location(), propName, 100, false, 1);
+						if ( props[pr].mark === 'in' && isInv == false){
+							propName = "^"+propName;
+						}
+						if(isInv == false){
+							await addContinuation(await location(), propName, 100, false, 2);
+						}else if(isInv == true && props[pr].mark === 'in'){
+							await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
+						}
 					}
 				}
-				// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
-				params.main.propertyKind = 'ObjectExt'
-				var props = await dataShapes.getPropertiesFull(params);				
-				
-				props = props["data"];
-				for(var pr in props){
-            		var prefix;
-            		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
-						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
-            		else prefix = props[pr]["prefix"]+":";
-            						
-            		var propName = prefix+props[pr]["display_name"];
-            		if ( props[pr].mark === 'in' && isInv == false){
-            			propName = "^"+propName;
-            		}
-            		if(isInv == false){
-						await addContinuation(await location(), propName, 100, false, 2);
-					}else if(isInv == true && props[pr].mark === 'in'){
-						await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
-					}
-            	}
 				return o;
     		};
         			
@@ -21239,63 +21282,80 @@ options = arguments[1];
 					if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 						act_el = new VQ_Element(selected_elem_id)
 					}
-					var loc = await location();
-					var textEnd = loc.end.offset;
-					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-							
-					var prop;
-					if(pathParts.length > 1){
-						var params = {main:{propertyKind:'Data',"limit": 30}}
-						params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
-						if(pathParts[pathParts.length-1].startsWith("^")){
-							params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
-						} else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
-							params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+					if((act_el.isUnit() != true && act_el.isUnion() != true) || !act_el.isRoot()) {	
+						var loc = await location();
+						var textEnd = loc.end.offset;
+						var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
+						
+						var newStartElement = act_el;
+						var className = options.className;
+						if ((act_el.isUnion() || act_el.isUnit()) && !act_el.isRoot()) { // [ + ] element, that has link to upper class 
+							if (act_el.getLinkToRoot()){
+								var element = act_el.getLinkToRoot().link.getElements();
+								if (act_el.getLinkToRoot().start) {
+									newStartElement = new VQ_Element(element.start.obj._id);
+									className = newStartElement.getName();
+								} else {
+									newStartElement = new VQ_Element(element.end.obj._id);	
+									className = newStartElement.getName();									
+								}						
+							}					
 						}
-									 
-						prop = await dataShapes.getPropertiesFull(params);
-									 
-					} else prop = await dataShapes.getProperties({propertyKind:'Data'}, act_el);
-							
-					prop = prop["data"];
-					
-					var schemaName = dataShapes.schema.schemaType;
-					
-					for(var cl in prop){
-						var prefix;
-						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-						else prefix = prop[cl]["prefix"]+":";
+								
+						var prop;
+						if(pathParts.length > 1){
+							var params = {main:{propertyKind:'Data',"limit": 30}}
+							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+							if(pathParts[pathParts.length-1].startsWith("^")){
+								params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+							} else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
+								params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+							}
+										 
+							prop = await dataShapes.getPropertiesFull(params);
+										 
+						} else prop = await dataShapes.getProperties({propertyKind:'Data'}, newStartElement);
+								
+						prop = prop["data"];
+						
+						var schemaName = dataShapes.schema.schemaType;
+						
+						for(var cl in prop){
+							var prefix;
+							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							else prefix = prop[cl]["prefix"]+":";
 
-						var propName = prefix+prop[cl]["display_name"]
-						// await addContinuation(place, propName, priority, false, 2);
-						await addContinuation(await location(), propName, 99, false, 1, "end");
-					}
-							
-					if(pathParts.length > 1){
-						var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
-						params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
-								// if(pathParts[pathParts.length-1].startsWith("^")){
-									// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
-								// } else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
-									// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
-								// }
-									 
-						prop = await dataShapes.getPropertiesFull(params);
-									 
-					} else prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, act_el);
-					prop = prop["data"];
-					
-					for(var cl in prop){
-						var prefix;
-						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-						else prefix = prop[cl]["prefix"]+":";
+							var propName = prefix+prop[cl]["display_name"]
+							// await addContinuation(place, propName, priority, false, 2);
+							await addContinuation(await location(), propName, 99, false, 1, "end");
+						}
+								
+						if(pathParts.length > 1){
+							var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
+									// if(pathParts[pathParts.length-1].startsWith("^")){
+										// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+									// } else if(pathParts[pathParts.length-1].toLowerCase().startsWith("inv(")){
+										// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
+									// }
+										 
+							prop = await dataShapes.getPropertiesFull(params);
+										 
+						} else prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, newStartElement);
+						prop = prop["data"];
+						
+						for(var cl in prop){
+							var prefix;
+							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							else prefix = prop[cl]["prefix"]+":";
 
-						var propName = prefix+prop[cl]["display_name"]
-						if(prop[cl]["mark"] == "in") propName = "^" + propName;
-						// await addContinuation(place, propName, priority, false, 2);
-						await addContinuation(await location(), propName, 99, false, 2, "end");
+							var propName = prefix+prop[cl]["display_name"]
+							if(prop[cl]["mark"] == "in") propName = "^" + propName;
+							// await addContinuation(place, propName, priority, false, 2);
+							await addContinuation(await location(), propName, 99, false, 2, "end");
+						}
 					}
 				}
         		return o;

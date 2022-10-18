@@ -788,13 +788,15 @@ async function getAttributes(filter, waiting){
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
 			
-			if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
-			else attr_list.push({name:"(select this)"});
+			// if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
+			// else attr_list.push({name:"(select this)"});
+			
+			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(select this)"});
 			
 			var abstractS = await generateSymbolTable();
 			var symbolTable = abstractS["symbolTable"];
 			
-			attr_list.push({name:"(all properties)"});
+			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(all properties)"});
 			
 			attr_list.push({separator:"line"});
 			if(waiting == null){
@@ -808,33 +810,47 @@ async function getAttributes(filter, waiting){
 					}	
 				}
 				
-				attr_list.push({separator:"line"});
+				if((vq_obj.isUnit() != true && vq_obj.isUnion() != true) || !vq_obj.isRoot()) {
+				
+					attr_list.push({separator:"line"});
 
-				var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
+					var param = formParams(vq_obj, 'Data', filter,Template.AddAttribute.Count.get());
+					
+					var newStartElement = vq_obj;
+					if ((vq_obj.isUnion() || vq_obj.isUnit()) && !vq_obj.isRoot()) { // [ + ] element, that has link to upper class 
+						if (vq_obj.getLinkToRoot()){
+							var element = vq_obj.getLinkToRoot().link.getElements();
+							if (vq_obj.getLinkToRoot().start) {
+								newStartElement = new VQ_Element(element.start.obj._id);
+							} else {
+								newStartElement = new VQ_Element(element.end.obj._id);						
+							}						
+						}					
+					} 
 
-				var prop = await dataShapes.getProperties(param, vq_obj);
-				
-				if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
-				else $("#more-attributes-button")[0].style.display = "block";
-				
-				prop = prop["data"];
-				
-				// var proj = Projects.findOne({_id: Session.get("activeProject")});
-				var schemaName = dataShapes.schema.schemaType;
-				// if (proj) {
-					// if (proj.schema) {
-						// schemaName = proj.schema;
-					// };
-				// }
-				
-				for(var cl in prop){
-					var prefix;
-					if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-					else prefix = prop[cl]["prefix"]+":";
-					attr_list.push({name: prefix+prop[cl]["display_name"]})
+					var prop = await dataShapes.getProperties(param, newStartElement);
+					
+					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
+					else $("#more-attributes-button")[0].style.display = "block";
+					
+					prop = prop["data"];
+					
+					// var proj = Projects.findOne({_id: Session.get("activeProject")});
+					var schemaName = dataShapes.schema.schemaType;
+					// if (proj) {
+						// if (proj.schema) {
+							// schemaName = proj.schema;
+						// };
+					// }
+					
+					for(var cl in prop){
+						var prefix;
+						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+						else prefix = prop[cl]["prefix"]+":";
+						attr_list.push({name: prefix+prop[cl]["display_name"]})
+					}
 				}
-			
 			} else {
 				attr_list.push({name: "Waiting answer...", wait: true});
 			}
@@ -882,10 +898,23 @@ async function getAssociations(filter){
 			var attr_list = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
+			
 				
 			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
+			
+			var newStartElement = vq_obj;
+			if ((vq_obj.isUnion() || vq_obj.isUnit()) && !vq_obj.isRoot()) { // [ + ] element, that has link to upper class 
+				if (vq_obj.getLinkToRoot()){
+					var element = vq_obj.getLinkToRoot().link.getElements();
+					if (vq_obj.getLinkToRoot().start) {
+						newStartElement = new VQ_Element(element.start.obj._id);
+        			} else {
+        				newStartElement = new VQ_Element(element.end.obj._id);						
+        			}						
+				}					
+			} 
 
-			var prop = await dataShapes.getProperties(param, vq_obj)
+			var prop = await dataShapes.getProperties(param, newStartElement);
 			
 			if(prop["complete"] == true) {
 				$("#more-associations-button")[0].complete = "true";

@@ -583,11 +583,13 @@ function generateIds(rootClass, knownPrefixes){
 	var idTable = [];
 	var referenceTable = [];
 	var prefixTable = [];
+	var variableNamesTable = [];
+	var variableNamesCounter = [];
 
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
+	// if alias is not defined
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
-		// if(rootClass["identification"]["display_name"].startsWith("[[")){
 		if(typeof rootClass["identification"]["display_name"] !== 'undefined' && rootClass["identification"]["display_name"].startsWith("[")){
 			var textPart = rootClass["identification"]['display_name'].substring(1);
 			if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
@@ -608,7 +610,8 @@ function generateIds(rootClass, knownPrefixes){
 		}
 	}
 	else rootClassId = rootClassId.replace(/ /g, '_');
-
+	
+	// if instance is uri in prefox form
 	if (checkIfIsURI(rootClassId) == "prefix_form") {
 		if(rootClassId.indexOf("(") !== -1 || rootClassId.indexOf(")") !== -1){
 				
@@ -650,12 +653,19 @@ function generateIds(rootClass, knownPrefixes){
 	
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
-
+	
+	
+	var propertyNames = setFieldNamesForProperties(rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"]);
+	variableNamesTable = propertyNames["variableNamesTable"];
+	variableNamesCounter = propertyNames["variableNamesCounter"];
+	
 	//go through all root class children classes
 	_.each(rootClass["children"],function(subclazz) {
 		var unionClass = null;
 		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
-		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes);
+		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
+		variableNamesTable = temp["variableNamesTable"];
+	    variableNamesCounter = temp["variableNamesCounter"];
 		counter = temp["counter"];
 		idTable.concat(temp["idTable"]);
 		prefixTable.concat(temp["prefixTable"]);
@@ -670,7 +680,7 @@ function generateIds(rootClass, knownPrefixes){
 		idTableTemp[key] = idTable[key]["name"];
 	}
 
-	return {idTable:idTableTemp, referenceTable:referenceTable, prefixTable:prefixTable};
+	return {idTable:idTableTemp, referenceTable:referenceTable, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
 
@@ -680,7 +690,8 @@ function generateIds(rootClass, knownPrefixes){
 // idTable - table with unique class names, generated so far
 // counter - counter for classes with equals names
 // parentClassId - parent class identificator
-function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass, knownPrefixes){
+function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter){
+	
 	var referenceTable = [];
 	var prefixTable = [];
 	
@@ -694,7 +705,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			}
 		}
 	}
-	
+	// if equals classes
 	if(clazz["linkIdentification"]["local_name"] == "==" && typeof idTable[parentClassId] !== 'undefined') {
 		if(typeof clazz["instanceAlias"] !== "undefined" && clazz["instanceAlias"] != null && clazz["instanceAlias"] != "") {
 			idTable[parentClassId]["name"] = clazz["instanceAlias"];
@@ -825,6 +836,10 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 
 	if(clazz["linkType"] == "OPTIONAL" && clazz["isSubQuery"] != true && clazz["isGlobalSubQuery"] != true) referenceTable[className]["optionaPlain"] = true;
 	else referenceTable[className]["optionaPlain"] = false;
+	
+	var propertyNames = setFieldNamesForProperties(clazz["fields"], variableNamesTable, variableNamesCounter, clazz["identification"]["_id"]);
+	variableNamesTable = propertyNames["variableNamesTable"];
+	variableNamesCounter = propertyNames["variableNamesCounter"];
 
 	referenceTable[className]["classes"] = [];
 	_.each(clazz["children"],function(subclazz) {
@@ -834,7 +849,9 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			if(unionClass == null) unionClass = clazz["identification"]["_id"];
 		} else unionClass = null;
 
-		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes);
+		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
+		variableNamesTable = temp["variableNamesTable"];
+		variableNamesCounter = temp["variableNamesCounter"];
 
 		idTable.concat(temp["idTable"]);
 		for(pr in temp["prefixTable"]){
@@ -846,7 +863,47 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	
 	
 	
-	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable};
+	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
+}
+
+
+function setFieldNamesForProperties(fields, variableNamesTable, variableNamesCounter, classId){
+	_.each(fields,function(field) {
+		var attributeName = field["exp"];
+		if(field["isSimple"]){
+			
+			if(attributeName.indexOf(":") !== -1) attributeName = attributeName.substring(attributeName.indexOf(":")+1)
+
+			if(attributeName.startsWith("[") && attributeName.endsWith("]")){
+				var textPart = attributeName.substring(1);
+				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+				else textPart = textPart.substring(0, textPart.length - 1);
+				textPart = textPart.trim();
+				var t = textPart.match(/([\s]+)/g);
+					
+				if(t == null || t.length <3 ){
+					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+				} 
+				attributeName = textPart
+			}
+			attributeName = attributeName.replace(/-/g, '_');
+		
+			if(typeof variableNamesCounter[attributeName] !== "undefined"){
+				
+				var anCount = "_"+ variableNamesCounter[attributeName]
+				variableNamesCounter[attributeName] = variableNamesCounter[attributeName]+1;
+				attributeName = attributeName + anCount;
+			} else {
+				variableNamesCounter[attributeName] = 1;
+			}
+			if(typeof variableNamesTable[classId] === "undefined") variableNamesTable[classId] = [];
+			if(typeof variableNamesTable[classId][field["exp"]] === "undefined") variableNamesTable[classId][field["exp"]] = [];
+
+			variableNamesTable[classId][field["exp"]][field["_id"]] = {name:attributeName, order:field.order};
+		}
+	
+	})
+	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
 // find all prefixes used it a SPARQL query
@@ -900,8 +957,9 @@ function generateSPARQLtext(abstractQueryTable){
 		 var generateIdsResult = generateIds(rootClass, knownPrefixes);
 
 		 var idTable = generateIdsResult["idTable"];
+		 
 		 var referenceTable = generateIdsResult["referenceTable"];
-
+		
 		 //empty prefix in query
 		 // var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
 		 var emptyPrefix = findEmptyPrefix(knownPrefixes);
@@ -918,13 +976,13 @@ function generateSPARQLtext(abstractQueryTable){
 		 var tempAttrNames = setAttributeNames(rootClass, idTable, symbolTable, []);
 		 var attributesNames = tempAttrNames["attributeNames"];
 		 messages = messages.concat(tempAttrNames["messages"]);
-
-		 var result = forAbstractQueryTable(attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
+		 
+		 var result = forAbstractQueryTable(generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter, attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
 		
 		 messages = messages.concat(result["messages"]);
 
 		 sparqlTable = result["sparqlTable"];
-		 // console.log(result, JSON.stringify(sparqlTable,null,2));
+		  // console.log(result, JSON.stringify(sparqlTable,null,2));
 
 		 // table with prefixes used in query
 		 var prefixTable = result["prefixTable"];
@@ -973,7 +1031,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 // }
 
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
-			   
+
 			 tempSelect= tempSelect.concat(whereInfo["subSelectResult"]);
 			 
 			 // remove duplicates
@@ -1015,9 +1073,9 @@ function generateSPARQLtext(abstractQueryTable){
 				 SPARQL_text = SPARQL_text + graphService["graphInstruction"] + " " + graphService["graph"] + " {\n";
 			 }
 
-			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable);
+			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);
 
-			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes);
+			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, variableNamesTable, variableNamesCounter);
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
 
@@ -1258,7 +1316,7 @@ function getPrefixFromClassMembership(classMembership){
 // fieldNames - all field names in a query
 // symbolTable - table with symbols presented in a query
 // parameterTable - table with user set SPARQL generation parameters
-function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes){
+function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes){
 
 	var messages = [];
 	var prefixTable = [];
@@ -1382,7 +1440,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				"isBlocking" : true
 			});
 		} else{
-			var resultClass = parse_attrib(clazz["identification"]["exp"], attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
+			var resultClass = parse_attrib(clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
 
 			for (var prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
@@ -1461,13 +1519,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 					field["alias"] = field["alias"].replace(/ /g, '_');
 				}
 				// console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
-				var result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes);
+				var result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
 				
 				messages = messages.concat(result["messages"]);
-				 // console.log("ATTRIBUTE", result, field);
+				  // console.log("ATTRIBUTE", result, field);
 				 
 				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null && field["attributeConditionSelection"] !== ""){
-					 var resultC = parse_filter(field["attributeConditionSelection"], attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+					 var resultC = parse_filter(field["attributeConditionSelection"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, field["_id"]);
 					if(typeof result.triples[0] !== "undefined")result.triples[0] = result.triples[0] + " FILTER(" + resultC["exp"] + ")";
 				 }
 				 
@@ -1735,13 +1793,13 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				var result;
 				
 				if(clazz["isUnit"] != true){
-				result = parse_attrib(field["exp"], attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+				result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				
 				counter = result["counter"];
 				for (var attrname in result["variableNamesClass"]) {
 					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
 				}} else {
-					result = parse_attrib(field["exp"], [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+					result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				}
 				messages = messages.concat(result["messages"]);
 				for (var prefix in result["prefixTable"]) {
@@ -1842,7 +1900,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				});
 		} else { 
 			
-			var result = parse_filter(condition, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes);
+			var result = parse_filter(condition, variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, condition["_id"]);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result, condition["exp"]);
 			for (var reference in result["referenceCandidateTable"]){
@@ -1920,7 +1978,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 		
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 
-		var temp = forAbstractQueryTable(attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
+		var temp = forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
 		
 		messages = messages.concat(temp["messages"]);
 		counter = temp["counter"];
@@ -2165,11 +2223,11 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 				// temp["sparqlTable"]["having"] = getHaving(subclazz["havingConditions"]);
 
 				//ORDER BY
-				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes, symbolTable);
+				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);
 
 				//GROUP BY
 
-				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes);
+				temp["sparqlTable"]["groupBy"] = getGroupBy(subclazz["groupings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, subclazz["classMembership"], knownPrefixes, variableNamesTable, variableNamesCounter);
 
 				messages = messages.concat(temp["sparqlTable"]["order"]["messages"]);
 				messages = messages.concat(temp["sparqlTable"]["groupBy"]["messages"]);
@@ -2250,9 +2308,7 @@ function forAbstractQueryTable(attributesNames, clazz, parentClass, rootClassId,
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
 }
 
-function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable){
-	
-	
+function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter){
 	
 	var messages = [];
 	var orderTable = [];
@@ -2329,7 +2385,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
 					
 				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
-					var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					var result = parse_attrib(order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 					
 					descendingStart = "";
 							 descendingEnd = "";
@@ -2363,7 +2419,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 						});
 					}else{
 
-						var result = parse_attrib(order["exp"], [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, symbolTable, false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+						var result = parse_attrib(order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, symbolTable, false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 						
 						if(order["exp"].indexOf("Label") == -1 && order["exp"].indexOf("AltLabel") == -1 && order["exp"].indexOf("Description") == -1)messages = messages.concat(result["messages"]); 
 		
@@ -2433,7 +2489,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	return {"orders":orderTable.join(" "), "triples":orderTripleTable, "messages":messages, "orderGroupBy":orderGroupBy};
 }
 
-function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes){
+function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, variableNamesTable, variableNamesCounter){
 	var messages = [];
 	//var orderTable = [];
 	var groupTripleTable = [];
@@ -2470,7 +2526,7 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 				} else{
-					var result = parse_attrib(group["exp"], [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					var result = parse_attrib(group["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
 					 messages = messages.concat(result["messages"]);
 					 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 						 //orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
@@ -2991,7 +3047,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								// sparqlTable["subClasses"][subclass]["selectAll"] != true
 								var distinct = "";
 								if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
-								
+								temp = temp.filter(function (el, i, arr) {
+									return arr.indexOf(el) === i;
+								});
 								var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2);
 								//Label Service Languages
 								 // if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {

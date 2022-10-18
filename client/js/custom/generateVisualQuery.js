@@ -1214,10 +1214,13 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					if(typeof expression["args"][arg] == 'string') {
 						var arg1 = generateArgument(expression["args"][arg]);
 						if(arg1["type"] == "varName") viziQuerExpr["exprVariables"].push(arg1["value"]);
-						args.push(arg1["value"]);
+						args.push("@" + arg1["value"]);
 					}
 					else if(typeof expression["args"][arg] == 'object'){
 						var temp = await parseSPARQLjsStructureWhere(expression["args"][arg], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, patternType, bindTable, generateOnlyExpression);
+						
+						
+						
 						bindTable = temp["bindTable"];
 						args.push(temp["viziQuerExpr"]["exprString"]);
 						viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
@@ -1227,13 +1230,15 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				// if(ignoreFunction == false) 
 					viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + ")";
 				
+				var operationExpression = viziQuerExpr["exprString"];
+				
 				var attributeInfo = {
 					"alias":vq_visual_grammar.parse(variables[key]["variable"])["value"],
 					"identification":null,
 					"requireValues":false,
 					"isInternal":false,
 					"groupValues":false,
-					"exp":viziQuerExpr["exprString"],
+					"exp":operationExpression,
 					"counter":orderCounter
 				} 
 				
@@ -2146,7 +2151,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					
 					if(prop.complete == true && prop.data[0].is_local == true 
 					   && typeof variableList["?"+temp.viziQuerExpr.exprVariables[expr]] !== "undefined"
-					   && variableList["?"+temp.viziQuerExpr.exprVariables[expr]] !== 0
+					   && variableList["?"+temp.viziQuerExpr.exprVariables[expr]] > 1
 					   && className != temp.viziQuerExpr.exprVariables[expr]
 					   && ((classes[className]["identification"] != null
 					   && classes[className]["identification"]["short_name"].replace(/\?/g, "") != temp.viziQuerExpr.exprVariables[expr]) || 
@@ -5944,7 +5949,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						if(classTableAdded.indexOf(clazz) !== -1){
 							if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
 							classesTable[clazz]["conditions"].push(attrName+ " = " + objectNameParsed["value"]);
-							console.log("condition 1", attrName+ " = " + objectNameParsed["value"])
 							break;
 						}
 					}
@@ -6379,7 +6383,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													classesTable[className]["conditions"] = [];
 												}
 												classesTable[className]["conditions"].push(expr);
-												console.log("condition 2", expr)
 												// break;
 											// }
 										}
@@ -6492,7 +6495,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												classesTable[sclass]["conditions"] = [];
 											}
 											classesTable[sclass]["conditions"].push(expr);
-											console.log("condition 3", expr)
 											break;
 										}
 									}
@@ -6991,7 +6993,6 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 								}
 								if(!clazz["conditions"].includes(childerenClass["conditions"][condition])) {
 									clazz["conditions"].push(childerenClass["conditions"][condition]);
-									console.log("condition 4", childerenClass["conditions"][condition])
 								}
 							}
 						

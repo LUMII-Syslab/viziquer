@@ -1929,6 +1929,10 @@
                   },
                   {
                     "extensionPoint": "createCompartment"
+                  },
+				  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleForGraphFields"
                   }
                 ],
                 "subCompartmentTypes": [
@@ -4182,21 +4186,21 @@
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "Subquery, Global",
+                      "input": "Subquery + Global",
                       "value": "GLOBAL_SUBQUERY"
                     },
-                    {
-                      "compartmentStyle": "NoStyle",
-                      "elementStyle": "NoStyle",
-                      "input": "Non-structure (extra join) link",
-                      "value": "CONDITION"
-                    },
-                    {
+					{
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
                       "input": "Graph to contents",
                       "value": "GRAPH"
-                    }
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "Reference",
+                      "value": "CONDITION"
+                    } 
                   ]
                 },
                 "styles": [

@@ -339,6 +339,7 @@ function autocomplete(inp, continuations) {
 	ss.sort((a, b) => b.priority - a.priority);
 
 	if(inp.parentNode.id.length > 0 && inp.parentNode.nodeName == "DIV"){
+		
 		/*create a DIV element that will contain the items (values):*/
 		a = document.createElement("DIV");
 
@@ -385,6 +386,7 @@ function autocomplete(inp, continuations) {
 
 			if (i === currentFocus) b.style.backgroundColor = '#f8c26c';
 			a.appendChild(b);
+			
 		}
 
 		inp.removeEventListener("keydown", keyDownHandler);

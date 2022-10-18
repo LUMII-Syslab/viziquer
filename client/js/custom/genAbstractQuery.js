@@ -35,6 +35,7 @@ Interpreter.customMethods({
 // and creats symbol table with resolved types
 resolveTypesAndBuildSymbolTable = async function (query) {
 	count = 0;
+	var variableNamesTable = [];
   // TODO: This is not efficient to recreate schema each time
   // var schema = new VQ_Schema();
   // Adding default namespace
@@ -94,38 +95,26 @@ resolveTypesAndBuildSymbolTable = async function (query) {
    //JSON -->
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
-	 var schemaName = await dataShapes.schema.schemaType;
+	var schemaName = await dataShapes.schema.schemaType;
+	// for wikidata
 	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1 && (obj_class.instanceIsConstant == true || obj_class.instanceIsVariable == true)){ 
 		if(schemaName.toLowerCase() == "wikidata" && obj_class.instanceAlias.indexOf(":") == -1 &&((obj_class.instanceAlias.indexOf("[") > -1 && obj_class.instanceAlias.endsWith("]")))){
 			obj_class.instanceAlias = "wd:"+obj_class.instanceAlias;
 		}	
 
 		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
-			// var uriResolved = await dataShapes.resolveIndividualByName({name: obj_class.instanceAlias});
-			// if(uriResolved.complete == true) return true;
-			// else Interpreter.showErrorMsg("Instance identification URI '" + obj_class.instanceAlias + "' can not be found in the schema", -3);
-			// console.log("uriResolved", uriResolved)
 			return true;
 		}
 		
 		obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
 	}
 	
-    var my_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
-    var diagramm_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
+    var my_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
+    var diagramm_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
 	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
-	
-
-	// var proj = Projects.findOne({_id: Session.get("activeProject")});
-		  // var schemaName = null;
-		  // if (proj) {
-			  // if (proj.schema) {
-				// schemaName = proj.schema;
-			  // };
-		  // }
 	var pr = "";
 	if(schemaName.toLowerCase() == "wikidata" && typeof obj_class.identification.local_name !== "undefined" && obj_class.identification.local_name != null && ((obj_class.identification.local_name.startsWith("[") && obj_class.identification.local_name.endsWith("]")) || obj_class.identification.local_name.indexOf(":") == -1)){
 		pr = "wd:";
@@ -135,8 +124,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	if(typeof localName !== "undefined" && localName != null) localName = pr+localName;
 		
     var resCl = await resolveClassByName(localName);
-	
-	
+
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
@@ -153,27 +141,46 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		var prefix = "";
 		// _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
 		if(typeof obj_class.linkIdentification.prefix !== 'undefined' && obj_class.linkIdentification.prefix != "") prefix = obj_class.linkIdentification.prefix + ":";
-        _.extend(obj_class.linkIdentification, await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification))
+		var pathExpression = await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification);
+        _.extend(obj_class.linkIdentification, pathExpression);
+			
+		//link is variable name
+		if(typeof pathExpression.parsed_exp !== "undefined" && pathExpression.parsed_exp !== null
+		&& typeof pathExpression.parsed_exp.PathProperty !== "undefined" && typeof pathExpression.parsed_exp.PathProperty.VariableName !== "undefined"){
+			 var expr = pathExpression.parsed_exp.PathProperty.VariableName.substring(1);
+			 if(expr.startsWith("?")) expr = expr.substring(1);
+			 my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
+		}
     };
-	
+	//class have instance alias
 	if (obj_class.instanceAlias) {
-		var className = obj_class.identification.display_name;
-		if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
-		if(typeof className !== "undefined" && className != null) className = pr+className;
-		var type =  await resolveClassByName(className)
+		// var className = obj_class.identification.display_name;
+		// if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
+		// if(typeof className !== "undefined" && className != null) className = pr+className;
+		var type =  resCl;
 	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
-	  my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
+	     
+	   my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
 	
 	  //my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:obj_class.instanceAlias, type:null, context:obj_class.identification._id});
     };
 	
+	//class name is variable
 	if(obj_class.variableName != null){
-		var className = obj_class.identification.display_name;
-		if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
-		if(typeof className !== "undefined" && className != null) className = pr+className;
-		var type =  await resolveClassByName(className)
+		// var className = obj_class.identification.display_name;
+		// if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
+		// if(typeof className !== "undefined" && className != null) className = pr+className;
+		var type =  resCl;
 		my_scope_table.CLASS_ALIAS.push({id:obj_class.variableName.replace("?", ""), type:type, context:obj_class.identification._id});
 	}
+	
+	// class name
+	// if(!obj_class.instanceAlias && !obj_class.variableName){
+	   // var type =  resCl;
+	   // if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
+	   // my_scope_table.CLASS_NAME.push({id:localName, type:type, context:obj_class.identification._id});
+	// }
+	
 
     for (const cl of obj_class.conditionLinks) {
     // obj_class.conditionLinks.forEach(function(cl) {
@@ -214,12 +221,18 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         // } else if (f.alias) {
         if (f.alias) {
              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
-        } else {
+        } else if(f.exp.startsWith("?")){
+			//atribute is variable name
+			var expr = f.exp.substring(1);
+			 if(expr.startsWith("?")) expr = expr.substring(1);
+			 my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
+		} else {
           // field without alias? We should somehow identify it
           // obj_id + exp
           my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
         };
     }
+
 	// );
 	for (const f of obj_class.aggregations) {
     // obj_class.aggregations.forEach(function(f) {
@@ -350,7 +363,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     return;
   };
 
-  var empty_scope_table = {CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
+  var empty_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
   await resolveClass(query.root, empty_scope_table);
 
   // String, String, ObjectId --> JSON
@@ -359,17 +372,11 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function parseExpression(str_expr, exprType, context) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
 		  var schemaName = await dataShapes.schema.schemaType;
-		  // if (proj) {
-			  // if (proj.schema) {
-				// schemaName = proj.schema;
-			  // };
-		  // }
+
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
 		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType);
 		  
-		  // var parsed_exp = await vq_grammar.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
@@ -503,7 +510,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // JSON -->
   // Parses all expressions in the object and recursively in all children
   async function resolveClassExpressions(obj_class, parent_class) {
-	  
 	  // if(obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
 	
 	  if(obj_class.graphs){
@@ -550,10 +556,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
     }
 
-    for (const c of obj_class.conditions) {await parseExpObject(c,obj_class.identification);};
-	// obj_class.conditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);});
-	for (const a of obj_class.aggregations) {await parseExpObject(a,obj_class.identification);};
-    // obj_class.aggregations.forEach(async function(a) {await parseExpObject(a,obj_class.identification);});
+   
     // CAUTION!!!!! Hack for * and **
     // obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
     obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="(*attr)" || f.exp=="(*sub)")});
@@ -597,7 +600,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		 
           if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
-			 console.log("strURI", strURI)
 			 var schemaName = await dataShapes.schema.schemaType;
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
@@ -682,6 +684,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				  f.isSimple = true;
                 }
 
                 break;
@@ -722,6 +725,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				  f.isSimple = true;
                 }
 
                 break;
@@ -743,6 +747,12 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {max_cardinality : 1};
 			  updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", type);
            } else {
+			   
+			 if(f.exp.startsWith("?")){
+				  var expr = f.exp.substring(1);
+				  if(expr.startsWith("?")) expr = expr.substring(1);
+				  updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
+			 }
              // no alias
              // remove from symbol table ...
 
@@ -806,7 +816,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     }
 	// );
 	
+	if(obj_class.linkIdentification && obj_class.linkIdentification.local_name.startsWith("?")){
+		var expr = obj_class.linkIdentification.local_name.substring(1);
+		if(expr.startsWith("?")) expr = expr.substring(1);
+		updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
+	}
 	
+	 for (const c of obj_class.conditions) {await parseExpObject(c,obj_class.identification);};
+	// obj_class.conditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);});
+	for (const a of obj_class.aggregations) {await parseExpObject(a,obj_class.identification);};
+    // obj_class.aggregations.forEach(async function(a) {await parseExpObject(a,obj_class.identification);});
 
     if (obj_class.orderings) { 
 		for (const c of obj_class.orderings){await parseExpObject(c,obj_class.identification);}
@@ -1380,7 +1399,7 @@ async function resolveType(id, exprType, context, symbol_table, schemaName) {
         			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
 async function resolveKind(id, exprType, context, symbol_table, schemaName) {
     				if(id !== "undefined"){
-        				    var k=await resolveKindFromSymbolTable(id, context, symbol_table);
+						   var k=await resolveKindFromSymbolTable(id, context, symbol_table);
         						if (!k) {
         						  if (exprType) {
         							  if (await resolveTypeFromSchemaForClass(id, schemaName)) {
