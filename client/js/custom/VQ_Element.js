@@ -2713,6 +2713,8 @@ VQ_Element.prototype = {
         return "NOT";
       } else if (this.getCompartmentValue("Optional Link")=="true") {
         return "OPTIONAL";
+      } else if (this.getCompartmentValue("Filter Exists")=="true") {
+        return "FILTER_EXISTS";
       } else { return "REQUIRED";};
     } else { return null;};
   },
@@ -2808,6 +2810,10 @@ VQ_Element.prototype = {
   // detemines whether the link is REQUIRED
   isRequired: function() {
     return this.getType()=="REQUIRED"
+  }, 
+  // detemines whether the link is FILTER_EXISTS
+  isFilterExists: function() {
+    return this.getCompartmentValue("Filter Exists")=="true"
   },
   // Gets link's nesting (query) type: PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION,GRAPH
   getNestingType: function() {
@@ -3317,7 +3323,7 @@ VQ_Element.prototype = {
       this.setCompartmentValue("ClassType", type, type)
   },
 
-	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL
+	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL, FILTER EXISTS
 	setLinkType: function(value) {
 		 if (this.isLink()) {
 			 //console.log(this);
@@ -3325,10 +3331,14 @@ VQ_Element.prototype = {
 				var setNeg = "false";
 				var setNegValue = "";
 				var setOpt = "false";
+				var setFE = "false";
+				var setFEValue = "";
 				if (value=="NOT") {
 					  setNeg = "true";
 						setNegValue = "{not}";
 						setOpt = "false";
+						setFEValue = "";
+						setFE = "false";
 						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#ff0000"},
 						                      {attrName:"elementStyle.dash",attrValue:[0,0]},
 																	{attrName:"startShapeStyle.stroke", attrValue:"#ff0000"},
@@ -3362,6 +3372,8 @@ VQ_Element.prototype = {
 					  setOpt = "true";
 						setNeg = "false";
 						setNegValue = "";
+						setFEValue = "";
+						setFE = "false";
 						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#18b6d1"},
 						                      {attrName:"elementStyle.dash",attrValue:[6,5]},
 																	{attrName:"startShapeStyle.stroke", attrValue:"#18b6d1"},
@@ -3380,6 +3392,35 @@ VQ_Element.prototype = {
 							 } else if (root_dir=="end") {
 								 this.setCustomStyle([
 																	{attrName:"endShapeStyle.fill",attrValue:"#18b6d1"},
+																 ]);
+							 };
+
+						};
+				} else if (value=="FILTER_EXISTS") {
+					  this.setNestingType("SUBQUERY");
+					  setOpt = "false";
+						setNeg = "false";
+						setNegValue = "";
+						setFE = "true";
+						setFEValue = "{has}";
+						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#000000"},
+																{attrName:"elementStyle.dash",attrValue:[0,0]},
+																{attrName:"startShapeStyle.stroke", attrValue:"#000000"},
+																{attrName:"endShapeStyle.stroke", attrValue:"#000000"},
+																	]);
+						if (this.isConditional()) {
+               this.setNestingType("PLAIN");
+
+						} else if (this.isSubQuery() ) {
+						//	 this.setLinkQueryType("PLAIN");
+						   var root_dir =this.getRootDirection();
+               if (root_dir=="start") {
+								 this.setCustomStyle([
+																	{attrName:"startShapeStyle.fill",attrValue:"#000000"},
+																 ]);
+							 } else if (root_dir=="end") {
+								 this.setCustomStyle([
+																	{attrName:"endShapeStyle.fill",attrValue:"#000000"},
 																 ]);
 							 };
 
@@ -3407,6 +3448,8 @@ VQ_Element.prototype = {
 			  this.setCompartmentValue("Negation Link",setNeg,setNegValue);
 				this.setCompartmentVisibility("Negation Link", setNeg=="true");
 				this.setCompartmentValue("Optional Link",setOpt,"");
+				this.setCompartmentValue("Filter Exists",setFE,setFEValue);
+				this.setCompartmentVisibility("Filter Exists", setFE=="true");
 		 }
 	},
 
@@ -3501,6 +3544,7 @@ VQ_Element.prototype = {
 						//	this.setLinkType("REQUIRED");
 						//};
 				} else if (value=="CONDITION") {
+					if(this.getType() == "FILTER_EXISTS") this.setLinkType("REQUIRED");
 					  setSub = "false";
 						setGSub = "false";
 						setGraph = "false";
@@ -3518,6 +3562,7 @@ VQ_Element.prototype = {
 									this.setLinkType("REQUIRED");
 						};
 				} else if (value=="GRAPH") {
+					if(this.getType() == "FILTER_EXISTS") this.setLinkType("REQUIRED");
 					  setSub = "false";
 						setGSub = "false";
 						setCond = "false";
@@ -3547,6 +3592,7 @@ VQ_Element.prototype = {
 						//	this.setLinkType("REQUIRED");
 						//};
 				}  else {
+					if(this.getType() == "FILTER_EXISTS") this.setLinkType("REQUIRED");
 					this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"None"},
 															 {attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 															 {attrName:"startShapeStyle.radius",attrValue:8},

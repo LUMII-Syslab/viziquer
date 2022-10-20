@@ -602,6 +602,18 @@ Interpreter.customMethods({
 			 elem.setLinkType(lt);
 		}
 	},
+	
+	VQsetIsFilterExists: function(params) {
+
+		var c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+			 var input = params["input"];
+			 var lt = "REQUIRED";
+			 if (input=="true") { lt="FILTER_EXISTS"};
+			 var elem = new VQ_Element(c["elementId"]);
+			 elem.setLinkType(lt);
+		}
+	},
 
 	VQsetNestingType: function(params) {
 		var c = Compartments.findOne({_id:params["compartmentId"]});

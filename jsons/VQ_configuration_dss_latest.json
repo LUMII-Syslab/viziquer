@@ -1088,6 +1088,10 @@
 						"procedure": "AddSubquery"
 					},
 					{
+						"item": "Filter (exists) …",
+						"procedure": "AddFilterExists"
+					},
+					{
 						"item": "Union ...",
 						"procedure": "AddUnion"
 					},{
@@ -3591,6 +3595,57 @@
                   "shape": "Arrow"
                 }
               },
+			  {
+                "id": "8e68e4c97c060c9414a3bb99",
+                "name": "Filter Exists",
+                "elementStyle": {
+                  "stroke": "#000000",
+                  "strokeWidth": "3",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [
+                    "0",
+                    "0"
+                  ]
+                },
+                "startShapeStyle": {
+                  "fill": "#f0f0f0",
+                  "fillPriority": "color",
+                  "stroke": "#000000",
+                  "strokeWidth": "1",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "None"
+                },
+                "endShapeStyle": {
+                  "fill": "#375d8a",
+                  "fillPriority": "color",
+                  "stroke": "#ff0000",
+                  "strokeWidth": "2",
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "radius": 8,
+                  "shape": "Arrow"
+                }
+              },
               {
                 "id": "754ebb836aed33f0b0203cb8",
                 "name": "Conditional Link",
@@ -4070,6 +4125,84 @@
                 "label": "Optional Link"
               }
             },
+			{
+              "object": {
+                "_id": "6AfIRxwWXJkex9noH",
+                "elementTypeId": "vjSWyPTpvbs9JEB3a",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementId": "dbsGQGHqCahkCgkip",
+                "tabIndex": 35,
+                "index": 6,
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "name": "Filter Exists",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "checkbox",
+                  "inputType": "text",
+                  "values": [
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "true"
+                    },
+                    {
+                      "compartmentStyle": "NoStyle",
+                      "elementStyle": "NoStyle",
+                      "input": "false"
+                    }
+                  ]
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "9gut03kk6i5ndnx3b3joqzzp",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 0,
+                      "placement": "start-left",
+                      "visible": false,
+                      "fontSize": 16,
+                      "fontStyle": "normal",
+                      "fontFamily": "Calibri",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": "VQsetIsFilterExists"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  }
+                ],
+                "dialogTabId": "LH5gP2Peqhnu5rMeB",
+                "defaultValue": "false",
+                "label": "Filter Exists (for subqueries only)"
+              }
+            },
             {
               "object": {
                 "_id": "QZWhB28HdESLCabQ2",
@@ -4078,7 +4211,7 @@
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "dbsGQGHqCahkCgkip",
                 "tabIndex": 60,
-                "index": 8,
+                "index": 9,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Condition Link",
@@ -4258,7 +4391,7 @@
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementId": "dbsGQGHqCahkCgkip",
                 "tabIndex": 40,
-                "index": 6,
+                "index": 7,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
                 "name": "Subquery Link",
@@ -4505,7 +4638,7 @@
                 "diagramId": "7RrwRcGyxshqjBh9p",
                 "elementTypeId": "vjSWyPTpvbs9JEB3a",
                 "elementId": "dbsGQGHqCahkCgkip",
-                "index": 7,
+                "index": 8,
                 "noRepresentation": false,
                 "tabIndex": 7,
                 "dialogTabId": "y3z5MTcYLF83HbJnm",

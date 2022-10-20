@@ -2121,6 +2121,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				SPARQLstring = SPARQLstring + "?" + className;
 				variableTable.push("?" + className);
 			}
+		
 			visited = 1;
 		}
 		
@@ -3480,6 +3481,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					}
 				}
 			//}
+	
 		}
 		if (key == "NumericLiteral") {
 			if(isUnderInRelation == true) SPARQLstring = SPARQLstring +  '"' + expressionTable[key]['Number'] + '"';

@@ -4215,6 +4215,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						for(var link in linkTable){
 							if(linkTable[link]["subject"] == temp["classTableAdded"][clazz] || linkTable[link]["object"] == temp["classTableAdded"][clazz]) {
 								linkTable[link]["isSubQuery"] = true;
+								linkTable[link]["linkType"] = "FILTER_EXISTS";
 							}
 						}
 					}
@@ -4265,6 +4266,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								if((tempClassTable.indexOf(linkTable[link]["object"]) != -1 && tempClassTable.indexOf(linkTable[link]["subject"]) == -1) || 
 								(tempClassTable.indexOf(linkTable[link]["object"]) == -1 && tempClassTable.indexOf(linkTable[link]["subject"]) != -1)) {
 									linkTable[link]["isSubQuery"] = true;
+									linkTable[link]["linkType"] = "FILTER_EXISTS";
 								}
 							}
 							
@@ -4343,7 +4345,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 
 			for(link in linkTableAdded){
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
-					linkTableAdded[link]["linkType"] = "REQUIRED";
+					linkTableAdded[link]["linkType"] = "FILTER_EXISTS";
 					linkTableAdded[link]["isSubQuery"] = true;
 					for(attr in attributeTableAdded){
 						var attributeInfoTemp = attributeTable[attributeTableAdded[attr]];
@@ -7608,6 +7610,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 
 			// PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
 			var linkQueryType = "PLAIN";
+			
+			console.log("LLLLLLLLLLLLLLL", linkType)
 
 			var isSubQuery = clazz["isSubQuery"];
 			if(isSubQuery == true) linkQueryType = "SUBQUERY";

@@ -1031,7 +1031,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 // }
 
 			 var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable, SPARQL_interval+"  ", parameterTable);
-
+		
 			 tempSelect= tempSelect.concat(whereInfo["subSelectResult"]);
 			 
 			 // remove duplicates
@@ -1125,7 +1125,7 @@ function generateSPARQLtext(abstractQueryTable){
 			temp = temp.concat(whereInfo["bind"]);
 			temp = temp.concat(whereInfo["minusSubQueries"]);
 			temp = temp.concat(whereInfo["directSparql"]);
-			temp = temp.concat(whereInfo["filters"]);
+			
 			
 			var classMembership;
 			if(typeof rootClass["indirectClassMembership"] !== 'undefined' && rootClass["indirectClassMembership"] == true && typeof parameterTable["indirectClassMembershipRole"] !== 'undefined' && parameterTable["indirectClassMembershipRole"] != null && parameterTable["indirectClassMembershipRole"] != ""){
@@ -1165,6 +1165,7 @@ function generateSPARQLtext(abstractQueryTable){
 						"isBlocking" : true
 					});
 			}
+			temp = temp.concat(whereInfo["filters"]);
 			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval);
 			 
 			  //Label Service Languages
@@ -1936,6 +1937,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			}
 			sparqlTable["filterTriples"].push(tempTripleTable);
 			if(result["exp"] != "") sparqlTable["filters"].push("FILTER(" + result["exp"] + ")");
+
 		}
 		// console.log("CONDITION", result["exp"], result, instance, sparqlTable["classTriple"]);
 	})
@@ -2704,7 +2706,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	}
 	
 	// filterTriples
-	if(sparqlTable["class"].startsWith("?_") != true){
+	// if(sparqlTable["class"].startsWith("?_") != true || typeof sparqlTable["variableName"] !== "undefined"){
 		for (var expression in sparqlTable["filterTriples"]){
 			if(typeof sparqlTable["filterTriples"][expression] === 'object'){
 				for (var triple in sparqlTable["filterTriples"][expression]["triple"]){
@@ -2725,7 +2727,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 				filters.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
 			}
 		}
-	}
+	// }
 	
 	//link
 	if(typeof sparqlTable["linkTriple"] === 'string'){
@@ -2878,7 +2880,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							var subQuery = "{SELECT " ;
 
 							//DISTINCT	
-							if(sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true && sparqlTable["subClasses"][subclass]["selectAll"] != true) subQuery = subQuery + "DISTINCT ";
+							if(sparqlTable["subClasses"][subclass]["linkType"] == "FILTER_EXISTS" && (
+							sparqlTable["subClasses"][subclass]["isSubQuery"] == true || sparqlTable["subClasses"][subclass]["isGlobalSubQuery"] == true) &&
+							sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
+							// if(sparqlTable["subClasses"][subclass]["isSubQuery"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true && sparqlTable["subClasses"][subclass]["selectAll"] != true) subQuery = subQuery + "DISTINCT ";
 							else if(sparqlTable["subClasses"][subclass]["distinct"] == true && sparqlTable["subClasses"][subclass]["agregationInside"] != true) subQuery = subQuery + "DISTINCT ";
 							var parentClass = "";
 
@@ -3043,25 +3048,33 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								});
 							}
 							if(isMessage == false){
-								//var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
-								// sparqlTable["subClasses"][subclass]["selectAll"] != true
-								var distinct = "";
-								if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
-								temp = temp.filter(function (el, i, arr) {
-									return arr.indexOf(el) === i;
-								});
-								var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2);
-								//Label Service Languages
-								 // if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {
-								 if (selectResult["selectLabels"].length > 0){
-									subQuery = subQuery + '\n'+SPARQL_interval+'SERVICE wikibase:label {bd:serviceParam wikibase:language "'+sparqlTable["subClasses"][subclass]["labelServiceLanguages"]+'" .}\n'+SPARQL_interval;
-								 }
-					
-								subQuery = subQuery + "}}";
-								// whereInfo.unshift(subQuery);
 								
-								if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") optionalSubQueries.push(subQuery);
-								else requiredSubQueries.push(subQuery);
+								//no select fields
+								if(sparqlTable["subClasses"][subclass]["linkType"] == "FILTER_EXISTS" && sparqlTable["subClasses"][subclass]["distinct"] != true && sparqlTable["subClasses"][subclass]["isSubQuery"] == true){
+									subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})";
+									requiredSubQueries.push(subQuery);
+								} else {
+									if(sparqlTable["subClasses"][subclass]["linkType"] == "FILTER_EXISTS") distinct = "DISTINCT ";
+									//var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
+									// sparqlTable["subClasses"][subclass]["selectAll"] != true
+									var distinct = "";
+									if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
+									temp = temp.filter(function (el, i, arr) {
+										return arr.indexOf(el) === i;
+									});
+									var subQuery = "{SELECT " + distinct + sparqlTable["class"]+ " WHERE{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2);
+									//Label Service Languages
+									 // if (sparqlTable["subClasses"][subclass]["labelServiceLanguages"] != null) {
+									 if (selectResult["selectLabels"].length > 0){
+										subQuery = subQuery + '\n'+SPARQL_interval+'SERVICE wikibase:label {bd:serviceParam wikibase:language "'+sparqlTable["subClasses"][subclass]["labelServiceLanguages"]+'" .}\n'+SPARQL_interval;
+									 }
+						
+									subQuery = subQuery + "}}";
+									// whereInfo.unshift(subQuery);
+									
+									if(sparqlTable["subClasses"][subclass]["linkType"] == "OPTIONAL") optionalSubQueries.push(subQuery);
+									else requiredSubQueries.push(subQuery);
+								}
 							}
 						}
 

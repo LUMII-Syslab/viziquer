@@ -621,6 +621,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					}
 				}
 			}
+			
 			if(obj_class.identification.local_name != null){
 				obj_class.instanceAlias = obj_class.identification.display_name;
 				if(typeof obj_class.instanceAlias === "undefined") obj_class.instanceAlias = obj_class.identification.local_name;
@@ -632,14 +633,25 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					textPart = textPart.trim();
 					obj_class.instanceAlias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				}
-						
+
 				var condition = {exp:"(this) = " + strURI};
 			    await parseExpObject(condition, obj_class.identification);
 			    obj_class.conditions.push(condition);
-            
+				if(obj_class.isVariable == true) obj_class.instanceAlias = null;
 			} else {
-				if(f.alias == "") f.alias = "expr";
-				await parseExpObject(f, obj_class.identification);
+				
+				if(obj_class.identification.local_name == null && (instanceAliasIsURI == 3 || instanceAliasIsURI == 4)){
+					var condition = {exp:"(this) = " + strURI};
+					obj_class.instanceAlias = "expr";
+					await parseExpObject(condition, obj_class.identification);
+					obj_class.conditions.push(condition);
+					
+					if(f.alias == "") f.alias = "expr";
+					await parseExpObject(f, obj_class.identification);
+				} else {
+					if(f.alias == "") f.alias = "expr";
+					await parseExpObject(f, obj_class.identification);
+				}
 			}
 			// obj_class.instanceAlias = null;
           } else {

@@ -23,7 +23,9 @@ Interpreter.customMethods({
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
 		$('input[id=goto-wizard]').prop("checked",false);
+		$('input[id=linked-instance-exists]').prop("checked",false);
 		$('input[id=goto-wizard]').prop("disabled","disabled");	
+		$('input[id=linked-instance-exists]').prop("disabled","disabled");	
 		$("#mySearch")[0].value = "";		
 		$("#add-link-form").modal("show");
 		
@@ -68,10 +70,53 @@ Interpreter.customMethods({
 
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
-		$('input[id=goto-wizard]').attr('checked', false);
+		$('input[id=goto-wizard]').attr('checked', true);
+		$('input[id=linked-instance-exists]').attr('checked', false);
 		$('#goto-wizard').removeAttr("disabled");
+		$('#linked-instance-exists').removeAttr("disabled");
 		$("#mySearch")[0].value = "";
 		$("#add-link-form").modal("show");
+		
+		_.each(await getAllAssociations(), function(a){
+			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
+		})
+		Template.AddLink.fullList.set(asc);
+	},
+	
+	AddFilterExists: async function () {
+		Interpreter.destroyErrorMsg();
+		var asc = [];
+		Template.AddLink.Count.set(startCount);
+		
+		Template.AddLink.fullList.set([{name: "", text: "Waiting answer...", wait: true}]);
+		
+		
+		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
+		Template.AddLink.testAddLink.set({data: false});
+		
+		var start_elem_id = Session.get("activeElement");			
+		var currentElement = new VQ_Element(start_elem_id);
+		var joinLinkDesc = "join information from the host node and the linked node";
+		var subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each host node about links";
+		
+		if(currentElement !== null && currentElement.getName() != null && currentElement.getName() != "") 
+		{
+			joinLinkDesc = "join information from "+currentElement.getName()+" and the linked node";
+			subqueryLinkDesc = "compute grouped information (e.g., count, etc.) for each "+currentElement.getName()+" about links";
+		}
+		
+		Template.AddLink.JoinLinkText.set(joinLinkDesc);	
+		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
+
+		$('[name=type-radio]').removeAttr('checked');
+		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
+		$('input[id=goto-wizard]').attr('checked', false);
+		$('input[id=linked-instance-exists]').attr('checked', true);
+		$('#goto-wizard').removeAttr("disabled");
+		$('#linked-instance-exists').removeAttr("disabled");
+		$("#mySearch")[0].value = "";
+		$("#add-link-form").modal("show");
+		
 		
 		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
@@ -115,22 +160,6 @@ Interpreter.customMethods({
         }, newPosition);
 	},
 
-	AddLinkTest: async function () {
-		Interpreter.destroyErrorMsg();
-		var asc = [];
-		_.each(await getAllAssociations(), function(a){
-			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
-		})
-		Template.AddLink.fullList.set(asc);		
-		// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-		Template.AddLink.testAddLink.set({data: true});	
-
-		$('[name=type-radio]').removeAttr('checked');
-		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
-		$('input[id=goto-wizard]').prop("checked",false);
-		$('input[id=goto-wizard]').prop("disabled","disabled");	
-		$("#add-link-form").modal("show");
-	},
 })
 Template.AddLink.JoinLinkText = new ReactiveVar("")
 Template.AddLink.SubqueryLinkText = new ReactiveVar("")
@@ -265,7 +294,6 @@ Template.AddLink.events({
 	},
 
 	"click #ok-add-link": async function() {
-
 		//Read user's choise
 		var obj = $('input[name=link-list-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
@@ -326,7 +354,8 @@ Template.AddLink.events({
                 	locLink = [coordX, coordY, coordX, newPosition.y];                 
 	                Create_VQ_Element(function(lnk) {
 	                    lnk.setName(name);
-	                    lnk.setLinkType("REQUIRED");
+						if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+						else lnk.setLinkType("REQUIRED");
 	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
 						if (proj && proj.autoHideDefaultPropertyName=="true") { 
@@ -338,7 +367,8 @@ Template.AddLink.events({
 	            	locLink = [coordX, newPosition.y, coordX, coordY];
 	            	Create_VQ_Element(function(lnk) {
 	                    lnk.setName(name);
-	                    lnk.setLinkType("REQUIRED");
+	                    if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
+						else lnk.setLinkType("REQUIRED");
 	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
 						if (proj && proj.autoHideDefaultPropertyName=="true") {
@@ -406,7 +436,6 @@ Template.AddLink.events({
 	},
 	
 	"click #select-class-button": async function(e) { 
-		
 		var obj = $('input[name=link-list-radio]:checked').closest(".association");
 		var linkType = $('input[name=type-radio]:checked').val();
 
@@ -521,6 +550,7 @@ Template.AddLink.events({
 		} else {
 			subquerySettings.gotoWizard = "";
 		}
+		
 		Template.ConnectClasses.gotoSubquery.set(subquerySettings);
 
 		$("#connect-classes-form").modal("show");
@@ -532,7 +562,6 @@ Template.AddLink.events({
 	
 	
 	"click #build-path-button": function() {
-		
 		autoCompletionCleanup()
 		
 		$("#build-path-form").modal("show");
@@ -543,21 +572,32 @@ Template.AddLink.events({
 		var checkedName = $('input[name=type-radio]').filter(':checked').val(); // console.log(checkedName);
         if (checkedName === 'JOIN') {
             $('#goto-wizard:checked').prop('checked', false);
+            $('#linked-instance-exists:checked').prop('checked', false);
             $('#goto-wizard').prop('disabled',"disabled");
+            $('#linked-instance-exists').prop('disabled',"disabled");
         } else {
         	var cardValue = $('input[name=link-list-radio]:checked').attr("card"); //console.log("changed", cardValue);
         	if (cardValue == "") {
         		confirmSubquery();
         	} else {
         		$('#goto-wizard').removeAttr("disabled");
+        		$('#linked-instance-exists').removeAttr("disabled");
         		$('#goto-wizard').prop('checked', true);
         	}           
         } 
 	},
+	
+	"click #goto-wizard": function() {
+		if(document.getElementById("goto-wizard").checked == true) $('#linked-instance-exists').prop('checked', false);
+	},
+	
+	"click #linked-instance-exists": function() {
+		if(document.getElementById("linked-instance-exists").checked == true) $('#goto-wizard').prop('checked', false);
+	},
 
 	"click #link-list-form": function() {
+		
 		var checkedName = $('input[name=link-list-radio]:checked');
-	
 		var start_elem_id = Session.get("activeElement");			
 		var currentElement = new VQ_Element(start_elem_id);
 		var joinLinkDesc = "";
@@ -598,7 +638,6 @@ Template.AddLink.events({
 		}
 		Template.AddLink.JoinLinkText.set(joinLinkDesc);
 		Template.AddLink.SubqueryLinkText.set(subqueryLinkDesc);
-		
 		
 		$("div[id=errorField]").remove();
 	},
@@ -815,11 +854,11 @@ Template.AddLink.events({
 	},
 
 	"change #link-list-form": function() {
-		var typeName = $('input[name=type-radio]').filter(':checked').val();
-		var cardValue = $('input[name=link-list-radio]:checked').attr("card");
-		if (typeName == "NESTED" && cardValue == "") {
-			confirmSubquery();
-		}
+		// var typeName = $('input[name=type-radio]').filter(':checked').val();
+		// var cardValue = $('input[name=link-list-radio]:checked').attr("card");
+		// if (typeName == "NESTED" && cardValue == "") {
+			// confirmSubquery();
+		// }
 	},
 	'click #apply-button': async function(e) {
 		var asc = [];
@@ -830,6 +869,7 @@ Template.AddLink.events({
 		return;
 	},
 	'keyup #mySearch': async function(e) {
+	
 		if (e.keyCode == 13) {
 			var asc = [];
 			_.each(await getAllAssociations(), function(a){
@@ -840,6 +880,7 @@ Template.AddLink.events({
 		return;
 	},
 	'click #dbp_for_links': async function(e) {
+
 		var asc = [];
 		_.each(await getAllAssociations(), function(a){
 			asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});
@@ -898,12 +939,15 @@ function clearAddLinkInput(){
 	$('[name=type-radio]').removeAttr('checked');
 	$('input[name=type-radio][value="JOIN"]').attr('checked', true);
 	$('input[id=goto-wizard]').prop("checked",false);
+	$('input[id=linked-instance-exists]').prop("checked",false);
 	$('input[id=goto-wizard]').prop("disabled","disabled");
+	$('input[id=linked-instance-exists]').prop("disabled","disabled");
 	$("#mySearch")[0].value = "";
 	$("div[id=errorField]").remove();
 }
 
 function confirmSubquery(){
+	
 	// var txt;
 	var proj = Projects.findOne({_id: Session.get("activeProject")});
 	if (proj.showCardinalities=="true" && confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
@@ -911,13 +955,17 @@ function confirmSubquery(){
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
 		$('#goto-wizard:checked').prop('checked', false);
+		$('#linked-instance-exists:checked').prop('checked', false);
         $('#goto-wizard').prop('disabled',"disabled");
+        $('#linked-instance-exists').prop('disabled',"disabled");
 	} else {
 		// txt = "You pressed Cancel!";
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="NESTED"]').prop('checked', true);
 		$('#goto-wizard').removeAttr("disabled");
+		$('#linked-instance-exists').removeAttr("disabled");
         $('#goto-wizard').prop('checked', true);		
+        $('#linked-instance-exists').prop('checked', false);		
 	}
 	// console.log(txt);
 }
