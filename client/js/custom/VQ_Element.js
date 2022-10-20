@@ -2815,8 +2815,12 @@ VQ_Element.prototype = {
   },
   // string  -->
   setNestingType: function(type) {
+	 
     var valueInputMap = {"PLAIN":"Join", "SUBQUERY":"Subquery","GLOBAL_SUBQUERY":"Subquery + Global", "GRAPH":"Graph to contents", "CONDITION":"Reference"};
-    this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
+	var nestingTypeValueOld = this.getCompartmentValue("NestingType");
+	
+	if(nestingTypeValueOld == "Subquery, Global" || nestingTypeValueOld == "Non-structure (extra join) link") this.setCompartmentValueAuto("NestingType", nestingTypeValueOld);
+    else this.setCompartmentValueAuto("NestingType", valueInputMap[type]);
     this.setLinkQueryType(type);
   },
   isLabelServiceLanguages: function() {
