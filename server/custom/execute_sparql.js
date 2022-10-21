@@ -320,10 +320,10 @@ function selectHttpRequestProfileNameByUrl(url) {
 }
 
 var DO_CALL_DEBUG = function(method, url, options, cb) {
-    console.log('☕', method, url, options);
+    console.log('☕', method, decodeURI(url), options);
     if (cb) {
         HTTP.call(method, url, options, (err, resp) => {
-            if (resp.statucCode >= 300) {
+            if (resp.statusCode >= 300) {
                 console.log('🥤🥤', err, resp);
             }
             console.log('🦊🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));
@@ -331,7 +331,7 @@ var DO_CALL_DEBUG = function(method, url, options, cb) {
         });
     } else {
         const resp = HTTP.call(method, url, options);
-        if (resp.statucCode >= 300) {
+        if (resp.statusCode >= 300) {
             console.log('🥤', err, resp);
         }
         console.log('🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));

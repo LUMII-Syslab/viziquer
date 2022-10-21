@@ -44,3 +44,4 @@ peerlibrary:xml2js
 rzymek:pegjs
 twbs:bootstrap
 dynamic-import@0.6.0
+fetch
