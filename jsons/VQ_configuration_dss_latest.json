@@ -4163,7 +4163,7 @@
                       "align": "left",
                       "fill": "#000000",
                       "padding": 0,
-                      "placement": "start-left",
+                      "placement": "end-right",
                       "visible": false,
                       "fontSize": 16,
                       "fontStyle": "normal",

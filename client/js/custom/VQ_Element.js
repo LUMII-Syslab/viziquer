@@ -3402,7 +3402,7 @@ VQ_Element.prototype = {
 						setNeg = "false";
 						setNegValue = "";
 						setFE = "true";
-						setFEValue = "{has}";
+						setFEValue = "{exists}";
 						this.setCustomStyle([{attrName:"elementStyle.stroke",attrValue:"#000000"},
 																{attrName:"elementStyle.dash",attrValue:[0,0]},
 																{attrName:"startShapeStyle.stroke", attrValue:"#000000"},
