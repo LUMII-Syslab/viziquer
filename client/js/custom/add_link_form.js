@@ -356,6 +356,7 @@ Template.AddLink.events({
 	                    lnk.setName(name);
 						if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
 						else lnk.setLinkType("REQUIRED");
+
 	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
 						if (proj && proj.autoHideDefaultPropertyName=="true") { 
@@ -369,7 +370,8 @@ Template.AddLink.events({
 	                    lnk.setName(name);
 	                    if(document.getElementById("linked-instance-exists").checked == true)  lnk.setLinkType("FILTER_EXISTS");
 						else lnk.setLinkType("REQUIRED");
-	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
+						
+						if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
 						if (proj && proj.autoHideDefaultPropertyName=="true") {
 							lnk.hideDefaultLinkName(true);
@@ -423,9 +425,9 @@ Template.AddLink.events({
 					$("#aggregate-wizard-form").modal("show");
 				}
 			}
-
-			clearAddLinkInput();
 			$("#add-link-form").modal("hide");
+			clearAddLinkInput();
+			
 			return;
 		}
 
@@ -939,7 +941,7 @@ function clearAddLinkInput(){
 	$('[name=type-radio]').removeAttr('checked');
 	$('input[name=type-radio][value="JOIN"]').attr('checked', true);
 	$('input[id=goto-wizard]').prop("checked",false);
-	$('input[id=linked-instance-exists]').prop("checked",false);
+	// $('input[id=linked-instance-exists]').prop("checked",false);
 	$('input[id=goto-wizard]').prop("disabled","disabled");
 	$('input[id=linked-instance-exists]').prop("disabled","disabled");
 	$("#mySearch")[0].value = "";
