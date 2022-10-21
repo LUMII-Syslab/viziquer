@@ -3054,11 +3054,12 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 									subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})";
 									requiredSubQueries.push(subQuery);
 								} else {
-									if(sparqlTable["subClasses"][subclass]["linkType"] == "FILTER_EXISTS") distinct = "DISTINCT ";
+									
 									//var subQuery = "FILTER(EXISTS{\n" +SPARQL_interval+ temp.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"})"
 									// sparqlTable["subClasses"][subclass]["selectAll"] != true
 									var distinct = "";
-									if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
+									if(sparqlTable["subClasses"][subclass]["linkType"] == "FILTER_EXISTS") distinct = "DISTINCT ";
+									// if(sparqlTable["subClasses"][subclass]["selectAll"] != true)distinct = "DISTINCT ";
 									temp = temp.filter(function (el, i, arr) {
 										return arr.indexOf(el) === i;
 									});

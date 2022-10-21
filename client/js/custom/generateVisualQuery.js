@@ -7536,7 +7536,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			var expression = condition;
 
 			//add condition to class
-			classBox.addCondition(expression);
+			if(typeof expression !== "undefined" && expression != null && expression != "")classBox.addCondition(expression);
 		})
 
 		//orderBy
