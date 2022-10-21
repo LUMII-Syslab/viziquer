@@ -1351,7 +1351,6 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			var found = false;
 			
 			
-			
 			//if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["max_cardinality"] == 1 && attributeInfoTemp["alias"] != ""){
 			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList["?"+attributeInfoTemp["alias"]] === "undefined" || variableList["?"+attributeInfoTemp["alias"]] <=1)){
 				
@@ -1395,7 +1394,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	
 							var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].split(/([\w|:]+)/)
 							
-							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"])
+							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"]);	
 
 							if(replaceIndex != -1) {
 								if(replaceIndex > 0 && attributeNameSplit[replaceIndex-1].slice(-1) == "@") attributeNameSplit[replaceIndex-1] = attributeNameSplit[replaceIndex-1].substring(0, attributeNameSplit[replaceIndex-1].length-1)
@@ -1438,6 +1437,24 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						}
 					}
 				}
+				//fields
+					for(var field in classesTable[attributeTable[attribute]["class"]]["fields"]){
+						
+						if(classesTable[attributeTable[attribute]["class"]]["fields"][field]["alias"] == attributeInfoTemp["alias"] && classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] != "(select this)"){
+	
+							var attributeNameSplit = classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"].split(/([\w|:]+)/)
+							
+							var replaceIndex = attributeNameSplit.indexOf(attributeInfoTemp["alias"]);	
+
+							if(replaceIndex != -1) {
+								if(replaceIndex > 0 && attributeNameSplit[replaceIndex-1].slice(-1) == "@") attributeNameSplit[replaceIndex-1] = attributeNameSplit[replaceIndex-1].substring(0, attributeNameSplit[replaceIndex-1].length-1)
+								 found = true;
+								 if(typeof attributeInfoTemp["exp"] !== 'undefined') attributeNameSplit[replaceIndex] = attributeInfoTemp["exp"];
+								 else attributeNameSplit[replaceIndex] = attributeInfoTemp["identification"]["short_name"];
+								 classesTable[attributeTable[attribute]["class"]]["fields"][field]["exp"] = attributeNameSplit.join("");
+							}
+						}
+					}
 			}
 			if(found == false && attributeTable[attribute]["seen"] != true){
 				var exp = attributeInfoTemp["exp"];
