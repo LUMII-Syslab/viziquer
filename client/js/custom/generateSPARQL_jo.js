@@ -1321,7 +1321,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 	var messages = [];
 	var prefixTable = [];
-	if(clazz.instanceAlias != null && clazz.instanceIsConstant == false && clazz.instanceIsVariable == false){
+	if(clazz.instanceAlias != null && clazz.instanceIsConstant == false && clazz.instanceIsVariable == false && clazz.instanceAlias.indexOf("_:name") == -1){
 		messages.push({
 			"type" : "Error",
 			"message" : "Instance identification '"+clazz["instanceAlias"]+"' can not be interpreted as an identifier (variable) or a constant (URI, number, string)",
