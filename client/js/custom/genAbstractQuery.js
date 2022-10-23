@@ -97,17 +97,17 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   async function resolveClass(obj_class, parents_scope_table) {
 	var schemaName = await dataShapes.schema.schemaType;
 	// for wikidata
-	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1 && (obj_class.instanceIsConstant == true || obj_class.instanceIsVariable == true)){ 
+	
+	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1 && (obj_class.instanceIsConstant == true || obj_class.instanceIsVariable == true)){
 		if(schemaName.toLowerCase() == "wikidata" && obj_class.instanceAlias.indexOf(":") == -1 &&((obj_class.instanceAlias.indexOf("[") > -1 && obj_class.instanceAlias.endsWith("]")))){
 			obj_class.instanceAlias = "wd:"+obj_class.instanceAlias;
 		}	
 
 		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
-			return true;
+			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
 		}
-		
-		obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
 	}
+		  
 	
     var my_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagramm_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
