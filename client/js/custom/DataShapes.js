@@ -441,7 +441,7 @@ dataShapes = {
 		}
 	},
 	callServerFunction : async function(funcName, params) {
-		if ( ConsoleLog && funcName != 'resolvePropertyByName') {
+		if ( ConsoleLog &&  funcName != 'resolvePropertyByName' && funcName.substring(0,2) != 'xx' ) {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
 		}
@@ -481,7 +481,8 @@ dataShapes = {
 			Interpreter.showErrorMsg("Project DSS parameter not found !");
 
 		const time = Date.now() - startTime
-		if ( ConsoleLog && funcName != 'resolvePropertyByName') {			
+
+		if ( ConsoleLog &&  funcName != 'resolvePropertyByName' && funcName.substring(0,2) != 'xx') {			
 			if ( rr.data ) {
 				console.log(rr)
 				//console.log(rr.data.map(v => v.prefix + ':' + v.display_name))
@@ -827,6 +828,79 @@ dataShapes = {
 	clearLog : function() {
 		this.schema.log = [];
 		this.schema.fullLog = [];
+	},
+	getClassList : async function(count, isLocal) {
+		var rr = [];
+		var allParams = {main: { limit: count, isLocal: isLocal }};
+		
+		rr = await this.callServerFunction("xx_getClassList", allParams);
+		
+		var c_list = rr.data.map(v => v.id)
+		return c_list;		
+	},
+	makeDiagr : async function(count = 30, isLocal = true) {
+
+		var c_list = await this.getClassList(count,isLocal);
+		
+		var rr;
+		var rez = [];
+		var tt = '';
+				//var allParams = {main: { c_list: `${c_list}`}};
+				//var rr = await this.callServerFunction("xx_getClassListInfo", allParams);
+				//console.log(rr);
+				
+				//var rez =  rr.data.map(function(f) { return `${f.id};${f.prefix}:${f.display_name};${f.cnt_x};${f.data_prop};${f.obj_prop};aaa##bbb`});
+				//rez.unshift('id;name;cnt;data_prop;obj_prop;aa');
+				//rez.push('');
+		
+		var allParams = {main: { c_list: `${c_list}`}};
+		for (var cc of c_list) {		
+			allParams.main.cc = cc;
+			rr = await this.callServerFunction("xx_getClassInfo", allParams);
+			tt = `${rr.data[0].id};${rr.data[0].prefix}:${rr.data[0].display_name};${rr.data[0].cnt_x};${rr.data[0].data_prop};${rr.data[0].obj_prop}`
+			rr = await this.callServerFunction("xx_getClassInfoAtr", allParams);
+			var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
+			rr = await this.callServerFunction("xx_getClassInfoLink", allParams);
+			var tt3 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
+			tt = `${tt};${tt2.join("##")};${tt3.join("##")}`;
+			rez.push(tt);
+		}
+		rez.unshift('id;name;cnt;data_prop;obj_prop;aa;aa2');
+		rez.push('');
+		//console.log(rez)
+		rr = await this.callServerFunction("xx_getCCInfo", allParams);
+		var rez2 =  rr.data.map(function(f) { return `Gen;${f.class_1_id};${f.class_2_id}`});  //  ***
+
+		//for (var cc of c_list) {
+		//	allParams.main.cc = cc;
+		//	rr = await this.callServerFunction("xx_getPropListInfo", allParams);
+		//	rr.data.map(function(f) { rez2.push(`Assoc;${cc};${f.class_id}`); return 1;});
+		//}
+		
+		for (var cc of c_list) {
+			for (var cc2 of c_list) {
+				allParams.main.cc = cc;
+				allParams.main.cc2 = cc2;
+				rr = await this.callServerFunction("xx_getPropListInfo2", allParams);
+				if (rr.data.length > 0 ) {
+					var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
+					rr.data.map(function(f) { rez2.push(`Assoc;${cc};${cc2};${tt2.join("##")}`); return 1;});
+				} 
+			}
+		}
+		rez2.unshift('type;c1;c2;aa');
+		rez2.push('');
+		
+				var link = document.createElement("a");
+				link.setAttribute("download", "data.txt");
+				link.href = URL.createObjectURL(new Blob([rez.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+				document.body.appendChild(link);
+				link.click();
+				link.setAttribute("download", "data2.txt");
+				link.href = URL.createObjectURL(new Blob([rez2.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+				document.body.appendChild(link);
+				link.click();
+			
 	},
 	getCPName: function(localName, type) {
 		//dataShapes.getCPName('http://dbpedia.org/ontology/Year', 'C') 
