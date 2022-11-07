@@ -91,6 +91,11 @@ function isURI(text) {
   return 0;
 };
 
+function isIndividual(individual) {
+	if (individual !== null && individual !== undefined && isURI(individual) != 0 && !individual.startsWith("?")) 
+		return true;
+}
+
 const getPListI = (vq_obj) => {
 	var pListI = {};
 	var link_list =  vq_obj.getLinks();
@@ -109,7 +114,7 @@ const getPListI = (vq_obj) => {
 		if (link.typeO === 'out' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
 			var eE = new VQ_Element(link.eE);
 			var individual =  eE.getInstanceAlias();
-			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
+			if (isIndividual(individual)) {
 				pListI.type = link.type;
 				pListI.name = link.name;
 				pListI.uriIndividual = dataShapes.getIndividualName(individual);;
@@ -118,7 +123,7 @@ const getPListI = (vq_obj) => {
 		if (link.typeO === 'in' && link.name !== null && link.name !== undefined && link.name !== '++' ) {
 			var sE = new VQ_Element(link.sE);
 			var individual =  sE.getInstanceAlias();
-			if (individual !== null && individual !== undefined && isURI(individual) != 0) {
+			if (isIndividual(individual)) {
 				pListI.type = link.type;
 				pListI.name = link.name;
 				pListI.uriIndividual = dataShapes.getIndividualName(individual);
@@ -186,7 +191,7 @@ const getPList = (vq_obj) => {
 			var individual =  el.getInstanceAlias();
 			if (class_name !== null && class_name !== undefined)
 				link.className = class_name;			
-			if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+			if (isIndividual(individual)) 
 				link.uriIndividual = dataShapes.getIndividualName(individual);
 		})
 		
@@ -197,7 +202,7 @@ const getPList = (vq_obj) => {
 				var individual =  el.getInstanceAlias();
 				if (class_name !== null && class_name !== undefined)
 					link.className = class_name;			
-				if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+				if (isIndividual(individual)) 
 					link.uriIndividual = dataShapes.getIndividualName(individual);
 			}
 		})
@@ -208,7 +213,7 @@ const getPList = (vq_obj) => {
 const findElementDataForClass = (vq_obj) => {
 	var params = {}
 	var individual =  vq_obj.getInstanceAlias();
-	if (individual !== null && individual !== undefined && isURI(individual) != 0) 
+	if (isIndividual(individual)) 
 		params.uriIndividual = dataShapes.getIndividualName(individual);;
 
 	var pList = getPList(vq_obj);
@@ -220,7 +225,7 @@ const findElementDataForProperty = (vq_obj) => {
 	var params = {};
 	var individual =  vq_obj.getInstanceAlias();
 	var class_name = vq_obj.getName();
-	if (individual !== null && individual !== undefined && isURI(individual) != 0)
+	if (isIndividual(individual))
 		params.uriIndividual = dataShapes.getIndividualName(individual);;
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
@@ -917,6 +922,9 @@ dataShapes = {
 	},
 	getIndividualName: function(localName) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
+		if (localName.startsWith("="))
+			localName = localName.substring(1,localName.length)
+			
 		function getLastB(name){
 			var r = -1; 
 			var searchStrLen = 1;
