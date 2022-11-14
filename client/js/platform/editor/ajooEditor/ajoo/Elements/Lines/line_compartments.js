@@ -25,6 +25,7 @@ LinkCompartments = function(element, comparts_in) {
 LinkCompartments.prototype = {
 
 	create: function(comparts_in) {
+		//console.log("-----LinkCompartments create---------------")
 
 		var compartments = this;
 		var line = compartments.element;
@@ -45,7 +46,8 @@ LinkCompartments.prototype = {
 		var sizes = {};
 
 		//adding compartments
-		var comparts = compartments.compartments;	
+		var comparts = compartments.compartments;
+		compartments.placements = {};		
 		_.each(comparts_in, function(compart_in) {
 
 			if (compart_in["value"] == undefined || compart_in["value"] == "") {
@@ -78,13 +80,13 @@ LinkCompartments.prototype = {
 			placement.width = Math.max(placement.width, compart.textWidth);
 			placement.height += compart.textHeight;
 		});
-		
+		console.log("--Tiek pārrēķinātas vērtības pie create--")	
 		compartments.computeGroupsPositions();
 		compartments.computeTextsPositions();
 	},
-
+	
 	getPlacementByName: function(placement_name) {
-
+	
 		var compartments = this;
 		var texts_group = compartments.textsGroup;
 
@@ -622,7 +624,7 @@ LinkCompartments.prototype = {
 
 	recomputeCompartmentsPosition: function(compartment) {
 		var compartments = this;
-
+		//console.log("-----Line recomputeCompartmentsPosition-----")
 		var placement_in = compartment.placement;
 		var placement_name = placement_in.name;
 
@@ -641,7 +643,7 @@ LinkCompartments.prototype = {
 
 			new_height += height;
 		});
-
+		console.log("--Tiek pārrēķinātas vērtības vienam kompartmentam--")	
 		placment_obj.width = new_width;
 		placment_obj.height = new_height;
 
@@ -650,7 +652,7 @@ LinkCompartments.prototype = {
 	},
 
 	removeAllRespresentations: function() {
-
+		//console.log("-----LinkCompartments removeAllRespresentations---------------")
 		var compartments = this;
 		var texts_group = compartments.textsGroup;
 
@@ -672,7 +674,7 @@ LinkCompartments.prototype = {
 	},
 
 	removeOne: function(compart_id, is_refresh_not_needed) {
-
+		//console.log("-----LinkCompartments removeOne---------------")
 		var compartments = this;
 		var editor = compartments.editor;
 
@@ -693,7 +695,7 @@ LinkCompartments.prototype = {
 
 		compartments.computeTextPositions(placement);
 
-		if (!is_refresh_not_needed) {
+		if (!is_refresh_not_needed && compartments.element.presentation.getLayer() !== null) {
 			compartments.element.presentation.getLayer().batchDraw();
 			//not working
 			//compartments.element.presentation.draw();

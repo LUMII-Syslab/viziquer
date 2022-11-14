@@ -3325,6 +3325,7 @@ VQ_Element.prototype = {
 
 	// sets link type. Possible values: REQUIRED, NOT, OPTIONAL, FILTER EXISTS
 	setLinkType: function(value) {
+	//console.log("~~~~~~~~~~~"+value+"~~~~~~~~~~~~~~~~~~")
 		 if (this.isLink()) {
 			 //console.log(this);
         // By default link is REQUIRED
@@ -3445,11 +3446,11 @@ VQ_Element.prototype = {
 				  };
 				};
 
-			    this.setCompartmentValue("Negation Link",setNeg,setNegValue,false,setNeg=="true");
-				//this.setCompartmentVisibility("Negation Link", setNeg=="true");
+				this.setCompartmentValue("Negation Link",setNeg,setNegValue);
+				this.setCompartmentVisibility("Negation Link", setNeg=="true");
 				this.setCompartmentValue("Optional Link",setOpt,"");
-				this.setCompartmentValue("Filter Exists",setFE,setFEValue,false,setFE=="true");
-				//this.setCompartmentVisibility("Filter Exists", setFE=="true");
+				this.setCompartmentValue("Filter Exists",setFE,setFEValue);
+				this.setCompartmentVisibility("Filter Exists", setFE=="true");
 
 		 }
 	},
@@ -3622,18 +3623,13 @@ VQ_Element.prototype = {
 	//sets compartment value (input and value)
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
   // If insert mode is true then new compartment is inserted regardless of existence
-	setCompartmentValue: function(comp_name, input, value, insertMode, visible) {
+	setCompartmentValue: function(comp_name, input, value, insertMode) {
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
 			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
 			if (c && !insertMode) {
-				if (visible == null) {
-					Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
-				}
-				else {
-					Dialog.updateCompartmentValue(ct, input, value, c["_id"],{ "compartmentStyleUpdate": {"style.visible":visible}});
-				};
-          return 1;
+				Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
+				return 1;
 			} else {
 				  //Dialog.updateCompartmentValue(ct, input, value);
           var c_to_create = {
@@ -3657,7 +3653,8 @@ VQ_Element.prototype = {
 											styleId: ct.styles[0]["id"],
 										},
 									};
-              Utilities.callMeteorMethod("insertCompartment", c_to_create);
+
+             Utilities.callMeteorMethod("insertCompartment", c_to_create);
           return 3;
 			};
 		};
