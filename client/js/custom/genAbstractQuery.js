@@ -188,8 +188,14 @@ resolveTypesAndBuildSymbolTable = async function (query) {
       _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
+	
+	for(var f in obj_class.fields){
+		 obj_class.fields[f]["order"] = f;
+	}
 
      for (const f of obj_class.fields) {
+		 
+		
     // obj_class.fields.forEach(async function(f) {
         // CAUTION .............
         // HACK: * and ** fields
@@ -229,6 +235,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		} else {
           // field without alias? We should somehow identify it
           // obj_id + exp
+ 
           my_scope_table.UNRESOLVED_NAME.push({id:obj_class.identification._id+f.exp, type:null, context:obj_class.identification._id});
         };
     }
@@ -254,11 +261,13 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
     }
 	// );
-
+	
     // we should copy to parent
     if (obj_class.linkIdentification) {
-       if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
-            for (const ca of my_scope_table.CLASS_ALIAS) {
+       // plain required
+	   if (obj_class.linkType == "REQUIRED" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
+     
+			for (const ca of my_scope_table.CLASS_ALIAS) {
 			// my_scope_table.CLASS_ALIAS.forEach(function(ca) {
                 parents_scope_table.CLASS_ALIAS.push(_.clone(ca))
             }
@@ -274,9 +283,10 @@ resolveTypesAndBuildSymbolTable = async function (query) {
             }
 			// );
        };
-
+	   // plain optional
        if (obj_class.linkType == "OPTIONAL" && !obj_class.isSubQuery && !obj_class.isGlobalSubQuery) {
-         for (const ca of my_scope_table.CLASS_ALIAS) {
+  
+		 for (const ca of my_scope_table.CLASS_ALIAS) {
 		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
@@ -297,8 +307,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		 // );
        };
 
-
+	   // subquery/global subquery required/optional
        if (obj_class.linkType !== "NOT") {
+
          for (const ca of  my_scope_table.CLASS_ALIAS) {
 		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
@@ -324,7 +335,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
            clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
-             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {
+				 clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1
+			 }
 			 clone_ca["distanceFromClass"] = 1
            }else{
 		     if (clone_ca["distanceFromClass"]) {clone_ca["distanceFromClass"] = clone_ca["distanceFromClass"] + 1}
@@ -348,6 +361,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
          symbol_table[obj_class.identification._id][entry.id].push({kind:key, type:entry.type, context:entry.context, upByOptional:entry.upByOptional, upBySubQuery:entry.upBySubQuery, distanceFromClass:entry.distanceFromClass});
        })
     })
+
 	// we should build symbol table entry for this Class.
     symbol_table["root"] = {};
     _.each(diagramm_scope_table, function(value, key) {
@@ -416,7 +430,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
   // JSON -->
   // Parses object's property "exp" and puts the result in the "parsed_exp" property
-  async function parseExpObject(exp_obj, context) {
+  async function parseExpObject(exp_obj, context, exprType) {
+	 
    var parse_obj = exp_obj.exp;
    if(typeof parse_obj !== 'undefined'){
 	   if(parse_obj.indexOf("-") !== -1 && parse_obj.indexOf("[") === -1 && parse_obj.indexOf("]") === -1){
@@ -437,14 +452,12 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			try {
 			  // var proj = Projects.findOne({_id: Session.get("activeProject")});
 			 var schemaName = await dataShapes.schema.schemaType;
-			  // if (proj) {
-				  // if (proj.schema) {
-					// schemaName = proj.schema;
-				  // };
-			  // }
-			  
+
+			    var tt=await resolveTypeFromSchemaForAttributeAndLink(exp_obj.exp, schemaName);
+				var isSimple = false;
+				if(tt != null) isSimple = true;
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
-			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context);
+			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple);
 			  
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
@@ -499,10 +512,18 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   function cleanSymbolTable() {
       _.each(symbol_table, function(name_list, current_context) {
             _.each(name_list, function(entry_list, name) {
-                symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS") } );
-                if (_.isEmpty(symbol_table[current_context][name])) {
-                  delete symbol_table[current_context][name];
+                symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS" || n.upBySubQuery > 1) } );
+ 
+				// for(var n in symbol_table[current_context][name]){
+					
+					// if(typeof symbol_table[current_context][name][n]["upBySubQuery"] !== "undefined" && symbol_table[current_context][name][n]["upBySubQuery"] > 1){
+						// delete symbol_table[current_context][name][n];
+					// }
+				// }
+				if (_.isEmpty(symbol_table[current_context][name])) {
+				  delete symbol_table[current_context][name];
                 };
+
             })
       })
   };
@@ -556,8 +577,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
     }
 
-   
-    // CAUTION!!!!! Hack for * and **
+    for (const ch of obj_class.children){ await resolveClassExpressions(ch,obj_class); }
+	
+	// CAUTION!!!!! Hack for * and **
     // obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="**")});
     obj_class.fields = _.reject(obj_class.fields, function(f) {return (f.exp=="*" || f.exp=="(*attr)" || f.exp=="(*sub)")});
 
@@ -594,7 +616,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         if (obj_class.instanceAlias==null) {
           if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
         } else{
-			
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
 		 
@@ -635,7 +656,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				}
 
 				var condition = {exp:"(this) = " + strURI};
-			    await parseExpObject(condition, obj_class.identification);
+			    await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 			    obj_class.conditions.push(condition);
 				if(obj_class.isVariable == true) obj_class.instanceAlias = null;
 			} else {
@@ -643,14 +664,14 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				if(obj_class.identification.local_name == null && (instanceAliasIsURI == 3 || instanceAliasIsURI == 4)){
 					var condition = {exp:"(this) = " + strURI};
 					obj_class.instanceAlias = "expr";
-					await parseExpObject(condition, obj_class.identification);
+					await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 					obj_class.conditions.push(condition);
 					
 					if(f.alias == "") f.alias = "expr";
-					await parseExpObject(f, obj_class.identification);
+					await parseExpObject(f, obj_class.identification, "CLASS_NAME");
 				} else {
 					if(f.alias == "") f.alias = "expr";
-					await parseExpObject(f, obj_class.identification);
+					await parseExpObject(f, obj_class.identification, "CLASS_NAME");
 				}
 			}
 			// obj_class.instanceAlias = null;
@@ -666,11 +687,16 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		if(obj_class.instanceAlias != null && obj_class.identification.local_name == null && (f.exp=="(.)" || f.exp=="(select this)")){
 			
 		} else{
-         await parseExpObject(f, obj_class.identification);
+		if(f.fulltext.indexOf("(select this)") === -1) await parseExpObject(f, obj_class.identification, "attribute");
+		else await parseExpObject(f, obj_class.identification, "CLASS_NAME");
          // Here we can try to analyze something about expressiond vcvc vcokkiiiiiuukuuuuuuukl;;;lljjjhh;yyyytttttttty5690-==-0855433``````
          // if expression is just single name, then resolve its type.
 
          var p = f.parsed_exp;
+		 
+		 var pathCheck = chechIfSimplePath(p, true, false);
+		 if(pathCheck["isPath"] == true && pathCheck["isSimple"] == true) f.isSimplePath = true;
+
          // Don't know shorter/better way to check ...
          if (p && p[1] && p[1].ConditionalOrExpression && p[1].ConditionalOrExpression[0] && p[1].ConditionalOrExpression[1] &&  p[1].ConditionalOrExpression[1].length == 0 &&
              p[1].ConditionalOrExpression[0].ConditionalAndExpression && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0] &&
@@ -688,21 +714,45 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
-
-           switch (var_obj["kind"]) {
+             
+		   switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
                 if (f.alias) {
                   updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
-				  f.isSimple = true;
+				  
                 }
-
+				f.isSimple = true;
                 break;
              case "PROPERTY_ALIAS":
-                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
-
+                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			case "AGGREGATE_ALIAS":
+                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			case "BIND_ALIAS":
+				if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			 case "REFERENCE_TO_ALIAS":
+				if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
                 break;
              case "CLASS_ALIAS":
                 updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", var_obj["type"]);
@@ -737,17 +787,51 @@ resolveTypesAndBuildSymbolTable = async function (query) {
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
-				  f.isSimple = true;
+				  
                 }
-
+				f.isSimple = true;
                 break;
              case "PROPERTY_ALIAS":
-                updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
-
+                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			case "AGGREGATE_ALIAS":
+                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			case "BIND_ALIAS":
+				if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
+                break;
+			 case "REFERENCE_TO_ALIAS":
+				if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+				else {
+					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
+					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				}
                 break;
              case "CLASS_ALIAS":
                 updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", var_obj["type"]);
                 break;
+			 case null:
+                if (f.alias) {
+                  updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS");
+                } else {
+                  updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME");
+                  renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);  
+                }
+				f.isSimple = true;
+                break;
+				
              default:
                  //  - so what is it???? It is ERROR ...
 
@@ -828,7 +912,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     }
 	// );
 	
-	if(obj_class.linkIdentification && obj_class.linkIdentification.local_name.startsWith("?")){
+	if(obj_class.linkIdentification && obj_class.linkIdentification.local_name && obj_class.linkIdentification.local_name.startsWith("?")){
 		var expr = obj_class.linkIdentification.local_name.substring(1);
 		if(expr.startsWith("?")) expr = expr.substring(1);
 		updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
@@ -849,7 +933,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	};
     // if (obj_class.havingConditions) { obj_class.havingConditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) };
 
-	for (const ch of obj_class.children){ await resolveClassExpressions(ch,obj_class); }
+	
     // obj_class.children.forEach(async function(ch) { await resolveClassExpressions(ch,obj_class); });
 	
 	
@@ -1224,17 +1308,17 @@ function getGraphFullForm(graph, prefixes){
 	return graph
 }
 
-async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType){
+async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
 	
 	for(var exp in parsed_exp){
 		if(exp == "var") {
-			parsed_exp[exp]["type"] = await resolveType(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName);
-			parsed_exp[exp]["kind"] = await resolveKind(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName);
+			parsed_exp[exp]["type"] = await resolveType(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
+			parsed_exp[exp]["kind"] = await resolveKind(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
 		}
 		
 		
 		if(typeof parsed_exp[exp] == 'object'){
-			await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType)
+			await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType, isSimple)
 		}
 		
 		if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
@@ -1267,6 +1351,26 @@ async function resolveTypeFromSymbolTable(id, context, symbol_table) {
     				}
     				return null
 };
+
+async function resolveTypeFromSymbolTableForContext(id, context, symbol_table) {
+    var context = context._id;
+	
+    if(typeof symbol_table[context] === 'undefined') return null;
+
+    var st_row = symbol_table[context][id];
+    if (st_row) {
+    	if(st_row.length == 0) return null;
+		var type = null;
+    	for (var symbol in st_row) {
+			if(st_row[symbol]["context"] == context) type = st_row[symbol].type;
+    	}
+
+		return type;
+    } else {
+    	return null
+    }
+    return null
+};
     			// string -> idObject
     			// returns kind of the identifier from symbol table. Null if does not exist.
 async function resolveKindFromSymbolTable(id, context, symbol_table) {
@@ -1275,6 +1379,7 @@ async function resolveKindFromSymbolTable(id, context, symbol_table) {
     				if(typeof symbol_table[context] === 'undefined') return null;
 
     				var st_row = symbol_table[context][id];
+					
     				if (st_row) {
     					if(st_row.length == 0) return null;
     					if(st_row.length == 1){
@@ -1285,11 +1390,31 @@ async function resolveKindFromSymbolTable(id, context, symbol_table) {
     							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
     						}
     					}
-    					return st_row.kind
+    					return st_row[0].kind
     				} else {
     					return null
     				}
     				return null
+};
+
+async function resolveKindFromSymbolTableForContext(id, context, symbol_table) {
+    var context = context._id;
+	
+    if(typeof symbol_table[context] === 'undefined') return null;
+
+    var st_row = symbol_table[context][id];
+    if (st_row) {
+    	if(st_row.length == 0) return null;
+		var kind = null;
+    	for (var symbol in st_row) {
+			if(st_row[symbol]["context"] == context) kind = st_row[symbol].kind;
+    	}
+
+		return kind;
+    } else {
+    	return null
+    }
+    return null
 };
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
@@ -1384,51 +1509,135 @@ async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
     			// string -> idObject
     			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
     			// then in schema. Null if does not exist
-async function resolveType(id, exprType, context, symbol_table, schemaName) {
+async function resolveType(id, exprType, context, symbol_table, schemaName, isSimple) {
     			  if(id !== "undefined"){
-    			  var t=await resolveTypeFromSymbolTable(id, context, symbol_table);
-    				if (!t) {
-    					if (exprType) {
-    					  t= await resolveTypeFromSchemaForClass(id, schemaName);
-    					  if (!t) {
-    						  t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)
-    					  }
-    					} else {
-    					  t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
-    					  if (!t) {
-    						  t=await resolveTypeFromSchemaForClass(id, schemaName)
-    					  }
-						  if (!t) {
-    						  t=await resolveTypeFromSchemaForIndividual(id, schemaName)
-    					  }
-    					}
+					  var t = null;
+					  if(exprType == "attribute" && isSimple == true){
+						   t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
+						   if (!t) {
+							  t=await resolveTypeFromSymbolTable(id, context, symbol_table);
+							  if (!t) {
+								 t=await resolveTypeFromSchemaForClass(id, schemaName)
+							  }
+							  if (!t) {
+								 t=await resolveTypeFromSchemaForIndividual(id, schemaName)
+							  }
+						   }
+					  } else {
+						
+						if (exprType == "CLASS_NAME"){
+							t=await resolveTypeFromSymbolTable(id, context, symbol_table);
+							if (!t) {
+							  t= await resolveTypeFromSchemaForClass(id, schemaName);
+							    if (!t) {
+								    t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)
+							    }
+							}
+						}else{
+							t=await resolveTypeFromSymbolTableForContext(id, context, symbol_table);
+							if (!t) {
+								 t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
+								 if (!t) {
+									 t=await resolveTypeFromSymbolTable(id, context, symbol_table);
+									  if (!t) {
+										 t=await resolveTypeFromSchemaForClass(id, schemaName);
+										 if (!t) {
+										   t=await resolveTypeFromSchemaForIndividual(id, schemaName)
+										 }
+									  }
+								 }
+							}
+						}
+						
+						// var t=await resolveTypeFromSymbolTable(id, context, symbol_table);
+						// if (!t) {
+							// if (exprType != "attribute") {
+							  // t= await resolveTypeFromSchemaForClass(id, schemaName);
+							  // if (!t) {
+								  // t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)
+							  // }
+							// } else {
+							  // t=await resolveTypeFromSchemaForAttributeAndLink(id, schemaName);
+							  // if (!t) {
+								  // t=await resolveTypeFromSchemaForClass(id, schemaName)
+							  // }
+							  // if (!t) {
+								  // t=await resolveTypeFromSchemaForIndividual(id, schemaName)
+							  // }
+							// }
 
-    				}
+						  // }
+					  }
     			  return t;}
     return null;
 };
               //string -> string
         			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
-async function resolveKind(id, exprType, context, symbol_table, schemaName) {
+async function resolveKind(id, exprType, context, symbol_table, schemaName, isSimple) {
     				if(id !== "undefined"){
-						   var k=await resolveKindFromSymbolTable(id, context, symbol_table);
-        						if (!k) {
-        						  if (exprType) {
-        							  if (await resolveTypeFromSchemaForClass(id, schemaName)) {
-        									 k="CLASS_NAME";
-        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
-        									 k="PROPERTY_NAME";
-        							  }
-        							} else {
-        							  if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+						var k = null;
+						if(exprType == "attribute" && isSimple == true){
+							if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        						k="PROPERTY_NAME";
+        					} else {
+								 k=await resolveKindFromSymbolTable(id, context, symbol_table);
+								 if (!k) {
+									  if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
         									k="PROPERTY_NAME";
         							  } else if (await resolveTypeFromSchemaForClass(id, schemaName)) {
         									k="CLASS_NAME";
         							 }
-        							}
+								 }
+							}
+						} else {
+						  if (exprType == "CLASS_NAME"){
+							  k=await resolveKindFromSymbolTable(id, context, symbol_table);
+							  if (!k) {
+							         if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									 k="CLASS_NAME";
+        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									 k="PROPERTY_NAME";
+        							  }
+							  }
+						  } else {
+							  k=await resolveKindFromSymbolTableForContext(id, context, symbol_table);
+							  if (!k) {
+								if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        						  k="PROPERTY_NAME";
+        					    } else {
+									k=await resolveKindFromSymbolTable(id, context, symbol_table);
+									if (!k) {
+									  if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									 k="CLASS_NAME";
+        							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									 k="PROPERTY_NAME";
+        							  }
+									}
+								}
+							  }
+						  }
+							
+							
+							
+						   // k=await resolveKindFromSymbolTable(id, context, symbol_table);
+        						// if (!k) {
+        						  // if (exprType != "attribute") {
+        							  // if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									 // k="CLASS_NAME";
+        							  // } else if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									 // k="PROPERTY_NAME";
+        							  // }
+        							// } else {
+        							  // if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
+        									// k="PROPERTY_NAME";
+        							  // } else if (await resolveTypeFromSchemaForClass(id, schemaName)) {
+        									// k="CLASS_NAME";
+        							 // }
+        							// }
 
-        					  }
-        						return k;
+        					  // }
+						}
+        				return k;
     				}
     				return null
 };
@@ -1510,3 +1719,58 @@ function pathOrReference(o, symbol_table, context) {
 
     				return o;
     			};
+				
+				
+function chechIfSimplePath(expressionTable, isSimple, isPath){
+	for(var key in expressionTable){
+		
+		if(key == "PathProperty"){
+			isPath = true;
+			
+		}
+
+		if(key == "Alternative" ){
+			isSimple = false;
+		}
+
+		if(typeof expressionTable[key] == 'object'){
+			var temp = chechIfSimplePath(expressionTable[key], isSimple, isPath);
+			if(temp["isSimple"]==false) isSimple = false;
+			if(temp["isPath"]==true) isPath = true;
+		}
+	}
+	return {isSimple:isSimple, isPath:isPath}
+}
+
+function checkIfIsSimpleAttribute(expressionTable, isSimpleVariable){
+	var kind = null;
+	var parentType = null;
+	for(var key in expressionTable){
+
+		if(key == "Concat" || key == "Additive" || key == "Unary"  || (key == "Function" && expressionTable[key] != "langmatchesShort" && expressionTable[key] != "langmatchesShortMultiple") || key == "RegexExpression" || key == "Aggregate" ||
+		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"
+		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr"
+		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr"
+		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName"){
+			isSimpleVariable = false;
+		}
+
+		if(key == "var"){
+			if(expressionTable[key]["kind"] != null){
+				kind = expressionTable[key]["kind"];
+			}
+			if(typeof expressionTable[key]["type"] !== 'undefined' && expressionTable[key]["type"] != null && typeof expressionTable[key]["type"]["parentType"] !== 'undefined' ){
+				parentType = expressionTable[key]["type"]["parentType"]
+			}
+
+		}
+
+		if(typeof expressionTable[key] == 'object'){
+			var temp = checkIfIsSimpleAttribute(expressionTable[key], isSimpleVariable);
+			if(temp["isSimpleVariable"]==false) isSimpleVariable = false;
+			if(temp["kind"]!=null) kind = temp["kind"];
+			if(temp["parentType"]!=null) parentType = temp["parentType"];
+		}
+	}
+	return {isSimpleVariable:isSimpleVariable, kind:kind, parentType:parentType}
+}

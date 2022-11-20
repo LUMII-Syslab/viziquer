@@ -32,6 +32,7 @@ var exp = "";
 var attributeOrder = 99999;
 var fieldId = null;
 var attributesNames = [];
+var currentClass = null;
 var knownNamespaces = {
 	"foaf:":"http://xmlns.com/foaf/0.1/",
        "owl:":"http://www.w3.org/2002/07/owl#",
@@ -63,7 +64,7 @@ function getPrefix(givenPrefix){
 	return givenPrefix;
 }
 
-function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId){
+function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId, cl){
 	tripleTable = [];
 	variableTable = [];
 	referenceTable = [];
@@ -93,6 +94,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	exp = expr;
 	variableNamesTable = variableNT;
 	variableNamesCounter = variableNC;
+	currentClass = cl;
 	if(ord != null) attributeOrder = ord;
 	if(fId != null) fieldId = fId;
 	
@@ -102,8 +104,8 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	}
 }
 
-parse_filter = function(expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId) {
-	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames, expr["exp"], variableNT, variableNC, null, fId);
+parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId) {
+	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames, expr["exp"], variableNT, variableNC, 99999999999999, fId, cl);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
 	
@@ -154,14 +156,15 @@ parse_filter = function(expr, variableNT, variableNC, attribNames, clID, parsed_
 	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(expr, variableNT, variableNC, attribNames, clID, parsed_exp, alias, className, classSchemaName, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr, ord, fId) {
+parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, alias, className, classSchemaName, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr, ord, fId) {
 
 	alias = alias || "";
 	
-	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId);
-	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId);
+	if(parType != null) initiate_variables(vna, count, parType, ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId, cl);
+	else initiate_variables(vna, count, "attribute", ep, st, internal, prt, idT, rTable, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId, cl);
 	
 	variableNamesClass = vnc;
+	
 	var parsed_exp1 = transformSubstring(parsed_exp);
 	// check if given expression is simple variable name or agregation, function, expression
 	// if given expression is simple variable, then in triple use alias(if exists), else - use variable names
@@ -224,208 +227,465 @@ function createTriples(tripleTable, tripleType){
 	return triples;
 }
 
-function  getReferenceName(expressionTable, symbolTable, classID){
-	var referenceName = expressionTable["name"];
+function findReferenceDefinitions(variableNamesTableClass, referenceName, isPath){
+	var referenceDefinitions = [];
+	if(typeof variableNamesTableClass != "undefined" && typeof variableNamesTableClass[referenceName] != "undefined"){
+		for(var refDef in variableNamesTableClass[referenceName]){
+			if(variableNamesTableClass[referenceName][refDef]["order"] < attributeOrder && variableNamesTableClass[referenceName][refDef]["isPath"] == isPath) referenceDefinitions[refDef] = variableNamesTableClass[referenceName][refDef];
+		}
+	}
+	return referenceDefinitions;
+}
+
+function getSimbolTableWithoutPrefixes(symbolTable, referenceName){
+	var simbolTableWithoutPrefixes = {};
+	
+	for(var st in symbolTable){
+		if(st.indexOf(":") != -1 && referenceName.indexOf(":") == -1){
+			var nameWithoutPrefix = st.substring(st.indexOf(":")+1)
+			if(referenceName == nameWithoutPrefix){
+				if(typeof simbolTableWithoutPrefixes[nameWithoutPrefix] === "undefined"){
+					simbolTableWithoutPrefixes[nameWithoutPrefix] = [];
+				}
+				for(var stRow in symbolTable[st]){
+					simbolTableWithoutPrefixes[nameWithoutPrefix].push(symbolTable[st][stRow])
+				}
+				
+				if(typeof simbolTableWithoutPrefixes[st] === "undefined"){
+					simbolTableWithoutPrefixes[st] = [];
+				}
+				for(var stRow in symbolTable[st]){
+					simbolTableWithoutPrefixes[st].push(symbolTable[st][stRow])
+				}
+			}
+		} else {
+			if(st == referenceName){
+				if(typeof simbolTableWithoutPrefixes[referenceName] === "undefined"){
+					simbolTableWithoutPrefixes[referenceName] = [];
+				}
+				for(var stRow in symbolTable[st]){
+					simbolTableWithoutPrefixes[referenceName].push(symbolTable[st][stRow])
+				}
+			}
+		}
+	}
+	return simbolTableWithoutPrefixes;
+}
+
+function getLastField(referenceName, referenceDefinitions){
+	var refName = referenceName;
+	var order = -10;
+	for(var name in referenceDefinitions){
+		if(order<referenceDefinitions[name]["order"]){
+			refName = referenceDefinitions[name]["name"];
+			order = referenceDefinitions[name]["order"]
+		}	
+	}
+	return refName;
+}
+
+
+getReferenceName = function(referenceName, symbolTable, classID){
+	
+	//var referenceName = expressionTable["name"];
+	
+	//simbol table copy with names without prefixes
+	var simbolTableWithOutPrefixes = getSimbolTableWithoutPrefixes(symbolTable, referenceName);
 	// if reference name is in a simbol table
-	if(typeof symbolTable[referenceName] !== "undefined"){
+	if(typeof simbolTableWithOutPrefixes[referenceName] !== "undefined"){
 		
-		var referenceNameST = symbolTable[referenceName];
-		//if reference in the simbol table is with type _ALIAS, use it
+		var referenceNameST = simbolTableWithOutPrefixes[referenceName];
+		
+		var sameClassContext = null;
+		for(var st in referenceNameST){	
+			// if reference in the symbol table in a given class context;
+			if(referenceNameST[st]["context"] == classID && referenceNameST[st]["kind"] != "REFERENCE_TO_ALIAS") {
+				sameClassContext = referenceNameST;	
+			}
+		}
+		
+		//if reference in the simbol table is with type _ALIAS
 		for(var st in referenceNameST){
 			if(referenceNameST[st]["kind"].indexOf("_ALIAS") != -1) {
-				return referenceName;
-			}
-		}
-		// if reference in the symbol table in a given class context;
-		for(var st in referenceNameST){
-			if(referenceNameST[st]["context"] == classID) {		
-				// if multiple names, find last one before reference
-				var refName = referenceName;
-				for(var name in variableNamesTable[classID][referenceName]){
-					if(variableNamesTable[classID][referenceName][name]["order"] < attributeOrder) {
-						refName = variableNamesTable[classID][referenceName][name]["name"];
+				// if alias is from other class context and given class has property with same name, without path expression
+				var isAlias = false;
+				var isPath = false;
+				
+				if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][referenceName] !== "undefined"){
+					for(var vnt in variableNamesTable[classID][referenceName]){
+						if(variableNamesTable[classID][referenceName][vnt]["isAlias"] === true){
+							isAlias = true;
+							// break;
+						}
+						if(variableNamesTable[classID][referenceName][vnt]["isPath"] === true){
+							isPath = true;
+							// break;
+						}
 					}
 				}
-
-				if(typeof refName === "undefined"){
+				if(classID != referenceNameST[st]["context"] && typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][referenceName] !== "undefined" && isAlias == false && isPath == false){
 					// TODO ERROR
-					console.log("ERROR vards definets pēc @ izmantosanas")
+					// console.log("ERROR vards gan aliass, gan propertija", variableNamesTable[classID][referenceName])
+					messages.push({
+						"type" : "Error",
+						"message" : "The reference to the name "+referenceName+" can not be resolved unanimously (there are two or more candidate places to which it can refer). The query can not be generated.",
+						"isBlocking" : true
+					});
 					referenceName = null;
-				} else referenceName = refName;
-				return referenceName;
-			}
-		}
-		// if reference in other class context;
-		// if multiple references
-		if(referenceNameST.length > 1) {
-			// TO DO ERROR
-			console.log("vairākas references no dazadam klasem")
-			return null;
-		} else {
-			for(var st in referenceNameST){
-				// if multiple names, find last one before reference
-				var refName = referenceName;
-				for(var name in variableNamesTable[classID][referenceName]){
-					if(variableNamesTable[classID][referenceName][name]["order"] < attributeOrder) {
-						refName = variableNamesTable[classID][referenceName][name]["name"];
-					}
+					return "";
 				}
-
-				if(typeof refName === "undefined"){
-					// TODO ERROR
-					console.log("ERROR vards definets pēc @ izmantosanas")
-					referenceName = null;
-				} else referenceName = refName;
-				return referenceName;
+				// else use alias if variable is not in context class;
+				else if(sameClassContext == null) {
+					
+					return referenceName;
+				}
 			}
 		}
-
 		
+		// if reference in the symbol table in a given class context;
+		if(sameClassContext != null && referenceName!= null){
+				// if variable is without prefix
+				if(referenceName.indexOf(":") == -1){
+					
+					//if class is unit or union use reference from ather context
+					if(currentClass != null && (currentClass.isUnion == true || currentClass.isUnit == true)){
+						for(var st in referenceNameST){
+							if(referenceNameST[st]["context"] !== classID){
+								if(referenceNameST[st]["kind"].indexOf("_ALIAS") != -1) return referenceName;
+								for(var name in variableNamesTable[referenceNameST[st]["context"]][referenceName]){
+									if(variableNamesTable[referenceNameST[st]["context"]][referenceName][name]["isPath"] == false){	
+										return variableNamesTable[referenceNameST[st]["context"]][referenceName][name]["name"];
+									}
+								}
+							}
+						}
+					}
+					var referenceDefinitions = findReferenceDefinitions(variableNamesTable[classID], referenceName, false);
+					// if VNT have variable that is not path expression and is used after definition
+					if(Object.keys(referenceDefinitions).length > 0){
+						
+						// last order where exp = referenceName
+						var lastOrderFull;
+						for(var name in referenceDefinitions){
+							if(referenceDefinitions[name]["exp"] == referenceName) lastOrderFull = referenceDefinitions[name]["order"];
+						}
+						// last order
+						var lastOrder;
+						for(var name in referenceDefinitions){
+							lastOrder = referenceDefinitions[name]["order"];
+						}
+						// if name is defined before dbo:name
+						if(lastOrderFull < lastOrder){
+					
+							// console.log("ERROR name before dbo:name", referenceDefinitions, referenceName, referenceDefinitions[name]["exp"])
+							messages.push({
+											"type" : "Error",
+											"message" : "The referenced name "+referenceName+" is used before definition.",
+											"isBlocking" : true
+										});
+							return "";
+						}
+						var refName = getLastField(referenceName, referenceDefinitions);
+						// for(var name in referenceDefinitions){
+							// refName = referenceDefinitions[name]["name"];	
+						// }
+						
+						return refName;
+					} else {
+						
+						var referenceDefinitions = findReferenceDefinitions(variableNamesTable[classID], referenceName, true);
+						
+						// if VNT have variable that is path expression and is used after definition
+						if(Object.keys(referenceDefinitions).length > 0){
+							// if variable is in simbol table more then one time
+							if(referenceNameST.length > 1){
+								for(var st in referenceNameST){
+									if(referenceNameST[st]["context"] != classID && referenceNameST[st]["kind"] == "PROPERTY_NAME"){
+					   
+										// console.log("ERROR vards izmantots cela izteiksme un cita klase")
+										
+										messages.push({
+											"type" : "Error",
+											"message" : "The referenced name @"+referenceName+" coincides with the last property of a property path. Reformulate the query (e.g., add an explicit alias to the property path expression or the name to be referenced) to avoid potential mis-understanding.",
+											"isBlocking" : true
+										});
+										return "";
+									}
+								}
+							}
+							
+							// use variable from VNT
+							else {
+								var refName = "";
+								// for(var name in referenceDefinitions){
+									// refName = referenceDefinitions[name]["name"];
+								// }
+								messages.push({
+									"type" : "Error",
+									"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+									"isBlocking" : true
+								});
+								return refName;
+							}
+	
+						} else {
+							for(var name in variableNamesTable[classID][referenceName]){
+								if(variableNamesTable[classID][referenceName][name]["order"] > attributeOrder){
+									// TODO ERROR
+									// console.log("ERROR name before dbo:name", referenceName, referenceDefinitions, attributeOrder, variableNamesTable[classID][referenceName][name]["order"])
+									messages.push({
+											"type" : "Error",
+											"message" : "The referenced name "+referenceName+" is used before definition.",
+											"isBlocking" : true
+										});
+									return "";
+								}
+							}
+					
+							// console.log("nevar atrast mainigo")
+							messages.push({
+								"type" : "Error",
+								//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+								//"listOfElementId" : [clId],
+								"isBlocking" : true
+							});
+							return "";
+						}
+					}
+					
+				} 
+				// if variable is with prefix
+				else {
+					var refName = referenceName.substring(referenceName.indexOf(":")+1);
+					// if VNT have variable that is not path expression, is used after definition, with the same prefix, use it
+					if(typeof variableNamesTable[classID] !== "undefined"){
+						for(var name in variableNamesTable[classID][refName]){
+							if(variableNamesTable[classID][refName][name]["isPath"] == false && variableNamesTable[classID][refName][name]["order"] < attributeOrder && variableNamesTable[classID][refName][name]["exp"] == referenceName){	
+								return variableNamesTable[classID][refName][name]["name"];
+							}
+						}
+						for(var name in variableNamesTable[classID][refName]){
+							if(variableNamesTable[classID][refName][name]["order"] > attributeOrder){	
+								// TODO ERROR
+								// console.log("iznamtosana pirms definesanas")
+								messages.push({
+											"type" : "Error",
+											"message" : "The referenced name "+referenceName+" is used before definition.",
+											"isBlocking" : true
+										});
+								return "";
+							}
+						}
+				  
+										
+				 
+					}
+					
+					//if class is unit or union use reference from ather context
+					if(currentClass != null && (currentClass.isUnion == true || currentClass.isUnit == true)){
+						for(var st in referenceNameST){
+							if(referenceNameST[st]["context"] !== classID){
+								for(var name in variableNamesTable[referenceNameST[st]["context"]][refName]){
+									if(variableNamesTable[referenceNameST[st]["context"]][refName][name]["isPath"] == false && variableNamesTable[referenceNameST[st]["context"]][refName][name]["exp"] == referenceName){	
+										return variableNamesTable[referenceNameST[st]["context"]][refName][name]["name"];
+									}
+								}
+							}
+						}
+					}
+					messages.push({
+								"type" : "Error",
+								//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+								//"listOfElementId" : [clId],
+								"isBlocking" : true
+							});
+					return "";
+				}
+		} else if(referenceName != null) {
+		// if variable is in a simbol table with different context
+			for(var st in referenceNameST){	
+
+					if(referenceNameST.length > 1){
+						// TODO ERROR
+						// console.log("vairākas references no dazadam klasem");
+						messages.push({
+							"type" : "Error",
+							"message" : "The reference to the name "+referenceName+" can not be resolved unanimously (there are two or more candidate places to which it can refer). The query can not be generated.",
+							"isBlocking" : true
+						});
+						return "";
+					} else {
+						var isReferenceDefinitions = false;
+						if(typeof variableNamesTable[classID] != "undefined" && typeof variableNamesTable[classID][referenceName] != "undefined"){
+							for(var refDef in variableNamesTable[classID][referenceName]){
+								
+								if(variableNamesTable[classID][referenceName][refDef]["isPath"] == true) {
+									isReferenceDefinitions = true;
+									break;
+								}
+							}
+						}
+						if(isReferenceDefinitions == true){
+							// TODO ERROR
+							// console.log("vairākas references no dazadam klasem + cela izteiksme");
+							messages.push({
+								"type" : "Error",
+								"message" : "The reference to the name "+referenceName+" can not be resolved unanimously (there are two or more candidate places to which it can refer). The query can not be generated.",
+								"isBlocking" : true
+							});
+							return "";
+						}
+						
+						var refName = null;
+						// for(var name in variableNamesTable[referenceNameST[0]["context"]][referenceName]){
+							// refName = variableNamesTable[referenceNameST[0]["context"]][referenceName][name]["name"];
+						// }
+						var refName = getLastField(refName, variableNamesTable[referenceNameST[0]["context"]][referenceName]);
+						
+						return refName;
+					}	
+			}
+		}
+			
 	} 
-	// if reference name is NOT in a simbol table - error message
+	// if reference name is NOT in a simbol table
 	else {
-		console.log("ERROR ERROR ERROR not in a simbol table")
+		// if VNT have variable with path expression use it
+		// var refName = null;
+		// if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][referenceName] !== "undefined"){
+			// for(var name in variableNamesTable[classID][referenceName]){
+				// if(variableNamesTable[classID][referenceName][name]["order"] < attributeOrder && variableNamesTable[classID][referenceName][name]["isPath"] == true){
+					// refName = variableNamesTable[classID][referenceName][name]["name"];
+				// }
+			// }
+		// }
+
+		// if(refName != null) return refName;
+		
+		// console.log("ERROR ERROR ERROR not in a simbol table")
+		messages.push({
+			"type" : "Error",
+			"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
+			"isBlocking" : true
+		});
 		//TO DO ERROR
-		return null;
+		return "";
 	}
+
 	return referenceName;
 }
 
-function setVariableName3(varName, alias, variableData, generateNewName){
+function setVariableName(varName, alias, variableData, generateNewName){
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
 	
-	var classSimbolTable = symbolTable[classID];
-	console.log("NNNNNNNNNNNN", classSimbolTable, varName, alias, variableData, generateNewName)
+	if(variableData["kind"].indexOf("CLASS") !== -1) {
+		if(typeof alias !== "undefined" && alias != null){
+			return alias;
+		} else if(variableData["kind"] == "CLASS_ALIAS") return varName;
+		else return idTable[classID];
+	}
+	
+	var classSimbolTable = getSimbolTableWithoutPrefixes(symbolTable[classID], varName);
+	//simbol table copy with names without prefixes
 	
 	var varFullName = variableData["name"];
+	// if is unit or union class
+	if(currentClass != null && (currentClass.isUnit == true || currentClass.isUnion == true)){
+		
+		if((classSimbolTable[varName].length ==1 && classSimbolTable[varName][0]["context"] == classID) || classSimbolTable[varName].length < 1){
+			// console.log("Property (attribute) {text} can not be defined at a node without data instance")
+			messages.push({
+				"type" : "Error",
+				"message" : "Property (attribute) "+ varFullName +" can not be defined at a node without data instance",
+				"isBlocking" : true
+			});
+			return "";
+		}
+	}
 	
-	// if alias is not null
-	if(typeof alias !== "undefined" && alias != null){
-		return alias;
+	if(variableData["kind"] == null){
+	   
+		// console.log("ERROR vards nav atpazits") 
+		messages.push({
+			"type" : "Error",
+			"message" : "Used name (variable) "+ varFullName +" not defined in the query, the query can not be created",
+			"isBlocking" : true
+		});
+		return "";
 	} else {
-		//if variable in a symbol table
-		if(typeof classSimbolTable[varFullName] !== "undefined"){
-			console.log("11111");
-			var variableKinds = [];
-			var referenceNameST = classSimbolTable[varFullName];
-			
-			for(var st in referenceNameST){
-				variableKinds[referenceNameST[st]["kind"]] = 1;
-			}
-			// if variable is used multiple times with differens kinds
-			if( Object.keys(variableKinds).length > 1){
-				// TO DO ERROR
-				console.log("22222");
-				console.log("vairaki ieraksti ar dazadiek kind")
-			} else {
-				console.log("33333");
-				// if used once
-				//if parseType is attribute, and variableNamesTable has property with given field id, use it
-				if(parseType == "attribute" && typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varFullName] !== "undefined" && typeof variableNamesTable[classID][varFullName][fieldId] !== "undefined"){
-					console.log("4444");
-					return variableNamesTable[classID][varFullName][fieldId]["name"];
-				}
-				else {
-					console.log("55555");
-					// if variable kind is _ALIAS, use it
-					if(variableData["kind"] != null && variableData["kind"].indexOf("_ALIAS") !== -1) {
-						console.log("666666");
-						return varName;
-					}
-					// if variable kind ia PROPERTY_NAME
-					else if(variableData["kind"] != null && variableData["kind"] == "PROPERTY_NAME"){
-						console.log("777777");
-						//if simbol table has context = classID, with given variable name, use it
-						for(var st in referenceNameST){
-							if(referenceNameST[st]["context"]  == classID){
-								// if multiple names, find last one before reference
-								var refName = varName;
-								for(var name in variableNamesTable[classID][varFullName]){
-									if(variableNamesTable[classID][varFullName][name]["order"] < attributeOrder) {
-										refName = variableNamesTable[classID][varFullName][name]["name"];
-									}
-								}
-
-								if(typeof refName === "undefined"){
-									// TODO ERROR
-									console.log("ERROR vards definets pēc @ izmantosanas")
-									return;
-								} else return refName;
-							}
-						}
-						console.log("RRRRRRRRRRRRRRRRRRRRRRR", referenceNameST)
-					}
-				}
-			}
+		// if alias is given use it
+		if(typeof alias !== "undefined" && alias != null){
+			return alias;
 		} else {
-			// if variable is not in a simbol table
-			// if variable kind is a PROPERTY_NAME
-			if(variableData["kind"] != null && variableData["kind"] == "PROPERTY_NAME"){
-				//if second+ use in a expression
-				//if variableNamesTable has property with given field id, use it
-				if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varFullName] !== "undefined" && typeof variableNamesTable[classID][varFullName][fieldId] !== "undefined"){
-					return variableNamesTable[classID][varFullName][fieldId]["name"];
+			//if variableNamesTable has property with given field id, use it
+			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName] !== "undefined" && typeof variableNamesTable[classID][varName][fieldId] !== "undefined" ){
+				//is simbol table has variable, wiht kind ALIAS and ather class contrext
+				for(var st in classSimbolTable[varFullName]){
+					if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName][fieldId]["isPath"] != true){
+						messages.push({
+							"type" : "Error",
+							"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
+							"isBlocking" : true
+						});
+						return "";
+					}
 				}
-				//generate new name
-				// variableNamesTable has class
-				if(typeof variableNamesTable[classID] !== "undefined" ){
-					// variableNamesTable has field
-					if(typeof variableNamesTable[classID][varFullName] !== "undefined"){
-						//use counter
-						var newName = varName+ "_" + variableNamesCounter[varName];
-						variableNamesTable[classID][varFullName][fieldId] = {name:newName, order:-1};
-						variableNamesCounter[varName] = variableNamesCounter[varName] + 1;
-						return newName;
-					} else{
-						//variableNamesCounter has no name
-						if(typeof variableNamesCounter[varName] === "undefined"){
+
+				return variableNamesTable[classID][varName][fieldId]["name"];
+			} else {
+				// if variable is not in a simbol table, make new name 
+				if(variableData["kind"] == "PROPERTY_NAME" && typeof classSimbolTable[varFullName] === "undefined"){
+					//variableNamesCounter has no name
+					if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
+					if(typeof variableNamesCounter[varName] === "undefined"){
 							//generate new
 							variableNamesTable[classID][varFullName] = [];
 							variableNamesTable[classID][varFullName][fieldId] = {name:varName, order:-1};
 							variableNamesCounter[varName] = 1;
+
 							return varName;
-						} else {
+					} else {
 							//variableNamesCounter has name
 							//use counter
+							if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
+							if(typeof variableNamesTable[classID][varFullName]=== "undefined") variableNamesTable[classID][varFullName] = [];
 							var newName = varName+ "_" + variableNamesCounter[varName];
 							variableNamesTable[classID][varFullName][fieldId] = {name:newName, order:-1};
 							variableNamesCounter[varName] = variableNamesCounter[varName] + 1;
+
 							return newName;
-						}	
-					}
+					}	
 				} else {
-					variableNamesTable[classID] = [];
-					variableNamesTable[classID][varFullName] = [];
-					//variableNamesCounter has no name
-					if(typeof variableNamesCounter[varName] === "undefined"){
-						//generate new	
-						variableNamesTable[classID][varFullName][fieldId] = {name:varName, order:-1};
-						variableNamesCounter[varName] = 1;
-						return varName
-					} else {
-						//variableNamesCounter has name
-						//use counter
-						var newName = varName+ "_" + variableNamesCounter[varName];
-						variableNamesTable[classID][varFullName][fieldId] = {name:newName, order:-1};
-						variableNamesCounter[varName] = variableNamesCounter[varName] + 1;
-						return newName;
+					var referenceDefinitions = findReferenceDefinitions(variableNamesTable[classID], varName, false);
+					// if(Object.keys(referenceDefinitions).length == 0){
+						
+					// } else 
+					if(variableData["kind"].indexOf("CLASS") == -1) {
+						var newName = getReferenceName(varFullName, symbolTable[classID], classID)
+
+						return newName
 					}
-				}
+				} 
 			}
 		}
 	}
 	
-	console.log("VVVVVVVVVVVVVVVVVVVVVVVVVV", varName, variableNamesTable);
 	
-	return setVariableName2(varName, alias, variableData, generateNewName);
+	//if(variableData["kind"].indexOf("CLASS") !== -1) 
+		return setVariableName2(varName, alias, variableData, generateNewName);
+	
+	return null;
 }
+
 
 // set unique variable name
 // varName - given variable
 // alias - given variable alias
-function setVariableName(varName, alias, variableData, generateNewName){
+function setVariableName2(varName, alias, variableData, generateNewName){
 	
 	// console.log("variableNamesTable, variableNamesCounter", varName, alias, variableData, generateNewName, symbolTable, variableNamesTable, variableNamesCounter)
 	
@@ -1017,10 +1277,10 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				
 				var aliasTable = {};
 				aliasTable[pe["PrimaryExpression"]["var"]["name"]] =  pe["PrimaryExpression"]["var"]["name"] + "_" + counter;
-				variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = {"alias" : aliasTable, "isvar" : false};
-				variableNamesAll[pe["PrimaryExpression"]["var"]["name"]+ "_" + counter] = pe["PrimaryExpression"]["var"]["name"];
+				// variableNamesClass[pe["PrimaryExpression"]["var"]["name"]] = {"alias" : aliasTable, "isvar" : false};
+				// variableNamesAll[pe["PrimaryExpression"]["var"]["name"]+ "_" + counter] = pe["PrimaryExpression"]["var"]["name"];
 				variable = setVariableName(pe["PrimaryExpression"]["var"]["name"], alias, pe["PrimaryExpression"]["var"]);
-				expressionLevelNames[pe["PrimaryExpression"]["var"]["name"]] = variable;
+				// expressionLevelNames[pe["PrimaryExpression"]["var"]["name"]] = variable;
 				
 			}else if(typeof pe["PathProperty"] !== 'undefined'){
 
@@ -1040,10 +1300,10 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 				var aliasTable = {};
 				aliasTable[path["variable"]["var"]["name"]] =  path["variable"]["var"]["name"] + "_" + counter;
 				
-				variableNamesClass[path["variable"]["var"]["name"]] = {"alias" : aliasTable, "isvar" : false};
-				variableNamesAll[path["variable"]["var"]["name"]+ "_" + counter] = path["variable"]["var"]["name"];
+				// variableNamesClass[path["variable"]["var"]["name"]] = {"alias" : aliasTable, "isvar" : false};
+				// variableNamesAll[path["variable"]["var"]["name"]+ "_" + counter] = path["variable"]["var"]["name"];
 				variable = setVariableName(path["variable"]["var"]["name"], alias, path["variable"]["var"]);
-				expressionLevelNames[path["variable"]["name"]] = variable;
+				// expressionLevelNames[path["variable"]["name"]] = variable;
 				
 			}else if(typeof pe["var"] !== 'undefined') {
 				if(alias == null || alias == ""){
@@ -1105,6 +1365,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 								"prefixedName" : prefixedName,
 								"object" : clName,
 							});
+						// console.log("tripleTable 1", variable)
 				}
 				else pe = findINExpressionTable(pe["FunctionExpression"], "PrimaryExpression");
 			}
@@ -1122,6 +1383,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 						"prefixedName" : prefixedName,
 						"object" : clName,
 					});
+					// console.log("tripleTable 2", variable)
 			expressionTable[count] =  {
 				[existsExpr] : {
 					"Triple" : tripleTable,
@@ -1153,7 +1415,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 					var prefixedName =  tempVarPRN["prefixedName"];
 					var clName = className;
 					if(typeof tempVarPRN["className"] !== "undefined") clName = tempVarPRN["className"];
-			
+					// console.log("tripleTable 3", variable)
 					tripleTable.push({
 								"variable" : variable,
 								"prefixedName" : prefixedName,
@@ -1173,7 +1435,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 						"prefixedName" : prefixedName,
 						"object" : clName,
 					});
-					
+				// console.log("tripleTable 4", variable)	
 			if(generateFilter == false){
 				expressionTable[count] =  {
 					[existsExpr] : {
@@ -1671,15 +1933,18 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					var path = getPathFullGrammar(expressionTable[key]["ReferencePath"]);
 					var variable = setVariableName(path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, path["variable"]["var"])
 					if(generateTriples == true && path["variable"]["var"]['type'] != null) {
-						var inFilter = false;
+						var inFilter = true;
+						applyExistsToFilter = true;
 						
 						var variableData = path["variable"]["var"];
-						if(typeof variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-						|| variableData["type"] != null) && (typeof path["cardinality"] === 'undefined' || path["cardinality"] > 1 || path["cardinality"] == -1))) inFilter = true;
-						else if((parseType == "condition") && path["cardinality"] == 1){
+						// if(typeof variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[path["variable"]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+						// || variableData["type"] != null) && (typeof path["cardinality"] === 'undefined' || path["cardinality"] > 1 || path["cardinality"] == -1))) inFilter = true;
+						// else 
+						if((parseType == "condition") && path["cardinality"] == 1){
 							inFilter = null;
 							applyExistsToFilter = false;
 						}
+						// console.log("tripleTable 5", variable)
 						tripleTable.push({"var":"?"+variable, "prefixedName":path["path"].substring(1), "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
 					}
 					variableTable.push("?" + variable);
@@ -1692,16 +1957,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}else{
 					var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
 					if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
-						var inFilter = false;
+						var inFilter = true;
+						applyExistsToFilter = true;
 						
 						var variableData = expressionTable[key]["var"];
-						if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
-						|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
-						else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
-							inFilter = null;
+						
+						// if(typeof variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"]]["isVar"] != true 
+						// || variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+						// else 
+						if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
+							inFilter = true;
 							applyExistsToFilter = false;
 						}
-						
+						// console.log("tripleTable 6", variable, inFilter, applyExistsToFilter)
 						tripleTable.push({"var":"?"+variable, "prefixedName":expressionTable[key]["var"]["type"]["prefix"]+":"+expressionTable[key]["var"]["name"], "object":expressionTable[key]["Reference"]["name"], "inFilter" : inFilter});
 					}
 					variableTable.push("?" + variable);
@@ -1781,7 +2049,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 						messages.push({
 							"type" : "Error",
-							"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+							//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+							"message" : "Used name (variable) '" + substringvar["name"] + "' not defined in the query, the query can not be created",
 							"listOfElementId" : [clId],
 							"isBlocking" : false
 						});
@@ -1792,16 +2061,23 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						variableTable.push("?" + variable);
 						if(generateTriples == true && substringvar['type'] != null && path != null) {
 							var inFilter = false;
-							if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && ((variableNamesClass[substringvar["name"]]["isVar"] != true 
-							|| substringvar["type"] != null) && (typeof substringvar["type"]["max_cardinality"] === 'undefined' || substringvar["type"]["max_cardinality"] > 1 || substringvar["type"]["max_cardinality"] == -1))) inFilter = true;
-								else if((parseType == "condition") && substringvar["type"]["max_cardinality"] == 1){
-								inFilter = null;
-								applyExistsToFilter = false;
-							}
+							// if(typeof variableNamesClass[substringvar["name"]] !== 'undefined' && ((variableNamesClass[substringvar["name"]]["isVar"] != true 
+							// || substringvar["type"] != null) && (typeof substringvar["type"]["max_cardinality"] === 'undefined' || substringvar["type"]["max_cardinality"] > 1 || substringvar["type"]["max_cardinality"] == -1))) inFilter = true;
+								// else if((parseType == "condition") && substringvar["type"]["max_cardinality"] == 1){
+								// inFilter = null;
+								// applyExistsToFilter = false;
+							// }
+							
+							if (typeof substringvar["type"]["max_cardinality"] === 'undefined' || substringvar["type"]["max_cardinality"] > 1 || substringvar["type"]["max_cardinality"] == -1) inFilter = true;
+									else if((parseType == "condition") && substringvar["type"]["max_cardinality"] == 1 && path["cardinality"] == 1){
+										inFilter = null;
+										applyExistsToFilter = false;
+									}
 							
 							var inv = "";
 				
 							if(typeof substringvar["INV"] !== 'undefined') inv = "^";
+							// console.log("tripleTable 7", variable)
 							tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(substringvar["type"]["prefix"]) + ":" + substringvar["name"], "object":className, "inFilter":inFilter});
 							var namespace = substringvar["type"]["Namespace"];
 							if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -1822,14 +2098,16 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							}
 							messages.push({
 								"type" : "Error",
-								"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
+								//"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + variableStructure["var"]["name"] + "' not defined in the query, the query can not be created",
 								"listOfElementId" : [clId],
 								"isBlocking" : false
 							});
 						}
 
 							var generateNewName = false;
-							if(path["isPath"] != true && parseType == "condition") {
+							// if(path["isPath"] != true && parseType == "condition") {
+							if(parseType == "condition") {
 								generateNewName = true;
 								applyExistsToFilter = true;
 							}
@@ -1843,17 +2121,25 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								
 								if(variableStructure["var"]['type'] != null){
 
-								if(typeof expressionTable[key]["PrimaryExpression"] !== 'undefined' && typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' && ((variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true
-								|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
-								else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1 && path["cardinality"] == 1){
-									inFilter = null;
-									applyExistsToFilter = false;
-								}
+									// if(typeof expressionTable[key]["PrimaryExpression"] !== 'undefined' 
+									// && typeof variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]] !== 'undefined' 
+									// && ((variableNamesClass[expressionTable[key]["PrimaryExpression"]["var"]["name"]]["isVar"] != true	|| variableData["type"] != null) 
+									// && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+									// else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1 && path["cardinality"] == 1){
+										// inFilter = null;
+										// applyExistsToFilter = false;
+									// }
+									// variableNamesTable
+									if (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1) inFilter = true;
+									else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1 && path["cardinality"] == 1){
+										inFilter = null;
+										applyExistsToFilter = false;
+									}
 								}
 								var inv = "";
 								if(typeof variableStructure["var"]["INV"] !== 'undefined') inv = "^";
 								if((path["isPath"] != true || path["cardinality"] != 1) && parseType == "condition") inFilter = true;
-								
+								// console.log("tripleTable 8", variable, path, variableStructure["var"]["name"], inFilter, applyExistsToFilter)
 								tripleTable.push({"var":"?"+variable, "prefixedName":prefixName, "object":className, "inFilter":inFilter});
 							}
 							SPARQLstring = SPARQLstring + "?" + variable;
@@ -1903,7 +2189,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					}
 					messages.push({
 						"type" : "Error",
-						"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+						//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+						"message" : "Used name (variable) '" + substringvar["name"] + "' not defined in the query, the query can not be created",
 						"listOfElementId" : [clId],
 						"isBlocking" : false
 					});
@@ -1924,7 +2211,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						var inv = "";
 						
 						if(typeof substringvar["INV"] !== 'undefined') inv = "^";
-						
+						// console.log("tripleTable 9", variable)
 						tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(substringvar["type"]["prefix"]) + ":" + substringvar["name"], "object":className, "inFilter":inFilter});
 						var namespace = substringvar["type"]["Namespace"];
 						if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -1947,7 +2234,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						var name = alias;
 						
 						if(name == null || name == "") name = expressionTable[key]["PrimaryExpression"]["iri"]["PrefixedName"]["Name"];
-						
+						// console.log("tripleTable 10", name)
 						tripleTable.push({"var":"?"+name, "prefixedName":prefixName+ "/" +valueString, "object":className, "inFilter":inFilter});
 						variableTable.push("?" + variable);
 						SPARQLstring = SPARQLstring  + "?" + name;
@@ -1964,7 +2251,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 						messages.push({
 							"type" : "Error",
-							"message" : "Unrecognized variable '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "'. Please specify variable.",
+							//"message" : "Unrecognized variable '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "'. Please specify variable.",
+							"message" : "Used name (variable) '" + expressionTable[key]["PrimaryExpression"]["var"]["name"] + "' not defined in the query, the query can not be created",
 							"listOfElementId" : [clId],
 							"isBlocking" : false
 						});
@@ -1984,6 +2272,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var inv = "";
 							
 							if(typeof expressionTable[key]["PrimaryExpression"]["var"]["INV"] !== 'undefined') inv = "^";
+							// console.log("tripleTable 11", variable)
 							tripleTable.push({"var":"?"+variable, "prefixedName":prefixName+ "/" + inv + getPrefix(expressionTable[key]["PrimaryExpression"]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["PrimaryExpression"]["var"]["name"], "object":className, "inFilter":inFilter});
 							var namespace = expressionTable[key]["PrimaryExpression"]["var"]["type"]["Namespace"];
 							if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -2012,77 +2301,53 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				else tempAlias = "?"+alias;
 				
 				var vn = varName.substr(1);
-				if(typeof variableNamesClass[vn]=== 'undefined'){
-					if(typeof variableNamesAll[vn]=== 'undefined'){
-						var aliasTable = {};
-						aliasTable[vn] =  tempAlias;
-						expressionLevelNames[vn] = aliasTable;
-						variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-						
-						var classes = [];
-						if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-						classes[classID]  = aliasTable;
-						
-						variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes" : classes};
-						alias = tempAlias;
-					} else {
-						var count = variableNamesAll[vn]["counter"] + 1;
-						
-						var aliasTable = {};
-						aliasTable[vn] =  tempAlias + "_" +count;
-						
-						expressionLevelNames[vn] = aliasTable;
-						variableNamesAll[vn]["counter"] = count;
-						
-						var classes = [];
-						if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-						classes[classID]  = aliasTable;
-						
-						variableNamesAll[vn]["classes"] = classes;
-
-						variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
-						alias = tempAlias + "_" +count;
-					}
-				} else {
-					var count = variableNamesClass[vn]["counter"] + 1;
-					
-					var aliasTable = {};
-					aliasTable[vn] =  vn + "_" +count;
-					
-					expressionLevelNames[vn] = aliasTable;
-					variableNamesClass[vn]["counter"] = count;
-					
-					var classes = [];
-					if(typeof variableNamesAll[vn] !== 'undefined' && typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-					classes[classID]  = aliasTable;
-					
-					variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"], "classes":classes};
-					alias = tempAlias + "_" +count;
-				}
 				
-				if(isInternal !=true) SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn][vn] + " " + tempAlias;
-				else SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn][vn];
+				if(alias !== null && alias !== ""){
+					if(isInternal !=true) SPARQLstring = SPARQLstring + "?"+variableNamesTable[classID][alias][fieldId]["name"] + " " + tempAlias;
+					else SPARQLstring = SPARQLstring + "?"+variableNamesTable[classID][alias][fieldId]["name"];
+					tripleTable.push({"var":"?"+alias, "prefixedName":"?"+vn, "object":className, "inFilter":false});
+				}else {
+					if(typeof variableNamesCounter[vn] === "undefined") {
+						alias = tempAlias;
+						variableNamesCounter[vn] = 1;	
+						if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
+						if(typeof variableNamesTable[classID][vn] === "undefined") variableNamesTable[classID][vn] = [];
+						variableNamesTable[classID][vn][fieldId] = {name:vn, order:-1, exp:vn, isPath:false};
+						
+					} else {
+						alias = tempAlias + variableNamesCounter[vn];
+						alias = tempAlias + variableNamesCounter[vn];
+						if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
+						if(typeof variableNamesTable[classID][vn] === "undefined") variableNamesTable[classID][vn] = [];
+						variableNamesTable[classID][vn][fieldId] = {name:vn + "_" + variableNamesCounter[vn], order:-1, exp:vn, isPath:false};
+						variableNamesCounter[vn] = variableNamesCounter[vn] + 1;	
+					}
+				
+					if(isInternal !=true) SPARQLstring = SPARQLstring + "?"+variableNamesTable[classID][vn][fieldId]["name"] + " " + tempAlias;
+					else SPARQLstring = SPARQLstring + "?"+variableNamesTable[classID][vn][fieldId]["name"];
 
-				tripleTable.push({"var":alias, "prefixedName":"?"+vn, "object":className, "inFilter":false});
+					tripleTable.push({"var":alias, "prefixedName":"?"+vn, "object":className, "inFilter":false});
+				}
+				// console.log("tripleTable 12", alias)
 			} else {
 				if(alias == "" || alias == null) tempAlias = varName+"_";
 				else tempAlias = "?"+alias;
 				if(isInternal !=true) SPARQLstring = SPARQLstring + varName + " " + tempAlias;
 				else SPARQLstring = SPARQLstring + varName
 				tripleTable.push({"var":tempAlias, "prefixedName":varName, "object":className, "inFilter":false});
-				
+				// console.log("tripleTable 13", tempAlias)
 				var aliasTable = {};
 				aliasTable[vn] =  tempAlias;
 				
-				expressionLevelNames[varName.substr(1)] = aliasTable;
+				// expressionLevelNames[varName.substr(1)] = aliasTable;
 				
-				variableNamesClass[varName.substr(1)] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+				// variableNamesClass[varName.substr(1)] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
 				
-				var classes = [];
-				if(typeof variableNamesAll[varName.substr(1)] !== 'undefined' && typeof variableNamesAll[varName.substr(1)]["classes"] !== 'undefined') classes = variableNamesAll[varName.substr(1)]["classes"];
-				classes[classID]  = aliasTable;
+				// var classes = [];
+				// if(typeof variableNamesAll[varName.substr(1)] !== 'undefined' && typeof variableNamesAll[varName.substr(1)]["classes"] !== 'undefined') classes = variableNamesAll[varName.substr(1)]["classes"];
+				// classes[classID]  = aliasTable;
 				
-				variableNamesAll[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : variableNamesClass[varName.substr(1)]["nameIsTaken"], "counter" : 0, "isVar" : variableNamesClass[varName.substr(1)]["isVar"], "classes":classes};	
+				// variableNamesAll[varName.substr(1)] = {"alias" : tempAlias, "nameIsTaken" : variableNamesClass[varName.substr(1)]["nameIsTaken"], "counter" : 0, "isVar" : variableNamesClass[varName.substr(1)]["isVar"], "classes":classes};	
 			}
 			visited = 1;
 		}
@@ -2133,15 +2398,16 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			}
 		}
 		if(key == "var") {	
+		
 			if(expressionTable[key]["ref"] != null){
 				 isExpression = true;
 			}
-			// if(expressionTable[key]["ref"] != null){
-				// isExpression = true;
-				// var referenceName = getReferenceName(expressionTable[key], symbolTable[classID], classID);
+			if(expressionTable[key]["ref"] != null){
+				isExpression = true;
+				var referenceName = getReferenceName(expressionTable[key]["name"], symbolTable[classID], classID);
 				
-				// if(referenceName != null) SPARQLstring = SPARQLstring + "?"+referenceName;
-			// } else {
+				if(referenceName != null) SPARQLstring = SPARQLstring + "?"+referenceName;
+			} else {
 			
 				var varName
 				if((alias == null || alias == "") && parseType != "condition" && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]["kind"] != "PROPERTY_ALIAS" && 
@@ -2155,23 +2421,33 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					
 					if(t == null || t.length <3 ){
 						alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, ''); 
-						if(typeof variableNamesAll[expressionTable[key]['type']['local_name']] !== "undefined"){
-							alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '') + "_"+variableNamesAll[expressionTable[key]['type']['local_name']]["counter"]; 
-						}
-						aliasInfo = {};
-						aliasInfo[expressionTable[key]['type']['display_name']] = alias
+						// if(typeof variableNamesAll[expressionTable[key]['type']['local_name']] !== "undefined"){
+							// alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '') + "_"+variableNamesAll[expressionTable[key]['type']['local_name']]["counter"]; 
+						// }
+						// aliasInfo = {};
+						// aliasInfo[expressionTable[key]['type']['display_name']] = alias
 						
-						if(typeof variableNamesClass[expressionTable[key]['type']['local_name']] === "undefined"){
-							variableNamesClass[expressionTable[key]['type']['local_name']] = {
-								"alias": aliasInfo,
-								"counter": 0,
-								"isVar": false,
-								"nameIsTaken": true
-							}
+						// if(typeof variableNamesClass[expressionTable[key]['type']['local_name']] === "undefined"){
+							// variableNamesClass[expressionTable[key]['type']['local_name']] = {
+								// "alias": aliasInfo,
+								// "counter": 0,
+								// "isVar": false,
+								// "nameIsTaken": true
+							// }
+							// applyExistsToFilter = true;
+						// }
+						
+						// if class have not attribute, add it to filter
+						if(typeof variableNamesTable[classID] === "undefined" || typeof variableNamesTable[classID][alias] === "undefined") {
 							applyExistsToFilter = true;
+						} else if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][alias]!== "undefined" && typeof variableNamesTable[classID][alias][fieldId]!== "undefined"){
+							alias = variableNamesTable[classID][alias][fieldId]["name"];
 						}
-						
 						varName = expressionTable[key]['type']['local_name'];
+						
+						
+						
+						// varName = expressionTable[key]['type']['local_name'];
 					} else varName = expressionTable[key]['type']['local_name'];
 				} else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['local_name'];
 				else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['display_name'];
@@ -2237,18 +2513,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					if(generateTriples == true && expressionTable[key]['type'] != null && className != "[ ]" && className != "[ + ]") {
 						if(expressionTable[key]['kind'] == "CLASS_ALIAS") referenceCandidateTable.push(varName);
 						if(expressionTable[key]['kind'] == "CLASS_NAME") {
-							var inFilter = false;
-							if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isVar"] != true) inFilter = true;
+							var inFilter = true;
+							// if(typeof variableNamesClass[varName] !== 'undefined' && variableNamesClass[varName]["isVar"] != true) inFilter = true;
 
 							if(isSimpleVariable == true) {
 								if(parseType == "class"){
 									if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1 && expressionTable[key]['type']['display_name'] !== expressionTable[key]['type']['local_name']) varName = expressionTable[key]['type']['local_name']
 									tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName, "prefixedName" : classMembership, "object":className, "inFilter":inFilter});
-									
+									// console.log("tripleTable 14", variable)
 									prefixTable[getPrefix(expressionTable[key]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["type"]["prefix"])+":"]+">";
 								}
 							}else {
 								tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName, "prefixedName" : classMembership, "object":variable, "inFilter":inFilter});	
+								// console.log("tripleTable 15", variable)
 							}
 		
 						}
@@ -2260,12 +2537,26 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var inFilter = false;
 							var variableData = expressionTable[key];
 							
-							if(typeof variableNamesClass[varName] !== 'undefined' 
+							/*if(typeof variableNamesClass[varName] !== 'undefined' 
 							&& (
 								(variableNamesClass[varName]["isVar"] != true || variableData["type"] != null) 
 								&& (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1)
 							)) inFilter = true;
 							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
+								inFilter = null;
+								applyExistsToFilter = false;
+								if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined') inFilter = true;
+							}*/
+							
+							// triple should be in a filter if, vnt has no record of these triple and max cardinality is not 1
+							
+							if((typeof variableNamesTable[classID] === 'undefined' || typeof variableNamesTable[classID][varName] === "undefined" || (typeof variableNamesTable[classID][varName][fieldId] !== 'undefined' && variableNamesTable[classID][varName][fieldId]["order"] == -1))
+							//&& typeof variableNamesTable[classID][varName][fieldId] !== 'undefined'
+							&& (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1)
+							){
+								inFilter = true;
+								applyExistsToFilter = true;
+							}else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 								if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined') inFilter = true;
@@ -2276,6 +2567,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							
 							var isPropertyFromSubQuery = false;
 							var isOwnProperty = false;
+							var isReference = false;
 							if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
 								for(var k in symbolTable[classID][varName]){
 									if(typeof symbolTable[classID][varName][k]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][k]["upBySubQuery"] == 1) {
@@ -2286,13 +2578,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 									&& symbolTable[classID][varName][k]["type"]["parentType"] != null){
 										isOwnProperty = true;
 									}
+									if(symbolTable[classID][varName][k]["context"] != classID) isReference = true;
 								}
 							}
-					
-							if((isPropertyFromSubQuery == false || isOwnProperty == true) && variableData["kind"] !== "BIND_ALIASS") {
+	
+							if(((isPropertyFromSubQuery == false || isOwnProperty == true) && isReference != true) && variableData["kind"] !== "BIND_ALIASS") {
 								var prefixedName = getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName;
 								if(varName.indexOf("/") !== -1) prefixedName = "<"+expressionTable[key]["type"]["iri"]+">";
 								tripleTable.push({"var":"?"+variable, "prefixedName":inv + prefixedName + pathMod, "object":className, "inFilter":inFilter});
+								// console.log("tripleTable 16", isReference, isPropertyFromSubQuery, isOwnProperty, variable, applyExistsToFilter, {"var":"?"+variable, "prefixedName":inv + prefixedName + pathMod, "object":className, "inFilter":inFilter})
 							}
 							var namespace = expressionTable[key]["type"]["Namespace"];
 							if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -2303,14 +2597,16 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						if(expressionTable[key]['kind'] == "CLASS_ALIAS" || expressionTable[key]['kind'] == "PROPERTY_ALIAS") referenceTable.push("?"+variable)
 					}
 					generateTriples = generateTriplesTemp;
-				} else if (typeof variableNamesAll[expressionTable[key]["name"]] !== 'undefined'){
-					SPARQLstring = SPARQLstring + "?" + expressionTable[key]["name"];
-					variableTable.push("?" + expressionTable[key]["name"]);
+				// } else if (typeof variableNamesAll[expressionTable[key]["name"]] !== 'undefined'){
+					// SPARQLstring = SPARQLstring + "?" + expressionTable[key]["name"];
+					// variableTable.push("?" + expressionTable[key]["name"]);
+					
 				} else if (expressionTable[key]["name"].toLowerCase() == 'type'){
 					var name = alias;
 					if(name == null || name == "") name = expressionTable[key]["name"];
 					
 					tripleTable.push({"var":"?"+name, "prefixedName":"rdf:type", "object":className, "inFilter" : true});
+					// console.log("tripleTable 17", variable)
 					SPARQLstring = SPARQLstring + "?" + name;
 					variableTable.push("?" + name);
 					prefixTable["rdf:"] = "<"+knownNamespaces["rdf:"]+">";
@@ -2325,14 +2621,17 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						
 					messages.push({
 						"type" : "Error",
-						"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
+						//"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
+						"message" : "Used name (variable) '" + varName + "' not defined in the query, the query can not be created",
 						"listOfElementId" : [clId],
 						"isBlocking" : false
 					});
 					
+					
+					
 					SPARQLstring = SPARQLstring + "?" + varName;
 				}
-			// }
+			}
 		}
 		if (key == "Additive" || key == "Unary") {
 			isExpression = true
@@ -2411,6 +2710,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		if (key == "RelationalExpression") {
 				if(typeof expressionTable[key]["Relation"]!== 'undefined') {
+					
 					var VarL = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 					var VarR = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
 
@@ -2779,9 +3079,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							
 							var inFilter = null;
 							var variableData = expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var'];
-							
-							if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
-							|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+
+							// if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
+							if((variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1)) inFilter = true;
 							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
@@ -2798,6 +3098,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								}else {
 									if(className == expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name']) SPARQLstring = "?" + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["name"] + " != ?"+expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name']
 									else tripleTable.push({"var": "?"+expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name'], "prefixedName":getPrefix(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["type"]["prefix"])+":"+expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["name"], "object":className, "inFilter":inFilter});
+								// console.log("tripleTable 18", variable)
 								}
 							}
 							else {
@@ -2839,8 +3140,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var inFilter = null;
 							var variableData = expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var'];
 							
-							if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
-							|| variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
+							// if(typeof variableNamesClass[variableData['name']] !== 'undefined' && ((variableNamesClass[variableData['name']]["isVar"] != true
+							if((variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1)) inFilter = true;
 							else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
@@ -2852,6 +3153,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								}else {
 									if(className == expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name']) SPARQLstring = "?" + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["name"] + " != ?"+expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name']
 									else tripleTable.push({"var": "?"+expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name'], "prefixedName":getPrefix(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["type"]["prefix"])+":"+expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["name"], "object":className, "inFilter":inFilter});
+								// console.log("tripleTable 19", variable)
 								}
 							}
 							else SPARQLstring = "EXISTS{?"+ className + " " + getPrefix(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["type"]["prefix"])+":"+expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']["name"] + " ?"+expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['var']['name'] + ".}";	
@@ -2895,6 +3197,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								if(expressionTable[key]['Relation'] == "!=" || expressionTable[key]['Relation'] == "<>") {
 									SPARQLstring = "FILTER NOT EXISTS{" + className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
 								}else tripleTable.push({"var":":"+variable['type']['local_name'], "prefixedName":expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'], "object":className, "inFilter":inFilter});
+							// console.log("tripleTable 20", variable)
 							}
 							else SPARQLstring = "EXISTS{?"+ className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
 							
@@ -2936,8 +3239,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							var inFilter = null;
 							if(isSimpleFilter) tripleTable.push({"var":":"+variable['type']['local_name'], "prefixedName":expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'], "object":className, "inFilter":inFilter});
-							else SPARQLstring = "EXISTS{?"+ className + " " + expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
 							
+							else SPARQLstring = "EXISTS{?"+ className + " " + expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
+							// console.log("tripleTable 21", variable)
 							if(knownNamespaces[expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]] != null)prefixTable[ expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[ expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]]+">";
 			
 							visited = 1
@@ -2988,6 +3292,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								var inFilter = true;
 								if(isSimpleFilter) {
 									tripleTable.push({"var":"?"+varName, "prefixedName":variable["name"], "object":className, "inFilter":inFilter});
+									// console.log("tripleTable 22", varName)
 									applyExistsToFilter = true;
 									var relation = expressionTable[key]['Relation'];
 									if(relation = "<>") relation = "!=";
@@ -3047,6 +3352,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								var inFilter = true;
 								if(isSimpleFilter) {
 									tripleTable.push({"var":"?"+varName, "prefixedName":variable["name"], "object":className, "inFilter":inFilter});
+									// console.log("tripleTable 23", varName)
 									applyExistsToFilter = true;
 									var relation = expressionTable[key]['Relation'];
 									if(relation = "<>") relation = "!=";
@@ -3404,6 +3710,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							if(tripleTable[k]["var"] == VarL)varTemp = VarR;
 							else varTemp = VarL;
 							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " " });
+							// console.log("tripleTable 24")
 						}
 						if(tripleTable.length == 0) tripleTableTemp.push({"object":className, "prefixedName":VarL, "var":VarR + " " });
 						tripleTable = tripleTableTemp;
@@ -3625,6 +3932,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		
 		if (key == "PrimaryExpression" && typeof expressionTable[key]["iri"]!== 'undefined') {
+			
 			if (typeof expressionTable[key]["ArgList"]!== 'undefined' && expressionTable[key]["ArgList"]!= ''){
 				isFunction = true;
 				if (typeof expressionTable[key]["iri"]["PrefixedName"]!== 'undefined'){
@@ -3666,15 +3974,26 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								var name = alias;
 								if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
 								tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
+								// console.log("tripleTable 25")
 								valueString = "?"+name;
 							}
 							if(parseType == "class"){
 								var name = alias;
 								if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
 								tripleTable.push({"var":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "prefixedName":classMembership, "object":className, "inFilter" : true});
+								// console.log("tripleTable 26")
 								valueString = name;
 							}
 							
+						} else {
+							messages.push({
+								"type" : "Warning",
+								//"message" : "Unrecognized variable '" + valueString + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + valueString + "' not defined in the query, the query can not be created",
+								"listOfElementId" : [classID],
+								"isBlocking" : false
+							});
+							valueString = "";
 						}
 					}
 					
@@ -3690,7 +4009,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 						if(parseType == "class"){tripleTable.push({"var":"?"+className, "prefixedName":classMembership, "object":expressionTable[key]["iri"]["IRIREF"], "inFilter" : true});}
 						else {tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["IRIREF"], "object":className, "inFilter" : true});}
-						
+						// console.log("tripleTable 27")
 						SPARQLstring = SPARQLstring + "?"+name;
 					}else{
 						SPARQLstring = SPARQLstring  + expressionTable[key]["iri"]["IRIREF"];
@@ -3878,10 +4197,10 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			var triples = [];
 			for(var t in expressionTable[key]["Triple"]){
 				var triple = "?" + expressionTable[key]["Triple"][t]["object"] + " " + expressionTable[key]["Triple"][t]["prefixedName"] + " ?" + expressionTable[key]["Triple"][t]["variable"]+ "." ;
-				var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
-				delete variableNamesClass[temp];
-				delete variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
-				variableNamesAll[temp] = temp;
+				// var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
+				// delete variableNamesClass[temp];
+				// delete variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
+				// variableNamesAll[temp] = temp;
 				triples.push(triple);
 			}
 			SPARQLstring = SPARQLstring  + "EXISTS{" + triples.join("\n") + " " + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}";
@@ -3889,14 +4208,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			
 		}
 		if(key == "NotExistsExpr"){
+			
+			
 			var triples = [];
 			for(var t in expressionTable[key]["Triple"]){
 				var triple = "?" + expressionTable[key]["Triple"][t]["object"] + " " + expressionTable[key]["Triple"][t]["prefixedName"] + " ?" + expressionTable[key]["Triple"][t]["variable"] + "." ;
-				
-				var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
-				delete variableNamesClass[temp];
-				delete variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
-				variableNamesAll[temp] = temp;
+				// var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
+				// delete variableNamesClass[temp];
+				// delete variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
+				// variableNamesAll[temp] = temp;
 				triples.push(triple);
 			}
 			SPARQLstring = SPARQLstring  + "NOT EXISTS{" + triples.join("\n") + " " + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}";

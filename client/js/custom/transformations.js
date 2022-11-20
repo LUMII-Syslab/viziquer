@@ -46,7 +46,7 @@ Interpreter.customMethods({
 		 var elem = new VQ_Element(act_elem);
 		 comp_val_inst = elem.getCompartmentValue("Instance");
 		 comp_val_group = elem.getCompartmentValue("Group by this");
-		 if(comp_val_inst != null){
+		 if(comp_val_inst != null && comp_val_inst != ""){
 			 var proj = Projects.findOne({_id: Session.get("activeProject")});
 			 if (proj) {
 				Interpreter.destroyErrorMsg();
@@ -1101,6 +1101,7 @@ Interpreter.customMethods({
 					// }
 				// }
 				// questionJson["sparql"] = queries.questions[q]["query"]["sparql"];
+				// console.log(queries.questions[q]["query"]["sparql"]);
 				// jsonText[queries.questions[q]["id"]] = questionJson;
 			// }
 			

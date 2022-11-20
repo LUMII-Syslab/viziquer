@@ -551,9 +551,13 @@ async function GenerateSPARQL_for_all_queries(list_of_ids) {
 
 	   var result = generateSPARQLtext(abstractQueryTable);
 	   
-	   var commentSplit = result["comment"].split(",")
-	   sparqlTable[parseInt(commentSplit[0].substring(5), 10)] = result["SPARQL_text"]
-	   console.log(parseInt(commentSplit[0].substring(5), 10))
+	   if(result["comment"] != null){
+		   var commentSplit = result["comment"].split(",")
+		   sparqlTable[parseInt(commentSplit[0].substring(5), 10)] = result["SPARQL_text"]
+		   console.log(parseInt(commentSplit[0].substring(5), 10))
+	   } else {
+		   sparqlTable[0] = result["SPARQL_text"]
+	   }
   }
   // _.each(queries, async function(q) {
 
@@ -651,21 +655,31 @@ function generateIds(rootClass, knownPrefixes){
 	// idTable[rootClass["identification"]["_id"]] = rootClassId;
 	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
 	
+	variableNamesCounter[rootClassId] = 1;
+	
 	referenceTable[rootClassId] = [];
 	referenceTable[rootClassId]["classes"] = [];
 	
+	_.each(rootClass["aggregations"],function(aggregation) {
+		if(typeof aggregation["alias"] !== "undefined" && aggregation["alias"] != null && aggregation["alias"] != "") variableNamesCounter[aggregation["alias"]] = 1;
+	})
 	
-	var propertyNames = setFieldNamesForProperties(rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"]);
+	var aliasNames = setFieldAliases(rootClass, rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"])
+	variableNamesTable = aliasNames["variableNamesTable"];
+	variableNamesCounter = aliasNames["variableNamesCounter"];
+
+	var propertyNames = setFieldNamesForProperties(rootClass, rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"], knownPrefixes);
 	variableNamesTable = propertyNames["variableNamesTable"];
 	variableNamesCounter = propertyNames["variableNamesCounter"];
+	
 	
 	//go through all root class children classes
 	_.each(rootClass["children"],function(subclazz) {
 		var unionClass = null;
 		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
 		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
-		variableNamesTable = temp["variableNamesTable"];
-	    variableNamesCounter = temp["variableNamesCounter"];
+		// variableNamesTable = temp["variableNamesTable"];
+	    // variableNamesCounter = temp["variableNamesCounter"];
 		counter = temp["counter"];
 		idTable.concat(temp["idTable"]);
 		prefixTable.concat(temp["prefixTable"]);
@@ -730,6 +744,11 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 					}
 				}
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:rootClassId, unionId:unionClass};
+				if(typeof variableNamesCounter[rootClassId] !== "undefined"){
+					variableNamesCounter[rootClassId] = variableNamesCounter[rootClassId]+1;
+				} else {
+					variableNamesCounter[rootClassId] = 1;
+				}
 			} else {
 				var className = clazz["instanceAlias"];
 				if(className.indexOf(",") !== -1 || className.indexOf("'") !== -1){
@@ -742,8 +761,20 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 					}
 				}
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:className.replace(/ /g, '_'), unionId:unionClass};
+				if(typeof variableNamesCounter[className] !== "undefined"){
+					variableNamesCounter[className] = variableNamesCounter[className]+1;
+				} else {
+					variableNamesCounter[className] = 1;
+				}
 			}
-		} else {idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};}
+		} else {
+			idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["instanceAlias"].replace(/ /g, '_'), unionId:unionClass};
+			if(typeof variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')] !== "undefined"){
+				variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')] = variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')]+1;
+			} else {
+				variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')] = 1;
+			}
+		}
 	}
 	else if(clazz["isVariable"] == true) {
 		var varName = clazz["variableName"];
@@ -755,11 +786,17 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				if(idTable[key]["name"] == "_" + varName){
 					foundInIdTable = true;
 					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName + "_"+ counter, unionId:unionClass};
-					counter++;
+					counter++;	
 				}
 			}
 			// if given class name is not in the table, use it
 			if(foundInIdTable == false) idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName, unionId:unionClass};
+			
+			if(typeof variableNamesCounter[idTable[key]["name"]] !== "undefined"){
+				variableNamesCounter[idTable[key]["name"]] = variableNamesCounter[idTable[key]["name"]]+1;
+			} else {
+				variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')] = 1;
+			}
 		} else{
 			if(varName.startsWith("?"))varName = varName.substr(1);
 			idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"_" + varName, unionId:unionClass};
@@ -779,6 +816,13 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				if(idTable[key]["local_name"] == clazz["identification"]["local_name"] && idTable[key]["unionId"] == unionClass){
 					foundInIdTable = true;
 					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:idTable[key]["name"], unionId:unionClass};
+					
+					
+					if(typeof variableNamesCounter[idTable[key]["name"]] !== "undefined"){
+						variableNamesCounter[idTable[key]["name"]] = variableNamesCounter[idTable[key]["name"]]+1;
+					} else {
+						variableNamesCounter[clazz["instanceAlias"].replace(/ /g, '_')] = 1;
+					}
 				}
 			}
 		}
@@ -805,6 +849,12 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 					foundInIdTable = true;
 					idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:className.replace(/-/g, '_') + "_"+ counter, unionId:unionClass};
 					counter++;
+					
+					if(typeof variableNamesCounter[className.replace(/-/g, '_')] !== "undefined"){
+						variableNamesCounter[className.replace(/-/g, '_')] = variableNamesCounter[className.replace(/-/g, '_')]+1;
+					} else {
+						variableNamesCounter[className.replace(/-/g, '_')] = 1;
+					}
 				}
 			}
 		}
@@ -822,7 +872,23 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				} else textPart = clazz["identification"]["local_name"].replace(/-/g, '_');
 				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:textPart, unionId:unionClass};
-			} else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
+				
+				if(typeof variableNamesCounter[textPart] !== "undefined"){
+					variableNamesCounter[textPart] = variableNamesCounter[textPart]+1;
+				} else {
+					variableNamesCounter[textPart] = 1;
+				}
+				
+			} else {
+				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
+				
+				if(typeof variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')] !== "undefined"){
+					variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')] = variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')]+1;
+				} else {
+					variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')] = 1;
+				}
+			}
+			
 		}
 	}
 	
@@ -837,9 +903,13 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 	if(clazz["linkType"] == "OPTIONAL" && clazz["isSubQuery"] != true && clazz["isGlobalSubQuery"] != true) referenceTable[className]["optionaPlain"] = true;
 	else referenceTable[className]["optionaPlain"] = false;
 	
-	var propertyNames = setFieldNamesForProperties(clazz["fields"], variableNamesTable, variableNamesCounter, clazz["identification"]["_id"]);
+	_.each(clazz["aggregations"],function(aggregation) {
+		if(typeof aggregation["alias"] !== "undefined" && aggregation["alias"] != null && aggregation["alias"] != "") variableNamesCounter[aggregation["alias"]] = 1;
+	})
+	
+	/*var propertyNames = setFieldNamesForProperties(clazz["fields"], variableNamesTable, variableNamesCounter, clazz["identification"]["_id"], knownPrefixes);
 	variableNamesTable = propertyNames["variableNamesTable"];
-	variableNamesCounter = propertyNames["variableNamesCounter"];
+	variableNamesCounter = propertyNames["variableNamesCounter"];*/
 
 	referenceTable[className]["classes"] = [];
 	_.each(clazz["children"],function(subclazz) {
@@ -850,8 +920,8 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		} else unionClass = null;
 
 		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
-		variableNamesTable = temp["variableNamesTable"];
-		variableNamesCounter = temp["variableNamesCounter"];
+		/*variableNamesTable = temp["variableNamesTable"];
+		variableNamesCounter = temp["variableNamesCounter"];*/
 
 		idTable.concat(temp["idTable"]);
 		for(pr in temp["prefixTable"]){
@@ -861,48 +931,131 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 		counter = temp["counter"];
 	})
 	
-	
-	
-	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
+	//return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
+	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable};
 }
 
-
-function setFieldNamesForProperties(fields, variableNamesTable, variableNamesCounter, classId){
+function setFieldAliases(clazz, fields, variableNamesTable, variableNamesCounter, classId){
 	_.each(fields,function(field) {
-		var attributeName = field["exp"];
-		if(field["isSimple"]){
-			
-			if(attributeName.indexOf(":") !== -1) attributeName = attributeName.substring(attributeName.indexOf(":")+1)
-
-			if(attributeName.startsWith("[") && attributeName.endsWith("]")){
-				var textPart = attributeName.substring(1);
-				if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
-				else textPart = textPart.substring(0, textPart.length - 1);
-				textPart = textPart.trim();
-				var t = textPart.match(/([\s]+)/g);
-					
-				if(t == null || t.length <3 ){
-					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
-				} 
-				attributeName = textPart
-			}
-			attributeName = attributeName.replace(/-/g, '_');
 		
-			if(typeof variableNamesCounter[attributeName] !== "undefined"){
-				
-				var anCount = "_"+ variableNamesCounter[attributeName]
-				variableNamesCounter[attributeName] = variableNamesCounter[attributeName]+1;
-				attributeName = attributeName + anCount;
-			} else {
-				variableNamesCounter[attributeName] = 1;
-			}
+		if(typeof field["alias"] !== "undefined" && field["alias"] != null && field["alias"] != "") {
+			var alias = field["alias"];
+			variableNamesCounter[alias] = 1;
 			if(typeof variableNamesTable[classId] === "undefined") variableNamesTable[classId] = [];
-			if(typeof variableNamesTable[classId][field["exp"]] === "undefined") variableNamesTable[classId][field["exp"]] = [];
-
-			variableNamesTable[classId][field["exp"]][field["_id"]] = {name:attributeName, order:field.order};
+			if(typeof variableNamesTable[classId][alias] === "undefined") variableNamesTable[classId][alias] = [];
+			variableNamesTable[classId][alias][field["_id"]] = {name:alias, order:field.order, exp:alias, isPath:false, isAlias:true};
 		}
-	
 	})
+	
+	_.each(clazz["children"],function(subclazz) {
+		var temp = setFieldAliases(subclazz, subclazz.fields, variableNamesTable, variableNamesCounter, subclazz["identification"]["_id"]);
+		variableNamesTable = temp.variableNamesTable;
+		variableNamesCounter = temp.variableNamesCounter;
+	})
+	
+	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
+}
+
+function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableNamesCounter, classId, knownPrefixes){
+	
+	
+	if(clazz.isUnion == true ){
+		var tempVariableNamesTable = [];
+		var tempVariableNamesCounter = [];
+
+		_.each(clazz["children"],function(subclazz) {
+			var variableNamesCounterCopy = [];
+			for(var vnc in variableNamesCounter){
+				variableNamesCounterCopy[vnc] = variableNamesCounter[vnc];
+			}
+			var temp = setFieldNamesForProperties(subclazz, subclazz.fields, [], variableNamesCounterCopy, subclazz["identification"]["_id"], knownPrefixes);
+
+			for(var vnt in temp.variableNamesTable){
+				tempVariableNamesTable[vnt] = temp.variableNamesTable[vnt];
+			}
+			
+			for(var vnc in variableNamesCounter){
+				tempVariableNamesCounter[vnc] = temp.variableNamesCounter[vnc];
+			}
+		})
+			
+		for(var vnt in tempVariableNamesTable){
+			variableNamesTable[vnt] = tempVariableNamesTable[vnt];
+		}
+		for(var vnc in tempVariableNamesCounter){
+			if(typeof variableNamesCounter[vnc] ==='undefined' || tempVariableNamesCounter[vnc] > variableNamesCounter[vnc]) variableNamesCounter[vnc] = tempVariableNamesCounter[vnc];
+		}
+
+	} else {
+		if(clazz.isUnit != true){
+			_.each(fields,function(field) {
+				
+				if(typeof field["alias"] !== "undefined" && field["alias"] != null && field["alias"] != "") variableNamesCounter[field["alias"]] = 1;
+				
+				var attributeName = field["exp"];
+				if(field["isSimplePath"]){		
+					attributeName = field["exp"].split(/[/.\s]/).slice(-1)[0];
+				}
+				
+				if((typeof field["alias"] === "undefined" || field["alias"] == null || field["alias"] == "") && (field["isSimple"] || field["isSimplePath"])){
+					
+					if(attributeName.indexOf(":") !== -1) attributeName = attributeName.substring(attributeName.indexOf(":")+1)
+
+					if(attributeName.startsWith("[") && attributeName.endsWith("]")){
+						var textPart = attributeName.substring(1);
+						if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+						else textPart = textPart.substring(0, textPart.length - 1);
+						textPart = textPart.trim();
+						var t = textPart.match(/([\s]+)/g);
+							
+						if(t == null || t.length <3 ){
+							textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+						} else textPart = attributeName.substring(attributeName.indexOf("(")+1 , attributeName.indexOf(")"));
+						
+						attributeName = textPart
+					}
+					attributeName = attributeName.replace(/-/g, '_');
+					var generatedName = attributeName;
+					
+					var addName = true;
+					
+					if(field["kind"] == null && field["exp"].indexOf(":") !== -1){
+						addName = false;
+						var prefix = field["exp"].substring(0, field["exp"].indexOf(":"));
+						for(var kp in knownPrefixes){
+							if(knownPrefixes[kp]["name"] == prefix) {
+								addName = true;
+							}
+						}
+					}
+					// add variable to the table if kind = PN or kind = null and expression is in prefix:name notation, when prefix is known
+					if(addName == true){
+						if(typeof variableNamesCounter[attributeName] !== "undefined"){
+							
+							var anCount = "_"+ variableNamesCounter[attributeName]
+							variableNamesCounter[attributeName] = variableNamesCounter[attributeName]+1;
+							attributeName = attributeName + anCount;
+						} else {
+							variableNamesCounter[attributeName] = 1;
+						}
+						if(typeof variableNamesTable[classId] === "undefined") variableNamesTable[classId] = [];
+						if(typeof variableNamesTable[classId][generatedName] === "undefined") variableNamesTable[classId][generatedName] = [];
+						var isPath = false;
+						if(field["isSimplePath"]) isPath = true;
+						variableNamesTable[classId][generatedName][field["_id"]] = {name:attributeName, order:field.order, exp:field["exp"], isPath:isPath};
+					}
+				} 
+			
+			})
+		}
+		
+		_.each(clazz["children"],function(subclazz) {
+			var temp = setFieldNamesForProperties(subclazz, subclazz.fields, variableNamesTable, variableNamesCounter, subclazz["identification"]["_id"], knownPrefixes);
+			variableNamesTable = temp.variableNamesTable;
+			variableNamesCounter = temp.variableNamesCounter;
+		})
+	}
+	
 	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
@@ -1423,7 +1576,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		
 		if(underNotLink != true && clazz["variableName"].startsWith("?") == false)sparqlTable["variableName"] = "?" + varName;
 
-		if(typeof fieldNames[attrname] === 'undefined') fieldNames[varName] = [];
+		if(typeof fieldNames[varName] === 'undefined') fieldNames[varName] = [];
 		var aliasTable = {};
 		aliasTable[varName] = idTable[clazz["identification"]["_id"]];
 		fieldNames[varName][clazz["identification"]["_id"]] = aliasTable;
@@ -1441,8 +1594,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				"isBlocking" : true
 			});
 		} else{
-			var resultClass = parse_attrib(clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
-
+			var resultClass = parse_attrib(clazz, clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
+				
 			for (var prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 			}
@@ -1474,7 +1627,11 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	_.each(clazz["fields"],function(field) {
 		
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
-			sparqlTable["selectMain"]["simpleVariables"].push({"alias": "?"+field["exp"], "value" : "?"+field["exp"]});
+			var result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
+			messages = messages.concat(result["messages"]);
+			var refName = result["exp"]
+
+			sparqlTable["selectMain"]["simpleVariables"].push({"alias": refName, "value" : refName});
 			
 			if(field["exp"].startsWith("??") == false && field["addLabel"] == true){
 				sparqlTable["selectMain"]["labelVariables"].push({"alias": "?"+field["exp"]+"Label", "value" : "?"+field["exp"]+"Label"});
@@ -1520,13 +1677,13 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 					field["alias"] = field["alias"].replace(/ /g, '_');
 				}
 				// console.log("parse_attrib",  JSON.stringify(field["parsed_exp"],null,2));
-				var result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
+				var result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
 				
 				messages = messages.concat(result["messages"]);
 				  // console.log("ATTRIBUTE", result, field);
 				 
 				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null && field["attributeConditionSelection"] !== ""){
-					 var resultC = parse_filter(field["attributeConditionSelection"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, field["_id"]);
+					 var resultC = parse_filter(clazz, field["attributeConditionSelection"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, field["_id"]);
 					if(typeof result.triples[0] !== "undefined")result.triples[0] = result.triples[0] + " FILTER(" + resultC["exp"] + ")";
 				 }
 				 
@@ -1540,11 +1697,11 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 				counter = result["counter"]
 
-				for (var attrname in result["variableNamesClass"]) {
-					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
-					if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
-					if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"];
-				}
+				// for (var attrname in result["variableNamesClass"]) {
+					// if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+					// if(typeof fieldNames[attrname] === 'undefined') fieldNames[attrname] = [];
+					// if(typeof result["variableNamesClass"][attrname] === 'object')fieldNames[attrname][clazz["identification"]["_id"]] = result["variableNamesClass"][attrname]["alias"];
+				// }
 				for (var prefix in result["prefixTable"]) {
 					if(typeof result["prefixTable"][prefix] === 'string') prefixTable[prefix] = result["prefixTable"][prefix];
 				}
@@ -1794,13 +1951,14 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				var result;
 				
 				if(clazz["isUnit"] != true){
-				result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
-				
-				counter = result["counter"];
-				for (var attrname in result["variableNamesClass"]) {
-					if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
-				}} else {
-					result = parse_attrib(field["exp"], variableNamesTable, variableNamesCounter, [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+					result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
+					
+					counter = result["counter"];
+					// for (var attrname in result["variableNamesClass"]) {
+						// if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+					// }
+				} else {
+					result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, [], clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], [], [], counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership,  "aggregation", knownPrefixes);
 				}
 				messages = messages.concat(result["messages"]);
 				for (var prefix in result["prefixTable"]) {
@@ -1901,7 +2059,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				});
 		} else { 
 			
-			var result = parse_filter(condition, variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, condition["_id"]);
+			var result = parse_filter(clazz, condition, variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], condition["parsed_exp"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, condition["_id"]);
 			messages = messages.concat(result["messages"]);
 			// console.log("FILTER", result, condition["exp"]);
 			for (var reference in result["referenceCandidateTable"]){
@@ -1913,10 +2071,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 			counter = result["counter"]
 			// for (var attrname in result["variableNamesClass"]) { variableNamesClass[attrname] = result["variableNamesClass"][attrname]; }
-			for (var attrname in result["variableNamesClass"]) {
-				if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
-			}
-			for (var attrname in result["expressionLevelNames"]) {
+			// for (var attrname in result["variableNamesClass"]) {
+				// if(typeof result["variableNamesClass"][attrname] === 'object' || typeof result["variableNamesClass"][attrname] === 'string') variableNamesClass[attrname] = result["variableNamesClass"][attrname];
+			// }
+			/*for (var attrname in result["expressionLevelNames"]) {
 				// if(typeof result["expressionLevelNames"][attrname] === 'string') {
 				if(typeof result["expressionLevelNames"][attrname] === 'object') {
 					if(typeof variableNamesAll[attrname] === 'undefined') {
@@ -1925,7 +2083,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						variableNamesAll[attrname] = {"alias": result["expressionLevelNames"][attrname][attrname], "nameIsTaken": true, counter:0, "isVar" : false, "classes":classes};
 					}
 				}
-			}
+			}*/
 			for (var prefix in result["prefixTable"]) {
 				if(typeof result["prefixTable"][prefix] === 'string')  prefixTable[prefix] = result["prefixTable"][prefix];
 			}
@@ -1967,14 +2125,14 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	if(clazz["children"].length > 0){
 		sparqlTable["subClasses"] = []; // class all sub classes
 	};
-	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') {
-			//if(typeof variableNamesAll[attrname] === 'undefined')
-				var classes = [];
-				classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
-				variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"][attrname], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"], "classes" : classes};
-		}
-	}
+	// for (var attrname in variableNamesClass) {
+		// if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string') {
+			// //if(typeof variableNamesAll[attrname] === 'undefined')
+				// var classes = [];
+				// classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
+				// variableNamesAll[attrname] = {"alias": variableNamesClass[attrname]["alias"][attrname], "nameIsTaken": variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar" : variableNamesClass[attrname]["isVar"], "classes" : classes};
+		// }
+	// }
 	_.each(clazz["children"],function(subclazz) {
 		var tempUnderNotLink = underNotLink;
 		
@@ -1984,14 +2142,14 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		
 		messages = messages.concat(temp["messages"]);
 		counter = temp["counter"];
-		for (var attrname in temp["variableNamesAll"]) {
+		/*for (var attrname in temp["variableNamesAll"]) {
 			if(typeof temp["variableNamesAll"][attrname] === 'string') {
 				var aliasTable = {};
 				aliasTable[attrname] =  temp["variableNamesAll"][attrname]["alias"];
-				variableNamesClass[attrname] = {"alias": aliasTable, "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
+				// variableNamesClass[attrname] = {"alias": aliasTable, "nameIsTaken": temp["variableNamesAll"][attrname]["nameIsTaken"], "counter":temp["variableNamesAll"][attrname]["counter"], "isVar" : temp["variableNamesAll"][attrname]["isVar"]};
 				//variableNamesClass[attrname] = {"alias":temp["variableNamesAll"][attrname], "isvar" : false};
 			}
-		}
+		}*/
 		for (var prefix in temp["prefixTable"]) {
 			if(typeof temp["prefixTable"][prefix] === 'string') prefixTable[prefix] = temp["prefixTable"][prefix];
 		}
@@ -2022,51 +2180,55 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 							var tempAlias = "?property_";
 
 							var vn = "property";
-							if(typeof variableNamesClass[vn]=== 'undefined'){
-								if(typeof variableNamesAll[vn]=== 'undefined'){
+							// if(typeof variableNamesClass[vn]=== 'undefined'){
+							// if(typeof variableNamesTable[clazz["identification"]["_id"]] ==='undefined' || typeof variableNamesTable[clazz["identification"]["_id"]][vn]=== 'undefined'){
+								// if(typeof variableNamesAll[vn]=== 'undefined'){
+								if(typeof variableNamesCounter[vn]=== 'undefined'){
 									//expressionLevelNames[vn] = vn;
 									preditate = " ?" + vn;
-									var aliasTable = {};
-									aliasTable[vn] =  tempAlias;
-									variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
-									var classes = [];
-									classes[clazz["identification"]["_id"]] = aliasTable;
-									variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes" : classes};
+									variableNamesCounter[vn] = 1;
+									// var aliasTable = {};
+									// aliasTable[vn] =  tempAlias;
+									// variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : true, "counter" : 0, "isVar" : false};
+									// var classes = [];
+									// classes[clazz["identification"]["_id"]] = aliasTable;
+									// variableNamesAll[vn] = {"alias" : tempAlias, "nameIsTaken" : true, "counter" : 0, "isVar" : false, "classes" : classes};
 									//alias = tempAlias;
 								} else {
-									var count = variableNamesAll[vn]["counter"] + 1;
+									var count = variableNamesCounter[vn] + 1;
 									//expressionLevelNames[vn] = vn + "_" +count;
 									preditate = " ?" + vn + "_" +count;
-									variableNamesAll[vn]["counter"] = count;
+									variableNamesCounter[vn] = variableNamesCounter[vn]+ 1;
+									// variableNamesAll[vn]["counter"] = count;
 									
-									var aliasTable = {};
-									aliasTable[vn] =  tempAlias + "_" +count;
+									// var aliasTable = {};
+									// aliasTable[vn] =  tempAlias + "_" +count;
 									
-									var classes = [];
-									if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-									classes[clazz["identification"]["_id"]] = aliasTable;
-									variableNamesAll[vn]["classes"] = classes;
+									// var classes = [];
+									// if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
+									// classes[clazz["identification"]["_id"]] = aliasTable;
+									// variableNamesAll[vn]["classes"] = classes;
 
 									
-									variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
+									// variableNamesClass[vn] = {"alias" : aliasTable, "nameIsTaken" : variableNamesAll[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesAll[vn]["isVar"]};
 									//alias = tempAlias + "_" +count;
 								}
-							} else {
-								var count = variableNamesClass[vn]["counter"] + 1;
-								//expressionLevelNames[vn] = vn + "_" +count;
-								preditate = " ?" + vn + "_" +count;
-								variableNamesClass[vn]["counter"] = count;
-								
-								var aliasTable = {};
-								aliasTable[vn] =  tempAlias + "_" +count;
-								
-								var classes = [];
-								if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
-								classes[clazz["identification"]["_id"]] = aliasTable;
+							// } else {
+								// var count = variableNamesClass[vn]["counter"] + 1;
 
-								variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"], "classes" : classes};
-								//alias = tempAlias + "_" +count;
-							}
+								// preditate = " ?" + vn + "_" +count;
+								// variableNamesClass[vn]["counter"] = count;
+								
+								// var aliasTable = {};
+								// aliasTable[vn] =  tempAlias + "_" +count;
+								
+								// var classes = [];
+								// if(typeof variableNamesAll[vn]["classes"] !== 'undefined') classes = variableNamesAll[vn]["classes"];
+								// classes[clazz["identification"]["_id"]] = aliasTable;
+
+								// variableNamesAll[vn] = {"alias" : tempAlias + "_" +count, "nameIsTaken" : variableNamesClass[vn]["nameIsTaken"], "counter" : count, "isVar" : variableNamesClass[vn]["isVar"], "classes" : classes};
+
+							// }
 							//preditate = "?"+expressionLevelNames[vn];
 							// if(isInternal !=true) SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn] + " " + tempAlias;
 							// else SPARQLstring = SPARQLstring + "?"+expressionLevelNames[vn];
@@ -2165,19 +2327,20 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				// if is global subQuery then no need in link between classes
 				if(subclazz["linkIdentification"]["local_name"] != "==" && subject != null && object != null && preditate != null && preditate.replace(" ", "") !=""){
 					var subjectName = subject;
-					if(subjectName.indexOf("://") != -1) subjectName = "<" + subjectName + ">";
+					if(subjectName.indexOf("://") != -1 && !subjectName.startsWith("<")) subjectName = "<" + subjectName + ">";
 					else if(subjectName.indexOf(":") != -1){
 						//TODO add prefix
 					} else subjectName = "?" + subjectName;
 
 					var objectName = object;
-					if(objectName.indexOf("://") != -1) objectName = "<" + objectName + ">";
+					if(objectName.indexOf("://") != -1 && !objectName.startsWith("<")) objectName = "<" + objectName + ">";
 					else if(objectName.indexOf(":") != -1){
 						//TODO add prefix
 					} else if(subclazz["isBlankNode"] != true) objectName = "?" + objectName;
 					if(subclazz["isBlankNode"] == true && objectName.startsWith("?_:name")){
 						objectName = objectName.substring(1);
 					}	
+					
 					temp["sparqlTable"]["linkTriple"] = subjectName +  preditate + " " + objectName + ".";
 				} else{
 					if(preditate == null || preditate.replace(" ", "") =="") {
@@ -2295,16 +2458,16 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		
 	})
 
-	for (var attrname in variableNamesClass) {
-		if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string'){
+	// for (var attrname in variableNamesClass) {
+		// if(typeof variableNamesClass[attrname] === 'object' || typeof variableNamesClass[attrname] === 'string'){
 	
-			var classes = [];
-			if(typeof variableNamesAll[attrname]["classes"] !== 'undefined') classes = variableNamesAll[attrname]["classes"];
-			classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
+			// var classes = [];
+			// if(typeof variableNamesAll[attrname]["classes"] !== 'undefined') classes = variableNamesAll[attrname]["classes"];
+			// classes[clazz["identification"]["_id"]] = variableNamesClass[attrname]["alias"];
 
-			variableNamesAll[attrname] = {"alias": attrname, "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"], "classes" : classes};
-		}
-	}
+			// variableNamesAll[attrname] = {"alias": attrname, "nameIsTaken":variableNamesClass[attrname]["nameIsTaken"], "counter":variableNamesClass[attrname]["counter"], "isVar":variableNamesClass[attrname]["isVar"], "classes" : classes};
+		// }
+	// }
 
 	// console.log("sparqlTable", JSON.stringify(sparqlTable,null,2), sparqlTable)
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
@@ -2387,8 +2550,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
 					
 				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
-					var result = parse_attrib(order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-					
+					var result = parse_attrib(null, order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes, 99999999);
 					descendingStart = "";
 							 descendingEnd = "";
 							 if(order["isDescending"] == true) {
@@ -2420,9 +2582,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 					}else{
-
-						var result = parse_attrib(order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, symbolTable, false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
-						
+						var result = parse_attrib(null, order["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, order["parsed_exp"], null, idTable[rootClass_id], idTable[rootClass_id], [], [], 0, emptyPrefix, symbolTable, false, [], idTable, referenceTable, classMembership, null, knownPrefixes, 99999999);
 						if(order["exp"].indexOf("Label") == -1 && order["exp"].indexOf("AltLabel") == -1 && order["exp"].indexOf("Description") == -1)messages = messages.concat(result["messages"]); 
 		
 						 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
@@ -2528,7 +2688,7 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							"isBlocking" : true
 						});
 				} else{
-					var result = parse_attrib(group["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes);
+					var result = parse_attrib(null, group["exp"], variableNamesTable, variableNamesCounter, [], rootClass_id, group["parsed_exp"], null, idTable[rootClass_id],idTable[rootClass_id], [], [], 0, emptyPrefix, [], false, [], idTable, referenceTable, classMembership, null, knownPrefixes, 99999999);
 					 messages = messages.concat(result["messages"]);
 					 if(result["isAggregate"] == false && result["isExpression"] == false && result["isFunction"] == false && result["triples"].length > 0){
 						 //orderTable.push(descendingStart +  result["exp"] + descendingEnd + " ");
