@@ -104,30 +104,56 @@ Meteor.methods({
                     future.return({status: 505, error:err, limit_set: false, number_of_rows: 0});
                 }
                 else {
-                    if( resp["statusCode"] == 200 && resp["headers"]["content-type"].toLowerCase().startsWith("text")){
-                        var error_message = resp.content;
-                        if(error_message.length > 514) error_message = error_message.substring(0, 514) + "...";
-                        future.return({status: 504, error:resp.content, limit_set: false, number_of_rows: 0});
-                    } else{
-                        xml2js.parseString(resp.content, function(json_err, json_res) {
-                            if (json_err) {
-                                future.return({status: 504, error:json_err, limit_set: false, number_of_rows: 0});
-                            }
-                            else {
-
+                    if( resp["statusCode"] !== 200){
+                        if (resp["headers"]["content-type"].toLowerCase().startsWith("text")) {
+                            var error_message = resp.content;
+                            if(error_message.length > 514) error_message = error_message.substring(0, 514) + "...";
+                            future.return({status: 504, error:resp.content, limit_set: false, number_of_rows: 0});
+                        } else {
+                            future.return({ status: 504, error: 'bad response from the endpoint', limit_set: false, number_of_rows: 0 })
+                        }
+                    } else { // 200
+                        if (resp["headers"]["content-type"].toLowerCase().startsWith('application/json')) {
+                            try {
+                                // TODO: saskaņot JSON un XML formātu apstrādi; šobrīd JSON netiks saprasts
+                                let json_res = JSON.parse(resp.content);
+                                console.log('🦢 🦢 ', json_res);
+                                json_res = { sparql: json_res };
                                 if (limit_set) {
                                     if (options.paging_info) {
-                                            _.extend(json_res, {limit: 50, offset:options.paging_info.offset + 50});
+                                        _.extend(json_res, {limit: 50, offset:options.paging_info.offset + 50});
                                     }
                                     else {
                                         _.extend(json_res, {limit: 50, offset: 50});
                                     }
                                 }
-
-                            _.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
+                                _.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
                                 future.return({status: 200, result: json_res});
+
+                            } catch (err) {
+                                future.return({status: 504, error: new Error("Unable to parse JSON response"), limit_set: false, number_of_rows: 0});
                             }
-                        });
+                        } else {
+                            xml2js.parseString(resp.content, function(json_err, json_res) {
+                                if (json_err) {
+                                    future.return({status: 504, error:json_err, limit_set: false, number_of_rows: 0});
+                                }
+                                else {
+    
+                                    if (limit_set) {
+                                        if (options.paging_info) {
+                                                _.extend(json_res, {limit: 50, offset:options.paging_info.offset + 50});
+                                        }
+                                        else {
+                                            _.extend(json_res, {limit: 50, offset: 50});
+                                        }
+                                    }
+    
+                                    _.extend(json_res, {limit_set: limit_set, number_of_rows: number_of_rows});
+                                    future.return({status: 200, result: json_res});
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -270,6 +296,7 @@ function selectHttpRequestProfile(options) {
 var PROFILE_MAP = {
     P1: doHttpRequestP1,
     P1b: doHttpRequestP1b,
+    P1c: doHttpRequestP1c,
     P2: doHttpRequestP2,
     P2b: doHttpRequestP2b,
     P3: doHttpRequestP3,
@@ -282,6 +309,7 @@ var DEFAULT_PROFILE = PROFILE_MAP[DEFAULT_PROFILE_NAME];
 var NON_DEFAULT_PROFILES = [
     { pattern: 'wikidata.org', profileName: 'P1' },
     { pattern: 'scholarlydata.org', profileName: 'P4' },
+    { pattern: 'digital-agenda-data.eu', profileName: 'P1c' },
 ];
 
 var TIMEOUT = 0;
@@ -401,6 +429,30 @@ function doHttpRequestP1b(url, httpOptions, query, namedGraph, preferJSON, callb
         fullOptions.params['format'] = XML_FORMAT_SHORT;
         fullOptions.headers['Accept'] = XML_FORMAT;
     }
+    return DO_CALL('GET', fullUrl, fullOptions, callback);
+}
+
+function doHttpRequestP1c(url, httpOptions, query, namedGraph, preferJSON, callback) {
+    // console.log("profile P1c", url, query, namedGraph, httpOptions, preferJSON);
+    let fullUrl = url;
+    let fullOptions = _.extend({}, httpOptions, { timeout: TIMEOUT });
+
+    fullOptions.params = {
+        query: query
+    };
+    if (namedGraph) {
+        fullOptions.params['default-graph-uri'] = namedGraph;
+    }
+
+    fullOptions.headers = _.extend({}, COMMON_HEADERS);
+    // if (preferJSON) {
+        // fullOptions.params['format'] = 'application%2Fsparql-results%2Bjson';
+        fullOptions.params['format'] = XML_FORMAT;
+        fullOptions.headers['Accept'] = XML_FORMAT;
+    // } else {
+    //     fullOptions.params['format'] = XML_FORMAT_SHORT;
+    //     fullOptions.headers['Accept'] = XML_FORMAT;
+    // }
     return DO_CALL('GET', fullUrl, fullOptions, callback);
 }
 
