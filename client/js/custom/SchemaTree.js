@@ -14,12 +14,15 @@ Template.schemaInstances.Classes = new ReactiveVar("");
 Template.schemaInstances.F3 = new ReactiveVar("");
 Template.schemaInstances.showI = new ReactiveVar("");
 Template.schemaInstances.isWD = new ReactiveVar("");
+const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
 //Template.schemaTree.ClassPath = new ReactiveVar("");
 //Template.schemaFilter.Count = new ReactiveVar("");
 //const startCount = 30;
 //const plusCount = 20;
+const delayTime = 500;
+var schemaTreeKeyDownTimeStamp;
 
 Template.schemaTree.onDestroyed(function() {
 	Template.schemaTree.Classes.set([]);
@@ -334,6 +337,15 @@ Template.schemaTree.events({
 	},
 	'click .class-body': async function(e) {
 		// console.log(e)
+	},
+	"keydown #filter_text": async function(e) {
+		schemaTreeKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if ( schemaTreeKeyDownTimeStamp === e.timeStamp ) {
+			Template.schemaTree.F1.set($('#filter_text').val());
+			await useFilter ();
+		}
+	
 	},
 	"click .form-check-input": async function(e) {
 		var index = $(e.target).closest(".form-check-input").attr("index");
