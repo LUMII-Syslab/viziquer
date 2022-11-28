@@ -3995,7 +3995,7 @@
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
                       "input": "false",
-                      "value": " "
+                      "value": ""
                     }
                   ]
                 },
@@ -4008,7 +4008,7 @@
                       "fill": "#000000",
                       "padding": 0,
                       "placement": "end-left",
-                      "visible": false,
+                      "visible": true,
                       "fontSize": 16,
                       "fontStyle": "normal",
                       "fontFamily": "Calibri",
@@ -4146,12 +4146,14 @@
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "true"
+                      "input": "true",
+					  "value": "{exists}"
                     },
                     {
                       "compartmentStyle": "NoStyle",
                       "elementStyle": "NoStyle",
-                      "input": "false"
+                      "input": "false",
+					  "value": ""
                     }
                   ]
                 },
@@ -4164,7 +4166,7 @@
                       "fill": "#000000",
                       "padding": 0,
                       "placement": "end-right",
-                      "visible": false,
+                      "visible": true,
                       "fontSize": 16,
                       "fontStyle": "normal",
                       "fontFamily": "Calibri",
