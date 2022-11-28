@@ -87,7 +87,7 @@ function isURI(text) {
   if(text.indexOf("://") != -1)
     return 3;
   else
-    if(text.indexOf(":") != -1) return 4;
+    if(text.indexOf(":") != -1 || text.indexOf("[") != -1 ) return 4;
   return 0;
 };
 
@@ -406,6 +406,7 @@ dataShapes = {
 					var ns = await this.getNamespaces();
 					this.schema.namespaces = ns;
 					var local_ns = ns.filter(function(n){ return n.is_local == true});
+					this.schema.local_ns = local_ns[0].name;
 					//if ( local_ns.length > 0 )
 					//	this.schema.localNS = local_ns[0].name;
 						
@@ -813,6 +814,20 @@ dataShapes = {
 				this.schema.resolvedIndividualsF[params.name] = 1;
 		return rr;	
 	},
+	tt : function (all = 1) {
+		var el = new VQ_Element(Session.get("activeElement"));
+		//var comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
+		//console.log(comparts)
+		Compartments.find({elementId: el._id()}, {sort: {index: 1}}).forEach(function (cc) {
+			if (all == 1 || cc["style"].visible)
+				console.log(CompartmentTypes.findOne({ _id:cc.compartmentTypeId})["name"] + "--" + cc["value"] +"*--"+ cc["style"].visible.toString() + "--" + cc["index"])
+			//console.log(cc["value"])
+			//console.log(cc["style"])
+		 })
+		//console.log(el)
+		//el.getCompartmentValue("Name")
+
+	},
 	printLog : function() {
 		if ( this.schema.log.length > 0 ) {
 			var link = document.createElement("a"); 
@@ -923,7 +938,9 @@ dataShapes = {
 	getIndividualName: function(localName) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
 		if (localName.startsWith("="))
-			localName = localName.substring(1,localName.length)
+			localName = localName.substring(1,localName.length);
+		if (localName.startsWith("["))	
+			localName = `${this.schema.local_ns}:${localName}`;
 			
 		function getLastB(name){
 			var r = -1; 
