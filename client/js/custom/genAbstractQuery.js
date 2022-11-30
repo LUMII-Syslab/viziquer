@@ -194,8 +194,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	}
 
      for (const f of obj_class.fields) {
-		 
-		
+
     // obj_class.fields.forEach(async function(f) {
         // CAUTION .............
         // HACK: * and ** fields
@@ -227,6 +226,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         // } else if (f.alias) {
         if (f.alias) {
              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+			 if(f.addLabel == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Label", type:null, context:obj_class.identification._id});
+			 if(f.addAltLabel == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"AltLabel", type:null, context:obj_class.identification._id});
+			 if(f.addDescription == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Description", type:null, context:obj_class.identification._id});
         } else if(f.exp.startsWith("?")){
 			//atribute is variable name
 			var expr = f.exp.substring(1);
@@ -618,9 +620,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         } else{
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
-		 
+		  
           if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
-            var strURI = (instanceAliasIsURI == 3) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
+            var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
 			 var schemaName = await dataShapes.schema.schemaType;
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
@@ -631,7 +633,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 						}
 
 			}
-			else if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1){
+			else if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1 || strURI.indexOf(",") !== -1){
 				var prefix = strURI.substring(0, strURI.indexOf(":"));
 				var name = strURI.substring(strURI.indexOf(":")+1);
 				var prefixes = query.prefixes;
@@ -654,7 +656,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					textPart = textPart.trim();
 					obj_class.instanceAlias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				}
-
 				var condition = {exp:"(this) = " + strURI};
 			    await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 			    obj_class.conditions.push(condition);
@@ -719,6 +720,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              case "PROPERTY_NAME":
                 if (f.alias) {
                   updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addLabel == true) updateSymbolTable(f.alias+"Label", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addAltLabel == true) updateSymbolTable(f.alias+"AltLabel", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+			      if(f.addDescription == true) updateSymbolTable(f.alias+"Description", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
@@ -784,6 +788,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              case "PROPERTY_NAME":
                 if (f.alias) {
                   updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addLabel == true) updateSymbolTable(f.alias+"Label", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addAltLabel == true) updateSymbolTable(f.alias+"AltLabel", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+			      if(f.addDescription == true) updateSymbolTable(f.alias+"Description", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
                 } else {
                   updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
                   renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);

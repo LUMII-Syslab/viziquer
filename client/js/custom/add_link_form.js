@@ -1127,7 +1127,7 @@ async function getAllAssociations(){
 
       		if (proj){
       			var selfName = "";
-      			if (className.indexOf("[") == -1) {      				
+      			if (className != null && className.indexOf("[") == -1) {      				
       				selfName = className;
       			} else {
 					var linkUp = startElement.getLinkToRoot(); 

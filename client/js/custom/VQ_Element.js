@@ -2728,6 +2728,8 @@ VQ_Element.prototype = {
     var alias = this.getInstanceAlias();
     var className = this.getName();
 	var fields = this.getFields();
+	var aggregation = this.getAggregateFields();
+	
 	var isOptional = false;
 	for(var field in fields){
 		if(fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)"){
@@ -2743,7 +2745,7 @@ VQ_Element.prototype = {
 			break;
 		}
 	}
-	return (alias == null && className == null && isOptional == false);
+	return (alias == null && className == null && isOptional == false && aggregation.length < 1);
 
   },
   // gets class variable name (e.g. X for ?X)

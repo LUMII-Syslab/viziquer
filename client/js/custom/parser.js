@@ -231,7 +231,7 @@ function findReferenceDefinitions(variableNamesTableClass, referenceName, isPath
 	var referenceDefinitions = [];
 	if(typeof variableNamesTableClass != "undefined" && typeof variableNamesTableClass[referenceName] != "undefined"){
 		for(var refDef in variableNamesTableClass[referenceName]){
-			if(variableNamesTableClass[referenceName][refDef]["order"] < attributeOrder && variableNamesTableClass[referenceName][refDef]["isPath"] == isPath) referenceDefinitions[refDef] = variableNamesTableClass[referenceName][refDef];
+			if(variableNamesTableClass[referenceName][refDef]["order"] <= attributeOrder && variableNamesTableClass[referenceName][refDef]["isPath"] == isPath) referenceDefinitions[refDef] = variableNamesTableClass[referenceName][refDef];
 		}
 	}
 	return referenceDefinitions;
@@ -291,6 +291,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 	
 	//simbol table copy with names without prefixes
 	var simbolTableWithOutPrefixes = getSimbolTableWithoutPrefixes(symbolTable, referenceName);
+	
 	// if reference name is in a simbol table
 	if(typeof simbolTableWithOutPrefixes[referenceName] !== "undefined"){
 		
@@ -334,9 +335,12 @@ getReferenceName = function(referenceName, symbolTable, classID){
 					referenceName = null;
 					return "";
 				}
+				// else if(sameClassContext != null && (referenceNameST[st]["kind"] == "CLASS_ALIAS" || referenceNameST[st]["kind"] == "AGGREGATE_ALIAS")){
+					
+					// return referenceName;
+				// }
 				// else use alias if variable is not in context class;
 				else if(sameClassContext == null) {
-					
 					return referenceName;
 				}
 			}
@@ -361,6 +365,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 						}
 					}
 					var referenceDefinitions = findReferenceDefinitions(variableNamesTable[classID], referenceName, false);
+					
 					// if VNT have variable that is not path expression and is used after definition
 					if(Object.keys(referenceDefinitions).length > 0){
 						
@@ -429,19 +434,24 @@ getReferenceName = function(referenceName, symbolTable, classID){
 							}
 	
 						} else {
-							for(var name in variableNamesTable[classID][referenceName]){
-								if(variableNamesTable[classID][referenceName][name]["order"] > attributeOrder){
-									// TODO ERROR
-									// console.log("ERROR name before dbo:name", referenceName, referenceDefinitions, attributeOrder, variableNamesTable[classID][referenceName][name]["order"])
-									messages.push({
-											"type" : "Error",
-											"message" : "The referenced name "+referenceName+" is used before definition.",
-											"isBlocking" : true
-										});
-									return "";
+							if(typeof variableNamesTable[classID] !== "undefined"){
+								for(var name in variableNamesTable[classID][referenceName]){
+									if(variableNamesTable[classID][referenceName][name]["order"] > attributeOrder){
+										// TODO ERROR
+										// console.log("ERROR name before dbo:name", referenceName, referenceDefinitions, attributeOrder, variableNamesTable[classID][referenceName][name]["order"])
+										messages.push({
+												"type" : "Error",
+												"message" : "The referenced name "+referenceName+" is used before definition.",
+												"isBlocking" : true
+											});
+										return "";
+									}
 								}
 							}
-					
+	
+							for(var st in sameClassContext){
+								if(sameClassContext[st]["kind"].indexOf("_ALIAS") != null) return referenceName
+							}
 							// console.log("nevar atrast mainigo")
 							messages.push({
 								"type" : "Error",
@@ -2378,7 +2388,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				var bindExpr = className;
 				if(className.indexOf(":") == -1)bindExpr = "?" + className;
 				
-				if(className != alias)tripleTable.push({"BIND":"BIND(" + bindExpr + " AS ?" + alias + ")"})
+				if(className != alias){
+					tripleTable.push({"BIND":"BIND(" + bindExpr + " AS ?" + alias + ")"})
+				}
 			} else if(isAggregate == true && className.indexOf(":") != -1){
 				SPARQLstring = SPARQLstring + className;
 				variableTable.push( className);
@@ -2400,12 +2412,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		if(key == "var") {	
 		
 			if(expressionTable[key]["ref"] != null){
-				 isExpression = true;
-			}
-			if(expressionTable[key]["ref"] != null){
-				isExpression = true;
+				// isExpression = true;
 				var referenceName = getReferenceName(expressionTable[key]["name"], symbolTable[classID], classID);
-				
 				if(referenceName != null) SPARQLstring = SPARQLstring + "?"+referenceName;
 			} else {
 			
