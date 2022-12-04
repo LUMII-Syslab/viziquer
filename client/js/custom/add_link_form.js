@@ -488,13 +488,13 @@ Template.AddLink.events({
 			
 		}
 		classes = classes.data;
-	
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+
 		_.each(classes, function(e){
 			var prefix;
-			if(e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd"))prefix = "";
+			if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;	
-
 			if(e.principal_class == 2) e.clr = "color: purple";
 			else if(e.principal_class == 0) e.clr = "color: #bbbbbb";
 			else e.clr = "color: #777777";
@@ -1099,7 +1099,7 @@ async function getAllAssociations(){
 						
 						//prefix:name
 						var prefix;
-						if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt"))prefix = "";
+						if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
 						else prefix = e.prefix+":";
 						var eName = prefix + e.display_name;
 						

@@ -13274,6 +13274,15 @@ vq_grammar_parser = (function() {
             s1 = peg$FAILED;
             if (peg$silentFails === 0) { await peg$fail(peg$c370); }
           }
+          if (s1 === peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 32) {
+              s1 = peg$c447;
+              peg$currPos++;
+            } else {
+              s1 = peg$FAILED;
+              if (peg$silentFails === 0) { await peg$fail(peg$c448); }
+            }
+          }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -16232,7 +16241,7 @@ vq_grammar_parser = (function() {
     			// parse(string, options) where options is an object
     			// {schema: VQ_Schema, symbol_table:JSON, context:class_identification_object, exprType:String}
     			// exprType: CLASS_NAME or null if other - at the moment it determines the precedence of resolving - class or property first in case of name clash
-         options = arguments[1];
+options = arguments[1];
     			function makeVar(o) {return makeString(o);};
 
           // string -> idObject

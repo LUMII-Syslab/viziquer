@@ -13,7 +13,6 @@ Interpreter.methods({
 _.extend(Interpreter, {
 
 	createEditor: function() {
-
 		if ($("#Diagram_Editor").length == 0) {
 			console.error("Error: no container")
 			return;
@@ -23,6 +22,8 @@ _.extend(Interpreter, {
 		if (!diagram) {
 			console.error("Error: no diagram")
 			return;
+		} else {
+			Interpreter.destroyErrorMsg();
 		}
 
 		//selecting an editor type

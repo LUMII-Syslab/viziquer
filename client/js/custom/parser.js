@@ -631,11 +631,11 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		if(typeof alias !== "undefined" && alias != null){
 			return alias;
 		} else {
-			//if variableNamesTable has property with given field id, use it
-			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName] !== "undefined" && typeof variableNamesTable[classID][varName][fieldId] !== "undefined" ){
-				//is simbol table has variable, wiht kind ALIAS and ather class contrext
+			
+			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId] !== "undefined" ){
+				//is simbol table has variable, wiht kind ALIAS and ather class context
 				for(var st in classSimbolTable[varFullName]){
-					if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName][fieldId]["isPath"] != true){
+					if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["isPath"] != true){
 						messages.push({
 							"type" : "Error",
 							"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
@@ -644,8 +644,8 @@ function setVariableName(varName, alias, variableData, generateNewName){
 						return "";
 					}
 				}
-
-				return variableNamesTable[classID][varName][fieldId]["name"];
+				//if variableNamesTable has property with given field id, use it
+				return variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["name"];
 			} else {
 				// if variable is not in a simbol table, make new name 
 				if(variableData["kind"] == "PROPERTY_NAME" && typeof classSimbolTable[varFullName] === "undefined"){
@@ -2527,8 +2527,10 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							if(isSimpleVariable == true) {
 								if(parseType == "class"){
 									if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1 && expressionTable[key]['type']['display_name'] !== expressionTable[key]['type']['local_name']) varName = expressionTable[key]['type']['local_name']
-									tripleTable.push({"var": getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName, "prefixedName" : classMembership, "object":className, "inFilter":inFilter});
-									// console.log("tripleTable 14", variable)
+									var tripleVar = getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName
+									if(varName.indexOf("/") !== -1 && expressionTable[key]['type'] != null && expressionTable[key]['type']["iri"] != null) tripleVar = "<" + expressionTable[key]['type']["iri"] + ">"
+									tripleTable.push({"var": tripleVar, "prefixedName" : classMembership, "object":className, "inFilter":inFilter});
+									//console.log("tripleTable 14", expressionTable[key]['type'], variable, className, getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName)
 									prefixTable[getPrefix(expressionTable[key]["type"]["prefix"])+":"] = "<"+knownNamespaces[getPrefix(expressionTable[key]["type"]["prefix"])+":"]+">";
 								}
 							}else {

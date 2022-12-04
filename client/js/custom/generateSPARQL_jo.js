@@ -594,13 +594,14 @@ function generateIds(rootClass, knownPrefixes){
 	// if alias is not defined
 	if(rootClassId == null || rootClassId.replace(" ", "") =="") {
 		if(typeof rootClass["identification"]["display_name"] !== 'undefined' && rootClass["identification"]["display_name"].startsWith("[")){
+			
 			var textPart = rootClass["identification"]['display_name'].substring(1);
 			if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
 			else textPart = textPart.substring(0, textPart.length - 1);
 			textPart = textPart.trim();
 			var t = textPart.match(/([\s]+)/g);
-					
-			if(t == null || t.length <3 ){
+
+			if(textPart != "" && (t == null || t.length <3 )){
 				rootClassId = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 			} else rootClassId = rootClass["identification"]["local_name"];
 		
@@ -613,6 +614,10 @@ function generateIds(rootClass, knownPrefixes){
 		}
 	}
 	else rootClassId = rootClassId.replace(/ /g, '_');
+	
+	if(rootClassId == "") rootClassId = "expr";
+	
+	
 	
 	// if instance is uri in prefox form
 	if (checkIfIsURI(rootClassId) == "prefix_form") {
@@ -1570,7 +1575,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		// if(varName == "?") varName = "?class";
 		if(varName == "?") varName = instance;
 		if(clazz["variableName"].startsWith("?")) varName = varName.substr(1);
-		if(checkIfIsURI(instance) == "prefix_form" || checkIfIsURI(instance) == "full_form" ) sparqlTable["classTriple"] = instance + " " + classMembership + " ?" + varName+ ".";
+		if(checkIfIsURI(instance) == "prefix_form") sparqlTable["classTriple"] = instance + " " + classMembership + " ?" + varName+ ".";
+		if(checkIfIsURI(instance) == "full_form" ) sparqlTable["classTriple"] = "<" + instance + "> " + classMembership + " ?" + varName+ ".";
 		else sparqlTable["classTriple"] = "?" + instance + " " + classMembership + " ?" + varName+ ".";
 		
 		if(underNotLink != true && clazz["variableName"].startsWith("?") == false)sparqlTable["variableName"] = "?" + varName;
@@ -1584,7 +1590,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		var instAlias = clazz["instanceAlias"]
 		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
-
+		
 		if(typeof clazz["identification"]["parsed_exp"] === 'undefined'){
 			messages.push({
 				"type" : "Error",
@@ -1892,10 +1898,22 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	classSimpleTriples = classSimpleTriples.concat(classFunctionTriples);
 	if(clazz["isBlankNode"] != true)sparqlTable["simpleTriples"] = classSimpleTriples;
 	else {
-		sparqlTable["blankNodeTriples"] = classSimpleTriples;
-		if(typeof clazz.children !== "undefined" && clazz.children.length > 0){
-			sparqlTable["isParentBlankNode"] = true;
+		
+		var isBlankNode = true;
+		for(var v in classSimpleTriples){
+			for(var triple in classSimpleTriples[v]["triple"]){
+				if(classSimpleTriples[v]["triple"][triple].indexOf("<") !== -1 && classSimpleTriples[v]["triple"][triple].indexOf(">") != -1) {
+					isBlankNode = false;
+					break;
+				}
+			}
 		}
+		if(isBlankNode == true){
+			sparqlTable["blankNodeTriples"] = classSimpleTriples;
+			if(typeof clazz.children !== "undefined" && clazz.children.length > 0){
+				sparqlTable["isParentBlankNode"] = true;
+			}
+		} else {sparqlTable["simpleTriples"] = classSimpleTriples;}
 	}
 	
 	var isMultipleAllowedAggregation = false;
@@ -2117,7 +2135,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						}
 						object = object + blankNodes.join(";");
 						object = object+ "]";
-		sparqlTable["classTriple"] = object;
+		console.log("ggggggggggggg", object, sparqlTable["blankNodeTriples"])
+		if(object != "[]")sparqlTable["classTriple"] = object;
 		
 	}
 	//subClasses

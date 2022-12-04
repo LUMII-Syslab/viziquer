@@ -3589,7 +3589,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	if(where["type"] == "functionCall"){
 		var functionName = "<"+where["function"]+">"
 		var ignoreFunction = false;
-		if(where["function"] == "http://www.w3.org/2001/XMLSchema#dateTime" || where["function"] == "http://www.w3.org/2001/XMLSchema#date" || where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
+		//if(where["function"] == "http://www.w3.org/2001/XMLSchema#dateTime" || where["function"] == "http://www.w3.org/2001/XMLSchema#date" || where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
+		if(where["function"] == "http://www.w3.org/2001/XMLSchema#decimal") ignoreFunction = true;
 
 		var shortFunction = await generateInstanceAlias(where["function"], false);
 		
