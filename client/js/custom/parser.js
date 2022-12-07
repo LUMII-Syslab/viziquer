@@ -588,6 +588,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 }
 
 function setVariableName(varName, alias, variableData, generateNewName){
+
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
@@ -650,6 +651,25 @@ function setVariableName(varName, alias, variableData, generateNewName){
 				// if variable is not in a simbol table, make new name 
 				if(variableData["kind"] == "PROPERTY_NAME" && typeof classSimbolTable[varFullName] === "undefined"){
 					//variableNamesCounter has no name
+					if(varName.indexOf("[") !== -1 && varName.indexOf("]") !== -1){
+						var attributeName = varName;
+						if(attributeName.indexOf(":") !== -1) attributeName = attributeName.substring(attributeName.indexOf(":")+1)
+
+						if(attributeName.startsWith("[") && attributeName.endsWith("]")){
+							var textPart = attributeName.substring(1);
+							if(textPart.indexOf("(") !== -1) textPart = textPart.substring(0, textPart.indexOf("("));
+							else textPart = textPart.substring(0, textPart.length - 1);
+							textPart = textPart.trim();
+							var t = textPart.match(/([\s]+)/g);
+								
+							if(t == null || t.length <3 ){
+								textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+							} else textPart = attributeName.substring(attributeName.indexOf("(")+1 , attributeName.indexOf(")"));
+							
+							attributeName = textPart
+						}
+						varName = attributeName.replace(/-/g, '_');
+					}
 					if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
 					if(typeof variableNamesCounter[varName] === "undefined"){
 							//generate new
@@ -2418,6 +2438,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			} else {
 			
 				var varName
+				
+				
 				if((alias == null || alias == "") && parseType != "condition" && expressionTable[key]["kind"] != "CLASS_ALIAS" && expressionTable[key]["kind"] != "PROPERTY_ALIAS" && 
 				expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null 
 				&& typeof expressionTable[key]['type']['display_name'] !== 'undefined' && expressionTable[key]['type']['display_name'].indexOf("[") !== -1){
@@ -2428,7 +2450,11 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					var t = textPart.match(/([\s]+)/g);
 					
 					if(t == null || t.length <3 ){
-						alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, ''); 
+						alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
+						// if(typeof variableNamesCounter[alias] !== "undefined"){
+							// alias = alias + "_" +variableNamesCounter[alias];
+							// variableNamesCounter[alias] = variableNamesCounter[alias]+1;
+						// }
 						// if(typeof variableNamesAll[expressionTable[key]['type']['local_name']] !== "undefined"){
 							// alias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '') + "_"+variableNamesAll[expressionTable[key]['type']['local_name']]["counter"]; 
 						// }
@@ -2450,11 +2476,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							applyExistsToFilter = true;
 						} else if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][alias]!== "undefined" && typeof variableNamesTable[classID][alias][fieldId]!== "undefined"){
 							alias = variableNamesTable[classID][alias][fieldId]["name"];
+						} else {
+							if(typeof variableNamesCounter[alias] !== "undefined"){
+								alias = alias + "_" +variableNamesCounter[alias];
+								variableNamesCounter[alias] = variableNamesCounter[alias]+1;
+							}
 						}
 						varName = expressionTable[key]['type']['local_name'];
-						
-						
-						
+	
 						// varName = expressionTable[key]['type']['local_name'];
 					} else varName = expressionTable[key]['type']['local_name'];
 				} else if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined' && expressionTable[key]['type']['display_name'] !== null && typeof expressionTable[key]['type']['display_name'] !== 'undefined' && typeof expressionTable[key]["kind"] !== 'undefined' && expressionTable[key]["kind"].indexOf("_ALIAS") === -1) varName = expressionTable[key]['type']['local_name'];

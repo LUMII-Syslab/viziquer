@@ -5641,7 +5641,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							var instanceAlias = await generateInstanceAlias(objectNameParsed);
 							
 							if(typeof parentNodeList[triples[triple]["object"]] === 'undefined'){
-		
+
 								if(typeof allClasses[objectNameParsed] === 'undefined'){
 									classesTable[objectNameParsed] = {
 										"variableName":triples[triple]["object"],
@@ -6296,6 +6296,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												
 												var identification = await dataShapes.resolveClassByName({name: classesTable[oclass]["instanceAlias"]})
 												if(identification.complete == true) {
+													
+													
 													var sn = identification.data[0].display_name;
 													if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
 													else if(identification.data[0].is_local != true )sn = identification.data[0].prefix+ ":" + sn;
@@ -6305,9 +6307,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 													
 													 delete classesTable[oclass];
 
-												} else if(oclass.indexOf(":/") == -1){													
+												} else if(oclass.indexOf(":/") == -1){												
 													classesTable[sclass]["identification"] = {"short_name": "?"+oclass};
 													classesTable[sclass]["indirectClassMembership"] = true;
+													if(triples[triple]["object"].startsWith("?") && (typeof variableList[classesTable[sclass]["identification"]["short_name"]] === "undefined" || variableList[classesTable[sclass]["identification"]["short_name"]] == 0)) classesTable[sclass]["identification"]["short_name"] = "?"+ classesTable[sclass]["identification"]["short_name"]
 													delete classesTable[oclass];
 		
 												} else {

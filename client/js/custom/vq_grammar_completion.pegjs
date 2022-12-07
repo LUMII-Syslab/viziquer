@@ -878,10 +878,11 @@
 			STRING_LITERAL1 = quote "'" string_c stringQ quote "'"
 			STRING_LITERAL2 = dubble_quote '"' string_c stringQ dubble_quote '"'
 	
-			QName = Path:(Path / PathBr / QNameReference) 
+			QName = Path:(Path / PathBrRound / PathBr / QNameReference) 
 			
 			////////////////////////////////////////////////////////////////
 			Path = (space PathProperty:(PathAlternative) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?)
+			PathBrRound = double_squere_br_open "[[" br_open "(" space PathProperty:(PathAlternativeBr) Substring:Substring br_close ")" double_squere_br_close "]]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? 
 			PathBr = double_squere_br_open "[[" space PathProperty:(PathAlternativeBr) Substring:Substring double_squere_br_close "]]" space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression? 
 			PathAlternative = PathAlternative:(PathSequence (space VERTICAL space PathSequence)*) {return {PathAlternative:PathAlternative}}
 			PathAlternativeBr = PathAlternative:(PathSequenceBr (space VERTICAL space PathSequenceBr)*) {return {PathAlternative:PathAlternative}}
@@ -911,8 +912,8 @@
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? colon_c ':') {return makeVar(Prefix)}
 			PNAME_LNP = at "@"? LName:PNAME_LNP2 {return ifObjectDataProperty(LName)}
-			PNAME_LNP2 = (PNAME_NS:PNAME_NSP  LName:( Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
-			LNameP = (at "@"? LName:(( Chars_String_prefix_LName))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			PNAME_LNP2 = (PNAME_NS:PNAME_NSP  LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(LName),type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
+			LNameP = (at "@"? LName:((squareVariable / Chars_String_prefix_LName))) {return {var:{name:makeVar(LName),type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 			
 			VERTICAL = vertical_c "|" {return {Alternative:"|"}}
 			PATH_SYMBOL = ((dot_path ".") / (div_path "/")) {return {PathSymbol :"/"}} 

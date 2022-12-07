@@ -1112,7 +1112,7 @@ function generateSPARQLtext(abstractQueryTable){
 
  		 //generate table with unique class names in form [_id] = class_unique_name
 		 var generateIdsResult = generateIds(rootClass, knownPrefixes);
-
+		 
 		 var idTable = generateIdsResult["idTable"];
 		 
 		 var referenceTable = generateIdsResult["referenceTable"];
@@ -1315,12 +1315,12 @@ function generateSPARQLtext(abstractQueryTable){
 			
 			
 			if(temp.length == 0){
-			messages.push({
-						"type" : "Error",
-						"message" : "Insufficient information for query generation. Add a link, an attribute, or a class name",
-						"listOfElementId" : [rootClass["identification"]["_id"]],
-						"isBlocking" : true
-					});
+				messages.push({
+							"type" : "Error",
+							"message" : "Insufficient information for query generation. Add a link, an attribute, or a class name",
+							"listOfElementId" : [rootClass["identification"]["_id"]],
+							"isBlocking" : true
+				});
 			}
 			temp = temp.concat(whereInfo["filters"]);
 			 SPARQL_text = SPARQL_text + SPARQL_interval+ temp.join("\n"+SPARQL_interval);
@@ -2135,7 +2135,6 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						}
 						object = object + blankNodes.join(";");
 						object = object+ "]";
-		console.log("ggggggggggggg", object, sparqlTable["blankNodeTriples"])
 		if(object != "[]")sparqlTable["classTriple"] = object;
 		
 	}
