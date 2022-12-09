@@ -23,6 +23,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 //const plusCount = 20;
 const delayTime = 500;
 var schemaTreeKeyDownTimeStamp;
+var schemaFilterKeyDownTimeStamp;
+var schemaInstancesKeyDownTimeStamp;
 
 Template.schemaTree.onDestroyed(function() {
 	Template.schemaTree.Classes.set([]);
@@ -345,7 +347,6 @@ Template.schemaTree.events({
 			Template.schemaTree.F1.set($('#filter_text').val());
 			await useFilter ();
 		}
-	
 	},
 	"click .form-check-input": async function(e) {
 		var index = $(e.target).closest(".form-check-input").attr("index");
@@ -627,6 +628,14 @@ Template.schemaFilter.events({
 			await useFilterP();
 		}
 	},
+	"keydown #filter_text2": async function(e) {
+		schemaFilterKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if ( schemaFilterKeyDownTimeStamp === e.timeStamp ) {
+			Template.schemaFilter.F2.set($('#filter_text2').val());
+			await useFilterP();
+		}
+	},
 	'click #dbp': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
 		Template.schemaFilter.F2.set($('#filter_text2').val());
@@ -723,6 +732,14 @@ Template.schemaInstances.events({
 	},
 	'keydown #filter3': async function(e) {
 		if ( e.keyCode === 13 ) {
+			Template.schemaInstances.F3.set($('#filter_text3').val());
+			await useFilterI();
+		}
+	},
+	"keydown #filter_text3": async function(e) {
+		schemaInstancesKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if ( schemaInstancesKeyDownTimeStamp === e.timeStamp ) {
 			Template.schemaInstances.F3.set($('#filter_text3').val());
 			await useFilterI();
 		}
