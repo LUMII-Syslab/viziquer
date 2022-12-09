@@ -814,6 +814,17 @@ dataShapes = {
 				this.schema.resolvedIndividualsF[params.name] = 1;
 		return rr;	
 	},
+	generateClassUpdate : async function (label_name) {
+		var rr = await this.callServerFunction("generateClassUpdate", {main: {label_name: label_name}});
+		//console.log(rr);
+		if (rr.data.length > 0) {
+			var link = document.createElement("a"); 
+			link.setAttribute("download", "Update.sql");
+			link.href = URL.createObjectURL(new Blob([rr.data.join("\r\n")], {type: "application/json;charset=utf-8;"}));
+			document.body.appendChild(link);
+			link.click();
+		}
+	},
 	tt : function (all = 1) {
 		var el = new VQ_Element(Session.get("activeElement"));
 		//var comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();

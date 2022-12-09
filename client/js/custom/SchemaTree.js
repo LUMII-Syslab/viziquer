@@ -21,7 +21,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaFilter.Count = new ReactiveVar("");
 //const startCount = 30;
 //const plusCount = 20;
-const delayTime = 500;
+const delayTime = 1000;
 var schemaTreeKeyDownTimeStamp;
 var schemaFilterKeyDownTimeStamp;
 var schemaInstancesKeyDownTimeStamp;
