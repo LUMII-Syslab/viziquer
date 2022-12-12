@@ -1580,13 +1580,13 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Graph/service mode"
+                        "label": "Graph/Service mode"
                       },
 					  {
                         "_id": "su465uh97s8gf52uaamk58gv",
                         "index": 1,
                         "name": "Graph",
-                        "label": "Graph/service URI or shorthand",
+                        "label": "Graph/Service URI or shorthand",
                         "extensionPoints": [
 						  {
 							"extensionPoint": "isVisible",
@@ -1971,13 +1971,13 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Graph/service mode"
+                        "label": "Graph/Service mode"
                       },
 					  {
                         "_id": "jrdmkqgrxfpp7w6oobxfhlg1",
                         "index": 8,
                         "name": "Graph",
-                        "label": "Graph/service URI or shorthand",
+                        "label": "Graph/Service URI or shorthand",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -3768,7 +3768,7 @@
                   }
                 ],
                 "dialogTabId": "LH5gP2Peqhnu5rMeB",
-                "label": "Graph/service mode"
+                "label": "Graph/Service mode"
               }
             },
 			{
@@ -3834,7 +3834,7 @@
                   }
                 ],
                 "dialogTabId": "LH5gP2Peqhnu5rMeB",
-                "label": "Graph/service URI or shorthand"
+                "label": "Graph/Service URI or shorthand"
               }
             },
 			{
