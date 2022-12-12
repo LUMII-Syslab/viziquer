@@ -260,9 +260,15 @@ Template.SelectTargetClass.events({
 	"click #ok-select-class": function() {
 		var clazz = $('input[name=class-list-radio]:checked').val();
 		if(typeof clazz !== "undefined"){
+			
 			var obj = $('input[name=link-list-radio]:checked').closest(".association");
-			obj.attr("className", clazz);
-			obj.find('#targetClass')[0].innerHTML= clazz;
+			if(clazz == "(no_class)"){
+				obj.attr("className", "");
+				obj.find('#targetClass')[0].innerHTML= "";
+			}else {
+				obj.attr("className", clazz);
+				obj.find('#targetClass')[0].innerHTML= clazz;
+			}
 		}
 		return;
 	},

@@ -110,7 +110,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  
 	
     var my_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
-    var diagramm_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
+    var diagram_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
 
 	if(obj_class.identification.local_name != null) obj_class.identification.local_name = obj_class.identification.local_name.trim();
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
@@ -251,7 +251,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
              // TODO: resolve type
              parents_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id, upBySubQuery:1, distanceFromClass:1});
           } else if(typeof obj_class.linkIdentification === "undefined") {
-			  diagramm_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
+			  diagram_scope_table.AGGREGATE_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 		  };
         };
     }
@@ -366,7 +366,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
 	// we should build symbol table entry for this Class.
     symbol_table["root"] = {};
-    _.each(diagramm_scope_table, function(value, key) {
+    _.each(diagram_scope_table, function(value, key) {
        _.each(value, function(entry) {
          if (!symbol_table["root"][entry.id]) {
            symbol_table["root"][entry.id] = [];
@@ -616,7 +616,11 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	  // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {
         if (obj_class.instanceAlias==null) {
-          if (f.alias!=null && f.alias!="") obj_class.instanceAlias=f.alias;
+          if (f.alias!=null && f.alias!="") {
+			  obj_class.instanceAlias=f.alias;
+			  obj_class.instanceIsConstant = false;
+			  obj_class.instanceIsVariable = true;
+		  }
         } else{
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);

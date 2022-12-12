@@ -600,7 +600,7 @@
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? ':') {return makeVar(Prefix)}
-			PNAME_LNP = (ref:"@"? PNAME_NS:PNAME_NSP  LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(LName), ref:ref,type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
+			PNAME_LNP = (ref:"@"? PNAME_NS:PNAME_NSP  LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(PNAME_NS)+makeVar(LName), ref:ref,type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
 			LNameP = (ref:"@"? LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(LName),ref:ref, type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
 
 			VERTICAL = "|" {return {Alternative:"|"}}

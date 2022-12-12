@@ -978,17 +978,18 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 				tempVariableNamesTable[vnt] = temp.variableNamesTable[vnt];
 			}
 			
-			for(var vnc in variableNamesCounter){
+			for(var vnc in temp.variableNamesCounter){
 				tempVariableNamesCounter[vnc] = temp.variableNamesCounter[vnc];
 			}
-		})
 			
+		})
+					
 		for(var vnt in tempVariableNamesTable){
 			variableNamesTable[vnt] = tempVariableNamesTable[vnt];
 		}
 		for(var vnc in tempVariableNamesCounter){
 			if(typeof variableNamesCounter[vnc] ==='undefined' || tempVariableNamesCounter[vnc] > variableNamesCounter[vnc]) variableNamesCounter[vnc] = tempVariableNamesCounter[vnc];
-		}
+		}		
 
 	} else {
 		if(clazz.isUnit != true){
@@ -1632,7 +1633,14 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	_.each(clazz["fields"],function(field) {
 		
 		if(clazz["isUnit"] == true && field["exp"].match("^[a-zA-Z0-9_]+$")){
-			var result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
+			var result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);		
+			
+			for(var t in result["triples"]){
+				if(result["triples"][t].startsWith("BIND(")){
+					classSimpleTriples.push({"triple":[result["triples"][t]]});
+				}
+			}
+			
 			messages = messages.concat(result["messages"]);
 			var refName = result["exp"]
 
@@ -1685,7 +1693,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				var result = parse_attrib(clazz, field["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["parsed_exp"], field["alias"], instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, field["isInternal"], parameterTable, idTable, referenceTable, classMembership, null, knownPrefixes, field["order"], field["_id"]);
 				
 				messages = messages.concat(result["messages"]);
-				  // console.log("ATTRIBUTE", result, field);
+				  // console.log("ATTRIBUTE", result, field, symbolTable[clazz["identification"]["_id"]][field["exp"]]);
 				 
 				 if(typeof field["attributeConditionSelection"] !== "undefined" && field["attributeConditionSelection"] !== null && field["attributeConditionSelection"] !== ""){
 					 var resultC = parse_filter(clazz, field["attributeConditionSelection"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], field["attributeConditionSelection"]["parsed_exp"], field["alias"], clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, sparqlTable["classTriple"], parameterTable, idTable, referenceTable, classMembership, knownPrefixes, field["_id"]);
@@ -1896,6 +1904,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	})
 	classSimpleTriples = classSimpleTriples.concat(classExpressionTriples);
 	classSimpleTriples = classSimpleTriples.concat(classFunctionTriples);
+	
 	if(clazz["isBlankNode"] != true)sparqlTable["simpleTriples"] = classSimpleTriples;
 	else {
 		

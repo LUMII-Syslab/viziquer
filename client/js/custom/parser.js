@@ -178,7 +178,11 @@ parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 	
 	var result = generateExpression(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
-	
+
+	if(typeof symbolTable[classID] !== "undefined" && typeof symbolTable[classID][expr] !== "undefined" && symbolTable[classID][expr].length == 1 && symbolTable[classID][expr][0]["kind"].indexOf("_ALIAS") != -1){
+		tripleTable.push({"BIND":"BIND(?" + expr + " AS ?" + alias + ")"})
+	}
+
 	return {"exp":result, "triples":createTriples(tripleTable, "out"), "variables":variableTable, "references":referenceTable, "variableNamesClass":variableNamesClass, "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 
 }
@@ -588,7 +592,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 }
 
 function setVariableName(varName, alias, variableData, generateNewName){
-
+	
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
