@@ -2443,7 +2443,7 @@
                         "_id": "9feiflqzvrn04zoawqs9gph4",
                         "index": 2,
                         "name": "Allow result multiplication",
-                        "label": "Force simple implementation (can cause result set multiplication due to multiple-valued properties)",
+                        "label": "Simple condition",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -2465,6 +2465,7 @@
                             }
                           ]
                         },
+						"description":"Use of non-singleton properties in simple conditions can cause repetitions of result set rows",
                         "subCompartmentTypes": []			 
                       }
                     ],
