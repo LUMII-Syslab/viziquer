@@ -712,7 +712,7 @@
 												<input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}" autocomplete="off" > 
 											</div>
 											<div class="help-tip">
-											  <p>Direct Class Membership Role</p>
+											  <p>Role for instance-to-classifier relation (leave blank to have 'a' notation in SPARQL queries, corresponding to rdf:type)</p>
 											</div>
 										</div>
 
@@ -722,7 +722,7 @@
 												<input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}" autocomplete="off" >	
 											</div>
 											<div class="help-tip">
-											  <p>Indirect Class Membership Role</p>
+											  <p>Role (or path) for indirect instance-to-classifier relation. To be used in SPARQL query generation, if indirect class membership is specified for a node.</p>
 											</div>
 										</div>
 										
@@ -734,7 +734,7 @@
 												 Simple condition implementation
 											  </label>
 											  <div class="help-tip">
-												<p>Simple condition implementation</p>
+												<p>Do not use 'Filter exists' to implement conditions that refer to instance properties. This simplifies the queries, although it might lead to result row duplication, if the used property is multi-valued.</p>
 											  </div>
 											</div>	
 										</div>
@@ -744,10 +744,12 @@
 												<label class="form-check-label">
 												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{showPrefixesForAllNames}}">
 												 <span class="custom-checkbox"></span>
-												 Show prefixes for all names
+												 Show local namespace prefixes
 											  </label>
 											  <div class="help-tip">
-												<p>Show prefixes for all names</p>
+												<p>Show names from the local namespace (if one is specified) in full prefix:display_name form. Unchecking the checkbox
+												shall show names from the local namespace simply as display_name, without the prefix.
+												For query generation, each of the forms (with prefix or without prefix) are accepted regardless of the parameter value.</p>
 											  </div>
 											</div>
 										</div>
@@ -792,7 +794,8 @@
 												 Show Graph/Service compartments
 											  </label>
 											  <div class="help-tip">
-												<p>Show Graph/Service compartments</p>
+												<p>Show Graph/Service compartments to allow specifying named graph and federated service information in query parts. 
+												Uncheck, if the graph/service information is not not needed, to have a cleaner interface</p>
 											  </div>
 											</div>
 										</div>
@@ -806,7 +809,7 @@
 												 Enable Wikibase Label Services
 											  </label>
 											  <div class="help-tip">
-												<p>Enable Wikibase Label Services</p>
+												<p>Enable Wikibase Label Services (special compartments for selecting labels and descriptions along with attributes in wikidata queries)</p>
 											  </div>
 											</div>
 										</div>
@@ -837,6 +840,9 @@
 													</tbody>
 												</table>
 												<a class="btn btn-success pull-right" id="add-graph-menu-item"><i class="fa fa-plus"></i> Add</a>
+												<div class="help-tip">
+													<p>Specify shorthands for introducing graph/service information in queries</p>
+											    </div>
 											</div>
 										</div>
 										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
@@ -850,7 +856,9 @@
 											  </label>
 											</div>
 											<div class="help-tip">
-												<p>Decorate instance position variable names with '?'</p>
+												<p>Use '?' notation to emphasize that non-constant names in instance positions are variables. 
+												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics 
+												(shall not be used with constants). </p>
 											  </div>
 										</div>
 										
@@ -863,7 +871,9 @@
 											  </label>
 											</div>
 											<div class="help-tip">
-												<p>Decorate instance position constants with '='</p>
+												<p>Use '=' notation to emphasize that the expression in the instance description is a constant.
+												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics
+												(shall not be used with variables).</p>
 											  </div>
 										</div>
 										
