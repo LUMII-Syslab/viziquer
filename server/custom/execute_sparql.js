@@ -235,6 +235,12 @@ Meteor.methods({
             httpOptions = { auth: makeAuthString(options) }
         }
 
+        // httpOptions.timeout = 100;
+        let x = setTimeout(() => {
+            console.log('timeout in endpoint test');
+            future.return({status: 408});
+        }, 3000);
+
         HTTP_REQUEST_FN(options.endpoint, httpOptions, ENDPOINT_TEST_QUERY, options.uri, false, function(err, resp){
             if (err) {
                 console.log(err);
@@ -306,10 +312,12 @@ var PROFILE_MAP = {
 var DEFAULT_PROFILE_NAME = "P2"; // <-- change here to switch the default profile for http requests
 var DEFAULT_PROFILE = PROFILE_MAP[DEFAULT_PROFILE_NAME];
 
-var NON_DEFAULT_PROFILES = [
+// use the specified profile for matching endpoint(s)
+var SITE_SPECIFIC_PROFILES = [
     { pattern: 'wikidata.org', profileName: 'P1' },
     { pattern: 'scholarlydata.org', profileName: 'P4' },
     { pattern: 'digital-agenda-data.eu', profileName: 'P1c' },
+    { pattern: 'data.nobelprize.org', profileName: 'P2b' },
 ];
 
 var TIMEOUT = 0;
@@ -340,7 +348,7 @@ function selectHttpRequestProfileByName(name) {
 }
 
 function selectHttpRequestProfileNameByUrl(url) {
-    for (let entry of NON_DEFAULT_PROFILES) {
+    for (let entry of SITE_SPECIFIC_PROFILES) {
         if (url.indexOf(entry.pattern) !== -1) return entry.profileName;
     }
 
@@ -350,28 +358,46 @@ function selectHttpRequestProfileNameByUrl(url) {
 var DO_CALL_DEBUG = function(method, url, options, cb) {
     console.log('☕', method, decodeURI(url), options);
     if (cb) {
-        HTTP.call(method, url, options, (err, resp) => {
-            if (resp.statusCode >= 300) {
-                console.log('🥤🥤', err, resp);
-            }
-            console.log('🦊🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));
-            cb(err, resp);
-        });
-    } else {
-        const resp = HTTP.call(method, url, options);
-        if (resp.statusCode >= 300) {
-            console.log('🥤', err, resp);
+        try {
+            HTTP.call(method, url, options, (err, resp) => {
+                if (resp.statusCode >= 300) {
+                    console.log('🥤🥤', err, resp);
+                }
+                console.log('🦊🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));
+                cb(err, resp);
+            });
+   
+        } catch (err) {
+            cb(err)
         }
-        console.log('🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));
-        return resp;
+    } else {
+        try {
+            const resp = HTTP.call(method, url, options);
+            if (resp.statusCode >= 300) {
+                console.log('🥤', err, resp);
+            }
+            console.log('🦊', resp["statusCode"], resp["headers"]["content-type"], detectContentType(resp.content));
+            return resp;
+           } catch (err) {
+            console.error('Error in HTTP call', err);
+            return err;
+        }
     }
 }
 
 var DO_CALL_PROD = function(method, url, options, cb) {
     if (cb) {
-        HTTP.call(method, url, options, cb);
+        try {
+            HTTP.call(method, url, options, cb);
+        } catch (err) {
+            cb(err);
+        }
     } else {
-        return HTTP.call(method, url, options);
+        try {
+            return HTTP.call(method, url, options);
+        } catch (err) {
+            return err;
+        }
     }
 }
 
