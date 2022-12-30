@@ -759,6 +759,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 
 	for(var key in variables){
 		
+		
+		
 		if(typeof variables[key] === 'string'){
 			if(serviceLabelLang != "" && 
 			(variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined")
@@ -881,7 +883,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 					
 				}
 				//reference
-				else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined'){		
+				else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key].substring(1)] === 'undefined' && variableList[variables[key]] > 0){	
 					var parsedAttributeRes = vq_visual_grammar.parse(variables[key]);	
 					var parsedAttribute = parsedAttributeRes["value"];	
 					if(typeof bindTable[parsedAttribute] === 'undefined'){		
@@ -7507,7 +7509,10 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		
 		_.each(clazz["fields"],function(field) {
 			var alias = field["alias"];
-			if(typeof alias !== "undefined" && typeof variableList["?" + field["alias"]] !== "undefined" && variableList["?" + field["alias"]] <=1 && typeof variableList["?" + field["alias"]+"Label"] === "undefined" && typeof variableList["?" + field["alias"]+"AltLabel"] === "undefined" && typeof variableList["?" + field["alias"]+"Description"] === "undefined" && !field["exp"].startsWith("??")) alias = "";
+			
+			var proj = Projects.findOne({_id: Session.get("activeProject")});
+
+			if(proj && proj.keepVariableNames == "false" && typeof alias !== "undefined" && typeof variableList["?" + field["alias"]] !== "undefined" && variableList["?" + field["alias"]] <=1 && typeof variableList["?" + field["alias"]+"Label"] === "undefined" && typeof variableList["?" + field["alias"]+"AltLabel"] === "undefined" && typeof variableList["?" + field["alias"]+"Description"] === "undefined" && !field["exp"].startsWith("??")) alias = "";
 			if(alias == field["exp"]){
 				alias = "";
 			}

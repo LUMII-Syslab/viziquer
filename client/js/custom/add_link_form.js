@@ -1,3 +1,8 @@
+const delay = ms => new Promise(res => setTimeout(res, ms));
+const delayTime = 500;
+var linkKeyDownTimeStamp;
+
+
 Interpreter.customMethods({
 	AddLink: async function () {
 		Interpreter.destroyErrorMsg();
@@ -877,8 +882,9 @@ Template.AddLink.events({
 		return;
 	},
 	'keyup #mySearch': async function(e) {
-	
-		if (e.keyCode == 13) {
+		linkKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if (linkKeyDownTimeStamp === e.timeStamp ) {
 			var asc = [];
 			_.each(await getAllAssociations(), function(a){
 				asc.push({name: a.name, class: a.class , text: a.text, type: a.type, card: a.card, clr: a.clr, show: true, is:a.is, of:a.of});

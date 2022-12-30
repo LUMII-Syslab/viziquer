@@ -179,7 +179,7 @@ parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 	var result = generateExpression(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
 	//var resultSQL = generateExpressionSQL(parsed_exp1, "", className, classSchemaName, alias, true, isSimpleVariable, false);
 
-	if(typeof symbolTable[classID] !== "undefined" && typeof symbolTable[classID][expr] !== "undefined" && symbolTable[classID][expr].length == 1 && symbolTable[classID][expr][0]["kind"].indexOf("_ALIAS") != -1){
+	if(alias != null && typeof symbolTable[classID] !== "undefined" && typeof symbolTable[classID][expr] !== "undefined" && symbolTable[classID][expr].length == 1 && symbolTable[classID][expr][0]["kind"].indexOf("_ALIAS") != -1){
 		tripleTable.push({"BIND":"BIND(?" + expr + " AS ?" + alias + ")"})
 	}
 
@@ -1426,7 +1426,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 			} 
 		}
 	} else {
-		
+
 		var tempAliasOrAttribute = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["kind"];
 		if(tempAliasOrAttribute.indexOf("_ALIAS") !== -1){
 			if(tempAliasOrAttribute == "CLASS_ALIAS") referenceCandidateTable.push(findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionL"], "var")["name"]);

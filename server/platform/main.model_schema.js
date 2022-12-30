@@ -294,6 +294,11 @@ Schemas.Projects = new SimpleSchema({
  			 label: "Projects.enableWikibaseLabelServices",
  			 optional: true,
  	    },
+		keepVariableNames: {
+ 			 type: String,
+ 			 label: "Projects.keepVariableNames",
+ 			 optional: true,
+ 	    },
 		showGraphServiceCompartments: {
  			 type: String,
  			 label: "Projects.showGraphServiceCompartments",

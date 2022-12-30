@@ -22,6 +22,9 @@ Template.AddAttribute.Count = new ReactiveVar("")
 Template.AddAttribute.CountAssoc = new ReactiveVar("")
 const startCount = 30;
 const plusCount = 20;
+const delay = ms => new Promise(res => setTimeout(res, ms));
+var attributeKeyDownTimeStamp;
+const delayTime = 500;
 
 Interpreter.customMethods({
 	AddAttribute: async function () {
@@ -412,7 +415,10 @@ Template.AddAttribute.events({
 	},
 	
 	"keyup #mySearch-attribute": async function(e){
-		if (e.keyCode == 13) {
+		attributeKeyDownTimeStamp = e.timeStamp;
+		await delay(delayTime);
+		if (attributeKeyDownTimeStamp === e.timeStamp ) {
+			var value = $("#mySearch-attribute").val().toLowerCase();
 			var attr_list = await getAttributes(value);
 			var link_list = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attr_list);
@@ -425,13 +431,7 @@ Template.AddAttribute.events({
 		var value = $("#mySearch-attribute").val().toLowerCase();
 		var attr_list = await getAttributes(value);
 		var link_list = await getAssociations(value);
-		//attr_list = attr_list.filter(function(obj) { 
-		//	return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		//});
 		Template.AddAttribute.attrList.set(attr_list);
-		//link_list = link_list.filter(function(obj) { 
-		//	return typeof obj['name'] === 'undefined' || obj['name'].toLowerCase().indexOf(value)!== -1;
-		//});
 		Template.AddAttribute.linkList.set(link_list);
 		return;
 	},

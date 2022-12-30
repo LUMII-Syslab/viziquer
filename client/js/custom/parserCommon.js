@@ -71,7 +71,7 @@ checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableFo
 // expressionTable - parsed expression table
 // level - level name
 findINExpressionTable = function(expressionTable, level){
-	var v = [];
+	// var v = [];
 	if(typeof expressionTable !== "undefined"){
 		for(var key in expressionTable){
 			if (key == level) {

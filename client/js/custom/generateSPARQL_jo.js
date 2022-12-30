@@ -672,9 +672,7 @@ function generateIds(rootClass, knownPrefixes){
 	variableNamesTable = aliasNames["variableNamesTable"];
 	variableNamesCounter = aliasNames["variableNamesCounter"];
 
-	var propertyNames = setFieldNamesForProperties(rootClass, rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"], knownPrefixes);
-	variableNamesTable = propertyNames["variableNamesTable"];
-	variableNamesCounter = propertyNames["variableNamesCounter"];
+	
 	
 	
 	//go through all root class children classes
@@ -692,6 +690,10 @@ function generateIds(rootClass, knownPrefixes){
 		}
 		referenceTable[rootClassId]["classes"].push(temp["referenceTable"]);
 	})
+	
+	var propertyNames = setFieldNamesForProperties(rootClass, rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"], knownPrefixes);
+	variableNamesTable = propertyNames["variableNamesTable"];
+	variableNamesCounter = propertyNames["variableNamesCounter"];
 
 	var idTableTemp = [];
 	for(var key in idTable) {
@@ -967,6 +969,7 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 		var tempVariableNamesTable = [];
 		var tempVariableNamesCounter = [];
 
+
 		_.each(clazz["children"],function(subclazz) {
 			var variableNamesCounterCopy = [];
 			for(var vnc in variableNamesCounter){
@@ -990,6 +993,14 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 		for(var vnc in tempVariableNamesCounter){
 			if(typeof variableNamesCounter[vnc] ==='undefined' || tempVariableNamesCounter[vnc] > variableNamesCounter[vnc]) variableNamesCounter[vnc] = tempVariableNamesCounter[vnc];
 		}		
+		
+		// console.log("sssss", classId, clazz)
+		// for(var n in variableNamesTable){
+			// console.log(n, variableNamesTable[n]);
+		// }
+		// for(var n in variableNamesCounter){
+			// console.log(n, variableNamesCounter[n]);
+		// }
 
 	} else {
 		if(clazz.isUnit != true){
@@ -1060,6 +1071,8 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 			variableNamesCounter = temp.variableNamesCounter;
 		})
 	}
+	
+	
 	
 	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
@@ -2856,7 +2869,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			}	
 			
 			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
-				tripleTebleTemp = tripleTebleTemp.concat(attributeTripleTemp);
+				// tripleTebleTemp = tripleTebleTemp.concat(attributeTripleTemp);
+				tripleTebleTemp = attributeTripleTemp;
 				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bind"]);
 				if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bound"]);
 				attributesValues.push(sparqlTable["simpleTriples"][expression]["graphInstruction"] + " " + sparqlTable["simpleTriples"][expression]["graph"] + " {"+ tripleTebleTemp.join(" ") + "}");

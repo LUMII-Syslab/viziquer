@@ -1160,6 +1160,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 		  if (proj.simpleConditionImplementation=="true") {
             proj_params.simpleConditionImplementation = proj.simpleConditionImplementation;
           };
+		  if (proj.keepVariableNames=="true") {
+            proj_params.keepVariableNames = proj.keepVariableNames;
+          };
           if (proj.directClassMembershipRole) {
             proj_params.directClassMembershipRole = proj.directClassMembershipRole;
           };
@@ -1298,7 +1301,7 @@ function getGraphFullForm(graph, prefixes){
 		
 		var graphs = JSON.parse(proj.graphsInstructions)
 		for(var g in graphs){
-			if(graphs[g]["Instruction"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Graph"]+">";
+			if(graphs[g]["Graph/Service shorthand"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Expansion (e.g., URI)"]+">";
 		}
      }
 	

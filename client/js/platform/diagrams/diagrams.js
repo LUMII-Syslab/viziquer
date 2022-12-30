@@ -786,22 +786,19 @@ Template.ontologySettings.events({
 
 	'click #ok-ontology-settings' : async function(e, templ) {
 		
-		
 		var myRows = [];
 		var $headers = $("th");
 		var $rows = $("tbody tr").each(function(index) {
 		  $cells = $(this).find("td");
 		  myRows[index] = {};
 		  $cells.each(function(cellIndex) {
-			  if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){
+			  if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
 				  myRows[index][$($headers[cellIndex]).html()] = $(this).find("div").text();
 			  }
 		  });
 		  myRows[index]["index"] = index;
 		});
 
-		// console.log(JSON.stringify(myRows));
-		
 		
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -824,6 +821,7 @@ Template.ontologySettings.events({
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
 					showGraphServiceCompartments: $("#show-graph-service-compartments").is(":checked"),
 					enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
+					keepVariableNames: $("#keep-variable-names").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val(),
 					graphsInstructions: JSON.stringify(myRows)
@@ -872,6 +870,7 @@ Template.ontologySettings.events({
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
 		 $("#show-graph-service-compartments").prop("checked", proj.showGraphServiceCompartments=="true");
 		 $("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
+		 $("#keep-variable-names").prop("checked", proj.keepVariableNames=="true");
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);
 	 }
@@ -1159,6 +1158,12 @@ Template.ontologySettings.helpers({
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
 			return (proj.enableWikibaseLabelServices=="true");
+		}
+	},
+	keepVariableNames: function() {
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
+			return (proj.keepVariableNames=="true");
 		}
 	},
 	endpointUsername: function() {
