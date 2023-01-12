@@ -225,16 +225,34 @@ Template.SelectTargetClass.events({
 		// }
 		
 		var params = {};
+		var start_elem_id = Session.get("activeElement");
+		var startElement = new VQ_Element(start_elem_id);
+		var startElementName = startElement.getName();
+		var startElementAlias = startElement.getInstanceAlias();
+
+		if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
 		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
 			if(line_direct == "=>") {
+				var elementParams = [{"name": name, "type": "in",}]
+				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
+				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
+					var cls = dataShapes.getIndividualName(startElementAlias);
+					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
+				}
 				params = {
 					"main": {"limit": 30,  "filter": f},
-					"element": {"pList": {"in": [{"name": name, "type": "in"}]}}
+					"element": {"pList": {"in": elementParams}}
 				}
 			} else {
+				var elementParams = [{"name": name, "type": "out",}]
+				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
+				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
+					var cls = dataShapes.getIndividualName(startElementAlias);
+					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
+				}
 				params = {
 					"main": {"limit": 30,  "filter": f},
-					"element": {"pList": {"out": [{"name": name, "type": "out"}]}}
+					"element": {"pList": {"out": elementParams}}
 				}
 			}
 		var classes = await dataShapes.getClassesFull(params);
@@ -481,20 +499,38 @@ Template.AddLink.events({
 		}
 		else {
 			var params = {};
-			
+			var start_elem_id = Session.get("activeElement");
+			var startElement = new VQ_Element(start_elem_id);
+			var startElementName = startElement.getName();
+			var startElementAlias = startElement.getInstanceAlias();
+
 			if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
+			if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
 			
 			if(line_direct == "=>") {
+				var elementParams = [{"name": name, "type": "in",}]
+				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
+				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
+					var cls = dataShapes.getIndividualName(startElementAlias);
+					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
+				}
 				params = {
 					"main": {"limit": 30},
-					"element": {"pList": {"in": [{"name": name, "type": "in",}],}}
+					"element": {"pList": {"in": elementParams,}}
 				}
 			} else {
+				var elementParams = [{"name": name, "type": "out",}]
+				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
+				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
+					var cls = dataShapes.getIndividualName(startElementAlias);
+					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
+				}
 				params = {
 					"main": {"limit": 30},
-					"element": {"pList": {"out": [{"name": name, "type": "out",}],}}
+					"element": {"pList": {"out": elementParams,}}
 				}
 			}
+
 			classes = await dataShapes.getClassesFull(params);
 			
 		}
