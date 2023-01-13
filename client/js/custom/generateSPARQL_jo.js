@@ -579,6 +579,42 @@ function setText_In_SPARQL_Editor(text) {
   yasqe3.setValue(text);
 }
 
+
+function getAllVariableNamesInQuery(expression, variableTable){
+	for(var key in expression){
+		if(typeof expression[key] === 'object'){
+			if(key == 'variables'){
+				var variables = expression[key];
+				var starInSelect = false;
+				
+				for(var variable in variables){
+					
+					if(variables[variable] == "*") variableTable[variables[variable]] = 10;
+					if(typeof variables[variable] === 'string'){
+						variableTable[variables[variable]] = 0;
+						
+					} else if(typeof variables[variable] === 'object'){
+						variableTable[variables[variable]["variable"]] = 1;
+						
+					}
+				}
+			}
+			var temp = getAllVariableNamesInQuery(expression[key], variableTable);
+			for(var t in temp){
+				variableTable[t] = temp[t];
+			}
+		} else if(typeof expression[key] === 'string' && expression[key].startsWith("?")) {
+			if(typeof variableTable[expression[key]] !== 'undefined') {
+				variableTable[expression[key]] = variableTable[expression[key]] + 1;
+			} else {
+				variableTable[expression[key]] = 0;
+			}
+
+		}
+	}
+	return variableTable;
+}
+
 //generate table with unique class names in form [_id] = class_unique_name
 //rootClass - abstract syntax table starting with 'rootClass' object
 function generateIds(rootClass, knownPrefixes){
@@ -588,6 +624,44 @@ function generateIds(rootClass, knownPrefixes){
 	var prefixTable = [];
 	var variableNamesTable = [];
 	var variableNamesCounter = [];
+
+	// var text = "";
+	// var prefixesText = [];
+	// for(var p in knownPrefixes){
+			// prefixesText.push("PREFIX " + knownPrefixes[p]["name"] + ": <" + knownPrefixes[p]["value"] + ">");
+		// }
+	 // text = prefixesText.join("\n")+"SELECT * WHERE{"+rootClass.fullSPARQL+"}";
+	 // console.log("rrrrrrrrrrrrr", rootClass)
+	 // Utilities.callMeteorMethod("parseSPARQLText", text, function(parsedQuery) {
+		// console.log("parsedQuery", parsedQuery)
+		// var variableList = getAllVariableNamesInQuery(parsedQuery, []);
+		 // console.log("variableList", variableList)
+		 // for(var v in variableList){
+			 // if(v != "*"){
+				// var alias = v.substring(1);
+				// if(typeof variableNamesTable[rootClass.identification._id] === "undefined") variableNamesTable[rootClass.identification._id] = [];
+				// if(typeof variableNamesTable[rootClass.identification._id][alias] === "undefined") variableNamesTable[rootClass.identification._id][alias] = [];
+				// variableNamesTable[rootClass.identification._id][alias][rootClass.identification._id] = {name:alias, order:9999999, exp:alias, isPath:false, isAlias:true};
+			 // }
+		 // }
+	// })
+	
+    // console.log("fffff", variableNamesTable);
+	// for(var v in variableNamesTable){
+		// console.log("ffffffffffff", v, variableNamesTable[v])
+	// }
+	if(rootClass.fullSPARQL != null && rootClass.fullSPARQL != ""){
+		var fullSPARQLsprlit = rootClass.fullSPARQL.split(/\s|\n|\t|\./)
+		
+		for(var sp in fullSPARQLsprlit){
+			if(fullSPARQLsprlit[sp].startsWith("?")) {
+				var alias = fullSPARQLsprlit[sp].substring(1);
+				if(typeof variableNamesTable[rootClass.identification._id] === "undefined") variableNamesTable[rootClass.identification._id] = [];
+				if(typeof variableNamesTable[rootClass.identification._id][alias] === "undefined") variableNamesTable[rootClass.identification._id][alias] = [];
+				variableNamesTable[rootClass.identification._id][alias][rootClass.identification._id] = {name:alias, order:9999999, exp:alias, isPath:false, isAlias:true};
+			}
+		}
+	}
 
 	//add root class unique name
 	var rootClassId = rootClass["instanceAlias"];
@@ -693,6 +767,7 @@ function generateIds(rootClass, knownPrefixes){
 	
 	var propertyNames = setFieldNamesForProperties(rootClass, rootClass["fields"], variableNamesTable, variableNamesCounter, rootClass["identification"]["_id"], knownPrefixes);
 	variableNamesTable = propertyNames["variableNamesTable"];
+	
 	variableNamesCounter = propertyNames["variableNamesCounter"];
 
 	var idTableTemp = [];
@@ -1031,7 +1106,16 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 						attributeName = textPart
 					}
 					attributeName = attributeName.replace(/-/g, '_');
+					
 					var generatedName = attributeName;
+					if(attributeName.startsWith("^") == true) {
+						attributeName = "has_"+attributeName.substring(1);
+						generatedName = generatedName.substring(1);
+					}
+					if(attributeName.startsWith("inv(") == true && attributeName.endsWith(")") == true) {
+						attributeName = "has_"+attributeName.substring(4, attributeName.length-1);
+						generatedName = generatedName.substring(4, generatedName.length-1);
+					}
 					
 					var addName = true;
 					
@@ -1058,7 +1142,10 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 						if(typeof variableNamesTable[classId][generatedName] === "undefined") variableNamesTable[classId][generatedName] = [];
 						var isPath = false;
 						if(field["isSimplePath"]) isPath = true;
-						variableNamesTable[classId][generatedName][field["_id"]] = {name:attributeName, order:field.order, exp:field["exp"], isPath:isPath};
+						var fieldExp = field["exp"];
+						if(fieldExp.startsWith("^") == true) fieldExp = fieldExp.substring(1);
+						if(fieldExp.startsWith("inv(") == true && fieldExp.endsWith(")") == true) fieldExp = fieldExp.substring(4, fieldExp.length-1);
+						variableNamesTable[classId][generatedName][field["_id"]] = {name:attributeName, order:field.order, exp:fieldExp, isPath:isPath};
 					}
 				} 
 			
@@ -1071,9 +1158,7 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 			variableNamesCounter = temp.variableNamesCounter;
 		})
 	}
-	
-	
-	
+
 	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
@@ -1149,7 +1234,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 messages = messages.concat(tempAttrNames["messages"]);
 		 
 		 var result = forAbstractQueryTable(generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter, attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
-		
+
 		 messages = messages.concat(result["messages"]);
 
 		 sparqlTable = result["sparqlTable"];
@@ -1809,15 +1894,20 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 				//function in expression
 				else if(result["isFunction"] == true) {
+					
+					
 					//functionTriples
 					//sparqlTable["functionTriples"].push(getTriple(result, alias, field["requireValues"], true));
 					
 					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
-
+					
 					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
 								tripleTemp["graph"] = field["graph"];
 								tripleTemp["graphInstruction"] = field["graphInstruction"];
 							}
+							
+					if(field["requireValues"] == true) tripleTemp["requireValues"] = true;
+					else tripleTemp["requireValues"] = false;
 					
 					classExpressionTriples.push(tripleTemp);
 					
@@ -2340,7 +2430,6 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						
 					}
 					else{
-						
 						object = "[";
 						var blankNodes = [];
 						for(var triple in  temp["sparqlTable"]["blankNodeTriples"]){
@@ -2354,6 +2443,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 								blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
 							}
 						}
+						temp["sparqlTable"]["filterTriples"] = [];
 						object = object + blankNodes.join(";");
 						object = object+ "]";
 					}
