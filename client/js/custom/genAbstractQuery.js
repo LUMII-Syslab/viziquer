@@ -224,11 +224,18 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         // } else if (f.exp=="(*sub)") {
            // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
         // } else if (f.alias) {
+				
         if (f.alias) {
              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 			 if(f.addLabel == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Label", type:null, context:obj_class.identification._id});
 			 if(f.addAltLabel == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"AltLabel", type:null, context:obj_class.identification._id});
 			 if(f.addDescription == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Description", type:null, context:obj_class.identification._id});
+			 if(f.exp.startsWith("?")){
+				//atribute is variable name with alias
+				var expr = f.exp.substring(1);
+				if(expr.startsWith("?")) expr = expr.substring(1);
+			    my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
+			}
         } else if(f.exp.startsWith("?")){
 			//atribute is variable name
 			var expr = f.exp.substring(1);
@@ -853,6 +860,12 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			 var type = null;
 			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {max_cardinality : 1};
 			  updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", type);
+			  
+			  if(f.exp.startsWith("?")){
+				  var expr = f.exp.substring(1);
+				  if(expr.startsWith("?")) expr = expr.substring(1);
+				  updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
+			 }
            } else {
 			   
 			 if(f.exp.startsWith("?")){

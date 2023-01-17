@@ -3349,6 +3349,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == null)
 						))
 						){
+							
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							if(variable['PropertyReference'] == null){
 								var varName = variable["name"];
@@ -3367,14 +3368,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								}
 								
 								visited = 1;
-							} else {
-								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-								var relation = expressionTable[key]['Relation'];
-								if(relation = "<>") relation = "!=";
-								SPARQLstring = SPARQLstring  + " " + relation + " ";
-								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-								visited = 1;
-							}
+							} //else {
+								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+								// var relation = expressionTable[key]['Relation'];
+								// if(relation = "<>") relation = "!=";
+								// SPARQLstring = SPARQLstring  + " " + relation + " ";
+								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+								// visited = 1;
+							//}
 						}
 					}
 					//special_property = property			
@@ -3426,14 +3427,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 									SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " " + "?"+varName;
 								}
 								visited = 1;
-							} else {
-								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-								var relation = expressionTable[key]['Relation'];
-								if(relation = "<>") relation = "!=";
-								SPARQLstring = SPARQLstring  + " " + relation + " ";
-								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
-								visited = 1;
-							}
+							} //else {
+								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+								// var relation = expressionTable[key]['Relation'];
+								// if(relation = "<>") relation = "!=";
+								// SPARQLstring = SPARQLstring  + " " + relation + " ";
+								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+								// visited = 1;
+							// }
 						}
 					}
 					
@@ -3451,6 +3452,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["var"] !== 'undefined'
 
 						){
+
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							if(variable['PropertyReference'] != null){
 								var expression = expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri'];
@@ -3488,6 +3490,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						&& typeof expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']["var"] !== 'undefined'
 
 						){
+
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							if(variable['PropertyReference'] != null){
 								
@@ -3537,7 +3540,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							|| expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']['PrefixedName']['var']['kind'] == null)
 						))
 						){
-							
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							var varName = variable["name"];
 							varName = setVariableName(varName, null,variable);
@@ -3551,6 +3553,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						}
 					}
 					
+
 					//property = `pr:attribute				
 					if(visited != 1 && typeof expressionTable[key]['Relation'] !== 'undefined'){
 						if(typeof expressionTable[key]['NumericExpressionR'] !== 'undefined'
