@@ -235,10 +235,10 @@ const findElementDataForProperty = (vq_obj) => {
 	pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
-	//if (dataShapes.schema.schemaType !== 'wikidata') {
-		// ** var pListI = getPListI(vq_obj);
-		// ** if ( pListI.type != undefined) params.pListI = pListI;
-	// }
+	//if (dataShapes.schema.schemaType !== 'wikidata') { // Ir uztaisīts, bet strādā drusku palēni
+	//	var pListI = getPListI(vq_obj);
+	//	if ( pListI.type != undefined) params.pListI = pListI;
+	//}
 	
 	return params;
 }
@@ -869,9 +869,24 @@ dataShapes = {
 		var c_list = rr.data.map(v => v.id)
 		return c_list;		
 	},
-	makeDiagr : async function(count = 30, isLocal = true) {
+	makeDiagr : async function(par = {count:30, only_locals:true}) {
+	//dataShapes.makeDiagr({count:30, only_locals:true, properties_out:['rdf:type']})
+		var count = par.count;
+		var isLocal = par.only_locals;
+		var properties_out = [];
+		if (par.properties_out != undefined)
+			properties_out = par.properties_out;
+		
+		properties_ids = [];
+		for (var p of properties_out) {
+			var p_info = await this.resolvePropertyByName({name: p})
+			if (p_info.complete)
+			properties_ids.push(p_info.data[0].iri);
+		}
 
 		var c_list = await this.getClassList(count,isLocal);
+		if (c_list.length == 0)
+			await this.getClassList(count,false);
 		
 		var rr;
 		var rez = [];
@@ -906,7 +921,12 @@ dataShapes = {
 		//	allParams.main.cc = cc;
 		//	rr = await this.callServerFunction("xx_getPropListInfo", allParams);
 		//	rr.data.map(function(f) { rez2.push(`Assoc;${cc};${f.class_id}`); return 1;});
-		//}
+		// }
+		
+		if ( properties_ids.length > 0 )
+			allParams.main.properties_ids = properties_ids.join("','");
+		else
+			allParams.main.properties_ids = '';
 		
 		for (var cc of c_list) {
 			for (var cc2 of c_list) {
@@ -914,14 +934,14 @@ dataShapes = {
 				allParams.main.cc2 = cc2;
 				rr = await this.callServerFunction("xx_getPropListInfo2", allParams);
 				if (rr.data.length > 0 ) {
-					var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
+					var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });  
 					rr.data.map(function(f) { rez2.push(`Assoc;${cc};${cc2};${tt2.join("##")}`); return 1;});
 				} 
 			}
 		}
 		rez2.unshift('type;c1;c2;aa');
 		rez2.push('');
-		
+				
 				var link = document.createElement("a");
 				link.setAttribute("download", "data.txt");
 				link.href = URL.createObjectURL(new Blob([rez.join("\r\n")], {type: "application/json;charset=utf-8;"}));
