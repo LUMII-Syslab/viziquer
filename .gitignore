@@ -1,5 +1,6 @@
 settings.json
 # package-lock.json
+_doc
 
 # MongoDB data directory
 data/mongo
@@ -84,7 +85,7 @@ typings/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
+#!.vscode/launch.json
 !.vscode/extensions.json
 
 ### WebStorm ###
@@ -417,3 +418,4 @@ __pycache__/
 # !tools/packages.config
 
 # End of https://www.gitignore.io/api/meteorjs,visualstudio,visualstudiocode,webstorm,node
+
