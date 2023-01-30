@@ -149,6 +149,7 @@ Meteor.methods({
 							};
 				Meteor.call("uploadProjectDataByUrl", list);
 			}
+			return project._id;
 		}
 	},
 
