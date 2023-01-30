@@ -80,7 +80,7 @@ LinkCompartments.prototype = {
 			placement.width = Math.max(placement.width, compart.textWidth);
 			placement.height += compart.textHeight;
 		});
-		console.log("--Tiek pārrēķinātas vērtības pie create--")	
+
 		compartments.computeGroupsPositions();
 		compartments.computeTextsPositions();
 	},
@@ -643,7 +643,7 @@ LinkCompartments.prototype = {
 
 			new_height += height;
 		});
-		console.log("--Tiek pārrēķinātas vērtības vienam kompartmentam--")	
+
 		placment_obj.width = new_width;
 		placment_obj.height = new_height;
 

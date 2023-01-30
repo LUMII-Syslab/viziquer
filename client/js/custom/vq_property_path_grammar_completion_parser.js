@@ -3668,6 +3668,7 @@ vq_property_path_grammar_completion_parser = (function() {
     	
     			if(pathParts[0].startsWith("^"))isInv = true;
       		}
+
           	var props = await dataShapes.getPropertiesFull(params);
 			
 			var schemaName = dataShapes.schema.schemaType;
@@ -3731,19 +3732,18 @@ vq_property_path_grammar_completion_parser = (function() {
           async function getAssociations(place, priority){
 				var pathParts = options.text.split(/[.\/]/);
 				if(pathParts.length <= 1){
-					var params = {propertyKind:'ObjectExt'};
+					var params = {propertyKind:'Connect'};
 					// if (fullText != "") params.filter = fullText;
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
 					if(typeof options.link !== "undefined"){
 						var elFrom=options.link.getStartElement();
 						var elTo=options.link.getEndElement();
-
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {
 						var params = {main:{propertyKind:'ObjectExt',"limit": 30}};
 						if (typeof options.className !== 'undefined') params.element = {className: options.className};
-							props = await dataShapes.getPropertiesFull(params);
+						props = await dataShapes.getPropertiesFull(params);
 					}
 					props = props["data"];
 					

@@ -272,7 +272,7 @@ Template.createProjectModal.events({
 				list.project_link = obj.attr("link")	
 			//console.log("Jauna projekta taisīšana");
 			Template.createProjectModal.loading.set(true);
-			Utilities.callMeteorMethod("insertProject", list, function() {
+			Utilities.callMeteorMethod("insertProject", list, function(proj_id) {
 				$("#add-project").modal("hide");
 				Template.createProjectModal.loading.set(false);
 			});
