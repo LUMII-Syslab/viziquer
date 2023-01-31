@@ -8,231 +8,10 @@
       options = arguments[1];
 			function makeVar(o) {return makeString(o);};
 
-      // string -> idObject
-			// returns type of the identifier from symbol table. Null if does not exist.
-			async function resolveTypeFromSymbolTable(id) {
-				var context = options.context._id;
-
-				if(typeof options.symbol_table[context] === 'undefined') return null;
-
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].type
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-						}
-					}
-					return st_row.type
-				} else {
-					return null
-				}
-				return null
-			};
-			// string -> idObject
-			// returns kind of the identifier from symbol table. Null if does not exist.
-			async function resolveKindFromSymbolTable(id) {
-				var context = options.context._id;
-
-				if(typeof options.symbol_table[context] === 'undefined') return null;
-
-				var st_row = options.symbol_table[context][id];
-				if (st_row) {
-					if(st_row.length == 0) return null;
-					if(st_row.length == 1){
-						return st_row[0].kind
-					}
-					if(st_row.length > 1){
-						for (var symbol in st_row) {
-							if(st_row[symbol]["context"] == context) return st_row[symbol].kind;
-						}
-					}
-					return st_row.kind
-				} else {
-					return null
-				}
-				return null
-			};
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
-			async function resolveTypeFromSchemaForClass(id) {
-				if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
-					id = "wd:"+id;
-				}
-				
-				var cls = await dataShapes.resolveClassByName({name: id})
-				if(cls["complite"] == false) return null;
-				if(cls["data"].length > 0){
-					return cls["data"][0];
-				}
-				
-				return null;
-			};
-			// string -> idObject
-			// returns type of the identifier from schema assuming that it is name of the property (attribute or association). Null if does not exist
-			async function resolveTypeFromSchemaForAttributeAndLink(id) {
-				if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
-					id = "wdt:"+id;
-				}
-				
-				var aorl = await dataShapes.resolvePropertyByName({name: id})
-				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-				if(aorl["complite"] == false) return null;
-				var res = aorl["data"][0];
-				if(res){
-					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
-					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
-					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
-					return res;
-				}
-				// if (!res) { 
-					// res = options.schema.resolveLinkByName(id); 
-					// if (res) res["property_type"] = "OBJECT_PROPERTY"
-				// }
-				// else {
-						// res["parentType"] = aorl[1];
-						// res["property_type"] = "DATA_PROPERTY";
-				// };
-				
-				return null
-			};
-			// string -> idObject
-			// returns type of the identifier from schema. Looks everywhere. First in the symbol table,
-			// then in schema. Null if does not exist
-			async function resolveType(id) {
-			  
-			  if(id !== "undefined"){
-			  var t=await resolveTypeFromSymbolTable(id);
-				if (!t) {
-					if (options.exprType) {
-					  t= await resolveTypeFromSchemaForClass(id);
-					  if (!t) {
-						  t=await resolveTypeFromSchemaForAttributeAndLink(id)
-					  }
-					} else {
-					  t=await resolveTypeFromSchemaForAttributeAndLink(id);
-					  if (!t) {
-						  t=await resolveTypeFromSchemaForClass(id)
-					  }
-					}
-
-				}
-			  return t;}
-			  return null;
-			};
-          //string -> string
-    			// resolves kind of id. CLASS_ALIAS, PROPERTY_ALIAS, CLASS_NAME, CLASS_ALIAS, null
-     	   async function resolveKind(id) {
-				if(id !== "undefined"){
-    				    var k=await resolveKindFromSymbolTable(id);
-    						if (!k) {
-    						  if (options.exprType) {
-    							  if (await resolveTypeFromSchemaForClass(id)) {
-    									 k="CLASS_NAME";
-    							  } else if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-    									 k="PROPERTY_NAME";
-    							  }
-    							} else {
-    							  if (await resolveTypeFromSchemaForAttributeAndLink(id)) {
-    									k="PROPERTY_NAME";
-    							  } else if (await resolveTypeFromSchemaForClass(id)) {
-    									k="CLASS_NAME";
-    							 }
-    							}
-
-    					  }
-    						return k;
-				}
-				return null
-    		  };
 			function pathOrReference(o) {
-    				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
-            // It does not make sense calculate this every time function is called, but ...
-    				// console.log("oooooooooooo", o, options.symbol_table, options.symbol_table[options.context._id])
-
-    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] !== "undefined" &&
-    					(o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "CLASS_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "BIND_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] == "PROPERTY_ALIAS")
-    				){
-
-    					return {Reference:
-    						{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    						type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    					var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
-    					Substring : o["Substring"],
-    					FunctionBETWEEN : o["FunctionBETWEEN"],
-    					FunctionLike : o["FunctionLike"]
-    					}
-
-    				}
-    				
-    				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][1].length == 1 &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"] !== "undefined" &&
-    					o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathMod"] == null &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"] !== "undefined" &&
-    					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["kind"] === "undefined" 
-    				){
-    					var simbolTable = options.symbol_table[options.context._id][o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"]];
-
-    					for (var symbol in simbolTable) {
-    						if(simbolTable[symbol]["kind"] == "CLASS_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "BIND_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "UNRESOLVED_FIELD_ALIAS" ||
-    						simbolTable[symbol]["kind"] == "PROPERTY_ALIAS"){
-								
-								if(typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"] !== "undefined"){
-									return {Reference:
-    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["PrefixedName"]["var"],
-    								Substring : o["Substring"],
-    								FunctionBETWEEN : o["FunctionBETWEEN"],
-    								FunctionLike : o["FunctionLike"]
-    							}
-								}
-								
-    							return {Reference:
-    								{name:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["name"],
-    								type:o["PathProperty"]["PathAlternative"][0]["PathSequence"][0]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"]["type"]},
-    								var:o["PathProperty"]["PathAlternative"][0]["PathSequence"][1][0][1]["PathEltOrInverse"]["PathElt"]["PathPrimary"]["var"],
-    								Substring : o["Substring"],
-    								FunctionBETWEEN : o["FunctionBETWEEN"],
-    								FunctionLike : o["FunctionLike"]
-    							}
-    						}
-    					}
-    					
-    				}
-
     				return o;
     			};
 
-			function checkIfVariable(Variable) {
-				// console.log("Variable", makeVar(Variable));
-				// if(makeVar(Variable) != "student-Number") return;
-				return Variable;
-			};
 			function transformExpressionIntegerScopeToList(start, end){
 				var s = parseInt(start["Number"]);
 				var e = parseInt(end["Number"]);
@@ -521,7 +300,7 @@
 
 			PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
 
-			PNAME_LN = (ref:"@"? PropertyReference:PropertyReference? Prefix:PNAME_NS  LName:(Chars_String_variables / PNAME_LN_Chars_String_prefix) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(Prefix)+makeVar(LName), ref:ref, type:resolveType(makeVar(Prefix)+makeVar(LName)), kind:resolveKind(makeVar(Prefix)+makeVar(LName)), PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			PNAME_LN = (ref:"@"? PropertyReference:PropertyReference? Prefix:PNAME_NS  LName:(Chars_String_variables / PNAME_LN_Chars_String_prefix) Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(Prefix)+makeVar(LName), ref:ref, type:null, kind:null, PropertyReference:PropertyReference},Prefix:Prefix, Name:makeVar(LName), Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
 			PN_PREFIX = Chars_String_prefix
 
@@ -600,8 +379,8 @@
 			iriP = IRIREF / PrefixedNameP
 			PrefixedNameP = PrefixedName:(PNAME_LNP / PNAME_NSP) {return {PrefixedName:PrefixedName}}
 			PNAME_NSP = Prefix:(PN_PREFIX? ':') {return makeVar(Prefix)}
-			PNAME_LNP = (ref:"@"? PNAME_NS:PNAME_NSP  LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(PNAME_NS)+makeVar(LName), ref:ref,type:resolveType(makeVar(PNAME_NS)+makeVar(LName)), kind:resolveKind(makeVar(PNAME_NS)+makeVar(LName))}, Prefix:PNAME_NS}}
-			LNameP = (ref:"@"? LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(LName),ref:ref, type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName))}}}
+			PNAME_LNP = (ref:"@"? PNAME_NS:PNAME_NSP  LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(PNAME_NS)+makeVar(LName), ref:ref,type:null, kind:null}, Prefix:PNAME_NS}}
+			LNameP = (ref:"@"? LName:(squareVariable / Chars_String_prefix)) {return {var:{name:makeVar(LName),ref:ref, type:null, kind:null}}}
 
 			VERTICAL = "|" {return {Alternative:"|"}}
 			PATH_SYMBOL = ("." / "/") {return {PathSymbol :"/"}}
@@ -618,14 +397,14 @@
 			Substring = ("[" (INTEGER ("," space INTEGER)?) "]")?
 			LNameSimple = (LName: (Chars_String_variables / Chars_String_prefix))
 
-			LName = (ref:"@"? PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName), ref:ref, type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LName = (ref:"@"? PropertyReference:PropertyReference? LName: (Chars_String_variables / Chars_String_prefix) PathMod:PathMod?  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return {var:{name:makeVar(LName), ref:ref, type:null, kind:null, PathMod:PathMod, PropertyReference:PropertyReference},  Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			LNameINV = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
-			LNameINV3 = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(PNAME_NS)+makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" LName:LNameSimple  ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:null, PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV3 = (ref:"@"? PropertyReference:PropertyReference? INV: "INV"i "(" PNAME_NS:PNAME_NS  LName:LNameSimple ")"  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:INV, name:makeVar(LName), ref:ref, type:null, PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			LNameINV2 = (ref:"@"? PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:resolveTypeFromSchemaForAttributeAndLink(makeVar(LName)), PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
+			LNameINV2 = (ref:"@"? PropertyReference:PropertyReference? INV: "^" LName:LNameSimple  Substring:Substring space FunctionBETWEEN: BetweenExpression? FunctionLike: LikeExpression?) {return { var:{INV:"INV", name:makeVar(LName), ref:ref, type:null, PropertyReference:PropertyReference}, Substring:makeVar(Substring), FunctionBETWEEN:FunctionBETWEEN, FunctionLike:FunctionLike}}
 
-			DoubleSquareBracketName = PropertyReference:PropertyReference? LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:resolveType(makeVar(LName)), kind:resolveKind(makeVar(LName)), PropertyReference:PropertyReference}}}
+			DoubleSquareBracketName = PropertyReference:PropertyReference? LName:(squarePrefix? squareVariable) {return {var:{name:makeVar(LName), type:null, kind:null, PropertyReference:PropertyReference}}}
 			squarePrefix = Chars_String_prefix ":"
 			squareVariable = "["  Chars_String_square  "]"
 			

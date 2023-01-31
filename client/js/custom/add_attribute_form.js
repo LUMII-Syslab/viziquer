@@ -787,10 +787,7 @@ async function getAttributes(filter, waiting){
 			var attr_list = [];
 			
 			var vq_obj = new VQ_Element(selected_elem_id);
-			
-			// if(vq_obj.isRoot() == true && vq_obj.isUnit() == true) {}
-			// else attr_list.push({name:"(select this)"});
-			
+
 			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(select this)"});
 			
 			var abstractS = await generateSymbolTable();
@@ -975,21 +972,6 @@ function getExistingAttributes(){
 	var selected_elem_id = Session.get("activeElement");
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		var vq_obj = new VQ_Element(selected_elem_id);
-		
-		// var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: Elements.findOne({_id: Session.get("activeElement")})["elementTypeId"]})["_id"];
-		// var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: Session.get("activeElement"), }, {sort: {index: 1}}).fetch();
-
-		// var field_list = [];
-		
-		// var fieldListTemp = vq_obj.getFields();
-		// for(var compartment in compartments){
-			// for(var field in fieldListTemp){
-				// if(fieldListTemp[field]["_id"] == compartments[compartment]["_id"]) {
-					// field_list.push(fieldListTemp[field]);
-					// break;
-				// }
-			// }
-		// }
 		
 		// var field_list = field_list.map(function(f) {
 		var field_list = vq_obj.getFields().map(function(f) {

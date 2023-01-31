@@ -1488,12 +1488,6 @@ async function resolveTypeFromSchemaForIndividual(id, schemaName) {
 							return {local_name: cls.substring(3), prefix: "wd"};
 						}
 		
-						// if(cls["complite"] == false) return null;
-						// if(cls["data"].length > 0){
-							// cls["data"][0]["local_name"] = cls2.substring(3);
-							// cls["data"][0]["prefix"] = "wd";
-							// return cls["data"][0];
-						// }
 					}
     				return null;
 };
@@ -1513,24 +1507,7 @@ async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
     					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
     					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
     					return res;
-    				 } //else if(typeof aorl["name"] !== "undefined" && !aorl["name"].startsWith("?") && schemaName.toLowerCase() == "wikidata" && id.indexOf("[") != -1 && id.endsWith("]")) {
-						
-						// var name = aorl["name"];
-						// var prefix;
-						// var display_name = id;
-						// if(display_name.indexOf(":") !== -1){
-							// display_name = display_name.substring(display_name.indexOf(":")+1);
-						// }
-						// if(name.indexOf(":") !== -1){
-							// prefix = name.substring(0, name.indexOf(":"));
-							// name = name.substring(name.indexOf(":")+1);
-						// }
-						// return {
-							// display_name: display_name,
-							// local_name: name,
-							// prefix:prefix
-						// }
-					// }
+    				 } 
   return null
 };
     			// string -> idObject
@@ -1767,37 +1744,4 @@ function chechIfSimplePath(expressionTable, isSimple, isPath){
 		}
 	}
 	return {isSimple:isSimple, isPath:isPath}
-}
-
-function checkIfIsSimpleAttribute(expressionTable, isSimpleVariable){
-	var kind = null;
-	var parentType = null;
-	for(var key in expressionTable){
-
-		if(key == "Concat" || key == "Additive" || key == "Unary"  || (key == "Function" && expressionTable[key] != "langmatchesShort" && expressionTable[key] != "langmatchesShortMultiple") || key == "RegexExpression" || key == "Aggregate" ||
-		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"
-		|| key == "Comma" || key == "OROriginal" || key == "ANDOriginal"  || key == "ValueScope"  || key == "Filter"  || key == "NotExistsExpr"
-		|| key == "ExistsExpr" || key == "notBound" || key == "Bound" || key == "ArgListExpression" || key == "ExpressionList" || key == "FunctionExpression" || key == "classExpr"
-		|| key == "NotExistsFunc" || key == "ExistsFunc" || key == "BrackettedExpression" || key == "VariableName"){
-			isSimpleVariable = false;
-		}
-
-		if(key == "var"){
-			if(expressionTable[key]["kind"] != null){
-				kind = expressionTable[key]["kind"];
-			}
-			if(typeof expressionTable[key]["type"] !== 'undefined' && expressionTable[key]["type"] != null && typeof expressionTable[key]["type"]["parentType"] !== 'undefined' ){
-				parentType = expressionTable[key]["type"]["parentType"]
-			}
-
-		}
-
-		if(typeof expressionTable[key] == 'object'){
-			var temp = checkIfIsSimpleAttribute(expressionTable[key], isSimpleVariable);
-			if(temp["isSimpleVariable"]==false) isSimpleVariable = false;
-			if(temp["kind"]!=null) kind = temp["kind"];
-			if(temp["parentType"]!=null) parentType = temp["parentType"];
-		}
-	}
-	return {isSimpleVariable:isSimpleVariable, kind:kind, parentType:parentType}
 }
