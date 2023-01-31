@@ -361,8 +361,6 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		
 		var classesTable = abstractTable["classesTable"];
 		
-		//classesTable = removeClassesToBedeleted(classesTable);
-		
 		var classCount = Object.keys(classesTable).length;
 
 		var whereTriplesVaribles = getWhereTriplesVaribles(parsedQuery["where"]);
@@ -5292,22 +5290,6 @@ function findAttributeInAttributeTable(attributeTable, parsedVariableName, varia
 	return null;
 }
 
-function findClassInClassTable(classesTable, parsedVariableName, variableName, nodeList, identification){
-	//classes are the same if  equals variableName, 
-	// identifications are null or identifications short_name are equals or (classesTable identification is not emprty and identification is empty)
-	for(var c in classesTable){
-		var clazz = classesTable[c];
-		if(c.startsWith(parsedVariableName) && clazz["variableName"] == variableName &&
-		((typeof identification === 'undefined' && (typeof clazz["identification"] === 'undefined' || clazz["identification"] == null)) || 
-		(typeof identification !== 'undefined' && (typeof clazz["identification"] !== 'undefined' && clazz["identification"] != null) && identification["short_name"] == clazz["identification"]["short_name"]) ||
-		(typeof identification === 'undefined' && (typeof clazz["identification"] !== 'undefined' && clazz["identification"] != null)))) return clazz;
-		
-		if(c.startsWith(parsedVariableName) && clazz["variableName"] == variableName &&
-		(typeof identification !== 'undefined' && (typeof clazz["identification"] === 'undefined' || clazz["identification"] == null))) return "addToClass";
-	}
-	return null;
-}
-
 function findByVariableName(classesTable, variableName){
 	var classes = [];
 	for(var c in classesTable){
@@ -6887,24 +6869,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 	
 }
 
-function generateTypeFilter(expression){
-	var filterString = "";
-	var filterVariables = [];
-	if(expression["type"] == "operation"){
-		//if is a relational expressin
-		if(checkIfRelation(expression["operator"]) != -1){
-			var arg1 = generateArgument(expression["args"][0]);
-			var arg2 =  generateArgument(expression["args"][1]);
-
-			filterString = arg1["value"] + " " + expression["operator"] + " " + arg2["value"];
-
-			if(arg1["type"] == "varName") filterVariables.push(arg1["value"]);
-			if(arg2["type"] == "varName") filterVariables.push(arg2["value"]);
-		}
-	}
-	return {filterString:filterString, filterVariables:filterVariables};
-}
-
 function checkIfRelation(value){
 	var relations = [ "=" , "!=" , "<>" , "<=" , ">=" ,"<" , ">"]
 	return relations.indexOf(value);
@@ -7860,13 +7824,6 @@ function removeDuplicateLinks(linkTable){
 		if(linkExists == false) newLinkTable.push(linkTable[link]);
 	}
 	return newLinkTable;
-}
-
-function removeClassesToBedeleted(classesTable){
-	for(var clazz in classesTable){
-		if(classesTable[clazz]["toBeDeleted"] == true) delete classesTable[clazz];
-	}
-	return classesTable
 }
 
 function removeParrentQueryClasses(parentNodeList, classesTable, classTableTemp, linkTableTemp, attributeTable){

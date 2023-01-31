@@ -1,31 +1,5 @@
 Interpreter.customMethods({
 	
-	setParameters: function(list) {
-
-		console.log("SetParametrs called, not implemented");
-	},
-
-	Test: function() {
-		//Utilities.callMeteorMethod("migrateIndexes",Session.get("activeProject"));
-        var proj_id = Session.get("activeProject");
-		var act_elem_id = Session.get("activeElement"); 
-		console.log(proj_id);
-		var elem = Elements.findOne({_id: act_elem_id,})
-		var elem_type = ElementTypes.findOne({_id: elem.elementTypeId,});
-		CompartmentTypes.find({elementTypeId:elem_type._id}).forEach(function(compType){
-			compartments = Compartments.find({projectId:proj_id, elementId:act_elem_id, compartmentTypeId:compType._id });
-				comp_ind = compartments.map(function (c) {
-				   return {_id:c._id, index:c.index, input:c.input};
-				});
-				if (compartments.count() > 0 )
-				{
-				  console.log(compType.name);
-				  console.log(compType.index);
-				  console.log(comp_ind);
-				}
-		});
-	},
-
 	VQTransformLinkToSubQuery:function(classId){
 		
 		var classObj = new VQ_Element(classId);
@@ -117,105 +91,14 @@ Interpreter.customMethods({
 		Session.set("plain", plain);
 	},
 
-	TestPr: function() {
-
-		var schema = new VQ_Schema();
-  		//console.log(schema);
-		//console.log(schema.findClassByName("Course").getAllAssociations());
-		//console.log(schema.findClassByName("Student").getAllAttributes());
-		//console.log(schema.getAllClasses());
-		//console.log(schema.findClassByName("Teacher3"));
-		//console.log(schema.resolveClassByName("Teacher3"));
-		//console.log(schema.resolveLinkByName("teaches"));
-		//console.log(schema.resolveAttributeByName("Nationality" ,"nCode"));
-	},
-
-	VQsetClassTypeValue: function(list) {
-		//class->element->extensions->after create elements
-	},
-
-	VQsetEnabledFieldsFromClassTypeChange: function() {
-		//class->compartments->ClassType->extensions->after update
-		//params: (compartType, compartId)
-	},
-	VQgetClassNames: function() {
-		//Class -> compartments->Name->extension->dynamicDropDown
-		var schema = new VQ_Schema();
-		var cls = schema.getAllClasses();
-		var class_names = [];
-		if (_.size(cls) > 0) {
-
-			//Create array of needed structure from class' names
-			class_names = cls.map(function (c) {
-				return {value: c["name"], input: c["name"]};
-			});
-
-			// class_names = _.sortBy(class_names, "input"); // Saraksts ir jau sakārtots, ņemot vērā ontoloģijas
-
-		 	class_names =  _.uniq(class_names, false, function(c) {
-		 		return c["input"];
-		 	});
-	 	};
-
-		class_names.push({input:"[ ]", value:"[ ]"});
-		class_names.push({input:"[ + ]", value:"[ + ]"});
-
-		return class_names;
-
-	},
-
-	VQgetClassNamesOld: function() {
-		//Class -> compartments->Name->extension->dynamicDropDown
-		var cls = Classes.find();
-
-		if (cls.count() > 0) {
-
-			//Create array of needed structure from class' names
-			var class_names = cls.map(function (user) {
-				return {value: user["name"], input: user["name"],};
-			});
-
-			class_names = _.union([{value: " ", input: " ", }], class_names);
-			class_names = _.sortBy(class_names, "input");
-
-		 	var is_sorted = false;
-		 	return _.uniq(class_names, is_sorted, function(item) {
-		 		return item["input"];
-		 	});
-	 	}
-
-	},
-
-	VQsetInstance: function() {
-		//class -> compartments->Name->extension->AfterUpdate
-		//params: (compartType, compartId)
-	},
-
-	VQsetShowInstanceName: function() {
-		//class -> compartments->Instance->extension->AfterUpdate
-		//params: (compartType, compartId)
-	},
-
-	VQattributeGrammar: function() {
-	},
-
-	VQsetIsNegationAttribute: function() {
-
-	console.log("is negations enetered");
-
-	},
-
-	VQsetIsOptionalAttribute: function() {
-		console.log("is optional enetered");
-	},
-  VQgetGraphInstructions: function() {
+	VQgetGraphInstructions: function() {
 	return  [
 	{input:"GRAPH",value:"GRAPH"},
 	{input:"SERVICE",value:"SERVICE"}
 	]
   },
   
-  VQgetGraphInstructionsClass: function() {
+	VQgetGraphInstructionsClass: function() {
 	return  [
 	{input:"FROM",value:"FROM"},
 	{input:"FROM NAMED",value:"FROM NAMED"},
@@ -223,7 +106,8 @@ Interpreter.customMethods({
 	{input:"SERVICE",value:"SERVICE"}
 	]
   },
-  VQgetAggregateNames: function() {
+  
+	VQgetAggregateNames: function() {
 
 		 var act_elem = Session.get("activeElement");
 		 if (!act_elem) {
@@ -328,215 +212,7 @@ Interpreter.customMethods({
  		return atr_names;
 
 	},
-	VQgetAttributeNames: function() {
-
-		//console.log("VQgetAttributeNames executed");
-		// console.log("Attributes names")
-
-		//atribute value for class
-		var act_elem = Session.get("activeElement");
-		//Active element does not exist OR has no Name OR is of an unpropriate type
-		if (!act_elem) {
-			return [];
-		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
-		if (!act_comp) {
-			return [];
-		}
-
-		var elem_type = ElementTypes.findOne({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
-			return [];
-		}
-
-		//Active element is given as Class type element
-		var atr_names = [{value: " ", input: " ", }];
-
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-
-		if (act_el) {
-		//check if Class name is defined for active element
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-
-			if (!compart_type) {
-				return atr_names;
-			}
-
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			if (!compart) {
-				return atr_names;
-			}
-
-		//Read attribute values from DB
-
-			var schema = new VQ_Schema();
-
-			if (schema.classExist(compart["input"])) {
-				var klass = schema.findClassByName(compart["input"]);
-
-				_.each(klass.getAllAttributes(), function(att){
-					var att_val = att["short_name"];
-					atr_names.push({value: att_val, input: att_val});
-				})
-			}
-		}
-
-		
-	 	// return atr_names;
-		atr_names = _.sortBy(atr_names, "input");
-		
-		var selected_elem_id = Session.get("activeElement");
-		
-		
-		var tempSymbolTable = generateSymbolTable();
-		var symbolTable = tempSymbolTable["symbolTable"];
-
-		for (var  key in symbolTable) {	
-			for (var symbol in symbolTable[key]) {
-				if(symbolTable[key][symbol]["context"] != selected_elem_id){
-					// if(typeof symbolTable[key][symbol]["upBySubQuery"] == 'undefined' || symbolTable[key][symbol]["upBySubQuery"] == 1)atr_names.push({value: key, input: key});
-					if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 ))atr_names.push({value: key, input: key});
-				}
-			}	
-		}
-
-	 	atr_names = _.uniq(atr_names, false, function(item) {
-	 		return item["input"];
-	 	});
-
-		
-		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-			var vq_obj = new VQ_Element(selected_elem_id);
-			if(vq_obj.isUnion() != true && vq_obj.isUnit() != true) atr_names.push({input:"(select this)",value:"(select this)"});;
-		} else {atr_names.push({input:"(select this)",value:"(select this)"});}
-				
-		atr_names.push({input:"*",value:"*"});
-		//atr_names.push({input:"(*attr)",value:"(*attr)"});
-		atr_names.push({input:"(*sub)",value:"(*sub)"});
-		// atr_names.push({input:"**",value:"**"});
-
-		return atr_names;
-
-
-	},
-
-	VQgetAttributeNamesOld: function() {
-
-		console.log("VQgetAttributeNames executed");
-
-		//atribute value for class
-		var act_elem = Session.get("activeElement");
-		//Active element does not exist OR has no Name OR is of an unpropriate type
-		if (!act_elem) {
-			return [];
-		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
-		if (!act_comp) {
-			return [];
-		}
-
-		var elem_type = ElementTypes.findOne({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
-			return [];
-		}
-
-		//Active element is given as Class type element
-		var atr_names = [{value: " ", input: " ", }];
-
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-
-		if (act_el) {
-		//check if Class name is defined for active element
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-
-			if (!compart_type) {
-				return atr_names;
-			}
-
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			if (!compart) {
-				return atr_names;
-			}
-
-		//Read attribute values from DB
-			//direct
-			var klass = Classes.findOne({name: compart["input"]});
-
-			if (!klass) {
-				console.error("VQgetAttributeNames: No Classs with such Name");
-				return ;
-			}
-
-			_.each(klass["Attributes"], function(att){
-				var att_val = att["localName"];
-				atr_names.push({value: att_val, input: att_val});
-			})
-
-			//from Super Class
-			_.each(klass["AllSuperClasses"], function(supC){
-
-				var cs_val = supC["localName"];
-				var cs_list = Classes.findOne({name: cs_val});
-
-				if (cs_list) {
-
-					_.each(cs_list["Attributes"], function(sca){
-						var att_val = sca["localName"];
-						atr_names.push( {value: att_val, input: att_val} );
-					})
-				}
-			})
-
-			//from Sub Class
-			_.each(klass["AllSubClasses"], function(supC){
-
-				var cs_val = supC["localName"];
-				var cs_list = Classes.findOne({name: cs_val});
-
-				if (cs_list) {
-
-					_.each(cs_list["Attributes"], function(sca){
-						var att_val = sca["localName"];
-						atr_names.push( {value: att_val, input: att_val} );
-					})
-				}
-			})
-		}
-
-	 	//Chech for Optional-Negation check-boxes simultaneous active
-	 	compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-	 	if (compart_type) {
-
-	 		Compartments.find({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")}).forEach(function(c){
-	 			if(c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] == "true" &&
-	 				c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] == "true") {
-
-
-	 				console.error("Choose optional OR negation type");
-
-	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsNegation"]["input"] =  "false";
-	 				// c["subCompartments"]["Attributes"]["Attributes"]["IsOptional"]["input"] = "false";
-	 				// Dialog.updateCompartmentValue(ct, "false", "", compart_id);
-	 			}
-	 		})
-	 	}
-
-	 	// return atr_names;
-		atr_names = _.sortBy(atr_names, "input");
-	 	var is_sorted = false;
-
-	 	return _.uniq(atr_names, is_sorted, function(item) {
-	 		return item["input"];
-	 	});
-
-
-	},
-
-	VQsetIsGroup: function() {
-		//arrow ->compartments->"Subquery Link"->extensions->after Update
-		//params: (compartType, compartId)
-	},
-
+	
 	VQsetIsCondition: function(params) {
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
@@ -569,6 +245,7 @@ Interpreter.customMethods({
 			 elem.setNestingType(lt);
 		}
 	},
+	
 	VQsetIsGraphToContents: function(params) {
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
@@ -682,6 +359,7 @@ Interpreter.customMethods({
 			}
 		}
 	},
+	
 	VQgetAssociationIsInverse: function() {
 		////arrow ->compartments->Inverse link->extensions->dynamic default value
 		//return: String
@@ -717,11 +395,6 @@ Interpreter.customMethods({
 				}
 			}
 		}
-	},
-
-	VQgetAssociationName: function() {
-		//arrow ->compartments->extensions->dynamic default value
-		//return: String
 	},
 
 	VQsetLinkName: function(params) {
@@ -761,18 +434,6 @@ Interpreter.customMethods({
 		};
 	},
 
-	VQsetIndirectClassMembershipDefaultValue: function(params) {		
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		// console.log("A1");
-		if (proj && proj.indirectClassMembershipRole) {
-       // console.log("A2");
-			 return "true";
-		} else {
-       // console.log("A3");
-			 return "false";
-		 };
-	},
-
 	VQSetHideDefaultLinkValue: function(a,b,c){
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj && proj.autoHideDefaultPropertyName == "true") {
@@ -781,40 +442,7 @@ Interpreter.customMethods({
 			 return "false";
 		};
 	},
-	
-	
-	
-	VQgetAssociationNames: function() {
-		//arrow ->compartments->extensions-> dynamic drop down
-		var act_elem = Session.get("activeElement");
-		var name_list = {value: " ", input: " ", };
-		if (act_elem) {
-			var vq_link = new VQ_Element(act_elem);
-			if (vq_link.isLink()) {
-  				var myschema = new VQ_Schema();
-				var start_class = myschema.findClassByName(vq_link.getStartElement().getName());
-				var end_class = myschema.findClassByName(vq_link.getEndElement().getName());
-				if (start_class && end_class) {
-					var all_assoc_from_start = start_class.getAllAssociations();
-					var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);
-					var possible_assoc_list = _.filter(all_assoc_from_start, function(a) {
-					 	return _.find(all_sub_super_of_end, function(c) {
-							 	return c.localName == a.class
-					 	})
-			  		});
-
-					name_list = _.union(name_list, _.map(possible_assoc_list, function(assoc) {
-						var assoc_name = assoc["short_name"];
-						return {value:assoc_name, input:assoc_name};
-					}));
-				};
-			};
-		};
-
-		name_list = _.union(name_list, {value: "==", input: "=="});
-		return name_list;
-	},
-	
+		
 	VQsetSubQueryNameSuffix: function(val) {
 		//arrow ->compartments->extensions->dynamicSuffix
 		//params: (value), return: String
@@ -851,205 +479,7 @@ Interpreter.customMethods({
 				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
 			} 
 	},
-	
-	VQgetOrderByFields: async function(val) {
-		//	 console.log("order by")
-		//atribute value for class
-		var act_elem = Session.get("activeElement");
-		//Active element does not exist OR has no Name OR is of an unpropriate type
-		if (!act_elem) {
-			return [];
-		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
-		if (!act_comp) {
-			return [];
-		}
-
-		var elem_type = ElementTypes.findOne({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
-			return [];
-		}
 		
-		var order_by_list = [];
-	
-		var tempSymbolTable = await generateSymbolTable();
-		var symbolTable = tempSymbolTable["symbolTable"];
-		var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
-		
-		for (var key in rootSymbolTable) {
-			for(var k in rootSymbolTable[key]){
-				if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") order_by_list.push({value: key, input: key});
-			}
-		}
-		
-		for (var key in symbolTable) {
-			for(var k in symbolTable[key]){
-				if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME") order_by_list.push({value: key, input: key});
-			}
-		}
-		
-
-		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-
-		if (act_el) {
-		
-			var select_distinct_compart_type = CompartmentTypes.findOne({name: "Distinct", elementTypeId: act_el["elementTypeId"]});
-			var select_distinct = Compartments.findOne({compartmentTypeId: select_distinct_compart_type["_id"], elementId: act_elem});
-			
-			var e = new VQ_Element(act_elem);
-			var aggregationAliases = e.getAggregateFields();
-			
-			// for (var key in aggregationAliases) {
-				// var alias = aggregationAliases[key]["alias"];
-				// if(alias != "")order_by_list.push({value: alias, input: alias});
-			// }
-			
-			if(_.size(aggregationAliases) == 0 && typeof select_distinct !== 'undefined' && select_distinct.input != "true"){
-				//check if Class name is defined for active element
-				
-				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-
-				if (!compart_type) {
-					return order_by_list;
-				}
-
-				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-				if (!compart) {
-					return order_by_list;
-				}
-
-				//Read attribute values from DB
-				var schema = new VQ_Schema();
-				if (schema.classExist(compart["input"])) {
-					var klass = schema.findClassByName(compart["input"]);
-
-					_.each(klass.getAllAttributes(), function(att){
-						var att_val = att["name"];
-						order_by_list.push({value: att_val, input: att_val});
-					})
-				}
-			}
-		}
-		
-
-	 	order_by_list = _.uniq(order_by_list, false, function(item) {
-	 		return item["input"];
-	 	});
-		
-		//console.log("order_by_list", order_by_list);
-		
-		return order_by_list;
-	},
-	
-	VQgetGroupByFields: async function(val) {
-		//console.log("group by")
-		//atribute value for class
-		var act_elem = Session.get("activeElement");
-		//Active element does not exist OR has no Name OR is of an unpropriate type
-		if (!act_elem) {
-			return [];
-		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
-		if (!act_comp) {
-			return [];
-		}
-
-		var elem_type = ElementTypes.findOne({name: "Class"});
-		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
-			return [];
-		}
-		
-		var group_by_list = [];
-		var group_by_list_vissible = [];
-		
-		var group_by_list_sub = [];
-		var group_by_list_vissible_sub = [];
-
-		var selected_elem_id = Session.get("activeElement");
-		
-		var tempSymbolTable = await generateSymbolTable();
-		// console.log("group by", tempSymbolTable);
-		var symbolTable = tempSymbolTable["symbolTable"];
-
-
-		
-		for (var  key in symbolTable) {
-			
-			for (var  k in symbolTable[key]) {
-				var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][k]["context"], tempSymbolTable["abstractQueryTable"], key);
-					
-				if(symbolTable[key][k]["context"] == selected_elem_id){
-					
-					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS") {
-						if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list.push({value: key, input: key});
-						else group_by_list_vissible.push({value: key, input: key});
-					}
-					if(symbolTable[key][k]["kind"] == "CLASS_ALIAS") group_by_list.unshift({value: key, input: key});
-				}
-				if (symbolTable[key][k]["upBySubQuery"] == 1) {
-					if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true) group_by_list_sub.push({value: key, input: key});
-					else group_by_list_vissible_sub.push({value: key, input: key});
-				}
-			}
-		}
-
-		group_by_list = _.union(group_by_list, group_by_list_vissible);
-		group_by_list = _.union(group_by_list, group_by_list_sub);
-		group_by_list = _.union(group_by_list, group_by_list_vissible_sub);
-		
-		group_by_list = _.uniq(group_by_list, false, function(item) {
-	 		return item["input"];
-	 	});
-		
-		//console.log("group_by_list", group_by_list)
-		
-		return group_by_list;
-	},
-
-  // TODO: Dynamic Context Menus dont work
-	getVQ_Class_ContextMenuEditMode: function() {
-		var menu = [{item:"AddLink", procedure:"AddLink"},{item:"Copy", procedure:"Copy"},{item:"Delete", procedure:"Delete"},
-		            {item:"Generate SPARQL from single class",procedure:"GenerateSPARQL_from_selection"},
-							  {item:"Execute SPARQL from single class",procedure:"ExecuteSPARQL_from_selection"},
-						    {item:"Generate SPARQL from component",procedure:"GenerateSPARQL_from_component"},
-								{item:"Execute SPARQL from component",procedure:"ExecuteSPARQL_from_component"},
-							];
-
-		return menu;
-	},
-
-	createNewVQ_Element: function()  {
-		var loc = {x:400,y:400,width:250,height:250};
-		Create_VQ_Element(function(boo) {
-			 boo.setName("Boo");
-			 boo.addCondition("boo > voo");
-			 boo.addCondition("zoo is not here");
-			 boo.addField("kvak","a",true,true,true);
-			 boo.addField("mooh","b",true,false,true);
-			 boo.setDistinct(true);
-			 boo.setOffset("333");
-			 boo.setLimit("777");
-			 boo.setFullSPARQL("Full SPARQL");
-			 var loc2 = {x:400,y:800,width:200,height:200};
-			 Create_VQ_Element(function(voo) {
-				 voo.setName("Voo");
-				 voo.setClassType("condition");
-				 voo.addAggregateField("count(.)","zumzum");
-				 voo.addAggregateField("sum(fum)","foo");
-				 voo.addOrdering("cockoo",true);
-				 voo.addOrdering("sparrow",false);
-				 var points = [444, 800, 444, 650];
-				 Create_VQ_Element(function(coo) {
-					 coo.setName("Coo");
-					 coo.setLinkType("REQUIRED");
-					 coo.setNestingType("SUBQUERY");
-				 }, points, true, voo, boo);
-			 }, loc2);
-		}, loc);
-		//boo.setName("Boo");
-
-	},
-
 	visualizeSPARQL: function() {
 		var query_text = yasqe3.getValue();
 		// console.log("query_text", query_text);
@@ -1130,11 +560,7 @@ Interpreter.customMethods({
 		return true;
 	},
 
-
 	AggregateWizard: function(e) {
-// Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
-// Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
-// Template.AggregateWizard.endClassId = new ReactiveVar("No end");
 
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
@@ -1373,7 +799,6 @@ Interpreter.customMethods({
 		return true;
 	},
 
-
 	setIsVisibleForIndirectClassMembership: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj) {
@@ -1389,8 +814,7 @@ Interpreter.customMethods({
 		}
 		return false;
 	},
-	
-	
+		
 	setIsVisibleForLabelService: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});		
 		if (proj) {
@@ -1423,7 +847,6 @@ Interpreter.customMethods({
 
 		return;
 	},
-	
 	
 	//Adds outer query as [ ] class with ++ link
 	addOuterQuery: function(){
@@ -1465,7 +888,6 @@ Interpreter.customMethods({
 		}
 	},
 
-	//
 	setAsMainClass: function(){
 		Interpreter.destroyErrorMsg();
 		//Based on "generate SPARQL from component" realisation
@@ -1636,7 +1058,7 @@ findAttributeInAbstractTable = function(context, clazz, fieldValue){
 }
 
 generateSymbolTable = async function() {
- console.log("    generateSymbolTable")
+ // console.log("    generateSymbolTable")
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}

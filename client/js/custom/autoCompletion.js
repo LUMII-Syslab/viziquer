@@ -2,33 +2,6 @@ var symbolTable = {};
 var grammarType = "class";
 var time;
 
-/*'
-"
-
-%
-.
-,
-/
-+
--
-=
-!
-<
->
-{
-[
-(
-}
-)
-]
-?
-|
-*
-@
-`
-&
-*/
-
 Interpreter.customMethods({
 
 	conditionAutoCompletion: async function(e, compart) {
@@ -123,18 +96,6 @@ autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	const d = new Date();
 	time = d.getTime();
-	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-	await autoCompletion(e);
-},
-
-autoCompletionOrderBy = async function(e) {
-	grammarType = "order"
-	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
-	await autoCompletion(e);
-},
-
-autoCompletionGroupBy = async function(e) {
-	grammarType = "group"
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
 },
@@ -454,84 +415,6 @@ function updateInputValue(input, prefix, suggestion) {
 	}
 }
 
-/*
-function generateInputValue(fi, con, cursorPosition){
-
-	var fullInput = fi.substring(0, cursorPosition).toLowerCase();
-	var continuation = con.toLowerCase();
-
-	var fullTillCursor = fi.substring(0, cursorPosition);
-
-	var inputValue = fullTillCursor + con;
-	var inputSet = false;
-	var counter = 1;
-
-	while(inputSet == false && continuation.length > counter){
-		var subSt = fullInput.lastIndexOf(continuation.substring(0, counter));
-		if(subSt == -1) inputSet = true;
-		else {
-			if(continuation.startsWith(fullInput.substring(subSt)) == true){
-				inputSet = true;
-				inputValue = fullTillCursor.substring(0, subSt) + con;
-			} else {
-				counter++;
-			}
-		}
-	}
-
-	inputValue = inputValue + fi.substring(cursorPosition);
-
-	return inputValue;
-}
-*/
-
-runCompletion = async function (text, act_elem2){
-	var act_elem = Session.get("activeElement");
-	try {
-		var schema = new VQ_Schema();
-
-		if(grammarType == "link"){
-			var name_list = [];
-			//var act_elem = Session.get("activeElement");
-			if (act_elem) {
-				var vq_link = new VQ_Element(act_elem);
-				if (vq_link.isLink()) {
-					var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-				};
-			};
-		} else if(grammarType == "linkPath"){
-			var name_list = [];
-			//var act_elem = Session.get("activeElement");
-			if (act_elem) {
-				var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-				var className = compart["input"];
-				var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), className:className});
-			};
-		} else {
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-			var className = compart["input"];
-		
-				
-			// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-			var parsed_exp = await vq_grammar_completion_parser.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-			// var obj = JSON.parse(parsed_exp);
-		}
-		//console.log("parsed_exp", parsed_exp, obj);
-	} catch (com) {
-		// console.log(Session.get("activeElement"),  com["message"]);
-		// console.log(com["message"], JSON.parse(com["message"]));
-		// console.log(com);
-		var c = getContinuations(text, text.length, JSON.parse(com["message"]));
-		// console.log(JSON.stringify(c, 0, 2));
-		return c;
-	}
-
-	return [];
-}
-
 function isURI(text) {
   if(text.indexOf("://") != -1)
     return 3;
@@ -543,17 +426,7 @@ function isURI(text) {
 runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 
 	if(grammarType == "className"){
-			
-			/*try {
-			// var parsed_exp = testGramma_completion.parse(text, {schema:"", symbol_table:"", className:"", type:grammarType, context:""});
-			var parsed_exp = await testGrammar_completion_parser.parse(text, {schema:"", symbol_table:"", className:"", type:grammarType, context:""});
-			}catch (com) {
-				// console.log("uuuuuuuuuuuuuuuuuu", text, com);
-				console.log("uuuuuuuuuuuuuuuuuu", JSON.parse(com["message"]));
-				// var c = getContinuationsNew(text, text.length, JSON.parse(com["message"]));			
-				// return c;
-			}*/
-			
+						
 			var c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
@@ -600,36 +473,6 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			}
 			return c;
 	}
-	// else if(grammarType == "link"){
-		
-		// var p = {};
-		// p["prefix"] = "";
-		// p["suggestions"] = [];
-		// var params = {propertyKind:'Object'};
-		// if (fullText != "") params.filter = fullText;
-		// var selected_elem_id = Session.get("activeElement");	
-		// var elFrom;
-		// var elTo;
-		// if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-				
-			// var vq_link = new VQ_Element(selected_elem_id);
-			// if (vq_link.isLink()) {
-				// var elements = vq_link.getElements();
-				// elFrom = elements.start;
-				// elTo = elements.end;
-			// }
-		// }
-	
-		// var props = await dataShapes.getProperties(params, elFrom, elTo);
-		// props = props["data"];
-		// for(var pr in props){
-			// var prefix;
-			// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-			// else prefix = props[pr]["prefix"]+":";
-			// p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:2})
-		// }
-		// return p;
-	// }
 	else if(grammarType == "order"){
 		var c = {};
 			c["prefix"] = "";
@@ -760,29 +603,6 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 		
 		return c;
 	}
-	// else if(grammarType == "attribute"){
-		// var p = {};
-		// p["prefix"] = "";
-		// p["suggestions"] = [];
-		
-		// var params = {propertyKind: 'Data'};
-		// if (fullText != "") params.filter = fullText;
-		// var selected_elem_id = Session.get("activeElement");
-		// var act_el;
-		// if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-			// act_el = new VQ_Element(selected_elem_id)
-		// }
-		
-		// var props = await dataShapes.getProperties(params, act_el);
-		// props = props["data"];
-		// for(var pr in props){
-			// var prefix;
-			// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
-			// else prefix = props[pr]["prefix"]+":";
-			// p["suggestions"].push({name: prefix+props[pr]["display_name"], priority:100, type:1})
-		// }
-		// return p;
-	// }
 	else if(grammarType == "instance"){
 		var c = {};
 		c["prefix"] = "";
@@ -881,30 +701,6 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 	return [];
 }
 
-function getCompletionTable(continuations_to_report) {
-	var sortable = [];
-	for (var  key in continuations_to_report) {
-		sortable.push(continuations_to_report[key]);
-	}
-
-	sortable.sort(function(a, b) {
-		// return  a.priority-b.priority;
-		return  b.priority-a.priority;
-	});
-
-	var uniqueMessages = []
-
-	for (var key in sortable) {
-				//remove empty continuations
-		if (sortable[key]["name"] != "") {
-			uniqueMessages.push(sortable[key]["name"]);
-		}
-	}
-
-	return uniqueMessages
-}
-
-
 function getCompletionTableNew(continuations_to_report, text) {
 
 	var sortable = [];
@@ -925,83 +721,6 @@ function getCompletionTableNew(continuations_to_report, text) {
 	});
 
 	return sortable
-}
-
-//text - input string
-//length - input string length
-function getContinuations(text, length, continuations) {
-	var farthest_pos = -1 //farthest position in continuation table
-	var farthest_pos_prev = -1 // previous farthest position (is used only some nonterminal symbol is started)
-	var continuations_to_report;
-
-	//find farthest position in continuation table
-	//find  previous farthest position
-	for (var pos in continuations) {
-		if (farthest_pos != -1) {
-			farthest_pos_prev = farthest_pos
-		}
-		if (parseInt(pos) > farthest_pos) {
-			farthest_pos = parseInt(pos)
-			continuations_to_report = continuations[pos]
-		}
-	}
-
-
-	if (farthest_pos_prev != -1) {
-		for (i = farthest_pos; i >=0; i--) {
-			if (continuations[i] != null) {
-				var varrible = text.substring(i, farthest_pos);
-				var startedContinuations = [];
-				var wholeWordMatch = false;
-				for (var pos in continuations[i]) {
-					//ja sakumi sakrit un nesarkit viss vards
-					if (pos.substring(0, varrible.length).toLowerCase() == varrible.toLowerCase() && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
-						continuations_to_report[pos] = continuations[i][pos];
-						startedContinuations[pos] = continuations[i][pos];
-					} else if(varrible == pos) wholeWordMatch = true;
-				}
-				if(Object.keys(startedContinuations).length > 0 && wholeWordMatch != true) continuations_to_report = startedContinuations;
-			}
-		}
-	}
-
-	var TermMessages=[];
-
-	if (length>=farthest_pos) {
-		//nemam mainigo no kludas vietas lidz beigam
-		var er = text.substring(farthest_pos, length)
-		var er_lenght = er.length
-
-		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
-		for (var pos in continuations_to_report) {
-			//console.log("pospospos", er, pos);
-			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
-				TermMessages[pos]=continuations_to_report[pos];
-			}
-		}
-		TermMessages = getCompletionTable(TermMessages)
-
-
-
-		if (TermMessages[0] != null) {
-			return TermMessages
-			//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
-		} else {
-			var uniqueMessages = getCompletionTable(continuations_to_report)
-			var messages = [];
-
-			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
-
-			for (var pos in uniqueMessages) {
-				messages = messages+ "\n" + uniqueMessages[pos] + ",";
-			}
-			return messages
-		}
-	}
-
-	var uniqueMessages = getCompletionTable(continuations_to_report);
-
-	return uniqueMessages
 }
 
 //text - input string
@@ -1120,20 +839,6 @@ function errorMessage(message, elem){
 function removeMessage(){
 	var m = document.getElementById("message");
 	if(m != null) m.parentNode.removeChild(m);
-}
-
-function chechCompartmentChange(){
-	var input = document.activeElement;
-	var act_elem = Session.get("activeElement");
-	var act_el = Elements.findOne({_id: act_elem});
-	if(typeof act_el !== 'undefined'){
-		var compart_type_id = $(input).closest(".compart-type").attr("id");
-		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
-		if(typeof compart !== "undefined"){
-			// console.log("compart", compart)
-		}
-	}
 }
 
 function findClassInAbstractQueryTable(elemId, abstractQueryTable){

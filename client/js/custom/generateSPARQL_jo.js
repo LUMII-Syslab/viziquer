@@ -579,42 +579,6 @@ function setText_In_SPARQL_Editor(text) {
   yasqe3.setValue(text);
 }
 
-
-function getAllVariableNamesInQuery(expression, variableTable){
-	for(var key in expression){
-		if(typeof expression[key] === 'object'){
-			if(key == 'variables'){
-				var variables = expression[key];
-				var starInSelect = false;
-				
-				for(var variable in variables){
-					
-					if(variables[variable] == "*") variableTable[variables[variable]] = 10;
-					if(typeof variables[variable] === 'string'){
-						variableTable[variables[variable]] = 0;
-						
-					} else if(typeof variables[variable] === 'object'){
-						variableTable[variables[variable]["variable"]] = 1;
-						
-					}
-				}
-			}
-			var temp = getAllVariableNamesInQuery(expression[key], variableTable);
-			for(var t in temp){
-				variableTable[t] = temp[t];
-			}
-		} else if(typeof expression[key] === 'string' && expression[key].startsWith("?")) {
-			if(typeof variableTable[expression[key]] !== 'undefined') {
-				variableTable[expression[key]] = variableTable[expression[key]] + 1;
-			} else {
-				variableTable[expression[key]] = 0;
-			}
-
-		}
-	}
-	return variableTable;
-}
-
 //generate table with unique class names in form [_id] = class_unique_name
 //rootClass - abstract syntax table starting with 'rootClass' object
 function generateIds(rootClass, knownPrefixes){
@@ -625,31 +589,6 @@ function generateIds(rootClass, knownPrefixes){
 	var variableNamesTable = [];
 	var variableNamesCounter = [];
 
-	// var text = "";
-	// var prefixesText = [];
-	// for(var p in knownPrefixes){
-			// prefixesText.push("PREFIX " + knownPrefixes[p]["name"] + ": <" + knownPrefixes[p]["value"] + ">");
-		// }
-	 // text = prefixesText.join("\n")+"SELECT * WHERE{"+rootClass.fullSPARQL+"}";
-	 // console.log("rrrrrrrrrrrrr", rootClass)
-	 // Utilities.callMeteorMethod("parseSPARQLText", text, function(parsedQuery) {
-		// console.log("parsedQuery", parsedQuery)
-		// var variableList = getAllVariableNamesInQuery(parsedQuery, []);
-		 // console.log("variableList", variableList)
-		 // for(var v in variableList){
-			 // if(v != "*"){
-				// var alias = v.substring(1);
-				// if(typeof variableNamesTable[rootClass.identification._id] === "undefined") variableNamesTable[rootClass.identification._id] = [];
-				// if(typeof variableNamesTable[rootClass.identification._id][alias] === "undefined") variableNamesTable[rootClass.identification._id][alias] = [];
-				// variableNamesTable[rootClass.identification._id][alias][rootClass.identification._id] = {name:alias, order:9999999, exp:alias, isPath:false, isAlias:true};
-			 // }
-		 // }
-	// })
-	
-    // console.log("fffff", variableNamesTable);
-	// for(var v in variableNamesTable){
-		// console.log("ffffffffffff", v, variableNamesTable[v])
-	// }
 	if(rootClass.fullSPARQL != null && rootClass.fullSPARQL != ""){
 		var fullSPARQLsprlit = rootClass.fullSPARQL.split(/\s|\n|\t|\./)
 		
@@ -777,8 +716,6 @@ function generateIds(rootClass, knownPrefixes){
 
 	return {idTable:idTableTemp, referenceTable:referenceTable, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
-
-
 
 // generate table with unique class names in form [_id] = class_unique_name
 // clazz - abstract syntax table starting with given class object
@@ -1162,38 +1099,11 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 	return {variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
-// find all prefixes used it a SPARQL query
-// expressionTable - query abstract syntax table
-// prefixTable - table with prefixes find so far
-function findUsedPrefixes(expressionTable, prefixTable){
-
-	for(var key in expressionTable){
-		if(key == 'prefix') {
-			
-			if(typeof prefixTable[expressionTable[key]] === 'undefined') prefixTable[expressionTable[key]] = 1;
-			else prefixTable[expressionTable[key]] = prefixTable[expressionTable[key]] +1;
-		}
-		if(typeof expressionTable[key] == 'object') prefixTable = findUsedPrefixes(expressionTable[key], prefixTable);
-	}
-	
-	return prefixTable;
-}
-
 // find prefix, used most offen in query or empty prefix if it is already used
 // prefixTable - table with prefixes in a query
 function findEmptyPrefix(prefixTable){
 	
 	var prefix = "";
-	// var prefix = null;
-
-	// if(typeof prefixTable[""] === 'undefined' && typeof prefixTable[":"] === 'undefined'){
-		// for(var key in prefixTable){
-			// if(typeof prefixTable[key] === 'number'){
-				// if(prefix == null) prefix = key;
-				// else if(prefixTable[key] > prefixTable[prefix]) prefix = key;
-			// }
-		// }
-	// } else prefix = "";
 	return prefix
 }
 
@@ -1217,7 +1127,6 @@ function generateSPARQLtext(abstractQueryTable){
 		 var referenceTable = generateIdsResult["referenceTable"];
 		
 		 //empty prefix in query
-		 // var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
 		 var emptyPrefix = findEmptyPrefix(knownPrefixes);
 		
 		 //table with unique variable names
@@ -1348,20 +1257,7 @@ function generateSPARQLtext(abstractQueryTable){
 						"isBlocking" : true
 				});
 				
-				// var groupBySelectDistinct = [];
-				// if(rootClass["aggregations"].length > 0) groupBySelectDistinct = groupByTemp;
-				// var groupBySelectDistinct = groupBySelectDistinct.concat(selectResult["innerDistinct"]);
-				// groupBySelectDistinct = groupBySelectDistinct.filter(function (el, i, arr) {
-					// return arr.indexOf(el) === i;
-				// });
-
-				 // SPARQL_text = SPARQL_text + "{SELECT DISTINCT " +groupBySelectDistinct.join(" ") + " WHERE{\n";
 			 }
-
-			  //HAVING
-			 // var having = getHaving(rootClass["havingConditions"]);
-			 // if(having != "") SPARQL_text = SPARQL_text + having + "\n";
-
 
 			 var temp = [];
 			 // var temp = whereInfo["links"];
@@ -2513,8 +2409,6 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			temp["sparqlTable"]["isGraphToContents"] = subclazz["isGraphToContents"];
 
 			if(subclazz["isSubQuery"] == true || subclazz["isGlobalSubQuery"] == true){
-				 //HAVING
-				// temp["sparqlTable"]["having"] = getHaving(subclazz["havingConditions"]);
 
 				//ORDER BY
 				temp["sparqlTable"]["order"] = getOrderBy(subclazz["orderings"], fieldNames, subclazz["identification"]["_id"], idTable, emptyPrefix, referenceTable, subclazz["classMembership"], knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);
@@ -2843,22 +2737,6 @@ function getGroupBy(groupings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 	});
 	
 	return {"triples":groupTripleTable, "messages":messages, "groupings":orderGroupBy};
-}
-
-// generete HAVING info
-function getHaving(havingConditions){
-	var havingTable = [];
-
-	_.each(havingConditions,function(having) {
-		//TODO dabut izparseto izteiksmi
-		havingTable.push("FILTER(" + having["exp"] + ")");
-	})
-
-	// remove duplicates
-	var uniqueTriples = havingTable.filter(function (el, i, arr) {
-		return arr.indexOf(el) === i;
-	});
-	return uniqueTriples.join("\n");
 }
 
 function getTriple(result, alias, required, notAgrageted){
@@ -4039,7 +3917,6 @@ function setAttributeNames(clazz, idTable, symbolTable, attributeNames){
 	})
 	return {attributeNames:attributeNames, messages:messages}
 }
-
 
 function checkIfOptionalReferenceParse(field, expressionTable, isSimpleVariable, aliasFieldsOptional){
 	var messages = [];

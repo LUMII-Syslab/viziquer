@@ -416,17 +416,17 @@ Template.AddLink.events({
 				//Fields
 				var attr_list = [{attribute: ""}];
 				
-				var schema = new VQ_Schema();
+				// var schema = new VQ_Schema();
 
-				if (schema.classExist(class_name)) {
+				// if (schema.classExist(class_name)) {
 
-					var klass = schema.findClassByName(class_name);
+					// var klass = schema.findClassByName(class_name);
 
-					_.each(klass.getAllAttributes(), function(att){
-						attr_list.push({attribute: att["name"]});
-					})
-					attr_list = _.sortBy(attr_list, "attribute");
-				}
+					// _.each(klass.getAllAttributes(), function(att){
+						// attr_list.push({attribute: att["name"]});
+					// })
+					// attr_list = _.sortBy(attr_list, "attribute");
+				// }
 				attr_list = attr_list.filter(function(obj, index, self) { 
 					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
 				});
@@ -560,13 +560,13 @@ Template.AddLink.events({
 
 	"click #add-long-link": function() {
 		//Generate data for Connect Classes
-		var schema = new VQ_Schema();
+		// var schema = new VQ_Schema();
 		var data = [];
 		var count = 0;
-		_.each(schema.getAllClasses(), function(c){
-			data.push({name: c.name, id: count});
-			count++;
-		});
+		// _.each(schema.getAllClasses(), function(c){
+			// data.push({name: c.name, id: count});
+			// count++;
+		// });
 		var activeClass = new VQ_Element(Session.get("activeElement"));
 		if (activeClass.isUnion() && !activeClass.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
 			if (activeClass.getLinkToRoot()){
@@ -691,217 +691,6 @@ Template.AddLink.events({
 		$("div[id=errorField]").remove();
 	},
 
-	"keyup #mySearch5": function(){
-	// 	if (!Template.AddLink.testAddLink.curValue.data){ console.log("\nmySearch NORMAL action");
-	// 		$("div[id=errorField]").remove();
-	// 		var value = $("#mySearch").val().toLowerCase();
-	// 		value = value.trim();
-	// 		if (value == "" || value == " ") {//empty or space - show all elements
-	// 			// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-	// //TEST
-	// 			// if (Template.AddLink.testAddLink.curValue.data){
-	// 				var asc = Template.AddLink.fullList.curValue;
-	// 				_.each(asc, function(a){
-	// 					a.show = true;
-	// 				})
-	// 				Template.AddLink.fullList.set(asc);	
-	// 			// }
-	// 		} else if (value.indexOf('.') > -1) {
-	// 			console.log("property path");
-	// 			value = value.split('.');
-	// 			if (value.length > 2) {
-	// 				console.log("too many points");
-	// 				$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 period to separate link and class</div>");
-	// 				return;
-	// 			}
-
-	// 			_.each(value, function(v){
-	// 				console.log(v);
-	// 				if (v.indexOf(' ') > -1 || v.indexOf(',') > -1) {
-	// 					var newV = v.replace(/,/g, ' ').replace(/ {2,}/g, ' ').split(" ");
-	// 					value[value.indexOf(v)] = newV;			
-	// 				} else {
-	// 					value[value.indexOf(v)] = [v];
-	// 				}
-	// 			})
-
-	// 			console.log(value);
-
-	// 			var ascList = Template.AddLink.fullList.curValue;
-	// 			var asc = Template.AddLink.fullList.curValue;
-	// 			// ascList = ascList.filter(function(e){
-	// 			_.each(ascList, function(e){
-	// 				var hasLink = true;
-	// 				var hasClass = true;
-
-	// 				_.each(value[0], function(v){
-	// 					if (v != "" && e.name.toLowerCase().indexOf(v) == -1) {
-	// 						hasLink = false;
-	// 					}
-	// 				});
-
-	// 				_.each(value[1], function(v){
-	// 					if (v != "" && e.class.toLowerCase().indexOf(v) == -1) {
-	// 						hasClass = false;
-	// 					}
-	// 				});
-	// //TEST
-	// 				// if (Template.AddLink.testAddLink.curValue.data){
-	// 					asc[asc.findIndex(elem => _.isEqual(elem,e) )].show = (hasLink && hasClass);
-	// 				// }
-	// 				// return (hasLink && hasClass);
-	// 			})
-
-	// 			// Template.AddLink.shortList.set(ascList);
-	// //TEST
-	// 			// if (Template.AddLink.testAddLink.curValue.data){
-	// 				Template.AddLink.fullList.set(asc);
-	// 			// }	
-	// 		} else {
-	// 			if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
-	// 				value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
-	// 				value = value.split(" ");			
-	// 			} else {
-	// 				value = [value];
-	// 			}
-	// 			value = value.filter(function(e) { return e !== "" });
-
-	// 			var ascList = Template.AddLink.fullList.curValue;
-	// 			// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}		
-	// 			_.each(ascList, function(e){		
-	// 				var hasValues = true;
-	// 				_.each(value, function(v){ //check if any of searched values is missing
-	// 					if (e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
-	// 						hasValues = false;
-	// 					}
-	// 				});
-	// //TEST
-	// 				if (Template.AddLink.testAddLink.curValue.data){
-	// 					asc[asc.findIndex(elem => _.isEqual(elem,e) )].show = hasValues;
-	// 				}
-	// 				return hasValues;
-	// 			})			
-	// 			// Template.AddLink.shortList.set(ascList);
-	// //TEST
-	// 			// if (Template.AddLink.testAddLink.curValue.data){
-	// 				Template.AddLink.fullList.set(asc);
-	// 			// }
-	// 		}
-	// 	} else {
-			// console.log("\nmySearch TEST action");
-			$("div[id=errorField]").remove();
-			var value = $("#mySearch").val().toLowerCase(); console.log("mySearch read value: ", value);
-			var asc = Template.AddLink.fullList.curValue;
-			if (value == "" || value == " ") {//empty or space - show all elements
-				// Template.AddLink.shortList.set(Template.AddLink.fullList.curValue);
-	//TEST
-				// if (Template.AddLink.testAddLink.curValue.data){
-					
-					_.each(asc, function(a){
-						a.show = true;
-					})
-					Template.AddLink.fullList.set(asc);
-				// }
-				// console.log("mySearch empty value or space");
-			} else if (value.indexOf('.') > -1) {
-				// console.log("TODO property path");
-				value = value.split(".");
-				if (value.length > 2){ //More then 1 point is used
-					// Template.AddLink.shortList.set([]);
-		        	$(".searchBox").append("<div id='errorField' style='color:red; margin-top: 0px;'>Please, use only 1 period to separate link and class</div>");
-	//TEST
-		        	// if (Template.AddLink.testAddLink.curValue.data){		        		
-						_.each(asc, function(a){
-							a.show = false;
-						})
-						Template.AddLink.fullList.set(asc);
-					// }
-					console.log("Multiple points (.)");
-				} else {
-					// console.log("mySearch single point");
-					$("div[id=errorField]").remove();
-
-					if (value[0].indexOf(' ') > -1 || value[0].indexOf(',') > -1) {
-						value[0] = value[0].replace(/,/g, ' ').replace(/ {2,}/g, ' ');
-						value[0] = value[0].split(" ");
-					} else {
-						value[0] = [value[0]];
-					}
-					value[0] = value[0].filter(function(e) { return e !== "" });
-					
-					if (value[1].indexOf(' ') > -1 || value[1].indexOf(',') > -1) {
-						value[1] = value[1].replace(/,/g, ' ').replace(/ {2,}/g, ' ');
-						value[1] = value[1].split(" ");
-					} else {
-						value[1] = [value[1]];
-					}
-					value[1] = value[1].filter(function(e) { return e !== "" });
-
-					// var ascList = Template.AddLink.fullList.curValue;
-					// var asc = Template.AddLink.fullList.curValue;
-					// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
-					_.each(asc, function(e){
-						var hasValues = true;
-
-						_.each(value[0], function(v){ //check if any of searched values is missing in link part
-							if (e.name.toLowerCase().indexOf(v) == -1) {
-								hasValues = false;
-							}
-						});
-
-						if (hasValues) {
-							_.each(value[1], function(v){ //check if any of searched values is missing in class part
-								if (e.class.toLowerCase().indexOf(v) == -1) {
-									hasValues = false;
-								}
-							});
-						};
-	//TEST
-						// if (Template.AddLink.testAddLink.curValue.data){
-							e.show = hasValues;
-						// }
-						// return hasValues;
-					})
-					// Template.AddLink.shortList.set(ascList);
-	//TEST
-					// if (Template.AddLink.testAddLink.curValue.data){
-						Template.AddLink.fullList.set(asc);
-					// }
-				}
-
-			} else { //console.log("mySearch no point");
-				if (value.indexOf(' ') > -1 || value.indexOf(',') > -1) {
-					value = value.replace(/,/g, ' ').replace(/ {2,}/g, ' ');
-					value = value.split(" ");			
-				} else {
-					value = [value];
-				}
-				value = value.filter(function(e) { return e !== "" }); console.log("mySearch new value: ", value);
-
-				// var ascList = Template.AddLink.fullList.curValue; console.log("mySearch full list: ", ascList);
-				// ascList = ascList.filter(function(e){ //{name: "++", class: " ", type: "=>", card: "", clr: ""}				
-				_.each(asc, function(e){
-					var hasValues = true;
-					_.each(value, function(v){ //check if any of searched values is missing
-						if (hasValues && e.name.toLowerCase().indexOf(v) == -1 && e.class.toLowerCase().indexOf(v) == -1) {
-							hasValues = false;
-						}
-					}); //console.log(400, e, asc.findIndex(elem => _.isEqual(elem,e) ));//;
-	//TEST
-					// if (Template.AddLink.testAddLink.curValue.data){
-						e.show = hasValues;
-					// }
-					return hasValues;
-				}); //console.log("mySearch filtered list: ", ascList);
-				// Template.AddLink.shortList.set(ascList); console.log("mySearch no point finished\n");
-	//TEST
-				// if (Template.AddLink.testAddLink.curValue.data){
-					Template.AddLink.fullList.set(asc);
-				// }
-			}
-		// }
-	},
-
 	"change #link-list-form": function() {
 		// var typeName = $('input[name=type-radio]').filter(':checked').val();
 		// var cardValue = $('input[name=link-list-radio]:checked').attr("card");
@@ -972,11 +761,6 @@ Template.BuildLinkPath.events({
 //++++++++++++
 function clearAddLinkInput(){
 	$('input[name=link-list-radio]:checked').attr('checked', false);
-	// var defaultList = document.getElementsByName("link-list-radio");
-	// _.each(defaultList, function(e){
-	// 	if (e.value == "++") e.checked = true;
-	// 	else e.checked = false;
-	// });
 	var defaultRadio = document.getElementsByName("type-radio");
 	_.each(defaultRadio, function(e){
 		if (e.value == "JOIN") e.checked = true;
@@ -1028,12 +812,6 @@ async function getAllAssociations(){
 			//Associations
 			var asc = [];
 			var ascReverse = [];
-			// var ascDetails = getDetailedAttributes(); 
-			// //check if max cardinality exists 
-			// var hasCardinalities = false;
-			// _.each(ascDetails, function(e){
-			// 	if (e.max) hasCardinalities = true;
-			// })
 			
 			var className = startElement.getName();
 				
@@ -1210,12 +988,6 @@ async function getAllAssociations(){
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 			}); 
 			
-			//_.each(asc, function(e){
-			//	e.class = "";
-			//});
-
-			// *** console.log("YYYYYYYYYYYYYYYYYYY", asc)
-
 			return asc;
 		}
 }

@@ -1,5 +1,4 @@
 Template.AddMergeValues.expression = new ReactiveVar("");
-// Template.AddMergeValues.alias = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");
 Template.AddMergeValues.cardinality = new ReactiveVar(-1);
@@ -8,7 +7,6 @@ Template.AddMergeValues.distinct = new ReactiveVar("");
 Template.AddMergeValues.require = new ReactiveVar("");
 Template.AddMergeValues.expressionField = new ReactiveVar("");
 Template.AddMergeValues.requireField = new ReactiveVar("");
-//Template.AddMergeValues.hideField = new ReactiveVar("");
 Template.AddMergeValues.e = new ReactiveVar("");
 Template.AddMergeValues.attribute = new ReactiveVar("");
 Template.AddMergeValues.isNotRootClass = new ReactiveVar(false);
@@ -20,8 +18,7 @@ Interpreter.customMethods({
 		var requireField = getRequireField(e);//require
 		if(requireField[0].checked) Template.AddMergeValues.require.set("checked");
 		else Template.AddMergeValues.require.set("");
-		
-		//var hideField = getHide(e);
+
 		var parsedExpression = parsedExpressionField(expressionField.val());
 		var expr = parsedExpression["expression"];
 		var aggregation = parsedExpression["aggregation"];
@@ -31,7 +28,6 @@ Interpreter.customMethods({
 		var mergeAlias = getAlais(e).val();
 		if(mergeAlias == null || mergeAlias == "") mergeAlias = expr.substring(0,1).toUpperCase();
 		Template.AddMergeValues.mergeAlias.set(mergeAlias);
-		// Template.AddMergeValues.alias.set(getAlais(e).val());
 		Template.AddMergeValues.aliasField.set(getAlais(e));
 		Template.AddMergeValues.attribute.set(e);
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
@@ -173,11 +169,7 @@ Template.AddMergeValues.events({
 		var expr = $('input[name=expression-merge]').val();
 		// var aggregation = $('option[name=function-name-merge]:selected').val();
 		var aggregation = $('input[name=radio-function]:checked').val();
-		
-		// var distinctValues = $('input[id=distinct-merge-check-box]').val();
-		// if(typeof required !== "undefined" && required == "on") required = true;
-		// else required = false;
-		
+
 		var diaplay = $('input[id=distinct-merge-check-box]:checked').val();	
 		if(typeof diaplay !== "undefined" && diaplay == "on") diaplay = "DISTINCT ";
 		else diaplay = "";
@@ -334,14 +326,13 @@ function clearMergeValuesInput(){
 function getExpression(e){
 	return getField(e, "Expression");
 }
-function getHide(e){
-	return getField(e, "IsInternal");
-}
 
 function getAlais(e){
 	return getField(e, "Field Name");
 	
-}function getRequireField(e){
+}
+
+function getRequireField(e){
 	return getField(e, "Require Values");
 }
 
