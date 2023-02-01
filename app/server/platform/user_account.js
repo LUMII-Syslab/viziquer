@@ -65,13 +65,14 @@ Meteor.methods({
 				}
 
 
-				console.log("file_name", file_name)
+				console.log("file_name", file_name);
 
-	  			var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
+        // var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
+        var file = JSON.parse(Assets.getText("jsons/" + file_name));
 
-	  			var list = {toolId: tool_id, versionId: version_id, data: file,};
+        var list = {toolId: tool_id, versionId: version_id, data: file,};
 
-	  			Meteor.call("importAjooConfiguration", list);
+        Meteor.call("importAjooConfiguration", list);
 			}
 
 			return id;

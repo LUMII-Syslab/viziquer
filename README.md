@@ -3,7 +3,7 @@
 
 The aim of the ViziQuer project is to provide visual/diagrammatic environment for ontology-based data query definition and execution.
 
-See http://viziquer.lumii.lv for the tool description.
+See https://viziquer.lumii.lv for the tool description.
 
 ## Context
 
@@ -14,7 +14,7 @@ See https://github.com/LUMII-Syslab/data-shape-server
 
 The DSS shall need a link to a PostGres SQL database, holding the data schemas for the endpoints to be queried. 
 
-The sample schemas are available and means for their creation are described at http://viziquer.lumii.lv
+The sample schemas are available; means for their creation are described at https://viziquer.lumii.lv
 
 ## Installation
 
@@ -23,10 +23,13 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 ### To setup ViziQuer locally
 
 1. Download and install _Meteor_ framework, follow instructions: https://www.meteor.com/install
-1. Create a directory for ViziQuer on your computer and then perform git clone for this repository
-1. To run Meteor, type `meteor` in the ViziQuer directory.
+1. Perform `git clone` for this repository.
+1. Change to the `./viziquer/app` directory.
+1. Install the _node.js_ framework, version 14.x (for the instructions, see https://nodejs.org/en/).
+1. Execute the command `npm ci` to install the required _node_ packages.
+1. Now to run the ViziQuer tool, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
-1. Open browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
+1. Open the web browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
 
 
 
