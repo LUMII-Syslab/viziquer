@@ -1,3 +1,5 @@
 FROM johnnyutahio/meteor-launchpad
 
-COPY jsons /opt/meteor/dist/bundle/jsons
+WORKDIR /the/workdir/path
+# COPY app/private/jsons /opt/meteor/dist/bundle/jsons
+COPY app/private/jsons /opt/meteor/dist/bundle/private/jsons

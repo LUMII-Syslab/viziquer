@@ -28,7 +28,6 @@ accounts-password@1.7.0
 ajduke:bootstrap-tagsinput
 natestrauser:font-awesome
 less@3.0.1
-http@1.4.2
 tap:i18n-db
 spacebars-compiler
 natestrauser:bootstrap-colorpicker
