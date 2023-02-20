@@ -101,7 +101,7 @@
 					var elTo=options.link.getEndElement().getName();
 									
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
-					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
+					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")   { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
 				} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
       			
       			if (varibleName != "") params.main.filter=varibleName;
@@ -149,7 +149,7 @@
 					var elTo=options.link.getEndElement().getName();
 									
 					if(typeof elFrom !== 'undefined' && elFrom !== null && elFrom !== "") params.element = {className: elFrom};
-					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  params.elementOE = {className: elTo};
+					if(typeof elTo !== 'undefined' && elTo !== null && elTo !== "")  { params.elementOE = {className: elTo};  params.main.propertyKind = 'Connect'; }
 				} else if (typeof options.className !== 'undefined') params.element = {className: options.className};
       		}
 
