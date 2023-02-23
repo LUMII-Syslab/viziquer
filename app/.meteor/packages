@@ -4,44 +4,41 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-base@1.4.0             # Packages every Meteor app needs to have
+meteor-base@1.5.1             # Packages every Meteor app needs to have
 mobile-experience@1.1.0       # Packages for a great mobile UX
-mongo@1.11.0                   # The database Meteor supports right now
+mongo@1.16.4                   # The database Meteor supports right now
 # blaze-html-templates@1.0.4    # Compile .html files into Meteor Blaze views
-blaze-html-templates           # Compile .html files into Meteor Blaze views
-reactive-var@1.0.11            # Reactive variable for tracker
-jquery@1.11.10                  # Helpful client-side library
-tracker@1.2.0                 # Meteor's client-side reactive programming library
+blaze-html-templates@2.0.0           # Compile .html files into Meteor Blaze views
+reactive-var@1.0.12            # Reactive variable for tracker
+tracker@1.3.0                 # Meteor's client-side reactive programming library
 
-standard-minifier-css@1.7.2   # CSS minifier run for production mode
-standard-minifier-js@2.6.0    # JS minifier run for production mode
+standard-minifier-css@1.8.3   # CSS minifier run for production mode
+standard-minifier-js@2.8.1    # JS minifier run for production mode
 
-aldeed:collection2
+#aldeed:collection2@3.5.0
 matb33:collection-hooks
 iron:router
-accounts-ui@1.3.2
-underscore@1.0.10
+underscore@1.0.11
 alanning:roles
 mrt:jquery-ui-sortable
 tmeasday:publish-with-relations
-accounts-password@1.7.0
+accounts-password@2.3.3
 ajduke:bootstrap-tagsinput
 natestrauser:font-awesome
-less@3.0.1
-froala:editor-reactive
-http@1.4.2
-tap:i18n-db
+less@4.0.0
+http@1.0.8
+#tap:i18n-db
 spacebars-compiler
 natestrauser:bootstrap-colorpicker
-mizzao:user-status
-email@2.0.0
+email@2.2.3
 nilsdannemann:pdfmake
-session@1.2.0
+session@1.2.1
 nimble:restivus
 shell-server@0.5.0
 mikowals:batch-insert
 peerlibrary:xml2js
 rzymek:pegjs
 twbs:bootstrap
-dynamic-import@0.6.0
-fetch
+dynamic-import@0.7.2
+fetch@0.1.3
+tap:i18n

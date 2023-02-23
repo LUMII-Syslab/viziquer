@@ -132,7 +132,7 @@ Link.prototype = {
 			return;
 		}
 
-		var context = line.getContext();
+		// var context = line.getContext();
 
 		line.hitFunc(function(context) {
 

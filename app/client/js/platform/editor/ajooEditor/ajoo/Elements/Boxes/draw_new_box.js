@@ -1,6 +1,5 @@
 
 ANewBox = function(editor) {
-
 	var newBox = this;
 	newBox.editor = editor;
 
@@ -10,7 +9,6 @@ ANewBox = function(editor) {
 ANewBox.prototype = {
 
 	startDragging: function(palette_button) {
-
 		var newBox = this;
 		var editor = newBox.editor;
 

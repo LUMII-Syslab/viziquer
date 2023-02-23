@@ -61,9 +61,9 @@ login = function(e, name, password) {
 
 					else {
 
-						if (UserStatus.isMonitoring()) {
-					    	UserStatus.stopMonitor();
-						}
+						// if (UserStatus.isMonitoring()) {
+					    // 	UserStatus.stopMonitor();
+						// }
 
 						loginWithPassword(name, password);
 					}
@@ -126,12 +126,12 @@ login_on_success = function() {
 
 function redirect_on_login(user) {
 
-	if (UserStatus.isMonitoring()) {
-		UserStatus.stopMonitor();
-	}
+	// if (UserStatus.isMonitoring()) {
+	// 	UserStatus.stopMonitor();
+	// }
 
-	var minute = 60000;
-	UserStatus.startMonitor({threshold: 7 * minute, idle: 10 * minute});
+	// var minute = 60000;
+	// UserStatus.startMonitor({threshold: 7 * minute, idle: 10 * minute});
 
 	if (user["activeProject"] == "no-project") {
 		Router.go("structure");

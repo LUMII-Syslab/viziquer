@@ -1,18 +1,8 @@
 {
-  "name": "wwsna",
-  "private": true,
-  "scripts": {
-    "start": "meteor run",
-    "debug": "meteor run --inspect=5959",
-    "debug-brk": "meteor run --inspect-brk=5959"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.13.10",
-    "bcrypt": ">=5.0.0",
-    "dotenv": "10.0.0",
-    "json2csv": "^4.5.4",
-    "meteor-node-stubs": "^0.4.1",
-    "sparqljs": "^2.2.3",
-    "yasgui-yasqe": "^2.11.22"
+  "meteor": {
+    "mainModule": {
+      "client": false,
+      "server": "server/platform/main.startup.js"
+    }
   }
 }

@@ -1,4 +1,9 @@
 
+// const UserStatus = Meteor.require('meteor/mizzao:user-status');
+
+
+
+
 Meteor.methods({
 
 	makeUser: function(list) {
@@ -30,9 +35,14 @@ Meteor.methods({
 			// if (!is_test_user(list["email"]))
 				// Accounts.sendVerificationEmail(user_id, list["email"]);
 
+
+
 			if (is_first_user) {
 				var role = build_power_user_role();
+				
+				Roles.createRole(role, {unlessExists: true});
 				Roles.addUsersToRoles(user_id, [role]);
+
 
 				//loading configurator data
 				load_configurator(user_id);
@@ -321,31 +331,34 @@ Accounts.validateLoginAttempt(function(obj) {
 
 });
 
-UserStatus.events.on("connectionLogin", function(fields) {
 
-	if (!fields)
-		return;
+// import { UserStatus } from 'meteor/mizzao:user-status';
 
-	var item = {connectionId: fields["connectionId"],
-				loginTime: fields["loginTime"],
-				userAgent: fields["userAgent"],
-				ipAddress: fields["ipAddr"]
-			};
+// UserStatus.events.on("connectionLogin", function(fields) {
 
-	Users.update({systemId: fields["userId"]},
-				{$push: {logins: item}, $set: {loginFailsCount: 0}});
+// 	if (!fields)
+// 		return;
 
-});
+// 	var item = {connectionId: fields["connectionId"],
+// 				loginTime: fields["loginTime"],
+// 				userAgent: fields["userAgent"],
+// 				ipAddress: fields["ipAddr"]
+// 			};
 
-UserStatus.events.on("connectionLogout", function(fields) {
+// 	Users.update({systemId: fields["userId"]},
+// 				{$push: {logins: item}, $set: {loginFailsCount: 0}});
 
-	if (!fields)
-		return;
+// });
 
-	Users.update({systemId: fields["userId"], "logins.connectionId": fields["connectionId"]},
-					{$set: {"logins.$.logoutTime": fields["logoutTime"]}});
+// UserStatus.events.on("connectionLogout", function(fields) {
 
-});
+// 	if (!fields)
+// 		return;
+
+// 	Users.update({systemId: fields["userId"], "logins.connectionId": fields["connectionId"]},
+// 					{$set: {"logins.$.logoutTime": fields["logoutTime"]}});
+
+// });
 
 // UserStatus.events.on("connectionIdle", function(fields) {
 

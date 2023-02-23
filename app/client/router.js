@@ -23,15 +23,15 @@ Router.configure({
                 TAPi18n.setLanguage(lang);
 
                 //starting monitoring user status if it hasn't started for some reason
-                if (!UserStatus.isMonitoring())
-                  UserStatus.startMonitor();
+                // if (!UserStatus.isMonitoring())
+                  // UserStatus.startMonitor();
             }
 
             else {
 
                 //stopping monitoring user events if there it hasn't stopped for some reason
-                if (UserStatus.isMonitoring())
-                  UserStatus.stopMonitor();
+                // if (UserStatus.isMonitoring())
+                  // UserStatus.stopMonitor();
             }
 
             Meteor.subscribe('navbar_user', {});

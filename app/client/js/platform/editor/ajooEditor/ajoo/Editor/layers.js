@@ -63,7 +63,9 @@ Layers = function(editor, area) {
 
 	layers.DrawingLayerF = function() {
 	    var layer = layers.createLayer("DrawingLayer");
-	        layer.disableHitGraph();
+	    	layer.listening(false);
+	    	// layer.listening(false);
+	        // layer.disableHitGraph();
 
 	    var in_lines_group = new Konva.Group({});
 	        in_lines_group["name"] = "InLinesGroup";
@@ -94,9 +96,10 @@ Layers.prototype = {
 
 		var layer;
 		if (is_fast_layer)
-			layer = new Konva.FastLayer();
+			// layer = new Konva.FastLayer();
+			layer = new Konva.Layer({listening: true,});
 		else
-		    layer = new Konva.Layer();
+		    layer = new Konva.Layer({listening: true,});
 
 		layer["name"] = name;
 	    stage.add(layer);
