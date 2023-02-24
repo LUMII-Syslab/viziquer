@@ -4,5 +4,10 @@
       "client": false,
       "server": "server/platform/main.startup.js"
     }
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "json2csv": "^5.0.7",
+    "sparqljs": "^2.2.3"
   }
 }
