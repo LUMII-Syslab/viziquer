@@ -331,17 +331,23 @@ AjooEditor.prototype = {
 };
 
 find_child = function(parent, name) {
+
     if (parent) {
-        if (parent.name == name)
+        if (parent.name == name) {
             return parent;
-        
+        }
         else {
-            var children = parent.getChildren()
-            if (children) {
-                for (var i=0;i<children.length;i++) {
-                    var child = find_child(children[i], name);
-                    if (child)
-                        return child;
+            if (parent.getChildren) {
+                // console.log("no getChildren", parent, name)
+            // }
+            // else {
+                var children = parent.getChildren()
+                if (children) {
+                    for (var i=0;i<children.length;i++) {
+                        var child = find_child(children[i], name);
+                        if (child)
+                            return child;
+                    }
                 }
             }
         }

@@ -4,7 +4,8 @@ ConnectionPoints = function(editor) {
 	connectionPoints.editor = editor;
 
 	var layer = editor.getLayer("DrawingLayer");
-	layer.hitGraphEnabled(true);
+	// layer.hitGraphEnabled(true);
+	layer.listening(true);
 
 	connectionPoints.layer = layer;
 

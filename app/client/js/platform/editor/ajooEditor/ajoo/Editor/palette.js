@@ -450,6 +450,7 @@ PaletteButton.prototype = {
 
 		//changing style
 		paletteButton.setActiveStyle();
+
 	}, 
 
 	unPressPaletteButton: function(is_no_refresh) {
@@ -469,7 +470,9 @@ function PaletteButtonHandlers(paletteButton) {
 	var palette = paletteButton.palette;
 
 	var button_container = paletteButton.presentation;
+
 	var palette_button_overlay = find_child(button_container, "Overlay");
+
 
 	//mouser over on the palette button
 	palette_button_overlay.on("mouseover", function(e) {
@@ -512,6 +515,7 @@ function PaletteButtonHandlers(paletteButton) {
 
 		var palette_state = palette["state"];
 		var pressed_button = palette_state["pressedButton"];
+
 
 		//if no palette button was pressed, then setting as pressed
 		if (!pressed_button) {

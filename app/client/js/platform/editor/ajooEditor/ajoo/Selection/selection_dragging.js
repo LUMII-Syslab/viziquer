@@ -22,7 +22,8 @@ SelectionDragging.prototype = {
 		var editor = selection_dragging.editor;
 		var state = selection_dragging.state;
 
-		selection_dragging.dragLayer.disableHitGraph();
+		// selection_dragging.dragLayer.disableHitGraph();
+		selection_dragging.dragLayer.listening(false);
 		selection_dragging.dragLayer.opacity(0.6);
 
 		var dragged_boxes = [];
@@ -56,7 +57,7 @@ SelectionDragging.prototype = {
 								};
 
 		//selection_dragging.adjustDraggedLines();
-		selection_dragging.dragLayer.disableHitGraph();
+		// selection_dragging.dragLayer.disableHitGraph();
 		selection_dragging.dragLayer.listening(false);
 
 		//refreshing the layer
@@ -159,7 +160,7 @@ SelectionDragging.prototype = {
 		//refreshing layers
 		var drag_layer = selection_dragging.dragLayer;
 		drag_layer.opacity(1);
-		drag_layer.enableHitGraph();
+		// drag_layer.enableHitGraph();
 		drag_layer.listening(true);
 
 		drag_layer.draw();

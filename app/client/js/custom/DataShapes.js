@@ -23,7 +23,7 @@ const ConsoleLog = false;
 // ***********************************************************************************
 const callWithPost = async (funcName, data = {}) => {
 	try {
-        const schemaServerUrl = await getSchemaServerUrl();
+    const schemaServerUrl = await getSchemaServerUrl();
 		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
 			method: 'POST',
 			mode: 'cors',
@@ -39,12 +39,12 @@ const callWithPost = async (funcName, data = {}) => {
 	catch(err) {
 		console.log("-------error-----------")
 		return {complete: false, data: [], error: err};
-    }
+  }
 }
 
 const callWithGet = async (funcName) => {
 	try {
-        const schemaServerUrl = await getSchemaServerUrl();
+    const schemaServerUrl = await getSchemaServerUrl();
 		const response = await window.fetch(`${schemaServerUrl}/${funcName}`, {
 			method: 'GET',
 			mode: 'cors',
@@ -54,9 +54,9 @@ const callWithGet = async (funcName) => {
 		return await response.json();
 	}
 	catch(err) {
-        console.error(err)
+    console.error(err)
 		return {};
-    }
+  }
 }
 //'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Q633795&language=en&limit=50&format=json&origin=*'
 const callWithGetWD = async (filter, limit) => {
@@ -373,9 +373,16 @@ dataShapes = {
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
-		rr.unshift({display_name:""});
-		// *** console.log(rr)
-		return await rr;
+
+		console.log("rr ", rr)
+
+		if (!_.isEmpty(rr)) {
+			rr.unshift({display_name:""});
+			// *** console.log(rr)
+			return await rr;
+		}
+
+		return NaN;
 	},
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')

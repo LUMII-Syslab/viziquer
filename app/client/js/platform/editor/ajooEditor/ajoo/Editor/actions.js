@@ -352,8 +352,7 @@ EditorHandlers = function(actions) {
     var editor = actions.editor;
     var stage = editor.getStage();
 
-    stage.on("contentMousedown contentTouchstart", function(ev) {
-
+    stage.on("mousedown touchstart contentMousedown contentTouchstart", function(ev) {
         var mouse_state = editor.getMouseState();
 
         //if there was a click on element, then don't start a new action
@@ -376,22 +375,23 @@ EditorHandlers = function(actions) {
     });
 
     //finishes on mouse down and mouse move started actions
-    stage.on("contentMouseup contentTouchend", function(e) {
+    stage.on("mouseup touchend contentMouseup contentTouchend", function(e) {
 
         if (actions.state.name != "SwimlaneTextEditing")
             actions.finish(e);
     });
 
     //if mouse leaves the editor and the selection was started
-    stage.on("contentMouseleave", function(e) { 
+    stage.on("mouseleave touchend contentMouseleave", function(e) { 
         set_cursor_style("default");
-        if (editor["action"]["name"] == "Selecting") {
+
+        if (editor["actions"]["name"] == "Selecting") {
             actions.finish(e);
             return;
         }
     });
 
-    stage.on("contentDblclick contentDblTap", function(ev) {
+    stage.on("dblclick dbltap contentDblclick contentDblTap", function(ev) {
 
         if (actions.state.name != "SwimlaneTextEditing") {
             editor.mouseState.mouseDown(ev);

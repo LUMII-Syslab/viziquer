@@ -69,7 +69,7 @@ ImportAjooConfiguration.prototype = {
 
 			var object = diagram_type.object;
 			var diagram_type_id = object._id;
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramId: self.obj_type_map[object.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
@@ -100,7 +100,7 @@ ImportAjooConfiguration.prototype = {
 			var object = box_type.object;
 			var box_type_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
@@ -126,7 +126,7 @@ ImportAjooConfiguration.prototype = {
 
 			var object = line_type.object;
 			var line_type_id = object._id;
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								startElementTypeId: self.obj_type_map[object.startElementTypeId],
 								endElementTypeId: self.obj_type_map[object.endElementTypeId],
@@ -156,7 +156,7 @@ ImportAjooConfiguration.prototype = {
 			var object = compart_type.object;
 			var compart_type_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								elementTypeId: self.obj_type_map[object.elementTypeId],
 
@@ -189,7 +189,7 @@ ImportAjooConfiguration.prototype = {
 			var object = compart_type.object;
 			var compart_type_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 
 								diagramId: self.obj_type_map[object.diagramId],
@@ -230,7 +230,7 @@ ImportAjooConfiguration.prototype = {
 		var self = this;
 		_.each(palette_buttons, function(object) {
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								toolId: self.toolId,
 								versionId: self.versionId,
@@ -254,7 +254,7 @@ ImportAjooConfiguration.prototype = {
 		_.each(diagram_type.dialog, function(dialog) {
 
 			var dialog_tab_id = dialog._id;
-			_.extend(dialog, {_id: undefined,
+			_.extend(dialog, {_id: new Mongo.ObjectID(),
 								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
 								diagramId: self.obj_type_map[dialog.diagramId],
 								toolId: self.toolId,
@@ -273,7 +273,7 @@ ImportAjooConfiguration.prototype = {
 		_.each(box_type.dialog, function(dialog) {
 
 			var dialog_tab_id = dialog._id;
-			_.extend(dialog, {_id: undefined,
+			_.extend(dialog, {_id: new Mongo.ObjectID(),
 								elementTypeId: self.obj_type_map[dialog.elementTypeId],
 								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
 								diagramId: self.obj_type_map[dialog.diagramId],
@@ -312,7 +312,7 @@ ImportAjooConfiguration.prototype = {
 			var object = diagram.object;
 			var diagram_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								toolId: self.toolId,
 								versionId: self.versionId,
 								diagramTypeId: self.diagram_type._id,
@@ -340,7 +340,7 @@ ImportAjooConfiguration.prototype = {
 			var object = box.object;
 			var box_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramId: self.obj_type_map[object.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
@@ -371,7 +371,7 @@ ImportAjooConfiguration.prototype = {
 			var object = line.object;
 			var line_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramId: self.obj_type_map[object.diagramId],
 								startElement: self.obj_type_map[object.startElement],
 								endElement: self.obj_type_map[object.endElement],
@@ -397,7 +397,7 @@ ImportAjooConfiguration.prototype = {
 			var object = compart.object;
 			var compart_id = object._id;
 
-			_.extend(object, {_id: undefined,
+			_.extend(object, {_id: new Mongo.ObjectID(),
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
