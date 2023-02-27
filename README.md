@@ -25,18 +25,14 @@ You can choose between running ViziQuer locally (from source) and running ViziQu
 1. Download and install _Meteor_ framework, follow instructions: https://www.meteor.com/install
 1. Perform `git clone` for this repository.
 1. Change to the `./viziquer/app` directory.
-1. Install the _node.js_ framework, version 14.x (for the instructions, see https://nodejs.org/en/).
-1. Execute the command `npm ci` to install the required _node_ packages.
+1. Execute the command `meteor npm ci` to install the required _node_ packages.
 1. Now to run the ViziQuer tool, type `meteor` in the ViziQuer directory.
  To run on a specific port, type, for example, `meteor --port 4000`.
 1. Open the web browser and type `localhost:3000` (default port: 3000) or with the specified port `localhost:4000`
 
-
-
 ## Configuration for the first use
 
 1. The first user that signs up to the tool instance shall get administrator rights (the rights to manage tool configurations)
-
 
 ## Docker Environment Notes (currently applies to ViziQuer/web classic only)
 
