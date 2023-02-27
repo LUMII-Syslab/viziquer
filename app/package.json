@@ -5,9 +5,18 @@
       "server": "server/platform/main.startup.js"
     }
   },
+  "name": "viziquer.app",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "debug": "meteor run --inspect=5959",
+    "debug-brk": "meteor run --inspect-brk=5959"
+  },
   "dependencies": {
+    "@babel/runtime": "^7.21.0",
     "dotenv": "^16.0.3",
     "json2csv": "^5.0.7",
+    "meteor-node-stubs": "^1.2.5",
     "sparqljs": "^2.2.3"
   }
 }
