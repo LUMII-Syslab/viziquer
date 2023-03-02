@@ -21362,7 +21362,7 @@ options = arguments[1];
 							else prefix = props[pr]["prefix"]+":";
 							var propName = prefix+props[pr]["display_name"];
 							await addContinuation(await location(), propName, 100, false, 1);
-							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1);
+							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1);
 						}
 					}
 					// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
@@ -21382,10 +21382,10 @@ options = arguments[1];
 						}
 						if(isInv == false){
 							await addContinuation(await location(), propName, 100, false, 2);
-							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2);
+							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2);
 						}else if(isInv == true && props[pr].mark === 'in'){
 							await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
-							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, "^"+props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2, "end");
+							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), "^"+props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2, "end");
 						}
 					}
 				}
@@ -21418,7 +21418,7 @@ options = arguments[1];
             						
             			var propName = prefix+props[pr]["display_name"];
             			await addContinuation(await location(), propName, 100, false, 1, "end");
-						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
+						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
             		}
 					params.main.propertyKind = "Object";
 					var props = await dataShapes.getPropertiesFull(params);
@@ -21491,7 +21491,7 @@ options = arguments[1];
 							var propName = prefix+prop[cl]["display_name"]
 							// await addContinuation(place, propName, priority, false, 2);
 							await addContinuation(await location(), propName, 99, false, 1, "end");
-							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
+							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 						}
 								
 						if(pathParts.length > 1){
@@ -21522,7 +21522,7 @@ options = arguments[1];
 							}
 							// await addContinuation(place, propName, priority, false, 2);
 							await addContinuation(await location(), propName, 99, false, 2, "end");
-							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, mark+props[pr]["prefix"]+":"+props[pr]["display_name"], 99, false, 2, "end");
+							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), mark+props[pr]["prefix"]+":"+props[pr]["display_name"], 99, false, 2, "end");
 						}
 					}
 				}

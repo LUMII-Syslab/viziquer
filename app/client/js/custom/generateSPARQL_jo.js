@@ -1111,6 +1111,7 @@ function findEmptyPrefix(prefixTable){
 // abstractQueryTable - abstract query sintex table
 function generateSPARQLtext(abstractQueryTable){
 	// console.log("abstractQueryTable", abstractQueryTable)
+	// console.log(result, JSON.stringify(abstractQueryTable,null,2));
 		 var messages = [];
 
 		 var rootClass = abstractQueryTable["root"];
@@ -1229,6 +1230,13 @@ function generateSPARQLtext(abstractQueryTable){
 						SPARQL_text =  SPARQL_text +"\n"+ rootClass["graphs"][g]["graphInstruction"] + " " + rootClass["graphs"][g]["graph"] ;
 					} else if(graphService == null) {
 						graphService = rootClass["graphs"][g];
+						if(rootClass["graphs"][g]["graph"].startsWith("?")){
+							if(rootClass["graphs"][g]["graph"].startsWith("??")){
+								rootClass["graphs"][g]["graph"] = rootClass["graphs"][g]["graph"].substring(1);
+							} else {
+								SPARQL_text = SPARQL_text + " " + rootClass["graphs"][g]["graph"];
+							}
+						}
 					}
 				}
 			}
@@ -1798,6 +1806,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
 					
 					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								if(field["graph"].startsWith("?")){
+									if(field["graph"].startsWith("??")){ field["graph"] = field["graph"].substring(1);}
+									else sparqlTable["selectMain"]["simpleVariables"].push({"alias": field["graph"], "value" : field["graph"]});
+								}
 								tripleTemp["graph"] = field["graph"];
 								tripleTemp["graphInstruction"] = field["graphInstruction"];
 							}
@@ -1833,6 +1845,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 					//sparqlTable["expressionTriples"].push(getTriple(result, alias, field["requireValues"], true));
 					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
 					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								if(field["graph"].startsWith("?")){
+									if(field["graph"].startsWith("??")){ field["graph"] = field["graph"].substring(1);}
+									else sparqlTable["selectMain"]["simpleVariables"].push({"alias": field["graph"], "value" : field["graph"]});
+								}
 								tripleTemp["graph"] = field["graph"];
 								tripleTemp["graphInstruction"] = field["graphInstruction"];
 							}
@@ -1868,8 +1884,12 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						for (var triple in result["triples"]){
 							if(typeof result["triples"][triple] === 'string')tempTripleTable["triple"].push(result["triples"][triple]);
 							if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								if(field["graph"].startsWith("?")){
+									if(field["graph"].startsWith("??")){ field["graph"] = field["graph"].substring(1);}
+									else sparqlTable["selectMain"]["simpleVariables"].push({"alias": field["graph"], "value" : field["graph"]});
+								}
 								tempTripleTable["graph"] = field["graph"];
-								tempTripleTable["graphInstruction"] = field["graphInstruction"];
+								tempTripleTable["graphInstruction"] = field["graphInstruction"]; 
 							}
 						}
 						//sparqlTable["simpleTriples"].push(tempTripleTable);
@@ -3341,8 +3361,8 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		tempWhereInfo = tempWhereInfo.concat(attributesValues);
 		tempWhereInfo = tempWhereInfo.concat(plainOptionalNotLinks);
 		tempWhereInfo = tempWhereInfo.concat(bind);
-		tempWhereInfo = tempWhereInfo.concat(minusSubQueries);
 		tempWhereInfo = tempWhereInfo.concat(directSparql);
+		tempWhereInfo = tempWhereInfo.concat(minusSubQueries);
 		tempWhereInfo = tempWhereInfo.concat(filters);	
 
 		classes = [];
@@ -3446,6 +3466,13 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		filters = [];
 		
 		SPARQL_interval = SPARQL_interval + "  ";
+		if(sparqlTable["graph"].startsWith("?")){
+			if(sparqlTable["graph"].startsWith("??")){
+				sparqlTable["graph"] = sparqlTable["graph"].substring(1);
+			} else {
+				sparqlTable["selectMain"]["simpleVariables"].push({"alias": sparqlTable["graph"], "value" : sparqlTable["graph"]});
+			}
+		}
 		var tempString = sparqlTable["graphInstruction"] + " "+ sparqlTable["graph"] + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 
 		unions.push(tempString);

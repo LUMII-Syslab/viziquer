@@ -313,8 +313,9 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
-	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
-		
+	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery, a,b,c) {
+		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
+		else {
 		schemaName = dataShapes.schema.schemaType;
 		  
 		x = xx;
@@ -368,8 +369,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		// console.log("whereTriplesVaribles", whereTriplesVaribles);
 		
 		var tempGetStartClass = getStartClass(classesTable, abstractTable["linkTable"]);
-		
-		//console.log("SSSSSSSSSSSS", tempGetStartClass)
+
 		
 		var startClass = tempGetStartClass["startClass"];
 		classesTable = tempGetStartClass["classesTable"];
@@ -554,6 +554,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				}
 			//TODO create condition link
 		})
+	  }
 	  });
   },
 });

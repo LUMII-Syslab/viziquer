@@ -2729,6 +2729,7 @@ VQ_Element.prototype = {
     var className = this.getName();
 	var fields = this.getFields();
 	var aggregation = this.getAggregateFields();
+	var conditions = this.getConditions();
 	
 	var isOptional = false;
 	for(var field in fields){
@@ -2745,7 +2746,14 @@ VQ_Element.prototype = {
 			break;
 		}
 	}
-	return (alias == null && className == null && isOptional == false && aggregation.length < 1);
+	var isCompleCondition = true;
+	for(var condition in conditions){
+		var conditionExpr = conditions[condition]["exp"];
+		
+		const re = /[?*!@#$%^&*()-+{},.;]/g;
+		if(conditionExpr.search(re) !== -1)  isCompleCondition = false;
+	}
+	return (alias == null && className == null && isOptional == false && aggregation.length < 1 && isCompleCondition == true);
 
   },
   // gets class variable name (e.g. X for ?X)
