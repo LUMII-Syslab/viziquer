@@ -1,7 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import { Users, Tools, ToolVersions } from '/libs/platform/collections';
 
-// const UserStatus = Meteor.require('meteor/mizzao:user-status');
-
-
+import { get_current_time } from '/server/platform/_helpers';
+import { build_power_user_role } from '/libs/platform/user_rights';
+import { load_configurator } from '/server/platform/load_configuration';
 
 
 Meteor.methods({
@@ -77,12 +79,12 @@ Meteor.methods({
 
 				console.log("file_name", file_name);
 
-        // var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
-        var file = JSON.parse(Assets.getText("jsons/" + file_name));
+				// var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
+				var file = JSON.parse(Assets.getText("jsons/" + file_name));
 
-        var list = {toolId: tool_id, versionId: version_id, data: file,};
+				var list = {toolId: tool_id, versionId: version_id, data: file,};
 
-        Meteor.call("importAjooConfiguration", list);
+				Meteor.call("importAjooConfiguration", list);
 			}
 
 			return id;
@@ -401,11 +403,11 @@ Accounts.onLoginFailure(function(obj) {
 	}
 });
 
-Accounts.emailTemplates.siteName = build_site_name();
-Accounts.emailTemplates.from = build_from_address();
-Accounts.emailTemplates.enrollAccount.subject = function (user) {
-    return "ajoo registration";
-};
+// Accounts.emailTemplates.siteName = build_site_name();
+// Accounts.emailTemplates.from = build_from_address();
+// Accounts.emailTemplates.enrollAccount.subject = function (user) {
+//     return "ajoo registration";
+// };
 
 Accounts.urls.resetPassword = function (token) {
     return Meteor.absoluteUrl('reset-password/' + token);

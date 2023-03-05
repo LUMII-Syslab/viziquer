@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+
+
 Interpreter.customMethods({
 //From selection
 	ConnectClasses: async function () {

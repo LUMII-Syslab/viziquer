@@ -1,3 +1,7 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Projects, Diagrams, DiagramTypes } from '/libs/platform/collections'
+
 
 Interpreter.methods({
 
@@ -23,8 +27,9 @@ Interpreter.methods({
 
 		var selected_elements;
 		var editor = Interpreter.editor;
-
+		
 		var editor_type = Interpreter.getEditorType();
+
 		if (is_ajoo_editor(editor_type)) {
 			selected_elements = editor.getSelectedElements();
 
@@ -44,7 +49,7 @@ Interpreter.methods({
 			});
 
 			var drag_layer = editor.getLayer("DragLayer");
-			var drag_group = find_child(drag_layer, "DragGroup");
+			var drag_group = editor.findChild(drag_layer, "DragGroup");
 			left_point["x"] = left_point["x"] + drag_group.x();
 			left_point["y"] = left_point["y"] + drag_group.y();
 

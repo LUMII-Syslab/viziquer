@@ -1,3 +1,7 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { ToolVersions, UserTools } from '/libs/platform/collections'
+
 
 Template.timeline.helpers({
 
@@ -16,8 +20,8 @@ Template.timeline.helpers({
 		if (!active_version) {
 			var version = ToolVersions.findOne({}, {sort: {createdAt: -1}})
 			if (version) {
-			 		active_version = version["_id"];
-			 		Session.set("toolVersionId", active_version);
+		 		active_version = version["_id"];
+		 		Session.set("toolVersionId", active_version);
 			}
 		}
 
@@ -60,7 +64,7 @@ Template.timeline.events({
 
 		//if user tools was inserted
 		//if (version_id)
-			Router.go("tool", {_id: tool_id, versionId: version_id});
+			FlowRouter.go("tool", {_id: tool_id, versionId: version_id});
 
 	},
 });
@@ -125,9 +129,9 @@ Template.tool_version_buttons.events({
 
 					var last_version = ToolVersions.findOne({}, {sort: {createdAt: -1}});
 					if (last_version)
-						Router.go("tool", {_id: Session.get("toolId"), versionId: last_version["_id"]});
+						FlowRouter.go("tool", {_id: Session.get("toolId"), versionId: last_version["_id"]});
 					else
-						Router.go("tool", {_id: Session.get("toolId")});
+						FlowRouter.go("tool", {_id: Session.get("toolId")});
 				}
 			}
 		}

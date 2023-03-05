@@ -1,3 +1,8 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Elements, Diagrams, DiagramTypes } from '/libs/platform/collections'
+
 
 Interpreter.methods({
 
@@ -20,7 +25,7 @@ Interpreter.methods({
 				Interpreter.executeExtensionPoint(diagram_type, "afterCreateDiagram", list);
 
 				if (id) {
-					Router.go("diagram", {projectId: list["projectId"],
+					FlowRouter.go("diagram", {projectId: list["projectId"],
 											_id: id,
 											diagramTypeId: list["diagramTypeId"],
 											versionId: list["versionId"],
@@ -76,7 +81,7 @@ Interpreter.methods({
 		list["versionId"] =	Session.get("versionId");
 
 		Utilities.callMeteorMethod("removeDiagram", list);
-		Router.go("diagrams", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")});
+		FlowRouter.go("diagrams", {projectId: Session.get("activeProject"), versionId: Session.get("versionId")});
 	},
 
 	AddTargetDiagram: function() {
@@ -124,7 +129,7 @@ Interpreter.methods({
 				stage["selection"] = [];
 				stage["selected"] = {};
 
-				Router.go("diagram", {projectId: Session.get("activeProject"),
+				FlowRouter.go("diagram", {projectId: Session.get("activeProject"),
 										_id: target_id,
 										diagramTypeId: Session.get("diagramType"),
 										versionId: Session.get("versionId"),

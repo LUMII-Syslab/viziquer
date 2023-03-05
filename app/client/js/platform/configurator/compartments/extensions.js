@@ -1,3 +1,6 @@
+import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { CompartmentTypes } from '/libs/platform/collections'
 
 Template.compartmentExtensions.helpers({
 	extensions: function() {

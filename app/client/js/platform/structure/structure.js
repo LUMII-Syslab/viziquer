@@ -1,4 +1,8 @@
-
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { reset_variable } from '/client/js/platform/utilities/utils'
+import { Projects, ProjectsUsers, Tools } from '/libs/platform/collections'
+import { Services } from '/libs/custom/collections'
 
 Template.structureTemplate.helpers({
 
@@ -12,10 +16,8 @@ Template.structureTemplate.helpers({
 	    var user_id = Session.get("userSystemId");
 
 		ProjectsUsers.find({userSystemId: Session.get("userSystemId")}).forEach(
-
 			function(user_proj, i) {
 				var proj_id = user_proj["projectId"];
-
 				var project = Projects.findOne({_id: proj_id});
 				
 				var category = "";
@@ -94,7 +96,7 @@ Template.structureTemplate.events({
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
 		dataShapes.changeActiveProject(proj_id);
-    	Router.go("diagrams", {projectId: proj_id, versionId: version_id});
+    	FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		//return;
 	},
@@ -156,9 +158,6 @@ Template.structureTemplate.events({
 		var list = {projectId: proj_id};
 
 		Utilities.callMeteorMethod("leaveProject", list);
-
-		
-		
 
 		return;
 	},

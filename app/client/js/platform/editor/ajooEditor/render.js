@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { DiagramTypes, ElementTypes, PaletteButtons, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+
 
 //render_ajoo_editor_diagram
 Interpreter.renderAjooEditorDiagram = function(editor, template) {

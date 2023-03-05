@@ -1,0 +1,215 @@
+
+<head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!--     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5GFYKKTQSP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []; 
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-5GFYKKTQSP');
+    </script> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>ViziQuer App</title>
+    <!-- <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script> -->
+
+    <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
+    <script src='//cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
+
+    <link href='//cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+</head>
+
+<template name="mainLayout">
+
+    {{#if currentUser}}
+        <div class="pace-down" style="">
+            <div id="wrapper" class="preload sidebar-mini">
+                {{> nav}}
+                {{> panel}}
+                <div id="main-container">
+
+                    <!-- {{> yield region='ribbon'}} -->
+                    {{> Template.dynamic template=ribbon}}
+
+                    <div class="padding-md">
+
+                        {{> Template.dynamic template=main}}
+                        <!-- {{> yield}} -->
+
+                    </div>
+                </div> <!-- End of main-container -->
+            </div> <!-- End of wrapper -->
+        </div>
+    {{else}}
+        {{> notLoggedIn}}
+    {{/if}}
+
+</template>
+
+<template name="mainLayoutWithHeader">
+    {{#if currentUser}}
+        <div id="wrapper" class="preload sidebar-mini">
+            {{> nav}}
+            {{> panel}}
+            <div id="main-container">
+                <!-- MAIN CONTENT -->
+
+                <!-- {{> yield region='ribbon'}} -->
+                <!-- {{> yield region='header'}} -->
+                {{> Template.dynamic template=ribbon}}
+                {{> Template.dynamic template=header}}
+
+                <div class="padding-md">
+
+                    {{> Template.dynamic template=main}}
+                    <!-- {{> yield}} -->
+
+                </div>
+            </div> <!-- End of main-container -->
+        </div> <!-- End of wrapper -->
+
+    {{else}}
+        {{> notLoggedIn}}
+    {{/if}}
+</template>
+
+<template name="mainLayoutWithoutRibbon">
+    {{#if currentUser}}
+        <div id="wrapper" class="preload sidebar-mini">
+            {{> nav}}
+            {{> panel}}
+            <div id="main-container">
+                {{> Template.dynamic template=main}}
+
+                <!-- {{> yield}} -->
+            </div> <!-- End of main-container -->
+        </div> <!-- End of wrapper -->
+
+    {{else}}
+        {{> notLoggedIn}}
+    {{/if}}
+
+</template>
+
+<template name="nav">
+    <div id="top-nav" class="skin-{{skin}} fixed">
+        <div class="brand">
+            <span><a href="https://viziquer.lumii.lv" title="Tool website" target="_blank" style="color: white; font-weight: bold;">ViziQuer</a></span>
+        </div><!-- /brand -->
+        <button type="button" class="navbar-toggle pull-left" id="sidebarToggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+        <button type="button" class="navbar-toggle pull-left hide-menu" id="menuToggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+        <ul class="nav-notification clearfix">
+            
+            {{> projectsT}}
+
+            {{> notificationsT}}
+
+            {{> userT}}
+        </ul>
+    </div><!-- /top-nav-->
+
+</template>
+
+<template name="mailsT">
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-envelope fa-lg"></i>
+            {{#if unreadMails}}
+                <span class="notification-label bounceIn animation-delay4">{{unreadMails}}</span>
+            {{/if}}
+        </a>
+        <ul id="nav-messages" class="dropdown-menu message dropdown-1">
+            <li><a>You have 4 new unread messages</a></li>                    
+            <li>
+                <a class="clearfix" href="#">
+                    <img src="/img/user.jpg" alt="User Avatar">
+                    <div class="detail">
+                        <strong>John Doe</strong>
+                        <p class="no-margin">
+                            Lorem ipsum dolor sit amet...
+                        </p>
+                        <small class="text-muted"><i class="fa fa-check text-success"></i> 27m ago</small>
+                    </div>
+                </a>    
+            </li>
+            <li><a href="#">View all messages</a></li>                    
+        </ul>
+    </li>
+</template>
+
+<template name="userT">
+    <li id="nav-user" class="profile dropdown">
+
+        {{#with profile}}
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <strong>{{name}} {{surname}}</strong>
+                <span><i class="fa fa-chevron-down"></i></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="clearfix" href="#">
+                        <img src="{{profileImage}}" alt="User Avatar">
+                        <div class="detail">
+                            <strong>{{name}} {{surname}}</strong>
+                           <!-- <p class="grey">email</p> -->
+                        </div>
+                    </a>
+                </li>
+                <li><a tabindex="-1" href="{{pathFor 'profile'}}" class="main-link"><i class="fa fa-pencil fa-lg"></i> {{_ "edit_profile"}}</a></li>
+                <li class="divider"></li>
+                <li><a id="logout" tabindex="-1" class="main-link logoutConfirm_open" href="#"><i class="fa fa-lock fa-lg"></i> {{_ "logout"}}</a></li>
+            </ul>
+        {{/with}}
+
+    </li>
+</template>
+
+<template name="logout">
+    <a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
+    
+    <!-- Logout confirmation -->
+    <div class="custom-popup width-100" id="logoutConfirm">
+        <div class="padding-md">
+            <h4 class="m-top-none"> {{_ "do_you_want_to_logout"}}</h4>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-success m-right-sm" href="login.html">{{_ "logout"}}</a>
+            <a class="btn btn-danger logoutConfirm_close">{{_ "cancel"}}</a>
+        </div>
+    </div>
+</template>
+
+<template name="notLoggedIn">
+
+    <div id="wrapper">
+        <div class="padding-md" style="margin-top:50px;">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 text-center">
+                    <div class="h5">You are not logged in.</div> 
+                    <a class="btn btn-success m-bottom-sm" href="{{pathFor 'index'}}"><i class="fa fa-lock"></i> Login</a>
+
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div>
+    </div>
+
+</template>

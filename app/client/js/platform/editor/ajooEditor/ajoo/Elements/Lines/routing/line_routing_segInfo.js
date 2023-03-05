@@ -1,7 +1,7 @@
 //******************************************************************************
 // SegmInfo 
 //******************************************************************************
-SegmInfo = function(info) {
+var SegmInfo = function(info) {
     this.dir = info[0];
     this.min = info[1];
     this.lev = info[2];
@@ -80,3 +80,5 @@ SegmInfo.prototype.toString = function() {
             "; max: " + this.max + "; ind: " + this.ind + "; mark: " + this.mark + 
              "; disconn: " + this.disconnected + "; myId: " + this.owner.myId + "}";
 };
+
+export default SegmInfo

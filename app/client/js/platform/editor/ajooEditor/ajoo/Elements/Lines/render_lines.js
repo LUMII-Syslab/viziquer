@@ -1,9 +1,13 @@
+// import { _ } from 'vue-underscore';
+import LineEndShape from './lineEndShape';
+import LinkCompartments from './line_compartments';
+import ElementHandlers from '../element_handlers';
+import {OrthogonalRerouting} from "./routing/orthogonal_rerouting"
 
-Link = function(editor) {
+var Link = function(editor) {
 	var link = this;
 	link.editor = editor;
 	link.type = "Line";
-
 }
 
 Link.prototype = {
@@ -47,6 +51,8 @@ Link.prototype = {
 		line_style["points"] = list["points"];
 		line_style["perfectDrawEnabled"] = false;
 
+		line_style.opacity = 1;
+
 		//box.shapes[0].transformsEnabled('position');
 		//line_style.transformsEnabled = "position";
 
@@ -80,14 +86,21 @@ Link.prototype = {
 	getPoints: function() {
 		var link = this;
 		var line = link.line;
-
-		return line.points();
+		
+		return this.processPoints(line.points());
 	},
 
-	setPoints: function(points) {
+	processPoints: function(points) {
+		return _.map(points, function(point) {
+			return Math.round(point);
+		});
+	},
 
+	setPoints: function(points_in) {
 		var link = this;
 		var line = link.line;
+
+		var points = link.processPoints(points_in);
 
 		//setting new line pointss
 		if (line) {
@@ -369,16 +382,18 @@ Link.prototype = {
 		var editor = link.editor;
 
 		var drag_layer = editor.getLayer("DragLayer");
-		var drag_group = find_child(drag_layer, "DragGroup");
+		var drag_group = editor.findChild(drag_layer, "DragGroup");
 
 		var delta_x = drag_group.x();
 		var delta_y = drag_group.y();
 
 		_.each(line_points, function(item, i) {
-			if (i%2 == 0)
+			if (i % 2 == 0) {
 				line_points[i] = line_points[i] + direction * delta_x;
-			else
+			}
+			else {
 				line_points[i] = line_points[i] + direction * delta_y;
+			}
 		});
 	},
 
@@ -389,3 +404,4 @@ Link.prototype = {
 
 }
 
+export default Link

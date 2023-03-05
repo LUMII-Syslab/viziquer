@@ -1,5 +1,10 @@
+import Link from "./render_lines"
+import Event from "../../Editor/events"
+import ElementHandlers from "../element_handlers"
+import {SVGObject, LineSVGObject} from "./routing/svg_collisions"
+import compute_intersection from "./routing/IntersectionUtilities"
 
-ANewLine = function(editor) {
+var ANewLine = function(editor) {
 	var newLine = this;
 	newLine.editor = editor;
 
@@ -9,12 +14,13 @@ ANewLine = function(editor) {
 ANewLine.prototype = {
 
 	startDragging: function(palette_button, start_element) {
-
 		var newLine = this;
 		var editor = newLine.editor;
 
-		if (!start_element)
+		if (!start_element) {
+			console.error("No start element", start_element);
 			return;
+		}
 
 		editor.unSelectElements();
 
@@ -58,8 +64,8 @@ ANewLine.prototype = {
 	},
 
 	dragging: function(target) {
-
 		var newLine = this;
+
 		var editor = newLine.editor;
 		var state = newLine.state;
 
@@ -68,7 +74,7 @@ ANewLine.prototype = {
 		var mouse_x = mouse_state["mouseX"];
 		var mouse_y = mouse_state["mouseY"];
 
-		set_cursor_style("crosshair");
+		editor.setCursorStyle("crosshair");
 
 		//selects the line
 		var new_line = state["object"];
@@ -105,17 +111,35 @@ ANewLine.prototype = {
 
 	 	//if target, then recomputing the last point
 	 	var new_end_point;
+
+
 	 	if (target && target.type === "Box") {
 
 	 		editor.connectionPoints.addEndPoint(target);
 
 	 		//finding collision with end shape
-	 		if (is_not_self_loop)
+	 		if (is_not_self_loop) {
 	 			new_end_point = newLine.getShapeCollisionPoint(target,
 	 															[line_points[2], line_points[3]],
 	 															[line_points[0], line_points[1]]);
-	 		else
+	 		}
+	 		else {
 	 			new_end_point = [line_points[2], line_points[3]];
+	 		}
+
+	 		state.end = target;
+	 	}
+
+	 	else if (target && target.type == "Port") {
+
+	 		if (is_not_self_loop) {
+	 			new_end_point = newLine.getShapeCollisionPoint(target,
+	 															[line_points[2], line_points[3]],
+	 															[line_points[0], line_points[1]]);
+	 		}
+	 		else {
+	 			new_end_point = [line_points[2], line_points[3]];
+	 		}
 
 	 		state.end = target;
 	 	}
@@ -132,11 +156,11 @@ ANewLine.prototype = {
 
 	 		//user didn't mouse overed on connection point
 	 		else {
-	 			state.end = reset_variable();
+	 			state.end = editor.resetVariable();
 	 		}
 	 	}
 
-	 	new Event(editor, "checkingNewLineConstraints", state);
+	 	//new Event(editor, "checkingNewLineConstraints", state);
 
 	 	//saving the last point
 	 	if (new_end_point) {
@@ -146,7 +170,6 @@ ANewLine.prototype = {
 	 	else {
 	 		new_points.push(line_points[2], line_points[3]);
 	 	}
-
 
 	 	//need recomputing
 		if (new_line["lineType"] == "Orthogonal") {
@@ -163,7 +186,6 @@ ANewLine.prototype = {
 	},
 
 	finishDragging: function(target) {
-
 		var newLine = this;
 		var editor = newLine.editor;
 		var state = newLine.state;
@@ -172,8 +194,9 @@ ANewLine.prototype = {
 	 	if (!target || target.type == "Line") {
 	 		var tmp_target = connection_points.getEndElement();
 	 		connection_points.reset();
-	 		if (!tmp_target || (target && target.type == "Line"))
+	 		if (!tmp_target || (target && target.type == "Line")) {
 	 			return newLine.destroyNewLine();
+	 		}
 
 	 		target = tmp_target;
 	 	}
@@ -186,7 +209,10 @@ ANewLine.prototype = {
 
 	 	state.end = target;
 		var ev = new Event(editor, "checkingNewLineConstraints", state);
-		if (ev.result) {
+
+		console.log("ev", ev)
+
+		if (ev.result == false) {
 			return newLine.destroyNewLine();
 		}
 
@@ -207,6 +233,7 @@ ANewLine.prototype = {
 		new_line["type"] = "Line";
 		new_line["inLines"] = {};
 		new_line["outLines"] = {};
+
 
 		if (start_elem_id == end_elem_id) {
 
@@ -261,10 +288,11 @@ ANewLine.prototype = {
 	 	//line2
 	 	var line2 = [point1[0], -inf, point1[0], inf];
 	 	var new_line_svg2 = new LineSVGObject(line2, 0);
-	 	
+	 		
 	 	//finding collision with start shape
 	 	var new_point_obj2 = new_line_svg2.getIntersectionWithElement(elem, point2);
 	 	var new_point2 = new_point_obj2["point"];
+
 
 	 	var distance1 = Infinity;
 	 	if (new_point1) {
@@ -290,7 +318,8 @@ ANewLine.prototype = {
 		var newLine = this;
 		var state = newLine.state;
 
-		state.object.presentation.destroy();
+		// state.object.presentation.destroy();
+		state.object.presentation.remove();
 		state.drawingLayer.batchDraw();
 	},
 
@@ -368,8 +397,9 @@ ANewLine.prototype = {
 			new_start_point = start_point_obj_v["point"];
 
 			//computing direction
-			if (start_point[1] > new_start_point[1])
+			if (start_point[1] > new_start_point[1]) {
 				delta = delta * -1;
+			}
 
 			//middle points
 			middle_point1 = [new_start_point[0], new_start_point[1] + delta];
@@ -432,7 +462,7 @@ ANewLine.prototype = {
 
 }
 
-NewOrthogonalLine = function(points_in, start_elem, end_elem) {
+var NewOrthogonalLine = function(points_in, start_elem, end_elem) {
 
 	this.pointsIn = points_in;
 	this.startElement = start_elem;
@@ -458,7 +488,6 @@ NewOrthogonalLine.prototype = {
 		}
 
 		else {
-
 			var start_side = this.getIntersectingSide(this.startElement);
 			if (!start_side) {
 				this.newPoints = this.pointsIn;
@@ -467,7 +496,6 @@ NewOrthogonalLine.prototype = {
 			else {
 				var end_side = this.getIntersectingSide(this.endElement);
 				var new_points = this.computeLine(start_side, end_side);
-
 				this.newPoints = new_points;
 			}
 		}
@@ -476,11 +504,11 @@ NewOrthogonalLine.prototype = {
 
 	getIntersectingSide: function(elem) {
 
-		if (!elem || elem.type != "Box") {
+		if (!elem || elem.type == "Line") {
 			return;
 		}
 
-		var size = elem.getSize();
+		var size = elem.getElementPosition();
 
 		var sides = [
 			{segment: [size.x, size.y, size.x + size.width, size.y],
@@ -527,8 +555,9 @@ NewOrthogonalLine.prototype = {
 			end_side = opposite[start_side];
 		}
 
-		else
+		else {
 			end_side = end_side_in;
+		}
 
 		var points = this.pointsIn;
 		var cases = {
@@ -622,3 +651,4 @@ NewOrthogonalLine.prototype = {
 
 }
 
+export {ANewLine, NewOrthogonalLine}

@@ -1,15 +1,17 @@
+// import { _ } from 'vue-underscore';
+import Event from '../Editor/events';
+import {OrthogonalCollectionRerouting} from '../Elements/Lines/routing/orthogonal_rerouting';
 
-SelectionDragging = function(editor) {
-
+var SelectionDragging = function(editor) {
 	var selection_dragging = this;
 	selection_dragging.editor = editor;
 
 	selection_dragging.shapesLayer = editor.getLayer("ShapesLayer");
 	selection_dragging.dragLayer = editor.getLayer("DragLayer"); 
-	selection_dragging.dragGroup = find_child(selection_dragging.dragLayer, "DragGroup");
+	selection_dragging.dragGroup = editor.findChild(selection_dragging.dragLayer, "DragGroup");
 
-	selection_dragging.inLinesGroup = find_child(selection_dragging.dragLayer, "InLinesGroup");
-	selection_dragging.outLinesGroup = find_child(selection_dragging.dragLayer, "OutLinesGroup");
+	selection_dragging.inLinesGroup = editor.findChild(selection_dragging.dragLayer, "InLinesGroup");
+	selection_dragging.outLinesGroup = editor.findChild(selection_dragging.dragLayer, "OutLinesGroup");
 
 	selection_dragging.state = {};
 }
@@ -17,7 +19,6 @@ SelectionDragging = function(editor) {
 SelectionDragging.prototype = {
 
 	startDragging: function() {
-
 		var selection_dragging = this;
 		var editor = selection_dragging.editor;
 		var state = selection_dragging.state;
@@ -27,7 +28,9 @@ SelectionDragging.prototype = {
 		selection_dragging.dragLayer.opacity(0.6);
 
 		var dragged_boxes = [];
+		var dragged_ports = [];
 		var lines = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
+		var linked_ports = [];
 
 		//set unselected style for selected elements and select linked lines
 		var selected_elems = editor.getSelectedElements();
@@ -35,13 +38,28 @@ SelectionDragging.prototype = {
 			drag_elem.setUnselectedStyle();
 
 			if (drag_elem["type"] == "Box") {
-
 				selection_dragging.adjustShapeToGrid(drag_elem);
 
-				drag_elem.collectLinkedLines(lines);
+				_.each(drag_elem.ports, function(port) {
+					port.collectLinkedLines(lines, linked_ports);
+					// dragged_ports.push(port);
+					// dragged_ports_in_box[port._id] = port;
+					linked_ports.push(port);
+				});
+
+				drag_elem.collectLinkedLines(lines, linked_ports);
 				dragged_boxes.push(drag_elem);
 			}
+
+			else {
+
+				if (drag_elem["type"] == "Port") {
+					drag_elem.collectLinkedLines(lines, linked_ports);
+					dragged_ports.push(drag_elem);
+				}
+			}
 		});
+
 
 		//initializes the dragging state
 		selection_dragging.state = {
@@ -52,6 +70,9 @@ SelectionDragging.prototype = {
 
 									draggedBoxes: dragged_boxes,
 									draggedLines: lines.draggedLines,
+									draggedPorts: dragged_ports,
+
+									linkedPorts: linked_ports,
 									linkedOrthogonalLines: lines.orthogonalLines,
 									linkedDirectLines: lines.directLines,
 								};
@@ -68,8 +89,7 @@ SelectionDragging.prototype = {
 	dragging: function() {
 
 		var selection_dragging = this;
-
-		set_cursor_style("move");
+		selection_dragging.editor.setCursorStyle("move");
 
 		var state = selection_dragging.state;
         var mouse_state = selection_dragging.editor.getMouseState();
@@ -94,20 +114,8 @@ SelectionDragging.prototype = {
         var delta_obj = selection_dragging.adjustDragGroupToGrid(param);
 
 		//moves lines that are linked to the selection elements
-
-		//var time11 = $.now();
 		selection_dragging.moveLinesEndPoints(delta_obj);
-
-		//var time21 = $.now();
-		//console.log("Move lines: ", time21-time11);
-
-		//var time1 = $.now();
-
-
 		state.dragLayer.batchDraw();
-
-		//var time2 = $.now();
-		//console.log("Batch Draw: ", time2-time1);
 	},
 
 	finishDragging: function() {
@@ -157,6 +165,7 @@ SelectionDragging.prototype = {
 			selected_elem.setSelectedStyle();
 		});
 
+
 		//refreshing layers
 		var drag_layer = selection_dragging.dragLayer;
 		drag_layer.opacity(1);
@@ -178,8 +187,9 @@ SelectionDragging.prototype = {
 		var delta_y = drag_group.y() - state["dragStartY"];
 
 		var box_collection_type;
-		if (editor.isGridEnabled())
+		if (editor.isGridEnabled()) {
 			box_collection_type = "movedBoxes";
+		}
 
 		else {
 			list.deltaX = delta_x;
@@ -189,12 +199,14 @@ SelectionDragging.prototype = {
 
 		list[box_collection_type] = [];
 		list["lines"] = [];
+		list["ports"] = [];
 
 		//selecting dragged element positions
 		_.each(selection_dragging.state.draggedBoxes, function(drag_elem) {
 
-			if (box_collection_type == "boxes")
+			if (box_collection_type == "boxes") {
 				list[box_collection_type].push(drag_elem._id);
+			}
 
 			else {
 				var pos = drag_elem.getElementPosition();
@@ -207,7 +219,7 @@ SelectionDragging.prototype = {
 
 			var link = line_obj.line;
 			var line_points = link.getPoints().slice();
-			link.transformLinePoints(line_points, 1);
+			// link.transformLinePoints(line_points, 1);
 
 			list["lines"].push({id: link._id,
 								points: line_points,
@@ -216,9 +228,16 @@ SelectionDragging.prototype = {
 			link.line.listening(true);
 		});
 
+
+		//selecting dragged port positions
+		_.each(selection_dragging.state.draggedPorts, function(drag_elem) {
+			var pos = drag_elem.getElementPosition();
+			list["ports"].push({id: drag_elem._id, position: {x: pos.x, y: pos.y}});
+		});
+
+
 		//selecting linked lines
 		_.each(selection_dragging.state.linkedOrthogonalLines, function(line_obj) {
-
 			var line = line_obj.line;
 			list["lines"].push({id: line._id, points: line.getPoints()});
 
@@ -295,7 +314,6 @@ SelectionDragging.prototype = {
 
 			var new_point = selection_dragging.computeAdjustedPoint(new_x, new_y);
 
-
 			var divider = editor.grid.step;
 
 			if (drag_obj.x() != new_point.x || drag_obj.y() != new_point.y) {
@@ -312,9 +330,53 @@ SelectionDragging.prototype = {
 		}
 
 		else {
-
 			var new_x = Math.round(param.newX + param.deltaX);
 			var new_y = Math.round(param.newY + param.deltaY);
+
+			// if dragging port
+	        if (_.size(this.state.draggedPorts) > 0) {
+	        	var port = this.state.draggedPorts[0];
+	        	var port_parent = port.parent;
+
+				var port_size = port.getSize();
+				var port_parent_size = port_parent.getSize();
+
+				var x1 = port_parent_size.x - port_size.x - port_size.width;
+				var y1 = port_parent_size.y - port_size.y - port_size.height;
+				var x2 = x1 + port_parent_size.width + port_size.width;
+				var y2 = y1 + port_parent_size.height + port_size.height;
+
+	        	var deltas = [{name: "deltaX1", value: Math.abs(-new_x + x1)},
+	        				  {name: "deltaX2", value: Math.abs(-new_x + x2)},
+	        				  {name: "deltaY1", value: Math.abs(-new_y + y1)},
+	        				  {name: "deltaY2", value: Math.abs(-new_y + y2)},
+	        				];
+
+	        	var min_delta = _.min(deltas, "value");
+	        	if (min_delta.name == "deltaX1") {
+	        		new_x = x1;
+	        		new_y = Math.max(new_y, y1);
+	        		new_y = Math.min(new_y, y2);
+	        	}
+
+	        	if (min_delta.name == "deltaX2") {
+	        		new_x = x2;
+	        		new_y = Math.max(new_y, y1);
+	        		new_y = Math.min(new_y, y2);
+	        	}
+
+	        	if (min_delta.name == "deltaY1") {
+	        		new_x = Math.max(new_x, x1);
+	        		new_x = Math.min(new_x, x2);
+	        		new_y = y1;
+	        	}
+
+	        	if (min_delta.name == "deltaY2") {
+	        		new_x = Math.max(new_x, x1);
+	        		new_x = Math.min(new_x, x2);
+	        		new_y = y2;
+	        	}
+	        }
 
 			drag_obj.x(new_x);
 			drag_obj.y(new_y);
@@ -387,11 +449,10 @@ SelectionDragging.prototype = {
 
 		var state = selection_dragging.state;
 
-		OrthogonalCollectionRerouting.recomputeLines(editor, state.draggedBoxes, state.linkedOrthogonalLines, state.draggedLines, delta_obj.deltaX, delta_obj.deltaY);
+		OrthogonalCollectionRerouting.recomputeLines(editor, state.draggedBoxes, state.draggedPorts, state.linkedPorts, state.linkedOrthogonalLines, state.draggedLines, delta_obj.deltaX, delta_obj.deltaY);
 	},
 
 	recomputeDirectLines: function(delta_obj) {
-
 		var selection_dragging = this;
 		var editor = selection_dragging.editor;
 
@@ -467,3 +528,4 @@ SelectionDragging.prototype = {
 
 }
 
+export default SelectionDragging

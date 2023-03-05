@@ -1,5 +1,6 @@
+// import { _ } from 'vue-underscore';
 
-Zoom = function(editor) {
+var Zoom = function(editor) {
 
     var zoom = this;
     zoom.editor = editor;
@@ -104,3 +105,5 @@ Zoom.prototype = {
     },
 
 }
+
+export default Zoom

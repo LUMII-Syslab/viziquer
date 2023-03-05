@@ -3,7 +3,11 @@
 <template name="configuratorDiagramTemplate">
 	<div class="row">
 		<div id="diagram-container" class="col-sm-8 col-md-8 col-lg-8" style="padding-left:0px;">
-			{{> configuratorDiagramContainer}}
+			{{#if isReady}}
+				{{> configuratorDiagramContainer}}
+			{{else}}
+				Loading
+			{{/if}}
 		</div>
 		<div class="col-sm-4 col-md-4 col-lg-4">
 

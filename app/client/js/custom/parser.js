@@ -187,6 +187,7 @@ parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 }
 
 function createTriples(tripleTable, tripleType){
+	
 	var triples = []
 	var tripleStart= "";
 	var tripleEnd = "";
@@ -217,11 +218,9 @@ function createTriples(tripleTable, tripleType){
 						triples.push(triple);
 					}
 				}
-				// if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
-				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition")) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
+				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
 			} else {
-				// if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
-				if(parseType == "different" || (parseType == "condition")) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
+				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
 			}
 		//	triples.push("?" + triple["object"] + " " + triple["prefixedName"] + " " + triple["var"] + "." );
 		}
@@ -426,19 +425,11 @@ getReferenceName = function(referenceName, symbolTable, classID){
 								// for(var name in referenceDefinitions){
 									// refName = referenceDefinitions[name]["name"];
 								// }
-								if(typeof variableNamesCounter[referenceName] !== "undefined") {
-									messages.push({
-										"type" : "Error",
-										"message" : "The use of the name (variable) '"+referenceName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-										"isBlocking" : true
-									});
-								} else{
-									messages.push({
-										"type" : "Error",
-										"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
-										"isBlocking" : true
-									});
-								}
+								messages.push({
+									"type" : "Error",
+									"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+									"isBlocking" : true
+								});
 								return refName;
 							}
 	
@@ -462,20 +453,13 @@ getReferenceName = function(referenceName, symbolTable, classID){
 								if(sameClassContext[st]["kind"].indexOf("_ALIAS") != null) return referenceName
 							}
 							// console.log("nevar atrast mainigo")
-							if(typeof variableNamesCounter[referenceName] !== "undefined") {
-								messages.push({
-									"type" : "Error",
-									"message" : "The use of the name (variable) '"+referenceName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-									"isBlocking" : true
-								});
-							} else{
-								messages.push({
-									"type" : "Error",
-									"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
-									"isBlocking" : true
-								});
-							}
-						
+							messages.push({
+								"type" : "Error",
+								//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+								//"listOfElementId" : [clId],
+								"isBlocking" : true
+							});
 							return "";
 						}
 					}
@@ -520,20 +504,13 @@ getReferenceName = function(referenceName, symbolTable, classID){
 							}
 						}
 					}
-					if(typeof variableNamesCounter[referenceName] !== "undefined") {
-						messages.push({
-							"type" : "Error",
-							"message" : "The use of the name (variable) '"+referenceName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-							"isBlocking" : true
-						});
-					} else{
-						messages.push({
-							"type" : "Error",
-							"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
-							"isBlocking" : true
-						});
-					}
-					
+					messages.push({
+								"type" : "Error",
+								//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + referenceName + "' not defined in the query, the query can not be created",
+								//"listOfElementId" : [clId],
+								"isBlocking" : true
+							});
 					return "";
 				}
 		} else if(referenceName != null) {
@@ -609,20 +586,12 @@ getReferenceName = function(referenceName, symbolTable, classID){
 
 		if(refName != null) return refName;
 		
-		// console.log("ERROR ERROR ERROR not in a simbol table", variableNamesTable, variableNamesCounter[referenceName])
-		if(typeof variableNamesCounter[referenceName] !== "undefined") {
-			messages.push({
-				"type" : "Error",
-				"message" : "The use of the name (variable) '"+referenceName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-				"isBlocking" : true
-			});
-		} else{
-			messages.push({
-				"type" : "Error",
-				"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
-				"isBlocking" : true
-			});
-		}
+		// console.log("ERROR ERROR ERROR not in a simbol table")
+		messages.push({
+			"type" : "Error",
+			"message" : "Used name (variable) '"+referenceName+ "' not defined in the query, the query can not be created",
+			"isBlocking" : true
+		});
 		//TO DO ERROR
 		return "";
 	}
@@ -635,7 +604,8 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
-	if(variableData["kind"] != null && variableData["kind"].indexOf("CLASS") !== -1) {
+	
+	if(variableData["kind"].indexOf("CLASS") !== -1) {
 		if(typeof alias !== "undefined" && alias != null){
 			return alias;
 		} else if(variableData["kind"] == "CLASS_ALIAS") return varName;
@@ -651,20 +621,11 @@ function setVariableName(varName, alias, variableData, generateNewName){
 		
 		if((classSimbolTable[varName].length ==1 && classSimbolTable[varName][0]["context"] == classID) || classSimbolTable[varName].length < 1){
 			// console.log("Property (attribute) {text} can not be defined at a node without data instance")
-			if(typeof variableNamesCounter[varFullName] !== "undefined") {
-				messages.push({
-					"type" : "Error",
-					"message" : "The use of the name (variable) '"+varFullName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-					"isBlocking" : true
-				});
-			} else{
-				messages.push({
-					"type" : "Error",
-					"message" : "Used name (variable) '"+varFullName+ "' not defined in the query, the query can not be created",
-					"isBlocking" : true
-				});
-			}
-			
+			messages.push({
+				"type" : "Error",
+				"message" : "Property (attribute) "+ varFullName +" can not be defined at a node without data instance",
+				"isBlocking" : true
+			});
 			return "";
 		}
 	}
@@ -672,20 +633,11 @@ function setVariableName(varName, alias, variableData, generateNewName){
 	if(variableData["kind"] == null){
 	   
 		// console.log("ERROR vards nav atpazits") 
-		if(typeof variableNamesCounter[varFullName] !== "undefined") {
-				messages.push({
-					"type" : "Error",
-					"message" : "The use of the name (variable) '"+varFullName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-					"isBlocking" : true
-				});
-		} else{
-				messages.push({
-					"type" : "Error",
-					"message" : "Used name (variable) '"+varFullName+ "' not defined in the query, the query can not be created",
-					"isBlocking" : true
-				});
-		}
-
+		messages.push({
+			"type" : "Error",
+			"message" : "Used name (variable) "+ varFullName +" not defined in the query, the query can not be created",
+			"isBlocking" : true
+		});
 		return "";
 	} else {
 		// if alias is given use it
@@ -1260,7 +1212,6 @@ getPathFullGrammar = function(expressionTable){
 
 // transfort exists and not exists expressions
 function transformExistsNotExists(expressionTable, alias, className){
-	
 	for(var key in expressionTable){
 
 		if(key == "ExistsFunc" || key == "NotExistsFunc"){
@@ -1373,36 +1324,11 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 			} else if(typeof pe["iri"] !== 'undefined' && typeof pe["ArgList"] === 'undefined'){
 				variable = setVariableName(pe["iri"]["PrefixedName"]["Name"], alias, pe["iri"]["PrefixedName"]["var"], true);
 				prefixedName = getPrefix(pe["iri"]["PrefixedName"]["Prefix"])+pe["iri"]["PrefixedName"]["Name"];
-				if(pe["iri"]["PrefixedName"]["var"]["type"] != null){
-					var namespace = pe["iri"]["PrefixedName"]["var"]["type"]["Namespace"];
-					if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
-					prefixTable[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])] = "<"+knownNamespaces[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])]+">";
-				}
+				var namespace = pe["iri"]["PrefixedName"]["var"]["type"]["Namespace"];
+				if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
+				prefixTable[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])] = "<"+knownNamespaces[getPrefix(pe["iri"]["PrefixedName"]["Prefix"])]+">";
 			}
 	return {"variable":variable, "prefixedName":prefixedName, "className":className};
-}
-
-function addNewVariableName(varName, varFullName){
-	if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
-					if(typeof variableNamesCounter[varName] === "undefined"){
-							//generate new
-							variableNamesTable[classID][varFullName] = [];
-							variableNamesTable[classID][varFullName][fieldId] = {name:varName, order:-1};
-							variableNamesCounter[varName] = 1;
-
-							return varName;
-					} else {
-							//variableNamesCounter has name
-							//use counter
-							if(typeof variableNamesTable[classID] === "undefined") variableNamesTable[classID] = [];
-							if(typeof variableNamesTable[classID][varFullName]=== "undefined") variableNamesTable[classID][varFullName] = [];
-							var newName = varName+ "_" + variableNamesCounter[varName];
-							variableNamesTable[classID][varFullName][fieldId] = {name:newName, order:-1};
-							variableNamesCounter[varName] = variableNamesCounter[varName] + 1;
-
-							return newName;
-					}	
-	
 }
 
 function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, className){
@@ -1426,9 +1352,6 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 	
 					var tempVarPRN = generatePrefixedNameVariable(prefix, existsExpr, alias, pe2);
 					var variable = tempVarPRN["variable"];
-					
-					variable = addNewVariableName(variable, variable)
-					
 					var prefixedName =  tempVarPRN["prefixedName"];
 					var clName = className;
 					if(typeof tempVarPRN["className"] !== "undefined") clName = tempVarPRN["className"];
@@ -1447,7 +1370,6 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 			var tempVarPRN = generatePrefixedNameVariable(prefix, existsExpr, alias, pe);
 
 			var variable = tempVarPRN["variable"];
-			variable = addNewVariableName(variable, variable)
 			var prefixedName =  tempVarPRN["prefixedName"];
 			var clName = className;
 			if(typeof tempVarPRN["className"] !== "undefined") clName = tempVarPRN["className"];
@@ -1457,51 +1379,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 						"prefixedName" : prefixedName,
 						"object" : clName,
 					});
-					// console.log("tripleTable 2", variable, existsExpr, expressionTable[count]["RelationalExpression"])
-					
-					
-			var pe = findINExpressionTable(expressionTable[count]["RelationalExpression"]["NumericExpressionR"], "PrimaryExpression");
-			
-			if(typeof pe["FunctionExpression"] !== 'undefined') {
-				if(typeof pe["FunctionExpression"]["FunctionTime"] !== 'undefined'){
-					
-					var pe2 = findINExpressionTable(pe["FunctionExpression"], "PrimaryExpressionR");
-					pe = findINExpressionTable(pe["FunctionExpression"], "PrimaryExpressionL");
-	
-					var tempVarPRN = generatePrefixedNameVariable(prefix, existsExpr, alias, pe2);
-					var variable = tempVarPRN["variable"];
-					variable = addNewVariableName(variable, variable)
-					var prefixedName =  tempVarPRN["prefixedName"];
-					var clName = className;
-					if(typeof tempVarPRN["className"] !== "undefined") clName = tempVarPRN["className"];
-				
-					tripleTable.push({
-								"variable" : variable,
-								"prefixedName" : prefixedName,
-								"object" : clName,
-							});
-						// console.log("tripleTable 1a", variable)
-				}
-				else pe = findINExpressionTable(pe["FunctionExpression"], "PrimaryExpression");
-			}
-
-			// var variable, prefixedName
-			var tempVarPRN = generatePrefixedNameVariable(prefix, existsExpr, alias, pe);
-
-			var variable = tempVarPRN["variable"];
-			variable = addNewVariableName(variable, variable)
-			var prefixedName =  tempVarPRN["prefixedName"];
-			var clName = className;
-			if(typeof tempVarPRN["className"] !== "undefined") clName = tempVarPRN["className"];
-			
-			tripleTable.push({
-						"variable" : variable,
-						"prefixedName" : prefixedName,
-						"object" : clName,
-					});
-					// console.log("tripleTable 2a", variable, existsExpr, expressionTable[count]["RelationalExpression"])		
-			
-			
+					// console.log("tripleTable 2", variable)
 			expressionTable[count] =  {
 				[existsExpr] : {
 					"Triple" : tripleTable,
@@ -2082,7 +1960,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						// || variableData["type"] != null) && (typeof variableData["type"]["max_cardinality"] === 'undefined' || variableData["type"]["max_cardinality"] > 1 || variableData["type"]["max_cardinality"] == -1))) inFilter = true;
 						// else 
 						if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
-							inFilter = null;
+							inFilter = true;
 							applyExistsToFilter = false;
 						}
 						// console.log("tripleTable 6", variable, inFilter, applyExistsToFilter)
@@ -2125,27 +2003,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			if(path["isPath"] != true && parseType != "condition"){
 				
 				var clId;
-				for(var k in idTable){
-					if (idTable[k] == className) {
-						clId = k;
-						break;
+					for(var k in idTable){
+						if (idTable[k] == className) {
+							clId = k;
+							break;
+						}
 					}
-				}
 
-				if(typeof variableNamesCounter[exp] !== "undefined") {
-					messages.push({
+				messages.push({
 						"type" : "Error",
-						"message" : "The use of the name (variable) '"+exp+ "' is not in the scope of the visibility of its definition. The query can not be created.",
+						"message" : "Path expression " + exp + " can start only with role(object property). To specify arithmetic division, surround the '/' symbol by spaces.",
+						"listOfElementId" : [clId],
 						"isBlocking" : true
 					});
-				} else{
-					messages.push({
-						"type" : "Error",
-						"message" : "Used name (variable) '"+exp+ "' not defined in the query, the query can not be created",
-						"isBlocking" : true
-					});
-				}
-				
 			}
 			if(path["messages"].length > 0) {
 				prefixName = null;
@@ -2171,20 +2041,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								break;
 							}
 						}
-						if(typeof variableNamesCounter[substringvar["name"]] !== "undefined") {
-							messages.push({
-								"type" : "Error",
-								"message" : "The use of the name (variable) '"+substringvar["name"]+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-								"isBlocking" : true
-							});
-						} else{
-							messages.push({
-								"type" : "Error",
-								"message" : "Used name (variable) '"+substringvar["name"]+ "' not defined in the query, the query can not be created",
-								"isBlocking" : true
-							});
-						}
-						
+						messages.push({
+							"type" : "Error",
+							//"message" : "Unrecognized variable '" + substringvar["name"] + "'. Please specify variable.",
+							"message" : "Used name (variable) '" + substringvar["name"] + "' not defined in the query, the query can not be created",
+							"listOfElementId" : [clId],
+							"isBlocking" : false
+						});
 					}
 					else{
 					
@@ -2230,9 +2093,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							messages.push({
 								"type" : "Error",
 								//"message" : "Unrecognized variable '" + variableStructure["var"]["name"] + "'. Please specify variable.",
-								"message" : "7 Used name (variable) '" + variableStructure["var"]["name"] + "' not defined in the query, the query can not be created",
+								"message" : "Used name (variable) '" + variableStructure["var"]["name"] + "' not defined in the query, the query can not be created",
 								"listOfElementId" : [clId],
-								"isBlocking" : true
+								"isBlocking" : false
 							});
 						}
 
@@ -2410,7 +2273,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			
 		
 			if(expressionTable[key]["ref"] != null){
-				if(parseType == "attribute") isExpression = true;
+				// isExpression = true;
 				var referenceName = getReferenceName(expressionTable[key]["name"], symbolTable[classID], classID);
 				if(referenceName != null) SPARQLstring = SPARQLstring + "?"+referenceName;
 			} else {
@@ -2599,7 +2462,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								}
 							}
 	
-							if(((isPropertyFromSubQuery == false || isOwnProperty == true) && isReference != true) && variableData["kind"] !== "BIND_ALIAS") {
+							if(((isPropertyFromSubQuery == false || isOwnProperty == true) && isReference != true) && variableData["kind"] !== "BIND_ALIASS") {
 								var prefixedName = getPrefix(expressionTable[key]["type"]["prefix"])+":"+varName;
 								if(varName.indexOf("/") !== -1) prefixedName = "<"+expressionTable[key]["type"]["iri"]+">";
 								tripleTable.push({"var":"?"+variable, "prefixedName":inv + prefixedName + pathMod, "object":className, "inFilter":inFilter});
@@ -2635,19 +2498,16 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							break;
 						}
 					}
-					if(typeof variableNamesCounter[varName] !== "undefined") {
-							messages.push({
-								"type" : "Error",
-								"message" : "The use of the name (variable) '"+varName+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-								"isBlocking" : true
-							});
-						} else{
-							messages.push({
-								"type" : "Error",
-								"message" : "Used name (variable) '"+varName+ "' not defined in the query, the query can not be created",
-								"isBlocking" : true
-							});
-					}
+						
+					messages.push({
+						"type" : "Error",
+						//"message" : "Unrecognized variable '" + varName + "'. Please specify variable.",
+						"message" : "Used name (variable) '" + varName + "' not defined in the query, the query can not be created",
+						"listOfElementId" : [clId],
+						"isBlocking" : false
+					});
+					
+					
 					
 					SPARQLstring = SPARQLstring + "?" + varName;
 				}
@@ -3215,17 +3075,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var inFilter = null;
 							if(isSimpleFilter) {
 								if(expressionTable[key]['Relation'] == "!=" || expressionTable[key]['Relation'] == "<>") {
-									SPARQLstring = "FILTER NOT EXISTS{?" + className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
+									SPARQLstring = "FILTER NOT EXISTS{" + className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
 								}else tripleTable.push({"var":":"+variable['type']['local_name'], "prefixedName":expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'], "object":className, "inFilter":inFilter});
 							// console.log("tripleTable 20", variable)
-							} else if(isSimpleFilter == null){
-								tripleTable = [];
-								SPARQLstring = "?"+ className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".";
 							}
 							else SPARQLstring = "EXISTS{?"+ className + " " + expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]['var']['name'] + " :"+variable['type']['local_name'] + ".}";
 							
 							if(knownNamespaces[expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]] != null)prefixTable[ expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[ expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['iri']["PrefixedName"]["Prefix"]]+">";
-
+			
 							visited = 1
 						}
 					}
@@ -3371,19 +3228,18 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var variable = findINExpressionTable(expressionTable[key]['NumericExpressionL']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression'], "var");
 							if(variable['PropertyReference'] == null){
 								var varName = variable["name"];
-								// console.log("tripleTable 23", varName, variable["name"], knownNamespaces[varName.substring(0,varName.indexOf(":")+1)])
 								if(knownNamespaces[varName.substring(0,varName.indexOf(":")+1)] != null) prefixTable[varName.substring(0, varName.indexOf(":")+1)] = "<"+ knownNamespaces[varName.substring(0, varName.indexOf(":")+1)]+">";
-								if(varName.indexOf(":") != -1) varName = varName.substring(varName.indexOf(":")+1);
+								if(varName.indexOf(":") != -1) varName = varName.substr
 								var inFilter = true;
 								if(isSimpleFilter) {
 									tripleTable.push({"var":"?"+varName, "prefixedName":variable["name"], "object":className, "inFilter":inFilter});
+									// console.log("tripleTable 23", varName)
 									applyExistsToFilter = true;
 									var relation = expressionTable[key]['Relation'];
 									if(relation = "<>") relation = "!=";
 									SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + " " + relation + " " + "?"+varName;
-								
-								visited = 1;
 								}
+								visited = 1;
 							} //else {
 								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 								// var relation = expressionTable[key]['Relation'];
@@ -3392,7 +3248,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								// SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 								// visited = 1;
 							// }
-							
 						}
 					}
 					
@@ -3780,19 +3635,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					}
 					
 					if(visited != 1){
-						
-						
-						
 						var left = findINExpressionTable(expressionTable[key]["NumericExpressionL"], "PrimaryExpression");
 						var right = findINExpressionTable(expressionTable[key]["NumericExpressionR"], "PrimaryExpression");
-						
+		
 						if(typeof expressionTable[key]["NumericExpressionL"] !== "undefined") SPARQLstring = SPARQLstring + generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 						else if (typeof expressionTable[key]["classExpr"] !== 'undefined') {
 								if(alias!=null)SPARQLstring =  "?" +alias;
 								else SPARQLstring =  "?" +className;
 						}
 						if (typeof expressionTable[key]['Relation'] !== 'undefined'){
-							
 							isExpression = true;
 							if (expressionTable[key]["Relation"] == "<>") SPARQLstring = SPARQLstring  + " != ";
 							else if (expressionTable[key]["Relation"] == "NOTIN") SPARQLstring = SPARQLstring  + " NOT IN";
@@ -4018,19 +3869,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							}
 							
 						} else {
-							if(typeof variableNamesCounter[valueString] !== "undefined") {
-								messages.push({
-									"type" : "Error",
-									"message" : "The use of the name (variable) '"+valueString+ "' is not in the scope of the visibility of its definition. The query can not be created.",
-									"isBlocking" : true
-								});
-							} else{
-								messages.push({
-									"type" : "Error",
-									"message" : "Used name (variable) '"+valueString+ "' not defined in the query, the query can not be created",
-									"isBlocking" : true
-								});
-							}
+							messages.push({
+								"type" : "Warning",
+								//"message" : "Unrecognized variable '" + valueString + "'. Please specify variable.",
+								"message" : "Used name (variable) '" + valueString + "' not defined in the query, the query can not be created",
+								"listOfElementId" : [classID],
+								"isBlocking" : false
+							});
 							valueString = "";
 						}
 					}
@@ -4241,26 +4086,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				// variableNamesAll[temp] = temp;
 				triples.push(triple);
 			}
-			if (typeof expressionTable[key]["Filter"] !== "undefined" && typeof expressionTable[key]["Filter"]["RelationalExpression"] !== "undefined") {
-				if(typeof expressionTable[key]["Filter"]["RelationalExpression"]["Relation"]!== 'undefined') {
-					var VarV = findINExpressionTable(expressionTable[key]["Filter"]["RelationalExpression"]["NumericExpressionL"], "var");
-					var VarRV = findINExpressionTable(expressionTable[key]["Filter"]["RelationalExpression"]["NumericExpressionR"], "var");
-					if(typeof VarV !== "undefined" && VarV !== null && typeof VarV["name"] !== "undefined" && VarV["name"] !== null && typeof VarRV !== "undefined" && VarRV !== null && VarRV["kind"] == "CLASS_NAME"){
-						var specialProperties = ["rdf:type", "owl:sameas", "rdfs:subclassof"];
-						if(specialProperties.indexOf(VarV["name"].toLowerCase()) !== -1){
-							triples = [];
-							isSimpleFilter = null;
-						}
-					}
-				}
-			}
 			SPARQLstring = SPARQLstring  + "EXISTS{" + triples.join("\n") + " " + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}";
 			visited = 1;
 			
 		}
 		if(key == "NotExistsExpr"){
-			var triples = [];
 			
+			
+			var triples = [];
 			for(var t in expressionTable[key]["Triple"]){
 				var triple = "?" + expressionTable[key]["Triple"][t]["object"] + " " + expressionTable[key]["Triple"][t]["prefixedName"] + " ?" + expressionTable[key]["Triple"][t]["variable"] + "." ;
 				// var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
@@ -4269,28 +4102,13 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				// variableNamesAll[temp] = temp;
 				triples.push(triple);
 			}
-			if (typeof expressionTable[key]["Filter"] !== "undefined" && typeof expressionTable[key]["Filter"]["RelationalExpression"] !== "undefined") {
-				if(typeof expressionTable[key]["Filter"]["RelationalExpression"]["Relation"]!== 'undefined') {
-					var VarV = findINExpressionTable(expressionTable[key]["Filter"]["RelationalExpression"]["NumericExpressionL"], "var");
-					var VarRV = findINExpressionTable(expressionTable[key]["Filter"]["RelationalExpression"]["NumericExpressionR"], "var");
-					if(typeof VarV !== "undefined" && VarV !== null && typeof VarV["name"] !== "undefined" && VarV["name"] !== null && typeof VarRV !== "undefined" && VarRV !== null && VarRV["kind"] == "CLASS_NAME"){
-						var specialProperties = ["rdf:type", "owl:sameas", "rdfs:subclassof"];
-						if(specialProperties.indexOf(VarV["name"].toLowerCase()) !== -1){
-							triples = [];
-							isSimpleFilter = null;
-						}
-					}
-				}
-			}
-			
 			SPARQLstring = SPARQLstring  + "NOT EXISTS{" + triples.join("\n") + " " + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + "}";
 			
 			visited = 1;
 		}
 		
 		if(key == "Filter"){
-			if(isSimpleFilter != null)SPARQLstring = SPARQLstring  + " FILTER(" + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
-			else {SPARQLstring = SPARQLstring  +  generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);}
+			SPARQLstring = SPARQLstring  + " FILTER(" + generateExpression(expressionTable[key], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 			visited = 1;
 		}
 		

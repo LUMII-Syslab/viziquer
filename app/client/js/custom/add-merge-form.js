@@ -1,3 +1,5 @@
+import { Interpreter } from '/client/lib/interpreter'
+
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");

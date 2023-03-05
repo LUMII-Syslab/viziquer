@@ -1,3 +1,5 @@
+import { Configurator } from '/client/js/platform/configurator/config_utils'
+
 
 Template.editCollectionKeyStrokes.helpers({
 

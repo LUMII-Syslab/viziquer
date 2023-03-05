@@ -1,3 +1,5 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Tools, Projects, DiagramTypes, Diagrams, Elements } from '/libs/platform/collections'
 
 Template.diagram_settings.helpers({
 

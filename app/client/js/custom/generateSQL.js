@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+
+
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
 

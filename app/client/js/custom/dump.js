@@ -1,3 +1,4 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
 
 Template.dump.helpers({
 

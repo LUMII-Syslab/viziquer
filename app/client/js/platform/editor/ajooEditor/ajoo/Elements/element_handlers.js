@@ -1,5 +1,7 @@
+// import { _ } from 'vue-underscore';
+import Event from '../Editor/events';
 
-ElementHandlers = function(element) {
+var ElementHandlers = function(element) {
 
 	var handlers = this;
 	handlers.element = element;
@@ -13,7 +15,6 @@ ElementHandlers = function(element) {
 }
 
 function ElementMouseDown(element) {
-
 	var elementMouseDown = this;
 	elementMouseDown.element = element;
 
@@ -21,13 +22,16 @@ function ElementMouseDown(element) {
 	var shape_group = element.presentation;
 
 	var drag_layer = editor.getLayer("DragLayer");
-	var drag_group = find_child(drag_layer, "DragGroup");
+	var drag_group = editor.findChild(drag_layer, "DragGroup");
 
 	var zoom = editor.zoom;
 
-	editor.selectionPosition = {x: drag_group.x() / zoom.x, y: drag_group.y() / zoom.y};
+	editor.selectionPosition = {x: drag_group.x() / zoom.x, y: drag_group.y() / zoom.y,};
 
 	elementMouseDown.leftClick = function(e) {
+		if (!editor.mode.isEditMode) {
+			e.cancelBubble = true;
+		}
 
 		editor.mouseState.mouseDown(e);
 
@@ -39,8 +43,9 @@ function ElementMouseDown(element) {
 		if (palette.isPressed()) {
 
 			//lines don't start in lines
-			if (palette.isLinePressed() && element.type == "Line")
+			if (palette.isLinePressed() && element.type == "Line") {
 				return;
+			}
 			
 			editor.actions.reset();
 	    	editor.actions.startAction("NewElement", element);
@@ -59,8 +64,9 @@ function ElementMouseDown(element) {
 
 				else {
 
-					if (!selected[id])
+					if (!selected[id]) {
 						editor.selectElements([element]);
+					}
 
 					elementMouseDown.intitLineReRouting(element);
 				}
@@ -82,10 +88,10 @@ function ElementMouseDown(element) {
 
 				//selecting the element
 				else {
-
 					elementMouseDown.selectElement();
 					elementMouseDown.intitLineReRouting(element);
 					var params = {ev: e, element: element};
+
 					new Event(editor, "clickedOnElement", params);
 			    }
 		    }
@@ -132,28 +138,35 @@ function ElementMouseDown(element) {
 	//on mouse down shape group is added or removed from the selection
 	shape_group.on('mousedown touchstart', function(ev) {
 
-		editor.selectionPosition = {x: drag_group.x(), y: drag_group.y()};
+		if (editor.isAction() && editor.actions.state.name == "NewElement") {
+			return;
+		}
 
 		var mouse_state_obj = editor.getMouseStateObject();
+		editor.selectionPosition = {x: drag_group.x(), y: drag_group.y()};
 
 		//if mouse left button clicked
-		if (mouse_state_obj.isLeftClick(ev))
+		if (mouse_state_obj.isLeftClick(ev)) {
 			elementMouseDown.leftClick(ev);
+		}
 
-		else 
+		else {
 			elementMouseDown.rightClick(ev);
+		}
+
 	});
 }
 
 function ElementMouseMove(element) {
-
 	var shape_group = element.presentation;
 	var editor = element.editor;
 
 	shape_group.on('mousemove touchmove', function(e) {
-
-		if (get_cursor_style() == "default")
-			set_cursor_style("move");
+		e.cancelBubble = true;
+		
+		if (editor.getCursorStyle() == "default") {
+			editor.setCursorStyle("move");
+		}
 
 		element.editor.mouseState.mouseMove(e);
 		editor.actions.state.cancelMove = true;
@@ -167,7 +180,7 @@ function ElementMouseUp(element) {
 	var editor = element.editor;
 
 	var drag_layer = editor.getLayer("DragLayer");
-	var drag_group = find_child(drag_layer, "DragGroup");
+	var drag_group = editor.findChild(drag_layer, "DragGroup");
 
 	var shape_group = element.presentation;
 
@@ -211,8 +224,9 @@ function ElementMouseEnter(element) {
 	var editor = element.editor;
 
 	shape_group.on('mouseenter', function(e) {
+		e.cancelBubble = true;
 
-		set_cursor_style("move");
+		editor.setCursorStyle("move");
 
 		if (editor.palette.isLinePressed()) {
 
@@ -244,9 +258,11 @@ function ElementMouseLeave(element) {
 		editor.actions.state.cancelMove = false;
 		editor.actions.state.target = undefined;
 
-		if (get_cursor_style() == "move")
-			set_cursor_style("default");
+		if (editor.getCursorStyle() == "move") {
+			editor.setCursorStyle("default");
+		}
 	});
 }
 
 
+export default ElementHandlers

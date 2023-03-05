@@ -1,3 +1,5 @@
+import { Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
+
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.existingAttributeList = new ReactiveVar([{name: "No_attribute"}]);
@@ -568,7 +570,7 @@ Template.AddNewAttribute.helpers({
 Template.AddNewAttribute.events({
 
 	"click #ok-add-new-attribute": function(e, t) {
-		
+
 		var alias = document.getElementById("add-new-attribute-alias").value;
 		var expression = document.getElementById("add-new-attribute-expression").value;
 		var requireValues = document.getElementById("add-new-attribute-requireValues").checked ;
@@ -666,14 +668,13 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["IsInternal"]["input"] = helper.toString() ;
 				// if(requireValues==true)compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["value"] = "{+} ";
 				compart.subCompartments["Attributes"]["Attributes"]["Require Values"]["input"] = requireValues.toString() ;
-				
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Add Label"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Add Label"]["input"] = addLabel.toString() ;
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"]["input"] = addAltLabel.toString() ;
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Add Description"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Add Description"]["input"] = addDescription.toString() ;
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"]["input"] = selectionCondition;
+				compart.subCompartments["Attributes"]["Attributes"]["Add Label"]["input"] = addLabel.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"]["input"] = addAltLabel.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["Add Description"]["input"] = addDescription.toString() ;
+				compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"]["input"] = selectionCondition;
 				// compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Graph"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
-				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
+				compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
+				compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
 					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {

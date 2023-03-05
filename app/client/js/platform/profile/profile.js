@@ -1,3 +1,7 @@
+import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Users } from '/libs/platform/collections'
+
 
 //builds user object to render it
 Template.profileInfo.helpers({

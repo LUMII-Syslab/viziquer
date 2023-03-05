@@ -1,3 +1,4 @@
+import Box from './../Boxes/DrawingShapes/_render_boxes';
 
 Swimlane = function(editor) {
 

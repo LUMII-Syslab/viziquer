@@ -1,5 +1,6 @@
+import Event from '../../../Editor/events';
 
-LineRerouting = function(link) {
+var LineRerouting = function(link) {
 	var rerouting = this;
 
 	rerouting.link = link;
@@ -28,15 +29,18 @@ LineRerouting.prototype = {
 		var points = link.getPoints();
 		link.line.listening(false);
 
-		state = {
+		var start_elem_svg = start_elem.buildSVG();
+		var end_elem_svg = end_elem.buildSVG();
+
+		var state = {
 				points: points.slice(),
 				index: rerouting.getLineIndex(points),
 
 				startElementObj: start_elem,
 				endElementObj: end_elem,
 
-				startElementSVG: start_elem.buildSVG(),
-				endElementSVG: end_elem.buildSVG(),
+				startElementSVG: start_elem_svg,
+				endElementSVG: end_elem_svg,
 
 				//direction: line_direction,
 				dragLayer: editor.getLayer("DragLayer"),
@@ -160,3 +164,5 @@ LineRerouting.prototype = {
 	},
 }
 
+
+export default LineRerouting

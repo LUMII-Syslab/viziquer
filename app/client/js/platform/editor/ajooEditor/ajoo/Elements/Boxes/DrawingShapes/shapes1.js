@@ -1,6 +1,12 @@
+// import { _ } from 'vue-underscore';
+import Box from './_render_boxes'
+import Resizers from '../add_remove_resizers'
+
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
+
 
 //Rectangle
-ARectangle = function(editor) {
+var ARectangle = function(editor) {
 	Box.call(this, editor);
 }
 
@@ -48,7 +54,7 @@ ARectangle.prototype.toSVG = function(x, y, width, height) {
 
 
 //RoundRectangle
-ARoundRectangle = function(editor) {
+var ARoundRectangle = function(editor) {
 	ARectangle.call(this, editor);
 }
 
@@ -108,7 +114,7 @@ ARoundRectangle.prototype.toSVG = function(x, y, width, height) {
 
 
 //HorizontalLine
-HorizontalLine = function(editor) {
+var HorizontalLine = function(editor) {
 	ARectangle.call(this, editor);
 }
 
@@ -138,7 +144,7 @@ HorizontalLine.prototype.toSVG = function(x, y, width, height) {
 }
 
 //VerticalLine
-VerticalLine = function(editor) {
+var VerticalLine = function(editor) {
 	ARectangle.call(this, editor);
 }
 
@@ -169,7 +175,7 @@ VerticalLine.prototype.toSVG = function(x, y, width, height) {
 
 
 //Regular polygon
-RPolygon = function(editor, sides) {
+var RPolygon = function(editor, sides) {
 	Box.call(this, editor);
 	this.sides = sides;
 	this.isRegularPolygon = true;
@@ -204,7 +210,7 @@ RPolygon.prototype.buildSVGSize = function(x, y) {
 
 
 //Triangle
-ATriangle = function(editor) {
+var ATriangle = function(editor) {
 	Box.call(this, editor);
 	this.sides = 3;
 }
@@ -244,7 +250,7 @@ ATriangle.prototype.compartmentArea = function() {
 
 
 //Square
-ASquare = function(editor) {
+var ASquare = function(editor) {
 	Box.call(this, editor);
 	this.sides = 4;
 }
@@ -273,7 +279,7 @@ ASquare.prototype.compartmentArea = function() {
 
 
 //Pentagon
-ADiamond = function(editor) {
+var ADiamond = function(editor) {
 	Box.call(this, editor);
 	this.sides = 4;
 }
@@ -353,7 +359,7 @@ ADiamond.prototype.compartmentArea = function() {
 
 
 //Pentagon
-APentagon = function(editor) {
+var APentagon = function(editor) {
 	Box.call(this, editor);
 	this.sides = 5;
 }
@@ -417,7 +423,7 @@ APentagon.prototype.side = function(radisu) {
 
 
 //Xexagon
-AXexagon = function(editor) {
+var AXexagon = function(editor) {
 	Box.call(this, editor);
 	this.sides = 6;
 }
@@ -464,7 +470,7 @@ AXexagon.prototype.compartmentArea = function() {
 
 
 //Pentagon
-AOctagon = function(editor) {
+var AOctagon = function(editor) {
 	Box.call(this, editor);
 	this.sides = 8;
 }
@@ -526,7 +532,7 @@ AOctagon.prototype.side = function(radius) {
 
 
 //Circle
-ACircle = function(editor) {
+var ACircle = function(editor) {
 	RPolygon.call(this, editor);
 }
 
@@ -600,7 +606,7 @@ ACircle.prototype.compartmentArea = function() {
 
 
 //Ellipse
-AEllipse = function(editor) {
+var AEllipse = function(editor) {
 	Box.call(this, editor);
 }
 
@@ -673,7 +679,7 @@ AEllipse.prototype.compartmentArea = function() {
 
 
 //Arrow
-Arrow = function(editor) {
+var Arrow = function(editor) {
 	Box.call(this, editor);
 }
 
@@ -701,3 +707,18 @@ Arrow.prototype.updateShapeSize = function(res) {
 
 //TODO: toSVG
 
+export {ARectangle,
+		ARoundRectangle,
+		HorizontalLine,
+		VerticalLine,
+		RPolygon,
+		ATriangle,
+		ASquare,
+		ADiamond,
+		APentagon,
+		AXexagon,
+		AOctagon,
+		ACircle,
+		AEllipse,
+		Arrow,
+	}

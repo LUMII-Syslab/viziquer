@@ -1,3 +1,5 @@
+import { Interpreter } from '/client/lib/interpreter'
+
 var count = 0;
 
 Interpreter.customMethods({
@@ -107,26 +109,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
 		}
 	}
-	
-	if(obj_class.instanceAlias != null){
-		var instanceAliasIsURI = isURI(obj_class.instanceAlias);
-		
-		// if is selected only individual
-		if((instanceAliasIsURI == 3 || instanceAliasIsURI == 4 ) && obj_class.children.length == 0 && typeof obj_class.linkType === "undefined" 
-		&& (obj_class.identification.local_name == null || obj_class.identification.local_name == "") 
-		&& obj_class.fields.length == 1 && obj_class.fields[0].exp == "(select this)"){
-			obj_class.distinct = true;
-			obj_class.fields[0].exp = "expr";
-			obj_class.fields[0].fulltext = "expr";
-			var field = {fulltext: "val<-??prop", exp: "??prop", alias: "val", isInternal:true, _id: "QuYlTCx0qbunIACOu"};
-			obj_class.fields.push(field);
-			var condition = {exp:"expr = " + obj_class.instanceAlias};
-			obj_class.conditions.push(condition);
-			obj_class.instanceAlias = "expr";
-			obj_class.instanceIsConstant = false;
-			obj_class.instanceIsVariable = true;
-		}
-	}	  
+		  
 	
     var my_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
     var diagram_scope_table = {CLASS_NAME:[], CLASS_ALIAS:[], AGGREGATE_ALIAS:[], UNRESOLVED_FIELD_ALIAS:[], UNRESOLVED_NAME:[]};
@@ -648,6 +631,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			  obj_class.instanceIsVariable = true;
 		  }
         } else{
+			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
 		  
           if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
@@ -696,7 +680,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					obj_class.instanceAlias = "expr";
 					await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 					obj_class.conditions.push(condition);
-						
+					
 					if(f.alias == "") f.alias = "expr";
 					await parseExpObject(f, obj_class.identification, "CLASS_NAME");
 				} else {
@@ -760,7 +744,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				f.isSimple = true;
                 break;
              case "PROPERTY_ALIAS":
-                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "") updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
+                if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
 				else {
 					updateSymbolTable(obj_class.identification._id+f.exp, obj_class.identification._id, "REFERENCE_TO_ALIAS");
 					renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);

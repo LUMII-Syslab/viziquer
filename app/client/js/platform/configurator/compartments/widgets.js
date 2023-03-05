@@ -1,4 +1,5 @@
-
+import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '/libs/platform/collections'
 
 Template.compartmentDialog.helpers({
 	inputType: function() {

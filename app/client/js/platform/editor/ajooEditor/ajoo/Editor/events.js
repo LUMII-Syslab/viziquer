@@ -1,5 +1,5 @@
 
-Event = function(editor, name, data) {
+var Event = function(editor, name, data) {
 
 	var ev = this;
 	ev.editor = editor;
@@ -9,8 +9,7 @@ Event = function(editor, name, data) {
 
 Event.prototype = {
 
-	fire: function(name, data) {
-
+	fire: function(name, data) {		
 		var ev = this;
 		var editor = ev.editor;
 		var events = editor.events;
@@ -28,3 +27,5 @@ Event.prototype = {
 
 	},
 }
+
+export default Event

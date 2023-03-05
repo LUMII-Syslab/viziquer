@@ -1,3 +1,5 @@
+// import { _ } from 'vue-underscore';
+
 /*****
 *
 *   IntersectionUtilities.js
@@ -46,10 +48,11 @@ function init(e) {
     get_intersections(shapes[0], shapes[1]);
 }
 
-compute_intersection = function(shape_svg_obj1, shape_svg_obj2) {
+var compute_intersection = function(shape_svg_obj1, shape_svg_obj2) {
 
-    if (!shape_svg_obj1 || !shape_svg_obj2)
+    if (!shape_svg_obj1 || !shape_svg_obj2) {
         return {points: []};
+    }
 
     var intersections = {points: []};
     _.each(shape_svg_obj1, function(shape1) {
@@ -150,11 +153,13 @@ function showIntersections(shapes) {
 *
 *****/
 
-// Array.prototype.foreach=function(func){var length=this.length;for(var i=0;i<length;i++){func(this[i]);}};
-// Array.prototype.grep=function(func){var length=this.length;var result=[];for(var i=0;i<length;i++){var elem=this[i];if(func(elem)){result.push(elem);}}return result;};
+var roots = [];
+
+Array.prototype.foreach=function(func){var length=this.length;for(var i=0;i<length;i++){func(this[i]);}};
+Array.prototype.grep=function(func){var length=this.length;var result=[];for(var i=0;i<length;i++){var elem=this[i];if(func(elem)){result.push(elem);}}return result;};
 // Array.prototype.map=function(func){var length=this.length;var result=[];for(var i=0;i<length;i++){result.push(func(this[i]));}return result;};
-// Array.prototype.min=function(){var length=this.length;var min=this[0];for(var i=0;i<length;i++){var elem=this[i];if(elem<min)min=elem;}return min;}
-// Array.prototype.max=function(){var length=this.length;var max=this[0];for(var i=0;i<length;i++)var elem=this[i];if(elem>max)max=elem;return max;}
+Array.prototype.min=function(){var length=this.length;var min=this[0];for(var i=0;i<length;i++){var elem=this[i];if(elem<min)min=elem;}return min;}
+Array.prototype.max=function(){var length=this.length;var max=this[0];for(var i=0;i<length;i++)var elem=this[i];if(elem>max)max=elem;return max;}
 AntiZoomAndPan.VERSION="1.2"
 function AntiZoomAndPan(){this.init();}
 AntiZoomAndPan.prototype.init=function(){var svgRoot=svgDocument.documentElement;this.svgNodes=new Array();this.x_trans=0;this.y_trans=0;this.scale=1;this.lastTM=svgRoot.createSVGMatrix();svgRoot.addEventListener('SVGZoom',this,false);svgRoot.addEventListener('SVGScroll',this,false);svgRoot.addEventListener('SVGResize',this,false);};
@@ -549,3 +554,4 @@ Rectangle.prototype.selectHandles=function(select){this.p1.select(select);this.p
 Rectangle.prototype.showHandles=function(state){this.p1.show(state);this.p2.show(state);};
 Rectangle.prototype.getIntersectionParams=function(){return new IntersectionParams("Rectangle",[this.p1.point,this.p2.point]);};
 
+export default compute_intersection

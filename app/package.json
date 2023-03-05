@@ -1,22 +1,25 @@
 {
-  "meteor": {
-    "mainModule": {
-      "client": false,
-      "server": "server/platform/main.startup.js"
-    }
-  },
-  "name": "viziquer.app",
+  "name": "vq",
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "debug": "meteor run --inspect=5959",
-    "debug-brk": "meteor run --inspect-brk=5959"
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/runtime": "^7.21.0",
+    "@babel/runtime": "^7.17.9",
+    "ClientStorage": "^4.0.1",
     "dotenv": "^16.0.3",
+    "jquery": "^3.6.0",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.5",
     "sparqljs": "^2.2.3"
+  },
+  "meteor": {
+    "mainModule": {
+      "server": "server/platform/main.js"
+    },
+    "testModule": "tests/main.js"
   }
 }

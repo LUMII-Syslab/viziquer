@@ -1,7 +1,14 @@
+// import { _ } from 'vue-underscore';
+import SegmInfo from './line_routing_segInfo'
+import PointInfo from './line_routing_pointInfo'
+
+import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef} from './line_routing_other'
+import {SVGObject, LineSVGObject} from './svg_collisions'
+
 ////******************************************************************************
 // PathInfo 
 //******************************************************************************
-PathInfo = function(info) {
+var PathInfo = function(info) {
     this.fromRect;
     this.fromCenter;
     this.toRect;
@@ -49,8 +56,9 @@ PathInfo.prototype.reverse = function() {
 };
 PathInfo.prototype.segm = function(ind) {
     var segm;
-    if (ind < 1 || ind >= this.n)
-        warning(" PathInfo.prototype.segm index wrong " + ind);
+    if (ind < 1 || ind >= this.n) {
+        // warning(" PathInfo.prototype.segm index wrong " + ind);
+    }
     else if (this.lev[ind - 1] <= this.lev[ind + 1])
         segm = new SegmInfo([(this.dir + ind) & 1, this.lev[ind - 1], this.lev[ind], this.lev[ind + 1], ind, this, "s"]);
     else
@@ -59,8 +67,9 @@ PathInfo.prototype.segm = function(ind) {
 };
 PathInfo.prototype.point = function(ind) {
     var rc;
-    if (ind < 0 || ind >= this.n)
-        warning(" PathInfo.prototype.point index wrong " + ind.toString() + this);
+    if (ind < 0 || ind >= this.n) {
+        // warning(" PathInfo.prototype.point index wrong " + ind.toString() + this);
+    }
     else {
         var dir = (ind + this.dir) & 1;
         rc = new PointInfo([this.lev[ind + dir], this.lev[ind + 1 - dir], ind]);
@@ -159,7 +168,7 @@ PathInfo.prototype.dummyPath = function(f, t) {
     this.lev = v;
     this.n = this.lev.length - 1;
     this.testPath("dummyPath", 0, -1, true);
-    printText(str);
+    // printText(str);
     return v;
 };
 PathInfo.prototype.dummyDeltaPath = function(delta2) {
@@ -235,7 +244,7 @@ PathInfo.prototype.dummyDeltaPath = function(delta2) {
                 v = [f[2], t[3] + delta2, t[2] + delta2, t[3] - delta2, t[3]];
             else
                 v = [f[2], f[3] + delta2, f[2] + delta2, f[3] - delta2, t[3]];
-        printText("dummyDeltaPath delta2 " + delta2 + "; max " + max.toString() + "; d " + d + "; s " + max[1] + "; v " + v.toString() + "; q " + q.toString());
+        // printText("dummyDeltaPath delta2 " + delta2 + "; max " + max.toString() + "; d " + d + "; s " + max[1] + "; v " + v.toString() + "; q " + q.toString());
         printText("\t f " + f.toString());
         printText("\t t " + t.toString());
         this.dir = 1 - (max[1] & 1);
@@ -246,15 +255,15 @@ PathInfo.prototype.dummyDeltaPath = function(delta2) {
     }
     if (delta2 < 4)
         var iii = 0;
-    printText("dummyDeltaPath delta2 " + delta2);
+    // printText("dummyDeltaPath delta2 " + delta2);
     return v;
 };
 PathInfo.prototype.setDummySinglePath = function() {
-    turnOnPrinting("xxx");
+    // turnOnPrinting("xxx");
     
     var f = this.fromRect;
     var t = this.toRect;
-//    var v;
+    var v;
 //    if (rectInsideRect(f, t))
 //        v = this.dummyPath(f, t);
 //    else if (rectInsideRect(t, f))
@@ -272,12 +281,13 @@ PathInfo.prototype.setDummySinglePath = function() {
 //    }
     this.lev = v;
     this.n = this.lev.length - 1;
-    if (this.n < 2 || !this.hasFromProj(this.from) || !this.hasFromProj(this.to))
-        warning("PathInfo.prototype.setDummySinglePath wrong path " + this.toString());
+    if (this.n < 2 || !this.hasFromProj(this.from) || !this.hasFromProj(this.to)) {
+        // warning("PathInfo.prototype.setDummySinglePath wrong path " + this.toString());
+    }
     this.testPath("setDummySinglePath", 0, -1, true);
 //    if (this.owner.needTest && !(this.hasFromProj() && this.hasToProj()))
 //        warning("PathInfo.prototype.setDummySinglePath has not projection " + str + "; " + this.toString());
-    turnOffPrinting("xxx");
+    // turnOffPrinting("xxx");
 
 //    printText(", dir:" + this.dir + ", v:" + v.toString());
 //    this.smoothConnection(this.from);
@@ -306,7 +316,7 @@ PathInfo.prototype.setDummySelfloop = function() {
     this.dir = 0;
     this.n = this.lev.length - 1;
     
-    printText("setDummySelfloop q = " + q.toString() + "; corner " + corner + "; delta " + delta + "; " + this.toString());
+    // printText("setDummySelfloop q = " + q.toString() + "; corner " + corner + "; delta " + delta + "; " + this.toString());
 };
 PathInfo.prototype.setDummyPath = function() {
     if (this.isSelfloop())
@@ -325,7 +335,7 @@ PathInfo.prototype.clipOnBoxes = function() {
     }
 
     var dir = (this.dir + this.n) & 1;
-    center = this.toCenter;
+    var center = this.toCenter;
 
     if (this.toCenter[dir] < this.lev[this.n - 2]) {
         this.lev[this.n] = this.toRect[2 + dir];
@@ -349,17 +359,17 @@ PathInfo.prototype.clipOnBoxes = function() {
         this.lev[0] = new_start_point_obj.point[this.dir];
         this.lev[1] = new_start_point_obj.point[1 - this.dir];
     }
-    else {
-        warning("clipOnBoxes: " + new_start_point_obj.point);
-    }
+    // else {
+    //     warning("clipOnBoxes: " + new_start_point_obj.point);
+    // }
 
 //clipping end point
     point0 = this.point(this.n - 2);
     point1 = this.point(this.n - 1);
     
-    if (point0 === undefined || point1 === undefined) {
-        warning("clipOnBoxes: endpoints are undefined " + this.toString());
-    }
+    // if (point0 === undefined || point1 === undefined) {
+    //     warning("clipOnBoxes: endpoints are undefined " + this.toString());
+    // }
 
     var dir = (this.dir + this.n) & 1;
     this.lev[this.n] = this.toCenter[this.dir];
@@ -372,9 +382,9 @@ PathInfo.prototype.clipOnBoxes = function() {
        this.lev[this.n] = new_end_point_obj.point[dir];
        this.lev[this.n - 1] = new_end_point_obj.point[1 - dir];
     }
-    else {
-       warning("clipOnBoxes: " + new_end_point_obj.point);
-    }
+    // else {
+    //    warning("clipOnBoxes: " + new_end_point_obj.point);
+    // }
 };
 
 PathInfo.prototype.buildEndSegmentForClipping = function(point0, point1) {
@@ -440,21 +450,23 @@ PathInfo.prototype.getFirstPointOutsideToBox = function(ind) {
 };
 PathInfo.prototype.hasFromProj = function() {
     var segm = this.segm(1);
-    if (segm === undefined)
-        warning("PathInfo.prototype.hasFromProj segm undefined" );
+    // if (segm === undefined) {
+    //     warning("PathInfo.prototype.hasFromProj segm undefined" );
+    // }
     var rc = segm.projRect(this.fromRect);
 //    printText("\t\thasFromProjection: " + rc + "; segm: " + segm.toString() + "; toRect" + this.fromRect.toString());
     return rc;
 };
 PathInfo.prototype.hasToProj = function() {
     var segm = this.segm(this.n - 1);
-    if (segm === undefined)
-        warning("PathInfo.prototype.hasFromProj segm undefined" );
+    // if (segm === undefined) {
+    //     warning("PathInfo.prototype.hasFromProj segm undefined" );
+    // }
     var rc = segm.projRect(this.toRect);
     return rc;
 };
 PathInfo.prototype.hasProj = function(boxId) {
-    rc = true;
+    var rc = true;
     if (this.from === boxId)
         rc &= this.hasFromProj();
     if (this.to === boxId)
@@ -464,7 +476,7 @@ PathInfo.prototype.hasProj = function(boxId) {
 PathInfo.prototype.addFromBend = function() {
     this.testPath("addFromBend start", 0, -1, false);
     if (this.hasFromProj()) {
-        warning("PathInfo.prototype.addFromBend this path has from projection " + this.toString());
+        // warning("PathInfo.prototype.addFromBend this path has from projection " + this.toString());
         return;
     }
     var center = this.fromCenter;
@@ -508,17 +520,17 @@ PathInfo.prototype.addFromBend = function() {
 
     this.n = this.lev.length - 1;
     this.testPath("addFromBend", 0, -1, false);
-    printText("; addFromBend final path: " + this.toString());
+    // printText("; addFromBend final path: " + this.toString());
 };
 PathInfo.prototype.addToBend = function() {
     this.testPath("addToBend start", 0, -1, false);
     if (this.hasToProj()) {
-        warning("PathInfo.prototype.addToBend this path has from projection " + this.toString());
+        // warning("PathInfo.prototype.addToBend this path has from projection " + this.toString());
         return;
     }
     var center = this.toCenter;
 
-    addText("\n\t\t\taddToBend seq:");
+    // addText("\n\t\t\taddToBend seq:");
 
     var d = (this.n + this.dir) & 1;
     if (this.segm(this.n - 1).projRect(this.fromRect)) {
@@ -528,44 +540,44 @@ PathInfo.prototype.addToBend = function() {
             // move point outside fromRect
             if (this.lev[this.n - 2] > center[d])
                 if (this.fromRect[2 + d] + this.owner.delta < this.toRect[2 + d]) {
-                    addText(" ==> 1");
+                    // addText(" ==> 1");
                     this.lev[this.n] = (this.toRect[2 + d] + this.fromRect[2 + d]) / 2;
                     this.lev.push(center[1 - d]);
                 }
                 else {
-                    addText(" ==> 2");
+                    // addText(" ==> 2");
                     this.lev[this.n] = pv;
                     this.lev.push(center[d], center[1 - d]);
                 }
             else if (this.fromRect[d] - this.owner.delta < this.toRect[d]) {
-                addText(" ==> 3");
+                // addText(" ==> 3");
                 this.lev[this.n] = (this.toRect[d] + this.toRect[d]) / 2;
                 this.lev.push(center[1 - d]);
             }
             else {
-                addText(" ==> 4");
+                // addText(" ==> 4");
                 this.lev[this.n] = pv;
                 this.lev.push(center[d], center[1 - d]);
             }
         }
         else {
-            addText(" ==> 5");
+            // addText(" ==> 5");
             this.lev.push(center[1 - d]);
         }
     }
     else {
-        addText(" ==> 6");
+        // addText(" ==> 6");
         this.lev[this.n] = center[d];
         this.lev.push(center[1 - d]);
     }
-    printText(" ");
+    // printText(" ");
 
     this.n = this.lev.length - 1;
     this.testPath("addToBend", 0, -1, false);
-    printText("; addToBend final path: " + this.toString());
+    // printText("; addToBend final path: " + this.toString());
 };
 PathInfo.prototype.cutPoints = function(cutList) {
-    addText("\t\tcutPoints before cutList: " + cutList.toString());
+    // addText("\t\tcutPoints before cutList: " + cutList.toString());
     if (cutList.length === 2 && cutList[0] === 0 && cutList[1] === this.n)
         return;
     var k = cutList.length;
@@ -573,7 +585,7 @@ PathInfo.prototype.cutPoints = function(cutList) {
     for (var i = 0; cor && i < k; i += 2)
         cor = cutList[i] < cutList[i + 1] && (i < 2 || cutList[i - 1] < cutList[i]);
     if (!cor) {
-        warning("cutPoints wrong cutList " + cutList.toString());
+        // warning("cutPoints wrong cutList " + cutList.toString());
         return;
     }
 
@@ -585,7 +597,7 @@ PathInfo.prototype.cutPoints = function(cutList) {
         j += cutList[i + 1] - cutList[i];
     }
     this.ind = m;
-    newLev = [];
+    var newLev = [];
     if ((cutList[0] & 1) === 1)
         this.dir = 1 - this.dir;
     for (var i = 0; i < k; i += 2)
@@ -641,7 +653,7 @@ PathInfo.prototype.simplifyTo = function() {
 };
 PathInfo.prototype.smoothConnection = function(boxId) {
     if (this.n < 3) {
-        warning("PathInfo.prototype.smoothConnectionNew path do not have bends " + this.n);
+        // warning("PathInfo.prototype.smoothConnectionNew path do not have bends " + this.n);
         return;
     }
     var side = this.side(boxId);
@@ -670,11 +682,11 @@ PathInfo.prototype.smoothConnection = function(boxId) {
     else if (side === 3)
         test = [rect[2], vs[0], this.lev[v], vs[1]];
     else {
-        warning("PathInfo.prototype.smoothConnectionNew wrong side " + side);
+        // warning("PathInfo.prototype.smoothConnectionNew wrong side " + side);
         return;
     }
     var testSegm = new SegmInfo([1 - dir, test[dir], this.lev[v], test[2 + dir], -1, this, "s"]);
-    printText("\t\t\tsmoothConnection dir:" + dir + "; vs:" + vs.toString() + "; fs:" + testSegm.toString());
+    // printText("\t\t\tsmoothConnection dir:" + dir + "; vs:" + vs.toString() + "; fs:" + testSegm.toString());
     var segmList = [];
     var levMap = {};
     var levList = [test[dir], test[2 + dir]];
@@ -685,7 +697,7 @@ PathInfo.prototype.smoothConnection = function(boxId) {
             ((this.from === boxId && this.lev[1] < this.lev[3]) ||
                     (this.to === boxId && this.lev[this.n - 1] < this.lev[this.n - 3]))) ? -1 : 1;
     for (var j = 0; j < box.paths.length; j++) {
-        path = box.paths[j];
+        var path = box.paths[j];
         if (path !== this && side === path.side(box.id)) {
             for (var i = 1; i < path.n; i++) {
                 var segm = path.segm(i);
@@ -722,8 +734,9 @@ PathInfo.prototype.smoothConnection = function(boxId) {
         levList.push(levList[0]);
 
     for (var i = 0; i < levList.length; i++)
-        if (isNaN(levList[i]))
-            warning("PathInfo.prototype.smoothConnection level ie NaN " + levList.toString());
+        if (isNaN(levList[i])) {
+            // warning("PathInfo.prototype.smoothConnection level ie NaN " + levList.toString());
+        }
 
     levList.sort((function(a, b) {
         return (a < b) ? -1 : (a > b) ? 1 : 0;
@@ -732,10 +745,10 @@ PathInfo.prototype.smoothConnection = function(boxId) {
         levList.reverse();
     
     // find best interval
-    addText("\n\t\t\t levList::");
-    for (var i = 0; i < levList.length; i++)
-        addText(" (" + levList[i] + "; " + levMap[levList[i]] + ")");
-    printText(".");
+    // addText("\n\t\t\t levList::");
+    // for (var i = 0; i < levList.length; i++)
+        // addText(" (" + levList[i] + "; " + levMap[levList[i]] + ")");?
+    // printText(".");
     
     var m = -1;
     var v = Number.MAX_VALUE;
@@ -761,8 +774,8 @@ PathInfo.prototype.smoothConnection = function(boxId) {
         var v = (levList[m + 1] + levList[m]) / 2;
         this.lev[this.n - 1] = v;
     }
-    if (this.testPath("smoothConnection", 0, -1, false))
-        printText("\t\tsmoothConnection " + this.toSide());
+    // if (this.testPath("smoothConnection", 0, -1, false))
+        // printText("\t\tsmoothConnection " + this.toSide());
 };
 PathInfo.prototype.toString = function() {
     var str = "path{";
@@ -786,12 +799,12 @@ PathInfo.prototype.isSelfloop = function() {
 PathInfo.prototype.simplifySelfloop = function() {
     if (!this.hasToProj()) {
         this.addToBend();
-        printText("\t\t\t addToBend ");
+        // printText("\t\t\t addToBend ");
         this.smoothConnection(this.to);
     }
     if (!this.hasFromProj()) {
         this.addFromBend();
-        printText("\t\t\t addFromBend ");
+        // printText("\t\t\t addFromBend ");
         this.smoothConnection(this.from);
     }
     var f = this.getFirstPointOutsideFromBox(1);
@@ -803,7 +816,7 @@ PathInfo.prototype.simplifySelfloop = function() {
 PathInfo.prototype.simplifyPath = function() {
     if (this.point(0).inside(this.toRect) || this.point(this.n - 1).inside(this.fromRect)) {
         this.setDummyPath();
-        printText("\t\t\t setDummyPath 1 ");
+        // printText("\t\t\t setDummyPath 1 ");
 //        return;
     }
 
@@ -811,25 +824,25 @@ PathInfo.prototype.simplifyPath = function() {
     var st = this.getSegmIntersectWithToBox(1);
     var rOR = rectOverlapRect(this.fromRect, this.toRect);
     var dir = (this.dir + sf + 1) & 1;
-    printText("\t\t\t sf " + sf + "; st " + st + "; rOR " + rOR);
+    // printText("\t\t\t sf " + sf + "; st " + st + "; rOR " + rOR);
 
     if (sf >= 0 && st >= 0) {
         if (sf > st || (sf === st &&
                 (rOR || this.toCenter[dir] < this.fromCenter[dir] !==
                         this.lev[sf + 1] < this.lev[sf - 1]))) {
             this.setDummyPath();
-            printText("\t\t\t setDummyPath 2 ");
+            // printText("\t\t\t setDummyPath 2 ");
 //            return;
         }
         else if (sf > 1 || st < this.n - 1) {
             this.cutPoints([sf - 1, st + 1]);
-            printText("\t\t\t cutPoints 1 ");
+            // printText("\t\t\t cutPoints 1 ");
         }
     }
     else {
         if (st === -1 && !this.hasToProj()) {
             this.addToBend();
-            printText("\t\t\t addToBend ");
+            // printText("\t\t\t addToBend ");
 //            printText("\t\tpath 1:[" + this.lev.toString() + "]; " + this.dir);
             this.smoothConnection(this.to);
             st = this.n - 1;
@@ -840,7 +853,7 @@ PathInfo.prototype.simplifyPath = function() {
             if (st > 0)
                 st++;
             this.addFromBend();
-            printText("\t\t\t addFromBend ");
+            // printText("\t\t\t addFromBend ");
             this.smoothConnection(this.from);
             st = this.getSegmIntersectWithToBox(1);
             sf = 1;
@@ -850,19 +863,19 @@ PathInfo.prototype.simplifyPath = function() {
         if (sf > 1 || st < this.n - 1) {
             var i = (st === -1) ? this.n : st + 1;
             this.cutPoints([sf - 1, i]);
-            printText("\t\t\t cutPoints 2 ");
+            // printText("\t\t\t cutPoints 2 ");
         }
     }
 };
 PathInfo.prototype.simplify = function() {
-    printText("\n>>>>>>>>>>>>>>>>>>>>>>>>> simplify >>>>>>>>>>>>>>>>>>>>>>>>>\n");
+    // printText("\n>>>>>>>>>>>>>>>>>>>>>>>>> simplify >>>>>>>>>>>>>>>>>>>>>>>>>\n");
     if (this.owner.needTest) {
-        testOperation = "simplify";
+        // testOperation = "simplify";
         if (this.testPath("input simplify", 0, false, false)) {
             return;
         }
     }
-    printText("\t\tsimplify start: " + this.toString());
+    // printText("\t\tsimplify start: " + this.toString());
 
     if (this.isSelfloop())
         this.simplifySelfloop();
@@ -871,8 +884,8 @@ PathInfo.prototype.simplify = function() {
         
     this.n = this.lev.length - 1;
     this.clipOnBoxes();
-    printText("\n\t\tsimplify final: " + this.toString());
-    printText("\n<<<<<<<<<<<<<<<<<<<<<<<<< simplify <<<<<<<<<<<<<<<<<<<<<<<<<\n");
+    // printText("\n\t\tsimplify final: " + this.toString());
+    // printText("\n<<<<<<<<<<<<<<<<<<<<<<<<< simplify <<<<<<<<<<<<<<<<<<<<<<<<<\n");
     if (this.owner.needTest) {
         if (this.testPath("output simplify", 0, false, true)) {
             return;
@@ -881,7 +894,7 @@ PathInfo.prototype.simplify = function() {
 };
 PathInfo.prototype.removeStep = function(k) {
     if (k < 1 || k > this.n - 1){
-        warning("PathInfo.prototype.removeStep can not remove this step.");
+        // warning("PathInfo.prototype.removeStep can not remove this step.");
         return;
     }
     for (var i = k; i <= this.n; i++)
@@ -906,7 +919,7 @@ PathInfo.prototype.removeGaps = function(ind) {
                     this.lev[k] = this.toRect[2 + d] + this.owner.limPathGap();
             str += "; newlev: " + this.lev.toString();
         }
-        printText("selfloop ==> " + str);
+        // printText("selfloop ==> " + str);
         return;
     }
     if (k > 1) {
@@ -925,7 +938,7 @@ PathInfo.prototype.removeGaps = function(ind) {
             this.removeStep(k + 2);
         str += "; newlev: " + this.lev.toString();
     }
-    printText(str);
+    // printText(str);
     this.testPath("PathInfo.prototype.removeGaps ", 0, -1, true);
 //    turnOffPrinting("111");
 };
@@ -934,38 +947,41 @@ PathInfo.prototype.onDragSegm = function(ind) {
     this.simplify();
 };
 PathInfo.prototype.testPath = function(name, n, testInd, final) {
-    if (!this.owner.needTest)
+    if (!this.owner.needTest) {
         return false;
+    }
 
     // test path
-    if (!emptyTest())
-        return true;
-    addTitle(name + n);
+    // if (!emptyTest()) {
+    //     return true;
+    // }
+
+    // addTitle(name + n);
     if (this.lev === undefined || this.lev === null) {
-        warning("PathInfo.prototype.testPath " + name + "; wrong lev: " + this.lev + "; ");
+        // warning("PathInfo.prototype.testPath " + name + "; wrong lev: " + this.lev + "; ");
         return true;
     }
     for (var i = 0; i < this.lev.length; i++)
         if (this.lev[i] === undefined || isNaN(this.lev[i])) {
-            warning("PathInfo.prototype.testPath " + name + "; wrong lev value in: " + i + "; lev: ");
+            // warning("PathInfo.prototype.testPath " + name + "; wrong lev value in: " + i + "; lev: ");
             return true;
         }
     if (final && !this.hasFromProj()) {
-        warning("PathInfo.prototype.testPath " + name + "; wrong from connection: ");
+        // warning("PathInfo.prototype.testPath " + name + "; wrong from connection: ");
         return true;
     }
     if (final && !this.hasToProj()) {
-        warning("PathInfo.prototype.testPath " + name + "; wrong to connection: ");
+        // warning("PathInfo.prototype.testPath " + name + "; wrong to connection: ");
         return true;
     }
     return false;
 };
 
 PathInfo.prototype.avoidPathCrossings = function() {
-    printText("\tavoidCrossings start " + this.toString());
+    // printText("\tavoidCrossings start " + this.toString());
     var sf = this.getSegmIntersectWithFromBox(this.n - 1);
     var st = this.getSegmIntersectWithToBox(1);
-    printText("\t\t sf = " + sf + "; st = " + st);
+    // printText("\t\t sf = " + sf + "; st = " + st);
     if (sf !== -1 && st !== -1)
         if (sf > st)
             this.setDummyPath();
@@ -992,11 +1008,11 @@ PathInfo.prototype.avoidPathCrossings = function() {
     this.testPath("PathInfo.prototype.avoidPathCrossings ", 0, -1, true);
 //    this.clipOnBoxes();
 
-    printText("\tavoidCrossings end" + this.toString());
+    // printText("\tavoidCrossings end" + this.toString());
 };
 PathInfo.prototype.avoidSelfLoopCrossings = function() {
     var i = this.getFirstPointOutsideFromBox(0);
-    printText("avoidSelfLoopCrossings i " + i);
+    // printText("avoidSelfLoopCrossings i " + i);
     if (i === -1)
         this.setDummySelfloop();
 };
@@ -1027,3 +1043,6 @@ PathInfo.prototype.cutPointInToBox = function() {
     else if (i === -1)
         this.setDummyPath();
 };
+
+
+export default PathInfo

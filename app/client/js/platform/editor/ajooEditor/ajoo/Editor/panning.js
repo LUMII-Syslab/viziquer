@@ -1,5 +1,5 @@
 
-Panning = function(editor) {
+var Panning = function(editor) {
 	var panning = this;
 	panning.editor = editor;
 
@@ -30,7 +30,7 @@ Panning.prototype = {
 
 }
 
-PanningDrag = function(editor) {
+var PanningDrag = function(editor) {
 	var panningDrag = this;
 	panningDrag.editor = editor;
 }
@@ -40,7 +40,13 @@ PanningDrag.prototype = {
 	startDragging: function() {
 		var panningDrag = this;
 		var editor = panningDrag.editor;
-		editor.stage.draggable(true);			
+
+		console.log("editor starg ", editor.stage.attrs.draggable)
+
+		editor.stage.draggable(true);
+
+		console.log("editor starg ", editor.stage.attrs.draggable)
+				
 	},
 
 	finishDragging: function() {
@@ -53,3 +59,4 @@ PanningDrag.prototype = {
 }	
 
 
+export {Panning, PanningDrag}

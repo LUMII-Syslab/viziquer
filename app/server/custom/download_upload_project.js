@@ -1,4 +1,6 @@
-
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { Schema } from '/libs/custom/collections'
+import { is_project_member } from '/libs/platform/user_rights'
 
 Meteor.methods({	
 

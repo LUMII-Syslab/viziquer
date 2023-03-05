@@ -1,7 +1,14 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Interpreter } from '/client/lib/interpreter'
+import { analytics } from '/client/lib/global_variables'
+import AjooEditor from '/client/js/platform/editor/ajooEditor/ajoo/AjooEditor'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+
 
 Interpreter.loadAjooEditor = function(diagram) {
 
 	if (!(diagram && diagram["style"])) {
+		console.error("Error: no diagram");
 		return;
 	}
 
@@ -160,7 +167,7 @@ function get_event_functions() {
 	        else {
 	        	menu = get_context_menu_list(diagram_type, "readModeCollectionContextMenu", "dynamicReadModeCollectionContextMenu");
 	        };
-          console.log(menu);
+
 	        var ev = data.ev;
 
 	    	Interpreter.processContextMenu(data.ev, diagram_type[menu.attrName]);
@@ -209,7 +216,8 @@ function get_event_functions() {
 
 	        Interpreter.execute("NewBox", [data._id, data.elementTypeId, location]);
 
-	        return true;
+	        // return true;
+	        return false;
 	    },
 
 	    newLineCreated: function(data) {

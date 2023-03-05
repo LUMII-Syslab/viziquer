@@ -1,5 +1,17 @@
+// import { _ } from 'vue-underscore';
+import Link from './Lines/render_lines';
+import Event from '../Editor/events';
+import {ARectangle, ARoundRectangle, HorizontalLine, VerticalLine, RPolygon, ATriangle, ASquare, ADiamond, APentagon, AXexagon, AOctagon, ACircle, AEllipse, Arrow,} from './Boxes/DrawingShapes/shapes1' 
+import {BPMNShape, BPMNTerminate, BPMNMultiple, BPMNDiamondPlus, BPMNCancel, BPMNDiamondX,} from './Boxes/DrawingShapes/shapes2'
 
-AElements = function(editor) {
+import {Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage, 
+        ComputedDataPinSingle, ComputedDataPinMultiple, 
+        PortIn, PortOut, PortInMultiple, PortOutMultiple, 
+        DeclaredProvidedMultiplePin, DeclaredRequiredMultiplePin,
+        ThreeTrianglesAndRectangle, ThreeFilledTrianglesAndRectangle, RectangleAndThreeTriangles, ThreeTriangles, RectangleAndThreeFilledTriangles
+} from './Boxes/DrawingShapes/shapes3'
+
+var AElements = function(editor, parent) {
 
     var elements = this;
     elements.editor = editor;
@@ -89,6 +101,16 @@ AElements = function(editor) {
                 return new TwitterBird(editor);
             },
 
+            ComputedDataPinSingle: function() {
+                return new ComputedDataPinSingle(editor);
+            },
+
+            
+            ComputedDataPinMultiple: function() {
+                return new ComputedDataPinMultiple(editor);
+            },
+            
+
             Package: function() {
                 return new APackage(editor);
             },
@@ -113,22 +135,61 @@ AElements = function(editor) {
                 return new Swimlane(editor);
             },
 
+            PortIn: function() {
+                return new PortIn(editor);
+            },
+
+            PortOut: function() {
+                return new PortOut(editor);
+            },
+            PortInMultiple: function() {
+                return new PortInMultiple(editor);
+            },
+
+            PortOutMultiple: function() {
+                return new PortOutMultiple(editor);
+            },
+            DeclaredProvidedMultiplePin: function() {
+                return new DeclaredProvidedMultiplePin(editor);
+            },
+            
+            DeclaredRequiredMultiplePin: function() {
+                return new DeclaredRequiredMultiplePin(editor);
+            },
+            //ThreeTrianglesAndRectangle, RectangleAndThreeTriangles, ThreeTriangles
+            ThreeTriangles: function() {
+                return new ThreeTriangles(editor);
+            },
+            RectangleAndThreeTriangles: function() {
+                return new RectangleAndThreeTriangles(editor);
+            },
+            ThreeTrianglesAndRectangle: function() {
+                return new ThreeTrianglesAndRectangle(editor);
+            },
+            
+            ThreeFilledTrianglesAndRectangle: function() {
+                return new ThreeFilledTrianglesAndRectangle(editor);
+            },
+            RectangleAndThreeFilledTriangles: function() {
+                return new RectangleAndThreeFilledTriangles(editor);
+            },
         };
 
     elements.createShape = function(name) {
 
         var func = elements.shapes[name];
-        if (func)
+        if (func) {
             return func();
-        else
+        }
+        else {
             console.error("Shape constructor not found ", name);
+        }
     }
 }
 
 AElements.prototype = {
 
     addElements: function(data, is_refresh_not_needed) {
-
         var elements = this;
         var editor = elements.editor;
 
@@ -140,7 +201,7 @@ AElements.prototype = {
         var max_y = 0;
 
         var shapes_layer = editor.getLayer("ShapesLayer");
-        var swimlane_layer = editor.getLayer("SwimlaneLayer");
+        // var swimlane_layer = editor.getLayer("SwimlaneLayer");
         _.each(data["boxes"], function(box_in) {
 
             var shape_name = box_in["style"]["elementStyle"]["shape"];
@@ -148,9 +209,6 @@ AElements.prototype = {
             var elem = elements.createShape(shape_name);
 
             var parent = shapes_layer;
-            if (shape_name == "Swimlane")
-                parent = swimlane_layer;
-
             elem.create(parent, box_in);
 
             element_list[elem._id] = elem;
@@ -163,6 +221,30 @@ AElements.prototype = {
             max_y = Math.max(max_y, (pos["y"] + size["height"] || 0));
         });
 
+
+        _.each(data["ports"], function(port_in) {
+
+            var parent_node = element_list[port_in.parentId];
+
+            var shape_name = port_in["style"]["elementStyle"]["shape"];
+            var elem = elements.createShape(shape_name);
+            elem.updateShapeSize({width: 20, height: 20,});
+            _.extend(elem, {type: "Port",
+                            settings: editor.portSettings,
+                            parent: parent_node,
+                        });
+
+            var node_properties = port_in["style"]["elementStyle"];
+            elem.create(parent_node.presentation, port_in);
+            elem.presentation.moveToTop();
+
+            parent_node.ports.push(elem);
+
+            var elem_id = elem._id;
+            element_list[elem_id] = elem;
+        });
+
+
         _.each(data["lines"], function(link_in) {
 
             var elem = new Link(editor);
@@ -172,15 +254,18 @@ AElements.prototype = {
             element_list[elem_id] = elem;
 
             var start_elem = element_list[elem.startElementId];
-            if (start_elem)
+            if (start_elem) {
                 start_elem.outLines[elem_id] = elem;
+            }
 
             var end_elem = element_list[elem.endElementId];
-            if (end_elem)
+            if (end_elem) {
                 end_elem.inLines[elem_id] = elem;
+            }
 
             editor.selection.manageLineLayer(elem);
         });
+
 
         //resizing the stage
         editor.size.resizeStage(max_x, max_y, is_refresh_not_needed);
@@ -198,13 +283,13 @@ AElements.prototype = {
     },
 
     removeElements: function(data, is_refresh_needed) {
-
         var elements = this;
         var editor = elements.editor;
 
         var element_list = editor.getElements();
-        if (!element_list)
+        if (!element_list) {
             return;
+        }
 
         _.each(data, function(elem_id) {
             var elem = element_list[elem_id];
@@ -212,27 +297,27 @@ AElements.prototype = {
             if (elem) {
 
                 if (elem["type"] == "Line") {
-
                     var start_elem_id = elem["startElementId"];
                     var start_elem = element_list[start_elem_id];
 
                     if (start_elem != undefined) {
-                        if (start_elem["outLines"] && start_elem["outLines"][elem_id]);
+                        if (start_elem["outLines"] && start_elem["outLines"][elem_id]) {
                             delete start_elem["outLines"][elem_id];
+                        }
                     }
 
                     var end_elem_id = elem["endElementId"];
                     var end_elem = element_list[end_elem_id];
-
                     if (end_elem != undefined) {
-                        if (end_elem["inLines"] && end_elem["inLines"][elem_id]);
+                        if (end_elem["inLines"] && end_elem["inLines"][elem_id]) {
                             delete end_elem["inLines"][elem_id];
+                        }
                     }
+
                 }
 
                 editor.unSelectElements([elem]);
-
-                elem.presentation.destroy();
+                elem.presentation.remove();
 
                 delete element_list[elem_id];
             }
@@ -248,3 +333,6 @@ AElements.prototype = {
         }
     }
 }
+
+
+export default AElements

@@ -1,7 +1,7 @@
 //******************************************************************************
 // PointInfo 
 //******************************************************************************
-PointInfo = function(info) {
+var PointInfo = function(info) {
     this.c = [info[0], info[1]];
     this.ind = info[2];
     this.ntype = "p";
@@ -17,3 +17,5 @@ PointInfo.prototype.proj = function(r, dir) {
 PointInfo.prototype.toString = function() {
     return "point{" + "[" + this.c[0] + ", " + this.c[1] + "]; ind:" + this.ind + "}";
 };
+
+export default PointInfo

@@ -1,3 +1,6 @@
+import { is_system_admin, is_project_version_admin } from '/libs/platform/user_rights'
+import { DiagramTypes, ElementTypes, CompartmentTypes } from '/libs/platform/collections'
+import { Services } from '/libs/custom/collections'
 
 Meteor.methods({
 
@@ -37,6 +40,7 @@ Meteor.methods({
 	},
 
 });
+
 
 var ImportTDAConfiguration = {
 
@@ -1440,8 +1444,4 @@ var ImportTDAConfiguration = {
 	},
 
 };
-
-
-
-
 

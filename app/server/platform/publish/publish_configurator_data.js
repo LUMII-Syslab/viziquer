@@ -1,3 +1,9 @@
+import { Meteor } from 'meteor/meteor'
+import { Tools, ToolVersions, UserTools, DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, ImportedTranslets, Diagrams, Elements, Compartments, PaletteButtons } from '/libs/platform/collections'
+import { get_configurator_tool_id } from '/libs/platform/helpers'
+import { is_system_admin } from '/libs/platform/user_rights'
+import { error_msg } from '/server/platform/_global_functions'
+
 
 Meteor.publish("Structure_Tools", function(list) {
 
@@ -19,9 +25,9 @@ Meteor.publish("Structure_Tools", function(list) {
 });
 
 Meteor.publish("Tools", function(list) {
-
-	if (!list || list["noQuery"])
+	if (!list || list["noQuery"]) {
 		return this.stop();
+	}
 
 	var user_id = this.userId;
 	if (is_system_admin(user_id)) {
@@ -125,6 +131,9 @@ Meteor.publish("ConfiguratorDiagram", function(list) {
 
 		var diagram_type_query2	= {toolId: get_configurator_tool_id(),
 									_id: list["diagramTypeId"]};		
+
+		console.log("diagrams conf", Diagrams.find({$or: [diagram_query, query2]}).fetch())
+
 
 		return [
 				Diagrams.find({$or: [diagram_query, query2]}),

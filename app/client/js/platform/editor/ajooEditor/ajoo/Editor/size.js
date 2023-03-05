@@ -1,5 +1,6 @@
+// import { _ } from 'vue-underscore';
 
-Size = function(editor) {
+var Size = function(editor) {
 	var size = this;
 	size.editor = editor;
 	var stage = editor.getStage();
@@ -140,5 +141,4 @@ Size.prototype = {
 
 }
 
-
-
+export default Size

@@ -1,6 +1,23 @@
+import Mode from './Editor/mode'
+import Palette from './Editor/palette'
+import SelectionStyle from './Editor/selectionStyle'
+import Layers from './Editor/layers'
+import Actions from './Editor/actions'
+import ConnectionPoints from './Editor/connectionPoints'
+import MouseState from './Editor/mouseState'
+import Zoom from './Editor/zooming'
+import Grid from './Editor/grid'
+import Size from './Editor/size'
+import {Panning} from './Editor/panning'
 
- AjooEditor = function(settings) {
 
+import AElements from './Elements/elements'
+
+import Selection from './Selection/select'
+import UnSelection from './Selection/unselect'
+
+
+var AjooEditor = function(settings) {
     var editor = this;
 
     editor._id = $.now();
@@ -12,13 +29,20 @@
     editor.height = settings["height"];
 
     editor.boxSettings = settings.boxSettings;
-    if (!editor.boxSettings)
+    if (!editor.boxSettings) {
         editor.boxSettings = {};
-
+    }
 
     editor.lineSettings = settings.lineSettings;
-    if (!editor.lineSettings)
+    if (!editor.lineSettings) {
         editor.lineSettings = {};
+    }
+
+
+    editor.portSettings = settings.portSettings;
+    if (!editor.portSettings) {
+        editor.portSettings = {width: 10, height: 10,};
+    }
 
     //mode
     editor.mode = new Mode(editor);
@@ -123,7 +147,6 @@
 
     editor.data = {};
 
-   // new Event(editor, "afterElementsLoaded");
 
     //this is a hack to refresh a palette layer when images are present in the scene
     setTimeout(function() {
@@ -328,28 +351,46 @@ AjooEditor.prototype = {
         });
     },
 
-};
-
-find_child = function(parent, name) {
-
-    if (parent) {
-        if (parent.name == name) {
-            return parent;
-        }
-        else {
-            if (parent.getChildren) {
-                // console.log("no getChildren", parent, name)
-            // }
-            // else {
-                var children = parent.getChildren()
-                if (children) {
-                    for (var i=0;i<children.length;i++) {
-                        var child = find_child(children[i], name);
-                        if (child)
-                            return child;
+    findChild: function(parent, name) {
+        var self = this;
+        if (parent) {
+            if (parent.name == name) {
+                return parent;
+            }
+            else {
+                if (parent.getChildren) {
+                    var children = parent.getChildren()
+                    if (children) {
+                        for (var i=0;i<children.length;i++) {
+                            var child = self.findChild(children[i], name);
+                            if (child) {
+                                return child;
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-}
+    },
+
+    resetVariable: function() {
+        return undefined;
+    },
+
+    setCursorStyle: function(name) {
+        document.body.style.cursor = name;
+    },
+
+    getCursorStyle: function() {
+        var cursor = document.body.style.cursor;
+        if (cursor) {
+            return cursor;
+        }
+        else {
+            return "default";
+        }
+    },
+
+};
+
+export default AjooEditor

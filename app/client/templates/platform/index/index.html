@@ -1,0 +1,79 @@
+
+
+<template name="index">
+
+	<div class="login-wrapper" style="-webkit-animation: none !important;">
+		<div class="login-widget">
+			<div class="panel panel-default">
+				<div class="panel-heading clearfix">
+					<div class="pull-left">
+						<!-- <i class="fa fa-lock fa-lg"></i> {{_ "login"}} -->
+					</div>
+					<div class="pull-right">
+						<span style="font-size:11px;">{{_ "dont_have_any_account"}}</span>
+						<a class="btn btn-default btn-xs login-link" href="/signup" style="margin-top:-2px;"><i class="fa fa-plus-circle"></i> {{_ "sign_up"}}</a>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<form class="form-login1">
+						<div class="form-group">
+							<label>{{_ "login_user_name"}}</label>
+							<input id="email" type="email" placeholder='{{_ "login_user_name"}}' class="form-control input-sm" >
+						</div>
+						<div class="form-group">
+							<label>{{_ "login_password"}}</label>
+							<input id="password" type="password" placeholder='{{_ "login_password"}}' class="form-control input-sm">
+						</div>
+
+						<div class="seperator"></div>
+
+						<div class="panel-footer text-right">
+							<div class="text-right">
+								<button id="signin" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> {{_ "sign_in"}}</button>
+							</div>
+
+							<div id="button-message">
+								{{#if login_error}}
+									<ul  class="parsley-error-list" style="display: block;">
+
+									{{#with login_error}}
+
+										{{#if incorrect_password}}
+											<li style="display: list-item;">Incorrect login or password</li>
+										{{/if}}
+
+										{{#if not_verified}}
+											<li style="display: list-item;">Your account is not verified</li>
+										{{/if}}
+
+										{{#if too_many_attempts}}
+											<li style="display: list-item;">Too many login fails. Reset your password</li>
+										{{/if}}
+
+									{{/with}}
+									</ul>
+								{{/if}}
+							</div>
+						</div>
+
+						
+              <div class="form-group">
+                {{_ "forgot_password"}}<br/>
+                {{_ "click"}}<a href="{{pathFor 'resetPasswordPage'}}"> {{_ "here"}}</a>{{_ "reset_password"}}
+              </div>
+            
+
+						<hr />
+
+						{{> loginBranding}}
+
+					</form>
+				</div>
+			</div><!-- /panel -->
+		</div><!-- /login-widget -->
+	</div><!-- /login-wrapper -->
+
+</template>
+
+

@@ -1,3 +1,8 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Interpreter } from '/client/lib/interpreter'
+import { Dialog } from '/client/js/platform/interpretator/Dialog'
+
+import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/libs/platform/collections'
 
 //Start of diagram ribbon
 Interpreter.methods({
@@ -38,7 +43,7 @@ Interpreter.methods({
 					versionId: Session.get("versionId"),
 				};
 
-		Router.go("diagram", path);
+		FlowRouter.go("diagram", path);
 	},
 
 	SwitchToEditMode: function() {
@@ -50,7 +55,7 @@ Interpreter.methods({
 					editMode: "edit",
 				};
 
-		Router.go("diagram", path);
+		FlowRouter.go("diagram", path);
 	},
 
 	ShowFileDownloadForm: function() {

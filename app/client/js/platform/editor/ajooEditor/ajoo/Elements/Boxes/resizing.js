@@ -1,5 +1,9 @@
+// import { _ } from 'vue-underscore';
+import Event from '../../Editor/events';
+import SelectionDragging from '../../Selection/selection_dragging';
+import {OrthogonalCollectionRerouting} from '../Lines/routing/orthogonal_rerouting';
 
-ResizingShape = function(editor) {
+var ResizingShape = function(editor) {
 
 	var resizingShape = this;
 	resizingShape.editor = editor;
@@ -28,12 +32,18 @@ ResizingShape.prototype = {
 		//saving the action state
 		var drawingLayer = editor.getLayer("DrawingLayer");
 		var dragLayer = editor.getLayer("DragLayer");
-		var drag_group = find_child(dragLayer, "DragGroup");
+		var drag_group = editor.findChild(dragLayer, "DragGroup");
 
 		var shapesLayer = editor.getLayer("ShapesLayer");
 
 		var lines = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
-		element.collectLinkedLines(lines);
+		var linked_ports = editor.selection.getLinkedPorts();
+
+		element.collectLinkedLines(lines, linked_ports);
+
+		_.each(element.ports, function(port) {
+			port.collectLinkedLines(lines, linked_ports);
+		});
 
 		var size = element.getSize();
 		resizingShape.state = {name: "Resizing",
@@ -42,6 +52,7 @@ ResizingShape.prototype = {
 
 								linkedOrthogonalLines: lines.orthogonalLines,
 								linkedDirectLines: lines.directLines,
+								linkedPorts: linked_ports,
 
 								draggedLines: lines.draggedLines,
 
@@ -62,7 +73,7 @@ ResizingShape.prototype = {
 		//moving element to the drawing layer
 		shape_group.moveTo(drawingLayer);
 
-		dragLayer.disableHitGraph();
+		// dragLayer.disableHitGraph();
 		dragLayer.listening(false);
 		drawingLayer.listening(false);
 
@@ -74,14 +85,13 @@ ResizingShape.prototype = {
 	},
 
 	dragging: function() {
-
-		//changing the cursor style
-		set_cursor_style('crosshair');
-
 		var resizingShape = this;
+
 		var editor = resizingShape.editor;
 		var state = resizingShape.state;
 		var element = state.element;
+
+		editor.setCursorStyle('crosshair');
 
 		//element being resized
 		var element = state["element"];
@@ -113,7 +123,6 @@ ResizingShape.prototype = {
 			mouse_x = mouse_state["mouseX"];
 			mouse_y = mouse_state["mouseY"];
 		}
-
 
 		var x1 = state["x1"];
 		var y1 = state["y1"];
@@ -157,6 +166,7 @@ ResizingShape.prototype = {
 			element.updateElementSize(x1, y1, mouse_x, y2);
 		}
 
+		resizingShape.recomputeLinkedPorts(element);
 		resizingShape.recomputeLinkedLines(element);
 
 		//if the element has gradient, then recomputes its proportions
@@ -184,7 +194,7 @@ ResizingShape.prototype = {
 		element.addResizers();
 
 		//moves element back to the drag_layer
-		var drag_group = find_child(state["dragLayer"], "DragGroup");
+		var drag_group = editor.findChild(state["dragLayer"], "DragGroup");
 
 		var new_shape_x = resizing_shape.x();
 		var new_shape_y = resizing_shape.y();
@@ -219,6 +229,9 @@ ResizingShape.prototype = {
 			lines.push({_id: link._id, points: line_points});
 		});
 
+		var ports = _.map(state.linkedPorts, function(port) {
+						return {_id: port._id, location: port.getSize(),};
+					});
 
 		//execute the reiszeelement extension point
 		var list = {
@@ -228,6 +241,7 @@ ResizingShape.prototype = {
 				width: element_size["width"],
 				height: element_size["height"],
 				lines: lines,
+				ports: ports,
 			};
 
 		editor.size.recomputeStageBorders();
@@ -236,7 +250,7 @@ ResizingShape.prototype = {
 
 		var dragLayer = state["dragLayer"];
 
-		dragLayer.enableHitGraph();
+		// dragLayer.enableHitGraph();
 		dragLayer.listening(true);
 
 		state["drawingLayer"].listening(true);
@@ -267,14 +281,75 @@ ResizingShape.prototype = {
 		element.presentation.y(element.presentation.y() + selection_y);
 	},
 
-	buildGraphInfo: function() {
+
+	recomputeLinkedPorts: function(element) {
 		var resizingShape = this;
 		var editor = resizingShape.editor;
 
 		var state = resizingShape.state;
 
+		var ports = state.linkedPorts;
+		_.each(ports, function(port) {
+
+			var port_size = port.getSize();
+			var port_parent_size = element.getSize();
+
+			var x1 = -port_size.width;
+			var y1 = -port_size.height;
+
+			var x2 = port_parent_size.width;
+			var y2 = port_parent_size.height;
+
+			var new_x = port_size.x;
+			var new_y = port_size.y;
+
+        	var deltas = [{name: "deltaX1", value: Math.abs(port_size.x)},
+        				  {name: "deltaX2", value: Math.abs(port_parent_size.width - port_size.x)},
+        				  {name: "deltaY1", value: Math.abs(port_size.y)},
+        				  {name: "deltaY2", value: Math.abs(port_parent_size.height - port_size.y)},
+        				];
+
+			var x1 = port_size.x;
+			var y1 = port_size.y;
+
+        	var min_delta = _.min(deltas, "value");
+        	if (min_delta.name == "deltaX1") {
+        		new_x = x1;
+        		new_y = Math.max(new_y, y1);
+        		new_y = Math.min(new_y, y2);
+        	}
+
+        	if (min_delta.name == "deltaX2") {
+        		new_x = x2;
+        		new_y = Math.max(new_y, y1);
+        		new_y = Math.min(new_y, y2);
+        	}
+
+        	if (min_delta.name == "deltaY1") {
+        		new_x = Math.max(new_x, x1);
+        		new_x = Math.min(new_x, x2);
+        		new_y = y1;
+        	}
+
+        	if (min_delta.name == "deltaY2") {
+        		new_x = Math.max(new_x, x1);
+        		new_x = Math.min(new_x, x2);
+        		new_y = y2;
+        	}
+
+        	port.presentation.x(new_x);
+        	port.presentation.y(new_y);
+		});
+	},
+
+	buildGraphInfo: function() {
+		var resizingShape = this;
+		var editor = resizingShape.editor;
+
+		var state = resizingShape.state;
 		var box_obj = {resizedElement: state.element, minX: state.x1, minY: state.y1, maxX: state.x2, maxY: state.y2};
-		OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], state.linkedOrthogonalLines, state.draggedLines);
+
+		OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], state.element.ports, state.linkedOrthogonalLines, state.draggedLines);
 	},
 
 	computeAdjustedPoint: function(new_x, new_y) {
@@ -287,3 +362,4 @@ ResizingShape.prototype = {
 
 }
 
+export default ResizingShape

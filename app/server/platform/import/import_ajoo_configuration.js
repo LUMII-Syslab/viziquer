@@ -1,3 +1,5 @@
+import { is_system_admin } from '/libs/platform/user_rights'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
 
 Meteor.methods({
 
@@ -41,6 +43,34 @@ Meteor.methods({
 
 });
 
+
+function addConfiguratorExportButtonInToolbar() {
+
+	console.log("addConfiguratorExportButtonInToolbar")
+
+	// var user_id = Meteor.userId();
+	// if (is_system_admin(user_id)) {
+
+	// 	var diagram_type = DiagramTypes.findOne({name: "_ConfiguratorDiagramType"});
+	// 	if (!diagram_type) {
+	// 		console.error("No configurator diagram type");
+	// 		return;
+	// 	}
+
+	// 	var toolbar = diagram_type.toolbar;
+
+	// 	var add_export_button = {id: generate_id(),
+	// 							icon: "fa-download",
+	// 							name: "Export configuration",
+	// 							procedure: "ExportDiagramConfiguration",
+	// 						};
+
+	// 	toolbar = _.union([add_export_button], toolbar);
+
+	// 	DiagramTypes.update({_id: diagram_type._id}, {$set: {toolbar: toolbar}});
+	// }
+
+}
 
 
 function ImportAjooConfiguration(tool_id, version_id) {

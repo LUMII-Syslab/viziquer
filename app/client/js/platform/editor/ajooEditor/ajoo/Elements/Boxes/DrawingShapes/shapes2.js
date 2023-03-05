@@ -1,6 +1,13 @@
+// import { _ } from 'vue-underscore';
+import Box from './_render_boxes';
+import {BoxCompartments} from '../box_compartments';
+import Resizers from '../add_remove_resizers'
+import {ACircle } from './shapes1';
+
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
 
 //BPMNShape(abstract class)
-BPMNShape = function(editor) {
+var BPMNShape = function(editor) {
 	Box.call(this, editor);
 }
 
@@ -60,7 +67,7 @@ BPMNShape.prototype.updateShapesStyle = function(style) {
 
 
 //BPMNTerminate
-BPMNTerminate = function(editor) {
+var BPMNTerminate = function(editor) {
 	ACircle.call(this, editor);
 }
 
@@ -119,7 +126,7 @@ BPMNTerminate.prototype.updateShapeStyle = function(style) {
 
 
 //BPMNMultiple
-BPMNMultiple = function(editor) {
+var BPMNMultiple = function(editor) {
 	ACircle.call(this, editor);
 }
 
@@ -183,7 +190,7 @@ BPMNMultiple.prototype.updateShapeStyle = function(style) {
 
 
 //BPMNMultiple
-BPMNDiamondPlus = function(editor) {
+var BPMNDiamondPlus = function(editor) {
 	ACircle.call(this, editor);
 }
 
@@ -259,7 +266,7 @@ BPMNDiamondPlus.prototype.updateShapeStyle = function(style) {
 }
 
 //BPMNX
-BPMNCancel = function(editor) {
+var BPMNCancel = function(editor) {
 	ACircle.call(this, editor);
 
 	this.name = "BPMNCancel";
@@ -336,7 +343,7 @@ BPMNCancel.prototype.updateShapeStyle = function(style) {
 
 
 //BPMNDiamondX
-BPMNDiamondX = function(editor) {
+var BPMNDiamondX = function(editor) {
 	ACircle.call(this, editor);
 
 	this.name = "BPMNDiamondX";
@@ -363,3 +370,5 @@ BPMNDiamondX.prototype.toSVG = function(x, y, width, height) {
 BPMNDiamondX.prototype.updateShapeStyle = function(style) {
 	BPMNShape.prototype.updateShapesStyle.call(this, style);
 }
+
+export {BPMNShape, BPMNTerminate, BPMNMultiple, BPMNDiamondPlus, BPMNCancel, BPMNDiamondX,}

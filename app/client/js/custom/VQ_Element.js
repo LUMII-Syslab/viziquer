@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { TriplesMaps, Projects } from '/libs/platform/collections'
+
 
 VQ_r2rml = function (schema) {
 //console.log(schema);
@@ -2729,7 +2732,6 @@ VQ_Element.prototype = {
     var className = this.getName();
 	var fields = this.getFields();
 	var aggregation = this.getAggregateFields();
-	var conditions = this.getConditions();
 	
 	var isOptional = false;
 	for(var field in fields){
@@ -2746,14 +2748,7 @@ VQ_Element.prototype = {
 			break;
 		}
 	}
-	var isCompleCondition = true;
-	for(var condition in conditions){
-		var conditionExpr = conditions[condition]["exp"];
-		
-		const re = /[?*!@#$%^&*()-+{},.;]/g;
-		if(conditionExpr.search(re) !== -1)  isCompleCondition = false;
-	}
-	return (alias == null && className == null && isOptional == false && aggregation.length < 1 && isCompleCondition == true);
+	return (alias == null && className == null && isOptional == false && aggregation.length < 1);
 
   },
   // gets class variable name (e.g. X for ?X)

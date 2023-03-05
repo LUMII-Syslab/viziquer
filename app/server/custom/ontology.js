@@ -1,5 +1,5 @@
-
-
+import { is_project_version_admin } from '/libs/platform/user_rights'
+import { Schema, Associations, Attributes, Classes } from '/libs/custom/collections'
 
 Meteor.methods({
 

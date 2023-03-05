@@ -1,3 +1,5 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { DocumentTypes } from '/libs/platform/collections'
 
 Template.toolDocuments.helpers({
 

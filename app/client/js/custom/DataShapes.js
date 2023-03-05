@@ -1,3 +1,5 @@
+import { Projects } from '/libs/platform/collections'
+
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 let _schemaServerUrl = null;

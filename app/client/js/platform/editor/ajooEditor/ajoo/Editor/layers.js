@@ -1,5 +1,5 @@
 
-Layers = function(editor, area) {
+var Layers = function(editor, area) {
 
 	var layers = this;
 	layers.editor = editor;
@@ -109,5 +109,4 @@ Layers.prototype = {
 	    return layer;
 	},
 }
-
-
+export default Layers

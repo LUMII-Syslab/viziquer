@@ -1,3 +1,6 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Tools, Diagrams, DiagramTypes } from '/libs/platform/collections'
 
 Template.toolDiagrams.helpers({
 
@@ -138,7 +141,7 @@ Template.addConfiguratorDiagram.events({
 
 				Utilities.callMeteorMethod("insertDiagramType", list, function(dgr_obj) {
 
-						Router.go("configuratorDiagram",
+						FlowRouter.go("configuratorDiagram",
 												{toolId: list["toolId"],
 												versionId: list["versionId"],
 												_id: dgr_obj["diagramId"],

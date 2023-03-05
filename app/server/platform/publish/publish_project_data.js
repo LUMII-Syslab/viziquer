@@ -1,3 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, ForumPostTags } from '/libs/platform/collections'
+import { get_configurator_tool_id } from '/libs/platform/helpers'
+import { is_project_version_reader, is_project_member } from '/libs/platform/user_rights'
+import { error_msg } from '/server/platform/_global_functions'
+
 
 Meteor.publish("Diagrams", function(list) {
 
@@ -412,14 +418,14 @@ Meteor.publish("ProjectsGroups", function(list) {
 
 
 Meteor.publish("SearchNewProjectUsers", function(list) {
-
 	if (!list || list["noQuery"])
 		return this.stop();
 
 	if (is_project_admin(this.userId, list)) {
 
-		if (list["text"] == "")
+		if (list["text"] == "") {
 			return this.stop();
+		}
 		else {
 			var query = build_user_search_query(list["text"]);
 			var limit = get_user_query_limit();
@@ -600,8 +606,8 @@ Meteor.publish("elementsCount", function (list) {
 	});
 });
 
-Meteor.publish("ProjectsUsers_Users", function(list) {
 
+Meteor.publish("ProjectsUsers_Users", function(list) {
 	if (!list || list["noQuery"])
 		return this.stop();
 

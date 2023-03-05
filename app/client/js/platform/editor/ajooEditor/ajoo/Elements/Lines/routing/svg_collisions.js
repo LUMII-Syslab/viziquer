@@ -1,5 +1,8 @@
+// import { _ } from 'vue-underscore';
+import compute_intersection from './IntersectionUtilities'
 
-SVGObject = function(shape_path) {
+
+var SVGObject = function(shape_path) {
 
     if (!shape_path)
         return;
@@ -27,7 +30,7 @@ SVGObject = function(shape_path) {
 }
 
 
-LineSVGObject = function(points, index) {
+var LineSVGObject = function(points, index) {
 
 	var line_svg = this;
 	line_svg.points = points;
@@ -128,3 +131,4 @@ LineSVGObject.prototype = {
 
 }
 
+export {SVGObject, LineSVGObject}

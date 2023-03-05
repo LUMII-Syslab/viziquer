@@ -1,3 +1,8 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Tools, UserTools } from '/libs/platform/collections'
+import { Interpreter } from '/client/lib/interpreter'
+import { Dialog } from '/client/js/platform/interpretator/Dialog'
+
 
 Interpreter.methods({
 
@@ -10,7 +15,7 @@ Interpreter.methods({
 			else {
 
 				if (resp == 1) {
-					Router.go("configurator");
+					FlowRouter.go("configurator");
 				}
 
 				else {
@@ -91,12 +96,12 @@ Template.addToolForm.events({
 
 			Meteor.call("insertTool", list, function(err, id) {
 				if (err) {
-					console.log("Error in insertTool callback", err);
+					console.error("Error in insertTool callback", err);
 				}
 
 				else {
 					if (id) {
-	  					Router.go("tool", {_id: id});
+	  					FlowRouter.go("tool", {_id: id});
 					}
 				}
 			});

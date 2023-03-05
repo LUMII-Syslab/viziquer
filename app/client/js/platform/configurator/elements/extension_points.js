@@ -1,4 +1,4 @@
-
+import { Configurator } from '/client/js/platform/configurator/config_utils'
 
 // Start of element extensions
 Template.elementExtensions.helpers({

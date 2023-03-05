@@ -1,3 +1,5 @@
+import { Services, Associations, Attributes, Classes, Schema, TriplesMaps } from '/libs/custom/collections'
+import { is_project_member, is_system_admin } from '/libs/platform/user_rights'
 
 Meteor.publish("Ontology", function(list) {
 	if (!list || list["noQuery"]) {

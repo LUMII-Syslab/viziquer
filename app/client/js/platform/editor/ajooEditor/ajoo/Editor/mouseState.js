@@ -1,5 +1,5 @@
 
-MouseState = function(editor) {
+var MouseState = function(editor) {
 
 	var mouseState = this;
 	mouseState.editor = editor;
@@ -10,7 +10,6 @@ MouseState = function(editor) {
 MouseState.prototype = {
 
 	mouseDown: function(e) {
-
 		var mouseState = this;
 		var editor = mouseState.editor;
 
@@ -79,10 +78,12 @@ MouseState.prototype = {
 	getCursorPosition: function(e) {
 		var mouseState = this;
 
-		if (mouseState.isTouchEvent(e))
+		if (mouseState.isTouchEvent(e)) {
 			return mouseState.getTouchPosition(e);
-		else
+		}
+		else {
 			return mouseState.getMousePosition(e);
+		}
 	},
 
 	getTouchPosition: function(ev) {
@@ -141,23 +142,29 @@ MouseState.prototype = {
 		if (mouseState.isTouchEvent(e)) {
 
 			var ev;
-			if (e.evt)
+			if (e.evt) {
 				ev = e.evt;
-			else
+			}
+			else {
 				ev = e;
+			}
 
-			if (ev.originalEvent)
+			if (ev.originalEvent) {
 				return ev.originalEvent.targetTouches[0];
+			}
 
-			else if (ev.targetTouches)
+			else if (ev.targetTouches) {
 				return ev.targetTouches[0];
+			}
 		}
 
 		else {
-			if (e["evt"])
+			if (e["evt"]) {
 				return e["evt"];
-			else
+			}
+			else {
 				return e;
+			}
 		}
 	},
 
@@ -189,10 +196,12 @@ MouseState.prototype = {
 		var mouseState = this;
 
 		if (mouseState.isTouchEvent(e)) {
-			if (e.evt)
+			if (e.evt) {
 				return e.evt.which === 0;
-			else
+			}
+			else {
 				return e.which === 0;
+			}
 		}
 		else {
 			var ev = mouseState.getEvent(e);
@@ -206,12 +215,15 @@ MouseState.prototype = {
 
 		var ev = mouseState.getEvent(e);
 		if (mouseState.isTouchEvent(e))
-			if (e.evt)
+			if (e.evt) {
 				return e.evt.which === 1;
-			else
+			}
+			else {
 				return e.which === 1;
-		else
+			}
+		else {
 			return ev.which === 3;
+		}
 	},
 
 	getTarget: function(e) {
@@ -219,10 +231,12 @@ MouseState.prototype = {
 		var mouseState = this;
 
 		if (mouseState.isTouchEvent(e)) {
-			if (e.evt)
+			if (e.evt) {
 				return e.evt.which === 0;
-			else
+			}
+			else {
 				return e.which === 0;
+			}
 		}
 		else {
 			var ev = mouseState.getEvent(e);
@@ -242,14 +256,5 @@ MouseState.prototype = {
 
 }
 
-set_cursor_style = function(name) {
-	document.body.style.cursor = name;
-}
 
-get_cursor_style = function() {
-	var cursor = document.body.style.cursor;
-	if (cursor)
-		return cursor;
-	else
-		return "default";
-}
+export default MouseState

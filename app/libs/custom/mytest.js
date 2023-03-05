@@ -1,3 +1,6 @@
+import { is_project_version_admin, is_system_admin } from '/libs/platform/user_rights'
+import { Elements } from '/libs/platform/collections'
+
 Meteor.methods({
 
 	changeColor : function(list) {

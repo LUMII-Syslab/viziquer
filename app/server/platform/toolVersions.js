@@ -1,3 +1,5 @@
+import { UserTools, ToolVersions, Versions, DialogTabs, PaletteButtons, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+
 
 ToolVersions.after.insert(function (user_id, doc) {
 

@@ -1,3 +1,5 @@
+import { is_project_member } from '/libs/platform/user_rights'
+
 VQ_sparql_logs = new Mongo.Collection("VQ_Exec_SPARQL_Logs");
 
 Meteor.methods({

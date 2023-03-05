@@ -1,7 +1,10 @@
+// import { _ } from 'vue-underscore';
+import ConnArea from './line_routing_connArea';
+
 //******************************************************************************
 // BoxInfo 
 //******************************************************************************
-BoxInfo = function(info) {
+var BoxInfo = function(info) {
 
     _.extend(this, info);
 
@@ -207,7 +210,9 @@ BoxInfo.prototype.reduceSideCrossings = function(paths, side) {
                     path.lev[path.n - i] = coord[j];
         });
     });
-    _.each(paths, function(path) { path.clipOnBoxes(); });
+    _.each(paths, function(path) {
+        path.clipOnBoxes();
+    });
 };
 BoxInfo.prototype.Compare2Turns = function(a, b) {
     if (a.type < b.type)
@@ -311,12 +316,16 @@ BoxInfo.prototype.reduceConnectionCrossings = function() {
     var self = this;
     var nodePaths = [[], [], [], []];
 
-    _.each(this.paths, function(path) { nodePaths[path.side(self.id)].push(path); });
+    _.each(this.paths, function(path) {
+        nodePaths[path.side(self.id)].push(path);
+    });
     
-    _.each(nodePaths, function(paths, side) { self.reduceSideCrossings(paths, side); });
+    _.each(nodePaths, function(paths, side) {
+        self.reduceSideCrossings(paths, side);
+    });
 };
 BoxInfo.prototype.processPaths = function(paths) {
-    printText("\t\t\t\tprocessPaths start:: ");
+    // printText("\t\t\t\tprocessPaths start:: ");
     var disconnected = {};
     
     for (var i = 0; i < paths.length; i++) {
@@ -326,7 +335,7 @@ BoxInfo.prototype.processPaths = function(paths) {
     printText("\t\t\t\tprocessPaths end ");
 };
 BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
-    printText("\t\t\t\tcreateConnArea start:: ");
+    // printText("\t\t\t\tcreateConnArea start:: ");
     var rc = {};
     if (disconnPaths === undefined || disconnPaths.length === 0) {
         warning("BoxInfo.prototype.createConnArea :: wrong disconnected path list");
@@ -375,11 +384,11 @@ BoxInfo.prototype.createConnArea = function(side, disconnPaths, connPaths) {
         for (var i = 0; i < rc.intersectSegm[j].length; i++)
 //            printText("\t\t\t\t\t" + rc.intersectSegm[j][i].toString());
     
-    printText("\t\t\t\tcreateConnArea end:: ");
+    // printText("\t\t\t\tcreateConnArea end:: ");
     return rc;
 };
 BoxInfo.prototype.processDisconnectPaths = function() {
-    printText("\t\t\tprocessDisconnectPaths start" + this.toString());
+    // printText("\t\t\tprocessDisconnectPaths start" + this.toString());
     // separate disconnected and connected paths
     var paths = [[[], [], [], []], [[], [], [], []]];
     var disconn = 0;
@@ -406,7 +415,7 @@ BoxInfo.prototype.processDisconnectPaths = function() {
 //            connArea.connectPaths();
         }
     }
-    printText("\t\t\tprocessDisconnectPaths end");
+    // printText("\t\t\tprocessDisconnectPaths end");
 };
 
 
@@ -434,10 +443,10 @@ BoxInfo.prototype.processDisconnectedPathsNew = function(pathList) {
 BoxInfo.prototype.processDisconnectedPaths = function() {
     var disconnected = [];
     var nodes = {};
-    printText("\t\t\tinput paths:: ");
+    // printText("\t\t\tinput paths:: ");
     for (var i = 0; i < this.paths.length; i++) {
         var path = this.paths[i];
-        printText("\t\t\t " + path.toString());
+        // printText("\t\t\t " + path.toString());
         if (this.id === path.from && path.hasToProj())
             if (nodes[path.from] === undefined)
                 nodes[path.from] = [path];
@@ -565,3 +574,4 @@ BoxInfo.prototype.isFork = function() {
     }
 }
 
+export default BoxInfo

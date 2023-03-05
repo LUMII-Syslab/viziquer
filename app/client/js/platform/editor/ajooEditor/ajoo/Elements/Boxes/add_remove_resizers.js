@@ -1,5 +1,6 @@
+// import { _ } from 'vue-underscore';
 
-Resizers = function(element) {
+var Resizers = function(element) {
 	var resizers = this;
 	resizers.element = element;
 
@@ -160,7 +161,9 @@ Resizers.prototype = {
 
 			var layer = resizers_group.getLayer();
 
-			resizers_group.destroy();
+			// resizers_group.destroy();
+			// this is a hack because for some reason destroy does not work
+			resizers_group.visible(false);
 
 			if (is_refresh_needed) {
 				layer.draw();	
@@ -172,7 +175,7 @@ Resizers.prototype = {
 }
 
 
-Resizer = function(list, resizers) {
+var Resizer = function(list, resizers) {
 
 	var resizer = this;
 	resizer.resizers = resizers;
@@ -212,12 +215,12 @@ function ResizerHanlders(resizer) {
 	var editor = element.editor;
 
 	resizer_presentation.on('mouseenter', function(e) {
-		set_cursor_style(resizer.mouseStyle);
+		editor.setCursorStyle(resizer.mouseStyle);
 		e.cancelBubble = true;
 	});
 
 	resizer_presentation.on('mouseleave', function(e) {
-		set_cursor_style("default");
+		editor.setCursorStyle("default");
 	});
 
 	resizer_presentation.on('mousedown touchstart', function(e) {
@@ -240,3 +243,5 @@ function ResizerHanlders(resizer) {
 		editor.actions.startAction("Resizing", {element: element, resizerName: resizer_name});
 	});
 }
+
+export default Resizers

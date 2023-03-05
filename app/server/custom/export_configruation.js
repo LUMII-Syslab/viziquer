@@ -1,3 +1,4 @@
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
 
 
 Meteor.methods({

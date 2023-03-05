@@ -1,3 +1,5 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '/libs/platform/collections'
 
 //Start of dialog accordion
 Template.dialogAccordion.helpers({

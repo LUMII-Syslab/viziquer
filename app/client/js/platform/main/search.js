@@ -1,3 +1,5 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Users, Searches } from '/libs/platform/collections'
 
 //Binding data to render the search drop-down depending on search type
 Template.searchMenu.helpers({
@@ -227,7 +229,7 @@ function search_object(e, text) {
 
 			var path = build_path_to_chat_page(1);
 
-			Router.go(path);
+			FlowRouter.go(path);
 		},
 
 		contacts: function() {
@@ -260,7 +262,7 @@ function search_project_objects(query, collection_type, text) {
 
 	save_query(collection_type, text);
 
-	Router.go(query, {projectId: Session.get("activeProject"),
+	FlowRouter.go(query, {projectId: Session.get("activeProject"),
 						versionId: Session.get("versionId"),
 						phrase: text});
 }

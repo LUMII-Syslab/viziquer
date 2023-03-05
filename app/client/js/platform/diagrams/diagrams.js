@@ -1,3 +1,7 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '/libs/platform/collections'
+
 
 // Start of diagramsTemplate template
 
@@ -525,26 +529,28 @@ Template.importOntology.helpers({
 
 	schemas: function() {
 		var result = null;
-		var tool_id = null;
 
-		if (Projects && Projects.find().count() > 0)
-			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		var project = Projects.findOne({_id: Session.get("activeProject")});
+		if (project) {
+			var tool_id = project.toolId;
 
-	    Meteor.subscribe("Services", {});
+		    Meteor.subscribe("Services", {});
 
-		if ( tool_id && tool_id != 'undefined')
-		{
-			var services = Services.findOne({toolId: tool_id });
-
-			if (services && services.schemas)
+			if ( tool_id && tool_id != 'undefined')
 			{
-				result = [];
-				_.each(services.schemas, function (s){
-					result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
-				});
-			}
+				var services = Services.findOne({toolId: tool_id });
 
+				if (services && services.schemas)
+				{
+					result = [];
+					_.each(services.schemas, function (s){
+						result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
+					});
+				}
+
+			}
 		}
+
 		return result;
 	},
 
@@ -669,25 +675,26 @@ Template.uploadProject.helpers({
 	},
 	projects: function() {
 		var result = null;
-		var tool_id = null;
+		
+		var project = Projects.findOne({_id: Session.get("activeProject")});
+		if (project) {
+			var tool_id = project.toolId;
 
-		if (Projects && Projects.find().count() > 0)
-			tool_id = Projects.findOne({_id: Session.get("activeProject")}).toolId;
+		    Meteor.subscribe("Services", {});
 
-	    Meteor.subscribe("Services", {});
+			if (tool_id) {
+				var services = Services.findOne({toolId: tool_id });
 
-		if ( tool_id && tool_id != 'undefined')
-		{
-			var services = Services.findOne({toolId: tool_id });
-
-			if (services && services.projects)
-			{
-				result = [];
-				_.each(services.projects, function (p){
-					result.push({caption: "Upload " + p.caption, name: p.name, link: p.link});
-				});
+				if (services && services.projects)
+				{
+					result = [];
+					_.each(services.projects, function (p){
+						result.push({caption: "Upload " + p.caption, name: p.name, link: p.link});
+					});
+				}
 			}
 		}
+
 		return result;
 	},
 

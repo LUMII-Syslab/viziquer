@@ -1,11 +1,14 @@
+// import { _ } from 'vue-underscore';
+import {BoxCompartments, Compartment} from '../Boxes/box_compartments'
 
-LinkCompartments = function(element, comparts_in) {
+
+var LinkCompartments = function(element, comparts_in) {
 
 	var compartments = this;
 	compartments.element = element;
 	compartments.editor = element.editor;
 
-	compartments.textsGroup = find_child(element.presentation, "TextsGroup");
+	compartments.textsGroup = compartments.editor.findChild(element.presentation, "TextsGroup");
 
 	compartments.compartments = [];
 	compartments.placements = {};
@@ -16,7 +19,6 @@ LinkCompartments = function(element, comparts_in) {
 								west: compartments.horizontal_right_end,
 							};
 
-
 	compartments.create(comparts_in);
 
 	return compartments;
@@ -25,7 +27,6 @@ LinkCompartments = function(element, comparts_in) {
 LinkCompartments.prototype = {
 
 	create: function(comparts_in) {
-		//console.log("-----LinkCompartments create---------------")
 
 		var compartments = this;
 		var line = compartments.element;
@@ -46,21 +47,12 @@ LinkCompartments.prototype = {
 		var sizes = {};
 
 		//adding compartments
-		var comparts = compartments.compartments;
-		compartments.placements = {};		
+		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
-			if (compart_in["value"] == undefined || compart_in["value"] == "") {
+			if (compart_in["value"] && compart_in["value"] != "" &&
+				(compart_in["style"] && compart_in["style"]["visible"] == false))
 				return;
-			}
-
-			if (compart_in["style"]) {
-				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true" || compart_in["style"]["visible"] == true);
-			}
-
-			if (!compart_in["style"]["visible"]) {
-				return;
-			}
 
 			var compart_style = compart_in["style"];
 			
@@ -80,13 +72,13 @@ LinkCompartments.prototype = {
 			placement.width = Math.max(placement.width, compart.textWidth);
 			placement.height += compart.textHeight;
 		});
-
+		
 		compartments.computeGroupsPositions();
 		compartments.computeTextsPositions();
 	},
-	
+
 	getPlacementByName: function(placement_name) {
-	
+
 		var compartments = this;
 		var texts_group = compartments.textsGroup;
 
@@ -216,16 +208,9 @@ LinkCompartments.prototype = {
 		//assigning texts to the group
 		var text_x = 0;
 		var text_y = 0;
-
 		_.each(placement.group.getChildren(), function(text) {
-
-			var height = text.height();
-			if (text.getText() == "") {
-				height = 0;
-			}
-
 			text.setAttrs({x: text_x, y: text_y});
-			text_y += height;
+			text_y += text.height();
 		});
 	},
 
@@ -623,8 +608,9 @@ LinkCompartments.prototype = {
 	},
 
 	recomputeCompartmentsPosition: function(compartment) {
+
 		var compartments = this;
-		//console.log("-----Line recomputeCompartmentsPosition-----")
+
 		var placement_in = compartment.placement;
 		var placement_name = placement_in.name;
 
@@ -636,12 +622,7 @@ LinkCompartments.prototype = {
 		var parent_group = compartments.placements[placement_name].group;
 		_.each(parent_group.getChildren(), function(text) {
 			new_width = Math.max(new_width, text.getTextWidth());
-			var height = text.getHeight();
-			if (text.getText() == "") {
-				height = 0;
-			}
-
-			new_height += height;
+			new_height += text.getHeight();
 		});
 
 		placment_obj.width = new_width;
@@ -652,7 +633,7 @@ LinkCompartments.prototype = {
 	},
 
 	removeAllRespresentations: function() {
-		//console.log("-----LinkCompartments removeAllRespresentations---------------")
+
 		var compartments = this;
 		var texts_group = compartments.textsGroup;
 
@@ -674,7 +655,7 @@ LinkCompartments.prototype = {
 	},
 
 	removeOne: function(compart_id, is_refresh_not_needed) {
-		//console.log("-----LinkCompartments removeOne---------------")
+
 		var compartments = this;
 		var editor = compartments.editor;
 
@@ -695,7 +676,7 @@ LinkCompartments.prototype = {
 
 		compartments.computeTextPositions(placement);
 
-		if (!is_refresh_not_needed && compartments.element.presentation.getLayer() !== null) {
+		if (!is_refresh_not_needed) {
 			compartments.element.presentation.getLayer().batchDraw();
 			//not working
 			//compartments.element.presentation.draw();
@@ -1011,3 +992,4 @@ LinkCompartments.prototype = {
 
 };
 
+export default LinkCompartments

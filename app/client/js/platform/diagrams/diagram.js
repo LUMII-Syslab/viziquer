@@ -1,3 +1,7 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Diagrams, DiagramTypes } from '/libs/platform/collections'
 
 Interpreter.methods({
 
@@ -13,6 +17,7 @@ Interpreter.methods({
 _.extend(Interpreter, {
 
 	createEditor: function() {
+
 		if ($("#Diagram_Editor").length == 0) {
 			console.error("Error: no container")
 			return;
@@ -28,24 +33,10 @@ _.extend(Interpreter, {
 
 		//selecting an editor type
 		var editor_type = diagram["editorType"];
+		Session.set("editorType", editor_type);
 
 		//loading an editor
-		var editor;
-		if (is_ajoo_editor(editor_type)) {
-			editor = Interpreter.loadAjooEditor(diagram);
-		}
-
-		else if (is_zoom_chart_editor(editor_type)) {
-			editor = load_zoom_chart_editor(diagram);
-		}
-
-		//if no editor type
-		else {
-			console.error("ERROR: No editor type found");
-			return;
-		}
-
-		Session.set("editorType", editor_type);
+		var editor = Interpreter.loadAjooEditor(diagram);
 
 		Interpreter.editor = editor;
 
@@ -752,21 +743,14 @@ Template.diagramEditor.onRendered(function() {
 
     //adding the graphical editor
 	var editor = Interpreter.createEditor();
-
-
 	if (!editor) {
 		console.error("Error: no editor");
 		return;
 	}
 
 	var editor_type = Interpreter.getEditorType();
-	if (is_ajoo_editor(editor_type)) {
-		Interpreter.renderAjooEditorDiagram(editor, this);
-	}
 
-	else if (is_zoom_chart_editor(editor_type)) {
-		render_zoom_chart_diagram(editor, this);
-	}
+	Interpreter.renderAjooEditorDiagram(editor, this);
 
 	//computing edit mode
 	var edit_mode = Diagrams.find({"editingUserId": Session.get("userSystemId")}).observeChanges({

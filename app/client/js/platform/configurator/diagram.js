@@ -1,3 +1,6 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
 
 Interpreter.methods({
 
@@ -45,10 +48,10 @@ Interpreter.methods({
 		Utilities.callMeteorMethod("removeDiagram", list);
 
 		if (Session.get("toolVersionId")) {
-			Router.go("tool", {_id: Session.get("toolId"), versionId: Session.get("toolVersionId")});
+			FlowRouter.go("tool", {_id: Session.get("toolId"), versionId: Session.get("toolVersionId")});
 		}
 		else {
-			Router.go("tool", {_id: Session.get("toolId")});
+			FlowRouter.go("tool", {_id: Session.get("toolId")});
 		}
 	},
 

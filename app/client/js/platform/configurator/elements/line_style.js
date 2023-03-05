@@ -1,3 +1,7 @@
+import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { ElementTypes, Elements } from '/libs/platform/collections'
 
 Template.lineStyle.helpers({
 

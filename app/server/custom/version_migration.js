@@ -1,3 +1,5 @@
+import { is_system_admin } from '/libs/platform/user_rights'
+import { Tools, ToolVersions, Versions, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/libs/platform/collections'
 
 Meteor.methods({
 

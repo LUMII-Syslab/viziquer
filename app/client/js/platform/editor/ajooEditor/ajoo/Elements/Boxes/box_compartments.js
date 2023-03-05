@@ -1,18 +1,20 @@
+// import { _ } from 'vue-underscore';
 
-BoxCompartments = function(element, comparts_in) {
+var BoxCompartments = function(element, comparts_in) {
 
 	var compartments = this;
-	compartments.element = element;
+	compartments.element = element;	
 	compartments.editor = element.editor;
 
-	compartments.textsGroup = find_child(element.presentation, "TextsGroup");
+	compartments.textsGroup = compartments.editor.findChild(element.presentation, "TextsGroup");
 
 	compartments.minWidth = 0;
 	compartments.minHeight = 0;
 
 	compartments.compartments = [];
-	if (comparts_in && comparts_in.length > 0)
+	if (comparts_in && comparts_in.length > 0) {
 		compartments.create(comparts_in);
+	}
 
 	return compartments;
 }
@@ -20,7 +22,7 @@ BoxCompartments = function(element, comparts_in) {
 BoxCompartments.prototype = {
 
 	create: function(comparts_in) {
-
+	
 		var compartments = this;
 		var element = compartments.element;
 		var editor = compartments.editor;
@@ -47,7 +49,7 @@ BoxCompartments.prototype = {
 			compartments.minHeight = min_shape_height;
 
 			if (min_shape_width > size.width || min_shape_height > size.height) {
-
+				
 				var new_width = Math.max(size.width, min_shape_width);
 				var new_height = Math.max(size.height, min_shape_height);
 
@@ -79,23 +81,15 @@ BoxCompartments.prototype = {
 		var element = compartments.element;
 		var editor = compartments.editor;
 
-		var comparts = compartments.compartments;
+		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
-			if (compart_in["value"] == undefined || compart_in["value"] == "") {
+			if (compart_in["value"] && compart_in["value"] != "" &&
+				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
 			}
 
-			if (compart_in["style"]) {
-				compart_in["style"]["visible"] = (compart_in["style"]["visible"] == "true" || compart_in["style"]["visible"] == true);
-			}
-
-			if (!compart_in["style"]["visible"]) {
-				return;
-			}
-
-
-			var compart = new Compartment(compartments, compart_in, compartments.textsGroup);
+			var compart = new Compartment(compartments, compart_in, compartments.textsGroup)
 			comparts.push(compart);
 
 			editor.compartmentList[compart._id] = compart;
@@ -109,7 +103,7 @@ BoxCompartments.prototype = {
 		var min_width = 0;
 		var total_height = 0;
 
-		var comparts = compartments.compartments;
+		var comparts = compartments.compartments;	
 		_.each(compartments.compartments, function(compart) {
 
 			min_width = Math.max(min_width, compart.textWidth);
@@ -141,7 +135,7 @@ BoxCompartments.prototype = {
 		var prop_h = area_height / size.height;
 		var min_shape_height = total_height / prop_h;
 
-		return {width: Math.max(area_width, min_shape_width),
+		return {width: Math.max(area_width, min_shape_width), 
 				height: Math.max(area_height, min_shape_height)};
 	},
 
@@ -168,7 +162,7 @@ BoxCompartments.prototype = {
 			var text = compart.presentation;
 
 			text.width(text_width);
-			text.y(total_height);
+			text.y(total_height);	
 
 			var text_height = text.getHeight();
 			total_height = total_height + text_height;
@@ -176,11 +170,22 @@ BoxCompartments.prototype = {
 			compart.textWidth = text_width;
 			compart.textHeight = text_height;
 
+			var underline = compart.underline;
+			if (underline) {
+				var underline_y_padding = 5;
+				var undeline_y = total_height + underline_y_padding;
+
+				var x_padding = 1
+				underline.points([-x_padding, undeline_y, text_width + x_padding, undeline_y,]);
+
+				total_height += 2 * underline_y_padding;
+			}
+
 			//max_width = Math.max(text.getTextWidth(), max_width);
 		});
 
 		//selecting text group
-		var texts_group = compartments.textsGroup;
+		var texts_group = compartments.textsGroup;		
 		//texts_group.x(pos.x1 + (pos.x2 - pos.x1) / 2 - min_width / 2)
 		//texts_group.y(pos.y1 + (pos.y2 - pos.y1) / 2 - min_height / 2);
 
@@ -196,7 +201,7 @@ BoxCompartments.prototype = {
 		compartments.compartments = [];
 		texts_group.destroyChildren();
 
-		compartments.recomputeCompartmentsPosition();
+		compartments.recomputeCompartmentsPosition();		
 	},
 
 	removeOne: function(compart_id) {
@@ -213,8 +218,9 @@ BoxCompartments.prototype = {
 		//delete comparts_list[compart_id];
 		delete editor.compartmentList[compart_id];
 		compartments.compartments = _.filter(compartments.compartments, function(compart) {
-			if (compart._id != compart_id)
+			if (compart._id != compart_id) {
 				return true;
+			}
 		});
 
 		compartments.recomputeCompartmentsPosition();
@@ -223,7 +229,7 @@ BoxCompartments.prototype = {
 
 }
 
-Compartment = function(compartments, compart_in, parent) {
+var Compartment = function(compartments, compart_in, parent) {
 
 	var compart = this;
 	compart.compartments = compartments;
@@ -259,7 +265,18 @@ Compartment.prototype = {
 		attr_list["perfectDrawEnabled"] = false;
 
 		var text = new Konva.Text(attr_list);
+
 		texts_group.add(text);
+
+		if ((compart_in.underline == true) || (compart_in.compartmentType && compart_in.compartmentType.underline)) {
+			var red_line = new Konva.Line({points: [0, 0, 0, 0],
+											stroke: 'black',
+											strokeWidth: 1,
+										});
+
+			texts_group.add(red_line);
+			compart.underline = red_line;
+		}
 
 		return text;
 	},
@@ -267,10 +284,14 @@ Compartment.prototype = {
 	remove: function() {
 		var compart = this;
 		var text = compart.presentation;
-		if (text)
+		if (text) {
 			text.destroy();
+		}
 
 		compart.presentation = undefined;
 	},
 
 }
+
+// export default BoxCompartments
+export {BoxCompartments, Compartment,}

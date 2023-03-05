@@ -4,7 +4,7 @@
     <div class="row">
         {{#each tools}}
             <div class="col-sm-6 col-md-3">
-                <a href="{{pathFor 'tool'}}">
+                <a href="{{pathFor 'tool' _id=this._id}}">
                     <div class="panel-stat3 {{color}} tool">
                         <h2>{{name}}</h2>
                         <i class="fa fa-clock-o fa-lg"></i><span class="m-left-xs">{{date}}</span>

@@ -1,3 +1,5 @@
+// import { _ } from 'vue-underscore';
+
 //******************************************************************************
 // Other 
 //******************************************************************************
@@ -10,14 +12,14 @@ var testTitle = "";
 var testString = "";
 var testOperation;
 
-warning = function(text) {
+var warning = function(text) {
     if (printWarning) {
         console.warn("### Warning ### ", text);
         return;
     }
 };
 
-turnOffPrinting = function(tag) {
+var turnOffPrinting = function(tag) {
     if (printOutput) {
         printOutputPrev = true;
         printOutput = false;
@@ -26,7 +28,7 @@ turnOffPrinting = function(tag) {
     }
 };
 
-turnOnPrinting = function(tag) {
+var turnOnPrinting = function(tag) {
     if (printOutputPrev && printOutputTag === tag) {
         printOutput = true;
         printOutputPrev = false;
@@ -35,29 +37,29 @@ turnOnPrinting = function(tag) {
     }
 };
 
-addText = function(text) {
+var addText = function(text) {
     if (printOutput)
         printStr += text + ";";
 };
 
-printText = function(text) {
+var printText = function(text) {
     if (printOutput) {
         console.warn(printStr + text + ".");
         printStr = "";
     }
 };
 
-addTitle = function(v) {
+var addTitle = function(v) {
     if (testString === "")
         testTitle = v;
 };
-emptyTest = function() {
+var emptyTest = function() {
     return testString === "";
 };
-addTest = function(v) {
-    testString += "\n\t\t" + v;
+var addTest = function(v) {
+    var testString = "\n\t\t" + v;
 };
-printTest = function() {
+var printTest = function() {
     if (testString !== "") {
         printText("\n\n>>###################### " + testTitle + " ######################>>");
         printText(testString);
@@ -67,7 +69,7 @@ printTest = function() {
     testTitle = "";
 };
 
-koef = function(v) {
+var koef = function(v) {
     var n = 256;
     if (v === undefined) {
         warning("line_routing_other.koef wrong input value umdefined");
@@ -113,34 +115,36 @@ koef = function(v) {
 //        return koefList[8][1];
 //    return (1000);
 //};
-convert = function(v) {
+var convert = function(v) {
     return ((Math.round(v * 8)) >> 3) << 3;
 };
-reconvert = function(v) {
+var reconvert = function(v) {
     return v >> 3;
 };
-convertArray = function(a) {
+var convertArray = function(a) {
     for (var i = 0; i < a.length; i++)
         a[i] = convert(a[i]);
 };
-reconvertArray = function(a) {
+var reconvertArray = function(a) {
     for (var i = 0; i < a.length; i++)
         a[i] = reconvert(a[i]);
 };
-listPrintString = function(list, text, tabs) {
-    str = tabs + "\t" + text + ": ";
+var listPrintString = function(list, text, tabs) {
+    var str = tabs + "\t" + text + ": ";
     _.each(list, function(value, ind) {str += "; " + ind.toString() + ":" + value.toString(); });
     return str;
 };
-rectInsideRect = function(r1, r2) {
+var rectInsideRect = function(r1, r2) {
     var rc = r2[0] <= r1[0] && r1[2] <= r2[2] && r2[1] <= r1[1] && r1[3] <= r2[3];
     return rc;
 };
-rectOverlapRect = function(r1, r2) {
+var rectOverlapRect = function(r1, r2) {
     var rc = r1[0] <= r2[2] && r2[0] <= r1[2] && r1[1] <= r2[3] && r2[1] <= r1[3];
     return rc;
 };
-cloneArray = function(a) { return _.map(a, function(obj){ return obj; }); };
-cloneObject = function(a) { return _.clone(a); };
-getValueOfPair = function(pair, len) { return pair[0] * len + pair[1]; };
-getPairOfValue = function(v, len) { var mod = v % len; return [(v - mod) / len, mod]; };
+var cloneArray = function(a) { return _.map(a, function(obj){ return obj; }); };
+var cloneObject = function(a) { return _.clone(a); };
+var getValueOfPair = function(pair, len) { return pair[0] * len + pair[1]; };
+var getPairOfValue = function(v, len) { var mod = v % len; return [(v - mod) / len, mod]; };
+
+export {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef,}

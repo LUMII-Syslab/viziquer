@@ -1,3 +1,6 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { Users, Projects, ProjectsUsers } from '/libs/platform/collections'
+
 
 //#######################
 
@@ -15,17 +18,18 @@ Template.activeProject.helpers({
   },
 });
 
+
+Template.projectsT.onCreated(function() {
+  Meteor.subscribe('navbar_projects', {projectId: Session.get("activeProject")});
+  Meteor.subscribe("Tools", {});
+});
+
+
 Template.projectsT.events({
 
 //opens new project dialog (modal)
   'click #createProject' : function(e, templ) {
       e.preventDefault();
-      Session.set("tools", {});
-
-      //subscribes for tools to offer in drop down
-      Deps.autorun(function () {
-        Meteor.subscribe("Tools", Session.get("tools"));
-      });
 
       $("#add-project").modal("show");
 
@@ -53,7 +57,7 @@ Template.projectsList.events({
       var proj_id = $(e.target).closest(".projects-dropdown-item").attr("id");
 	  
       Utilities.changeUserActiveProject(proj_id);
-	  dataShapes.changeActiveProject(proj_id);
+	    dataShapes.changeActiveProject(proj_id);
   },
 });
 

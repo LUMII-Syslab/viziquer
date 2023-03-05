@@ -1,3 +1,7 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Dialog } from '/client/js/platform/interpretator/Dialog'
+
+import { Diagrams, Elements, Compartments, ElementTypes, CompartmenTypes, ElementsSections } from '/libs/platform/collections'
 
 
 Template.downloadAsFile.helpers({

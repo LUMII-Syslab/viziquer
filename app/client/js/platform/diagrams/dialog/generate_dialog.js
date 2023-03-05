@@ -1,5 +1,7 @@
 // import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
 // const { SpacebarsCompiler } = require('meteor/spacebars-compiler');
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { ElementTypes, CompartmentTypes, Compartments, DiagramFiles, DialogTabs } from '/libs/platform/collections'
 
 Template.dialogTabContent.helpers({
 

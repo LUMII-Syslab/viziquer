@@ -14,7 +14,9 @@
         {{#each diagrams}}
             <div class="col-sm-6 col-md-6">
                 <div class="thumbnail">
-                    <a class="reference" href="{{pathFor 'configuratorDiagram'}}">
+
+                    <!-- :toolId/version/:versionId/diagram/:_id/diagramType/:diagramTypeId -->
+                    <a class="reference" href="{{pathFor 'configuratorDiagram' toolId=this.toolId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId }}">
                         {{#if imageUrl}}
                           <img src="{{imageUrl}}" alt="{{imageUrl}}" class="diagram-image">
                         {{else}}
@@ -23,7 +25,7 @@
                     </a>
                     <div class="caption">
                         <center>
-                            <a class="reference" href="{{pathFor 'configuratorDiagram'}}"><h4>{{name}}</h4></a>
+                            <a class="reference" href="{{pathFor 'configuratorDiagram' toolId=this.toolId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId}}"><h4>{{name}}</h4></a>
                         </center>
                     </div>
                 </div>

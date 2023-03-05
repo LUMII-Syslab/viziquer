@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { DiagramTypes, Elements } from '/libs/platform/collections'
 
 Interpreter.methods({
 
@@ -14,12 +17,6 @@ Interpreter.methods({
 		if (is_ajoo_editor(editor_type)) {
 			var editor = Interpreter.editor;
 			selection_list = editor.getSelectedElements();
-		}
-
-		else if (is_zoom_chart_editor(editor_type)) {
-			var elem_id = Session.get("activeElement");
-			selection_list = {};
-			selection_list[elem_id] = true;
 		}
 
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});

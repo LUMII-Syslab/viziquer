@@ -1,3 +1,4 @@
+import { Elements } from '/libs/platform/collections'
 
 $(document).on('keypress', function (e) {
 
@@ -123,4 +124,4 @@ Interpreter = {
 };
 
 
-
+export {Interpreter}

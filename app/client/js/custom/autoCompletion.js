@@ -1,3 +1,5 @@
+import { Interpreter } from '/client/lib/interpreter'
+
 var symbolTable = {};
 var grammarType = "class";
 var time;

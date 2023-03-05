@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Projects } from '/libs/platform/collections'
+
 Interpreter.customMethods({
 	
 	VQTransformLinkToSubQuery:function(classId){

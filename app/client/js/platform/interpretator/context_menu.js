@@ -1,3 +1,8 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { ElementTypes } from '/libs/platform/collections'
+import { _contextMenu } from '/client/lib/global_variables'
+
 
 _.extend(Interpreter, {
 					processContextMenu: function(e, menu, params, isZoomChart) {
@@ -303,3 +308,4 @@ context_menu_hide = function() {
 } 
 
 
+export {ContextMenu, context_menu_hide}

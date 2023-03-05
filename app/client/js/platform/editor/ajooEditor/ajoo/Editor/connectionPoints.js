@@ -1,11 +1,12 @@
+// import { _ } from 'vue-underscore';
 
-ConnectionPoints = function(editor) {
+var ConnectionPoints = function(editor) {
 	var connectionPoints = this;
 	connectionPoints.editor = editor;
 
 	var layer = editor.getLayer("DrawingLayer");
+	layer.listening();
 	// layer.hitGraphEnabled(true);
-	layer.listening(true);
 
 	connectionPoints.layer = layer;
 
@@ -45,6 +46,10 @@ ConnectionPoints.prototype = {
 	fixStartElement: function() {
 		var connectionPoints = this;	
 		var state = connectionPoints.state;
+
+		if (_.isEmpty(state)) {
+			return;
+		}
 
 		state.fixedStartElement = state.start.element;
 		state.activePoint = undefined;
@@ -126,7 +131,6 @@ ConnectionPoints.prototype = {
 	},
 
 	addConnectionPoints: function(box, parent) {
-
 		var connectionPoints = this;
 		var connection_point_positions = box.computeConnectionPointPositions();
 		
@@ -162,7 +166,7 @@ ConnectionPoints.prototype = {
 
 		connection_point.on('mouseover', function(e) {
 
-			set_cursor_style("move");
+			connectionPoints.editor.setCursorStyle("move");
 
 			var editor = connectionPoints.editor;
 			connectionPoints.state.activePoint = connection_point;
@@ -190,7 +194,7 @@ ConnectionPoints.prototype = {
 
 			var editor = connectionPoints.editor;
 
-			set_cursor_style('crosshair');
+			editor.setCursorStyle('crosshair');
 
 			editor.actions.reset();
 			editor.mouseState.mouseDown(e);
@@ -223,33 +227,4 @@ ConnectionPoints.prototype = {
 
 }
 
-// function is_line_end_in_indicator2_area(radius, list) {
-
-// 	var stage = get_editor();
-// 	var action = stage["action"];
-// 	if (!action)
-// 		return;
-
-// 	var new_line = action["element"];
-// 	if (!new_line)
-// 		return;
-
-// 	var points = get_line_points(new_line);
-// 	var len = points.length;
-		
-// 	var last_point = [points[len-2] - list["elementX"], points[len-1] - list["elementY"]];
-
-// 	return is_point_in_area(list["x"] - radius, list["y"] - radius,
-// 							list["x"] + radius, list["y"] + radius, last_point);
-
-// }
-
-
-
-// is_point_in_area = function(x1, y1, x2, y2, point) {
-
-// 	if (x1 < point[0] && point[0] < x2 && y1 < point[1] && point[1] < y2) {
-// 		return true;
-// 	}
-
-// }
+export default ConnectionPoints

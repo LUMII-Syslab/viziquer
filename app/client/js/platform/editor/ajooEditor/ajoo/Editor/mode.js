@@ -1,5 +1,6 @@
+// import { _ } from 'vue-underscore';
 
-Mode = function(editor) {
+var Mode = function(editor) {
 
 	var mode = this;
 	mode.editor = editor;
@@ -64,3 +65,5 @@ Mode.prototype = {
 	},
 
 }
+
+export default Mode

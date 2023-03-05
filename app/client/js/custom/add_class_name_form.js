@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Elements } from '/libs/platform/collections'
+
 Interpreter.customMethods({
 	AddClassName: function () {
 		

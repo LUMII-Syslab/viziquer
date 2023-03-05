@@ -1,3 +1,4 @@
+import { ProjectsUsers, ProjectsGroups, DiagramTypes } from '/libs/platform/collections'
 
 Utilities = {
 					
@@ -107,3 +108,5 @@ reset_variable = function() {
 	return undefined;
 }
 
+
+export {reset_variable, Utilities}

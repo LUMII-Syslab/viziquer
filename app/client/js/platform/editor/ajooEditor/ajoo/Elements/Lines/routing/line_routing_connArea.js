@@ -1,7 +1,13 @@
+// import { _ } from 'vue-underscore';
+
+import {getPairOfValue, getValueOfPair, cloneObject, cloneArray, rectOverlapRect, rectInsideRect, listPrintString, reconvertArray, convertArray, reconvert, convert, koef,} from './line_routing_other'
+
+
+
 //******************************************************************************
 // ConnArea
 //******************************************************************************
-ConnArea = function(box, side, disconnPaths, connPaths) {
+var ConnArea = function(box, side, disconnPaths, connPaths) {
     this.testRect;
     this.segments = [];
     this.box = box;
@@ -131,7 +137,7 @@ ConnArea.prototype.setPenalty = function(ind, value) {
     this.indPenalty[ind] += value;
 };
 ConnArea.prototype.processForward = function(segm) {
-    printText("\t\t\t\t\tprocessForward:");
+    // printText("\t\t\t\t\tprocessForward:");
     var i, j, v, l, pair;
     var s = this.indHPenalty[0] + this.indVPenalty[0];
     var vv = Number.MAX_VALUE;
@@ -142,7 +148,7 @@ ConnArea.prototype.processForward = function(segm) {
             ;
         l = this.indCoord[j] - this.indCoord[i];
         v = s + koef(l * this.norm);
-        printText("\t\t\t\t\t\ti " + i + ", j " + j + ", ll " + ll + ", l " + l + ", vv " + vv + ", v " + v + "=" + s + " + " + koef(l * this.norm));
+        // printText("\t\t\t\t\t\ti " + i + ", j " + j + ", ll " + ll + ", l " + l + ", vv " + vv + ", v " + v + "=" + s + " + " + koef(l * this.norm));
         if (v < vv || (v === vv && l > ll)) {
             pair = [i, j];
             vv = v;
@@ -151,12 +157,12 @@ ConnArea.prototype.processForward = function(segm) {
         s += this.indHPenalty[j] + this.indVPenalty[j];
         i = j;
     }
-    printText("\t\t\t\t\t\tpair[ " + pair.toString() + "] " + vv + ", " + ll);
+    // printText("\t\t\t\t\t\tpair[ " + pair.toString() + "] " + vv + ", " + ll);
     return pair;
 };
 ConnArea.prototype.processBackward = function(segm) {
     var tabs = "\t\t\t\t\t";
-    printText(tabs + "processBachward:");
+    // printText(tabs + "processBachward:");
     var j, v, l, pair;
     var i = this.coors - 1;
     var s = -this.indHPenalty[i] - this.indVPenalty[i];
@@ -166,13 +172,13 @@ ConnArea.prototype.processBackward = function(segm) {
     str += "; " + listPrintString(this.indCoord, "Coord", " ");
     str += "; " + listPrintString(this.indHPenalty, "HPen", " ");
     str += "; " + listPrintString(this.indVPenalty, "VPen", " ");
-    printText(str);
+    // printText(str);
     while (i > 0) {
         for (j = i - 1; j > 0 && this.indHPenalty[j] === 0 && this.indVPenalty[j] === 0; j--)
             ;
         l = this.indCoord[i] - this.indCoord[j];
         v = s + koef(l * this.norm);
-        printText("\t\t\t\t\t\ti " + i + ", j " + j + ", ll " + ll + ", l " + l + ", vv " + vv + ", v " + v + "=" + s + " + " + koef(l * this.norm));
+        // printText("\t\t\t\t\t\ti " + i + ", j " + j + ", ll " + ll + ", l " + l + ", vv " + vv + ", v " + v + "=" + s + " + " + koef(l * this.norm));
         if (v < vv || (v === vv & l > ll)) {
             pair = [j, i];
             vv = v;
@@ -181,11 +187,11 @@ ConnArea.prototype.processBackward = function(segm) {
         s -= this.indHPenalty[j] - this.indVPenalty[j];
         i = j;
     }
-    printText("\t\t\t\t\t\tpair[ " + pair.toString() + "] " + vv + ", " + ll);
+    // printText("\t\t\t\t\t\tpair[ " + pair.toString() + "] " + vv + ", " + ll);
     return pair;
 };
 ConnArea.prototype.processDisconnected = function(segm) {
-    printText("\t\t\t\tprocessDisconnected:");
+    // printText("\t\t\t\tprocessDisconnected:");
     if (segm.forward(this.box.id))
         return this.processForward(segm);
     return this.processBackward(segm);
@@ -230,7 +236,7 @@ ConnArea.prototype.connectSegms = function() {
         var iii = 0;
     var i, pairV, pair, path, n, g, v, isLast, af, m;
     var self = this;
-    printText(listPrintString(self.indCoord, "indCoord:", "\t\t\t\t"));
+    // printText(listPrintString(self.indCoord, "indCoord:", "\t\t\t\t"));
     _.each(this.pairs, function(segmList, pairV){
         n = segmList.length;
         segmList.sort((function(a, b) {
@@ -292,7 +298,7 @@ ConnArea.prototype.connectSegms = function() {
             else
                 return 1;
         }));
-        str = "after sort center" + self.box.center[self.side & 1] + "\n";
+        var str = "after sort center" + self.box.center[self.side & 1] + "\n";
         _.each(segmList, function(segm){
             str += "\t" + segm.toString() + "; forward " + segm.forward(self.box.id)+ "\n";
         });
@@ -324,12 +330,12 @@ ConnArea.prototype.connectSegms = function() {
             str += "; dir " + path.dir + "; n " + n + "; lev " + path.lev.toString();
 //            str += ("\n" + path.toString() + "\n");
         });
-        printText(str);
+        // printText(str);
     });
 };
 ConnArea.prototype.connectPaths = function() {
-    turnOnPrinting("xxx");
-    printText("\t\t\t\t### connectPaths side " + this.side);
+    // turnOnPrinting("xxx");
+    // printText("\t\t\t\t### connectPaths side " + this.side);
     this.initTestRect();
 //    this.toString("initTestRect");
     this.collectIntersectSegm();
@@ -342,7 +348,7 @@ ConnArea.prototype.connectPaths = function() {
 //    this.toString("processSegms");
 //    printText(listPrintString(this.pairs, "pairs:", "\t\t\t"));
     this.connectSegms();
-    turnOffPrinting("xxx");
+    // turnOffPrinting("xxx");
 };
 ConnArea.prototype.simplifyPaths = function() {
     var self = this;
@@ -445,12 +451,14 @@ ConnArea.prototype.simplifyPaths = function() {
 };
 ConnArea.prototype.toString = function(text) {
     var tabs = "\t\t\t";
-    printText(tabs + "ConnArea::" + text);
-    printText(tabs + "\tside " + this.side);
-    printText(tabs + "\ttestRect " + this.testRect.toString());
-//    printText(tabs + "\tsegments: ");
-//    _.each(this.segments, function(segm) {printText(tabs + "\t\t" + segm.toString() + "; level " + segm.level()); });
-    printText(listPrintString(this.indCoord, "indCoord", tabs));
-    printText(listPrintString(this.coordInd, "coordInd", tabs));
-    printText(" ");
+//     printText(tabs + "ConnArea::" + text);
+//     printText(tabs + "\tside " + this.side);
+//     printText(tabs + "\ttestRect " + this.testRect.toString());
+// //    printText(tabs + "\tsegments: ");
+// //    _.each(this.segments, function(segm) {printText(tabs + "\t\t" + segm.toString() + "; level " + segm.level()); });
+//     printText(listPrintString(this.indCoord, "indCoord", tabs));
+//     printText(listPrintString(this.coordInd, "coordInd", tabs));
+//     printText(" ");
 };
+
+export default ConnArea

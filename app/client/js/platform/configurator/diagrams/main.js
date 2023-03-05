@@ -1,5 +1,13 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { ElementTypes } from '/libs/platform/collections'
+
 
 Template.configuratorDiagramTemplate.helpers({
+	isReady: function() {
+		return FlowRouter.subsReady("ConfiguratorDiagram");
+	},
+
 	activeElementType: function() {
 		var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType")});
 		if (elem_type && elem_type["name"] != "Specialization")
@@ -36,7 +44,7 @@ Template.diagramMain.helpers({
 Template.diagramMain.events({
 
 	'blur .dialog-input' : function(e) {
-		Configurator.updateElementStyleFromSelection(e);	
+		Configurator.updateObjectType(e);	
 	},
 });
 //End of diagram accordion

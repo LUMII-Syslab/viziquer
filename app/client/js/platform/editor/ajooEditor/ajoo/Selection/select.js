@@ -1,15 +1,18 @@
+// import { _ } from 'vue-underscore';
+import UnSelection from './unselect'
 
-Selection = function(editor) {
+var Selection = function(editor) {
 
 	var selection = this;
 	selection.editor = editor;
 
 	selection.selected = {};
+
 	selection.unselection = new UnSelection(selection);
 
 	selection.shapesLayer = editor.getLayer("ShapesLayer");
 	selection.dragLayer = editor.getLayer("DragLayer");
-	selection.dragGroup = find_child(selection.dragLayer, "DragGroup");
+	selection.dragGroup = editor.findChild(selection.dragLayer, "DragGroup");
 
 	selection.groups = selection.buildGroups();
 }
@@ -22,7 +25,7 @@ Selection.prototype = {
 
 		var selected = selection.selected;
 
-		//setting acive elements
+		//setting active elements
 		_.each(selection_list, function(obj) {
 			selected[obj._id] = obj;
 		});
@@ -36,6 +39,14 @@ Selection.prototype = {
 
 			else if (elem["type"] == "Line") {
 				selection.selectLine(elem);	
+			}
+
+			else if (elem["type"] == "Port") {
+				selection.selectPort(elem);	
+			}
+
+			else {
+				console.error("Incorrect element type", elem.type);
 			}
 		});
 
@@ -89,7 +100,22 @@ Selection.prototype = {
 
 	unselect: function(elem_list, is_refresh_needed) {
 		var selection = this;
+
 		selection.unselection.unselect(elem_list, is_refresh_needed);
+	},
+
+	getLinkedPorts: function() {
+		var selection = this;
+
+		var linked_ports = {};
+		_.each(selection.selected, function(element) {
+			_.each(element.ports, function(port) {
+				linked_ports[port._id] = port;
+				
+			});
+		});
+
+		return linked_ports;
 	},
 
 	manageLinkedLinesLayer: function(element, is_refresh_needed) {
@@ -109,6 +135,7 @@ Selection.prototype = {
 
 		var selection = this;
 		var selected = selection.selected;
+		var linked_ports = selection.getLinkedPorts();
 
 		var editor = selection.editor;
 
@@ -121,6 +148,7 @@ Selection.prototype = {
 		var is_parent_drag_group = false;
 
 		var line_presentation = line.presentation;
+
 
 		//if line was in the DragGroup, then point transformation is needed
 		var parent = line_presentation.getParent();
@@ -152,6 +180,18 @@ Selection.prototype = {
 			line_presentation.moveTo(no_end_group);
 		}
 
+		//if a line start element is selected
+		else if (linked_ports[start_elem_id]) {
+			var out_lines_group = groups["OutLinesGroup"];				
+			line_presentation.moveTo(out_lines_group);
+		}
+
+		//if a line end element is selected
+		else if (linked_ports[end_elem_id]) {
+			var in_lines_group = groups["InLinesGroup"];				
+			line_presentation.moveTo(in_lines_group);	
+		}
+
 		//if a line is not selected and its end-points are not selected
 		else  {
 			line_presentation.moveTo(selection.shapesLayer);
@@ -166,19 +206,24 @@ Selection.prototype = {
 
 		var shape_group = box.presentation;
 
-		//if editor is in edit mode
+		// if editor is in edit mode
 		if (editor.isEditMode()) {
 
-			//moving element to the drag layer
+			// moving element to the drag layer
 			var drag_group = selection.dragGroup;
 			shape_group.x(shape_group.x() - drag_group.x());
 			shape_group.y(shape_group.y() - drag_group.y());
 			
 			shape_group.moveTo(drag_group);
 
-			//moving lines
+			_.each(box.ports, function(port) {
+				selection.manageLinkedLinesLayer(port);
+			});
+
+			// moving lines
 			selection.manageLinkedLinesLayer(box);
 		}
+
 
 		box.setSelectedStyle();
 	},
@@ -202,14 +247,40 @@ Selection.prototype = {
 		element.setSelectedStyle();
 	},
 
+	selectPort: function(port) {
+		var selection = this;
+		var editor = selection.editor;
+
+		var shape_group = port.presentation;
+
+		//if editor is in edit mode
+		if (editor.isEditMode()) {
+
+			//moving element to the drag layer
+			var drag_group = selection.dragGroup;
+			var parent_group = port.parent.presentation;
+
+			shape_group.x(parent_group.x() + shape_group.x() - drag_group.x());
+			shape_group.y(parent_group.y() + shape_group.y() - drag_group.y());
+
+			shape_group.moveTo(drag_group);
+
+			//moving lines
+			selection.manageLinkedLinesLayer(port);
+		}
+
+		port.setSelectedStyle();
+	},
+
    	buildGroups: function() {
 
    		var selection = this;
+   		var editor = selection.editor;
    		var drag_layer = selection.dragLayer;
 
-        return {InLinesGroup: find_child(drag_layer, "InLinesGroup"),
-                OutLinesGroup: find_child(drag_layer, "OutLinesGroup"),
-                NoEndLinesGroup: find_child(drag_layer, "NoEndLinesGroup"),
+        return {InLinesGroup: editor.findChild(drag_layer, "InLinesGroup"),
+                OutLinesGroup: editor.findChild(drag_layer, "OutLinesGroup"),
+                NoEndLinesGroup: editor.findChild(drag_layer, "NoEndLinesGroup"),
                 DragGroup: selection.dragGroup,
             };
     },
@@ -537,7 +608,9 @@ Selection.prototype = {
 
 }
 
-SelectAll = function() {
+var SelectAll = function() {
 	var editor = get_editor();
 	editor.selection.selectAll();
 }
+
+export default Selection

@@ -1,6 +1,7 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Elements } from '/libs/platform/collections'
 
-
-Configurator = {
+var Configurator = {
 
 	selectSelectionValue: function(e) {
 		var src = $(e.target).closest(".dialog-selection");
@@ -74,9 +75,6 @@ Configurator = {
 //Updates
 	updateCompartmentType: function(list) {
 		list["id"] = Session.get("compartmentTargetTypeId");
-
-		console.log("updateCompartmentType ", list)
-
 
 		Utilities.callMeteorMethod("updateCompartmentType", list);
 	},
@@ -352,9 +350,8 @@ function update_element_style_object(attr_name, attr_value, style_type) {
 			};
 
 	//checking if the element is in the configurator
-	var target_elem_type = ElementTypes.findOne({elementId: Session.get("activeElement")});
-	if (target_elem_type) {
-
+	var target_elem_type = ElementTypes.findOne({elementId: Session.get("activeElement"),});
+	if (Session.get("activeElement") && target_elem_type) {
 		list["id"] = target_elem_type["_id"];
 		list["styleIndex"] = Configurator.getActiveElementStyleIndex();
 		list["type"] = target_elem_type["type"];
@@ -367,7 +364,6 @@ function update_element_style_object(attr_name, attr_value, style_type) {
 
 	//updating the presentation element
 	else {
-		
 		list["elementId"] = Session.get("activeElement");
 		list["diagramId"] = Session.get("activeDiagram");
 		list["projectId"] = Session.get("activeProject");
@@ -377,3 +373,6 @@ function update_element_style_object(attr_name, attr_value, style_type) {
 		Utilities.callMeteorMethod("updateElementStyle", list);
 	}
 }
+
+
+export {Configurator}

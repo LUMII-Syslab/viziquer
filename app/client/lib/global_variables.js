@@ -1,13 +1,14 @@
-
-_EDITED = undefined;
-_contextMenu = undefined;
+var _EDITED = undefined;
+var _contextMenu = undefined;
 
 //for data analytics
-charts = undefined;
+var charts = undefined;
 
-analytics = {
+var analytics = {
 	track: function() {
 
 	},
 
 };
+
+export { _EDITED, _contextMenu, charts, analytics }

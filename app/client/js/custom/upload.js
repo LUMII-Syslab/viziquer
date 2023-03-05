@@ -1,3 +1,5 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/client/js/platform/utilities/utils'
 
 Interpreter.customMethods({
 

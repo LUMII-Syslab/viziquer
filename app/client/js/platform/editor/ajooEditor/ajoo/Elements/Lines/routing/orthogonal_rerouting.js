@@ -1,9 +1,11 @@
+// import { _ } from 'vue-underscore';
+import GraphInfo from './line_routing_graphInfo';
+import LineRerouting from './line_dragging';
 
-OrthogonalRerouting = {
+var OrthogonalRerouting = {
 
 	recompute: function(line, state) {
-
-		var rerouting = this;
+		var rerouting = OrthogonalRerouting;
 		var editor = line.editor;
 		var elem_list = editor.getElements();
 
@@ -12,14 +14,18 @@ OrthogonalRerouting = {
 
 	    //selecting lines
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
-		start_elem.collectLinkedLines(lines);
-		end_elem.collectLinkedLines(lines);
+		var linked_ports = editor.selection.getLinkedPorts();
+
+		start_elem.collectLinkedLines(lines, linked_ports);
+		end_elem.collectLinkedLines(lines, linked_ports);
 
 		//selecting boxes
 		var boxes = [start_elem, end_elem];
 
 		//building graph
-		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, [], lines.linkedLines, lines.draggedLines);
+		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, [], [], lines.linkedLines, lines.draggedLines);
+		// var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, [], lines.linkedLines, lines.draggedLines);
+
 
 	    var path = graphInfo.infoDataMap[line._id];
 
@@ -143,7 +149,6 @@ OrthogonalRerouting = {
     	var start_center_x = start_width / 2 + size["x"];
     	var start_center_y = start_height / 2 + size["y"];
  	
-
     	var type_name = "";
     	if (box.elementTypeId) {
     		var splited_arr = box.elementTypeId.split(".");
@@ -193,16 +198,15 @@ OrthogonalRerouting = {
 
 }
 
-OrthogonalCollectionRerouting = {
+var OrthogonalCollectionRerouting = {
 
-	recomputeLines: function(editor, boxes, linkedLines, draggedLines, delta_x, delta_y) {
-
-		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, linkedLines, draggedLines, delta_x, delta_y);
+	recomputeLines: function(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y) {
+		var graphInfo = OrthogonalCollectionRerouting.buildGraphInfo(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y);
 	    graphInfo.onDragBoxes();
 		OrthogonalCollectionRerouting.updateMovedDraggedLines(graphInfo, editor);
 	},
 
-	buildGraphInfo: function(editor, boxes, linkedLines, draggedLines, delta_x, delta_y) {
+	buildGraphInfo: function(editor, boxes, ports, linkedPorts, linkedLines, draggedLines, delta_x, delta_y) {
 
 		var rerouting = OrthogonalCollectionRerouting;
 	    var graphInfo = new GraphInfo();
@@ -212,6 +216,17 @@ OrthogonalCollectionRerouting = {
 	    	var new_box = rerouting.addBoxToGraphInfo(box, graphInfo);
 	    	graphInfo.dragObjects.push(new_box);
 	    });
+
+	    _.each(ports, function(port) {
+	    	var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
+	    	graphInfo.dragObjects.push(new_port);
+	    });
+
+	    _.each(linkedPorts, function(port) {
+	    	var new_port = rerouting.addBoxToGraphInfo(port, graphInfo);
+	    	graphInfo.dragObjects.push(new_port);
+	    });
+
 
 	    rerouting.updateMovedLines(linkedLines, draggedLines, delta_x, delta_y);
 
@@ -240,7 +255,6 @@ OrthogonalCollectionRerouting = {
 
 	    //selecting next-level 
 	    _.each(linkedLines, function(line_obj) {
-
 	    	var link = line_obj.line;
 
 		   	//selecting the start and end element
@@ -359,3 +373,4 @@ OrthogonalCollectionRerouting = {
 
 }
 
+export {OrthogonalCollectionRerouting, OrthogonalRerouting}

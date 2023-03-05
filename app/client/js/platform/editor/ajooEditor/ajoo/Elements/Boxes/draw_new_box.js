@@ -1,5 +1,8 @@
+import Event from '../../Editor/events';
+import ElementHandlers from '../element_handlers'
 
-ANewBox = function(editor) {
+var ANewBox = function(editor) {
+
 	var newBox = this;
 	newBox.editor = editor;
 
@@ -9,6 +12,7 @@ ANewBox = function(editor) {
 ANewBox.prototype = {
 
 	startDragging: function(palette_button) {
+
 		var newBox = this;
 		var editor = newBox.editor;
 
@@ -56,12 +60,11 @@ ANewBox.prototype = {
 	},
 
 	dragging: function() {
-
-		//changing the cursor style
-		set_cursor_style('crosshair');
-
 		var newBox = this;
 		var editor = newBox.editor;
+
+		//changing the cursor style
+		editor.setCursorStyle('crosshair');
 
 		//selects mouse state and its position
 		var mouse_state = editor.getMouseState();
@@ -96,8 +99,8 @@ ANewBox.prototype = {
 		var new_id = new_box._id;
 		new_box.presentation.objId = new_id;
 
-		var element_list = editor.getElements();
-		element_list[new_id] = new_box;
+		// var element_list = editor.getElements();
+		// element_list[new_id] = new_box;
 
 		new_box.handlers = new ElementHandlers(new_box);
 
@@ -120,3 +123,4 @@ ANewBox.prototype = {
 	},
 }
 
+export default ANewBox

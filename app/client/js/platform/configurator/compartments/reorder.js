@@ -1,3 +1,6 @@
+import { Utilities } from '/client/js/platform/utilities/utils'
+import { CompartmentTypes, ElementTypes } from '/libs/platform/collections'
+
 
 Template.compartmentReorder.helpers({
 

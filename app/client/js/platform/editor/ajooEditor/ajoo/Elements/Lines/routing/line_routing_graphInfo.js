@@ -1,8 +1,12 @@
+// import { _ } from 'vue-underscore';
+import BoxInfo from './line_routing_boxInfo'
+import PathInfo from './line_routing_pathInfo'
+
 //******************************************************************************
 // GraphInfo 
 //******************************************************************************
-GraphInfo = function() {
-    turnOffPrinting("xxx");
+var GraphInfo = function() {
+    // turnOffPrinting("xxx");
     this.infoDataMap = {};
     this.dragObjects = [];
     this.operation = "unknown";
@@ -134,15 +138,15 @@ GraphInfo.prototype.onDragSegm = function(path, ind) {
     path.onDragSegm(ind);
 };
 GraphInfo.prototype.processAffectedPaths = function() {
-    printText("\t>>>>>>>>>>>>>> processAffectedPaths start >>>>>>>>>>>>>>");
+    // printText("\t>>>>>>>>>>>>>> processAffectedPaths start >>>>>>>>>>>>>>");
 //    turnOffPrinting("111");
     this.avoidPathCrossings();
 //    turnOnPrinting("111");
     this.processBoxesWithDisconnectPaths();
-    printText("\t>>>>>>>>>>>>>> processAffectedPaths end  >>>>>>>>>>>>>>");
+    // printText("\t>>>>>>>>>>>>>> processAffectedPaths end  >>>>>>>>>>>>>>");
 };
 GraphInfo.prototype.avoidPathCrossings = function() {
-    printText("\t\t>>>>>>>>>> avoidPathCrossings start >>>>>>>>>>");
+    // printText("\t\t>>>>>>>>>> avoidPathCrossings start >>>>>>>>>>");
 //    turnOffPrinting("avoidPathCrossings");
     // avoid affected path crossings with endboxes        
     for (var i = 0; i < this.affectedPaths.length; i++) {
@@ -156,11 +160,11 @@ GraphInfo.prototype.avoidPathCrossings = function() {
         }
     }
 //    turnOnPrinting("avoidPathCrossings");
-    printText("\t\t>>>>>>>>>> avoidPathCrossings end  >>>>>>>>>>");
+    // printText("\t\t>>>>>>>>>> avoidPathCrossings end  >>>>>>>>>>");
 };
 GraphInfo.prototype.processBoxesWithDisconnectPaths = function() {
-    printText("\t\t>>>>>>>>>> processBoxesWithDisconnectPaths start >>>>>>>>>>");
-    processedBoxes = {};
+    // printText("\t\t>>>>>>>>>> processBoxesWithDisconnectPaths start >>>>>>>>>>");
+    var processedBoxes = {};
     for (var i = 0; i < this.affectedPaths.length; i++) {
         var path = this.affectedPaths[i];
 //        printText("\t\t\tpath " + path.toString());
@@ -181,7 +185,7 @@ GraphInfo.prototype.processBoxesWithDisconnectPaths = function() {
         path.simplify();
         //path.clipOnBoxes();
     }
-    printText("\t\t>>>>>>>>>> processBoxesWithDisconnectPaths end  >>>>>>>>>>");
+    // printText("\t\t>>>>>>>>>> processBoxesWithDisconnectPaths end  >>>>>>>>>>");
 };
 GraphInfo.prototype.collectDisconnectedPaths = function() {
     // create list of nodes with disconnected paths
@@ -487,3 +491,6 @@ function FPathInfo(info) {
 FPathInfo.prototype.otherNode = function(nodeId) {
     return this.owner.infoDataMap[(this.from === nodeId) ? this.to : this.from];
 };
+
+
+export default GraphInfo

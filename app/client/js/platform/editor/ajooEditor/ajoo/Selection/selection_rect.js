@@ -1,5 +1,7 @@
+// import { _ } from 'vue-underscore';
+import Event from '../Editor/events';
 
-SelectionRect = function(editor) {
+var SelectionRect = function(editor) {
 
 	var selectionRect = this;
 
@@ -169,3 +171,4 @@ SelectionRect.prototype = {
 };
 
 
+export default SelectionRect

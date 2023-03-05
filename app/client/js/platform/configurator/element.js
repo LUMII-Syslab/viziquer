@@ -1,3 +1,6 @@
+import { Interpreter } from '/client/lib/interpreter'
+import { ElementTypes } from '/libs/platform/collections'
+
 
 //functions makes element type
 Interpreter.methods({

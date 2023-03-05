@@ -1,5 +1,10 @@
+// import { _ } from 'vue-underscore';
+import {BoxCompartments} from '../box_compartments'
+import ElementHandlers from '../../element_handlers'
+import Resizers from '../add_remove_resizers'
+import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
 
-Box = function(editor) {
+var Box = function(editor) {
 
 	var box = this;
 	box.editor = editor;
@@ -7,7 +12,6 @@ Box = function(editor) {
 	box.settings = editor.boxSettings;
 
 	box.getNodeProperties = function(element) {
-
 		var res = element["style"]["elementStyle"];
 		res["perfectDrawEnabled"] = false;
 
@@ -96,7 +100,7 @@ Box = function(editor) {
 
 	box.resizeGradient = function(element, shape_group, style) {
 
-		var shape = find_child(shape_group, "Shape");
+		var shape = this.editor.findChild(shape_group, "Shape");
 		if (shape) {	
 
 			if (shape["attrs"]["fillPriority"] != "color") {
@@ -104,8 +108,9 @@ Box = function(editor) {
 				//selects element style and the size, then recomputes the gradient
 				if (!style) {
 					var element = Elements.findOne({_id: shape_group["objId"]})
-					if (element)
+					if (element) {
 						style = element["style"]["elementStyle"];
+					}
 				}
 
 				var size = get_element_size(shape_group);
@@ -122,7 +127,6 @@ Box = function(editor) {
 Box.prototype = {
 
 	render: function(parent, element) {
-
 		var box = this;
 
 		box.style = element.style;
@@ -142,6 +146,7 @@ Box.prototype = {
 
 		box["inLines"] = {};
 		box["outLines"] = {};
+		box["ports"] = [];
 
 		box["minWidth"] = new_shape_obj["minWidth"] || 16;
 		box["minHeight"] = new_shape_obj["minHeight"] || 16;
@@ -157,22 +162,22 @@ Box.prototype = {
 			box["maxWidth"] = Infinity;
 			box["maxHeight"] = Infinity;
 
-			if (new_shape_obj["maxWidth"])
+			if (new_shape_obj["maxWidth"]) {
 				box["maxWidth"] = new_shape_obj["maxWidth"];
+			}
 
-			if (new_shape_obj["maxHeight"])
+			if (new_shape_obj["maxHeight"]) {
 				box["maxHeight"] = new_shape_obj["maxHeight"];
+			}
 		}
 
 		box["name"] = element["style"]["elementStyle"]["shape"];
-
 		box.shapes = new_shape_obj["element"];
 
 		//box.shapes[0].transformsEnabled('position');
-
 		box.presentation = shape_group;
-
 		box.linkShapesToParent(shape_group, new_shape_obj);
+
 
 		//add shape group to the parent
 		parent.add(shape_group);
@@ -187,6 +192,7 @@ Box.prototype = {
 
 		//adds element compartments
 		var compartments = element["compartments"];
+		
 		box.compartments = new BoxCompartments(box, compartments);
 
 		box.data = element.data;
@@ -278,17 +284,19 @@ Box.prototype = {
 		var new_width = new_x2 - new_x;
 		var new_height = new_y2 - new_y;
 
-		//udpating the size
+		//updating the size
 		var new_size = element.updateSizeAndCompartments(new_width, new_height);
 		var shape_group = element.presentation;
 
 		//recomputing the element's x position
-		if (elem_size["x"] != new_x)
+		if (elem_size["x"] != new_x) {
 			shape_group.x(new_x2 - new_size["width"]);
+		}
 
 		//recomputing the element's y position
-		if (elem_size["y"] != new_y)
+		if (elem_size["y"] != new_y) {
 			shape_group.y(new_y2 - new_size["height"]);
+		}
 	},
 
 	getSize: function() {
@@ -296,30 +304,47 @@ Box.prototype = {
 		var shape_group = box.presentation;
 		var stage = box.editor.stage;
 
-		return {x: shape_group.x(), y: shape_group.y(),
-					width: box.width, height: box.height};
+		var x = shape_group.x();
+		var y = shape_group.y();
+
+		return {x: x, y: y, width: box.width, height: box.height,};
 	},
 
 	getElementPosition: function() {
-
 		var box = this;
 		var editor = box.editor;
 
 	    var delta_x = 0;
 	    var delta_y = 0;
 
+    	var drag_layer = editor.getLayer("DragLayer");
+        var drag_group = editor.findChild(drag_layer, "DragGroup");
+
 	    var selection = editor.getSelectedElements();
 	    if (selection[box._id]) {
-
-        	var drag_layer = editor.getLayer("DragLayer");
-            var drag_group = find_child(drag_layer, "DragGroup");
-
             delta_x = drag_group.x();
             delta_y = drag_group.y();
 	    }
 
 	    var pos = box.getSize();
-	    return {x: pos["x"] + delta_x, y: pos["y"] + delta_y, width: pos.width, height: pos.height};
+
+	    var x = pos.x + delta_x;
+	    var y = pos.y + delta_y;
+
+	    var selected_elements = editor.getSelectedElements();
+		if (box.type == "Port" && !selected_elements[box._id]) {
+			var port_parent_size = box.parent.getSize();
+			x += port_parent_size.x;
+			y += port_parent_size.y;
+
+			var linked_ports = box.editor.selection.getLinkedPorts();
+			if (linked_ports[box._id]) {
+				x += drag_group.x();
+				y += drag_group.y();
+			}
+		}
+
+	    return {x: Math.floor(x), y: Math.floor(y), width: pos.width, height: pos.height};
 	},
 
 	setElementPosition: function(new_x, new_y) {
@@ -336,7 +361,7 @@ Box.prototype = {
 	    if (selection[box._id]) {
 
         	var drag_layer = editor.getLayer("DragLayer");
-            var drag_group = find_child(drag_layer, "DragGroup");
+            var drag_group = editor.findChild(drag_layer, "DragGroup");
 
             new_x -= drag_group.x();
             new_y -= drag_group.y();
@@ -437,20 +462,21 @@ Box.prototype = {
 		var box = this;
 		var editor = box.editor;
 		
-		if (editor.isEditMode())
+		if (editor.isEditMode() && box.type == "Box") {
 			box.removeResizers();
-
-		else
+		}
+		else {
 			box.updateStyle({elementStyle: {shadowBlur: 0}});
+		}
 	},
 
 	setSelectedStyle: function() {
 		var box = this;
 		var editor = box.editor;
 
-		if (editor.isEditMode())
+		if (editor.isEditMode() && box.type == "Box") {
 			box.addResizers();
-		
+		}
 		else {
 			var style = {elementStyle: {shadowEnabled: true, shadowColor: "red", shadowBlur: 15}};
 			box.updateStyle(style);
@@ -466,8 +492,9 @@ Box.prototype = {
 
 	removeResizers: function() {
 		var box = this;
-		if (box.resizers)
+		if (box.resizers) {
 			box.resizers.remove();
+		}
 
 		box.resizers = undefined;
 	},
@@ -487,9 +514,10 @@ Box.prototype = {
 	buildSVGSize: function(x, y) {
 		var box = this;
 
-		var size = box.getSize();
-
+		// var size = box.getSize();
+		var size = box.getElementPosition();
 		var path = box.toSVG(x, y, size.width, size.height);
+
 		return new SVGObject(path); 
 	},
 
@@ -507,7 +535,7 @@ Box.prototype = {
 		return {x1: x1, x2: x2, y1: y1, y2: y2};
 	},
 
-	collectLinkedLines: function(lines) {
+	collectLinkedLines: function(lines, linked_ports) {
 
 		var box = this;
 		var editor = box.editor;
@@ -516,15 +544,15 @@ Box.prototype = {
 
 		var selected = editor.getSelectedElements();
 
-		this.collectLinkedLinesByName("inLines", lines, selected, lines_map);
-		this.collectLinkedLinesByName("outLines", lines, selected, lines_map);
+		box.collectLinkedLinesByName("inLines", lines, selected, linked_ports, lines_map);
+		box.collectLinkedLinesByName("outLines", lines, selected, linked_ports, lines_map);
 
 		return lines;
 	},
 
-	collectLinkedLinesByName: function(in_or_out, lines, selected, lines_map) {
-
+	collectLinkedLinesByName: function(in_or_out, lines, selected, linked_ports, lines_map) {
 		var elem = this;
+
 	    _.each(elem[in_or_out], function(line, id) {
 	        
 	        //checking if the line was already selected
@@ -532,7 +560,6 @@ Box.prototype = {
 	    	if (line_id) {
 	    		return;
 	    	}
-
 	    	else {
 	    		lines_map[id] = true;
 	    	}
@@ -540,9 +567,15 @@ Box.prototype = {
 	        var points = line.getPoints().slice();
 	        
 	        var index = 0;
-
 	        var start_obj = selected[line.startElementId];
+	        if (!start_obj) {
+	        	start_obj = linked_ports[line.startElementId];
+	        }
+
 	        var end_obj = selected[line.endElementId];
+	        if (!end_obj) {
+	        	end_obj = linked_ports[line.endElementId];
+	        }
 
 	       	var line_obj = {line: line, points: points};
 
@@ -571,6 +604,14 @@ Box.prototype = {
 	        }
 
 	        else {
+	        	var dragged_line = _.find(lines.draggedLines, function(link) {
+	        							return link.line._id == line_obj.line._id;
+	        						});
+
+	        	if (dragged_line) {
+	        		return;
+	        	}
+
 	        	lines.draggedLines.push(line_obj);
 	        }
 	    });
@@ -709,3 +750,4 @@ Box.prototype = {
 
 };
 
+export default Box

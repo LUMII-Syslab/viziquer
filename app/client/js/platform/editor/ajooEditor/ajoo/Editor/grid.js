@@ -1,5 +1,8 @@
+// import { _ } from 'vue-underscore';
+import SelectionDragging from '../Selection/selection_dragging'
+import {OrthogonalRerouting} from '../Elements/Lines/routing/orthogonal_rerouting'
 
-Grid = function(editor) {
+var Grid = function(editor) {
 
 	var grid = this;
 	grid.editor = editor;
@@ -19,11 +22,13 @@ Grid.prototype = {
 		var grid = this;
 		var editor = grid.editor;
 
-	    if (!params)
+	    if (!params) {
 	        params = {};
+	    }
 
-	    if (params["step"])
+	    if (params["step"]) {
 	        grid.step = params["step"];
+	    }
 
 	    var step = grid.step;
 
@@ -75,8 +80,9 @@ Grid.prototype = {
 
         grid.layer.visible(true);
 
-        if (!is_refresh_not_needed)
+        if (!is_refresh_not_needed) {
         	grid.layer.draw();
+        }
 
         //grid.alignElements();
 
@@ -89,7 +95,6 @@ Grid.prototype = {
 
         //if grid is enabled, then removing it
         if (grid["isGridEnabled"]) {
-
             grid["isGridEnabled"] = false;
         	grid.layer.visible(false);
         }
@@ -107,7 +112,6 @@ Grid.prototype = {
 
 		editor.unSelectElements();
 
-
 	    var graphInfo = new GraphInfo();
 		var initial_pos = {
 							deltaX: 0,
@@ -116,9 +120,7 @@ Grid.prototype = {
 							stageY: 0,
 						};
 
-		
 		var self = {editor: editor};
-
 
 		var lines = [];
 
@@ -135,16 +137,14 @@ Grid.prototype = {
 		    	var new_box = SelectionDragging.prototype.addBoxToGraphInfo(element, graphInfo, 0, 0);  	
 		    	graphInfo.dragObjects.push(new_box);
 			}
-
-			else
+			else {
 				lines.push(element);
+			}
 		});
-
 
 		_.each(lines, function(line) {
 			OrthogonalRerouting.prototype.addPathToGraphInfo(line, line.getPoints(), graphInfo);
 		});
-
 
 		//recomputing lines
 	   	graphInfo.onDragBoxes();
@@ -169,4 +169,4 @@ Grid.prototype = {
 
 }
 
-
+export default Grid

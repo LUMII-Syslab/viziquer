@@ -1,6 +1,8 @@
+// import { _ } from 'vue-underscore';
+import Link from '../Elements/Lines/render_lines';
 
-Palette = function(editor, palette_obj) {
 
+var Palette = function(editor, palette_obj) {
 	var palette = this;
 
 	palette.editor = editor;
@@ -8,8 +10,9 @@ Palette = function(editor, palette_obj) {
 	palette.selectedId = undefined;
 
 	var palette_settings = {};
-	if (palette_obj && palette_obj.settings)
+	if (palette_obj && palette_obj.settings) {
 		palette_settings = palette_obj.settings;
+	}
 
 	palette.distanceBetweenButtons = palette_settings.padding || 3;
 
@@ -34,14 +37,12 @@ Palette = function(editor, palette_obj) {
     var palette_html = "<div id=" + editor.paletteContainerName + " style='float: left;width:" + palette.width + "px;'></div>";
     $("#" + editor.containerName).append(palette_html);
 
-
     var paletteStage = new Konva.Stage({container: editor.paletteContainerName,
                                         width: palette.width ,
                                         height: editor.height,
                                         });
 
-    editor.paletteStage = paletteStage;
-    
+    editor.paletteStage = paletteStage;    
 
 	//adding palette layer
 	var palette_layer = new Konva.Layer();
@@ -108,8 +109,9 @@ Palette.prototype = {
 
         //removing palette group elements
         var palette_layer = palette.paletteLayer;
-        if (palette_layer)
+        if (palette_layer) {
             palette_layer.destroyChildren();
+        }
 
         //if needed, refreshing the layer 
         if (is_refresh_needed) {
@@ -148,8 +150,9 @@ Palette.prototype = {
 		var palette = this;
 		var palette_button = palette.getPressedButton();
 
-		if (palette_button)
+		if (palette_button) {
 			return palette_button.type == "Line";
+		}
 	},
 
 	getPressedButton: function() {
@@ -165,7 +168,7 @@ Palette.prototype = {
 
 }
 
-PaletteButton = function(palette) {
+var PaletteButton = function(palette) {
 
 	var paletteButton = this;
 
@@ -183,9 +186,8 @@ PaletteButton = function(palette) {
 
 	paletteButton.build_button_container = function(palette_layer, palette_button) {
 
-		var button_container = new Konva.Group({x: palette_button["x"],
-												y: palette_button["y"]});
-			button_container["name"] = "PaletteButtonGroup";
+		var button_container = new Konva.Group({x: palette_button["x"], y: palette_button["y"]});
+		button_container["name"] = "PaletteButtonGroup";
 
 		palette_layer.add(button_container);
 
@@ -256,8 +258,9 @@ PaletteButton = function(palette) {
 		var box = editor.elements.createShape(elem_style["shape"]);
 		box.render(button_container, properties);
 
-		if (image_src)
+		if (image_src) {
 			box.renderAsImage(image_src);
+		}
 
 		//recomputing the shape position for regular shapes
 		if (box.isRegularPolygon) {
@@ -334,11 +337,44 @@ PaletteButton = function(palette) {
 		var palette = paletteButton.palette;
 		var editor = palette.editor;
 
-		var link = new Link(editor);
+		//This is a hack
+		var image_src = elem_style.imageSrc;
+//		    console.log("LINK IMG1",image_src);
+		if (image_src) {
+			delete elem_style.imageSrc;
+			var x = 5;
+			var y = 7;
+
+			var button_width = width - 2 * x;
+			var button_height = height - 2 * y;		var properties = {style: {elementStyle: elem_style},
+							location: {
+								width: button_width,
+								height: button_height,
+								x: x,
+								y: y,
+							},
+						};
+
+
+			var box = editor.elements.createShape("Rectangle");
+			box.render(button_container, properties);
+
+			box.renderAsImage(image_src);
+			var palette_icon = box.presentation;
+			palette_icon["name"] = "PaletteIcon";
+		}
+		else {
+			var link = new Link(editor);
+			link.render(button_container, properties);
+			var palette_icon = link.presentation;
+			palette_icon["name"] = "PaletteIcon";
+		}
+		
+/*		var link = new Link(editor);
 		link.render(button_container, properties);
 
 		var palette_icon = link.presentation;
-			palette_icon["name"] = "PaletteIcon";
+			palette_icon["name"] = "PaletteIcon";*/
 	}
 
 	paletteButton.add_palette_button_overlay = function(button_container) {
@@ -361,24 +397,112 @@ PaletteButton = function(palette) {
 
 	paletteButton.getBackgroundRect = function() {
 		var button_container = paletteButton.presentation;
-		return find_child(button_container, "ButtonRect");
+		return this.palette.editor.findChild(button_container, "ButtonRect");
+	}
+
+	Palette.tooltip = null
+	Palette.layer = null  
+
+	function addTooltip(y, tooltipText, stage){
+		//console.log("adding tooltip ... ")
+		//absolute top x and y are absolute coordinates of a left upper corner of a visible area of the component ajoo_scene
+		//visible area can be different from full component area in cases where horizontal or vertical scrolling is involved 
+		let absoluteTop_y = document.getElementById("ajoo_scene").getBoundingClientRect().top - 
+		                    document.getElementById("ajoo_scene").children[0].getBoundingClientRect().top;
+		
+		let absoluteTop_x = document.getElementById("ajoo_scene").getBoundingClientRect().left - 
+							document.getElementById("ajoo_scene").children[0].getBoundingClientRect().left;
+		
+		if (Palette.layer == null) {
+			Palette.layer = new Konva.Layer();
+			//console.log(stage)
+			stage.add(Palette.layer);
+		}
+		
+		if (Palette.tooltip == null) {
+			// label with left pointer
+			Palette.tooltip = new Konva.Label({
+				x: absoluteTop_x + 10,
+				y: absoluteTop_y + y,
+				opacity: 1
+			});
+
+			Palette.tooltip.add(new Konva.Tag({
+				fill: 'black',
+				pointerDirection: 'left',
+				pointerWidth: 10,
+				pointerHeight: 10,
+				lineJoin: 'round',
+				shadowColor: 'black',
+				shadowBlur: 10,
+				shadowOffset: {x :10, y:10},
+				shadowOpacity: 0.5
+			}));
+
+			Palette.tooltip.add(new Konva.Text({
+				text: tooltipText,
+				fontFamily: 'Calibri',
+				fontSize: 18,
+				padding: 5,
+				fill: 'white'
+			}));
+
+
+			// add the labels to layer
+			Palette.layer.add(Palette.tooltip);
+			Palette.layer.draw();	
+			//console.log(Palette.layer)	
+		}
 	}
 
 	paletteButton.setActiveStyle = function() {
+		// console.log("setActiveStyle")
+		// console.log(this)
 		var palette_button_rect = paletteButton.getBackgroundRect();
+		// console.log(palette_button_rect)
+		// console.log("Y = ", palette_button_rect.parent.attrs.y)
+		// console.log("elementTypeID = ", this.data.elementTypeId )
+
+		//find element_type by this.data.elementTypeId
+		
+		// console.log(window.rootVueInstance.$children[0].$children[2].elementTypes)
+		//const AjooEditorVueComponent = window.Vue.$children[0].$children[2]
+
+		// const AjooEditorVueComponent = Vue.$children[0].$children[0].$children[3]
+		// let tooltipText = this.data.elementTypeId
+		// for(let i=0; i < AjooEditorVueComponent.elementTypes.length; i++ ){
+		// 	let elemType = AjooEditorVueComponent.elementTypes[i]
+		// 	if(elemType.id == this.data.elementTypeId){
+		// 		tooltipText += " / " + elemType.name
+		// 	}
+		// }
+
+		//console.log(name)
+
+		//console.log(mainjs)
+		//console.log(paletteButton.palette.editor)
 		var fill = "#eee";
 		palette_button_rect.fill(fill);
 
 		paletteButton.refresh();
+
+		// addTooltip(palette_button_rect.parent.attrs.y + palette_button_rect.attrs.height/2, tooltipText, this.palette.editor.stage)
 	}
 
 	paletteButton.setDefaultStyle = function(is_no_refresh) {
+		//console.log("setdefaultstyle")
 		var palette_button_rect = paletteButton.getBackgroundRect();
 		var fill = "#fff";
 		palette_button_rect.fill(fill);
 
 		if (is_no_refresh)
 			return;
+		
+		if(Palette.tooltip){
+			Palette.tooltip.destroy()
+			Palette.layer.draw()
+			Palette.tooltip = null
+		}
 
 		paletteButton.refresh();
 	}
@@ -450,7 +574,6 @@ PaletteButton.prototype = {
 
 		//changing style
 		paletteButton.setActiveStyle();
-
 	}, 
 
 	unPressPaletteButton: function(is_no_refresh) {
@@ -470,14 +593,12 @@ function PaletteButtonHandlers(paletteButton) {
 	var palette = paletteButton.palette;
 
 	var button_container = paletteButton.presentation;
-
-	var palette_button_overlay = find_child(button_container, "Overlay");
-
+	var palette_button_overlay = palette.editor.findChild(button_container, "Overlay");
 
 	//mouser over on the palette button
 	palette_button_overlay.on("mouseover", function(e) {
 
-		set_cursor_style("pointer");
+		palette.editor.setCursorStyle("pointer");
 		paletteButton.setActiveStyle();
 
 		e.cancelBubble = true;
@@ -492,7 +613,7 @@ function PaletteButtonHandlers(paletteButton) {
 		//if the button was not pressed (was just mouse-overed and then leaved),
 		//then sets the default cursor and the default fill
 		if (!pressed_button) {
-			set_cursor_style("default");
+			palette.editor.setCursorStyle("default");
 			paletteButton.setDefaultStyle();
 		}
 
@@ -516,7 +637,6 @@ function PaletteButtonHandlers(paletteButton) {
 		var palette_state = palette["state"];
 		var pressed_button = palette_state["pressedButton"];
 
-
 		//if no palette button was pressed, then setting as pressed
 		if (!pressed_button) {
 			paletteButton.pressPaletteButton();
@@ -526,7 +646,6 @@ function PaletteButtonHandlers(paletteButton) {
 
 			//if clicked the pressed button, then unpressing it
 			if (pressed_button._id == paletteButton._id) {
-
 				pressed_button.unPressPaletteButton();
 			}
 
@@ -552,15 +671,17 @@ function compute_palette_line_end_shape_radius(radius) {
 
 function process_style_attributes(style) {
 
-	if (style.shape == "RoundRectangle") 
+	if (style.shape == "RoundRectangle") {
 		style["cornerRadius"] = Math.sqrt(Math.sqrt(style["cornerRadius"])) || 5;
+	}
 
-	if (style["strokeWidth"])
+	if (style["strokeWidth"]) {
 		style["strokeWidth"] = Math.sqrt(style["strokeWidth"]);
+	}
 
 	style["perfectDrawEnabled"] = false;
 
 	return style;
 }
 
-
+export default Palette

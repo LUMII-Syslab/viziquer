@@ -424,7 +424,7 @@
 			LikeExpressionC = ('~' space string:(likeString1B / likeString2B)) {return string}
 			likeString1 = (('"'/ '“' / '”') start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? ('"'/ '“' / '”')) {return {string: makeVar(string), start:start, end:end}}
 			likeString2 = ("'" start:"%"? string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / [0-9])+ end:"%"? "'") {return {string: makeVar(string), start:start, end:end}}
-			likeString1B = (('"'/ '“' / '”')  string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "^" / "*" / "." /"^" / "$"/ [0-9])+ ('"'/ '“' / '”')) {return {string: makeVar(string), start:"%", end:"%"}}
-			likeString2B = ("'" string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "^" / "*" / "." /"^" / "$" / [0-9])+ "'") {return {string: makeVar(string), start:"%", end:"%"}}
+			likeString1B = (('"'/ '“' / '”')  string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "^" / "*" / "." / [0-9])+ ('"'/ '“' / '”')) {return {string: makeVar(string), start:"%", end:"%"}}
+			likeString2B = ("'" string:([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "^" / "*" / "." / [0-9])+ "'") {return {string: makeVar(string), start:"%", end:"%"}}
 
 			BetweenExpression = ('BETWEEN'i space '(' space BetweenExpressionL:NumericExpression space Comma space BetweenExpressionR:NumericExpression ')') {return {BetweenExpressionL:BetweenExpressionL, BetweenExpressionR:BetweenExpressionR}}

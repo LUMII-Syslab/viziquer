@@ -1,4 +1,3 @@
-
 // Custom collections
 Associations = new Mongo.Collection("Associations");
 Attributes = new Mongo.Collection("Attributes");
@@ -7,3 +6,11 @@ Schema = new Mongo.Collection("Schema");
 TriplesMaps = new Mongo.Collection("TriplesMaps");
 Services = new Mongo.Collection("Services");
 
+export {
+	Associations,
+	Attributes,
+	Classes,
+	Schema,
+	TriplesMaps,
+	Services,
+}

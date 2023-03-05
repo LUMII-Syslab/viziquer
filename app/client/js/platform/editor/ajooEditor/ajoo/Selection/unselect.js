@@ -1,12 +1,13 @@
+// import { _ } from 'vue-underscore';
 
-UnSelection = function(selection) {
+var UnSelection = function(selection) {
 
 	var unselection = this;
 	unselection.selection = selection;
 
 	unselection.shapes_layer = selection.editor.getLayer("ShapesLayer");
 	unselection.drag_layer = selection.editor.getLayer("DragLayer");
-	unselection.drag_group = find_child(unselection.drag_layer, "DragGroup");
+	unselection.drag_group = selection.editor.findChild(unselection.drag_layer, "DragGroup");
 
 	unselection.unselectSpecificElements = function(elem_list) {
 
@@ -24,7 +25,7 @@ UnSelection = function(selection) {
 		}
 	}
 
-	unselection.unselectEditModeElement = function(element) {	
+	unselection.unselectEditModeElement = function(element) {
 		var shape_group = element.presentation;
 
 		//selection relative position
@@ -43,8 +44,22 @@ UnSelection = function(selection) {
 			shape_group.moveTo(unselection.shapes_layer);
 		}
 
-		else if (element["type"] == "Line") {
-			selection.manageLineLayer(element);
+		else {
+			if (element["type"] == "Line") {
+				selection.manageLineLayer(element);
+			}
+			else {
+				if (element["type"] == "Port") {
+					var port_parent = element.parent;
+
+					var port_parent_size = port_parent.getSize();
+
+					shape_group.x(shape_group.x() + selection_x - port_parent_size.x);
+					shape_group.y(shape_group.y() + selection_y - port_parent_size.y);
+
+					shape_group.moveTo(port_parent.presentation);
+				}
+			}
 		}
 
 		selection.manageLinkedLinesLayer(element);
@@ -91,3 +106,4 @@ UnSelection.prototype = {
 	},
 }
 
+export default UnSelection
