@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects } from '/libs/platform/collections'
+import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/libs/platform/collections'
 
 Interpreter.customMethods({
 	

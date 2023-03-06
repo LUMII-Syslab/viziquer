@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, ForumPostTags } from '/libs/platform/collections'
+import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags } from '/libs/platform/collections'
 import { get_configurator_tool_id } from '/libs/platform/helpers'
 import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/libs/platform/user_rights'
 import { error_msg } from '/server/platform/_global_functions'
@@ -171,7 +171,6 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 
 					
 Meteor.publish("Diagram_Palette_ElementType", function(list) {
-
 	var user_id = this.userId;
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
@@ -185,10 +184,8 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 
 	var role = proj_user["role"];
 	if (is_project_version_reader(user_id, list, role)) {
-
 		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
-
 			var tool_id = version["toolId"];
 			var tool_version_id = version["toolVersionId"];
 
@@ -233,15 +230,14 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 				//doc_query["allowedGroups"] = role;	
 			}
 
+
 			//if no diagrams found, then no data
 			var diagrams = Diagrams.find(diagram_query, diagram_limit);
 			if (diagrams.count() == 0) {
 				error_msg();
 				return this.stop();				
 			}
-			
 			else {
-
 				return [diagrams,
 						Elements.find(element_query, element_limit),
 						Compartments.find(element_query, compart_limit),

@@ -37,7 +37,6 @@ Meteor.methods({
 				// Accounts.sendVerificationEmail(user_id, list["email"]);
 
 
-
 			if (is_first_user) {
 				var role = build_power_user_role();
 				
@@ -74,9 +73,6 @@ Meteor.methods({
 				if (Meteor.settings && Meteor.settings.configurationName) {
 					file_name = Meteor.settings.configurationName;
 				}
-
-
-				console.log("file_name", file_name);
 
 				// var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
 				var file = JSON.parse(Assets.getText("jsons/" + file_name));

@@ -138,12 +138,13 @@
     {{#each diagrams}}
         <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="thumbnail diagram clearfix" diagramId="{{_id}}">
-                <a class="reference" href="{{pathFor 'diagram'}}" >
+                <a class="reference" href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}" >
+
                     <img src="{{imageUrl}}" class="diagram-image">
                 </a>
                 <div class="caption">
                     <center>
-                        <a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram'}}"><h4 class="diagram-name">{{name}}</h4></a>
+                        <a class="reference" diagramId="{{_id}}" href="{{pathFor 'diagram' projectId=this.projectId _id=this._id diagramTypeId=this.diagramTypeId versionId=this.versionId editMode='editMode'}}"><h4 class="diagram-name">{{name}}</h4></a>
                     </center>
                 </div>
 

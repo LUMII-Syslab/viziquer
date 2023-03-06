@@ -34,7 +34,7 @@ function load_configurator(user_id) {
 
 	var tool_version = ToolVersions.findOne({_id: version_id});
 	if (!tool_version) {
-		console.log("Error in load configurator, no tool version");
+		console.error("Error in load configurator, no tool version");
 		return;
 	}
 

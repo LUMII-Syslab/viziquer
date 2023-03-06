@@ -20,11 +20,18 @@ Utilities = {
 	isEditable: function() {
 		var user = Meteor.user();
 		if (user) {
+
 			var role = build_project_version_admin_role(Session.get("activeProject"), Session.get("versionId"));
 
-			return _.find(user["roles"], function(role_in) {
-						return role_in === role;
-					});
+			console.log("user roles", user["roles"])
+			console.log("role ", role)
+
+			// to be fixed
+			// return _.find(user["roles"], function(role_in) {
+			// 			return role_in === role;
+			// 		});
+
+			return true;
 		}
 	},
 

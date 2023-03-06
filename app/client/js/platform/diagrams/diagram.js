@@ -2,7 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { is_system_admin } from '/libs/platform/user_rights'
-import { Diagrams, DiagramTypes } from '/libs/platform/collections'
+import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes } from '/libs/platform/collections'
 
 Interpreter.methods({
 
@@ -66,10 +66,9 @@ Template.diagramTemplate.onRendered(function() {
 
 Template.diagramTemplate.helpers({
 
-	// isPlain: function() {
-	// 	return Session.get("isPlain");
-	// },
-
+	isReady: function() {
+		return FlowRouter.subsReady("Diagram_Palette_ElementType");
+	},
 
 	plain: function() {
 		return Session.get("plain");
@@ -77,24 +76,18 @@ Template.diagramTemplate.helpers({
 
 	diagram_type: function() {
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-
-		var is_ajoo_editor_var = false;
-		if (diagram_type && is_ajoo_editor(diagram_type["editorType"])) {
-			is_ajoo_editor_var = true;
-		}
-
 		if (diagram_type && diagram_type["size"]) {
 
 			return {diagram_size: diagram_type["size"]["diagramSize"],
 					dialog_size: diagram_type["size"]["dialogSize"],
-					is_ajoo_editor: is_ajoo_editor_var,
+					is_ajoo_editor: true,
 				};
 		}
 
 		else {
 			return {diagram_size: 10,
 					dialog_size: 2,
-					is_ajoo_editor: is_ajoo_editor_var
+					is_ajoo_editor: true
 				};
 		}
 	},
@@ -771,6 +764,7 @@ Template.diagramEditor.onRendered(function() {
 		},
 
 	});
+
 	this.editMode = new ReactiveVar(edit_mode);
 
 });
