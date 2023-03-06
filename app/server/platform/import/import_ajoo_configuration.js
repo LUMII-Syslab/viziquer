@@ -1,5 +1,6 @@
 import { is_system_admin } from '/libs/platform/user_rights'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { generate_id } from '/libs/platform/lib'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
 
 Meteor.methods({
 
@@ -7,8 +8,6 @@ Meteor.methods({
 		var _import = new ImportAjooConfiguration(list.toolId, list.versionId);
 
 		var data = list.data;
-		console.log("data", data)
-
 
 		_import.importDiagrams(data.presentations);
 		_import.importDiagramTypes(data.types);
@@ -99,11 +98,15 @@ ImportAjooConfiguration.prototype = {
 
 			var object = diagram_type.object;
 			var diagram_type_id = object._id;
-			_.extend(object, {_id: new Mongo.ObjectID(),
+
+			_.extend(object, {
 								diagramId: self.obj_type_map[object.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
+
+			delete object._id;
+
 
 			var new_diagram_type_id = DiagramTypes.insert(object);
 			self.obj_type_map[diagram_type_id] = new_diagram_type_id;
@@ -130,7 +133,7 @@ ImportAjooConfiguration.prototype = {
 			var object = box_type.object;
 			var box_type_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
@@ -139,6 +142,8 @@ ImportAjooConfiguration.prototype = {
 
 								targetDiagramTypeId: self.obj_type_map[object.diagramTypeId],
 							});
+
+			delete object._id;
 
 			var new_box_type_id = ElementTypes.insert(object);
 			self.obj_type_map[box_type_id] = new_box_type_id;
@@ -156,7 +161,7 @@ ImportAjooConfiguration.prototype = {
 
 			var object = line_type.object;
 			var line_type_id = object._id;
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								startElementTypeId: self.obj_type_map[object.startElementTypeId],
 								endElementTypeId: self.obj_type_map[object.endElementTypeId],
@@ -168,6 +173,8 @@ ImportAjooConfiguration.prototype = {
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
+
+			delete object._id;
 
 			var new_line_type_id = ElementTypes.insert(object);
 			self.obj_type_map[line_type_id] = new_line_type_id;
@@ -186,7 +193,7 @@ ImportAjooConfiguration.prototype = {
 			var object = compart_type.object;
 			var compart_type_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								elementTypeId: self.obj_type_map[object.elementTypeId],
 
@@ -201,11 +208,14 @@ ImportAjooConfiguration.prototype = {
 								label: object.label || object.name,
 							});
 
+			delete object._id;
+
 			if (_.size(object.subCompartmentTypes) > 0) {
 				object.subCompartmentTypes = self.recomputeSubCompartmentTypeLabels(object.subCompartmentTypes);
 			}
 
-			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
+			var new_copmart_type_id = CompartmentTypes.insert(object);
+			// var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
 			self.obj_type_map[compart_type_id] = new_copmart_type_id;
 		});
 	},
@@ -219,7 +229,7 @@ ImportAjooConfiguration.prototype = {
 			var object = compart_type.object;
 			var compart_type_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 
 								diagramId: self.obj_type_map[object.diagramId],
@@ -233,7 +243,10 @@ ImportAjooConfiguration.prototype = {
 								label: object.label || object.name,
 							});
 
-			var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
+			delete object._id;
+
+			var new_copmart_type_id = CompartmentTypes.insert(object);
+			// var new_copmart_type_id = CompartmentTypes.insert(object, {trimStrings: false});
 			self.obj_type_map[compart_type_id] = new_copmart_type_id;
 		});
 	},
@@ -260,11 +273,13 @@ ImportAjooConfiguration.prototype = {
 		var self = this;
 		_.each(palette_buttons, function(object) {
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramTypeId: self.obj_type_map[object.diagramTypeId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
+
+			delete object._id;
 
 			object.elementTypeIds = _.map(object.elementTypeIds, function(elem_type_id) {
 				return self.obj_type_map[elem_type_id];
@@ -284,12 +299,14 @@ ImportAjooConfiguration.prototype = {
 		_.each(diagram_type.dialog, function(dialog) {
 
 			var dialog_tab_id = dialog._id;
-			_.extend(dialog, {_id: new Mongo.ObjectID(),
+			_.extend(dialog, {
 								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
 								diagramId: self.obj_type_map[dialog.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
+
+			delete dialog._id;
 
 			var new_dialog_tab_id = DialogTabs.insert(dialog);
 			self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
@@ -303,13 +320,15 @@ ImportAjooConfiguration.prototype = {
 		_.each(box_type.dialog, function(dialog) {
 
 			var dialog_tab_id = dialog._id;
-			_.extend(dialog, {_id: new Mongo.ObjectID(),
+			_.extend(dialog, {
 								elementTypeId: self.obj_type_map[dialog.elementTypeId],
 								diagramTypeId: self.obj_type_map[dialog.diagramTypeId],
 								diagramId: self.obj_type_map[dialog.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 							});
+
+			delete dialog._id;
 
 			var new_dialog_tab_id = DialogTabs.insert(dialog);
 			self.obj_type_map[dialog_tab_id] = new_dialog_tab_id;
@@ -338,15 +357,16 @@ ImportAjooConfiguration.prototype = {
 		var self = this;
 
 		_.each(diagrams, function(diagram) {
-
 			var object = diagram.object;
 			var diagram_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								toolId: self.toolId,
 								versionId: self.versionId,
 								diagramTypeId: self.diagram_type._id,
 							});
+
+			delete object._id;
 
 			var new_diagram_id = Diagrams.insert(object);
 			self.obj_type_map[diagram_id] = new_diagram_id;
@@ -370,13 +390,15 @@ ImportAjooConfiguration.prototype = {
 			var object = box.object;
 			var box_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramId: self.obj_type_map[object.diagramId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 								diagramTypeId: self.diagram_type._id,
 								elementTypeId: box_type._id,
 							});
+
+			delete object._id;
 
 			var new_box_id = Elements.insert(object);
 			self.obj_type_map[box_id] = new_box_id;
@@ -401,7 +423,7 @@ ImportAjooConfiguration.prototype = {
 			var object = line.object;
 			var line_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramId: self.obj_type_map[object.diagramId],
 								startElement: self.obj_type_map[object.startElement],
 								endElement: self.obj_type_map[object.endElement],
@@ -411,6 +433,8 @@ ImportAjooConfiguration.prototype = {
 								diagramTypeId: self.diagram_type._id,
 								elementTypeId: line_type._id,
 							});
+
+			delete object._id;
 
 			var new_line_id = Elements.insert(object);
 			self.obj_type_map[line_id] = new_line_id;
@@ -427,13 +451,15 @@ ImportAjooConfiguration.prototype = {
 			var object = compart.object;
 			var compart_id = object._id;
 
-			_.extend(object, {_id: new Mongo.ObjectID(),
+			_.extend(object, {
 								diagramId: self.obj_type_map[object.diagramId],
 								elementId: self.obj_type_map[object.elementId],
 								toolId: self.toolId,
 								versionId: self.versionId,
 								diagramTypeId: self.diagram_type._id,
 							});
+
+			delete object._id;
 
 			var new_compart_id = Compartments.insert(object);
 			self.obj_type_map[compart_id] = new_compart_id;

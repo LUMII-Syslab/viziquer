@@ -1,11 +1,11 @@
-import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons,} from '/libs/platform/collections';
+import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons } from '/libs/platform/collections';
 import { generate_id } from '/libs/platform/lib'
+import { get_current_time } from '/server/platform/_helpers'
 import { build_initial_box_style, build_initial_line_style } from '/server/platform/methods/configurator/initialTypes/element_types'
 import { build_initial_compartment_type, get_default_compartment_style, build_box_compartment_style, build_line_compartment_style } from '/server/platform/methods/configurator/initialTypes/compartment_types'
 
 
-
-load_configurator = function (user_id) {
+function load_configurator(user_id) {
 	
 	if (!user_id) {
 		return;
@@ -41,7 +41,7 @@ load_configurator = function (user_id) {
 	var diagram_type_obj = build_ajoo_configurator_diagram_type(user_id, tool_id, version_id);
 	var diagram_type_id = DiagramTypes.insert(diagram_type_obj);
 
-//Element types
+	//Element types
 	var elem_type_list = {};
 	if (ElementTypes.find({toolId: tool_id}).count() === 0) {
 		var super_box_id = build_super_box(tool_id, version_id, diagram_type_id);
@@ -237,7 +237,8 @@ function build_box_type(tool_id, version_id, diagram_type_id, super_box_id) {
 					});
 
 	var compart_type_obj = build_box_compart_type_obj(tool_id, version_id, diagram_type_id, box_id, "ajooEditor");
-	CompartmentTypes.insert(compart_type_obj, {removeEmptyStrings: false});
+	// CompartmentTypes.insert(compart_type_obj, {removeEmptyStrings: false});
+	CompartmentTypes.insert(compart_type_obj);
 }
 
 function build_box_compart_type_obj(tool_id, version_id, diagram_type_id, elem_type_id, editor_type) {
@@ -505,17 +506,20 @@ function build_swimlane(tool_id, version_id, diagram_type_id) {
 
 	//top row copartment
 	var compart_type_obj1 = build_swimlane_compart_type_obj("TopLine", tool_id, version_id, diagram_type_id, box_id);
-	CompartmentTypes.insert(compart_type_obj1, {removeEmptyStrings: false});
+	CompartmentTypes.insert(compart_type_obj1);
+	// CompartmentTypes.insert(compart_type_obj1, {removeEmptyStrings: false});
 
 	//left column compartment
 	var compart_type_obj2 = build_swimlane_compart_type_obj("LeftLine", tool_id, version_id, diagram_type_id, box_id);
 	compart_type_obj2["styles"][0]["style"]["rotation"] = 270;
 
-	CompartmentTypes.insert(compart_type_obj2, {removeEmptyStrings: false});
+	CompartmentTypes.insert(compart_type_obj2);
+	// CompartmentTypes.insert(compart_type_obj2, {removeEmptyStrings: false});
 
 	//middle compartment
 	var compart_type_obj3 = build_swimlane_compart_type_obj("Middle", tool_id, version_id, diagram_type_id, box_id);
-	CompartmentTypes.insert(compart_type_obj3, {removeEmptyStrings: false});
+	CompartmentTypes.insert(compart_type_obj3);
+	// CompartmentTypes.insert(compart_type_obj3, {removeEmptyStrings: false});
 }
 
 function build_box_type_obj(tool_id, version_id, diagram_type_id, super_box_id, editor_type) {
@@ -577,15 +581,9 @@ function build_line_type_obj(tool_id, version_id, diagram_type_id, super_box_id,
 	var style = {id: generate_id(), name: "Default"};
 	
 	var edge_style = build_initial_line_style(editor_type);
-	if (is_ajoo_editor(editor_type)) {
-		style["elementStyle"] = edge_style["elementStyle"];
-		style["startShapeStyle"] = edge_style["startShapeStyle"];		
-		style["endShapeStyle"] = edge_style["endShapeStyle"];
-	}
-
-	else if (is_zoom_chart_editor(editor_type)) {
-		style["elementStyle"] = edge_style;
-	}
+	style["elementStyle"] = edge_style["elementStyle"];
+	style["startShapeStyle"] = edge_style["startShapeStyle"];		
+	style["endShapeStyle"] = edge_style["endShapeStyle"];
 
 	var styles = [style];
 

@@ -1,4 +1,5 @@
-import { is_project_admin, is_project_version_admin } from '/libs/platform/user_rights'
+import { Roles } from 'meteor/alanning:roles'
+import { is_project_admin, is_project_version_admin, build_project_version_admin_role } from '/libs/platform/user_rights'
 import { Versions, ProjectsUsers, Projects, Diagrams, Elements, Compartments, UserVersionSettings, Notifications } from '/libs/platform/collections'
 
 
@@ -235,9 +236,6 @@ Meteor.methods({
 
 
 	addAdminRights: function(list) {
-
-		console.log("list in add amdin rights", list);
-
 		add_admin_role(list.projectId, list.versionId);
 	},
 

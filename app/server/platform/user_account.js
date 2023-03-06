@@ -1,16 +1,15 @@
-import { Meteor } from 'meteor/meteor';
-import { Users, Tools, ToolVersions } from '/libs/platform/collections';
-
+import { Roles } from 'meteor/alanning:roles'
 import { get_current_time } from '/server/platform/_helpers';
 import { build_power_user_role } from '/libs/platform/user_rights';
 import { load_configurator } from '/server/platform/load_configuration';
+import { Users, Tools, ToolVersions } from '/libs/platform/collections';
 
 
 Meteor.methods({
 
 	makeUser: function(list) {
 
-		var connection = this.connection;
+		// var connection = this.connection;
 		//if (list && check_captcha(connection, list["recaptcha-response"])) {
 		if (list) {
 

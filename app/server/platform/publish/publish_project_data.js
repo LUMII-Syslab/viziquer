@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, ForumPostTags } from '/libs/platform/collections'
 import { get_configurator_tool_id } from '/libs/platform/helpers'
-import { is_project_version_reader, is_project_member } from '/libs/platform/user_rights'
+import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/libs/platform/user_rights'
 import { error_msg } from '/server/platform/_global_functions'
 
 

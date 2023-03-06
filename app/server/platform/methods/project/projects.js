@@ -1,5 +1,8 @@
-import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Schema, Elements, Compartments, Posts, ForumPosts } from '/libs/platform/collections'
-
+import { Roles } from 'meteor/alanning:roles'
+import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/libs/platform/user_rights'
+import { generate_id } from '/libs/platform/lib'
+import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, Posts, ForumPosts } from '/libs/platform/collections'
+import { Schema } from '/libs/custom/collections'
 
 //creating a new project version and adds the project creator to the project
 Projects.after.insert(function (user_id, doc) {
@@ -125,11 +128,6 @@ Meteor.methods({
 		    Projects.insert(list);
 			
 			var project = Projects.findOne({createdAt: list["createdAt"], createdBy:user_id, name:list["name"] });
-
-
-			console.log("project ", project)
-
-
 			var projectsUsers = ProjectsUsers.findOne({projectId: project._id})
 			if ( projectsUsers )
 				versionId = projectsUsers.versionId;
@@ -194,7 +192,7 @@ Meteor.methods({
 				return;
 			}
 
-			project._id = undefined;
+			project._id = generate_id();
 			var new_project_id = Projects.direct.insert(project);
 			list.newProjectId = new_project_id;
 
@@ -220,9 +218,6 @@ Meteor.methods({
 
 		var user_id = Meteor.userId();
 		if (is_project_member(user_id, list)) {
-
-			console.log("leave project11", list)
-
 			ProjectsUsers.remove({userSystemId: user_id, projectId: list.projectId,});
 		}
 
@@ -327,15 +322,17 @@ function afterInsert(user_id, doc) {
 	Users.update({systemId: user_id}, {$set: {activeProject: proj_id, activeVersion: version_id}});
 
 	//managing roles/permissons
-	var project_role = build_project_role(proj_id);
+	var project_role = build_project_role(proj_id);	
+	var project_version_reader_role = build_project_version_reader_role(proj_id, version_id, "Reader");
 	var project_admin_role = build_project_admin_role(proj_id);
 	var project_version_admin_role = build_project_version_admin_role(proj_id, version_id);
 
 	Roles.createRole(project_role, {unlessExists: true});
+	Roles.createRole(project_version_reader_role, {unlessExists: true});
 	Roles.createRole(project_admin_role, {unlessExists: true});
 	Roles.createRole(project_version_admin_role, {unlessExists: true});
 
-	Roles.addUsersToRoles(user_id, [project_role, project_admin_role, project_version_admin_role]);
+	Roles.addUsersToRoles(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
 
 	return version_id;
 }

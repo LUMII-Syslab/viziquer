@@ -87,11 +87,12 @@ Notifications.after.update(function (user_id, doc, fieldNames, modifier, options
 
 			//adding the user to the project
 			ProjectsUsers.update({projectId: proj_id, userSystemId: user_id},
-							{$set: {status: "Member"}});
+									{$set: {status: "Member"}});
 
 			//setting the new project and its version as active for the user
 			Users.update({systemId: user_id}, {$set: {activeProject: proj_id}});			
 		}
+
 
 		//roles
 		Roles.addUsersToRoles(user_id, roles);
@@ -118,16 +119,18 @@ Meteor.methods({
 
 	updateNotification: function(list) {
 		var user_id = Meteor.userId();
-		if (user_id)
+		if (user_id) {
 			Notifications.update({_id: list["id"], receiver: user_id}, list["update"]);
+		}
 	},
 
 	removeNotification: function(list) {
 		var user_id = Meteor.userId();
 		if (user_id) {
 
-            if (!list["id"])
+            if (!list["id"]) {
                 return;
+            }
 
 			Notifications.remove({_id: list["id"], receiver: user_id});
 		}

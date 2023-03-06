@@ -1,3 +1,4 @@
+import { generate_id, is_ajoo_editor } from '/libs/platform/lib'
 
 build_initial_element_type = function(list, editor_type) {
 		
@@ -42,19 +43,6 @@ build_initial_element_type = function(list, editor_type) {
 			res["readModeContextMenu"] = [];
 		}
 
-		else if (is_zoom_chart_editor(editor_type)) {
-
-			//res["keyStrokes"] = [{keyStroke: "Ctrl C", procedure: "Copy"},
-			//				{keyStroke: "Ctrl X", procedure: "Cut"},
-			//				{keyStroke: "Delete", procedure: "Delete"}];
-
-			res["keyStrokes"] = [];
-			res["readModeKeyStrokes"] = [];
-
-			res["contextMenu"] = [];
-
-			res["readModeContextMenu"] = [];
-		}
 
 		res["styles"] = [{id: generate_id(),
 							name: "Default",
@@ -93,13 +81,6 @@ build_initial_element_type = function(list, editor_type) {
 							}];
 		}
 
-		else if (is_zoom_chart_editor(editor_type)) {
-			res["styles"] = [{id: generate_id(),
-								name: "Default",
-								elementStyle: style,
-							}];
-
-		}
 
 		//by default line is directional
 		res["direction"] = "Directional";
@@ -177,26 +158,6 @@ build_initial_line_style = function(editor_type) {
 			};
 	}
 
-	else if (is_zoom_chart_editor(editor_type)) {
-		return {
-
-// radius: radius of the link line (actual size is 2x radius)
-// length = 1: link length multiplier. Each link has a default length based on node sizes and number of neighbor nodes. The default length gets multiplied by this value.
-// strength = 1: link strength. When there is no room to place all links at desired length, links with bigger strength take precedence. Useful range: [0.. 10]
-// fillColor: color of the link
-// label: link label text
-// labelStyle: label rendering style, structure same as Items, default value = settings.style.linkLabel
-// dashed: if true link is drawn as dashed line
-// items: array of items to show on the link, see Items.
-// fromDecoration: decoration at the "from" end, one of "circle", "arrow"
-// toDecoration: decoration at the "to" end, one of "circle", "arrow"
-// cursor: cursor to show when pointer over the node. One of HTML cursor names
-// direction: preferred direction of the link. Possible values: "D", "U", "R", "L".
-
-
-			};
-	}
-
 }
 
 build_initial_box_style = function(editor_type) {
@@ -247,23 +208,6 @@ build_initial_box_style = function(editor_type) {
 			// shapeCode: "RoundRectangle",
 			// shapeStyle: "0",
 		};
-	}
-
-	else if (is_zoom_chart_editor(editor_type)) {
-		return {
-				// fillColor: "#c7dae0",
-				// lineColor: null,
-				// lineDash: null,
-				// lineWidth: null,
-				// radius: 30,
-				// shadowColor: null,
-				// image: null,
-				// opacity: null,
-				// imageCropping: null,
-				// cursor: null,
-				// radius: null,
-				// display: "image",
-			};
 	}
 }
 

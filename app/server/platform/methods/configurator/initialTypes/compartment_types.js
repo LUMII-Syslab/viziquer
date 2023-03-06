@@ -1,3 +1,4 @@
+import { generate_id, is_ajoo_editor } from '/libs/platform/lib'
 
 get_default_compartment_style = function(type, editor_type) {
 	if (type == "Box") {

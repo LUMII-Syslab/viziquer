@@ -1,3 +1,4 @@
+import { build_project_version_admin_role } from '/libs/platform/user_rights'
 import { ProjectsUsers, ProjectsGroups, DiagramTypes } from '/libs/platform/collections'
 
 Utilities = {

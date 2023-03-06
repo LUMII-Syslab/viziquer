@@ -132,7 +132,6 @@ Meteor.publish("ConfiguratorDiagram", function(list) {
 		var diagram_type_query2	= {toolId: get_configurator_tool_id(),
 									_id: list["diagramTypeId"]};		
 
-		console.log("diagrams conf", Diagrams.find({$or: [diagram_query, query2]}).fetch())
 
 
 		return [

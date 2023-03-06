@@ -2,17 +2,17 @@ import { is_system_admin } from '/libs/platform/user_rights'
 import { CompartmentTypes, Compartments, Elements, ElementTypes, DialogTabs } from '/libs/platform/collections'
 import { build_initial_compartment_type, get_default_compartment_style } from '/server/platform/methods/configurator/initialTypes/compartment_types'
 
-CompartmentTypes.before.insert(function (user_id, doc) {
-	if (!doc) {
-		console.log("No CompartmentTypes document");
-		return false;
-	}
+// CompartmentTypes.before.insert(function (user_id, doc) {
+// 	if (!doc) {
+// 		console.log("No CompartmentTypes document");
+// 		return false;
+// 	}
 
-	//if (!doc["dialogTabId"] && doc["toolId"] != get_configurator_tool_id()) {
-	//	console.log("There is no dialogTabId or toolId is equal to configurator's id.");
-	//	return false;
-	//}
-});
+// 	//if (!doc["dialogTabId"] && doc["toolId"] != get_configurator_tool_id()) {
+// 	//	console.log("There is no dialogTabId or toolId is equal to configurator's id.");
+// 	//	return false;
+// 	//}
+// });
 
 CompartmentTypes.after.update(function (user_id, doc, fields, modifier, options) {
 
