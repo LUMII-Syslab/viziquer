@@ -2743,7 +2743,7 @@ VQ_Element.prototype = {
 	}
 	var links = this.getLinks();
 	for(var l in links){
-		if(!links[l].start && links[l].link.getType() != "REQUIRED"){
+		if(typeof links[l] === "object" && !links[l].start && links[l].link.getType() != "REQUIRED"){
 			isOptional = true;
 			break;
 		}
