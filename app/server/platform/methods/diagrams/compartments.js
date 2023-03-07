@@ -46,7 +46,8 @@ Meteor.methods({
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
-				Compartments.insert(compart_in, {trimStrings: false});
+				Compartments.insert(compart_in);
+				// Compartments.insert(compart_in, {trimStrings: false});
 
 				if (list["elementStyleUpdate"]) {
 					Elements.update({_id: compart_in.elementId, projectId: compart_in.projectId, versionId: compart_in.versionId},
@@ -85,7 +86,8 @@ Meteor.methods({
 
 					Compartments.update({_id: list["id"], projectId: list["projectId"],
 										versionId: list["versionId"]},
-									{$set: update}, {trimStrings: false, removeEmptyStrings: false,});
+										{$set: update});
+									// {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
 				}
 
 				if (list["elementStyleUpdate"]) {

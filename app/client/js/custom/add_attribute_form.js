@@ -1,4 +1,4 @@
-import { Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { Projects, Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
