@@ -192,7 +192,7 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
     this.register('Diagram_Types', Meteor.subscribe('Diagram_Types', {
                             id: dgr_id, projectId: proj_id, versionId: version_id,
                             diagramTypeId: type_id}));
-    
+
     this.register('Diagram_Palette_ElementType', Meteor.subscribe("Diagram_Palette_ElementType", {
                           id: dgr_id, projectId: proj_id, versionId: version_id,
                           diagramTypeId: type_id}));
@@ -219,7 +219,11 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
   //sets panel item to activate
     Session.set("activePanelItem", "diagrams");
 
+    console.log("params ", params)
+
     if (params.editMode) {
+        console.log("in set edit mode")
+
         Session.set("editMode", true);
         Session.set("edited", true);
     }

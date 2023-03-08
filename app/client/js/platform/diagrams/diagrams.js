@@ -53,10 +53,12 @@ Template.diagramsRibbon.events({
 
 //shows dialog window to enter diagram name
 	'click #add': function(e, templ) {
+		Dialog.destroyTooltip(e);
 		$('#add-diagram').modal("show");
 	},
 
 	'click #download-project': function(e) {
+		Dialog.destroyTooltip(e);
 
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
@@ -88,37 +90,41 @@ Template.diagramsRibbon.events({
 	},
 
 	'click #export': function(e) {
+		Dialog.destroyTooltip(e);
 		$('#export-ontology-form').modal("show");
 	},
 
 	'click #upload-project': function(e, templ) {
 		// e.preventDefault();
-
+		Dialog.destroyTooltip(e);
 		$('#upload-project-form').modal("show");
 	},
 
 	'click #import': function(e, templ) {
+		Dialog.destroyTooltip(e);
 		$('#import-ontology-form').modal("show");
 	},
 
 	'click #settings': function(e, templ) {
+		Dialog.destroyTooltip(e);
 		$('#ontology-settings-form').modal("show");
 	},
 
 	'click #migrate' : function(e, templ) {
+		Dialog.destroyTooltip(e);
 		$("#migrate-form").modal("show");
 	},
 
-//shows button's tooltip on mouse over
-    'mouseenter .btn-ribbon' : function(e, templ) {
-    	Dialog.destroyTooltip(e);
-    	Dialog.showTooltip(e);
-    },
+// //shows button's tooltip on mouse over
+//     'mouseenter .btn-ribbon' : function(e, templ) {
+//     	Dialog.destroyTooltip(e);
+//     	Dialog.showTooltip(e);
+//     },
 
-//removes tooltip on mouse leave
-    'mouseleave .btn-ribbon' : function(e, templ) {
-    	Dialog.destroyTooltip(e);
-    },
+// //removes tooltip on mouse leave
+//     'mouseleave .btn-ribbon' : function(e, templ) {
+//     	Dialog.destroyTooltip(e);
+//     },
 
 });
 
@@ -130,7 +136,10 @@ Template.diagramsRibbon.helpers({
 
 	//if the version is editable and there is atleast one diagram type
 	is_toolbar_enabled: function() {
-		return is_toolbar_enabled();
+		if (is_toolbar_enabled()) {
+			Dialog.initTooltip();
+			return true;
+		}
 	},
 
 	project_id: function() {
@@ -385,13 +394,17 @@ Template.defaultDiagramsView.events({
 			return;
 		}
 
-
 		var list = {diagramId: diagram_id};
 
 		list["projectId"] = Session.get("activeProject");
 		list["versionId"] =	Session.get("versionId");
 
 		Utilities.callMeteorMethod("duplicateDiagram", list);
+
+		var drop_down = $(e.target).closest(".diagram").find(".diagram-dropdown-container");
+
+		drop_down.addClass("hidden")
+					.removeClass("open");
 	},
 
 });

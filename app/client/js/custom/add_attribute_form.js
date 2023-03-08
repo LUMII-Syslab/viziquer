@@ -1,3 +1,4 @@
+import { Interpreter } from '/client/lib/interpreter'
 import { Projects, Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);

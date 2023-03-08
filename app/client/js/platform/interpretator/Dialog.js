@@ -511,12 +511,16 @@ Dialog = {
 		$(".color-picker").colorpicker();
 	},
 
+	initTooltip: function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	},
+
 	showTooltip: function(e, placement) {
 
-		//checks if tootip is already open
-		if (Session.get("tooltip")) {
-			return false;
-		}
+		// //checks if tootip is already open
+		// if (Session.get("tooltip")) {
+		// 	return false;
+		// }
 
 		if (!placement) {
 			placement = "bottom";
@@ -525,23 +529,37 @@ Dialog = {
 		//opens tooltip
 	    var elem = $(e.target).closest(".btn-ribbon");
 	    var title = elem.attr("data-title");
-	    elem.tooltip('destroy')
-	    	.tooltip({title: title, placement: placement})
-	        .tooltip('show');
 
-		//sets tooltip open
-		Session.set("tooltip", true);
+	    console.log("elem ", elem)
+
+
+	    // elem.tooltip('destroy')
+	    // 	.tooltip({title: title, placement: placement, trigger: "manual"})
+	    //     .tooltip('show');
+
+
+	    console.log("elem attr ", elem.attr("tooltip"))
+
+	    if (!elem.attr("tooltip")) {
+
+	    	console.log("in init")
+	    	elem.tooltip({title: title, placement: placement, trigger: "manual",})
+	    	elem.attr("tooltip", true);
+	    }
+
+	    elem.tooltip('show');
 	},
 
 	destroyTooltip: function(e, callback) {
-
-	    //resets tooltip variable
-	    Session.set("tooltip", false);
-
 	    //destroys toolip
-	    $(e.target).tooltip('destroy');
+	    var elem = $(e.target).closest(".toolbar-button");
+	    if (elem) {
+	    	elem.tooltip('destroy');
+	    	setTimeout(function() {
+	    		elem.tooltip();
+	    	}, 500)
+	    }
 	},
-
 
 	checkCompartmentVisibility: function(compart_type, compartment) {
 		var is_visible = true;

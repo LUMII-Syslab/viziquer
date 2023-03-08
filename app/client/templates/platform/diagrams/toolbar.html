@@ -7,13 +7,9 @@
             <li><i class="fa fa-picture-o"></i> {{diagramName}}</li>
         </ol>
 
-        <span class="ribbon-button-alignment pull-right">
-
-            {{#each toolbar_buttons}}
-                <button id="{{id}}" class="btn btn-ribbon toolbar-button" data-title='{{_ "toolbar_name" name=name context=name}}' procedure="{{procedure}}"><i class="fa {{icon}}"></i></button>
-            {{/each}}
-
-        </span>
+        {{#if is_toolbar_buttons }}
+            {{> diagram_toolbar}}
+        {{/if}}
         
     </div>
     <!-- END RIBBON --> 
@@ -26,6 +22,15 @@
     {{> ImportedTranslets}}
 
 </template>
+
+<template name="diagram_toolbar">
+    <span class="ribbon-button-alignment pull-right">
+        {{#each toolbar_buttons}}
+            <button id="{{id}}" class="btn btn-ribbon toolbar-button" data-title='{{_ "toolbar_name" name=name context=name}}' procedure="{{procedure}}" data-toggle="tooltip" data-placement="bottom" data-trigger="hover focus"><i class="fa {{icon}}"></i></button>
+        {{/each}}
+    </span>
+</template>
+
 
 <template name="diagram_settings">
 

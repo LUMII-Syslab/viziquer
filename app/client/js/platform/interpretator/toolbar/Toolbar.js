@@ -120,6 +120,13 @@ Interpreter.methods({
 //returns acive diagram name
 Template.diagramRibbon.helpers({
 
+	is_toolbar_buttons: function() {
+		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
+		if (diagram_type) {
+			return true;
+		}
+	},
+
 	diagramName: function() {
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 		if (diagram) {
@@ -127,20 +134,32 @@ Template.diagramRibbon.helpers({
 		}
 	},
 
+});
+
+
+Template.diagramRibbon.events({
+
+	'click .toolbar-button' : function(e) {
+		Dialog.destroyTooltip(e);
+		var src = $(e.target).closest(".toolbar-button");
+		var proc = src.attr("procedure");
+
+		Interpreter.execute(proc);
+	},
+
+});
+
+/* End of diagram ribbon */
+
+
+Template.diagram_toolbar.onRendered(function(argument) {
+	Dialog.initTooltip();
+})
+
+
+Template.diagram_toolbar.helpers({
+
 	toolbar_buttons: function() {
-
-		var add_toolbar_button = function(res, toolbar_item, editable) {
-
-			if (editable) {
-				res.push(toolbar_item);
-			}
-			else {
-				if (!toolbar_item["isInEditableVersion"]) {
-					res.push(toolbar_item);
-				}
-			}
-		}
-
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
 		if (!diagram_type) {
 			return;
@@ -194,32 +213,9 @@ Template.diagramRibbon.helpers({
 
 		}
 	},
-});
-
-
-Template.diagramRibbon.events({
-
-	'click .toolbar-button' : function(e) {
-		Dialog.destroyTooltip(e);
-		var src = $(e.target).closest(".toolbar-button");
-		var proc = src.attr("procedure");
-
-		Interpreter.execute(proc);
-	},
-
-//shows button's tooltip on mouse over
-    'mouseenter .btn-ribbon' : function(e, templ) {
-    	Dialog.destroyTooltip(e);
-    	Dialog.showTooltip(e);
-    },
-//removes tooltip on mouse leave
-    'mouseleave .btn-ribbon' : function(e, templ) {
-    	Dialog.destroyTooltip(e);
-    },
 
 });
 
-/* End of diagram ribbon */
 
 
 Template.diagram_log.helpers({
@@ -318,6 +314,19 @@ Template.diagram_log.events({
 	},
 
 });
+
+
+function add_toolbar_button(res, toolbar_item, editable) {
+
+	if (editable) {
+		res.push(toolbar_item);
+	}
+	else {
+		if (!toolbar_item["isInEditableVersion"]) {
+			res.push(toolbar_item);
+		}
+	}
+}
 
 
 build_element_names_array = function(elementIds) {

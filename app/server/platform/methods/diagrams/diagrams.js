@@ -17,6 +17,9 @@ Meteor.methods({
 		if (is_project_version_admin(user_id, list)) {
 
 			build_diagram(list, user_id);
+			list["editingUserId"] = user_id;
+			list["editingStartedAt"] = new Date();
+
 			var id = Diagrams.insert(list);
 
 			return id;
@@ -101,10 +104,8 @@ Meteor.methods({
 	},
 
 	lockingDiagram: function(list) {
-
 		var user_id = Meteor.userId();
 		if (list["toolId"] && is_system_admin(user_id)) {
-
 			Diagrams.update({_id: list["diagramId"],
 							toolId: list["toolId"]},
 
@@ -115,7 +116,6 @@ Meteor.methods({
 		}
 
 		else if (is_project_version_admin(user_id, list)) {
-
 			Diagrams.update({_id: list["diagramId"],
 							projectId: list["projectId"], versionId: list["versionId"],},
 							
@@ -157,7 +157,8 @@ Meteor.methods({
 				return;
 			}
 
-			diagram._id = undefined;
+			// diagram._id = undefined;
+			delete diagram._id;
 			var new_diagram_id = Diagrams.insert(diagram);
 
 
@@ -165,7 +166,8 @@ Meteor.methods({
 			Elements.find({diagramId: diagram_id, projectId: project_id, type: "Box"}).forEach(function(box) {
 
 				var old_box_id = box._id;
-				box._id = undefined;
+				// box._id = undefined;
+				delete box._id;
 				box.diagramId = new_diagram_id;
 
 				var new_box_id = Elements.insert(box);
@@ -177,7 +179,8 @@ Meteor.methods({
 
 				var old_line_id = line._id;
 
-				line._id = undefined;
+				// line._id = undefined;
+				delete line._id;
 				line.startElement = elems_map[line.startElement];
 				line.endElement = elems_map[line.endElement];
 				line.diagramId = new_diagram_id;
@@ -189,7 +192,8 @@ Meteor.methods({
 
 			Compartments.find({diagramId: diagram_id, projectId: project_id}).forEach(function(compart) {
 
-				compart._id = undefined;
+				// compart._id = undefined;
+				delete compart._id;
 				compart.elementId = elems_map[compart.elementId];
 				compart.diagramId = new_diagram_id;
 

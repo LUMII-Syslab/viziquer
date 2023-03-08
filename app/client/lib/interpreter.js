@@ -10,7 +10,7 @@ $(document).on('keypress', function (e) {
 });
 
 
-Interpreter = {
+var Interpreter = {
 
 	customExtensionPoints: {},
 	extensionPoints: {

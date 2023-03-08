@@ -2,7 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { is_system_admin } from '/libs/platform/user_rights'
-import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes } from '/libs/platform/collections'
+import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Sections, Documents } from '/libs/platform/collections'
 
 Interpreter.methods({
 
@@ -60,7 +60,16 @@ Template.noDiagramTemplate.helpers({
 //Start of sections template
 
 Template.diagramTemplate.onRendered(function() {
-	$("#lockDiagram").trigger("click");
+	// $("#lockDiagram").trigger("click");
+
+	// YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
+	// YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);
+	// YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyCompleter", "variables"];
+
+	if (Session.get("editMode")) {
+		set_locked_diagram();
+	}
+
 });
 
 
@@ -389,10 +398,17 @@ Template.editingMessage.helpers({
 
 	editing: function() {
 
+		console.log("in editiing 1")
+
+
 		var user_id = Session.get("userSystemId");
 		if (Utilities.isEditable() || is_system_admin(user_id)) {
 
+			console.log("in if")
+
 			var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
+
+			console.log("diagram ", diagram)
 
 			//diagram is being edited
 			if (diagram && diagram["editingUserId"]) {
@@ -401,6 +417,8 @@ Template.editingMessage.helpers({
 				if (diagram["editingUserId"] != user_id) {
 
 					var res = {isEdited: true};
+
+					console.log("in editiring")
 
 					var user = Users.findOne({systemId: diagram["editingUserId"]});
 					if (user) {
@@ -415,6 +433,8 @@ Template.editingMessage.helpers({
 				//diagram is being edited by the user
 				else {
 
+					console.log("unlock button")
+
 					make_sections_sortable();
 					return {unLockButton: true};
 				}
@@ -422,6 +442,8 @@ Template.editingMessage.helpers({
 
 			//diagram is not being edited
 			else {
+				console.log("not beigin edited")
+
 				remove_sections_sortable();
 				return {lockingButton: true};
 			}
@@ -434,27 +456,7 @@ Template.editingMessage.events({
 
 	"click #lockDiagram": function(e) {
 		e.preventDefault();
-
-		Session.set("editMode", true);
-		Session.set("edited", true);
-
-		var list = {diagramId: Session.get("activeDiagram"),
-					versionId: Session.get("versionId")};
-
-		if (DiagramTypes.findOne({diagramId: Session.get("activeDiagram")})) {
-			list["toolId"] = Session.get("toolId");
-		}
-
-		else {
-			list["projectId"] = Session.get("activeProject");
-		}
-
-		var editor = Interpreter.editor;
-		editor.isEditing = Session.get("userSystemId");
-
-		Utilities.callMeteorMethod("lockingDiagram", list);
-
-		return;
+		set_locked_diagram();
 	},
 
 	"click #unLockDiagram": function(e) {
@@ -745,28 +747,33 @@ Template.diagramEditor.onRendered(function() {
 	var editor_type = Interpreter.getEditorType();
 
 	Interpreter.renderAjooEditorDiagram(editor, this);
+	// editor.switchEditMode();
 
 	//computing edit mode
 	var edit_mode = Diagrams.find({"editingUserId": Session.get("userSystemId")}).observeChanges({
 
 		added: function(id, fields) {
 			Session.set("editMode", true);
-			if (is_ajoo_editor(editor_type)) {
+
+			console.log("in edit mode mode", editor)
+
+			// if (is_ajoo_editor(editor_type)) {
 				editor.switchEditMode();
-			}
+			// }
 		},
 
 		removed: function(id) {
+			console.log("in remove")
+
 			Session.set("editMode", reset_variable());
-			if (is_ajoo_editor(editor_type)) {
-				editor.switchReadMode();
-			}
+			// if (is_ajoo_editor(editor_type)) {
+			editor.switchReadMode();
+			// }
 		},
 
 	});
 
 	this.editMode = new ReactiveVar(edit_mode);
-
 });
 
 Template.diagramEditor.onDestroyed(function() {
@@ -1097,4 +1104,30 @@ function zoom_chart_canvas_to_image(chart, list) {
 	list["attrValue"] = data_url;
 
 	Utilities.callMeteorMethod("updateDiagram", list);
+}
+
+
+function set_locked_diagram() {
+
+	Session.set("editMode", true);
+	Session.set("edited", true);
+
+	var list = {diagramId: Session.get("activeDiagram"),
+				versionId: Session.get("versionId")};
+
+	if (DiagramTypes.findOne({diagramId: Session.get("activeDiagram")})) {
+		list["toolId"] = Session.get("toolId");
+	}
+
+	else {
+		list["projectId"] = Session.get("activeProject");
+	}
+
+	Utilities.callMeteorMethod("lockingDiagram", list);
+
+	var editor = Interpreter.editor;
+	if (editor) {
+		editor.isEditing = Session.get("userSystemId");
+	}
+
 }
