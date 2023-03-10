@@ -2965,6 +2965,7 @@ VQ_Element.prototype = {
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
   getFields: function() {
+  console.log('---------getFields------------')
     var field_list =  this.getMultiCompartmentSubCompartmentValues("Attributes",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
@@ -2979,21 +2980,22 @@ VQ_Element.prototype = {
     {title:"addDescription",name:"Add Description",transformer:function(v) {return v=="true"}},
 		{title:"groupValues",name:"GroupValues",transformer:function(v) {return v=="true"}},
 	  {title:"isInternal",name:"IsInternal",transformer:function(v) {return v=="true"}}]);
-	
+	  
 	var compart_type_id = CompartmentTypes.findOne({name: "Attributes", elementTypeId: this.obj.elementTypeId})["_id"];
 	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: this.obj._id, }, {sort: {index: 1}}).fetch();
-
+	
 	var compratmentList = [];
-		
-	for(var compartment in compartments){
-		for(var field in field_list){
-			if(field_list[field]["_id"] == compartments[compartment]["_id"]) {
-				compratmentList.push(field_list[field]);
+
+	for(var compartment of compartments){
+		for(var field of field_list){
+			if(field["_id"] == compartment["_id"]) {
+				compratmentList.push(field);
 				break;
 			}
 		}
 	}
-	
+	console.log('Rezultāts')
+	console.log(compratmentList)
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->

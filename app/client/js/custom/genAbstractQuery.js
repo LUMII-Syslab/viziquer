@@ -191,7 +191,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
       _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
-	
+
 	for(var f in obj_class.fields){
 		 obj_class.fields[f]["order"] = f;
 	}
@@ -544,10 +544,12 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // Parses all expressions in the object and recursively in all children
   async function resolveClassExpressions(obj_class, parent_class) {
 	  // if(obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
-	
+	console.log('---resolveClassExpressions--')
+	console.log(obj_class)
 	  if(obj_class.graphs){
 		  var prefixes = query.prefixes;
-		  for(var g in obj_class.graphs){
+		  //for(var g in obj_class.graphs){
+		  for (let g = 0; g < obj_class.graphs.length; g++) {
 			obj_class.graphs[g]["graph"] = getGraphFullForm(obj_class.graphs[g]["graph"], prefixes);
 		  }
 	  }
@@ -1316,9 +1318,11 @@ function getGraphFullForm(graph, prefixes){
    	 if (proj && proj.graphsInstructions) {
 		
 		var graphs = JSON.parse(proj.graphsInstructions)
-		for(var g in graphs){
+		//for(var g in graphs){
+		for (let g = 0; g < graphs.length; g++) {
 			if(graphs[g]["Graph/Service shorthand"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Expansion (e.g., URI)"]+">";
 		}
+
      }
 	
 	var graphIsUri = isURI(graph)

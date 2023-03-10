@@ -836,12 +836,12 @@ Interpreter.customMethods({
 	
 	AddSelectThis: function(){
 		
-		
 		var selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 		 var vq_obj = new VQ_Element(selected_elem_id);
 		 var fields = vq_obj.getFields();
+		 // Šis cikls joprojām strādā pareizi
 		 for(var field in fields){
 			 if(fields[field]["exp"] == "(select this)") return; 
 		 }
@@ -1093,8 +1093,6 @@ generateSymbolTable = async function() {
 
        var elem_ids = _.keys(visited_elems);  
        var queries = await genAbstractQueryForElementList(elem_ids, null); 
-	  
-	  
 	  
 	  
 	   for (const q of queries) {

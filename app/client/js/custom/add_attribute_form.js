@@ -864,8 +864,8 @@ async function getAttributes(filter, waiting){
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
 				var buttonClassName = "button button-required";
-				for(var field in field_list){
-
+				//for(var field in field_list){
+				for (let field = 0; field < field_list.length; field++) {
 					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
 						disabled = true; 
 						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
