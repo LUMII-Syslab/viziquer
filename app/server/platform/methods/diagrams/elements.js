@@ -1,5 +1,5 @@
 import { is_system_admin, is_project_version_admin, is_version_not_published } from '/libs/platform/user_rights'
-import { DiagramLogs, Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, DialogTabs, DiagramFiles, DiagramNotifications, ElementsSections, PaletteButtons  } from '/libs/platform/collections'
+import { DiagramLogs, Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, DialogTabs, DiagramFiles, DiagramNotifications, ElementsSections, PaletteButtons, Clipboard  } from '/libs/platform/collections'
 
 Elements.after.insert(function (user_id, doc) {
 

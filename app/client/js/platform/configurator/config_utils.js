@@ -30,7 +30,6 @@ var Configurator = {
 	},
 
 	getInputFieldValue: function(e) {
-
 		var src = $(e.target).closest(".dialog-input");
 
 		var attr_name = src.attr("id");
@@ -38,9 +37,14 @@ var Configurator = {
 
 		var seperator = src.attr("seperator");
 		if (seperator) {
-			val = val.split(seperator);
-			val = _.map(val, function(item) {
-				return convert_to_number(item);
+			splitted_val = val.split(seperator);
+			if (val == splitted_val) {
+				splitted_val = val.split(",");
+			}
+
+			val = _.map(splitted_val, function(item) {
+				return Number(item);
+				// return convert_to_number(item);
 			});
 		}
 		else {
