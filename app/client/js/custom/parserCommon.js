@@ -19,7 +19,7 @@ makeString = function (o){
 
 checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf, isIRIREF){
 	
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || (key == "Function" && expressionTable[key] != "langmatchesShort" && expressionTable[key] != "langmatchesShortMultiple") || key == "RegexExpression" || key == "Aggregate" ||
 		key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "IRIREF" || key == "FunctionTime"){
@@ -51,7 +51,7 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 
 checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableForNameDef){
 	
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		
 		if(key == "Concat" || key == "Additive" || key == "Unary"  || key == "Function" || key == "RegexExpression" || 
 		//key == "SubstringExpression" || key == "SubstringBifExpression" || key == "StrReplaceExpression" || key == "iri" || key == "FunctionTime"){
@@ -73,7 +73,7 @@ checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableFo
 findINExpressionTable = function(expressionTable, level){
 	// var v = [];
 	if(typeof expressionTable !== "undefined"){
-		for(var key in expressionTable){
+		for(let key in expressionTable){
 			if (key == level) {
 				v = expressionTable[key];
 				return v;
@@ -88,7 +88,7 @@ findINExpressionTable = function(expressionTable, level){
 }
 //???
 transformSubstring = function(expressionTable){
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		
 		if(typeof expressionTable[key] == 'object'){
 			transformSubstring(expressionTable[key]);
@@ -203,7 +203,7 @@ transformSubstring = function(expressionTable){
 
 function isDateVarSymbolTable(symbolTable, expression, dateType){
 	var value = false;
-	for(var key in symbolTable){
+	for(let key in symbolTable){
 		if(typeof symbolTable[expression] !== 'undefined' && 
 			symbolTable[expression]["type"] != null
 			&& dateType.indexOf(symbolTable[expression]["type"]["data_type"]) > -1) value = true;
@@ -258,7 +258,7 @@ isValidForConvertation = function(v, symbolTable){
 isFunctionExpr = function(value){
 	var r = false;
 	if (typeof value == 'object') {
-		for(var k in value){
+		for(let k in value){
 			if (k == "FunctionExpression") r = true;
 			else r = isFunctionExpr(value[k]);
 		}

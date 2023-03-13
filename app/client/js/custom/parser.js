@@ -97,7 +97,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	if(ord != null) attributeOrder = ord;
 	if(fId != null) fieldId = fId;
 	
-	for(var key in knPr){
+	for(let key = 0; key < knPr.length; key++){
 		if(knPr[key]["name"] == emptyPrefix)knownNamespaces[":"] = knPr[key]["value"];
 		knownNamespaces[knPr[key]["name"]+":"] = knPr[key]["value"];
 	}
@@ -231,7 +231,7 @@ function createTriples(tripleTable, tripleType){
 function findReferenceDefinitions(variableNamesTableClass, referenceName, isPath){
 	var referenceDefinitions = [];
 	if(typeof variableNamesTableClass != "undefined" && typeof variableNamesTableClass[referenceName] != "undefined"){
-		for(var refDef in variableNamesTableClass[referenceName]){
+		for(let refDef = 0; refDef < variableNamesTableClass[referenceName].length; refDef++){
 			if(variableNamesTableClass[referenceName][refDef]["order"] <= attributeOrder && variableNamesTableClass[referenceName][refDef]["isPath"] == isPath) referenceDefinitions[refDef] = variableNamesTableClass[referenceName][refDef];
 		}
 	}
@@ -241,21 +241,22 @@ function findReferenceDefinitions(variableNamesTableClass, referenceName, isPath
 function getSimbolTableWithoutPrefixes(symbolTable, referenceName){
 	var simbolTableWithoutPrefixes = {};
 	
-	for(var st in symbolTable){
+	for(let st in symbolTable){
 		if(st.indexOf(":") != -1 && referenceName.indexOf(":") == -1){
 			var nameWithoutPrefix = st.substring(st.indexOf(":")+1)
 			if(referenceName == nameWithoutPrefix){
 				if(typeof simbolTableWithoutPrefixes[nameWithoutPrefix] === "undefined"){
 					simbolTableWithoutPrefixes[nameWithoutPrefix] = [];
 				}
-				for(var stRow in symbolTable[st]){
+				
+				for(let stRow = 0; stRow < symbolTable[st].length; stRow++){
 					simbolTableWithoutPrefixes[nameWithoutPrefix].push(symbolTable[st][stRow])
 				}
 				
 				if(typeof simbolTableWithoutPrefixes[st] === "undefined"){
 					simbolTableWithoutPrefixes[st] = [];
 				}
-				for(var stRow in symbolTable[st]){
+				for(let stRow = 0; stRow < symbolTable[st].length; stRow++){
 					simbolTableWithoutPrefixes[st].push(symbolTable[st][stRow])
 				}
 			}
@@ -264,7 +265,7 @@ function getSimbolTableWithoutPrefixes(symbolTable, referenceName){
 				if(typeof simbolTableWithoutPrefixes[referenceName] === "undefined"){
 					simbolTableWithoutPrefixes[referenceName] = [];
 				}
-				for(var stRow in symbolTable[st]){
+				for(let stRow = 0; stRow < symbolTable[st].length; stRow++){
 					simbolTableWithoutPrefixes[referenceName].push(symbolTable[st][stRow])
 				}
 			}
@@ -276,7 +277,7 @@ function getSimbolTableWithoutPrefixes(symbolTable, referenceName){
 function getLastField(referenceName, referenceDefinitions){
 	var refName = referenceName;
 	var order = -10;
-	for(var name in referenceDefinitions){
+	for(let name = 0; name < referenceDefinitions.length; name++){
 		if(order<referenceDefinitions[name]["order"]){
 			refName = referenceDefinitions[name]["name"];
 			order = referenceDefinitions[name]["order"]
@@ -298,22 +299,23 @@ getReferenceName = function(referenceName, symbolTable, classID){
 		var referenceNameST = simbolTableWithOutPrefixes[referenceName];
 		
 		var sameClassContext = null;
-		for(var st in referenceNameST){	
+		for(let st = 0; st < referenceNameST.length; st++){
 			// if reference in the symbol table in a given class context;
 			if(referenceNameST[st]["context"] == classID && referenceNameST[st]["kind"] != "REFERENCE_TO_ALIAS") {
 				sameClassContext = referenceNameST;	
 			}
 		}
-		
+
 		//if reference in the simbol table is with type _ALIAS
-		for(var st in referenceNameST){
+		for(let st = 0; st < referenceNameST.length; st++){
 			if(referenceNameST[st]["kind"].indexOf("_ALIAS") != -1) {
 				// if alias is from other class context and given class has property with same name, without path expression
 				var isAlias = false;
 				var isPath = false;
 				
 				if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][referenceName] !== "undefined"){
-					for(var vnt in variableNamesTable[classID][referenceName]){
+					for(let vnt in variableNamesTable[classID][referenceName]){
+						
 						if(variableNamesTable[classID][referenceName][vnt]["isAlias"] === true){
 							isAlias = true;
 							// break;
@@ -351,12 +353,13 @@ getReferenceName = function(referenceName, symbolTable, classID){
 				// if variable is without prefix
 				if(referenceName.indexOf(":") == -1){
 					
-					//if class is unit or union use reference from ather context
+					//if class is unit or union use reference from other context
 					if(currentClass != null && (currentClass.isUnion == true || currentClass.isUnit == true)){
-						for(var st in referenceNameST){
+						for(let st = 0; st < referenceNameST.length; st++){
 							if(referenceNameST[st]["context"] !== classID){
 								if(referenceNameST[st]["kind"].indexOf("_ALIAS") != -1) return referenceName;
-								for(var name in variableNamesTable[referenceNameST[st]["context"]][referenceName]){
+								
+								for(let name in variableNamesTable[referenceNameST[st]["context"]][referenceName]){
 									if(variableNamesTable[referenceNameST[st]["context"]][referenceName][name]["isPath"] == false){	
 										return variableNamesTable[referenceNameST[st]["context"]][referenceName][name]["name"];
 									}
@@ -371,12 +374,12 @@ getReferenceName = function(referenceName, symbolTable, classID){
 						
 						// last order where exp = referenceName
 						var lastOrderFull;
-						for(var name in referenceDefinitions){
+						for(let name = 0; name < referenceDefinitions.length; name++){
 							if(referenceDefinitions[name]["exp"] == referenceName) lastOrderFull = referenceDefinitions[name]["order"];
 						}
 						// last order
 						var lastOrder;
-						for(var name in referenceDefinitions){
+						for(let name = 0; name < referenceDefinitions.length; name++){
 							lastOrder = referenceDefinitions[name]["order"];
 						}
 						// if name is defined before dbo:name
@@ -391,7 +394,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 							return "";
 						}
 						var refName = getLastField(referenceName, referenceDefinitions);
-						// for(var name in referenceDefinitions){
+						// for(let name = 0; name < referenceDefinitions.length; name++){
 							// refName = referenceDefinitions[name]["name"];	
 						// }
 						
@@ -404,7 +407,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 						if(Object.keys(referenceDefinitions).length > 0){
 							// if variable is in simbol table more then one time
 							if(referenceNameST.length > 1){
-								for(var st in referenceNameST){
+								for(let st = 0; st < referenceNameST.length; st++){
 									if(referenceNameST[st]["context"] != classID && referenceNameST[st]["kind"] == "PROPERTY_NAME"){
 					   
 										// console.log("ERROR vards izmantots cela izteiksme un cita klase")
@@ -422,7 +425,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 							// use variable from VNT
 							else {
 								var refName = "";
-								// for(var name in referenceDefinitions){
+								// for(let name = 0; name < referenceDefinitions.length; name++){
 									// refName = referenceDefinitions[name]["name"];
 								// }
 								messages.push({
@@ -435,7 +438,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 	
 						} else {
 							if(typeof variableNamesTable[classID] !== "undefined"){
-								for(var name in variableNamesTable[classID][referenceName]){
+								for(let name in variableNamesTable[classID][referenceName]){
 									if(variableNamesTable[classID][referenceName][name]["order"] > attributeOrder){
 										// TODO ERROR
 										// console.log("ERROR name before dbo:name", referenceName, referenceDefinitions, attributeOrder, variableNamesTable[classID][referenceName][name]["order"])
@@ -449,7 +452,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 								}
 							}
 	
-							for(var st in sameClassContext){
+							for(let st = 0; st < sameClassContext.length; st++){
 								if(sameClassContext[st]["kind"].indexOf("_ALIAS") != null) return referenceName
 							}
 							// console.log("nevar atrast mainigo")
@@ -470,12 +473,12 @@ getReferenceName = function(referenceName, symbolTable, classID){
 					var refName = referenceName.substring(referenceName.indexOf(":")+1);
 					// if VNT have variable that is not path expression, is used after definition, with the same prefix, use it
 					if(typeof variableNamesTable[classID] !== "undefined"){
-						for(var name in variableNamesTable[classID][refName]){
+						for(let name in variableNamesTable[classID][refName]){
 							if(variableNamesTable[classID][refName][name]["isPath"] == false && variableNamesTable[classID][refName][name]["order"] < attributeOrder && variableNamesTable[classID][refName][name]["exp"] == referenceName){	
 								return variableNamesTable[classID][refName][name]["name"];
 							}
 						}
-						for(var name in variableNamesTable[classID][refName]){
+						for(let name in variableNamesTable[classID][refName]){
 							if(variableNamesTable[classID][refName][name]["order"] > attributeOrder){	
 								// TODO ERROR
 								// console.log("iznamtosana pirms definesanas")
@@ -494,9 +497,9 @@ getReferenceName = function(referenceName, symbolTable, classID){
 					
 					//if class is unit or union use reference from ather context
 					if(currentClass != null && (currentClass.isUnion == true || currentClass.isUnit == true)){
-						for(var st in referenceNameST){
+						for(let st = 0; st < referenceNameST.length; st++){
 							if(referenceNameST[st]["context"] !== classID){
-								for(var name in variableNamesTable[referenceNameST[st]["context"]][refName]){
+								for(let name in variableNamesTable[referenceNameST[st]["context"]][refName]){
 									if(variableNamesTable[referenceNameST[st]["context"]][refName][name]["isPath"] == false && variableNamesTable[referenceNameST[st]["context"]][refName][name]["exp"] == referenceName){	
 										return variableNamesTable[referenceNameST[st]["context"]][refName][name]["name"];
 									}
@@ -515,7 +518,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 				}
 		} else if(referenceName != null) {
 		// if variable is in a simbol table with different context
-			for(var st in referenceNameST){	
+			for(let st = 0; st < referenceNameST.length; st++){
 
 					if(referenceNameST.length > 1){
 						// TODO ERROR
@@ -529,7 +532,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 					} else {
 						var isReferenceDefinitions = false;
 						if(typeof variableNamesTable[classID] != "undefined" && typeof variableNamesTable[classID][referenceName] != "undefined"){
-							for(var refDef in variableNamesTable[classID][referenceName]){
+							for(let refDef in variableNamesTable[classID][referenceName]){
 								
 								if(variableNamesTable[classID][referenceName][refDef]["isPath"] == true) {
 									isReferenceDefinitions = true;
@@ -577,7 +580,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 		// if VNT have variable, use it
 		var refName = null;
 		if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][referenceName] !== "undefined"){
-			for(var name in variableNamesTable[classID][referenceName]){
+			for(let name in variableNamesTable[classID][referenceName]){
 				if(variableNamesTable[classID][referenceName][name]["order"] > attributeOrder && variableNamesTable[classID][referenceName][name]["isAlias"] == true){
 					refName = variableNamesTable[classID][referenceName][name]["name"];
 				}
@@ -647,14 +650,16 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			
 			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId] !== "undefined" ){
 				//is simbol table has variable, wiht kind ALIAS and ather class context
-				for(var st in classSimbolTable[varFullName]){
-					if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["isPath"] != true){
-						messages.push({
-							"type" : "Error",
-							"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
-							"isBlocking" : true
-						});
-						return "";
+				for(let st = 0; st < classSimbolTable[varFullName].length; st++){
+					if(typeof classSimbolTable[varFullName][st] === "object"){
+						if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["isPath"] != true){
+							messages.push({
+								"type" : "Error",
+								"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
+								"isBlocking" : true
+							});
+							return "";
+						}
 					}
 				}
 				//if variableNamesTable has property with given field id, use it
@@ -1096,10 +1101,8 @@ getPathFullGrammar = function(expressionTable){
 	var isPath = null;
 	var mes = [];
 	var cardinality = 1;
-	
-	
-	
-	for(var key in expressionTable){
+
+	for(let key in expressionTable){
 		var visited = 0;
 		
 		//PathPrimary
@@ -1197,7 +1200,7 @@ getPathFullGrammar = function(expressionTable){
 			var temp = getPathFullGrammar(expressionTable[key]);
 			mes = mes.concat(temp["messages"]);
 			if(temp["cardinality"] == -1) {cardinality = -1;}
-			for(var prefix in temp["prefixTable"]){
+			for(let prefix in temp["prefixTable"]){
 				prTable[prefix] = temp["prefixTable"][prefix];
 			}
 			path = path + temp["path"];
@@ -1212,7 +1215,7 @@ getPathFullGrammar = function(expressionTable){
 
 // transfort exists and not exists expressions
 function transformExistsNotExists(expressionTable, alias, className){
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 
 		if(key == "ExistsFunc" || key == "NotExistsFunc"){
 			var prefix = "";
@@ -1235,7 +1238,7 @@ function transformExistsNotExists(expressionTable, alias, className){
 }
 
 function transformIriForValues(expressionTable){
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		
 		if(key == "iri"){
 			expressionTable["iriValues"] = expressionTable[key];
@@ -1258,7 +1261,7 @@ function transformIriForValues(expressionTable){
 function transformExistsOR(expressionTable, prefix, existsExpr, countOR, alias, className){	
 	expressionTable[countOR]["ConditionalAndExpression"] = transformExistsAND(expressionTable[countOR]["ConditionalAndExpression"], prefix, existsExpr, 0, alias, className);
 			
-	for(var key in expressionTable[1]){
+	for(let key in expressionTable[1]){
 		if(typeof expressionTable[1][key][3] !== 'undefined') expressionTable[1][key] = transformExistsOR(expressionTable[1][key], prefix, existsExpr, 3, alias, className);
 	}
 	return expressionTable;
@@ -1287,7 +1290,7 @@ function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
 					messages = messages.concat(path["messages"]);
 				}
 				else{
-					for (var prefix in path["prefixTable"]) { 
+					for(let prefix in path["prefixTable"]) { 
 						if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
 					}
 					prefixedName = path["path"];
@@ -1449,7 +1452,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 		}
 	}
 
-	for(var key in expressionTable[1]){
+	for(let key in expressionTable[1]){
 		if(typeof expressionTable[1][key][3] !== 'undefined') expressionTable[1][key] = transformExistsAND(expressionTable[1][key], prefix, existsExpr, 3, alias, className);
 	}
 	return expressionTable
@@ -1458,7 +1461,7 @@ function transformExistsAND(expressionTable, prefix, existsExpr, count, alias, c
 // transform a BETWEEN(1, 3) into a>=1 && a<=3
 // transform a LIKE "%abc" into REGEX(a, "abc$")
 function transformBetweenLike(expressionTable){
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		
 		//BETWEEN
 		if (key == "ConditionalAndExpression" &&
@@ -1870,7 +1873,7 @@ function transformBetweenLike(expressionTable){
 }
 
 function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
-	for(var ref in refTable){
+	for(let ref in refTable){
 		if(typeof refTable[ref] === 'object'){
 			if(typeof refTable[ref]["optionaPlain"] !== 'undefined' && refTable[ref]["optionaPlain"] == true) isOptionalPlain = true;
 			
@@ -1878,7 +1881,7 @@ function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
 				if(isOptionalPlain == true) return true;
 			}else {
 				var result  = false;
-				for(var r in refTable[ref]["classes"]){
+				for(let r in refTable[ref]["classes"]){
 					if(typeof refTable[ref]["classes"][r] === 'object'){
 						var tempResult = checkIfUnderOptionalPlain(reference, refTable[ref]["classes"][r], isOptionalPlain);
 						if(tempResult == true) result = true;
@@ -1892,7 +1895,7 @@ function checkIfUnderOptionalPlain(reference, refTable, isOptionalPlain){
 }
 
 function checkIfUnderUnion(reference, refTable, isUnderUnion){
-	for(var ref in refTable){
+	for(let ref in refTable){
 		if(typeof refTable[ref] === 'object'){
 			if(typeof refTable[ref]["underUnion"] !== 'undefined' && refTable[ref]["underUnion"] == true) isUnderUnion = true;
 
@@ -1900,7 +1903,7 @@ function checkIfUnderUnion(reference, refTable, isUnderUnion){
 				if(isUnderUnion == true) return true;
 			}else {
 				var result  = false;
-				for(var r in refTable[ref]["classes"]){
+				for(let r in refTable[ref]["classes"]){
 					if(typeof refTable[ref]["classes"][r] === 'object'){
 						var tempResult = checkIfUnderUnion(reference, refTable[ref]["classes"][r], isUnderUnion);
 						if(tempResult == true) result = true;
@@ -1915,7 +1918,7 @@ function checkIfUnderUnion(reference, refTable, isUnderUnion){
 
 function generateExpression(expressionTable, SPARQLstring, className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation){
 		
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		var visited = 0;
 		
 		//REFERENCE
@@ -1975,7 +1978,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}
 			} else {
 				var clId;
-				for(var k in idTable){
+				for(let k in idTable){
 					if (idTable[k] == className) {
 						clId = k;
 						break;
@@ -2003,7 +2006,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			if(path["isPath"] != true && parseType != "condition"){
 				
 				var clId;
-					for(var k in idTable){
+					for(let k in idTable){
 						if (idTable[k] == className) {
 							clId = k;
 							break;
@@ -2022,7 +2025,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				messages = messages.concat(path["messages"]);
 			}
 
-			for (var prefix in path["prefixTable"]) { 
+			for(let prefix in path["prefixTable"]) { 
 				if(typeof path["prefixTable"][prefix] === 'string') prefixTable[prefix] = path["prefixTable"][prefix];
 			}
 			var prefixName = path["path"];
@@ -2035,7 +2038,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					
 					if(substringvar["type"] == null){
 						var clId;
-						for(var k in idTable){
+						for(let k in idTable){
 							if (idTable[k] == className) {
 								clId = k;
 								break;
@@ -2084,7 +2087,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}else {
 						if(variableStructure["var"]["type"] == null){
 							var clId;
-							for(var k in idTable){
+							for(let k in idTable){
 								if (idTable[k] == className) {
 									clId = k;
 									break;
@@ -2140,7 +2143,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}
 			} else {
 				var clId;
-					for(var k in idTable){
+					for(let k in idTable){
 						if (idTable[k] == className) {
 							clId = k;
 							break;
@@ -2347,20 +2350,22 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						
 						if(typeof symbolTable[classID] !== "undefined"){
 							var st = symbolTable[classID][varName];
-							for(var symbol in st){
-								if(typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
-								typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
-								st[symbol]["type"]["parentType"]["short_name"] != classSchemaName
-								){
-									generateTriples = false;
-									variableToUse = st[symbol]["type"]["short_name"];
-								} else if (typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
-								typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
-								st[symbol]["type"]["parentType"]["short_name"] == classSchemaName){
-									classHasProperty = true;
-								} else if(expressionTable[key]["ref"] != null){
-									generateTriples = false;
-									variableToUse = varName;
+							if(typeof st !== "undefined"){
+								for(let symbol = 0; symbol < st.length; symbol++){
+									if(typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
+									typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
+									st[symbol]["type"]["parentType"]["short_name"] != classSchemaName
+									){
+										generateTriples = false;
+										variableToUse = st[symbol]["type"]["short_name"];
+									} else if (typeof st[symbol]["type"] !== 'undefined' && st[symbol]["type"] != null && 
+									typeof st[symbol]["type"]["parentType"] !== "undefined" && st[symbol]["type"]["parentType"] != null &&
+									st[symbol]["type"]["parentType"]["short_name"] == classSchemaName){
+										classHasProperty = true;
+									} else if(expressionTable[key]["ref"] != null){
+										generateTriples = false;
+										variableToUse = varName;
+									}
 								}
 							}
 						}
@@ -2449,7 +2454,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var isOwnProperty = false;
 							var isReference = false;
 							if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined'){
-								for(var k in symbolTable[classID][varName]){
+								for(let k = 0; k < symbolTable[classID][varName].length; k++){
 									if(typeof symbolTable[classID][varName][k]["upBySubQuery"] !== 'undefined' && symbolTable[classID][varName][k]["upBySubQuery"] == 1) {
 										isPropertyFromSubQuery = true;
 									}
@@ -2492,7 +2497,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					prefixTable["rdf:"] = "<"+knownNamespaces["rdf:"]+">";
 				}else{
 					var clId;
-					for(var k in idTable){
+					for(let k in idTable){
 						if (idTable[k] == className) {
 							clId = k;
 							break;
@@ -2549,7 +2554,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		if (key == "Aggregate") {
 			if(parseType == "condition"){
 				var clId;
-				for(var k in idTable){
+				for(let k in idTable){
 					if (idTable[k] == className) {
 						clId = k;
 						break;
@@ -2597,7 +2602,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					if((typeof VarL["NumericLiteral"] !== 'undefined' && typeof VarR["var"] !== 'undefined' && VarR["var"]['kind'] == "CLASS_NAME")
 						|| (typeof VarR["NumericLiteral"] !== 'undefined' && typeof VarL["var"] !== 'undefined' && VarL["var"]['kind'] == "CLASS_NAME")){
 							var clId;
-							 for(var k in idTable){
+							 for(let k in idTable){
 								if (idTable[k] == className) {
 									clId = k;
 									break;
@@ -3586,9 +3591,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						tripleTable = tripleTable.filter(function (el, i, arr) {
 							return arr.indexOf(el) === i;
 						});
-						
-						
-						for(var k in tripleTable){
+						 
+						for(let k = 0; k < tripleTable.length; k++){
 							var varTemp;
 							if(tripleTable[k]["var"] == VarL)varTemp = VarR;
 							else varTemp = VarL;
@@ -3714,7 +3718,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		}
 		
 		if (key == "MultiplicativeExpressionList"){
-			for(var k in expressionTable[key]){
+			for(let k = 0; k < expressionTable[key].length; k++){
 				if(typeof expressionTable[key][k]["Additive"]!== 'undefined'){
 					SPARQLstring = SPARQLstring  + expressionTable[key][k]["Additive"]
 					SPARQLstring = SPARQLstring  + generateExpression({MultiplicativeExpression:expressionTable[key][k]["MultiplicativeExpression"]}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
@@ -3739,7 +3743,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				if (typeof additiveExpression["MultiplicativeExpressionList"][0] !== 'undefined' && typeof additiveExpression["MultiplicativeExpressionList"][0]["Concat"]!== 'undefined') {
 					
 					var concat = "CONCAT(" + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpression"]}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
-					for(var k in additiveExpression["MultiplicativeExpressionList"]){
+					for(let k = 0; k < additiveExpression["MultiplicativeExpressionList"].length; k++){
 						if (typeof additiveExpression["MultiplicativeExpressionList"][k]["Concat"] !== 'undefined') {
 							isFunction = true
 							concat = concat + ", " + generateExpression({MultiplicativeExpression:additiveExpression["MultiplicativeExpressionList"][k]["MultiplicativeExpression"]}, "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation)
@@ -3917,7 +3921,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				
 				SPARQLstring = SPARQLstring  + lang + expressionTable[key]["LANGTAG_MUL"][0] + "')";
 				if(typeof expressionTable[key]["LANGTAG_MUL"][1] !== 'undefined'){
-					for(var langtag in expressionTable[key]["LANGTAG_MUL"][1]){
+					for(let langtag in expressionTable[key]["LANGTAG_MUL"][1]){
 						SPARQLstring = SPARQLstring  + " || " + lang + expressionTable[key]["LANGTAG_MUL"][1][langtag] + "')";
 					}
 				}
@@ -4024,14 +4028,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		}
 
 		if (key == "ExpressionList") {
-			for(var k in expressionTable[key]){
+			for(let k in expressionTable[key]){
 				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 			}
 			visited = 1
 		}
 
 		if (key == "ArgListExpression") {
-			for(var k in expressionTable[key]){
+			for(let k in expressionTable[key]){
 				SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key][k], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation); 
 			}
 			visited = 1
@@ -4078,7 +4082,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		}
 		if(key == "ExistsExpr"){
 			var triples = [];
-			for(var t in expressionTable[key]["Triple"]){
+			for(let t = 0; t < expressionTable[key]["Triple"].length; t++){
 				var triple = "?" + expressionTable[key]["Triple"][t]["object"] + " " + expressionTable[key]["Triple"][t]["prefixedName"] + " ?" + expressionTable[key]["Triple"][t]["variable"]+ "." ;
 				// var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
 				// delete variableNamesClass[temp];
@@ -4091,10 +4095,8 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			
 		}
 		if(key == "NotExistsExpr"){
-			
-			
 			var triples = [];
-			for(var t in expressionTable[key]["Triple"]){
+			for(let t = 0; t < expressionTable[key]["Triple"].length; t++){
 				var triple = "?" + expressionTable[key]["Triple"][t]["object"] + " " + expressionTable[key]["Triple"][t]["prefixedName"] + " ?" + expressionTable[key]["Triple"][t]["variable"] + "." ;
 				// var temp = variableNamesAll[expressionTable[key]["Triple"][t]["variable"]];
 				// delete variableNamesClass[temp];
@@ -4204,7 +4206,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		if (key == "InlineDataOneVar" && typeof expressionTable[key] !== 'undefined'){
 			var dataTable = [];
-			for(var data in expressionTable[key]){
+			for(let data in expressionTable[key]){
 				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				dataTable.push(dataBloctValue)
 			}
@@ -4214,7 +4216,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		if (key == "InlineDataFull" && typeof expressionTable[key] !== 'undefined'){
 			var dataTable = [];
-			for(var data in expressionTable[key]){
+			for(let data in expressionTable[key]){
 				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				dataTable.push(dataBloctValue)
 			}
@@ -4225,7 +4227,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		if (key == "DataBlockValueFull" && typeof expressionTable[key] !== 'undefined'){
 			SPARQLstring = SPARQLstring  + "(";
 			var dataTable = [];
-			for(var data in expressionTable[key]){
+			for(let data in expressionTable[key]){
 				var dataBloctValue = generateExpression(expressionTable[key][data], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
 				dataTable.push(dataBloctValue)
 			}
@@ -4289,7 +4291,7 @@ countMaxExpressionCardinality = function (expressionTable){
 	var isMultiple = false;
 	var isAggregation = false;
 	
-	for(var key in expressionTable){
+	for(let key in expressionTable){
 		if(key == "var") {	
 			//if type information is known
 			if(expressionTable[key]['type'] !== null && typeof expressionTable[key]['type'] !== 'undefined') {
@@ -4324,13 +4326,10 @@ countMaxExpressionCardinality = function (expressionTable){
 
 function typeStringFromSymbolTable(symbolTable, expression){
 	var value = false;
-	for(var key in symbolTable[expression]){
-
+	for(let key = 0; key < symbolTable[expression].length; key++){
 		if(symbolTable[expression][key]["type"]!== null && typeof symbolTable[expression][key]["type"] !== 'undefined' &&
 			(symbolTable[expression][key]["type"]["data_type"]== 'XSD_STRING'
-			|| symbolTable[expression][key]["type"]["data_type"]== 'xsd:string')) value = true;
-		
+			|| symbolTable[expression][key]["type"]["data_type"]== 'xsd:string')) value = true;	
 	}
-	
 	return value;
 }
