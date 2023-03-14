@@ -1,4 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
+import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/libs/platform/collections'
 
 var symbolTable = {};
 var grammarType = "class";
@@ -369,7 +370,7 @@ function addActive(x) {
 
 //function to remove selected item
 function removeActive(x) {
-	for (var i = 0; i < x.length; i++) {
+	for(let i = 0; i < x.length; i++) {
 		x[i].style.backgroundColor = '#efefef';
 	}
 }
@@ -378,7 +379,7 @@ function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document, except the one passed as an argument:*/
     var x = document.getElementsByClassName("autocomplete-items");
 	
-    for (var i = 0; i < x.length; i++) {
+    for(let i = 0; i < x.length; i++) {
       if (elmnt != x[i] && elmnt != document.activeElement) {
         x[i].parentNode.removeChild(x[i]);
 	  }
@@ -460,8 +461,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 					// schemaName = proj.schema;
 				// };
 			// }
-			
-			for(var cl in cls){
+			for(let cl = 0; cl < cls.length; cl++){
 				var prefix;
 				if((cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") || 
 				(schemaName.toLowerCase() == "wikidata" && cls[cl]["prefix"] == "wd"))prefix = "";
@@ -504,14 +504,14 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			var symbolTable = tempSymbolTable["symbolTable"];
 			var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
 			
-			for (var key in rootSymbolTable) {
-				for(var k in rootSymbolTable[key]){
+			for(let key in rootSymbolTable) {
+				for(let k = 0; k < rootSymbolTable[key].length; k++){
 					if(rootSymbolTable[key][k]["kind"] == "AGGREGATE_ALIAS") c["suggestions"].push({name: key , priority:100, type:3});
 				}
 			}
 			
-			for (var key in symbolTable) {
-				for(var k in symbolTable[key]){
+			for(let key in symbolTable) {
+				for(let k = 0; k < symbolTable[key].length; k++){
 					if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || (symbolTable[key][k]["kind"] == "CLASS_ALIAS" && isURI(key) == 0)) c["suggestions"].push({name: key, priority:100, type:3});
 				}
 			}
@@ -524,8 +524,8 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			if(findClassInAbstractQueryTable(act_elem, abstractQueryTable).isGlobalSubQuery == true){
 				var symbolTable = tempSymbolTable["symbolTable"];
 	
-				for (var key in symbolTable) {
-					for(var k in symbolTable[key]){
+				for(let key in symbolTable) {
+					for(let k = 0; k < symbolTable[key].length; k++){
 						if(symbolTable[key][k]["kind"] == "AGGREGATE_ALIAS" || symbolTable[key][k]["kind"] == "BIND_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_ALIAS" || symbolTable[key][k]["kind"] == "PROPERTY_NAME" || (symbolTable[key][k]["kind"] == "CLASS_ALIAS" && isURI(key) == 0)) c["suggestions"].push({name: key, priority:100, type:3});
 					}
 				}
@@ -573,9 +573,8 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 
 
 		
-		for (var  key in symbolTable) {
-			
-			for (var  k in symbolTable[key]) {
+		for(let  key in symbolTable) {
+			for(let k = 0; k < symbolTable[key].length; k++){
 				var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][k]["context"], tempSymbolTable["abstractQueryTable"], key);
 					
 				if(symbolTable[key][k]["context"] == selected_elem_id){
@@ -629,7 +628,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 				c["suggestions"].push({name: "dbr:"+fullText, priority:100, type:0})
 		}
 			
-		for(var i in inst){
+		for(let i = 0; i < inst.length; i++){
 			c["suggestions"].push({name: inst[i], priority:100, type:0})
 		}
 	
@@ -704,9 +703,8 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 }
 
 function getCompletionTableNew(continuations_to_report, text) {
-
 	var sortable = [];
-	for (var  key in continuations_to_report) {
+	for(let key in continuations_to_report) {
 		if(continuations_to_report[key]["name"] != "" && continuations_to_report[key]["name"] != " "){
 			if(continuations_to_report[key]["spaceBefore"] == true && text.length != 0 && text.substring(text.length-1) != " ") sortable.push({"name":" "+continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
 			else sortable.push({"name":continuations_to_report[key]["name"], "priority":continuations_to_report[key]["priority"], "type":continuations_to_report[key]["type"]});
@@ -738,7 +736,10 @@ function getContinuationsNew(text, length, continuations) {
 
 	//find farthest position in continuation table
 	//find  previous farthest position
-	for (var pos in continuations) {
+	
+	
+	
+	for(let pos in continuations) {
 		if (farthest_pos != -1) {
 			farthest_pos_prev = farthest_pos
 		}
@@ -756,11 +757,11 @@ function getContinuationsNew(text, length, continuations) {
 				var startedContinuations = [];
 				var wholeWordMatch = false;
 
-				for (var pos in continuations[i]) {
+				for(let pos in continuations[i]) {
 					if(varrible.toLowerCase() == pos.toLowerCase()) wholeWordMatch = true;
 				}
 
-				for (var pos in continuations[i]) {
+				for(let pos in continuations[i]) {
 					//if contuniation contains sub string
 					if (isNaN(varrible.substring(0, 1)) != false && wholeWordMatch!= true && pos.toLowerCase().includes(varrible.toLowerCase()) && varrible.toLowerCase() != pos.toLowerCase() && varrible != "") {
 						prefix = text.substring(0, i);
@@ -792,7 +793,7 @@ function getContinuationsNew(text, length, continuations) {
 		var er_lenght = er.length
 
 		//parbaudam, vai ir saderibas iespejamo turpinajumu tabulaa
-		for (var pos in continuations_to_report) {
+		for(let pos in continuations_to_report) {
 			if (pos.substring(0, er_lenght).toLowerCase() == er.toLowerCase()) {
 				TermMessages["'"+pos+"'"]=continuations_to_report[pos];
 				if(length>farthest_pos) prefix = text.substring(0, farthest_pos);
@@ -809,7 +810,7 @@ function getContinuationsNew(text, length, continuations) {
 
 			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
-			for (var pos in uniqueMessages) {
+			for(let pos in uniqueMessages) {
 				if(uniqueMessages.length-1 > pos)messages = messages+ "\n" + uniqueMessages[pos]["name"] + ",";
 				else messages = messages+ "\n" + uniqueMessages[pos]["name"];
 			}

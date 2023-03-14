@@ -191,8 +191,9 @@ resolveTypesAndBuildSymbolTable = async function (query) {
       _.extend(cl.identification, await parsePathExpression(cl.identification.local_name, obj_class.identification))
     }
 	// );
-
-	for(var f in obj_class.fields){
+	
+	
+	for(let f = 0; f < obj_class.fields.length; f++){
 		 obj_class.fields[f]["order"] = f;
 	}
 
@@ -525,13 +526,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
       _.each(symbol_table, function(name_list, current_context) {
             _.each(name_list, function(entry_list, name) {
                 symbol_table[current_context][name] = _.reject(entry_list, function(n) {return (n.kind == "UNRESOLVED_NAME" || n.kind == "UNRESOLVED_FIELD_ALIAS" || n.upBySubQuery > 1) } );
- 
-				// for(var n in symbol_table[current_context][name]){
-					
-					// if(typeof symbol_table[current_context][name][n]["upBySubQuery"] !== "undefined" && symbol_table[current_context][name][n]["upBySubQuery"] > 1){
-						// delete symbol_table[current_context][name][n];
-					// }
-				// }
 				if (_.isEmpty(symbol_table[current_context][name])) {
 				  delete symbol_table[current_context][name];
                 };
@@ -548,7 +542,6 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	console.log(obj_class)
 	  if(obj_class.graphs){
 		  var prefixes = query.prefixes;
-		  //for(var g in obj_class.graphs){
 		  for (let g = 0; g < obj_class.graphs.length; g++) {
 			obj_class.graphs[g]["graph"] = getGraphFullForm(obj_class.graphs[g]["graph"], prefixes);
 		  }
@@ -640,6 +633,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
           if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
 			 var schemaName = await dataShapes.schema.schemaType;
+
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
@@ -653,7 +647,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				var prefix = strURI.substring(0, strURI.indexOf(":"));
 				var name = strURI.substring(strURI.indexOf(":")+1);
 				var prefixes = query.prefixes;
-				for(var kp in prefixes){
+				for(let kp = 0; kp < prefixes.length; kp++){
 					if(prefixes[kp]["name"] == prefix) {
 						strURI = "<"+prefixes[kp]["value"]+name+">";
 						break;
@@ -1145,7 +1139,7 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
                 } else {
 					var orderingss = elem.getOrderings()
 					if(orderingss.length > 0){
-						for(var order in orderingss){
+						for(let order = 0; order < orderingss.length; order++){
 							warnings.push("Order by clause '" + orderingss[order]["fulltext"] + "' ignored since it is not placed in the main query node")
 						}					
 					}
@@ -1329,7 +1323,7 @@ function getGraphFullForm(graph, prefixes){
 	if(graphIsUri == 4){
 		var prefix = graph.substring(0, graph.indexOf(":"));
 		var name = graph.substring(graph.indexOf(":")+1);
-		for(var kp in prefixes){
+		for (let kp = 0; kp < prefixes.length; kp++) {
 			if(prefixes[kp]["name"] == prefix) {
 				graph = "<"+prefixes[kp]["value"]+name+">";
 				break;
@@ -1344,19 +1338,21 @@ function getGraphFullForm(graph, prefixes){
 
 async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
 	
-	for(var exp in parsed_exp){
-		if(exp == "var") {
-			parsed_exp[exp]["type"] = await resolveType(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
-			parsed_exp[exp]["kind"] = await resolveKind(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
-		}
-		
-		
-		if(typeof parsed_exp[exp] == 'object'){
-			await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType, isSimple)
-		}
-		
-		if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
-			parsed_exp[exp] = pathOrReference(parsed_exp[exp], symbol_table, context)
+	for(let exp in parsed_exp){
+		if(typeof parsed_exp[exp] === "object"){
+			if(exp == "var") {
+				parsed_exp[exp]["type"] = await resolveType(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
+				parsed_exp[exp]["kind"] = await resolveKind(parsed_exp[exp]["name"], exprType, context, symbol_table, schemaName, isSimple);
+			}
+			
+			
+			if(typeof parsed_exp[exp] === 'object'){
+				await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType, isSimple)
+			}
+			
+			if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
+				parsed_exp[exp] = pathOrReference(parsed_exp[exp], symbol_table, context)
+			}
 		}
 	}
 	
@@ -1733,21 +1729,21 @@ function pathOrReference(o, symbol_table, context) {
 				
 				
 function chechIfSimplePath(expressionTable, isSimple, isPath){
-	for(var key in expressionTable){
-		
-		if(key == "PathProperty"){
-			isPath = true;
-			
-		}
+	for(let key in expressionTable){
+		if(typeof expressionTable[key] === "object"){
+			if(key == "PathProperty"){
+				isPath = true;
+			}
 
-		if(key == "Alternative" ){
-			isSimple = false;
-		}
+			if(key == "Alternative" ){
+				isSimple = false;
+			}
 
-		if(typeof expressionTable[key] == 'object'){
-			var temp = chechIfSimplePath(expressionTable[key], isSimple, isPath);
-			if(temp["isSimple"]==false) isSimple = false;
-			if(temp["isPath"]==true) isPath = true;
+			if(typeof expressionTable[key] == 'object'){
+				var temp = chechIfSimplePath(expressionTable[key], isSimple, isPath);
+				if(temp["isSimple"]==false) isSimple = false;
+				if(temp["isPath"]==true) isPath = true;
+			}
 		}
 	}
 	return {isSimple:isSimple, isPath:isPath}
