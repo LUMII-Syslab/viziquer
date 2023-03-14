@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements } from '/libs/platform/collections'
+import { Projects, Elements } from '/libs/platform/collections'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
