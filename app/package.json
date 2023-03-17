@@ -14,7 +14,7 @@
     "jquery": "^3.6.0",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.5",
-    "sparqljs": "^2.2.3"
+    "sparqljs": "^3.6.2"
   },
   "meteor": {
     "mainModule": {
