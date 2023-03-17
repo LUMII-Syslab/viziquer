@@ -1,5 +1,7 @@
+
 joined_date = function(date_obj) {
 	if (date_obj) {
+    date_obj = new Date(date_obj);
 		var date = date_obj.getDate();
 		var month_int = date_obj.getMonth() + 1;
 		var year = date_obj.getFullYear();
@@ -12,18 +14,18 @@ joined_date = function(date_obj) {
 
 months = function() {
 	return ["January", 
-              "February", 
-              "March", 
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",                           
-            ];
+          "February", 
+          "March", 
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",                           
+        ];
 }
 
 time_interval_from_given_date = function(date, current_date) {
