@@ -9,8 +9,8 @@ YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
 YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);
 YASQE.defaults.autocompleters = ['customClassCompleter', "customPropertyCompleter", "variables"];
 
-var yasqe = null;
-var yasqe3 = null;
+// var yasqe = null;
+// var yasqe3 = null;
 
 
 var sparql_form_events = {
@@ -38,13 +38,20 @@ var sparql_form_events = {
 		e.preventDefault();
 		Session.set("generatedSparql", undefined);
 		Session.set("executedSparql", {limit_set:false, number_of_rows:0});
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
+		let yasqe3 = Template.sparqlForm.yasqe3.get();
+
 		yasqe.setValue("");
 		yasqe3.setValue("");
 	},
 
 	"click #execute-sparql": function(e) {
 		e.preventDefault();
-	    var query = yasqe.getValue();
+
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
+	    let query = yasqe.getValue();
+
+	    console.log("query ", query)
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
 	},
@@ -147,12 +154,14 @@ var sparql_form_helpers = {
 
 Template.sparqlForm.onRendered(function() {
 
-	yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
+	let yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
 		sparql: {
 			showQueryButton: false,
 		},
 		//autoRefresh: true,
 	});
+
+	Template.sparqlForm.yasqe3 = new ReactiveVar(yasqe3);
 
 	$(document).on('shown.bs.tab', '#vq-tab a[href="#sparql"]', function() {
 		this.refresh();
@@ -161,6 +170,8 @@ Template.sparqlForm.onRendered(function() {
 	yasqe3.on("blur", function(editor){
 		var val = editor.getValue();
 		Session.set("generatedSparql", val);
+
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
 		yasqe.setValue(val);
 		// yasqe.refresh();
 	});
@@ -197,15 +208,20 @@ Template.sparqlForm_see_results.onRendered(function() {
 	// 	yasqe_config.sparql.namedGraphs = [proj.uri];
   // };
 
-	yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), yasqe_config);
+	let yasqe = YASQE.fromTextArea(document.getElementById("generated-sparql"), yasqe_config);
 	yasqe.on("blur", function(editor) {
 		var val = editor.getValue();
 
 		Session.set("generatedSparql", val);
+
+		let yasqe3 = Template.sparqlForm.yasqe3.get();
 		yasqe3.setValue(val);
 		//yasqe3.refresh();
 	});
 	//yasqe.setValue("A");
+
+
+	Template.sparqlForm_see_results.yasqe = new ReactiveVar(yasqe);	
 });
 
 
