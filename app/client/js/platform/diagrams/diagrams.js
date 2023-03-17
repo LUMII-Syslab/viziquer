@@ -149,6 +149,10 @@ Template.diagramsRibbon.helpers({
 	tool_name: function() {
 		var project_id = Session.get("activeProject");
 		var project = Projects.findOne({_id: project_id,});
+
+		console.log("prject ", project)
+
+
 		if (!project) {
 			// console.error("No project ", project_id);
 			return;
@@ -825,8 +829,8 @@ Template.ontologySettings.events({
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
 					schema: $("#dss-schema").val(),
-          useStringLiteralConversion: $("#use-string-literal-conversion").val(),
-          queryEngineType: $("#query-engine-type").val(),
+		          	useStringLiteralConversion: $("#use-string-literal-conversion").val(),
+		          	queryEngineType: $("#query-engine-type").val(),
 					useDefaultGroupingSeparator: $("#use-default-grouping-separator").is(":checked"),
 					defaultGroupingSeparator: $("#default-grouping-separator").val(),
 					directClassMembershipRole: $("#direct-class-membership-role").val(),
@@ -1018,6 +1022,10 @@ Template.ontologySettings.rendered = async function() {
 
 Template.ontologySettings.helpers({
 
+	project: function() {
+		return Projects.findOne({_id: Session.get("activeProject")});
+	},
+
 	uri: function() {
 		return Template.ontologySettings.uri.get();
 		// var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -1080,24 +1088,24 @@ Template.ontologySettings.helpers({
 		return list;
 	},
 
-	defaultGroupingSeparator: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.defaultGroupingSeparator;
-		}
-	},
-	NOTuseDefaultGroupingSeparator: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.useDefaultGroupingSeparator=="false");
-		}
-	},
-	useDefaultGroupingSeparator: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.useDefaultGroupingSeparator=="true");
-		}
-	},
+	// defaultGroupingSeparator: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return proj.defaultGroupingSeparator;
+	// 	}
+	// },
+	// NOTuseDefaultGroupingSeparator: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.useDefaultGroupingSeparator=="false" || proj.useDefaultGroupingSeparator==false);
+	// 	}
+	// },
+	// useDefaultGroupingSeparator: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.useDefaultGroupingSeparator=="true" || proj.useDefaultGroupingSeparator==true);
+	// 	}
+	// },
 	directClassMembershipRole: function() {
 		return Template.ontologySettings.directClassMembershipRole.get();
 		// var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -1112,60 +1120,63 @@ Template.ontologySettings.helpers({
 		//	return proj.indirectClassMembershipRole;
 		// }
 	},
-	showCardinalities: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.showCardinalities=="true");
-		}
-	},
-	decorateInstancePositionVariable: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.decorateInstancePositionVariable=="true");
-		}
-	},
-	decorateInstancePositionConstants: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.decorateInstancePositionConstants=="true");
-		}
-	},
-	simpleConditionImplementation: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.simpleConditionImplementation=="true");
-		}
-	},
-	autoHideDefaultPropertyName: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.autoHideDefaultPropertyName=="true");
-		}
-	},
-	showPrefixesForAllNonLocalNames: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.showPrefixesForAllNonLocalNames=="true");
-		}
-	},
-	showPrefixesForAllNames: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.showPrefixesForAllNames=="true");
-		}
-	},
-	completeRDFBoxesInDatetimeFunctions: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.completeRDFBoxesInDatetimeFunctions=="true");
-		}
-	},
-	showGraphServiceCompartments: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.showGraphServiceCompartments=="true");
-		}
-	},
+	// showCardinalities: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		console.log("adsf afafs", proj.showCardinalities, (proj.showCardinalities=="true"))
+	// 		console.log("")
+
+	// 		return (proj.showCardinalities=="true" || proj.showCardinalities==true);
+	// 	}
+	// },
+	// decorateInstancePositionVariable: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.decorateInstancePositionVariable=="true" || proj.decorateInstancePositionVariable==true);
+	// 	}
+	// },
+	// decorateInstancePositionConstants: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.decorateInstancePositionConstants=="true" || proj.decorateInstancePositionConstants==true);
+	// 	}
+	// },
+	// simpleConditionImplementation: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.simpleConditionImplementation=="true" || proj.simpleConditionImplementation==true);
+	// 	}
+	// },
+	// autoHideDefaultPropertyName: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.autoHideDefaultPropertyName=="true" || proj.autoHideDefaultPropertyName==true);
+	// 	}
+	// },
+	// showPrefixesForAllNonLocalNames: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.showPrefixesForAllNonLocalNames==true );
+	// 	}
+	// },
+	// showPrefixesForAllNames: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.showPrefixesForAllNames=="true");
+	// 	}
+	// },
+	// completeRDFBoxesInDatetimeFunctions: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.completeRDFBoxesInDatetimeFunctions=="true");
+	// 	}
+	// },
+	// showGraphServiceCompartments: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.showGraphServiceCompartments=="true");
+	// 	}
+	// },
 	graphs: function() {
 		// var proj = Projects.findOne({_id: Session.get("activeProject")});
 		// if (proj) {
@@ -1174,30 +1185,30 @@ Template.ontologySettings.helpers({
 		return Template.ontologySettings.graphs.get();
 		// return [{instruction:"dbpedia", graph:"http://dbpedia.org"}, {instruction:"wikidata", graph:"http://wikidata.org"}]
 	},
-	enableWikibaseLabelServices: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.enableWikibaseLabelServices=="true");
-		}
-	},
-	keepVariableNames: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return (proj.keepVariableNames=="true");
-		}
-	},
-	endpointUsername: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.endpointUsername;
-		}
-	},
-	endpointPassword: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj) {
-			return proj.endpointPassword;
-		}
-	},
+	// enableWikibaseLabelServices: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.enableWikibaseLabelServices=="true");
+	// 	}
+	// },
+	// keepVariableNames: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return (proj.keepVariableNames=="true");
+	// 	}
+	// },
+	// endpointUsername: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return proj.endpointUsername;
+	// 	}
+	// },
+	// endpointPassword: function() {
+	// 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 	if (proj) {
+	// 		return proj.endpointPassword;
+	// 	}
+	// },
 });
 
 

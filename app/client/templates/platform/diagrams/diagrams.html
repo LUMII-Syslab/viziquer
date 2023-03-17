@@ -657,20 +657,20 @@
 										<div class="form-group">
 											<div class="col-sm-5">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{useDefaultGroupingSeparator}}">
+												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{project.useDefaultGroupingSeparator}}">
 												 <span class="custom-checkbox"></span>
 												 Use Default Grouping Separator
 											  </label>
 											</div>
 											<div class="col-sm-5">
-												<input id="default-grouping-separator" type="text" class="form-control" value="{{defaultGroupingSeparator}}" disabled="{{NOTuseDefaultGroupingSeparator}}" autocomplete="off" >
+												<input id="default-grouping-separator" type="text" class="form-control" value="{{project.defaultGroupingSeparator}}" disabled="{{project.NOTuseDefaultGroupingSeparator}}" autocomplete="off" >
 											</div>
 										</div>
 										
 										<div class="form-group">
 											<div class="col-sm-5">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{showCardinalities}}">
+												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{project.showCardinalities}}">
 												 <span class="custom-checkbox"></span>
 												 Show Cardinalities
 											  </label>
@@ -690,13 +690,13 @@
 									<div class="form-group">
 										<label for="endpoint-username" class="col-sm-3 control-label">Username</label>
 										<div class="col-sm-9">
-											<input id="endpoint-username" type="text" class="form-control" value="{{endpointUsername}}" autocomplete="off" >
+											<input id="endpoint-username" type="text" class="form-control" value="{{project.endpointUsername}}" autocomplete="off" >
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="endpoint-password" class="col-sm-3 control-label">Password</label>
 										<div class="col-sm-9">
-											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{endpointPassword}}">
+											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{project.endpointPassword}}">
 										</div>
 									</div>
 									
@@ -731,7 +731,7 @@
 										<div class="form-group">
 											<div class="col-sm-10">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{simpleConditionImplementation}}">
+												 <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{project.simpleConditionImplementation}}">
 												 <span class="custom-checkbox"></span>
 												 Simple condition implementation
 											  </label>
@@ -744,7 +744,7 @@
 										<div class="form-group">
 											<div class="col-sm-10">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{showPrefixesForAllNames}}">
+												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{project.showPrefixesForAllNames}}">
 												 <span class="custom-checkbox"></span>
 												 Show local namespace prefixes
 											  </label>
@@ -791,7 +791,7 @@
 										<div class="form-group">
 											<div class="col-sm-10">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{showGraphServiceCompartments}}">
+												 <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{project.showGraphServiceCompartments}}">
 												 <span class="custom-checkbox"></span>
 												 Show Graph/Service compartments
 											  </label>
@@ -806,7 +806,7 @@
 										<div class="form-group">
 											<div class="col-sm-10">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="enable-wikibase-label-services" type="checkbox" checked="{{enableWikibaseLabelServices}}">
+												 <input class="form-check-input" id="enable-wikibase-label-services" type="checkbox" checked="{{project.enableWikibaseLabelServices}}">
 												 <span class="custom-checkbox"></span>
 												 Enable Wikibase Label Services
 											  </label>
@@ -852,7 +852,7 @@
 										<div class="form-group">
 											<div class="col-sm-10" style="width: 62%;">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{decorateInstancePositionVariable}}">
+												 <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{project.decorateInstancePositionVariable}}">
 												 <span class="custom-checkbox"></span>
 												 Decorate instance position variable names with '?'
 											  </label>
@@ -867,7 +867,7 @@
 										<div class="form-group">
 											<div class="col-sm-10" style="width: 58%;">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{decorateInstancePositionConstants}}">
+												 <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{project.decorateInstancePositionConstants}}">
 												 <span class="custom-checkbox"></span>
 												 Decorate instance position constants with '='
 											  </label>
@@ -891,7 +891,7 @@
 										<div class="form-group">
 											<div class="col-sm-10">
 												<label class="form-check-label">
-												 <input class="form-check-input" id="keep-variable-names" type="checkbox" checked="{{keepVariableNames}}">
+												 <input class="form-check-input" id="keep-variable-names" type="checkbox" checked="{{project.keepVariableNames}}">
 												 <span class="custom-checkbox"></span>
 												 Keep Variable Names
 											  </label>
