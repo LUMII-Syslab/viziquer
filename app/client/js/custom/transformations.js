@@ -404,35 +404,54 @@ Interpreter.customMethods({
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var link = new VQ_Element(c["elementId"]);
-			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+			 link.hideDefaultLinkName(link.shouldHideDefaultLinkName(), params["input"], params["value"]);
 
 			 // link.setIsInverseLink(c["value"].substring(0,4)=="inv(");
 		}
 	},
 
 	VQsetClassName: function(params) {
+		let elem_name = params["input"];
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			var elem = new VQ_Element(c["elementId"]);
-			if (elem.isIndirectClassMembership() && elem.getName() !== null && elem.getName() !== "") {
-				elem.setNameValue(".. "+elem.getName());
-			} else {
-				if (elem.getName() !== null)elem.setNameValue(elem.getName());
-			};
-       _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
-					link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
-			 });
+
+			// if (elem.isIndirectClassMembership() && elem.getName() !== null && elem.getName() !== "") {
+			if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
+				let elem_name = ".. " + elem_name;
+				elem.setNameValue(elem_name, elem_name);
+				// elem.setNameValue(".. "+elem.getName());
+			}
+			else {
+				if (elem_name !== null) {
+					elem.setNameValue(elem_name, elem_name);
+					// elem.setNameValue(elem.getName());
+				}
+			}
+
+       		_.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
+				link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+			});
 		}
 	},
 
 	VQsetClassNameValue: function(params) {
+		let elem_name = params["input"];		
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			var elem = new VQ_Element(c["elementId"]);
-            if (elem.isIndirectClassMembership() && typeof elem.getName() !== "undefined" && elem.getName() !== null && elem.getName() !== "") {
-				elem.setNameValue(".. "+elem.getName());
-			} else {
-				if (typeof elem.getName() !== "undefined" && elem.getName() !== null)elem.setNameValue(elem.getName());
+			if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
+            // if (elem.isIndirectClassMembership() && typeof elem.getName() !== "undefined" && elem.getName() !== null && elem.getName() !== "") {
+				// elem.setNameValue(".. "+elem.getName());
+				let elem_name = ".. " + elem_name;
+				elem.setNameValue(elem_name, elem_name);	
+			}
+			else {
+				// if (typeof elem.getName() !== "undefined" && elem.getName() !== null) {
+				if (elem_name !== null) {
+					elem.setNameValue(elem_name, elem_name);
+					// elem.setNameValue(elem.getName());
+				}
 			};
 		};
 	},
@@ -451,7 +470,8 @@ Interpreter.customMethods({
 		//params: (value), return: String
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
     //  console.log(val);
-			return [val.value]
+		
+		return [val.value];
 	},
 
 	VQsetSubQueryNamePrefix: function(val) {
@@ -459,7 +479,8 @@ Interpreter.customMethods({
 		//params: (value), return: String
 		//vards zem bultas (ja neko neatgriez, tad panems vertibu, bet pieliks klat undescribed)
    //console.log(val);
-		return [val.value]
+
+		return [val.value];
 	},
 	
 	VQsetGraphPrefix: function(val) {

@@ -2554,6 +2554,7 @@ VQ_Element.prototype = {
   // string --> string
   // Returns the value (INPUT) of the given compartment by name or null if such compartment does not exist
   getCompartmentValue: function(compartment_name) {
+
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
     if (comp_type) {
@@ -3145,7 +3146,8 @@ VQ_Element.prototype = {
   // --> bool
 	// returns true if "Hide default link name" checkbox is checked
   shouldHideDefaultLinkName: function() {
-		 return this.getCompartmentValue("Hide default link name")=="true";
+  	let val = this.getCompartmentValue("Hide default link name");
+		return val == "true" || val == true;
 	},
 	// --> string
 	// Determines which end of the link is towards the root
@@ -3182,15 +3184,17 @@ VQ_Element.prototype = {
 	},
 	// bool -->
 	// hides or shows link name if it is default; true - hide, false - show
-  hideDefaultLinkName: function(hide) {
+  hideDefaultLinkName: function(hide, input, value) {
 		if (hide) {
 			   if (this.isDefaultLink()) {
-				   this.setLinkNameVisibility(false);
-				 } else {
-					 this.setLinkNameVisibility(true);
+				   this.setLinkNameVisibility(false, input, value);
 				 }
-		} else {
-		    this.setLinkNameVisibility(true);
+				 else {
+					 this.setLinkNameVisibility(true, input, value);
+				 }
+		}
+		else {
+		    this.setLinkNameVisibility(true, input, value);
 	  }
 	},
 	// function which in fact should be in the schema
@@ -3269,7 +3273,7 @@ VQ_Element.prototype = {
   },
 	// bool -->
 	// sets the link name compartment's visibility
-	setLinkNameVisibility: function(visible) {
+	setLinkNameVisibility: function(visible, input, value) {
 		if (this.isLink()) {
 			var elem_type_id = this.obj["elementTypeId"];
 	    var comp_type = CompartmentTypes.findOne({name: "Name", elementTypeId: elem_type_id});
@@ -3278,8 +3282,17 @@ VQ_Element.prototype = {
 	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
 	      if (comp) {
 					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
-            a["input"] = comp["input"];
-						a["value"] = comp["value"];
+
+					  if (_.isUndefined(input)) {
+					  	input = comp["input"];
+					  }
+
+					  if (_.isUndefined(value)) {
+					  	value = comp["value"];
+					  }
+
+            a["input"] = input;
+						a["value"] = value;
 						a["id"] = comp["_id"];
 						a["projectId"] = Session.get("activeProject");
 			 			a["versionId"] = Session.get("versionId");
@@ -3321,8 +3334,12 @@ VQ_Element.prototype = {
 	},
   // sets name's visual appeareance
   // string -->
-  setNameValue: function(value) {
-       this.setCompartmentValue("Name",this.getName(),value);
+  setNameValue: function(value, input) {
+  		if (!input) {
+  			input = this.getName();
+  		}
+
+      this.setCompartmentValue("Name", input, value);
   },
   // sets type of the class: query, condition
   // string -->
@@ -3867,7 +3884,7 @@ VQ_Element.prototype = {
       
 	    var elem_type = ElementTypes.findOne({_id: this.obj.elementTypeId});
 	    if (!elem_type){
-	    	console.log("setClassStyle: no elem_type");
+	    		console.error("setClassStyle: no elem_type");
 	        return;
 	    }
   

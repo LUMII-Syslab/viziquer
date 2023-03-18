@@ -6,7 +6,6 @@ import { ElementTypes, CompartmentTypes, Compartments, DiagramFiles, CloudFiles 
 Interpreter.methods({
 
 	UpdateCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
-
 		var compart_type = this;
 		var value = Dialog.buildCompartmentValue(compart_type, input, mapped_value);
 
@@ -530,19 +529,11 @@ Dialog = {
 	    var elem = $(e.target).closest(".btn-ribbon");
 	    var title = elem.attr("data-title");
 
-	    console.log("elem ", elem)
-
-
 	    // elem.tooltip('destroy')
 	    // 	.tooltip({title: title, placement: placement, trigger: "manual"})
 	    //     .tooltip('show');
 
-
-	    console.log("elem attr ", elem.attr("tooltip"))
-
 	    if (!elem.attr("tooltip")) {
-
-	    	console.log("in init")
 	    	elem.tooltip({title: title, placement: placement, trigger: "manual",})
 	    	elem.attr("tooltip", true);
 	    }

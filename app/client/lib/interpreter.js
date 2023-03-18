@@ -32,7 +32,6 @@ var Interpreter = {
 
 		var func = Interpreter.extensionPoints[method_name] || Interpreter.customExtensionPoints[method_name];
 		if (func) {
-
 			if (obj_type) {
 				return func.apply(obj_type, args);
 			}

@@ -154,18 +154,9 @@ Template.diagramTemplate.helpers({
 Template.editingMessage.helpers({
 
 	editing: function() {
-
-		console.log("in editiing 1")
-
-
 		var user_id = Session.get("userSystemId");
 		if (Utilities.isEditable() || is_system_admin(user_id)) {
-
-			console.log("in if")
-
 			var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
-
-			console.log("diagram ", diagram)
 
 			//diagram is being edited
 			if (diagram && diagram["editingUserId"]) {
@@ -174,8 +165,6 @@ Template.editingMessage.helpers({
 				if (diagram["editingUserId"] != user_id) {
 
 					var res = {isEdited: true};
-
-					console.log("in editiring")
 
 					var user = Users.findOne({systemId: diagram["editingUserId"]});
 					if (user) {
@@ -189,9 +178,6 @@ Template.editingMessage.helpers({
 
 				//diagram is being edited by the user
 				else {
-
-					console.log("unlock button")
-
 					make_sections_sortable();
 					return {unLockButton: true};
 				}
@@ -199,8 +185,6 @@ Template.editingMessage.helpers({
 
 			//diagram is not being edited
 			else {
-				console.log("not beigin edited")
-
 				remove_sections_sortable();
 				return {lockingButton: true};
 			}
