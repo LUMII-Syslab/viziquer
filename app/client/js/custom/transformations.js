@@ -23,6 +23,7 @@ Interpreter.customMethods({
 		 var elem = new VQ_Element(act_elem);
 		 comp_val_inst = elem.getCompartmentValue("Instance");
 		 comp_val_group = elem.getCompartmentValue("Group by this");
+		  
 		 if(comp_val_inst != null && comp_val_inst != ""){
 			 var proj = Projects.findOne({_id: Session.get("activeProject")});
 			 if (proj) {
@@ -30,23 +31,23 @@ Interpreter.customMethods({
 				if(comp_val_inst!= null && !comp_val_inst.trim().startsWith("?") && !comp_val_inst.trim().startsWith("=")){
 					//uri
 					if(isURI(comp_val_inst) == 3 || isURI(comp_val_inst) == 4) {
-						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					// number
 					else if(!isNaN(comp_val_inst)) {
-						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					// string in quotes
 					else if(comp_val_inst.startsWith("'") && comp_val_inst.endsWith("'") || comp_val_inst.startsWith('"') && comp_val_inst.endsWith('"')) {
-						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					//display label
 					else if(comp_val_inst.startsWith('[') && comp_val_inst.endsWith(']')) {
-						if(proj.decorateInstancePositionConstants == "true") comp_val_inst = "=" + comp_val_inst;
+						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					//string
 					else if(comp_val_inst.match(/^[0-9a-z_]+$/i)) {
-						if(proj.decorateInstancePositionVariable == "true") comp_val_inst = "?" + comp_val_inst;
+						if(proj.decorateInstancePositionVariable == true) comp_val_inst = "?" + comp_val_inst;
 					}
 					else Interpreter.showErrorMsg("Instance identification '" + comp_val_inst + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
 				} 	 
@@ -418,8 +419,8 @@ Interpreter.customMethods({
 
 			// if (elem.isIndirectClassMembership() && elem.getName() !== null && elem.getName() !== "") {
 			if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
-				let elem_name = ".. " + elem_name;
-				elem.setNameValue(elem_name, elem_name);
+				let elem_name_pref = ".. " + elem_name;
+				elem.setNameValue(elem_name_pref, elem_name);
 				// elem.setNameValue(".. "+elem.getName());
 			}
 			else {
@@ -436,21 +437,18 @@ Interpreter.customMethods({
 	},
 
 	VQsetClassNameValue: function(params) {
-		let elem_name = params["input"];		
+		let indirectClassMembership = params["input"];		
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			var elem = new VQ_Element(c["elementId"]);
-			if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
-            // if (elem.isIndirectClassMembership() && typeof elem.getName() !== "undefined" && elem.getName() !== null && elem.getName() !== "") {
-				// elem.setNameValue(".. "+elem.getName());
-				let elem_name = ".. " + elem_name;
-				elem.setNameValue(elem_name, elem_name);	
+			let elem_name = elem.getName();
+			if (indirectClassMembership == "true" && elem_name !== null && elem_name !== "") {
+				var elem_name_pref = ".. " + elem_name;
+				elem.setNameValue(elem_name_pref, elem_name);	
 			}
 			else {
-				// if (typeof elem.getName() !== "undefined" && elem.getName() !== null) {
 				if (elem_name !== null) {
 					elem.setNameValue(elem_name, elem_name);
-					// elem.setNameValue(elem.getName());
 				}
 			};
 		};
@@ -458,7 +456,7 @@ Interpreter.customMethods({
 
 	VQSetHideDefaultLinkValue: function(a,b,c){
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		if (proj && proj.autoHideDefaultPropertyName == "true") {
+		if (proj && proj.autoHideDefaultPropertyName == true) {
 			 return "true";
 		} else {
 			 return "false";
@@ -505,8 +503,15 @@ Interpreter.customMethods({
 	},
 		
 	visualizeSPARQL: function() {
+		
+		
+		// let yasqe = Template.sparqlForm_see_results.yasqe.get();
+		let yasqe3 = Template.sparqlForm.yasqe3.get();
+
+		// console.log("yasqe", yasqe)
+
 		var query_text = yasqe3.getValue();
-		// console.log("query_text", query_text);
+		
 		var queries = query_text.split("--------------------------------------------\n");
 		var x = 10;
 		var editor = Interpreter.editor;
@@ -531,10 +536,11 @@ Interpreter.customMethods({
 
 		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
 		
-		for(var query in queries){
-			Interpreter.customExtensionPoints.generateVisualQuery(queries[query], x, y);
+		for (const query of queries) {
+			Interpreter.customExtensionPoints.generateVisualQuery(query, x, y);
 			x = x+170;
 		}
+		
 		
 		
 		
@@ -842,15 +848,15 @@ Interpreter.customMethods({
 	setIsVisibleForLabelService: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});		
 		if (proj) {
-			if (proj.enableWikibaseLabelServices == "true") return true;
+			if (proj.enableWikibaseLabelServices == true) return true;
 		}
 		return false;
 	},
 	
 	setIsVisibleForGraphFields: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});		
-		if (proj) {
-			if (proj.showGraphServiceCompartments == "true") return true;
+		var proj = Projects.findOne({_id: Session.get("activeProject")});	
+		if (proj) {	
+			if (proj.showGraphServiceCompartments == true) return true;
 		}
 		return false;
 	},
@@ -1032,8 +1038,6 @@ VQsetAssociationName = function(start, end) {
 				return assoc_name;
 			});
 		}
-
-		console.log("name_list", name_list)
 
 		if(name_list.length == 1) {
 			if(!name_list[0].startsWith("^"))return name_list[0];

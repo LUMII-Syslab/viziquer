@@ -581,9 +581,6 @@ function setText_In_SPARQL_Editor(text) {
   let yasqe = Template.sparqlForm_see_results.yasqe.get();
   let yasqe3 = Template.sparqlForm.yasqe3.get();
 
-  console.log("yasqe", yasqe)
-
-
   yasqe.setValue(text);
   yasqe3.setValue(text);
 }

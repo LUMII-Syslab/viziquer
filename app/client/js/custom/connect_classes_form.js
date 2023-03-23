@@ -406,7 +406,7 @@ Template.ConnectClasses.events({
 	                    lnk.setName(name);
 	                    lnk.setLinkType("REQUIRED");	                    
 	                    lnk.setNestingType(nesting);						
-						if (proj && proj.autoHideDefaultPropertyName=="true") { 
+						if (proj && proj.autoHideDefaultPropertyName==true) { 
 							lnk.hideDefaultLinkName(true);
 							lnk.setHideDefaultLinkName("true");
 						}
@@ -434,7 +434,7 @@ Template.ConnectClasses.events({
                     lnk.setName(name);
                     lnk.setLinkType("REQUIRED");                   
                     lnk.setNestingType(nesting);						
-					if (proj && proj.autoHideDefaultPropertyName=="true") { 
+					if (proj && proj.autoHideDefaultPropertyName==true) { 
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
 					}					
@@ -874,7 +874,7 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
                 lnk.setName(chain[0].link);
                 lnk.setLinkType("REQUIRED");
                 lnk.setNestingType(nesting);
-				if (proj && proj.autoHideDefaultPropertyName=="true") { 
+				if (proj && proj.autoHideDefaultPropertyName==true) { 
 					lnk.hideDefaultLinkName(true);
 					lnk.setHideDefaultLinkName("true");
 				}
@@ -889,7 +889,7 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
                 lnk.setName(chain[0].link);
                 lnk.setLinkType("REQUIRED");
                 lnk.setNestingType(nesting);
-				if (proj && proj.autoHideDefaultPropertyName=="true") {
+				if (proj && proj.autoHideDefaultPropertyName==true) {
 					lnk.hideDefaultLinkName(true);
 					lnk.setHideDefaultLinkName("true");
 				}
@@ -920,7 +920,7 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	                lnk.setName(chain[0].link);
 	                lnk.setLinkType("REQUIRED");
 	                lnk.setNestingType(nesting);
-					if (proj && proj.autoHideDefaultPropertyName=="true") { 
+					if (proj && proj.autoHideDefaultPropertyName==true) { 
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
 					}
@@ -931,7 +931,7 @@ function AddNextLink(currentElement, chain, lastElement, needSubquery, subqueryF
 	                lnk.setName(chain[0].link);
 	                lnk.setLinkType("REQUIRED");
 	                lnk.setNestingType(nesting);
-					if (proj && proj.autoHideDefaultPropertyName=="true") {
+					if (proj && proj.autoHideDefaultPropertyName==true) {
 						lnk.hideDefaultLinkName(true);
 						lnk.setHideDefaultLinkName("true");
 					}

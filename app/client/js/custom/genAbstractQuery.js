@@ -538,8 +538,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // Parses all expressions in the object and recursively in all children
   async function resolveClassExpressions(obj_class, parent_class) {
 	  // if(obj_class.instanceAlias.indexOf("[") !== -1) obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias)
-	console.log('---resolveClassExpressions--')
-	console.log(obj_class)
+	// console.log('---resolveClassExpressions--')
+	// console.log(obj_class)
 	  if(obj_class.graphs){
 		  var prefixes = query.prefixes;
 		  for (let g = 0; g < obj_class.graphs.length; g++) {
@@ -1166,13 +1166,13 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
             useStringLiteralConversion: proj.useStringLiteralConversion,
             queryEngineType: proj.queryEngineType,
           };
-          if (proj.useDefaultGroupingSeparator=="true") {
+          if (proj.useDefaultGroupingSeparator==true) {
             proj_params.defaultGroupingSeparator = proj.defaultGroupingSeparator;
           };
-		  if (proj.simpleConditionImplementation=="true") {
+		  if (proj.simpleConditionImplementation==true) {
             proj_params.simpleConditionImplementation = proj.simpleConditionImplementation;
           };
-		  if (proj.keepVariableNames=="true") {
+		  if (proj.keepVariableNames==true) {
             proj_params.keepVariableNames = proj.keepVariableNames;
           };
           if (proj.directClassMembershipRole) {

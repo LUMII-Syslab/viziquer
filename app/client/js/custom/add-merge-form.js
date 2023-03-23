@@ -39,7 +39,7 @@ Interpreter.customMethods({
 		var card = countCardinality(expr, Session.get("activeElement"))
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj){
-      		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!="true"){
+      		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
       			card = -1;
       		}
       	} else card = -1;

@@ -605,7 +605,7 @@ VQ_Schema.prototype = {
 		
 	var showPrefixesForAllNonLocalNames = false;
 	var proj = Projects.findOne({_id: schema.projectID});
-	if (proj) { if (proj.showPrefixesForAllNonLocalNames=="true") { showPrefixesForAllNonLocalNames = true ; }}
+	if (proj) { if (proj.showPrefixesForAllNonLocalNames==true) { showPrefixesForAllNonLocalNames = true ; }}
 	
 	if ( showPrefixesForAllNonLocalNames )
 	{
@@ -676,7 +676,7 @@ VQ_Schema.prototype = {
 	var proj = Projects.findOne({_id: schema.projectID});
 	var name = "";
 	if (proj) {
-		if (proj.showPrefixesForAllNonLocalNames=="true") {
+		if (proj.showPrefixesForAllNonLocalNames==true) {
 			showPrefixesForAllNonLocalNames = true ;
 		}
 	}
@@ -2854,31 +2854,16 @@ VQ_Element.prototype = {
 
 	if (indirect) {
 		// if indirectClassMembership parameter is set, execute dynamicDefaultValue ExtensionPoint, to set default value
-		var ct = CompartmentTypes.findOne({name: "indirectClassMembership", elementTypeId: this.obj["elementTypeId"]});
-		// var proc_name = Interpreter.getExtensionPointProcedure("dynamicDefaultValue", ct);
-		// if (proc_name && proc_name != "") {
-			// if(Interpreter.execute(proc_name, [""])) {
-				if(this.getName() !== null && this.getName() !== ""){
-					this.setNameValue(".. "+this.getName());	
-					indirectS = "true";
-				}
-				
-			// }
-			else if(this.getName() !== null) this.setNameValue(this.getName());
-		// }
-		// else {
-			// if(this.getName() !== null) this.setNameValue(this.getName());
-		// }
+		if(this.getName() !== null && this.getName() !== ""){
+			this.setNameValue(".. "+this.getName());	
+			indirectS = "true";
+		}
+		else if(this.getName() !== null) this.setNameValue(this.getName());
 	} else {
       if(this.getName() !== null) this.setNameValue(this.getName());
     };
-	// if (indirect) {
-      // this.setNameValue(".. "+this.getName());
-    // } else {
-      // this.setNameValue(this.getName());
-    // };
-    // var indirectS = this.boolToString(indirect)
     this.setCompartmentValueAuto("indirectClassMembership",indirectS)
+	
   },
   // determines whether the class has distinct property
   isDistinct: function() {

@@ -159,7 +159,7 @@ Interpreter.customMethods({
                 lnk.setName("++");
                 lnk.setLinkType("REQUIRED");	                    
                 lnk.setNestingType("PLAIN");						
-				if (proj && proj.autoHideDefaultPropertyName=="true") { 
+				if (proj && proj.autoHideDefaultPropertyName==true) { 
 					lnk.hideDefaultLinkName(true);
 					lnk.setHideDefaultLinkName("true");
 				}
@@ -391,7 +391,7 @@ Template.AddLink.events({
 
 	                    if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
-						if (proj && proj.autoHideDefaultPropertyName=="true") { 
+						if (proj && proj.autoHideDefaultPropertyName==true) { 
 							lnk.hideDefaultLinkName(true);
 							lnk.setHideDefaultLinkName("true");
 						}
@@ -405,7 +405,7 @@ Template.AddLink.events({
 						
 						if (linkType == "JOIN") lnk.setNestingType("PLAIN");
 						else if (linkType == "NESTED") lnk.setNestingType("SUBQUERY");
-						if (proj && proj.autoHideDefaultPropertyName=="true") {
+						if (proj && proj.autoHideDefaultPropertyName==true) {
 							lnk.hideDefaultLinkName(true);
 							lnk.setHideDefaultLinkName("true");
 						}
@@ -542,7 +542,7 @@ Template.AddLink.events({
 
 		_.each(classes, function(e){
 			var prefix;
-			if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
+			if(proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
 			e.short_class_name = prefix + e.display_name;	
 			if(e.principal_class == 2) e.clr = "color: purple";
@@ -787,7 +787,7 @@ function confirmSubquery(){
 	
 	// var txt;
 	var proj = Projects.findOne({_id: Session.get("activeProject")});
-	if (proj.showCardinalities=="true" && confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
+	if (proj.showCardinalities==true && confirm("You are using subquery link type for link with cardinality equal to 1. Would You like to change link type to Join?\n\nCancel will accept Your settings as is.")) {
 		// txt = "You pressed OK!";
 		$('[name=type-radio]').removeAttr('checked');
 		$('input[name=type-radio][value="JOIN"]').prop('checked', true);
@@ -894,7 +894,7 @@ async function getAllAssociations(){
 						var cardinality = "";
 						var colorLetters = ""; 				
 						if (proj) {				
-							if (proj.showCardinalities=="true"){ 
+							if (proj.showCardinalities==true){ 
 								if (e.type == "<=") {
 									cardinality = cardinality.concat("[*]");
 									colorLetters = colorLetters.concat("color: purple");
@@ -928,7 +928,7 @@ async function getAllAssociations(){
 						
 						//prefix:name
 						var prefix;
-						if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
+						if(proj.showPrefixesForAllNames != true && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
 						else prefix = e.prefix+":";
 						var eName = prefix + e.display_name;
 						
@@ -944,7 +944,7 @@ async function getAllAssociations(){
 			}
 				//default value for any case
 			if (proj){
-				if (proj.showCardinalities=="true")
+				if (proj.showCardinalities==true)
 					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "[*]", clr: "color: purple", is:"", of:""}); 
 				else {
 					ascReverse.push({name: "++", class: " ", text: "(empty link)", type: "=>", card: "", clr: "", is:"", of:""});
@@ -979,7 +979,7 @@ async function getAllAssociations(){
 					}
 				}
 				if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
-					if (proj.showCardinalities=="true")
+					if (proj.showCardinalities==true)
 						asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""}); 
 					else {
 						asc.push({name: "==", class: selfName, text: "(same instance)", type: "=>", card: "", clr: "", is:"", of:""});

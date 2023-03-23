@@ -38,12 +38,12 @@ Interpreter.customMethods({
 		
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		 if (proj) {
-			  if (proj.enableWikibaseLabelServices=="true" && dataShapes.schema.schemaType === 'wikidata') {
+			  if (proj.enableWikibaseLabelServices==true && dataShapes.schema.schemaType === 'wikidata') {
 				Template.AddNewAttribute.showLabel.set(true)
 			  } else {
 				  Template.AddNewAttribute.showLabel.set(false)
 			  };
-			  if (proj.showGraphServiceCompartments=="true") {
+			  if (proj.showGraphServiceCompartments==true) {
 				Template.AddNewAttribute.showGraph.set(true)
 			  } else {
 				  Template.AddNewAttribute.showGraph.set(false)
