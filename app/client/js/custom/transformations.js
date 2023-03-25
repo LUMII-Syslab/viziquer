@@ -17,12 +17,13 @@ Interpreter.customMethods({
 		}
 	},
 	
-	VQsetGroupBy: function() {		
+	VQsetGroupBy: function(params) {
 		 let act_elem = Session.get("activeElement");
 		 let elem = new VQ_Element(act_elem);
 		 let comp_val_inst = elem.getCompartmentValue("Instance");
-		 let comp_val_group = elem.getCompartmentValue("Group by this");
-		  
+		 // let comp_val_group = elem.getCompartmentValue("Group by this");
+		 let comp_val_group = params["value"];
+
 		 if(comp_val_inst != null && comp_val_inst != ""){
 			 var proj = Projects.findOne({_id: Session.get("activeProject")});
 			 if (proj) {
@@ -53,7 +54,7 @@ Interpreter.customMethods({
 			 }
 		 }
 		 
- 		 if (comp_val_group == "true")
+ 		 if (comp_val_group == "true" || comp_val_group == true)
 		 {
 		   if (comp_val_inst == null )
 		     elem.setCompartmentValue("Instance", "", "{group}");
@@ -62,10 +63,12 @@ Interpreter.customMethods({
 		 }
 		 else
 		 {
-		   if (typeof comp_val_inst == "undefined")
+		   if (typeof comp_val_inst == "undefined") {
 		     elem.setCompartmentValue("Instance", "", "", false);
-		   else if ( comp_val_inst != null)
+		   }
+		   else if ( comp_val_inst != null) {
 		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
+		   }
 		 }
  	},
 	
