@@ -3297,8 +3297,8 @@ VQ_Element.prototype = {
 	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
 	      if (comp) {
 					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
-            a["input"] = comp["input"];
-						a["value"] = comp["value"];
+            // a["input"] = comp["input"];
+						// a["value"] = comp["value"];
 						a["id"] = comp["_id"];
 						a["projectId"] = Session.get("activeProject");
 			 			a["versionId"] = Session.get("versionId");
@@ -3455,11 +3455,14 @@ VQ_Element.prototype = {
 				  };
 				};
 
-				this.setCompartmentValue("Negation Link",setNeg,setNegValue);
-				this.setCompartmentVisibility("Negation Link", setNeg=="true");
-				this.setCompartmentValue("Optional Link",setOpt,"");
-				this.setCompartmentValue("Filter Exists",setFE,setFEValue);
-				this.setCompartmentVisibility("Filter Exists", setFE=="true");
+				// console.log("setNeg ", setNeg)
+				// console.log("")
+
+				this.setCompartmentValue("Negation Link", setNeg, setNegValue);
+				this.setCompartmentVisibility("Negation Link", (setNeg==true || setNeg=="true"));
+				this.setCompartmentValue("Optional Link", setOpt, "");
+				this.setCompartmentValue("Filter Exists", setFE, setFEValue);
+				this.setCompartmentVisibility("Filter Exists", (setFE==true || setFE=="true"));
 
 		 }
 	},

@@ -17,12 +17,11 @@ Interpreter.customMethods({
 		}
 	},
 	
-	VQsetGroupBy: function() {
-		
-		 var act_elem = Session.get("activeElement");
-		 var elem = new VQ_Element(act_elem);
-		 comp_val_inst = elem.getCompartmentValue("Instance");
-		 comp_val_group = elem.getCompartmentValue("Group by this");
+	VQsetGroupBy: function() {		
+		 let act_elem = Session.get("activeElement");
+		 let elem = new VQ_Element(act_elem);
+		 let comp_val_inst = elem.getCompartmentValue("Instance");
+		 let comp_val_group = elem.getCompartmentValue("Group by this");
 		  
 		 if(comp_val_inst != null && comp_val_inst != ""){
 			 var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -273,12 +272,14 @@ Interpreter.customMethods({
 	},
 
 	VQsetIsNegation: function(params) {
-
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			 var input = params["input"];
 			 var lt = "REQUIRED";
-			 if (input=="true") { lt="NOT"};
+			 if (input=="true") {
+			 	lt="NOT"
+			 }
+
 			 var elem = new VQ_Element(c["elementId"]);
 			 elem.setLinkType(lt);
 		}
