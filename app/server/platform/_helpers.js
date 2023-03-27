@@ -1,3 +1,5 @@
+import { Diagrams } from '/libs/platform/collections'
+
 convert_dictionary_to_array = function(list) {
 	var element_list = [];
 	for (var key in list)
@@ -113,6 +115,18 @@ empty_query = function() {
 }
 
 
+function is_public_diagram(diagram_id) {
+	let diagram = Diagrams.findOne({_id: diagram_id});
+	if (diagram) {
+		return diagram.isPublic || true; 
+	}
+}
+
+function get_unknown_public_user_name() {
+	return "unknown";
+}
+
+
 export {
 	convert_dictionary_to_array,
 	get_current_time,
@@ -123,4 +137,6 @@ export {
 	create_compartment_list,
 	not_loggedin_msg,
 	empty_query,
+	is_public_diagram,
+	get_unknown_public_user_name,
 }

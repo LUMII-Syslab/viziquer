@@ -1,5 +1,6 @@
 import { is_project_admin, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/libs/platform/user_rights'
 import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Projects } from '/libs/platform/collections'
+import { get_unknown_public_user_name } from '/server/platform/_helpers'
 
 ProjectsUsers.before.insert(function (user_id, doc) {
 
@@ -205,6 +206,8 @@ ProjectsUsers.after.remove(function (user_id, doc) {
 
 	if (!doc)
 		return false;
+
+	var user_id = user_id || get_unknown_public_user_name();
 
 	var target_user = doc["userSystemId"];
 	var role = doc["role"];

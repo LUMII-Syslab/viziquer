@@ -1,0 +1,88 @@
+<!-- <template name="noDiagramTemplate">
+  <div class="row">
+
+      {{#with diagram_type}}
+          <div id="just_sparql" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;">
+              <div class="row">
+                  {{> sparqlForm_see_results}}
+              </div>
+              <div id="compartment-forms" class="row" style="margin-left:5px;padding-right:2px;margin-top:5px;">
+                  {{> errorMessages}}
+              </div>
+          </div>
+
+      {{/with}}
+  </div>
+
+</template> -->
+
+<!-- Start of diagram template -->
+<template name="publicDiagramTemplate">
+    
+<!--     <script src='//cdn.jsdelivr.net/yasr/2.4/yasr.bundled.min.js'></script>
+    <script src='//cdn.jsdelivr.net/yasqe/2.2/yasqe.bundled.min.js'></script>
+
+    <link href='//cdn.jsdelivr.net/g/yasqe@2.2(yasqe.min.css),yasr@2.4(yasr.min.css)' rel='stylesheet' type='text/css'/> -->
+
+
+    {{#if isReady}}
+          <div style="display:{{plain.showPlain}}" >
+
+            {{> noDiagramTemplate}}
+
+          </div>
+
+          <div class="row" style="display:{{plain.showDiagram}}" >
+
+              {{#with diagram_type}}
+                  <div id="diagram_and_sparql" class="col-sm-10 col-md-10 col-lg-{{diagram_size}} col-xl-10" style="padding-left:2px;padding-right:2px;">
+                      <div class="row">
+                        <div id="diagram" class="col-sm-12 col-md-12 col-lg-12 col-xl-12" style="padding-left:2px;">
+                            {{> diagramEditor}}
+                        </div>
+                      </div>
+                      <div class="row">
+                          {{> sparqlForm}}
+                      </div>
+                  </div>
+
+
+                  <div id="compartment-forms" class="col-sm-2 col-md-2 col-lg-{{dialog_size}} col-xl-2" style="padding-left: 8px;padding-right: 1px;">
+
+                      {{> editingMessage editing=editing}}
+
+                      {{> errorMessages}}
+
+                      <div class="panel-group" id="dialog">
+                          {{> dialog}}
+                      </div>
+                  </div>
+              {{/with}}
+          </div>
+
+          {{#each templates}}
+              {{> Template.dynamic template=templateId}}
+          {{/each}}
+
+          {{> AddLink}}
+          {{> ConnectClasses}}
+          {{> ConnectClassesSettings}}
+          {{> AggregateWizard}}
+          {{> AddAttribute}}
+          {{> AddNewAttribute}}
+          {{> BuildLinkPath}}
+          {{> SelectTargetClass}}
+          {{> AddCondition}}
+          {{> AddUri}}
+          {{> AddClassName}}
+          {{> AddMergeValues}}
+          {{> ExplainLink}}
+          {{> ExplainField}}
+
+    {{else}}
+        Loading
+    {{/if}}
+
+</template>
+<!-- End of diagram template -->
+

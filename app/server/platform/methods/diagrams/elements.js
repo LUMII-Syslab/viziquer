@@ -1,4 +1,5 @@
 import { is_system_admin, is_project_version_admin, is_version_not_published } from '/libs/platform/user_rights'
+import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
 import { DiagramLogs, Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, DialogTabs, DiagramFiles, DiagramNotifications, ElementsSections, PaletteButtons, Clipboard  } from '/libs/platform/collections'
 
 Elements.after.insert(function (user_id, doc) {
@@ -50,9 +51,8 @@ Elements.hookOptions.after.remove = {fetchPrevious: false};
 Meteor.methods({
 
 	insertElement: function(list) {
-
-		var user_id = Meteor.userId();
-		if (is_project_version_admin(user_id, list)) {
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
+		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var compartments = list.initialCompartments;
 
 			var id = Elements.insert(list);
@@ -162,9 +162,9 @@ Meteor.methods({
 
 	resizeElement: function(list) {
 
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				var query = {projectId: list["projectId"],
 							versionId: list["versionId"],
 							diagramId: list["diagramId"],
@@ -184,9 +184,9 @@ Meteor.methods({
 	},
 
 	updateElementStyle: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 
-		if (is_project_version_admin(user_id, list)) {
+		if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			//update for element
 			var update_element = {};
@@ -210,9 +210,9 @@ Meteor.methods({
 
 	copyElements: function(list) {
 
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 				if (list["elements"]) {
 					Clipboard.update({userId: user_id,
@@ -239,9 +239,9 @@ Meteor.methods({
 	},
 
 	pasteElements: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 				var clipboard = Clipboard.findOne({userId: user_id,
 													// toolId: list.toolId,
@@ -391,9 +391,9 @@ Meteor.methods({
 	},
 
 	changeCollectionPosition: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				var query = {projectId: list["projectId"],
 								versionId: list["versionId"],
 								diagramId: list["diagramId"],
@@ -413,9 +413,9 @@ Meteor.methods({
 	},
 
 	deleteElements: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 				delete_elements(user_id, list);
 			}
 		}
@@ -426,9 +426,9 @@ Meteor.methods({
 
 	updateSwimlaneLines: function(list) {
 
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["projectId"]) {
-			if (is_project_version_admin(user_id, list)) {
+			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 
 				var query = {_id: list["elementId"], projectId: list["projectId"],

@@ -3,6 +3,7 @@ import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches,
 import { get_configurator_tool_id } from '/libs/platform/helpers'
 import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/libs/platform/user_rights'
 import { error_msg } from '/server/platform/_global_functions'
+import { get_unknown_public_user_name } from '/server/platform/_helpers'
 
 
 Meteor.publish("Diagrams", function(list) {
@@ -171,33 +172,35 @@ Meteor.publish("DiagramTypes_UserVersionSettings", function(list) {
 
 					
 Meteor.publish("Diagram_Palette_ElementType", function(list) {
-	var user_id = this.userId;
+	var user_id = this.userId || get_unknown_public_user_name();
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
 	}
 
+	var diagram_query = {_id: list["id"],
+						projectId: list["projectId"],
+						versionId: list["versionId"]};
+
+	var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1,
+						allowedGroups: 1, diagramTypeId: 1, parentDiagrams: 1,
+						editingUserId: 1, editingStartedAt: 1, editorType: 1,
+						"edit.action": 1, "edit.userId": 1}};	
+
+	var diagrams = Diagrams.find(diagram_query, diagram_limit);
+
+	var role;
 	var proj_id = list["projectId"];
 	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user) {
-		return;
+	if (proj_user) {
+		role = proj_user["role"];
 	}
 
-	var role = proj_user["role"];
-	if (is_project_version_reader(user_id, list, role)) {
+
+	if (is_project_version_reader(user_id, list, role) || is_public_diagram(diagrams)) {
 		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 			var tool_id = version["toolId"];
-			var tool_version_id = version["toolVersionId"];
-
-			//diagram
-			var diagram_query = {_id: list["id"],
-								projectId: list["projectId"],
-								versionId: list["versionId"]};
-
-			var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1,
-								allowedGroups: 1, diagramTypeId: 1, parentDiagrams: 1,
-								editingUserId: 1, editingStartedAt: 1, editorType: 1,
-								"edit.action": 1, "edit.userId": 1}};					
+			var tool_version_id = version["toolVersionId"];				
 
 			//diagram types and element types
 			var diagram_type_query = {_id: list["diagramTypeId"],
@@ -225,19 +228,24 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 			var elem_type_limit = {fields: {}};
 			var palette_button_type_limit = {fields: {toolId: 0, versionId: 0, diagramId: 0}};
 
-			if (role != "Admin" && role != "Reader") {
+			if (role != "Admin" && role != "Reader" && role) {
 				diagram_query["allowedGroups"] = role;
 				//doc_query["allowedGroups"] = role;	
 			}
 
 
 			//if no diagrams found, then no data
-			var diagrams = Diagrams.find(diagram_query, diagram_limit);
+			if (!diagrams) {
+				diagrams = Diagrams.find(diagram_query, diagram_limit);
+			}
+
+			// var diagrams = Diagrams.find(diagram_query, diagram_limit);
 			if (diagrams.count() == 0) {
 				error_msg();
 				return this.stop();				
 			}
 			else {
+
 				return [diagrams,
 						Elements.find(element_query, element_limit),
 						Compartments.find(element_query, compart_limit),
@@ -297,19 +305,22 @@ Meteor.publish("DiagramLogs", function(list) {
 
 Meteor.publish("Diagram_Types", function(list) {
 
-	var user_id = this.userId;
+	var user_id = this.userId || get_unknown_public_user_name();
 	if (!list || list["noQuery"] || !list["projectId"] || !user_id) {
 		return this.stop();
 	}
 
+	console.log("listlist  a", list)
+	var diagram = Diagrams.find({_id: list.id});
+
+	var role;
 	var proj_id = list["projectId"];
 	var proj_user = ProjectsUsers.findOne({projectId: proj_id, userSystemId: user_id});
-	if (!proj_user) {
-		return;
+	if (proj_user) {
+		role = proj_user["role"];
 	}
 
-	var role = proj_user["role"];
-	if (is_project_version_reader(user_id, list, role)) {
+	if (is_project_version_reader(user_id, list, role) || is_public_diagram(diagram)) {
 
 		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
@@ -327,9 +338,9 @@ Meteor.publish("Diagram_Types", function(list) {
 			var dialog_type_limit = {fields: {}};
 			//var palette_button_type_limit = {fields: {toolId: 0, versionId: 0, diagramId: 0}};
 
-			if (role != "Admin" && role != "Reader") {
-				diagram_query["allowedGroups"] = role;
-			}
+			// if (role != "Admin" && role != "Reader") {
+			// 	diagram_query["allowedGroups"] = role;
+			// }
 
 			return [
 					//types
@@ -349,15 +360,14 @@ Meteor.publish("Diagram_Types", function(list) {
 
 Meteor.publish("Diagram_Locker", function(list) {
 
-	if (is_project_version_reader(this.userId, list)) {
+	var diagram = Diagrams.find({_id: list["diagramId"],
+								projectId: list["projectId"],
+								versionId: list["versionId"],
+							});
+
+	if (is_project_version_reader(this.userId, list) || is_public_diagram(diagram)) {
 
 		var self = this;
-
-		var diagram = Diagrams.find({_id: list["diagramId"],
-									projectId: list["projectId"],
-									versionId: list["versionId"],
-								});
-
 
 		//TODO: This is not reactive when user's name changes (need improvement)
 		var handle = diagram.observe({
@@ -372,9 +382,9 @@ Meteor.publish("Diagram_Locker", function(list) {
 			changed: function(new_doc, old_doc) {
 				var user = Users.findOne({systemId: new_doc["editingUserId"]});
 
-				if (old_doc["editingUserId"]) {
-					self.removed('Users', old_doc["editingUserId"]);
-				}
+				// if (old_doc["editingUserId"]) {
+				// 	self.removed('Users', old_doc["editingUserId"]);
+				// }
 
 				if (new_doc["editingUserId"] && user) {
 					self.added("Users", new_doc["editingUserId"], user);
@@ -913,4 +923,14 @@ function select_project_users(user_id, list) {
 	return {projectId: {$in: proj_ids}};
 
 	//return {authorId: {$in: proj_users}};
+}
+
+
+function is_public_diagram(diagram) {
+
+	// console.log("in is public diagram", diagram)
+
+	console.log("in is public diagram")
+
+	return true;
 }

@@ -14,6 +14,58 @@ Template.index.events({
 		return false;
 	},
 
+
+	'click #public-diagram': function(e) {
+		e.preventDefault();
+
+		console.log("public diagramzz");
+
+		Utilities.callMeteorMethod("addPublicDiagram", {}, function(res) {
+
+			console.log("res zzzz", res);
+
+			FlowRouter.go("public-diagram", res);
+
+
+		    // if (res.status == 200) {
+        // var fields = _.map(res.result.sparql.head[0].variable, function(v) {
+        //     return v["$"].name;
+        //   });
+
+          // var csv_table = _.map(res.result.sparql.results[0].result, function(result_item) {
+          //    var csv_row = {};
+          //    _.forEach(fields, function(field) {
+          //      var result_item_attr = _.find(result_item.binding, function(attr) {return attr["$"].name==field});
+          //      var obj = {};
+          //      if (result_item_attr) {
+          //        if (result_item_attr.literal) {
+          //          if (result_item_attr.literal[0]._) {
+          //             obj[field] = result_item_attr.literal[0]._;
+          //          } else {
+          //             obj[field] = result_item_attr.literal[0];
+          //          };
+
+          //        } else {
+          //          if (result_item_attr.uri) {
+          //            obj[field] = result_item_attr.uri[0];
+          //          } else {
+          //            obj[field] = null;
+          //          };
+          //        };
+          //      } else {
+          //        obj[field] = undefined;
+          //      };
+          //      _.extend(csv_row,obj);
+          //    });
+          //   return csv_row;
+          // });
+        });
+
+		// login(e);
+		// return false;
+	},
+
+
 //signing in when enter is pressed and email and password fields have some values
 	'keypress': function(e) {
 		//e.preventDefault();

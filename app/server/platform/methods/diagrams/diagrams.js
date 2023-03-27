@@ -1,5 +1,7 @@
 import { is_system_admin, is_project_admin, is_project_version_admin, is_project_version_reader } from '/libs/platform/user_rights'
-import { DiagramTypes, Diagrams, Elements, Compartments  } from '/libs/platform/collections'
+import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
+import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { generate_id } from '/libs/platform/lib'
 
 Diagrams.after.remove(function (user_id, doc) {
 	if (!doc)
@@ -26,13 +28,83 @@ Meteor.methods({
 		}
 	},
 
+	addPublicDiagram: function(list) {
+		let user_id = get_unknown_public_user_name();
+
+		let tool = Tools.findOne({name: "Viziquer"});
+		if (!tool) {
+			console.error("No Viziquer tool");
+			return;
+		}
+		
+		let project_id;
+		let public_project_name = "__publicVQ";
+
+		let project = Projects.findOne({name: public_project_name});
+		if (!project) {
+			project_id = Projects.insert({name: public_project_name,	
+										toolId: tool._id,		
+										createdAt: new Date(),
+										createdBy: user_id,
+									});
+		}
+		else {
+			project_id = project["_id"];
+		}
+
+
+		var version = Versions.findOne({projectId: project_id,});
+		if (!version) {
+			console.error("No project version by project id", project_id);
+			return;
+		}
+
+		var diagram_type = DiagramTypes.findOne({toolId: tool._id});
+		if (!diagram_type) {
+			console.error("No diagram type by tool id", tool._id);
+			return;
+		}
+
+		build_diagram(list, user_id);
+		list["editingUserId"] = user_id;
+		list["editingStartedAt"] = new Date();
+		_.extend(list, {name: generate_id(),
+						projectId: project_id,
+						versionId: version._id,
+						style: {
+							fillPriority: 'color',
+							fill: '#ffffff',
+							fillLinearGradientStartPointX: 0.5,
+							fillLinearGradientStartPointY: 0,
+							fillLinearGradientEndPointX: 0.5,
+							fillLinearGradientEndPointY: 1,
+							fillLinearGradientColorStops: [ 0, 'white', 1, 'black' ],
+							fillRadialGradientStartPointX: 0.5,
+							fillRadialGradientStartPointY: 0.5,
+							fillRadialGradientEndPointX: 0.5,
+							fillRadialGradientEndPointY: 0.5,
+							fillRadialGradientStartRadius: 0,
+							fillRadialGradientEndRadius: 1,
+							fillRadialGradientColorStops: [ 0, 'white', 1, 'black' ]
+						},
+						diagramTypeId: diagram_type._id,
+						editorType: 'ajooEditor',
+		});
+
+		var id = Diagrams.insert(list);
+		list._id = id;
+
+		return list;
+	},
+
+
 	updateDiagram: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || is_public_diagram(list["diagramId"]);
 
 		var update = {};
 		update[list["attrName"]] = list["attrValue"];
 
-		if (is_project_version_admin(user_id, list)) {
+		if (is_project_version_admin(user_id, list) || get_unknown_public_user_name()) {
 
 			Diagrams.update({_id: list["diagramId"], projectId: list["projectId"],
 							versionId: list["versionId"]},
@@ -103,8 +175,9 @@ Meteor.methods({
 		}
 	},
 
+
 	lockingDiagram: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["toolId"] && is_system_admin(user_id)) {
 			Diagrams.update({_id: list["diagramId"],
 							toolId: list["toolId"]},
@@ -115,7 +188,7 @@ Meteor.methods({
 
 		}
 
-		else if (is_project_version_admin(user_id, list)) {
+		else if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			Diagrams.update({_id: list["diagramId"],
 							projectId: list["projectId"], versionId: list["versionId"],},
 							
@@ -123,18 +196,16 @@ Meteor.methods({
 									"editingStartedAt": new Date(),}
 							});
 		}
-
 	},
 
 	removeLocking: function(list) {
-
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (list["toolId"] && is_system_admin(user_id)) {
 			Diagrams.update({_id: list["diagramId"], toolId: list["toolId"]},
 							{$unset: {editingUserId: "", editingStartedAt: ""}});
 		}
 
-		else if (is_project_version_admin(user_id, list)) {
+		else if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 			Diagrams.update({_id: list["diagramId"],
 							projectId: list["projectId"], versionId: list["versionId"]},
 							{$unset: {editingUserId: "", editingStartedAt: ""}});

@@ -1,4 +1,5 @@
 import { is_project_member } from '/libs/platform/user_rights'
+import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
 import { DiagramLogs, Diagrams, Elements, Compartments, CompartmentTypes  } from '/libs/platform/collections'
 
 Compartments.after.update(function (user_id, doc, fields, modifier, options) {
@@ -38,10 +39,10 @@ Compartments.after.insert(function (user_id, doc) {
 Meteor.methods({
 
 	insertCompartment: function(list) {
-		var user_id = Meteor.userId();
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
 
 		var compart_in = list.compartment;
-		if (is_project_member(user_id, compart_in)) {
+		if (is_project_member(user_id, compart_in) || is_public_diagram(list["diagramId"])) {
 
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
 
@@ -58,9 +59,8 @@ Meteor.methods({
 	},
 
 	updateCompartment: function(list) {
-
-		var user_id = Meteor.userId();
-		if (is_project_member(user_id, list)) {
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
+		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			if (list["value"] || list["value"] == "") {
 
@@ -100,9 +100,8 @@ Meteor.methods({
 	},
 
 	removeCompartment: function(list) {
-
-		var user_id = Meteor.userId();
-		if (is_project_member(user_id, list)) {
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
+		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 
 			if (!list["compartmentId"])
 				return;
@@ -116,8 +115,8 @@ Meteor.methods({
 	},
 
 	swapCompartments: function(list) {
-		var user_id = Meteor.userId();
-		if (is_project_member(user_id, list)) {
+		var user_id = Meteor.userId() || get_unknown_public_user_name();
+		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
 			var prev_compart = list.prevCompartment;
 			var current_compart = list.currentCompartment;
 

@@ -430,10 +430,9 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    		},
 
    		removed: function(id) {
-
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
-   			if (compartment) {
+   			if (compartment && _.size(compartment.compartments) > 0) {
    				compartment.compartments.removeOne(id);
    			}
    		},

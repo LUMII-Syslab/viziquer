@@ -224,7 +224,9 @@ BoxCompartments.prototype = {
 		});
 
 		compartments.recomputeCompartmentsPosition();
-		compartments.element.presentation.draw();
+		if (compartments.element.presentation && compartments.element.presentation.parent) {
+			compartments.element.presentation.draw();
+		}
 	},
 
 }

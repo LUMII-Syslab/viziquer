@@ -3,6 +3,7 @@ import { is_project_admin, is_project_member, build_project_role, build_project_
 import { generate_id } from '/libs/platform/lib'
 import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, Posts, ForumPosts } from '/libs/platform/collections'
 import { Schema } from '/libs/custom/collections'
+import { get_unknown_public_user_name } from '/server/platform/_helpers'
 
 //creating a new project version and adds the project creator to the project
 Projects.after.insert(function (user_id, doc) {
@@ -273,6 +274,8 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 
 function afterInsert(user_id, doc) {
 
+	var user_id = user_id || get_unknown_public_user_name();
+
 	var proj_id = doc["_id"];
 	var tool_id = doc["toolId"];
 	var date = new Date();
@@ -331,6 +334,10 @@ function afterInsert(user_id, doc) {
 	Roles.createRole(project_version_reader_role, {unlessExists: true});
 	Roles.createRole(project_admin_role, {unlessExists: true});
 	Roles.createRole(project_version_admin_role, {unlessExists: true});
+
+
+	console.log("user_id dadfadfdf", user_id)
+
 
 	Roles.addUsersToRoles(user_id, [project_role, project_version_reader_role, project_admin_role, project_version_admin_role]);
 

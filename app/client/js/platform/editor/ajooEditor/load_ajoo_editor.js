@@ -205,6 +205,9 @@ function get_event_functions() {
 
 		newBoxCreated: function(data) {
 
+			console.log("newBoxCreated ", data)
+
+
 	       	if (!(data && data.elementTypeId)) {
 	       		console.error("Error: no data specified in palette button");
 	       		return;

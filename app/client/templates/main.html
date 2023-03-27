@@ -229,3 +229,33 @@
     </div>
 
 </template>
+
+
+<template name="publicDiagramLayout">
+
+    <!-- {{#if currentUser}} -->
+    <div class="pace-down" style="">
+        <div id="wrapper" class="preload sidebar-mini">
+            <!-- {{> nav}} -->
+            <!-- {{> panel}} -->
+            <!-- <div id="main-container"> -->
+            <div>
+
+                <!-- {{> yield region='ribbon'}} -->
+                {{> Template.dynamic template=ribbon}}
+
+                <div class="padding-md">
+
+                    {{> Template.dynamic template=main}}
+                    <!-- {{> yield}} -->
+
+                </div>
+            </div> <!-- End of main-container -->
+        </div> <!-- End of wrapper -->
+    </div>
+    <!-- {{else}} -->
+        <!-- {{> notLoggedIn}} -->
+    <!-- {{/if}} -->
+
+</template>
+

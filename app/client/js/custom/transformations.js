@@ -441,7 +441,7 @@ Interpreter.customMethods({
 	},
 
 	VQsetClassNameValue: function(params) {
-		let indirectClassMembership = params["input"];		
+		let indirectClassMembership = params["input"];
 		var c = Compartments.findOne({_id:params["compartmentId"]});
 		if (c) {
 			var elem = new VQ_Element(c["elementId"]);
