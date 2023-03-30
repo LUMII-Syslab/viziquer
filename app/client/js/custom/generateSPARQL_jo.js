@@ -700,9 +700,9 @@ function generateIds(rootClass, knownPrefixes){
 	    // variableNamesCounter = temp["variableNamesCounter"];
 		counter = temp["counter"];
 		idTable.concat(temp["idTable"]);
-		prefixTable.concat(temp["prefixTable"]);
+
 		for(let pr in temp["prefixTable"]){
-			if(typeof temp["prefixTable"][pr] === "object") prefixTable[pr] = temp["prefixTable"][pr];
+			if(typeof temp["prefixTable"][pr] === "string") prefixTable[pr] = temp["prefixTable"][pr];
 		}
 		referenceTable[rootClassId]["classes"].push(temp["referenceTable"]);
 	})
@@ -716,6 +716,7 @@ function generateIds(rootClass, knownPrefixes){
 	for(let key in idTable) {
 		if(typeof idTable[key] === "object") idTableTemp[key] = idTable[key]["name"];
 	}
+	
 	return {idTable:idTableTemp, referenceTable:referenceTable, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 }
 
@@ -755,6 +756,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				
 				var prefix = rootClassId.substring(0, rootClassId.indexOf(":"));
 				var name = rootClassId.substring(rootClassId.indexOf(":")+1);
+				
 				for(let kp = 0; kp < knownPrefixes.length; kp++){
 					if(knownPrefixes[kp]["name"] == prefix) {
 						prefixTable[prefix+":"] = "<"+knownPrefixes[kp]["value"]+">";
@@ -948,11 +950,12 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 
 		idTable.concat(temp["idTable"]);
 		for(pr in temp["prefixTable"]){
-			prefixTable[pr] = temp["prefixTable"][pr];
+			if(typeof temp["prefixTable"][pr] === "string") prefixTable[pr] = temp["prefixTable"][pr];
 		}
 		referenceTable[className]["classes"].push(temp["referenceTable"]);
 		counter = temp["counter"];
 	})
+	
 	
 	//return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable, variableNamesTable:variableNamesTable, variableNamesCounter:variableNamesCounter};
 	return {idTable: idTable, referenceTable: referenceTable, counter:counter, prefixTable:prefixTable};
@@ -1218,7 +1221,7 @@ function generateSPARQLtext(abstractQueryTable){
 				SPARQL_text = SPARQL_text + " *";
 			 }
 				
-			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
 				var graphService = null;
 
 				for(let g in rootClass["graphs"]){
@@ -1902,7 +1905,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		var isBlankNode = true;
 		for(let v in classSimpleTriples){
 			for(let triple in classSimpleTriples[v]["triple"]){
-				if(classSimpleTriples[v]["triple"][triple].indexOf("<") !== -1 && classSimpleTriples[v]["triple"][triple].indexOf(">") != -1) {
+				if(typeof classSimpleTriples[v]["triple"][triple] !=="function" && classSimpleTriples[v]["triple"][triple].indexOf("<") !== -1 && classSimpleTriples[v]["triple"][triple].indexOf(">") != -1) {
 					isBlankNode = false;
 					break;
 				}
@@ -2274,14 +2277,18 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						if(object.startsWith("?_:name"))object = object.substring(1);
 						var blankNodes = [];
 						for(let triple in temp["sparqlTable"]["blankNodeTriples"]){
-							for(let t = 0; t < temp["sparqlTable"]["blankNodeTriples"][triple]["triple"].length; t++){
-								blankNodes.push(object + temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+							if(typeof temp["sparqlTable"]["blankNodeTriples"][triple] !== "function"){
+								for(let t = 0; t < temp["sparqlTable"]["blankNodeTriples"][triple]["triple"].length; t++){
+									blankNodes.push(object + temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+								}
 							}
 						}
 						
 						for(let triple in temp["sparqlTable"]["filterTriples"]){
-							for(let t = 0; t < temp["sparqlTable"]["filterTriples"][triple]["triple"].length; t++){
-								blankNodes.push(object + temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
+							if(typeof temp["sparqlTable"]["filterTriples"][triple] !== "function"){
+								for(let t = 0; t < temp["sparqlTable"]["filterTriples"][triple]["triple"].length; t++){
+									blankNodes.push(object + temp["sparqlTable"]["filterTriples"][triple]["triple"][t]);
+								}
 							}
 						}
 						
@@ -2292,14 +2299,18 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						object = "[";
 						var blankNodes = [];
 						for(let triple in  temp["sparqlTable"]["blankNodeTriples"]){
-							for(let t = 0; t < temp["sparqlTable"]["blankNodeTriples"][triple]["triple"].length; t++){
-								blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+							if(typeof temp["sparqlTable"]["blankNodeTriples"][triple] !== "function"){
+								for(let t = 0; t < temp["sparqlTable"]["blankNodeTriples"][triple]["triple"].length; t++){
+									blankNodes.push(temp["sparqlTable"]["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+								}
 							}
 						}
 						
 						for(let triple in  temp["sparqlTable"]["filterTriples"]){
-							for(let t = 0; t < temp["sparqlTable"]["filterTriples"][triple]["triple"].length; t++){
-								blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
+							if(typeof temp["sparqlTable"]["filterTriples"][triple] !== "function"){
+								for(let t = 0; t < temp["sparqlTable"]["filterTriples"][triple]["triple"].length; t++){
+									blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
+								}
 							}
 						}
 						temp["sparqlTable"]["filterTriples"] = [];
@@ -2501,13 +2512,18 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 								}
 							}
 						}
-						if(typeof result === 'undefined'){
-							for(let ordr = 0; ordr < fieldNames[orderNameRep].length; ordr++){
-								result = fieldNames[orderNameRep][ordr][order["exp"]];
-								break;
+						if(typeof result === 'undefined'){console.log("result", orderNameRep, fieldNames[orderNameRep])
+							for(let ordr in fieldNames[orderNameRep]){
+								if(typeof fieldNames[orderNameRep][ordr] !== "function"){
+									result = fieldNames[orderNameRep][ordr][order["exp"]];
+									break;
+								}
 							}
 						}
+						
 					} else result = fieldNames[orderNameRep][rootClass_id][order["exp"]];
+					
+					
 					
 					if(!result.startsWith("?")) result = "?" + result;
 					orderTable.push(descendingStart +  result + descendingEnd + " ");
@@ -2518,10 +2534,14 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							if(symbolTable["root"][orderName][attrName]["kind"] == "AGGREGATE_ALIAS") isAgretedAlias = true;
 						}
 					}
-					for(let attrName = 0; symbolTable[rootClass_id][orderName].length; attrName++){
-						if(symbolTable[rootClass_id][orderName][attrName]["kind"] == "PROPERTY_ALIAS") isAgretedAlias = true;
+					
+					
+					if(typeof symbolTable[rootClass_id][orderName] !== "undefined"){
+						for(let attrName in symbolTable[rootClass_id][orderName]){
+							if(typeof symbolTable[rootClass_id][orderName][attrName] !== "undefined" && typeof symbolTable[rootClass_id][orderName][attrName] !== "function" && symbolTable[rootClass_id][orderName][attrName]["kind"] == "PROPERTY_ALIAS") isAgretedAlias = true;
+						}
 					}
-
+					
 					if(isAgretedAlias!=true)orderGroupBy.push(result);
 					
 				} else if(typeof symbolTable[rootClass_id][orderName] !== 'undefined'){
@@ -2761,7 +2781,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 			}
 			if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bind"]);
 			if(typeof sparqlTable["simpleTriples"][expression]["bound"]  === 'string') timeExpression.push(sparqlTable["simpleTriples"][expression]["bound"]);
-			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
 				attributesValues.push(sparqlTable["simpleTriples"][expression]["graphInstruction"] + " " + sparqlTable["simpleTriples"][expression]["graph"] + " {"+ "OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}" + "}");
 			}
 			else attributesValues.push("OPTIONAL{" + "\n"+SPARQL_interval + classTriple  + timeExpression.join("\n"+SPARQL_interval) + "\n"+SPARQL_interval.substring(2)+"}");
@@ -2788,7 +2808,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 				}	
 			}	
 			
-			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
+			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable["simpleTriples"][expression]["graph"] !== "undefined" && typeof sparqlTable["simpleTriples"][expression]["graphInstruction"] !== "undefined"){
 				// tripleTebleTemp = tripleTebleTemp.concat(attributeTripleTemp);
 				tripleTebleTemp = attributeTripleTemp;
 				if(typeof sparqlTable["simpleTriples"][expression]["bind"]  === 'string') tripleTebleTemp.push(sparqlTable["simpleTriples"][expression]["bind"]);
@@ -3028,7 +3048,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	
 							subQuery = subQuery + tempSelect.join(" ");
 							
-							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
 								
 								for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
 									if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
@@ -3040,7 +3060,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							subQuery = subQuery +" WHERE{\n";
 							
 							var graphFound = false;
-							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true"){
+							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
 								
 								for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
 									if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "GRAPH" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "SERVICE"){
@@ -3368,7 +3388,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 
 	}
 	
-	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == "true" && typeof sparqlTable["graph"] === 'string' && sparqlTable["graph"] != "" && typeof sparqlTable["graphInstruction"] === 'string' && sparqlTable["graphInstruction"] != "" ){	
+	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable["graph"] === 'string' && sparqlTable["graph"] != "" && typeof sparqlTable["graphInstruction"] === 'string' && sparqlTable["graphInstruction"] != "" ){	
 		var tempWhereInfo = [];
 		
 		tempWhereInfo = tempWhereInfo.concat(classes);
@@ -3971,7 +3991,7 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 					}
 				}
 				if(found == false){
-					if(symbolUsage[symbol]['kind'].indexOf("_ALIAS") == -1) isMultipleAllowedCardinality = true;
+					if(typeof symbolUsage[0] !== "undefined" && symbolUsage[0]['kind'].indexOf("_ALIAS") == -1) isMultipleAllowedCardinality = true;
 				}
 			// if type information not known
 			} else if(typeof expressionTable[key]['type'] === 'undefined' || expressionTable[key]['type'] == null )  {

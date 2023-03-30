@@ -2735,21 +2735,27 @@ VQ_Element.prototype = {
 	var aggregation = this.getAggregateFields();
 	
 	var isOptional = false;
-	for(var field in fields){
-		if(fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)"){
+	
+	
+	
+	
+	for(let field in fields){
+		if(typeof fields[field] !== "function" && (fields[field]["requireValues"] != true || fields[field]["exp"] == "(select this)")){
 			isOptional = true;
 			break;
 		}
-		if( this.getAggregateFields().length > 0) isOptional = true;
+		if( aggregation.length > 0) isOptional = true;
 	}
 	var links = this.getLinks();
-	for(var l in links){
+	for(let l in links){
+		
 		if(typeof links[l] === "object" && !links[l].start && links[l].link.getType() != "REQUIRED"){
+			
 			isOptional = true;
 			break;
 		}
 	}
-	return (alias == null && className == null && isOptional == false && aggregation.length < 1);
+	return ((alias == null || alias == "") && (className == null || className == "") && isOptional == false && aggregation.length < 1);
 
   },
   // gets class variable name (e.g. X for ?X)

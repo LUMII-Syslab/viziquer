@@ -359,6 +359,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
 		
+		// console.log("variableList", variableList["pubDate"]);
 		
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = await generateAbstractTable(parsedQuery, [], variableList, []);
@@ -368,7 +369,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		abstractTable["linkTable"] = removeDuplicateLinks(abstractTable["linkTable"]);
 		
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
-		//console.log("abstractTable", abstractTable);
+		// console.log("abstractTable", abstractTable);
 		
 		var classesTable = abstractTable["classesTable"];
 		
@@ -1484,6 +1485,9 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList[attributeInfoTemp["alias"]] === "undefined" || variableList[attributeInfoTemp["alias"]] <=1 || variableList[attribute] == 4)){
 				//agregations
 				if(typeof classesTable[attributeTable[attribute]["class"]]["aggregations"] !== "undefined"){
+					
+					
+
 					for(let aggregation = 0; aggregation < classesTable[attributeTable[attribute]["class"]]["aggregations"].length; aggregation++){
 						if(classesTable[attributeTable[attribute]["class"]]["aggregations"][aggregation]["exp"].indexOf("(.)") == -1 && variableList[attribute] <= 1 || (variableList[attribute] == 4 && classesTable[attributeTable[attribute]["class"]]["aggregations"][aggregation]["alias"] == attributeInfoTemp["alias"])){
 							
@@ -1612,7 +1616,9 @@ function connectNotConnectedClasses(classesTable, linkTable, nodeList){
 			  }
 			}
 			if(clazzFound == false){
+				
 				var equalClasses = connectEqualClasses(classesTable[clazz]["variableName"], nodeList, linkTable);
+		
 				if(equalClasses["linkAdded"] == true) linkTable = equalClasses["linkTable"];
 				else{
 					for(let clazz2 in classesTable){
@@ -1669,11 +1675,13 @@ function connectNotConnectedQueryParts(clazz, linkTable, classesTable){
 }
 
 function connectEqualClasses(node, nodeList, linkTable){
-		var linkAdded = false;
-		if(Object.keys(nodeList[node]["uses"].length > 1)){
+		var linkAdded = false;		
+		if(typeof nodeList[node] !== "undefined" && Object.keys(nodeList[node]["uses"].length > 1)){
+			
 			var linkNodes = [];
 			for(let use in nodeList[node]["uses"]){
 				if(typeof nodeList[node]["uses"][use] !== "function"){
+					
 					var nodeInLinkTable = false;
 					for(let link = 0; link< linkTable.length; link++){
 					 if(typeof linkTable[link] !== "undefined"){
@@ -4174,7 +4182,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		//not exists
 		else if(where["operator"] == "notexists"){
 			
-		
+			
 			
 			var nodeLitsTemp = [];
 			
@@ -4371,6 +4379,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			} else {	
 				
 				for(let arg = 0; arg < where["args"].length; arg++){
+					
 					if(where["args"][arg]["type"] == 'group'){
 						var patterns =  where["args"][arg]["patterns"];
 						var tempClassTable = [];
@@ -4438,7 +4447,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 			}
 
-			for(let link = 0; link < x.linkTableAdded; link++){
+			for(let link = 0; link < linkTableAdded.length; link++){
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
 					linkTableAdded[link]["linkType"] = "NOT";
 					if(patternType == "minus") linkTableAdded[link]["isGlobalSubQuery"] = true;
@@ -4677,7 +4686,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 			// console.log("FILTER EXISTS", nodeLitsTemp, nodeList);
 
-			for(let link = 0; link < x.linkTableAdded; link++){
+			for(let link = 0; link < linkTableAdded.length; link++){
 				if(classTableAdded.indexOf(linkTableAdded[link]["object"]) == -1 || classTableAdded.indexOf(linkTableAdded[link]["subject"]) == -1){
 					linkTableAdded[link]["linkType"] = "FILTER_EXISTS";
 					linkTableAdded[link]["isSubQuery"] = true;
@@ -5302,7 +5311,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		var classTableTemp = [];
 		var linkTableTemp = [];
 		var directClassMembershipRoleTemp = directClassMembershipRole;
-		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate == directClassMembershipRole){
+		
+		
+		
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate["value"] == directClassMembershipRole){
 			directClassMembershipRole = "";
 		}
 		
@@ -5648,7 +5660,7 @@ async function collectNodeList(whereAll, propUnderOptional){
 	//sub select
 	if(where["type"] == "group" && where["patterns"].length == 1 && where["patterns"][0]["type"] == "query"){	
 		var variables = transformSelectVariables(where["patterns"][0]["variables"])
-		for(let sel = 0; sel < x.variables; sel++){
+		for(let sel = 0; sel < variables.length; sel++){
 			selectStarList.push(variables[sel]);
 		}
 	}
@@ -6799,12 +6811,13 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											
 											classesTable[sclass] = addAttributeToClass(classesTable[sclass], attributeInfo);
 											
-											var expr = className + " = " + triples[triple]["object"]["value"];
+											var expr = className + " = " + getVariable(triples[triple]["object"])["value"];
 											
 											if(typeof classesTable[sclass]["conditions"] === 'undefined') {
 													classesTable[sclass]["conditions"] = [];
 											}
 											classesTable[sclass]["conditions"].push(expr);
+											// console.log("conditions 9", expr);
 										  }
 										}
 									} else {
@@ -7410,7 +7423,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							}
 						}
 					}
-
+					
 					if(childerenClass["identification"] == null
 					&& clazz["isUnit"] != true
 					&& clazz["isUnion"] != true
@@ -7419,6 +7432,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 					&& typeof childerenClass["children"] === 'undefined'
 					&& (typeof childerenClass["fields"] === 'undefined' || (childerenClass["fields"].length == 1 && childerenClass["fields"][0]["exp"] == "(select this)"))
 					&& typeof childerenClass["aggregations"] === 'undefined'
+					&& isURI(childerenClass["linkIdentification"]["short_name"]) != 3
 					// && linkTable[linkName]["linkIdentification"]["short_name"].indexOf(")*") === -1
 					// && linkTable[linkName]["linkIdentification"]["short_name"].indexOf("|") === -1
 					// && linkTable[linkName]["linkIdentification"]["short_name"].indexOf("+") === -1
@@ -7470,7 +7484,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 						var createAttribute = true;
 						
 							if(typeof childerenClass["conditions"] !== "undefined"){
-								for(let condition = 0; childerenClass["conditions"] < x.length; condition++){
+								for(let condition = 0; childerenClass["conditions"].length; condition++){
 									if(typeof clazz["conditions"] === 'undefined') clazz["conditions"] = [];
 									if(typeof variableList[attrAlias] !== "undefined" && variableList[attrAlias] <=1){
 										if(!exp.startsWith("?") && typeof variableList[ attrAlias] !== "undefined" && childerenClass["conditions"][condition].indexOf(attrAlias) != -1 && childerenClass["conditions"][condition].indexOf(" != ") === -1) {
@@ -7780,7 +7794,7 @@ async function getAllVariablesInQuery2(expression, variableTable){
 
 async function getAllVariablesInQuery(expression, variableTable){
 	for(let key in expression){
-		if(typeof expression[key] === 'object'){
+		if(typeof expression[key] === 'object'){	
 			if(key == 'variables'){
 				var variables = expression[key];
 				var starInSelect = false;
@@ -7795,7 +7809,13 @@ async function getAllVariablesInQuery(expression, variableTable){
 						variableTable[variables[variable]["value"]] = 0;
 					} else if(typeof variables[variable]["variable"] !== 'undefined'){
 						variableTable[variables[variable]["variable"]["value"]] = 1;
-					}
+						var temp = await getAllVariablesInQuery(variables[variable]["expression"], variableTable);
+						for(let t in temp){
+							if(typeof temp[t] !== "function"){
+								variableTable[t] = temp[t];
+							}
+						}
+					} 
 				}
 			}
 			
@@ -7832,7 +7852,7 @@ function getAllVariableCountInQuery(expression, variableTable){
 					if(typeof variables[variable]["termType"] === 'undefined'){
 						
 						var temp = getAllVariableCountInQuery(variables[variable], variableTable);
-						for(var t in temp){
+						for(let t in temp){
 							if(typeof temp[t] !== "function"){
 								variableTable[t] = temp[t];
 							}
@@ -8498,30 +8518,31 @@ async function generatePlainNegationUnion(unionBlock, nodeList, classesTable, fi
 function getWhereTriplesVaribles(where){
 	var variableList = [];
 	
-	for(let key = 0; key < where.length; key++){
-		if(typeof where[key]["type"] !== "undefined" && where[key]["type"] == "bgp"){
-	
-			var triples = where[key]["triples"];
-			for(let triple = 0; triple < triples.length; triple++) {
-			  if(typeof triples[triple] !== "undefined"){
-				var subject = getVariable(triples[triple]["subject"]);
-				var object = getVariable(triples[triple]["object"]);
-				if(subject["type"] == "varName"){
-					if(typeof variableList[subject["value"]] === "undefined") variableList[subject["value"]] = 1;
-					else variableList[subject["value"]] = variableList[subject["value"]] + 1;
+	for(let key in where){
+		if(typeof where[key]["type"] !== "function"){
+			if(typeof where[key]["type"] !== "undefined" && where[key]["type"] == "bgp"){	
+				var triples = where[key]["triples"];
+				for(let triple = 0; triple < triples.length; triple++) {
+				  if(typeof triples[triple] !== "undefined"){
+					var subject = getVariable(triples[triple]["subject"]);
+					var object = getVariable(triples[triple]["object"]);
+					if(subject["type"] == "varName"){
+						if(typeof variableList[subject["value"]] === "undefined") variableList[subject["value"]] = 1;
+						else variableList[subject["value"]] = variableList[subject["value"]] + 1;
+					}
+					if(object["type"] == "varName"){
+						if(typeof variableList[object["value"]] === "undefined") variableList[object["value"]] = 1;
+						else variableList[object["value"]] = variableList[object["value"]] + 1;
+					}
+				  }
 				}
-				if(object["type"] == "varName"){
-					if(typeof variableList[object["value"]] === "undefined") variableList[object["value"]] = 1;
-					else variableList[object["value"]] = variableList[object["value"]] + 1;
-				}
-			  }
-			}
-		}else if(typeof where[key] === 'object'){
-			var temp = getWhereTriplesVaribles(where[key]);
-			for(let variable in temp){
-				if(typeof variable[temp] !== "function"){
-					if(typeof variableList[variable] === "undefined") variableList[variable] = temp[variable];
-					else variableList[variable] = variableList[variable] + temp[variable];
+			}else if(typeof where[key] === 'object'){
+				var temp = getWhereTriplesVaribles(where[key]);
+				for(let variable in temp){
+					if(typeof variable[temp] !== "function"){
+						if(typeof variableList[variable] === "undefined") variableList[variable] = temp[variable];
+						else variableList[variable] = variableList[variable] + temp[variable];
+					}
 				}
 			}
 		}
@@ -8577,6 +8598,7 @@ function getVariable(variable){
 			return {value:variable.value, type:"varName", isBlankNode:"true"}
 		}
 		if(variable.termType == "Literal"){
+
 			if(typeof variable.datatype !== "undefined"){
 				if(variable.datatype.termType == "NamedNode" && variable.datatype.value === "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString" && variable.language !== ""){
 					return {value:'"'+variable.value+ '"@'+variable.language, type:"RDFLiteral"}
@@ -8602,7 +8624,7 @@ function getVariable(variable){
 					if(iri.startsWith("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) iri = "rdf:" + iri.substring(43);
 					else if(iri.startsWith("http://www.w3.org/2001/XMLSchema#")) iri =  "xsd:" + iri.substring(33);
 					else iri = "<"+iri+">";
-					return {value:'"'+variable.value+ '^^'+iri, type:"RDFLiteral"}
+					return {value:'"'+variable.value+ '"^^'+iri, type:"RDFLiteral"}
 				}
 				
 			}

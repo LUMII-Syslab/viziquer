@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { Elements, Compartments, CompartmentTypes, Projects } from '/libs/platform/collections'
 
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
@@ -53,14 +53,16 @@ Interpreter.customMethods({
 
 			var parentClass;
 			var links = vq_obj.getLinks();
-			for(var key in links) {
-				if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
-					parentClass = new VQ_Element(links[key].link.obj.startElement);
-					links[key].link.setNestingType("SUBQUERY");
-				}
-				if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
-					parentClass = new VQ_Element(links[key].link.obj.endElement);
-					links[key].link.setNestingType("SUBQUERY");
+			for(let key in links) {
+				if(typeof links[key] !== "function"){
+					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.startElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
+					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.endElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
 				}
 			}
 			if(typeof parentClass !== 'undefined')Template.AddMergeValues.isNotRootClass.set(true);
@@ -187,14 +189,16 @@ Template.AddMergeValues.events({
 
 				var parentClass;
 				var links = vq_obj.getLinks();
-				for(var key in links) {
-					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.startElement);
-						links[key].link.setNestingType("SUBQUERY");
-					}
-					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
-						parentClass = new VQ_Element(links[key].link.obj.endElement);
-						links[key].link.setNestingType("SUBQUERY");
+				for(let key in links) {
+					if(typeof links[key] !== "function"){
+						if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+							parentClass = new VQ_Element(links[key].link.obj.startElement);
+							links[key].link.setNestingType("SUBQUERY");
+						}
+						if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+							parentClass = new VQ_Element(links[key].link.obj.endElement);
+							links[key].link.setNestingType("SUBQUERY");
+						}
 					}
 				}
 				

@@ -873,8 +873,8 @@ Interpreter.customMethods({
 		 var vq_obj = new VQ_Element(selected_elem_id);
 		 var fields = vq_obj.getFields();
 		 // Šis cikls joprojām strādā pareizi
-		 for(var field in fields){
-			 if(fields[field]["exp"] == "(select this)") return; 
+		 for(let field in fields){
+			 if(typeof fields[field] !== "function" && fields[field]["exp"] == "(select this)") return; 
 		 }
 		 vq_obj.addField("(select this)",null,false,false,false);
 		};

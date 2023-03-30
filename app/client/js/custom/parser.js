@@ -1,3 +1,5 @@
+import { Projects } from '/libs/platform/collections'
+
 var tripleTable = [];
 var variableTable = [];
 var referenceTable = [];
@@ -137,7 +139,7 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 		
 		// if OpenLink Virtuoso && classTr != null && classTr != ""
 		if((typeof parameterTable["queryEngineType"] === 'undefined' || parameterTable["queryEngineType"] == "VIRTUOSO") && classTr != null && classTr != "") uniqueTriples.unshift(classTr);
-		if((typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == "true") || expr["allowResultMultiplication"] == true) {
+		if((typeof parameterTable["simpleConditionImplementation"] !== "undefined" && parameterTable["simpleConditionImplementation"] == true) || expr["allowResultMultiplication"] == true) {
 			uniqueTriples = uniqueTriples.concat(uniqueTriplesFilter);
 		}
 		else {
@@ -650,15 +652,17 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			
 			if(typeof variableNamesTable[classID] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')] !== "undefined" && typeof variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId] !== "undefined" ){
 				//is simbol table has variable, wiht kind ALIAS and ather class context
-				for(let st = 0; st < classSimbolTable[varFullName].length; st++){
-					if(typeof classSimbolTable[varFullName][st] === "object"){
-						if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["isPath"] != true){
-							messages.push({
-								"type" : "Error",
-								"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
-								"isBlocking" : true
-							});
-							return "";
+				if(typeof classSimbolTable[varFullName] !== "undefined"){
+					for(let st = 0; st < classSimbolTable[varFullName].length; st++){
+						if(typeof classSimbolTable[varFullName][st] === "object"){
+							if(classSimbolTable[varFullName][st]["kind"].indexOf("ALIAS") !== -1 && classSimbolTable[varFullName][st]["context"] != classID && variableNamesTable[classID][varName.replace(/-/g, '_').replace(/ /g, '')][fieldId]["isPath"] != true){
+								messages.push({
+									"type" : "Error",
+									"message" : "The used name "+varFullName+" can denote either an existing name (variable), or a new attribute (property). Use @"+varFullName+" to refer to the already existing name, or {prefix}:"+varFullName+" to introduce a new attribute (property)",
+									"isBlocking" : true
+								});
+								return "";
+							}
 						}
 					}
 				}

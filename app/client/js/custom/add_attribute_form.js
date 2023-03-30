@@ -118,9 +118,11 @@ Template.AddAttribute.events({
 					var abstractS = await generateSymbolTable();
 					var symbolTable = abstractS["symbolTableFull"];
 					var valCount = 0;
-					for(var el in symbolTable){
-						for(var s in symbolTable[el]){
-							if(s == "val" || s.startsWith("val_")) valCount++;
+					for(let el in symbolTable){
+						if(typeof symbolTable[el] !== "function"){
+							for(let s in symbolTable[el]){
+								if(typeof symbolTable[el][s] !== "function" && (s == "val" || s.startsWith("val_"))) valCount++;
+							}
 						}
 					}
 					name = "?prop";
@@ -166,9 +168,11 @@ Template.AddAttribute.events({
 					var abstractS = await generateSymbolTable();
 					var symbolTable = abstractS["symbolTableFull"];
 					var valCount = 0;
-					for(var el in symbolTable){
-						for(var s in symbolTable[el]){
-							if(s == "val" || s.startsWith("val_")) valCount++;
+					for(let el in symbolTable){
+						if(typeof symbolTable[el] !== "function"){
+							for(let s in symbolTable[el]){
+								if(symbolTable[el][s] !== "function" && (s == "val" || s.startsWith("val_"))) valCount++;
+							}
 						}
 					}
 					name = "?prop";
@@ -843,12 +847,14 @@ async function getAttributes(filter, waiting){
 						// };
 					// }
 					
-					for(var cl in prop){
-						var prefix;
-						if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-						else prefix = prop[cl]["prefix"]+":";
-						attr_list.push({name: prefix+prop[cl]["display_name"]})
+					for(let cl in prop){
+						if(typeof prop[cl] !== "function"){
+							var prefix;
+							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+							else prefix = prop[cl]["prefix"]+":";
+							attr_list.push({name: prefix+prop[cl]["display_name"]})
+						}
 					}
 				}
 			} else {
@@ -934,12 +940,14 @@ async function getAssociations(filter){
 				// };
 			// }
 			
-			for(var cl in prop){
-				var prefix;
-				if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-					|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
-				else prefix = prop[cl]["prefix"]+":";
-				attr_list.push({name: prefix+prop[cl]["display_name"]})
+			for(let cl in prop){
+				if(typeof prop[cl] !== "function"){
+					var prefix;
+					if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
+					else prefix = prop[cl]["prefix"]+":";
+					attr_list.push({name: prefix+prop[cl]["display_name"]})
+				}
 			}
 		
 			//remove duplicates
@@ -951,8 +959,8 @@ async function getAssociations(filter){
 			attr_list = attr_list.map(function(attr) {
 				var disabled = false;
 				var buttonClassName = "button button-required";
-				for(var field in field_list){
-					if(field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
+				for(let field in field_list){
+					if(typeof field_list[field] !== "function" && field_list[field]["exp"] == attr.name && (typeof field_list[field]["alias"] === "undefined" || field_list[field]["alias"] == "")) {
 						disabled = true; 
 						if(field_list[field]["requireValues"] == true) buttonClassName = "fa fa-plus button button-required";
 						else buttonClassName = "fa fa-check button button-required";

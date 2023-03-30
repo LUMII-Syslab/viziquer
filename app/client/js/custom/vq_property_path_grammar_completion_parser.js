@@ -3619,17 +3619,19 @@ vq_property_path_grammar_completion_parser = (function() {
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
           	props = props["data"];
-          	for(var pr in props){
-          		var prefix;
-          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
-          		else prefix = props[pr]["prefix"]+":";
-          			
-          		var propName = prefix+props[pr]["display_name"];
-          		if ( props[pr].mark === 'in'){
-          			propName = "^"+propName;
-          		}
-          		await addContinuation(await location(), propName, 100, 2, "end");
+          	for(let pr in props){
+				if(typeof props[pr] !== "function"){
+					var prefix;
+					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+					else prefix = props[pr]["prefix"]+":";
+						
+					var propName = prefix+props[pr]["display_name"];
+					if ( props[pr].mark === 'in'){
+						propName = "^"+propName;
+					}
+					await addContinuation(await location(), propName, 100, 2, "end");
+				}
           	}
           	return o;
           };
@@ -3675,17 +3677,19 @@ vq_property_path_grammar_completion_parser = (function() {
 
           	props = props["data"];
       		
-          	for(var pr in props){
-          		var prefix;
-          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-					|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
-          		else prefix = props[pr]["prefix"]+":";
-          			
-          		var propName = prefix+props[pr]["display_name"];
-          		if ( props[pr].mark === 'in' && isInv == false){
-          			propName = "^"+propName;
-          		}
-          		if(isInv == false || (isInv == true && props[pr].mark === 'in'))await addContinuation(await location(), propName, 100, 2);
+          	for(let pr in props){
+				if(typeof props[pr] !== "function"){
+					var prefix;
+					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+					else prefix = props[pr]["prefix"]+":";
+						
+					var propName = prefix+props[pr]["display_name"];
+					if ( props[pr].mark === 'in' && isInv == false){
+						propName = "^"+propName;
+					}
+					if(isInv == false || (isInv == true && props[pr].mark === 'in'))await addContinuation(await location(), propName, 100, 2);
+				}
           	}
           						
               return o;
@@ -3715,18 +3719,20 @@ vq_property_path_grammar_completion_parser = (function() {
 			var schemaName = dataShapes.schema.schemaType;
 
           	props = props["data"];
-          	for(var pr in props){
-          		var prefix;
-          		if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-					|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt"))prefix = "";
-          		else prefix = props[pr]["prefix"]+":";
-          			
-          		var propName = prefix+props[pr]["display_name"];
-          		if ( props[pr].mark === 'in'){
-          			if(o == "^")propName = "^"+propName;
-					else propName = "inv("+propName+")";
-          		}
-          		await addContinuation(await location(), propName, 100, 2);
+          	for(let pr in props){
+				if(typeof props[pr] !== "function"){
+					var prefix;
+					if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+						|| (schemaName.toLowerCase() == "wikidata" &&  props[pr]["prefix"] == "wdt"))prefix = "";
+					else prefix = props[pr]["prefix"]+":";
+						
+					var propName = prefix+props[pr]["display_name"];
+					if ( props[pr].mark === 'in'){
+						if(o == "^")propName = "^"+propName;
+						else propName = "inv("+propName+")";
+					}
+					await addContinuation(await location(), propName, 100, 2);
+				}
           	}				
             return;
 		  }
@@ -3751,18 +3757,19 @@ vq_property_path_grammar_completion_parser = (function() {
 					
 					var schemaName = dataShapes.schema.schemaType;
 	
-					for(var pr in props){
-						var prefix;
-						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
-							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
-						else prefix = props[pr]["prefix"]+":";
-										
-						var propName = prefix+props[pr]["display_name"];
-						if ( props[pr].mark === 'in'){
-							propName = "^"+propName;
+					for(let pr in props){
+						if(typeof props[pr] !== "function"){
+							var prefix;
+							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
+								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
+							else prefix = props[pr]["prefix"]+":";
+											
+							var propName = prefix+props[pr]["display_name"];
+							if ( props[pr].mark === 'in'){
+								propName = "^"+propName;
+							}
+							await addContinuation(place, propName, 100, 2);
 						}
-						await addContinuation(place, propName, 100, 2);
-		
 					}
 				}
           }
