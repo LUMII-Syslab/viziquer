@@ -548,6 +548,9 @@ Template.importOntology.helpers({
 		var result = null;
 
 		var project = Projects.findOne({_id: Session.get("activeProject")});
+
+		console.log("project ", project)
+
 		if (project) {
 			var tool_id = project.toolId;
 
@@ -567,6 +570,8 @@ Template.importOntology.helpers({
 
 			}
 		}
+
+		console.log("result ", result)
 
 		return result;
 	},
@@ -826,6 +831,7 @@ Template.ontologySettings.events({
 		
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
+					diagramId: Session.get("activeDiagram"),
 					uri: $("#ontology-uri").val(),
 					endpoint: $("#ontology-endpoint").val(),
 					schema: $("#dss-schema").val(),
@@ -1058,14 +1064,19 @@ Template.ontologySettings.helpers({
 	
 	useStringLiteralConversionList: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
+
+		console.log("useStringLiteralConversionList ", proj)
+
 		var act = 'SIMPLE';
 		if (proj) {
 			act = proj.useStringLiteralConversion;
 		}
 		var list = [{name:'SIMPLE'}, {name:'TYPED'}, {name:'OFF'}];
 		var selected = list.filter(function(o){ return o.name == act});
-		if ( selected.length > 0 )
+		if ( selected.length > 0 ) {
 			selected[0]["selected"] = "selected";
+		}
+
 		return list;
 	},
 

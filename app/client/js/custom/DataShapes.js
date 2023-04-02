@@ -379,6 +379,8 @@ dataShapes = {
 
 		console.log("rr ", rr)
 
+		Session.set("ontologiesLoaded", true);
+
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
 			// *** console.log(rr)
@@ -453,6 +455,8 @@ dataShapes = {
 						this.schema.simple_prompt = true;
 					
 				}
+
+				Session.set("ontologiesLoaded", true);
 			}
 		}
 	},

@@ -1,13 +1,25 @@
 import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/libs/platform/collections'
 import { Schema } from '/libs/custom/collections'
 import { is_project_member } from '/libs/platform/user_rights'
+import { is_public_diagram } from '/server/platform/_helpers'
 
 Meteor.methods({	
 
 	getProjectJson: function(list) {
 
+		console.log("zzz")
+		console.log("getProjectJson", list)
+		console.log("")
+
+		console.log("adsfaf ", is_public_diagram(list["diagramId"]))
+		console.log("")
+
+
 		var user_id = this.userId;
-		if (is_project_member(user_id, list)) {
+		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
+
+			console.log("adsfasf1")
+
 
 			var project_id = list.projectId;
 			var version_id = list.versionId;

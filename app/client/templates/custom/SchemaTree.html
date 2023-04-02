@@ -2,31 +2,33 @@
 <template name="schemaTree">
 
     <div class="col-sm-12">
+
         <div class="dd" id="nestable">
-			{{#if empty }}
+			{{#if empty}}
 				<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
 			{{else}}
-			<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
-			<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+				<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
+				<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 
-			{{#each ns}}
-				<label class="form-check-label">
-					<input class="form-check-input" name = {{name}} index={{index}} type="checkbox" checked={{checked}}>
-					<span class="custom-checkbox"></span>
-					{{caption}}
-				</label>
-			{{/each}}
-
-			<div class="describe">Double-click an item to start a query from it</div>
-            <ol class="dd-list">
-
-				{{#each classes}}
-				{{> subTree}}
+				{{#each ns}}
+					<label class="form-check-label">
+						<input class="form-check-input" name = {{name}} index={{index}} type="checkbox" checked={{checked}}>
+						<span class="custom-checkbox"></span>
+						{{caption}}
+					</label>
 				{{/each}}
 
-            </ol>
+				<div class="describe">Double-click an item to start a query from it</div>
+	            <ol class="dd-list">
+
+					{{#each classes}}
+						{{> subTree}}
+					{{/each}}
+
+            	</ol>
 			{{/if}}
         </div><!-- dd -->
+
     </div>
 
 </template>

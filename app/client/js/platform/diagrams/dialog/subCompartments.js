@@ -3,32 +3,14 @@ import { Utilities } from '/client/js/platform/utilities/utils'
 import { Compartments, CompartmentTypes } from '/libs/platform/collections'
 
 Template.multiField.helpers({
-
-	multi_fields_obj: function() {
-
-		var data_in = Template.currentData();
-		if (!data_in) {
-			return;
-		}
-
-		var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
-		var compartments = Compartments.find({compartmentTypeId: data_in["_id"],
-												elementId: Session.get("activeElement")}, {sort: {index: 1}});
-
-		res["values"] = compartments.fetch();
-
-		res["compartmentTypeId"] = Session.get("multiRowCompartmentTypeId");
-
-		return res;
-	},
-
+	multi_fields_obj: get_multi_fields_obj,
 });
 
-Template.multiField.events({
+
+Template.multiFieldBody.events({
 
 	'click .down-multi-field': function(e, templ) {
 		e.preventDefault();
-
 		var data = getCurrentCompartment(e);
 
 		var compartments = data.compartments;
@@ -51,7 +33,6 @@ Template.multiField.events({
 
 	'click .up-multi-field': function(e, templ) {
 		e.preventDefault();
-
 		var data = getCurrentCompartment(e);
 
 		var compartments = data.compartments;
@@ -72,14 +53,14 @@ Template.multiField.events({
 	},
 
 
-	'click .add-multi-field': function(e, templ) {
-		
+	'click .add-multi-field': function(e, templ) {		
 		autoCompletionCleanup()
 		
 		e.preventDefault();
 
 		var src = $(e.target);
 		$('.dialog-input').val('');
+
 		var multi_field = $(src).closest(".multi-field");
 		var compart_type_id = multi_field.attr("id");
 
@@ -131,6 +112,8 @@ Template.multiField.events({
 	},
 
 });
+
+
 
 Template.show_multi_field_form.helpers({
 
@@ -366,3 +349,24 @@ function execute_extension_point(compart_type_id) {
 
 	Session.set("extraButton", extra_button);
 }
+
+
+function get_multi_fields_obj() {
+	var data_in = Template.currentData();
+	if (!data_in) {
+		return;
+	}
+
+	var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
+	var compartments = Compartments.find({compartmentTypeId: data_in["_id"],
+											elementId: Session.get("activeElement")}, {sort: {index: 1}});
+
+	res["values"] = compartments.fetch();
+	res["compartmentTypeId"] = Session.get("multiRowCompartmentTypeId");
+	res["next_level_form"] = "show_multi_field_form";
+
+	return res;
+}
+
+
+export {get_multi_fields_obj}

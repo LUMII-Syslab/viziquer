@@ -89,6 +89,7 @@ Meteor.methods({
 						},
 						diagramTypeId: diagram_type._id,
 						editorType: 'ajooEditor',
+						isPublic: true,
 		});
 
 		var id = Diagrams.insert(list);

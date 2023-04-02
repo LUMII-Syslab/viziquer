@@ -55,12 +55,13 @@ import '/server/custom/generate_query_from_SPARQL'
 import '/server/custom/ontology'
 import '/server/custom/publish'
 import '/server/custom/version_migration'
+import '/server/custom/ontologyParams'
 
 
 // libs custom
 import '/libs/custom/collections'
 import '/libs/custom/mytest'
-import '/libs/custom/ontologyParams'
+// import '/libs/custom/ontologyParams'
 
 
 Meteor.startup(() => {  

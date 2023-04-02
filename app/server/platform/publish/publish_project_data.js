@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
-import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags } from '/libs/platform/collections'
+import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Projects, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags } from '/libs/platform/collections'
 import { get_configurator_tool_id } from '/libs/platform/helpers'
 import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/libs/platform/user_rights'
 import { error_msg } from '/server/platform/_global_functions'
 import { get_unknown_public_user_name } from '/server/platform/_helpers'
+import { is_public_diagram } from '/server/platform/_helpers'
 
 
 Meteor.publish("Diagrams", function(list) {
@@ -196,7 +197,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 	}
 
 
-	if (is_project_version_reader(user_id, list, role) || is_public_diagram(diagrams)) {
+	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagrams)) {
 		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
 			var tool_id = version["toolId"];
@@ -253,6 +254,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 						DiagramTypes.find(diagram_type_query, diagram_type_limit),
 						ElementTypes.find(type_query, elem_type_limit),
 						PaletteButtons.find(type_query, palette_button_type_limit),
+						Projects.find({_id: list["projectId"],}),
 					];
 			}
 		}
@@ -320,7 +322,7 @@ Meteor.publish("Diagram_Types", function(list) {
 		role = proj_user["role"];
 	}
 
-	if (is_project_version_reader(user_id, list, role) || is_public_diagram(diagram)) {
+	if (is_project_version_reader(user_id, list, role) || is_public_diagrams(diagram)) {
 
 		var version = Versions.findOne({_id: list["versionId"], projectId: list["projectId"]});
 		if (version) {
@@ -365,7 +367,7 @@ Meteor.publish("Diagram_Locker", function(list) {
 								versionId: list["versionId"],
 							});
 
-	if (is_project_version_reader(this.userId, list) || is_public_diagram(diagram)) {
+	if (is_project_version_reader(this.userId, list) || is_public_diagrams(diagram)) {
 
 		var self = this;
 
@@ -926,11 +928,14 @@ function select_project_users(user_id, list) {
 }
 
 
-function is_public_diagram(diagram) {
+function is_public_diagrams(diagrams) {
+	let resp = true;
 
-	// console.log("in is public diagram", diagram)
+	_.each(diagrams.fetch(), function(diagram) {
+		if (!is_public_diagram(diagram._id)) {
+			resp = false;
+		}	
+	});
 
-	console.log("in is public diagram")
-
-	return true;
+	return resp;
 }

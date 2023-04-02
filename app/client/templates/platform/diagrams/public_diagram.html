@@ -26,6 +26,22 @@
 
 
     {{#if isReady}}
+
+          <!-- RIBBON -->
+          <div id="ribbon">
+
+              <!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
+              <button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
+
+              <a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
+
+          </div>
+          <!-- END RIBBON -->
+
+          {{> ontologySettings}}
+          {{> exportOntology}}
+
+
           <div style="display:{{plain.showPlain}}" >
 
             {{> noDiagramTemplate}}

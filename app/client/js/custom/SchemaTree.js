@@ -31,6 +31,8 @@ var schemaInstancesKeyDownTimeStamp;
 Template.schemaTree.onDestroyed(function() {
 	Template.schemaTree.Classes.set([]);
 	Template.schemaTree.Ns.set([]);
+
+	Session.set("ontologiesLoaded", undefined);
 });
 
 Template.schemaTree.helpers({
@@ -44,7 +46,9 @@ Template.schemaTree.helpers({
 		return Template.schemaTree.F1.get();
 	},
 	empty: function() {
-		return Template.schemaTree.Empty.get();
+		console.log("ontologiesLoaded ", Session.get("ontologiesLoaded"));
+
+		return Session.set("ontologiesLoaded", true);
 	},
 });
 
@@ -445,7 +449,7 @@ Template.schemaTree.events({
 	},
 	'click #reload': async function(e){
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
-		Template.schemaTree.Empty.set(false);
+		// Template.schemaTree.Empty.set(false);
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
@@ -471,11 +475,11 @@ Template.schemaTree.rendered = async function() {
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
 	if (dataShapes.schema.empty) {
-		Template.schemaTree.Empty.set(true);
+		// Template.schemaTree.Empty.set(true);
 		// *** Template.schemaTree.NsInclude.set(false);
 	}
 	else {
-		Template.schemaTree.Empty.set(false);
+		// Template.schemaTree.Empty.set(false);
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		Template.schemaTree.Classes.set(dataShapes.schema.tree.classPath);

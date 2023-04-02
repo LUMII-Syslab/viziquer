@@ -2,39 +2,48 @@
 <template name="multiField">
 
 	{{#with multi_fields_obj}}
-		<div id="{{_id}}" class="multi-field multi-field-parent">
-			<table class="table table-striped " style="margin-bottom:0px;">
-				<thead>
-					<tr>
-						<th>{{name}}</th>
-						<th>
-							<a class="btn btn-xs btn-success pull-right add-multi-field"><i class="fa fa-plus"></i></a>
-						</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					{{#each values}}
-						<tr id="{{_id}}" class="multi-field-row">
-							<td>{{value}}</td>
-							<td class="pull-right">
-								<!-- <a class="btn btn-xs btn-primary down-multi-field"><i class="fa fa-arrow-down"></i></a> -->
-								<a class="btn btn-xs btn-info up-multi-field"><i class="fa fa-arrow-up"></i></a>
-
-								<a class="btn btn-xs btn-warning edit-multi-field"><i class="fa fa-pencil"></i></a>
-								<a class="btn btn-xs btn-danger remove-multi-field"><i class="fa fa-trash-o"></i></a>
-							</td>
-						</tr>
-					{{/each}}
-				</tbody>
-			</table>
-
-			{{> Template.dynamic template="show_multi_field_form" data=multi_fields_obj}}
-
-		</div>		
+		{{> Template.dynamic template="multiFieldBody" data=this}}
 	{{/with}}
 	
 </template>
+
+
+
+<template name="multiFieldBody">
+	<div id="{{_id}}" class="multi-field multi-field-parent">
+		<table class="table table-striped " style="margin-bottom:0px;">
+			<thead>
+				<tr>
+					<th>{{name}}</th>
+					<th>
+						<a class="btn btn-xs btn-success pull-right add-multi-field"><i class="fa fa-plus"></i></a>
+					</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{{#each values}}
+					<tr id="{{_id}}" class="multi-field-row">
+						<td>{{value}}</td>
+						<td class="pull-right">
+							<!-- <a class="btn btn-xs btn-primary down-multi-field"><i class="fa fa-arrow-down"></i></a> -->
+							<a class="btn btn-xs btn-info up-multi-field"><i class="fa fa-arrow-up"></i></a>
+
+							<a class="btn btn-xs btn-warning edit-multi-field"><i class="fa fa-pencil"></i></a>
+							<a class="btn btn-xs btn-danger remove-multi-field"><i class="fa fa-trash-o"></i></a>
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+
+		{{> Template.dynamic template=next_level_form data=this}}
+		<!-- {{> Template.dynamic template="show_multi_field_form" field_obj=this}} -->
+
+	</div>	
+
+</template>
+
 
 <template name="show_multi_field_form">
 

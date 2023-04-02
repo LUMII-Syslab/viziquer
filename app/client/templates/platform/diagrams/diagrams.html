@@ -285,7 +285,7 @@
                                 <li class="active" id="project-members"><a href="#file" data-toggle="tab">File</a></li>
                                 <li id="find-people"><a href="#url" data-toggle="tab">URL</a></li>
 								{{#if schemas}}
-								<li id="project-list"><a href="#schemaslist" data-toggle="tab">List</a></li>
+								    <li id="project-list"><a href="#schemaslist" data-toggle="tab">List</a></li>
 								{{/if}}
                             </ul>
                         </div>
@@ -581,354 +581,357 @@
     }  
 
 </style>
-    <!-- Modal for new document -->
-    <div id="ontology-settings-form" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Project Settings</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="panel panel-default">
-                        <div class="panel-tab clearfix">
-                            <ul class="tab-bar">
-                                <li class="active" id="project-settings"><a href="#main" data-toggle="tab">Main</a></li>
-                                <li id="project-security"><a href="#sec" data-toggle="tab">Security</a></li>
-								<li id="project-extra"><a href="#extra" data-toggle="tab">Extra</a></li>
-								<li id="project-visualization"><a href="#visualization" data-toggle="tab">SPARQL Visualization</a></li>
-                            </ul>
-                        </div>
 
-                        <div class="panel-body">
-                            <div class="tab-content user-tab-content">
-
-                                <!-- tab1 -->
-                                <div class="tab-pane fade in active" id="main">
-									<form class="form-horizontal" role="form">
-									
-										<div class="form-group">
-											<label for="dss-schema" class="col-sm-3 control-label">DSS schema</label>
-											<div class="col-sm-9">
-												<select class="form-control" id="dss-schema" >
-													{{#each schemas}}
-														<option {{selected}} value="{{display_name}}">{{display_name}}</option>
-													{{/each}}
-												</select>
-											</div>
-										</div>
-
-									    <div class="form-group">
-										    <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>
-										    <div class="col-sm-9">
-											    <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}" autocomplete="off" >
-										    </div>
-									    </div>
-
-										<div class="form-group">
-											<label for="ontology-uri" class="col-sm-3 control-label">Named Graph</label>
-											<div class="col-sm-9">
-												<input id="ontology-uri" type="text" class="form-control" value="{{uri}}" autocomplete="off" >
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
-											<div class="col-sm-9">
-												<select class="form-control" id="use-string-literal-conversion" >
-												    {{#each useStringLiteralConversionList}}
-														<option {{selected}} value="{{name}}">{{name}}</option>
-													{{/each}}
-												</select>
-											</div>
-										</div>
-						
-										<div class="form-group">
-											<label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
-											<div class="col-sm-9">
-												<select class="form-control" id="query-engine-type">
-												  {{#each queryEngineTypeList}}
-													 <option {{selected}} value="{{name}}">{{name}}</option>
-												  {{/each}}
-												</select>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<div class="col-sm-5">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{project.useDefaultGroupingSeparator}}">
-												 <span class="custom-checkbox"></span>
-												 Use Default Grouping Separator
-											  </label>
-											</div>
-											<div class="col-sm-5">
-												<input id="default-grouping-separator" type="text" class="form-control" value="{{project.defaultGroupingSeparator}}" disabled="{{project.NOTuseDefaultGroupingSeparator}}" autocomplete="off" >
-											</div>
-										</div>
-										
-										<div class="form-group">
-											<div class="col-sm-5">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{project.showCardinalities}}">
-												 <span class="custom-checkbox"></span>
-												 Show Cardinalities
-											  </label>
-											</div>
-										</div>
-										
-										
-										
-                                    </form>
-                                </div>
-                                <!-- end of tab1 -->
-
-                                <!-- tab2 -->
-                                <div class="tab-pane fade padding-10" id="sec">
-									<form class="form-horizontal" role="form">
-
-									<div class="form-group">
-										<label for="endpoint-username" class="col-sm-3 control-label">Username</label>
-										<div class="col-sm-9">
-											<input id="endpoint-username" type="text" class="form-control" value="{{project.endpointUsername}}" autocomplete="off" >
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="endpoint-password" class="col-sm-3 control-label">Password</label>
-										<div class="col-sm-9">
-											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{project.endpointPassword}}">
-										</div>
-									</div>
-									
-                                    </form>
-                                </div>
-                                <!-- end of tab2 -->
-								
-								<!-- tab3 -->
-                                <div class="tab-pane fade padding-10" id="extra">
-									<form class="form-horizontal" role="form">
-
-										<div class="form-group">
-											<label for="direct-class-membership-role" class="col-sm-3 control-label">Direct Class Membership Role</label>
-											<div class="col-sm-9" style="width: 70%;">
-												<input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}" autocomplete="off" > 
-											</div>
-											<div class="help-tip">
-											  <p>Role for instance-to-classifier relation (leave blank to have 'a' notation in SPARQL queries, corresponding to rdf:type)</p>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Indirect Class Membership Role</label>
-											<div class="col-sm-9" style="width: 70%;">
-												<input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}" autocomplete="off" >	
-											</div>
-											<div class="help-tip">
-											  <p>Role (or path) for indirect instance-to-classifier relation. To be used in SPARQL query generation, if indirect class membership is specified for a node.</p>
-											</div>
-										</div>
-										
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{project.simpleConditionImplementation}}">
-												 <span class="custom-checkbox"></span>
-												 Simple condition implementation
-											  </label>
-											  <div class="help-tip">
-												<p>Do not use 'Filter exists' to implement conditions that refer to instance properties. This simplifies the queries, although it might lead to result row duplication, if the used property is multi-valued.</p>
-											  </div>
-											</div>	
-										</div>
-										
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{project.showPrefixesForAllNames}}">
-												 <span class="custom-checkbox"></span>
-												 Show local namespace prefixes
-											  </label>
-											  <div class="help-tip">
-												<p>Show names from the local namespace (if one is specified) in full prefix:display_name form. Unchecking the checkbox
-												shall show names from the local namespace simply as display_name, without the prefix.
-												For query generation, each of the forms (with prefix or without prefix) are accepted regardless of the parameter value.</p>
-											  </div>
-											</div>
-										</div>
-										
-										<!--
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="show-prefixes-for-all-non-local-names" type="checkbox" checked="{{showPrefixesForAllNonLocalNames}}">
-												 <span class="custom-checkbox"></span>
-												 Show prefixes for all non-local names
-											  </label>
-											</div>
-										</div>
-										-->
-										
-										<!-- <div class="form-group"> -->
-											<!-- <div class="col-sm-10"> -->
-												<!-- <label class="form-check-label"> -->
-												 <!-- <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}"> -->
-												 <!-- <span class="custom-checkbox"></span> -->
-												 <!-- Auto-hide default property name -->
-											  <!-- </label> -->
-											<!-- </div> -->
-										<!-- </div> -->
-										
-										<!-- <div class="form-group"> -->
-											<!-- <div class="col-sm-10"> -->
-												<!-- <label class="form-check-label"> -->
-												 <!-- <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}"> -->
-												 <!-- <span class="custom-checkbox"></span> -->
-												 <!-- Complete RDF boxes in datetime functions -->
-											  <!-- </label> -->
-											<!-- </div> -->
-										<!-- </div> -->
-										
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{project.showGraphServiceCompartments}}">
-												 <span class="custom-checkbox"></span>
-												 Show Graph/Service compartments
-											  </label>
-											  <div class="help-tip">
-												<p>Show Graph/Service compartments to allow specifying named graph and federated service information in query parts. 
-												Uncheck, if the graph/service information is not not needed, to have a cleaner interface</p>
-											  </div>
-											</div>
-										</div>
-										
-										
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="enable-wikibase-label-services" type="checkbox" checked="{{project.enableWikibaseLabelServices}}">
-												 <span class="custom-checkbox"></span>
-												 Enable Wikibase Label Services
-											  </label>
-											  <div class="help-tip">
-												<p>Enable Wikibase Label Services (special compartments for selecting labels and descriptions along with attributes in wikidata queries)</p>
-											  </div>
-											</div>
-										</div>
-										
-										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-										<div class="form-group" >
-											<div class="col-sm-10" style="width: 100%;">
-												<table style="width: 100%;" class="table table-bordered table-condensed table-hover table-striped">
-													<thead>
-														<tr>
-															<th>Graph/Service shorthand</th>
-															<th>Expansion (e.g., URI)</th>
-															<th></th>
-														</tr>
-													</thead>
-													<tbody class="table-body">
-														{{#each graphs}}
-															<tr index="{{index}}">
-																<td><div class="table-item" attribute="item" contentEditable="true">{{Instruction}}</div></td>
-																<td><div class="table-item" attribute="procedure" contentEditable="true">{{Graph}}</div></td>			
-																<td>
-																	<center>
-																			<a class="btn btn-xs btn-danger remove-graph-menu-item"><i class="fa fa-trash-o"></i></a>
-																	</center>
-																</td>
-															</tr>
-														{{/each}}
-													</tbody>
-												</table>
-												<a class="btn btn-success pull-right" id="add-graph-menu-item"><i class="fa fa-plus"></i> Add</a>
-												<div class="help-tip">
-													<p>Specify shorthands for introducing graph/service information in queries. Can use then a shorthand in the place of its expansion.</p>
-											    </div>
-											</div>
-										</div>
-										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-										
-										<div class="form-group">
-											<div class="col-sm-10" style="width: 62%;">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{project.decorateInstancePositionVariable}}">
-												 <span class="custom-checkbox"></span>
-												 Decorate instance position variable names with '?'
-											  </label>
-											</div>
-											<div class="help-tip">
-												<p>Use '?' notation to emphasize that non-constant names in instance positions are variables. 
-												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics 
-												(shall not be used with constants). </p>
-											  </div>
-										</div>
-										
-										<div class="form-group">
-											<div class="col-sm-10" style="width: 58%;">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{project.decorateInstancePositionConstants}}">
-												 <span class="custom-checkbox"></span>
-												 Decorate instance position constants with '='
-											  </label>
-											</div>
-											<div class="help-tip">
-												<p>Use '=' notation to emphasize that the expression in the instance description is a constant.
-												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics
-												(shall not be used with variables).</p>
-											  </div>
-										</div>
-										
-										
-                                    </form>
-                                </div>
-                                <!-- end of tab3 -->
-								
-								 <!-- tab4 -->
-                                <div class="tab-pane fade padding-10" id="visualization">
-									<form class="form-horizontal" role="form">
-
-										<div class="form-group">
-											<div class="col-sm-10">
-												<label class="form-check-label">
-												 <input class="form-check-input" id="keep-variable-names" type="checkbox" checked="{{project.keepVariableNames}}">
-												 <span class="custom-checkbox"></span>
-												 Keep Variable Names
-											  </label>
-											  <div class="help-tip">
-												<p>Keep Variable Names</p>
-											  </div>
-											</div>
-										</div>
-									
-                                    </form>
-                                </div>
-                                <!-- end of tab4 -->
-
+        <!-- Modal for new document -->
+        <div id="ontology-settings-form" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Project Settings</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-default">
+                            <div class="panel-tab clearfix">
+                                <ul class="tab-bar">
+                                    <li class="active" id="project-settings"><a href="#main" data-toggle="tab">Main</a></li>
+                                    <li id="project-security"><a href="#sec" data-toggle="tab">Security</a></li>
+    								<li id="project-extra"><a href="#extra" data-toggle="tab">Extra</a></li>
+    								<li id="project-visualization"><a href="#visualization" data-toggle="tab">SPARQL Visualization</a></li>
+                                </ul>
                             </div>
-                        </div>
-                    </div>			
-		
 
-                </div>
+                            <div class="panel-body">
+                                <div class="tab-content user-tab-content">
 
-                <div class="modal-footer">
+                                    <!-- tab1 -->
+                                    <div class="tab-pane fade in active" id="main">
+    									<form class="form-horizontal" role="form">
+    									
+    										<div class="form-group">
+    											<label for="dss-schema" class="col-sm-3 control-label">DSS schema</label>
+    											<div class="col-sm-9">
+    												<select class="form-control" id="dss-schema" >
+    													{{#each schemas}}
+    														<option {{selected}} value="{{display_name}}">{{display_name}}</option>
+    													{{/each}}
+    												</select>
+    											</div>
+    										</div>
 
-                    <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
-                    <button id="cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
-                    <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
+    									    <div class="form-group">
+    										    <label for="ontology-endpoint" class="col-sm-3 control-label">SPARQL Endpoint</label>
+    										    <div class="col-sm-9">
+    											    <input id="ontology-endpoint" type="text" class="form-control" value="{{endpoint}}" autocomplete="off" >
+    										    </div>
+    									    </div>
 
-                    {{#if msg.text}}
-                        <ul class="parsley-error-list" style="display: block;">
-                            <li style="display: list-item;">{{msg.text}}</li>
-                        </ul>
-                    {{/if}}
+    										<div class="form-group">
+    											<label for="ontology-uri" class="col-sm-3 control-label">Named Graph</label>
+    											<div class="col-sm-9">
+    												<input id="ontology-uri" type="text" class="form-control" value="{{uri}}" autocomplete="off" >
+    											</div>
+    										</div>
 
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End of modal -->
+    										<div class="form-group">
+    											<label for="use-string-literal-conversion" class="col-sm-3 control-label">Use String Literal Conversion</label>
+    											<div class="col-sm-9">
+    												<select class="form-control" id="use-string-literal-conversion" >
+    												    {{#each useStringLiteralConversionList}}
+    														<option {{selected}} value="{{name}}">{{name}}</option>
+    													{{/each}}
+    												</select>
+    											</div>
+    										</div>
+    						
+    										<div class="form-group">
+    											<label for="query-engine-type" class="col-sm-3 control-label">Query Engine Type</label>
+    											<div class="col-sm-9">
+    												<select class="form-control" id="query-engine-type">
+    												  {{#each queryEngineTypeList}}
+    													 <option {{selected}} value="{{name}}">{{name}}</option>
+    												  {{/each}}
+    												</select>
+    											</div>
+    										</div>
+
+    										<div class="form-group">
+    											<div class="col-sm-5">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="use-default-grouping-separator" type="checkbox" checked="{{project.useDefaultGroupingSeparator}}">
+    												 <span class="custom-checkbox"></span>
+    												 Use Default Grouping Separator
+    											  </label>
+    											</div>
+    											<div class="col-sm-5">
+    												<input id="default-grouping-separator" type="text" class="form-control" value="{{project.defaultGroupingSeparator}}" disabled="{{project.NOTuseDefaultGroupingSeparator}}" autocomplete="off" >
+    											</div>
+    										</div>
+    										
+    										<div class="form-group">
+    											<div class="col-sm-5">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="show-cardinalities" type="checkbox" checked="{{project.showCardinalities}}">
+    												 <span class="custom-checkbox"></span>
+    												 Show Cardinalities
+    											  </label>
+    											</div>
+    										</div>
+    										
+    										
+    										
+                                        </form>
+                                    </div>
+                                    <!-- end of tab1 -->
+
+                                    <!-- tab2 -->
+                                    <div class="tab-pane fade padding-10" id="sec">
+    									<form class="form-horizontal" role="form">
+
+    									<div class="form-group">
+    										<label for="endpoint-username" class="col-sm-3 control-label">Username</label>
+    										<div class="col-sm-9">
+    											<input id="endpoint-username" type="text" class="form-control" value="{{project.endpointUsername}}" autocomplete="off" >
+    										</div>
+    									</div>
+    									<div class="form-group">
+    										<label for="endpoint-password" class="col-sm-3 control-label">Password</label>
+    										<div class="col-sm-9">
+    											<input id="endpoint-password" type="password" autocomplete= "new-password" class="form-control" value="{{project.endpointPassword}}">
+    										</div>
+    									</div>
+    									
+                                        </form>
+                                    </div>
+                                    <!-- end of tab2 -->
+    								
+    								<!-- tab3 -->
+                                    <div class="tab-pane fade padding-10" id="extra">
+    									<form class="form-horizontal" role="form">
+
+    										<div class="form-group">
+    											<label for="direct-class-membership-role" class="col-sm-3 control-label">Direct Class Membership Role</label>
+    											<div class="col-sm-9" style="width: 70%;">
+    												<input id="direct-class-membership-role" type="text" class="form-control" value="{{directClassMembershipRole}}" autocomplete="off" > 
+    											</div>
+    											<div class="help-tip">
+    											  <p>Role for instance-to-classifier relation (leave blank to have 'a' notation in SPARQL queries, corresponding to rdf:type)</p>
+    											</div>
+    										</div>
+
+    										<div class="form-group">
+    											<label for="indirect-class-membership-role" class="col-sm-3 control-label">Indirect Class Membership Role</label>
+    											<div class="col-sm-9" style="width: 70%;">
+    												<input id="indirect-class-membership-role" type="text" class="form-control" value="{{indirectClassMembershipRole}}" autocomplete="off" >	
+    											</div>
+    											<div class="help-tip">
+    											  <p>Role (or path) for indirect instance-to-classifier relation. To be used in SPARQL query generation, if indirect class membership is specified for a node.</p>
+    											</div>
+    										</div>
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="simple-condition-implementation" type="checkbox" checked="{{project.simpleConditionImplementation}}">
+    												 <span class="custom-checkbox"></span>
+    												 Simple condition implementation
+    											  </label>
+    											  <div class="help-tip">
+    												<p>Do not use 'Filter exists' to implement conditions that refer to instance properties. This simplifies the queries, although it might lead to result row duplication, if the used property is multi-valued.</p>
+    											  </div>
+    											</div>	
+    										</div>
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="show-prefixes-for-all-names" type="checkbox" checked="{{project.showPrefixesForAllNames}}">
+    												 <span class="custom-checkbox"></span>
+    												 Show local namespace prefixes
+    											  </label>
+    											  <div class="help-tip">
+    												<p>Show names from the local namespace (if one is specified) in full prefix:display_name form. Unchecking the checkbox
+    												shall show names from the local namespace simply as display_name, without the prefix.
+    												For query generation, each of the forms (with prefix or without prefix) are accepted regardless of the parameter value.</p>
+    											  </div>
+    											</div>
+    										</div>
+    										
+    										<!--
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="show-prefixes-for-all-non-local-names" type="checkbox" checked="{{showPrefixesForAllNonLocalNames}}">
+    												 <span class="custom-checkbox"></span>
+    												 Show prefixes for all non-local names
+    											  </label>
+    											</div>
+    										</div>
+    										-->
+    										
+    										<!-- <div class="form-group"> -->
+    											<!-- <div class="col-sm-10"> -->
+    												<!-- <label class="form-check-label"> -->
+    												 <!-- <input class="form-check-input" id="auto-hide-default-property-name" type="checkbox" checked="{{autoHideDefaultPropertyName}}"> -->
+    												 <!-- <span class="custom-checkbox"></span> -->
+    												 <!-- Auto-hide default property name -->
+    											  <!-- </label> -->
+    											<!-- </div> -->
+    										<!-- </div> -->
+    										
+    										<!-- <div class="form-group"> -->
+    											<!-- <div class="col-sm-10"> -->
+    												<!-- <label class="form-check-label"> -->
+    												 <!-- <input class="form-check-input" id="complete-RDF-boxes-in-datetime-functions" type="checkbox" checked="{{completeRDFBoxesInDatetimeFunctions}}"> -->
+    												 <!-- <span class="custom-checkbox"></span> -->
+    												 <!-- Complete RDF boxes in datetime functions -->
+    											  <!-- </label> -->
+    											<!-- </div> -->
+    										<!-- </div> -->
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="show-graph-service-compartments" type="checkbox" checked="{{project.showGraphServiceCompartments}}">
+    												 <span class="custom-checkbox"></span>
+    												 Show Graph/Service compartments
+    											  </label>
+    											  <div class="help-tip">
+    												<p>Show Graph/Service compartments to allow specifying named graph and federated service information in query parts. 
+    												Uncheck, if the graph/service information is not not needed, to have a cleaner interface</p>
+    											  </div>
+    											</div>
+    										</div>
+    										
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="enable-wikibase-label-services" type="checkbox" checked="{{project.enableWikibaseLabelServices}}">
+    												 <span class="custom-checkbox"></span>
+    												 Enable Wikibase Label Services
+    											  </label>
+    											  <div class="help-tip">
+    												<p>Enable Wikibase Label Services (special compartments for selecting labels and descriptions along with attributes in wikidata queries)</p>
+    											  </div>
+    											</div>
+    										</div>
+    										
+    										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+    										<div class="form-group" >
+    											<div class="col-sm-10" style="width: 100%;">
+    												<table style="width: 100%;" class="table table-bordered table-condensed table-hover table-striped">
+    													<thead>
+    														<tr>
+    															<th>Graph/Service shorthand</th>
+    															<th>Expansion (e.g., URI)</th>
+    															<th></th>
+    														</tr>
+    													</thead>
+    													<tbody class="table-body">
+    														{{#each graphs}}
+    															<tr index="{{index}}">
+    																<td><div class="table-item" attribute="item" contentEditable="true">{{Instruction}}</div></td>
+    																<td><div class="table-item" attribute="procedure" contentEditable="true">{{Graph}}</div></td>			
+    																<td>
+    																	<center>
+    																			<a class="btn btn-xs btn-danger remove-graph-menu-item"><i class="fa fa-trash-o"></i></a>
+    																	</center>
+    																</td>
+    															</tr>
+    														{{/each}}
+    													</tbody>
+    												</table>
+    												<a class="btn btn-success pull-right" id="add-graph-menu-item"><i class="fa fa-plus"></i> Add</a>
+    												<div class="help-tip">
+    													<p>Specify shorthands for introducing graph/service information in queries. Can use then a shorthand in the place of its expansion.</p>
+    											    </div>
+    											</div>
+    										</div>
+    										<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10" style="width: 62%;">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="decorate-instance-position-variable" type="checkbox" checked="{{project.decorateInstancePositionVariable}}">
+    												 <span class="custom-checkbox"></span>
+    												 Decorate instance position variable names with '?'
+    											  </label>
+    											</div>
+    											<div class="help-tip">
+    												<p>Use '?' notation to emphasize that non-constant names in instance positions are variables. 
+    												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics 
+    												(shall not be used with constants). </p>
+    											  </div>
+    										</div>
+    										
+    										<div class="form-group">
+    											<div class="col-sm-10" style="width: 58%;">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="decorate-instance-position-constants" type="checkbox" checked="{{project.decorateInstancePositionConstants}}">
+    												 <span class="custom-checkbox"></span>
+    												 Decorate instance position constants with '='
+    											  </label>
+    											</div>
+    											<div class="help-tip">
+    												<p>Use '=' notation to emphasize that the expression in the instance description is a constant.
+    												Applies to new instance denotations only. Used for decorative purposes only, does not influence the semantics
+    												(shall not be used with variables).</p>
+    											  </div>
+    										</div>
+    										
+    										
+                                        </form>
+                                    </div>
+                                    <!-- end of tab3 -->
+    								
+    								 <!-- tab4 -->
+                                    <div class="tab-pane fade padding-10" id="visualization">
+    									<form class="form-horizontal" role="form">
+
+    										<div class="form-group">
+    											<div class="col-sm-10">
+    												<label class="form-check-label">
+    												 <input class="form-check-input" id="keep-variable-names" type="checkbox" checked="{{project.keepVariableNames}}">
+    												 <span class="custom-checkbox"></span>
+    												 Keep Variable Names
+    											  </label>
+    											  <div class="help-tip">
+    												<p>Keep Variable Names</p>
+    											  </div>
+    											</div>
+    										</div>
+    									
+                                        </form>
+                                    </div>
+                                    <!-- end of tab4 -->
+
+                                </div>
+                            </div>
+                        </div>			
+    		
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
+                        <button id="cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                        <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
+
+                        {{#if msg.text}}
+                            <ul class="parsley-error-list" style="display: block;">
+                                <li style="display: list-item;">{{msg.text}}</li>
+                            </ul>
+                        {{/if}}
+
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- End of modal -->
+
+
 
 </template>
 
