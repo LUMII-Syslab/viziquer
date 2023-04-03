@@ -40,6 +40,8 @@ Template.schemaTree.helpers({
 		return Template.schemaTree.Classes.get();
 	},
 	ns: function() {
+		console.log("in get ns", Template.schemaTree.Ns.get())
+
 		return Template.schemaTree.Ns.get(); 
 	},
 	f1: function() {
@@ -48,7 +50,7 @@ Template.schemaTree.helpers({
 	empty: function() {
 		console.log("ontologiesLoaded ", Session.get("ontologiesLoaded"));
 
-		return Session.set("ontologiesLoaded", true);
+		return !Session.get("ontologiesLoaded");
 	},
 });
 
