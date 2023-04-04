@@ -858,7 +858,7 @@ Template.ontologySettings.events({
 				};
 
 		Utilities.callMeteorMethod("updateProjectOntology", list);
-		await dataShapes.changeActiveProject(Session.get("activeProject"));
+		await dataShapes.changeActiveProjectFull(list);
 		
 	},
 

@@ -241,7 +241,7 @@ const findElementDataForProperty = (vq_obj) => {
 	//if (dataShapes.schema.schemaType !== 'wikidata') { // Ir uztaisīts, bet strādā drusku palēni
 	//	var pListI = getPListI(vq_obj);
 	//	if ( pListI.type != undefined) params.pListI = pListI;
-	//}
+	// }
 	
 	return params;
 }
@@ -377,10 +377,6 @@ dataShapes = {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
 
-		console.log("rr ", rr)
-
-		Session.set("ontologiesLoaded", true);
-
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
 			// *** console.log(rr)
@@ -390,8 +386,17 @@ dataShapes = {
 		return NaN;
 	},
 	changeActiveProject : async function(proj_id) {
-		//console.log('------changeActiveProject-------')
+		console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
+		console.log(proj);
+		await this.changeActiveProjectFull();
+		this.schema = getEmptySchema();
+		if (proj !== undefined) {
+			await this.changeActiveProjectFull(proj);
+		}
+	},
+	changeActiveProjectFull : async function(proj) {
+		console.log('------changeActiveProjectFull-------')
 		//console.log(proj)
 		this.schema = getEmptySchema();
 		if (proj !== undefined) {
@@ -456,7 +461,6 @@ dataShapes = {
 					
 				}
 
-				Session.set("ontologiesLoaded", true);
 			}
 		}
 	},
