@@ -31,7 +31,7 @@ var schemaInstancesKeyDownTimeStamp;
 Template.schemaTree.onDestroyed(function() {
 	Template.schemaTree.Classes.set([]);
 	Template.schemaTree.Ns.set([]);
-
+	//console.log('--Template.schemaTree.onDestroyed--')
 });
 
 Template.schemaTree.helpers({
@@ -180,10 +180,12 @@ async function  useFilter (plus = 0) {
 	var text = Template.schemaTree.F1.get();
 	dataShapes.schema.tree.filterC = text;
 	// ** setNS();
-	var treeTop = Template.schemaTree.Classes.get();  
-	
+	var treeTop = Template.schemaTree.Classes.get(); 
 	if ( dataShapes.schema.tree.topClass != 0 ) 
-		await setTreeSubClasses ([treeTop[1]], true, text.toLowerCase());
+		if (treeTop.length == 1 )
+			await setTreeSubClasses ([treeTop[0]], true, text.toLowerCase()); 
+		else 
+			await setTreeSubClasses ([treeTop[1]], true, text.toLowerCase()); 
 	else 
 		await setTreeTop(text.toLowerCase(), plus);
 }
@@ -445,6 +447,7 @@ Template.schemaTree.events({
 		return;
 	},
 	'click #reload': async function(e){
+		//console.log('click #reload')
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
 		Template.schemaTree.Empty.set(false);
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
@@ -467,10 +470,9 @@ Template.schemaTree.events({
 });
 
 Template.schemaTree.rendered = async function() {
-	console.log("-----rendered schemaTree----")
+	//console.log("-----rendered schemaTree----")
 	var proj = Projects.findOne(Session.get("activeProject"));
-	console.log(proj)
-	if (proj !== undefined) {
+	if ( proj !== undefined && dataShapes.schema.projectId != proj._id) {
 		await dataShapes.changeActiveProjectFull(proj);
 	}
 
@@ -484,7 +486,7 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaTree.Empty.set(false);
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
-		Template.schemaTree.Classes.set(dataShapes.schema.tree.classPath);
+		Template.schemaTree.Classes.set([dataShapes.schema.tree.classPath[dataShapes.schema.tree.classPath.length-1]]); 
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
 		await useFilter ();		
 	}
