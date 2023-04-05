@@ -83,8 +83,8 @@ BoxCompartments.prototype = {
 
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
-
-			if (compart_in["value"] && compart_in["value"] != "" &&
+			
+			if ((compart_in && compart_in["value"] == "") ||
 				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
 			}

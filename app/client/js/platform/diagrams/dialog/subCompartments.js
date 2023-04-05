@@ -58,6 +58,8 @@ Template.multiFieldBody.events({
 		
 		e.preventDefault();
 
+		console.log("in add multi field")
+
 		var src = $(e.target);
 		$('.dialog-input').val('');
 
@@ -68,6 +70,11 @@ Template.multiFieldBody.events({
 		Session.set("multFieldCompartmentId", reset_variable());
 
 		var form = multi_field.find(".row-form");
+
+
+		console.log("form ", form)
+
+
 		form.modal("show");
 
 		execute_extension_point(compart_type_id);

@@ -50,9 +50,10 @@ LinkCompartments.prototype = {
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
-			if (compart_in["value"] && compart_in["value"] != "" &&
-				(compart_in["style"] && compart_in["style"]["visible"] == false))
+			if ((compart_in && (compart_in["value"] == "" || _.isUndefined(compart_in["value"]))) ||
+				(compart_in["style"] && compart_in["style"]["visible"] == false)) {
 				return;
+			}
 
 			var compart_style = compart_in["style"];
 			

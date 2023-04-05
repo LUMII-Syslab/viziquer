@@ -22,7 +22,9 @@ Interpreter.customMethods({
 		 let elem = new VQ_Element(act_elem);
 		 let comp_val_inst = elem.getCompartmentValue("Instance");
 		 // let comp_val_group = elem.getCompartmentValue("Group by this");
-		 let comp_val_group = params["value"];
+		 let comp_val_group = params["input"];
+
+		 let compartments = Compartments.find({elementId: act_elem}).fetch()
 
 		 if(comp_val_inst != null && comp_val_inst != ""){
 			 var proj = Projects.findOne({_id: Session.get("activeProject")});
@@ -54,15 +56,15 @@ Interpreter.customMethods({
 			 }
 		 }
 		 
- 		 if (comp_val_group == "true" || comp_val_group == true)
-		 {
-		   if (comp_val_inst == null )
+ 		 if (comp_val_group == "true" || comp_val_group == true){
+		   if (comp_val_inst == null ) {
 		     elem.setCompartmentValue("Instance", "", "{group}");
-		   else
+		   }
+		   else {
 		     elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
+		   }
 		 }
-		 else
-		 {
+		 else {
 		   if (typeof comp_val_inst == "undefined") {
 		     elem.setCompartmentValue("Instance", "", "", false);
 		   }
@@ -72,13 +74,14 @@ Interpreter.customMethods({
 		 }
  	},
 	
-	VQsetDistinct: function() {
+	VQsetDistinct: function(params) {
 		 var act_elem = Session.get("activeElement");
 		 var elem = new VQ_Element(act_elem);
-		 var comp_val_distinct = elem.getCompartmentValue("Distinct");
+		 // var comp_val_distinct = elem.getCompartmentValue("Distinct");
+		 var comp_val_distinct = params["input"];
 
- 		 if (comp_val_distinct != "true")
-		 {
+		 // elem.setCompartmentValue("Distinct", params["input"], params["value"]);
+ 		 if (comp_val_distinct != "true") {
 		   elem.setCompartmentValue("Distinct", "", "");
 		 }
  	},
