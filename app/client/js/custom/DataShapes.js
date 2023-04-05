@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects } from '/libs/platform/collections'
+import { Projects, Compartments, CompartmentTypes } from '/libs/platform/collections'
 
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
@@ -339,6 +339,7 @@ return {
 		treeTopsP: {}, 
 		namespaces: [],
 		showPrefixes: "false", 
+		projectId: "",
 		limit: MAX_ANSWERS,
 		use_pp_rels: false,
 		simple_prompt: false,
@@ -373,6 +374,9 @@ return {
 // ***********************************************************************************
 dataShapes = {
 	schema : getEmptySchema(),
+	clearSchema : function() {
+		this.schema = getEmptySchema();
+	},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
@@ -386,21 +390,20 @@ dataShapes = {
 		return NaN;
 	},
 	changeActiveProject : async function(proj_id) {
-		console.log('------changeActiveProject-------')
+		//console.log('------changeActiveProject-------')
 		var proj = Projects.findOne({_id: proj_id});
-		console.log(proj);
-		await this.changeActiveProjectFull();
-		this.schema = getEmptySchema();
+		//this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			await this.changeActiveProjectFull(proj);
 		}
 	},
 	changeActiveProjectFull : async function(proj) {
-		console.log('------changeActiveProjectFull-------')
+		//console.log('------changeActiveProjectFull-------')
 		//console.log(proj)
-		this.schema = getEmptySchema();
-		if (proj !== undefined) {
+		if (proj !== undefined && this.schema.projectId != proj._id) {
+			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
+				this.schema.projectId = proj._id;
 				this.schema.schemaName =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
 				this.schema.empty = false;
@@ -469,7 +472,6 @@ dataShapes = {
 			console.log("---------callServerFunction--------------" + funcName)
 			console.log(params)
 		}
-
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
 		var s = this.schema.schema;
@@ -501,8 +503,8 @@ dataShapes = {
 
 			rr = await callWithPost(`ontologies/${s}/${funcName}`, params);
 		}
-		else
-			Interpreter.showErrorMsg("Project DSS parameter not found !");
+		//else
+		//	Interpreter.showErrorMsg("Project DSS parameter not found !");  // TODO par šo padomāt
 
 		const time = Date.now() - startTime
 
