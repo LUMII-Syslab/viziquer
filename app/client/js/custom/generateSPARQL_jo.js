@@ -1829,9 +1829,15 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 					//expressionTriples
 					var tripleTemp = getTriple(result, alias, field["requireValues"], true);
 					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
-								tripleTemp["graph"] = field["graph"];
-								tripleTemp["graphInstruction"] = field["graphInstruction"];
-							}
+						tripleTemp["graph"] = field["graph"];
+						tripleTemp["graphInstruction"] = field["graphInstruction"];
+					}	
+					
+					if(field["requireValues"] != true && typeof tripleTemp["triple"] !== "undefined" && tripleTemp["triple"].length > 0 ){	
+						for(let t = 0; t < tripleTemp["triple"].length; t++){
+							tripleTemp["triple"][t] = "OPTIONAL{" + tripleTemp["triple"][t] + "}";
+						}
+					}
 					
 					classExpressionTriples.push(tripleTemp);
 

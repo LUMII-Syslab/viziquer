@@ -6,9 +6,9 @@
         max-height: 60vh;
     }
 </style>
-
+  {{#with field_obj}}
 	<!-- Modal for new document -->
-    <div id="add-condition-form" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div id="add-condition-form" class="modal fade row-form compart-type" data-backdrop="static" data-keyboard="false" compartmentId={{compartmentId}}>
 
         <div class="modal-dialog">
             <div class="modal-content">
@@ -17,8 +17,34 @@
                     <h4 class="modal-title">Condition</h4>
                 </div>
                 <div class="modal-body" style="width: 550px">
-				
 					<form autocomplete="off" onsubmit="return false;">
+					{{#if fields}}
+
+	                    {{#each fields}}
+							{{#if combobox}}
+
+								<div id = "condition-expression-field" class="form-group" style="margin-bottom:10px;">
+									<label>Expression</label>
+									<input id="condition-expression" type="text" class="form-control" value="{{field_value}}">
+									<span class="help-block">Use Ctrl+Space for text auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i></span>	
+								</div>
+							{{/if}}
+							
+							{{#if checkbox}}
+
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">						
+										<input type="checkbox" id="allow-multiplication-check-box" class="dialog-checkbox input-sm" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Simple condition
+										<span class="help-block"><small>Use of non-singleton properties in simple conditions can cause repetitions of result set rows </small></span>					
+									</label>
+								</div>
+							{{/if}}
+						{{/each}}
+						
+					{{else}}
+	               
 						<div id = "condition-expression-field" class="form-group" style="margin-bottom:10px;">
 							<label>Expression</label>
 							<input id="condition-expression" type="text" class="form-control">
@@ -33,17 +59,19 @@
 								<span class="help-block"><small>Use of non-singleton properties in simple conditions can cause repetitions of result set rows </small></span>					
 							</label>
 						</div>
-		   
-	                </form>
+					 {{/if}}	
+						
+						
+	                </form>	
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button id="ok-add-condition" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+                    <button id="ok-add-condition" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
-
+{{/with}}
 
 </template>

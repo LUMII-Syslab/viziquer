@@ -376,4 +376,4 @@ function get_multi_fields_obj() {
 }
 
 
-export {get_multi_fields_obj}
+export {get_multi_fields_obj, process_sub_compart_types}
