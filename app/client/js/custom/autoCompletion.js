@@ -404,10 +404,15 @@ function updateInputValue(input, prefix, suggestion) {
 	var act_el = Elements.findOne({_id: act_elem});
 	if(typeof act_el !== 'undefined'){
 		var compart_type_id = $(input).closest(".compart-type").attr("id");
+		console.log(compart_type_id )
 		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		var compartAll = Compartments.find({ elementId: act_elem});
+		Compartments.find({elementId: act_elem}).forEach(function (cc) {
+			console.log(cc)
+		 })
+
 		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
 		if(typeof compart !== "undefined"){
-
 			var elem = new VQ_Element(act_elem);
             if (elem.isIndirectClassMembership()) {
 				Dialog.updateCompartmentValue(compart_type, newValue, ".. "+newValue, compart["_id"]);

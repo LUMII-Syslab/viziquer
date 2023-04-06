@@ -386,9 +386,8 @@ Template.schemaTree.events({
 								 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
-					boo.setName(class_name);
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+					boo.setNameAndIndirectClassMembership(class_name,proj && proj.indirectClassMembershipRole);
 				}, loc);
 			
 		}
@@ -470,7 +469,7 @@ Template.schemaTree.events({
 });
 
 Template.schemaTree.rendered = async function() {
-	//console.log("-----rendered schemaTree----")
+	console.log("-----rendered schemaTree----")
 	var proj = Projects.findOne(Session.get("activeProject"));
 	if ( proj !== undefined && dataShapes.schema.projectId != proj._id) {
 		await dataShapes.changeActiveProjectFull(proj);
@@ -488,31 +487,44 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		Template.schemaTree.Classes.set([dataShapes.schema.tree.classPath[dataShapes.schema.tree.classPath.length-1]]); 
 		//$("#filter_text")[0].value = dataShapes.schema.tree.filterC;
-		await useFilter ();		
+		await useFilter ();	
+		
+		Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
+		Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
+		Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
+		await useFilterP ();
+		
+		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
+		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
+		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
+		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
+		await setBC();
+		await useFilterI();		
 	}
 	//Template.schemaTree.ClassPath.set([]);
 }
 
 Template.schemaFilter.rendered = async function() {
-	//console.log("-----rendered schemaFilter----")
-	Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
-	Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
-	Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
-	await useFilterP ();
+	console.log("-----rendered schemaFilter (Properties)----")
+	// Pārnests uz schemaTree.rendered
+	// Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
+	// Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
+	// Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
+	// await useFilterP ();
 
 }
 
 Template.schemaInstances.rendered = async function() {
 	//console.log("-----rendered schemaInstances----")
-	//$("#filter_text3")[0].value = dataShapes.schema.tree.filterI;
-	//$("#class").val(dataShapes.schema.tree.class);
-	Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
-	Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
-	Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
-	Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
-	Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
-	await setBC();
-	await useFilterI();
+	// Pārnests uz schemaTree.rendered
+	// Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
+	// Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
+	// Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
+	// Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
+	// Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
+	// await setBC();
+	// await useFilterI();
 }
 
 Template.schemaFilter.helpers({
@@ -591,13 +603,11 @@ Template.schemaFilter.events({
 
 				Create_VQ_Element(function(boo) {
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setName(domainName);
-					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+					boo.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
 					
 					Create_VQ_Element(function(cl){
 						var proj = Projects.findOne({_id: Session.get("activeProject")});
-						cl.setName(rangeName);
-						cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+						cl.setNameAndIndirectClassMembership(rangeName,proj && proj.indirectClassMembershipRole);
 						
 						cl.setClassStyle("condition");	                
 						locLink = [loc.x+DEFAULT_BOX_WIDTH/2, loc2.y+DEFAULT_BOX_HEIGHT, loc.x+DEFAULT_BOX_WIDTH/2, loc.y];                 
@@ -616,9 +626,8 @@ Template.schemaFilter.events({
 			}
 			else {
 				Create_VQ_Element(function(boo) {
-						boo.setName(domainName);
 						var proj = Projects.findOne({_id: Session.get("activeProject")});
-						boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+						boo.setNameAndIndirectClassMembership(domainName,proj && proj.indirectClassMembershipRole);
 						boo.addField(prop_name,null,true,false,false);
 					}, loc);				
 
@@ -725,12 +734,11 @@ Template.schemaInstances.events({
 					 height: DEFAULT_BOX_HEIGHT};
 
 			Create_VQ_Element(function(boo) {
+					var name = '';
 					if (!className.includes('All classes')) 
-						boo.setName(className);
-					else	
-						boo.setName('');
+						name = className;
 					var proj = Projects.findOne({_id: Session.get("activeProject")});
-					boo.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
+					boo.setNameAndIndirectClassMembership(name, proj && proj.indirectClassMembershipRole);
 					boo.setInstanceAlias(i_name);
 				}, loc);				
 			
