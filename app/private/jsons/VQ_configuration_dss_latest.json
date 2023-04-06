@@ -2367,7 +2367,7 @@
                 "inputType": {
                   "type": "custom",
                   "inputType": "text",
-                  "templateName": "multiField"
+                  "templateName": "classConditionsField"
                 },
                 "styles": [
                   {
