@@ -2881,11 +2881,9 @@ VQ_Element.prototype = {
 			nameValue = ".. " + name;
 			indirectS = "true";
 		}
-		else
-			indirectS = "true";  // TODO Pārbaudīt, vai šo vajag uzlikt, ja nav vārda
 	} 
 	
-	this.setCompartmentValue("Name",name,nameValue,true);
+	this.setCompartmentValue("Name",name,nameValue);
 	this.setCompartmentValueAuto("indirectClassMembership",indirectS)
   },
   // determines whether the class has distinct property
