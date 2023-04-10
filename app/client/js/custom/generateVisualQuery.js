@@ -3780,8 +3780,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	}
 	// type=bind
 	if(where["type"] == "bind"){
-		
 		var temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
+		
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
 		filterTable = temp["filterTable"];
@@ -3791,6 +3791,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		bindTable = temp["bindTable"];
 		viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
 		viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
+		
+		for(let variable = 0; variable < viziQuerExpr["exprVariables"].length; variable++){
+			if(viziQuerExpr["exprVariables"][variable].startsWith("@")) viziQuerExpr["exprVariables"][variable] = viziQuerExpr["exprVariables"][variable].substring(1);
+		}
 
 		if(typeof where["expression"]["termType"] !== "undefined" && Object.keys(classesTable).length == 0 && getVariable(where["expression"])["type"] == "iri"){
 			var subjectNameParsed = getVariable(where["expression"]);
@@ -3816,7 +3820,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}
 		
 		var bindExpr = viziQuerExpr["exprString"];
-		if(bindExpr == "" && typeof where["expression"]["termType"] !== "undefined") bindExpr = "`" + await generateInstanceAlias(where["expression"]["value"]);
+		
+		if(bindExpr == "" && typeof where["expression"]["termType"] !== "undefined" && where["expression"]["termType"] !== "Variable") bindExpr = "`" + await generateInstanceAlias(where["expression"]["value"]);
+		else if(bindExpr == "") bindExpr = await generateInstanceAlias(where["expression"]["value"]);
 		if(typeof where["expression"]["termType"] !== "undefined"){
 			var bindExprParse = getVariable(where["expression"]);
 			if(bindExprParse["type"] == "number") bindExpr = bindExprParse["value"];
@@ -3848,6 +3854,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 			}
 		}
+		
+		
+		
 		if(typeof classesTable[viziQuerExpr["exprVariables"][0]] !== 'undefined'){		
 			var className = viziQuerExpr["exprVariables"][0];
 			var classUnderOptional = false;

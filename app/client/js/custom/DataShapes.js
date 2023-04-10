@@ -481,13 +481,6 @@ dataShapes = {
 			s = this.schema.schema;
 		}
 		
-		//*if (s === "" || s === undefined ) {
-		//*	console.log("--------Tomēr tukšs-------------")
-		//*	this.schema.schema = 'DBpedia'; // ----- !!! ( for development ) - remove !!! -----
-		//*	this.schema.showPrefixes = "true"; // ----- !!! ( for development ) - remove !!! -----
-		//*	s = 'DBpedia';
-		//*}
-		
 		// *** console.log(params)
 		var rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
@@ -850,6 +843,7 @@ dataShapes = {
 		//var comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
 		//console.log(comparts)
 		Compartments.find({elementId: el._id()}, {sort: {index: 1}}).forEach(function (cc) {
+			console.log(cc)
 			if (all == 1 || cc["style"].visible)
 				console.log(CompartmentTypes.findOne({ _id:cc.compartmentTypeId})["name"] + "--" + cc["value"] +"*--"+ cc["style"].visible.toString() + "--" + cc["index"])
 			//console.log(cc["value"])

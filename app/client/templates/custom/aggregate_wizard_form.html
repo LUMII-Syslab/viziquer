@@ -57,8 +57,17 @@
                     <h4 class="modal-title">Aggregate wizard</h4>
                 </div>
                 <div class="modal-body">                
-                    <form class="form-horizontal" role="form">                       
-                        <form autocomplete="off" onsubmit="return false;">
+                    <form class="form-horizontal" role="form"> 
+
+						<form onsubmit="return false;" autocomplete="off">
+                            <p style="color:purple">Result name (alias): </p>
+                            <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
+							<!-- <input type="text" id="alias-name-aggr"><br> -->
+                        </form>
+
+                        <hr>
+						
+                        <div id = "what_to_aggregate" autocomplete="off" onsubmit="return false;">
                             <p style="color:purple">What to aggregate:  
 							<!-- <div class="help-tip">
                                 <p>Field or expression. Leave blank for class instance aggregation. </p>
@@ -81,7 +90,7 @@
                                     <!-- <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option> -->
                                 <!-- {{/each}} -->
                             <!-- </select> -->
-                        </form>
+                        </div>
 
 						
 						<div id="extra-options" style="display: none;">
@@ -145,13 +154,7 @@
 		
                         </form>      
 						
-						<form onsubmit="return false;" autocomplete="off">
-                            <p style="color:purple">Result name (alias): </p>
-                            <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
-							<!-- <input type="text" id="alias-name-aggr"><br> -->
-                        </form>
-
-                        <hr>
+						
 
                         <form style="display: {{showDisplay}};" onsubmit="return false;"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">

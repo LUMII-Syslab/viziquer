@@ -1892,7 +1892,7 @@ VQ_Schema.prototype = {
 		  //_.each(attr_data, function(attr){
 			//	attr.instanceCount = csv_table[ii]["AA"]
 			//	ii = ii + 1;
-		  //});
+		  // });
 		  //console.log("******************************");
 		  //console.log(attr_data);
     } 
@@ -2185,7 +2185,7 @@ VQ_Class.prototype.getAllAttributes = function(paz = true) {
 	//	var sparql = "PREFIX : <"+class_info.ontology.namespace+"> SELECT  (COUNT(?Cl) AS ?AA) WHERE{ ?Cl a :"+class_info.localName+". ?Cl :"+ attr.name+" ?attr.}";
 	//	console.log(sparql)
 	//	schema.FindInstanceCount(attr,sparql);	
-	//})
+	// })
 	// **** VQ_Schema_copy.FindAttrCount(attributes,this);
 	this.allAttributes = attributes;
 	if (druka) console.log(this.allAttributes)
@@ -2864,6 +2864,7 @@ VQ_Element.prototype = {
   },
   // bool ->
   setIndirectClassMembership: function(indirect) {
+
 	var indirectS = "false";
 
 	if (indirect) {
@@ -2878,6 +2879,20 @@ VQ_Element.prototype = {
     };
     this.setCompartmentValueAuto("indirectClassMembership",indirectS)
 	
+  },
+  setNameAndIndirectClassMembership: function(name,indirect) {
+	var indirectS = "false";
+	var nameValue = name;
+	
+	if (indirect) {
+		if(name !== null && name !== ""){
+			nameValue = ".. " + name;
+			indirectS = "true";
+		}
+	} 
+	
+	this.setCompartmentValue("Name",name,nameValue);
+	this.setCompartmentValueAuto("indirectClassMembership",indirectS)
   },
   // determines whether the class has distinct property
   isDistinct: function() {
@@ -2965,7 +2980,6 @@ VQ_Element.prototype = {
   // --> [{fulltext:string + see the structure below - title1:value1, title2:value2, ...}},...]
   // returns an array of attributes: expression, stereotype, alias, etc. ...
   getFields: function() {
-  console.log('---------getFields------------')
     var field_list =  this.getMultiCompartmentSubCompartmentValues("Attributes",
     [{title:"exp",name:"Expression"},
     {title:"alias",name:"Field Name"},
@@ -2994,8 +3008,6 @@ VQ_Element.prototype = {
 			}
 		}
 	}
-	console.log('Rezultāts')
-	console.log(compratmentList)
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
@@ -3323,14 +3335,13 @@ VQ_Element.prototype = {
 	},
   // sets name
 	// string -->
-	setName: function(name) {
+  setName: function(name) {
     if (this.isIndirectClassMembership() && name !== null && name !== "") {
       this.setCompartmentValue("Name",name,".. "+name);
     } else {
       this.setCompartmentValue("Name",name,name);
     };
-
-	},
+  },
   // sets name's visual appeareance
   // string -->
   setNameValue: function(value, input) {
@@ -3574,7 +3585,7 @@ VQ_Element.prototype = {
 						};
 						//if (this.isNegation()) {
 						//	this.setLinkType("REQUIRED");
-						//};
+						// };
 				} else if (value=="CONDITION") {
 					if(this.getType() == "FILTER_EXISTS") this.setLinkType("REQUIRED");
 					  setSub = "false";
@@ -3622,7 +3633,7 @@ VQ_Element.prototype = {
 						};
 						//if (this.isNegation()) {
 						//	this.setLinkType("REQUIRED");
-						//};
+						// };
 				}  else {
 					if(this.getType() == "FILTER_EXISTS") this.setLinkType("REQUIRED");
 					this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"None"},
@@ -3684,7 +3695,6 @@ VQ_Element.prototype = {
 											styleId: ct.styles[0]["id"],
 										},
 									};
-
              Utilities.callMeteorMethod("insertCompartment", c_to_create);
           return 3;
 			};
