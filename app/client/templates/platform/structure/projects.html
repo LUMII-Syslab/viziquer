@@ -23,9 +23,9 @@
     </li>
     {{#each projects}}
         <li class="projects-dropdown-item" id="{{projectId}}">
-            <a href="{{pathFor 'diagrams'}}">
+            <a href="{{pathFor 'diagrams' projectId=this.projectId versionId=this.versionId}}">
                 <div class="clearfix project-padding">
-                    <span class="m-left-xs"> {{name}} </span>
+                    <span class="m-left-xs"> {{name}}</span>
                     {{#if removeProject}}
                         <i class="fa fa-trash-o fa-lg pull-right remove-project"></i>
                     {{/if}}

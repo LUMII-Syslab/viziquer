@@ -2468,6 +2468,10 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
         endElement: target._id(),
       };
 
+
+      console.log("new line", new_line, new_line.style)
+      console.log("")
+
       var compartments = Dialog.buildCopartmentDefaultValue(new_line);
 
       if (_.size(compartments) > 0) {
@@ -2476,6 +2480,10 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
 
       Utilities.callMeteorMethod("insertElement", new_line, function(elem_id) {
             var vq_obj = new VQ_Element(elem_id);
+
+            console.log("vq_obj ", vq_obj)
+            console.log("func", func)
+
             if (func) { func(vq_obj) };
       });
 
@@ -3492,6 +3500,7 @@ VQ_Element.prototype = {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
 																		//{attrName:"startShapeStyle.fill",attrValue:"#000000"},
 																		{attrName:"startShapeStyle.radius",attrValue:12},
+																		// {attrName:"startShapeStyle.radius",attrValue:6},
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
@@ -3514,6 +3523,7 @@ VQ_Element.prototype = {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
 																		//{attrName:"endShapeStyle.fill",attrValue:"#000000"},
 																		{attrName:"endShapeStyle.radius",attrValue:12},
+																		// {attrName:"endShapeStyle.radius",attrValue:6},
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:8},
@@ -3544,6 +3554,7 @@ VQ_Element.prototype = {
 							this.setCustomStyle([{attrName:"startShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
 																		{attrName:"startShapeStyle.radius",attrValue:12},
+																		// {attrName:"startShapeStyle.radius",attrValue:6},
 																		{attrName:"endShapeStyle.shape",attrValue:"Arrow"},
 																	  {attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
 																	  {attrName:"endShapeStyle.radius",attrValue:8},
@@ -3553,6 +3564,7 @@ VQ_Element.prototype = {
 						} else if (root_dir=="end") {
 							this.setCustomStyle([{attrName:"endShapeStyle.shape",attrValue:"Circle"},
 																		{attrName:"endShapeStyle.fill",attrValue:"#FFFFFF"},
+																		// {attrName:"startShapeStyle.radius",attrValue:6},																		
 																		{attrName:"endShapeStyle.radius",attrValue:12},
 																		{attrName:"startShapeStyle.shape",attrValue:"None"},
 																		{attrName:"startShapeStyle.fill",attrValue:"#FFFFFF"},
@@ -3648,7 +3660,8 @@ VQ_Element.prototype = {
 			if (c && !insertMode) {
 				Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
 				return 1;
-			} else {
+			}
+			else {
 				  //Dialog.updateCompartmentValue(ct, input, value);
           var c_to_create = {
 										compartment: {

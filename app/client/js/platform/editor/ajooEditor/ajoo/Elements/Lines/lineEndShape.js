@@ -51,6 +51,11 @@ LineEndShape.prototype.addEndShapeRepresentationElement = function(style) {
 
 	style["perfectDrawEnabled"] = false;
 	style["listening"] = false;
+	if (style.radius) {
+		_.extend(style, {width: style.radius, height: style.radius,});
+	}
+
+
 	var shape_name = style["shape"];
 
 	var end_shapes = {
@@ -79,8 +84,9 @@ LineEndShape.prototype.addEndShapeRepresentationElement = function(style) {
 	};
 
 	var func = end_shapes[shape_name];
-	if (func)
+	if (func) {
 		return func();
+	}
 }
 
 

@@ -60,7 +60,6 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    	var elem_handle = Elements.find({isInVisible: {$ne: true}}).observeChanges({
 
 		added: function (id, elem) {
-
 			elem["_id"] = id;
 
 			//if initializing, then collecting all the data
@@ -169,7 +168,6 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 				//recomputing line style
 				else if (element["type"] == "Line") {
-
 					element.setStyle(fields["style"]);
 
 					var parent = element.presentation.getParent();
@@ -180,6 +178,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 					else {
 						var drag_layer = editor.getLayer("DragLayer");
 						drag_layer.batchDraw();
+						// parent.batchDraw();
 					}
 				}			
 			}

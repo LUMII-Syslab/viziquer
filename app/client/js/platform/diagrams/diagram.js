@@ -346,7 +346,6 @@ Template.diagramEditor.helpers({
 
 	//THIS is HACK
 	elements: function() {
-
 		var editor_type = Interpreter.getEditorType();
 		if (is_zoom_chart_editor(editor_type)) {
 

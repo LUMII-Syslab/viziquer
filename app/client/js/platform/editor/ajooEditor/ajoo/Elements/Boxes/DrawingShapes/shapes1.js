@@ -540,6 +540,7 @@ ACircle.prototype = Object.create(RPolygon.prototype);
 ACircle.prototype.constructor = ACircle;
 
 ACircle.prototype.createShape = function(prop_list) {
+	// _.extend(prop_list, {width: prop_list.radius, height: prop_list.radius,});
 
 	var shape = new Konva.Circle(prop_list);
 	return {element: [shape]};
@@ -549,21 +550,26 @@ ACircle.prototype.computeShapeSize = function(new_width, new_height) {
 
 	var radius = Math.max(new_width / 2, new_height / 2);
 
+	var radius = Math.max(new_width, new_height);
+
 	var new_x = radius;
 	var new_y = radius;
 
 	var res = {width: new_width, height: new_height};
 
-	var new_width = radius * 2;
-	var new_height = radius * 2;
+	// var new_width = radius * 2;
+	// var new_height = radius * 2;
 
-	res["centerX"] = new_width / 2;
-	res["centerY"] = new_height / 2;
+	// res["centerX"] = radius / 2;
+	// res["centerY"] = radius / 2;
+
+	res["centerX"] = radius;
+	res["centerY"] = radius;
 
 	res["radius"] = radius;
 
-	res["width"] = new_width;
-	res["height"] = new_height;
+	res["width"] = radius;
+	res["height"] = radius;
 
 	return res;
 }
