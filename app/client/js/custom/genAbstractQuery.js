@@ -951,7 +951,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		// obj_class.orderings.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) 
 	};
     if (obj_class.groupings) { 
-		for (const c of obj_class.groupings){await parseExpObject}
+		for (const c of obj_class.groupings){await parseExpObject(c,obj_class.identification);}
 		// obj_class.groupings.forEach(await parseExpObject) 
 	};
     // if (obj_class.havingConditions) { obj_class.havingConditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);}) };

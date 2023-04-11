@@ -87,7 +87,7 @@ Template.AddCondition.events({
 				
 				if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
 					allowMultiplication = "true";
-					allowMultiplicationInput = "  {*}";
+					allowMultiplicationInput = "* ";
 					fullText = allowMultiplicationInput + fullText;
 				}
 				else allowMultiplication = "false";
@@ -99,8 +99,20 @@ Template.AddCondition.events({
 				Dialog.updateCompartmentValue(compart_type, condition, fullText, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 			}
 		}
+		
+		document.getElementById("condition-extra-options").style.display = "none";
+		document.getElementById("condition-expression").value = "";
+		document.getElementById("allow-multiplication-check-box").checked=false;
+		
 		return;
 
+	},
+	
+	"click #cancel-add-condition": function(e) {
+		document.getElementById("condition-extra-options").style.display = "none";
+		document.getElementById("condition-expression").value = "";
+		document.getElementById("allow-multiplication-check-box").checked=false;
+		return;
 	},
 
 	"keydown #condition-expression": function(e) {
@@ -114,6 +126,12 @@ Template.AddCondition.events({
 
 	"hidden.bs.modal #add-condition-form": function(e) {
 		autoCompletionCleanup();
+	},
+	
+	'click #extra-options-attribute-button': function(e) {
+		if(document.getElementById("condition-extra-options").style.display == "none") document.getElementById("condition-extra-options").style.display = "block";
+		else document.getElementById("condition-extra-options").style.display = "none";
+		return;
 	},
 
 });
