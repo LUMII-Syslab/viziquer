@@ -1,3 +1,4 @@
+import { Interpreter } from '/client/lib/interpreter'
 
 Template.delete_confirmation.helpers({
 	text: function() {
