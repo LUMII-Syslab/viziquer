@@ -17,7 +17,6 @@ Interpreter.customMethods({
 
 Template.AddCondition.helpers({
 	field_obj: function() {
-
 		var data_in = Template.currentData();
 		if (!data_in) {
 			return;
@@ -101,8 +100,8 @@ Template.AddCondition.events({
 		}
 		
 		document.getElementById("condition-extra-options").style.display = "none";
-		document.getElementById("condition-expression").value = "";
-		document.getElementById("allow-multiplication-check-box").checked=false;
+		// document.getElementById("condition-expression").value = "";
+		// document.getElementById("allow-multiplication-check-box").checked=false;
 		
 		return;
 
@@ -110,8 +109,8 @@ Template.AddCondition.events({
 	
 	"click #cancel-add-condition": function(e) {
 		document.getElementById("condition-extra-options").style.display = "none";
-		document.getElementById("condition-expression").value = "";
-		document.getElementById("allow-multiplication-check-box").checked=false;
+		// document.getElementById("condition-expression").value = "";
+		// document.getElementById("allow-multiplication-check-box").checked=false;
 		return;
 	},
 
