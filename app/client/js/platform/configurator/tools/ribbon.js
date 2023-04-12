@@ -5,16 +5,19 @@ Template.toolRibbon.helpers({
 
 	title: function() {
 		var tool = Tools.findOne({_id: Session.get("toolId")});
-		if (tool)
+		if (tool) {
 			return tool["name"];
+		}
 	},
 
 	editMode: function() {
 		var tool_version = ToolVersions.findOne({status: "New"});
-		if (tool_version)
+		if (tool_version) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	},
 
 });

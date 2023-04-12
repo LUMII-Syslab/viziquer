@@ -57,8 +57,7 @@ Template.AddCondition.helpers({
 
 Template.AddCondition.events({
 
-	"click #ok-add-condition": function(e) {
-		
+	"click #ok-add-condition": function(e) {		
 		var selected_elem_id = Session.get("activeElement");
 		var elem = document.getElementById("add-condition-form");
 		var act_el = Elements.findOne({_id: selected_elem_id}); 
@@ -103,12 +102,17 @@ Template.AddCondition.events({
 		// document.getElementById("condition-expression").value = "";
 		// document.getElementById("allow-multiplication-check-box").checked=false;
 		
+		$("#condition-expression").val("");
+
 		return;
 
 	},
 	
 	"click #cancel-add-condition": function(e) {
 		document.getElementById("condition-extra-options").style.display = "none";
+
+		$("#condition-expression").val("");
+
 		// document.getElementById("condition-expression").value = "";
 		// document.getElementById("allow-multiplication-check-box").checked=false;
 		return;
