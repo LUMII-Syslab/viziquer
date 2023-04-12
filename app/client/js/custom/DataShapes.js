@@ -822,9 +822,9 @@ dataShapes = {
 		}
 		
 		if ( rr.complete )
-				this.schema.resolvedIndividuals[params.name] = rr.data[0];
-			else
-				this.schema.resolvedIndividualsF[params.name] = 1;
+			this.schema.resolvedIndividuals[params.name] = rr.data[0];
+		else if ( !rr.complete )
+			this.schema.resolvedIndividualsF[params.name] = 1;
 		return rr;	
 	},
 	generateClassUpdate : async function (label_name) {
