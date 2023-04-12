@@ -25,19 +25,20 @@
 
 								<div id = "condition-expression-field" class="form-group" style="margin-bottom:10px;">
 									<label>Expression</label>
-									<input id="condition-expression" type="text" class="form-control" value="{{field_value}}">
+									<input id="condition-expression" type="text" class="form-control" style="width:68%;display: inline-block;" value="{{field_value}}">
+									<a id="extra-options-attribute-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
 									<span class="help-block">Use Ctrl+Space for text auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i></span>	
 								</div>
 							{{/if}}
 							
 							{{#if checkbox}}
 
-								<div class="form-group" style="margin-bottom:10px;">
+								<div class="form-group" id = "condition-extra-options" style="margin-bottom:10px; display: none;">
 									<label class="label-checkbox">						
 										<input type="checkbox" id="allow-multiplication-check-box" class="dialog-checkbox input-sm" checked="{{checked}}">
 										<span class="custom-checkbox"></span>
-										Simple condition
-										<span class="help-block"><small>Use of non-singleton properties in simple conditions can cause repetitions of result set rows </small></span>					
+										Simple implementation
+										<span class="help-block"><small>Simple implementation does not place FILTER EXISTS around the condition even if the condition expression uses properties that are not known to be singleton. In the case of using non-singleton properties the rows in the result set may get duplicated. </small></span>					
 									</label>
 								</div>
 							{{/if}}
@@ -45,18 +46,19 @@
 						
 					{{else}}
 	               
-						<div id = "condition-expression-field" class="form-group" style="margin-bottom:10px;">
+						<div id = "condition-expression-field" class="form-group" style="margin-bottom:10px;" >
 							<label>Expression</label>
-							<input id="condition-expression" type="text" class="form-control">
+							<input id="condition-expression" type="text" class="form-control" style="width:68%;display: inline-block;">
+							<a id="extra-options-attribute-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
 							<span class="help-block">Use Ctrl+Space for text auto-completion <i class="fa fa-info-circle" title="Use Ctrl+Space to activate the auto-completion. Use Arrow-Down / Arrow-Up to change the selection; then click or use Tab to accept autocompletion."></i></span>	
 						</div>
 
-						<div class="form-group" style="margin-bottom:10px;">
+						<div class="form-group" id = "condition-extra-options" style="margin-bottom:10px; display: none;">
 							<label class="label-checkbox">						
 								<input type="checkbox" id="allow-multiplication-check-box" class="dialog-checkbox input-sm">
 								<span class="custom-checkbox"></span>
-								Simple condition
-								<span class="help-block"><small>Use of non-singleton properties in simple conditions can cause repetitions of result set rows </small></span>					
+								Simple implementation
+								<span class="help-block"><small>Simple implementation does not place FILTER EXISTS around the condition even if the condition expression uses properties that are not known to be singleton. In the case of using non-singleton properties the rows in the result set may get duplicated </small></span>					
 							</label>
 						</div>
 					 {{/if}}	
@@ -65,7 +67,7 @@
 	                </form>	
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="cancel-add-condition" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-condition" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div><!-- /.modal-content -->

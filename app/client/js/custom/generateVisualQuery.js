@@ -8048,12 +8048,13 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 	}
 	
 	var new_elem_id = Create_VQ_Element(function(classBox) {
-		if(className != null && className != "") classBox.setName(className);
+		var indirectClassMembership = false;
+		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
+		
+		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 		classBox.setClassStyle(nodeType);
 		if(instanceAlias != null) classBox.setInstanceAlias(instanceAlias);
 
-		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) classBox.setIndirectClassMembership(true);
-		else classBox.setIndirectClassMembership(false);
 		// setIndirectClassMembership
 
 		//class not in a schema 

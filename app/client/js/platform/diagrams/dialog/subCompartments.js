@@ -33,6 +33,7 @@ Template.multiFieldBody.events({
 
 	'click .up-multi-field': function(e, templ) {
 		e.preventDefault();
+
 		var data = getCurrentCompartment(e);
 
 		var compartments = data.compartments;
@@ -42,10 +43,12 @@ Template.multiFieldBody.events({
 		var prev_index = index - 1;
 		if (prev_index >= 0) {
 			var prev_compart = compartments[prev_index];
+
 			var list = {projectId: Session.get("activeProject"),
 						elementId: Session.get("activeElement"),
 						prevCompartment: {id: prev_compart._id, index: prev_compart.index,},
-						currentCompartment: {id: current_compart._id, index: current_compart.index,},
+						currentCompartment: {id: current_compart._id, index: prev_compart.index + 1,},
+						// currentCompartment: {id: current_compart._id, index: current_compart.index,},
 					};
 
 			Utilities.callMeteorMethod("swapCompartments", list);
@@ -58,8 +61,6 @@ Template.multiFieldBody.events({
 		
 		e.preventDefault();
 
-		console.log("in add multi field")
-
 		var src = $(e.target);
 		$('.dialog-input').val('');
 
@@ -70,10 +71,6 @@ Template.multiFieldBody.events({
 		Session.set("multFieldCompartmentId", reset_variable());
 
 		var form = multi_field.find(".row-form");
-
-
-		console.log("form ", form)
-
 
 		form.modal("show");
 

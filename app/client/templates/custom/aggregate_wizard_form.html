@@ -64,49 +64,6 @@
                             <input class="form-control" id="alias-name" type="text" placeholder="(e.g., A_count)" style="width:98%;display: inline-block;" value="{{defaultAlias}}">
 							<!-- <input type="text" id="alias-name-aggr"><br> -->
                         </form>
-
-                        <hr>
-						
-                        <div id = "what_to_aggregate" autocomplete="off" onsubmit="return false;">
-                            <p style="color:purple">What to aggregate:  
-							<!-- <div class="help-tip">
-                                <p>Field or expression. Leave blank for class instance aggregation. </p>
-                            </div> -->
-							<!-- <div style="color:grey">(leave blank for instances themselves)</div> --> </p>
-							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
-									placeholder="{{fieldsPlaceholder}}" style="width:77%;display: inline-block;" value="{{expression}}">
-							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
-							<!-- <datalist id="field-list-datalist" class="datalist"> -->
-							 <!-- {{#each attList}} -->
-                                    <!-- <option {{selectedOption}} name="field-name" input="{{attribute}}">{{attribute}}</option> -->
-                                <!-- {{/each}} -->
-							<!-- </datalist> -->
-							<!--<div class="help-tip">
-                                <p>Field or expression. Leave blank for class instance aggregation. </p>
-                            </div> -->
-							<a id="extra-options-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
-                            <!-- <select name="field-list-aggr" id="field-list-aggr" style="width:100%"> -->
-                                <!-- {{#each attList}} -->
-                                    <!-- <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option> -->
-                                <!-- {{/each}} -->
-                            <!-- </select> -->
-                        </div>
-
-						
-						<div id="extra-options" style="display: none;">
-							<p> Extra options: <br>
-							<form id="distinct-aggr" style="display:inline-block">
-								<input type="checkbox" id="distinct-aggr-check-box" {{distinct}}>
-								<span class="custom-checkbox"></span>
-								<div style="display:inline;font-weight: normal;">Distinct values only </div>
-							</form>
-							<form id="require-aggr" style="display:inline-block">
-								<input type="checkbox" id="require-aggr-check-box" {{require}}>
-								<span class="custom-checkbox"></span>
-								<div style="display:inline;font-weight: normal;">Require values explicitly</div>
-							</form>
-							</p>
-						</div>
 						
 						
 						<form class="function-radio-list" style="width:55%" autocomplete="off" onsubmit="return false;">
@@ -152,9 +109,55 @@
                                         <span>group_concat</span>
                                     </label>
 		
-                        </form>      
+                        </form>    
+
+                        
+						
+                        <div id = "what_to_aggregate" autocomplete="off" onsubmit="return false;">
+                            <p style="color:purple">What to aggregate:  
+							<!-- <div class="help-tip">
+                                <p>Field or expression. Leave blank for class instance aggregation. </p>
+                            </div> -->
+							<!-- <div style="color:grey">(leave blank for instances themselves)</div> --> </p>
+							<input class="form-control" id="field-list" name="field-list" type="text" list="field-list-datalist" 
+									placeholder="{{fieldsPlaceholder}}" style="width:77%;display: inline-block;" value="{{expression}}">
+							<!-- <input type="text" name="field-list-aggr" id="field-list-aggr" list="field-list-aggr-datalist"> -->
+							<!-- <datalist id="field-list-datalist" class="datalist"> -->
+							 <!-- {{#each attList}} -->
+                                    <!-- <option {{selectedOption}} name="field-name" input="{{attribute}}">{{attribute}}</option> -->
+                                <!-- {{/each}} -->
+							<!-- </datalist> -->
+							<!--<div class="help-tip">
+                                <p>Field or expression. Leave blank for class instance aggregation. </p>
+                            </div> -->
+							<a id="extra-options-button" class="btn btn-xs btn-success"><i>Extra Options</i></a>
+                            <!-- <select name="field-list-aggr" id="field-list-aggr" style="width:100%"> -->
+                                <!-- {{#each attList}} -->
+                                    <!-- <option name="field-name-aggr" value="{{attribute}}">{{attribute}}</option> -->
+                                <!-- {{/each}} -->
+                            <!-- </select> -->
+                        </div>
+
+						
+						<div id="extra-options" style="display: none;">
+							<p> Extra options: <br>
+							<form id="distinct-aggr" style="display:inline-block">
+								<input type="checkbox" id="distinct-aggr-check-box" {{distinct}}>
+								<span class="custom-checkbox"></span>
+								<div style="display:inline;font-weight: normal;">Distinct values only </div>
+							</form>
+							<form id="require-aggr" style="display:inline-block">
+								<input type="checkbox" id="require-aggr-check-box" {{require}}>
+								<span class="custom-checkbox"></span>
+								<div style="display:inline;font-weight: normal;">Require values explicitly</div>
+							</form>
+							</p>
+						</div>
 						
 						
+						  
+						
+						<hr>
 
                         <form style="display: {{showDisplay}};" onsubmit="return false;"> <!-- style="color: lightgrey !important;" -->
                             <input type="checkbox" id="display-results">
