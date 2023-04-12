@@ -826,6 +826,7 @@ dataShapes = {
 		else if ( !rr.complete )
 			this.schema.resolvedIndividualsF[params.name] = 1;
 		return rr;	
+		
 	},
 	generateClassUpdate : async function (label_name) {
 		var rr = await this.callServerFunction("generateClassUpdate", {main: {label_name: label_name}});
