@@ -62,7 +62,10 @@ Template.multiFieldBody.events({
 		e.preventDefault();
 
 		var src = $(e.target);
-		$('.dialog-input').val('');
+		_.each($('.dialog-input'), function(item) {
+			$(item).val("");
+		});
+
 
 		var multi_field = $(src).closest(".multi-field");
 		var compart_type_id = multi_field.attr("id");

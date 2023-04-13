@@ -102,7 +102,7 @@ Template.AddCondition.events({
 		// document.getElementById("condition-expression").value = "";
 		// document.getElementById("allow-multiplication-check-box").checked=false;
 		
-		$("#condition-expression").val("");
+		// $("#condition-expression").val("");
 
 		return;
 
@@ -111,7 +111,7 @@ Template.AddCondition.events({
 	"click #cancel-add-condition": function(e) {
 		document.getElementById("condition-extra-options").style.display = "none";
 
-		$("#condition-expression").val("");
+		// $("#condition-expression").val("");
 
 		// document.getElementById("condition-expression").value = "";
 		// document.getElementById("allow-multiplication-check-box").checked=false;
