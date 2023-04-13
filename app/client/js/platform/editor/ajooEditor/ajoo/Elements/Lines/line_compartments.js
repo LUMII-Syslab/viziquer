@@ -47,8 +47,13 @@ LinkCompartments.prototype = {
 		var sizes = {};
 
 		//adding compartments
-		compartments.placements = {};
-		var comparts = compartments.compartments;	
+		// compartments.placements = {};
+		var comparts = compartments.compartments;
+
+		if (_.size(comparts) == 0) {
+			compartments.placements = {};
+		}
+
 		_.each(comparts_in, function(compart_in) {
 
 			if ((compart_in && (compart_in["value"] == "" || _.isUndefined(compart_in["value"]))) ||
