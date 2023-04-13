@@ -216,13 +216,12 @@ SelectionDragging.prototype = {
 
 		//selecting dragged element positions
 		_.each(selection_dragging.state.draggedLines, function(line_obj) {
-
 			var link = line_obj.line;
 			var line_points = link.getPoints().slice();
-			// link.transformLinePoints(line_points, 1);
+			link.transformLinePoints(line_points, 1);
 
 			list["lines"].push({id: link._id,
-								points: line_points,
+								points: line_points,			
 							});
 
 			link.line.listening(true);
