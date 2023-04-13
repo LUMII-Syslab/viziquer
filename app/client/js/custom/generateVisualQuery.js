@@ -2098,8 +2098,14 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							else if(classResolved.data[0].is_local != true)sn = classResolved.data[0].prefix+ ":" + sn;
 							vData[vv] = sn;
 						} else {
-							var uriResolved = await dataShapes.resolveIndividualByName({name: where["values"][v][vv]["value"]})
 							
+							var uriResolved;
+							if(schemaName == "wikidata") {
+								var uriResolvedTemp = await dataShapes.getTreeIndividualsWD(where["values"][v][vv]["value"]);
+								uriResolved = {"data": uriResolvedTemp};
+								if(uriResolvedTemp.length > 0) uriResolved.complete = true; 
+								
+							} else uriResolved = await dataShapes.resolveIndividualByName({name: where["values"][v][vv]["value"]})
 							if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 								uri = uriResolved.data[0].localName;
 								vData[vv] = uri;
@@ -4328,9 +4334,21 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						exprVariables.push(dataPropertyResolved.data[0]["short_name"]);
 						filterTable.push({filterString:"NOT EXISTS " + dataPropertyResolved.data[0]["short_name"], filterVariables:exprVariables});
 						
-						var subject = await dataShapes.resolveIndividualByName({name: where["args"][0]["triples"][0]["subject"]["value"]});
-						var object = await dataShapes.resolveIndividualByName({name: where["args"][0]["triples"][0]["object"]["value"]});
+						var subject;
+						var object;
 						
+						if(schemaName == "wikidata") {
+							var subjectTemp = await dataShapes.getTreeIndividualsWD(where["args"][0]["triples"][0]["subject"]["value"]);
+							var objectTemp = await dataShapes.getTreeIndividualsWD(where["args"][0]["triples"][0]["object"]["value"]);
+							subject = {"data": subjectTemp};
+							if(subjectTemp.length > 0) subject.complete = true; 
+							object = {"data": objectTemp};
+							if(objectTemp.length > 0) object.complete = true; 							
+						} else {
+							subject = await dataShapes.resolveIndividualByName({name: where["args"][0]["triples"][0]["subject"]["value"]});
+							object = await dataShapes.resolveIndividualByName({name: where["args"][0]["triples"][0]["object"]["value"]});
+						}
+
 						var filterAdded = false;
 						
 						var classes = findByVariableName(classesTable, where["args"][0]["triples"][0]["subject"]["value"])
@@ -8022,7 +8040,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			else Interpreter.showErrorMsg("Instance identification '" + instanceAlias + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
 		}
 	}
-
+	
+	
 	//name
 	var className = "";
 	if(clazz["identification"] != null) className = clazz["identification"]["short_name"];
@@ -8053,7 +8072,14 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		
 		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 		classBox.setClassStyle(nodeType);
-		if(instanceAlias != null) classBox.setInstanceAlias(instanceAlias);
+		
+		
+		if(typeof clazz["groupByThis"] !== 'undefined'){
+			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
+			else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
+		} else if(instanceAlias != null) classBox.setInstanceAlias(instanceAlias);
+	// elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
+		
 
 		// setIndirectClassMembership
 
@@ -8276,7 +8302,15 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 
 async function generateInstanceAlias(uri, resolve){
 	if(uri.indexOf(":/") != -1 && resolve != false && splitURI(uri).name != ""){
-		var uriResolved = await dataShapes.resolveIndividualByName({name: uri})
+		var uriResolved;
+		
+		if(schemaName == "wikidata") {
+			uriResolvedTemp = await dataShapes.getTreeIndividualsWD(uri);
+			uriResolved = {"data": uriResolvedTemp};
+			if(uriResolvedTemp.length > 0) uriResolved.complete = true; 
+		}else 
+			uriResolved = await dataShapes.resolveIndividualByName({name: uri});
+		
 		// console.log("uriResolved", uri)
 		if(uriResolved.complete == true && uriResolved.data[0].localName != ""){
 			uri = uriResolved.data[0].localName;
@@ -8317,6 +8351,7 @@ async function generateInstanceAlias(uri, resolve){
 			}
 		}
 	}
+
 	return uri;
 }
 
