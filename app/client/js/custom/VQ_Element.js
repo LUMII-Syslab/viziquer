@@ -2468,10 +2468,6 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
         endElement: target._id(),
       };
 
-
-      console.log("new line", new_line, new_line.style)
-      console.log("")
-
       var compartments = Dialog.buildCopartmentDefaultValue(new_line);
 
       if (_.size(compartments) > 0) {
@@ -2480,10 +2476,6 @@ Create_VQ_Element = function(func, location, isLink, source, target) {
 
       Utilities.callMeteorMethod("insertElement", new_line, function(elem_id) {
             var vq_obj = new VQ_Element(elem_id);
-
-            console.log("vq_obj ", vq_obj)
-            console.log("func", func)
-
             if (func) { func(vq_obj) };
       });
 

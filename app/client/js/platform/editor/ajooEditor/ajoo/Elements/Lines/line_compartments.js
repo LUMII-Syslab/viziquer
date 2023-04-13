@@ -47,6 +47,7 @@ LinkCompartments.prototype = {
 		var sizes = {};
 
 		//adding compartments
+		compartments.placements = {};
 		var comparts = compartments.compartments;	
 		_.each(comparts_in, function(compart_in) {
 
