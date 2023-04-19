@@ -264,7 +264,6 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    	var compart_handle = Compartments.find(comparts_query).observeChanges({
 
    		added: function (id, doc) {
-
    			if (!init) {
 
 	   			//selecting element object
@@ -308,7 +307,6 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    		},
 
    		changed: function(id, fields) {
-
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
    			if (!compartment) {
@@ -328,6 +326,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    				elem.compartments.create([compart_in]);
    				compartment = compart_list[id];
    			}
+
 
 			if (compartment) {
 				var compart_presentation = compartment.presentation;
@@ -431,8 +430,20 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    		removed: function(id) {
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
+
+
+			var compartments = compartment.compartments
+			var element = compartments.element;
+			var element_presentation = element.presentation;
+
    			if (compartment && _.size(compartment.compartments) > 0) {
-   				compartment.compartments.removeOne(id);
+   				var compartments = compartment.compartments;
+   				compartments.removeOne(id);
+
+   				compartments["placements"][compartment["placement"]["name"]]["height"] -= compartment["textHeight"];
+
+				compartments.computeGroupsPositions();
+				compartments.computeTextsPositions();
    			}
    		},
 

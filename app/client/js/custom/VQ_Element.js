@@ -3307,7 +3307,7 @@ VQ_Element.prototype = {
 	},
   // string, bool -->
 	// sets comartments visibility
-	setCompartmentVisibility: function(compartmentName,visible) {
+	setCompartmentVisibility: function(compartmentName,visible, input, value) {
 			var elem_type_id = this.obj["elementTypeId"];
 	    var comp_type = CompartmentTypes.findOne({name: compartmentName, elementTypeId: elem_type_id});
 	    if (comp_type) {
@@ -3315,8 +3315,8 @@ VQ_Element.prototype = {
 	      var comp = Compartments.findOne({elementId: this._id(), compartmentTypeId: comp_type_id});
 	      if (comp) {
 					  var a = { "compartmentStyleUpdate": {"style.visible":visible}};
-            // a["input"] = comp["input"];
-						// a["value"] = comp["value"];
+            a["input"] = input;
+						a["value"] = value;
 						a["id"] = comp["_id"];
 						a["projectId"] = Session.get("activeProject");
 			 			a["versionId"] = Session.get("versionId");
@@ -3472,14 +3472,15 @@ VQ_Element.prototype = {
 				  };
 				};
 
-				// console.log("setNeg ", setNeg)
-				// console.log("")
+				// if (setNegValue == " ") {
+				// 	setNegValue = "";
+				// }
 
-				this.setCompartmentValue("Negation Link", setNeg, setNegValue);
-				this.setCompartmentVisibility("Negation Link", (setNeg==true || setNeg=="true"));
+				// this.setCompartmentValue("Negation Link", setNeg, setNegValue);
+				this.setCompartmentVisibility("Negation Link", (setNeg==true || setNeg=="true"), setNeg, setNegValue);
 				this.setCompartmentValue("Optional Link", setOpt, "");
-				this.setCompartmentValue("Filter Exists", setFE, setFEValue);
-				this.setCompartmentVisibility("Filter Exists", (setFE==true || setFE=="true"));
+				// this.setCompartmentValue("Filter Exists", setFE, setFEValue);
+				this.setCompartmentVisibility("Filter Exists", (setFE==true || setFE=="true"), setFE, setFEValue);
 
 		 }
 	},

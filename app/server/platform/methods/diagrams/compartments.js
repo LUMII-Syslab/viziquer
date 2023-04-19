@@ -61,9 +61,7 @@ Meteor.methods({
 	updateCompartment: function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
 		if (is_project_member(user_id, list) || is_public_diagram(list["diagramId"])) {
-
 			if (list["value"] || list["value"] == "") {
-
 				var update = {};
 				if (list["compartmentStyleUpdate"]) {
 					update = list["compartmentStyleUpdate"];
@@ -83,7 +81,6 @@ Meteor.methods({
 				}
 
 				else {
-
 					Compartments.update({_id: list["id"], projectId: list["projectId"],
 										versionId: list["versionId"]},
 										{$set: update});
@@ -97,6 +94,7 @@ Meteor.methods({
 
 			}
 		}
+
 	},
 
 	removeCompartment: function(list) {

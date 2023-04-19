@@ -27,7 +27,6 @@ var LinkCompartments = function(element, comparts_in) {
 LinkCompartments.prototype = {
 
 	create: function(comparts_in) {
-
 		var compartments = this;
 		var line = compartments.element;
 		var editor = compartments.editor;
@@ -80,6 +79,7 @@ LinkCompartments.prototype = {
 			placement.height += compart.textHeight;
 		});
 		
+
 		compartments.computeGroupsPositions();
 		compartments.computeTextsPositions();
 	},
