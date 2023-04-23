@@ -31,7 +31,7 @@ Meteor.methods({
 	addPublicDiagram: function(list) {
 		let user_id = get_unknown_public_user_name();
 
-		let tool = Tools.findOne({name: "Viziquer"});
+		let tool = Tools.findOne({"$or": [{name: "Viziquer"}, {name: "ViziQuer",},]});
 		if (!tool) {
 			console.error("No Viziquer tool");
 			return;
@@ -40,7 +40,7 @@ Meteor.methods({
 		let project_id;
 		let public_project_name = "__publicVQ";
 
-		let project = Projects.findOne({name: public_project_name});
+		let project = Projects.findOne({name: public_project_name, toolId: tool._id,});
 		if (!project) {
 			project_id = Projects.insert({name: public_project_name,	
 										toolId: tool._id,		
