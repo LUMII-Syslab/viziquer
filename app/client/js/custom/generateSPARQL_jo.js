@@ -448,6 +448,7 @@ function executeSparqlString(sparql, paging_info) {
 
   var list = {projectId: Session.get("activeProject"),
               versionId: Session.get("versionId"),
+              diagramId: Session.get("activeDiagram"),
               options: {
                         params: {
                                params: {

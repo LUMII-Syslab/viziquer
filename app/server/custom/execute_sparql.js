@@ -1,4 +1,7 @@
+import { Diagrams } from '/libs/platform/collections'
 import { is_project_member } from '/libs/platform/user_rights'
+import { is_public_diagram } from '/server/platform/_helpers'
+
 
 VQ_sparql_logs = new Mongo.Collection("VQ_Exec_SPARQL_Logs");
 
@@ -6,10 +9,10 @@ Meteor.methods({
 
 	executeSparql: function(list) {
 		var user_id = Meteor.userId();
-		if (!is_project_member(user_id, list)) return;
 
-        console.log("in exec sparql");
-        // console.log("list:", JSON.stringify(list));
+        if (!is_project_member(user_id, list) && !is_public_diagram(list.diagramId)) {
+            return;
+        }
 
         var options = list.options;
         if (!options || !options.params || !options.params.params || !options.params.params.query) {
