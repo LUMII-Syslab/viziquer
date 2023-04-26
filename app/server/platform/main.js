@@ -78,30 +78,56 @@ Meteor.startup(() => {
 
 
     // checking if CompartmentTypes contains attribute label
-    var compart_type = CompartmentTypes.findOne({label: { $exists: false }});
+    const compart_type = CompartmentTypes.findOne({label: { $exists: false }});
     if (compart_type) {
         CompartmentTypes.find().forEach(function(compart_type) {
             CompartmentTypes.update({_id: compart_type._id}, {$set: {label: compart_type.name,}});
         });
     }
 
-    if (Meteor.isServer) {
-        const path = Npm.require('path');
-        const dotenv = Npm.require('dotenv');
-        const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
+    // if (Meteor.isServer) {
+    const path = Npm.require('path');
+    const dotenv = Npm.require('dotenv');
+    const envFile = process.env.ENV_NAME ? `${process.env.ENV_NAME}.env` : '.env';
 
-        let startFolder = process.cwd();
-        let projectFolder = startFolder.slice(0, startFolder.indexOf('.meteor'));
+    let startFolder = process.cwd();
+    let projectFolder = startFolder.slice(0, startFolder.indexOf('.meteor'));
 
-        const envPath = path.resolve(projectFolder, envFile);
-        console.log(`Looking for env in ${envPath}`);
-        const env = dotenv.config({ path: envPath });
-        if (env && env.parsed) {
-            console.log('env loaded:', env.parsed)
-        } else {
-            console.log('no env found');
-        }
+    const envPath = path.resolve(projectFolder, envFile);
+    console.log(`Looking for env in ${envPath}`);
+    const env = dotenv.config({ path: envPath });
+    if (env && env.parsed) {
+        console.log('env loaded:', env.parsed)
+    } else {
+        console.log('no env found');
     }
+    // }
+
+
+    var Api = new Restivus({
+        // useDefaultAuth: true,
+        prettyJson: true
+    });
+
+
+    Api.addRoute('public-diagram', {}, {
+        post: {
+            action: function () {
+                let list = {};
+                _.extend(list, this.queryParams);
+
+                let diagram = Meteor.call("addPublicDiagram", list);
+
+                let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+
+                return {
+                    statusCode: 200,
+                    response: {url: url,}
+                };
+            }
+        }
+    });
+
 
     console.log("End startup");
 });

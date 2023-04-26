@@ -644,6 +644,32 @@ FlowRouter.route('/dump/tool/:tool_id', {
 });
 
 
+
+// FlowRouter.route('/public-diagram', {
+//   name: 'structure',
+//   waitOn() {
+//     // return import('/client/js/platform/signup/signup.js');
+//   },
+
+//   subscriptions: function(params, queryParams) {
+//     console.log("in new public diagram")
+//     console.log("params ", params)
+//     console.log("queryParams", queryParams)
+//     console.log("")
+
+//     // this.register('Structure_Tools', Meteor.subscribe('Structure_Tools', {}));
+//   },
+
+//   action() {
+//     // Session.set("activePanelItem", "structure");
+//     // BlazeLayout.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
+//   },
+  
+// });
+
+
+
+
 // Create 404 route (catch-all)
 FlowRouter.route('*', {
   action() {

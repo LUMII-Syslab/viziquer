@@ -7,13 +7,7 @@ Meteor.methods({
 	updateProjectOntology: function(list) {
 		var user_id = Meteor.userId();
 
-
-		console.log("list sadf ", list)
-
-
 		if (list["projectId"] && is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
-
-			console.log("in if")
 
 			Projects.update({_id: list.projectId}, {$set: {uri: list.uri, endpoint: list.endpoint, schema: list.schema,
 				                                             useStringLiteralConversion: list.useStringLiteralConversion,

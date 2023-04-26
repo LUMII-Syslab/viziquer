@@ -28,7 +28,7 @@ Meteor.methods({
 		}
 	},
 
-	addPublicDiagram: function(list) {
+	addPublicDiagram: function(list_in) {
 		let user_id = get_unknown_public_user_name();
 
 		let tool = Tools.findOne({"$or": [{name: "Viziquer"}, {name: "ViziQuer",},]});
@@ -37,20 +37,22 @@ Meteor.methods({
 			return;
 		}
 		
-		let project_id;
-		let public_project_name = "__publicVQ";
+		// let project_id;
+		let public_project_name = "__publicVQ" + tool._id;
 
-		let project = Projects.findOne({name: public_project_name, toolId: tool._id,});
-		if (!project) {
-			project_id = Projects.insert({name: public_project_name,	
-										toolId: tool._id,		
-										createdAt: new Date(),
-										createdBy: user_id,
-									});
-		}
-		else {
-			project_id = project["_id"];
-		}
+		// let project = Projects.findOne({name: public_project_name, toolId: tool._id,});
+		// if (!project) {
+		let project_id = Projects.insert({name: public_project_name,	
+											toolId: tool._id,		
+											createdAt: new Date(),
+											createdBy: user_id,
+											schema: list_in.schema,
+											query: list_in.query,
+										});
+		// }
+		// else {
+			// project_id = project["_id"];
+		// }
 
 
 		var version = Versions.findOne({projectId: project_id,});
@@ -65,6 +67,7 @@ Meteor.methods({
 			return;
 		}
 
+		let list = {};
 		build_diagram(list, user_id);
 		list["editingUserId"] = user_id;
 		list["editingStartedAt"] = new Date();
