@@ -104,30 +104,48 @@ Meteor.startup(() => {
     // }
 
 
-    var Api = new Restivus({
-        // useDefaultAuth: true,
-        prettyJson: true
-    });
+    // var Api = new Restivus({
+    //     // useDefaultAuth: true,
+    //     prettyJson: true
+    // });
 
 
-    Api.addRoute('public-diagram', {}, {
-        post: {
-            action: function () {
-                let list = {};
-                _.extend(list, this.queryParams);
+    // Api.addRoute('public-diagram', {}, {
 
-                let diagram = Meteor.call("addPublicDiagram", list);
+    //     get: function () {
+    //         let list = {};
+    //         _.extend(list, this.queryParams);
 
-                let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+    //         let diagram = Meteor.call("addPublicDiagram", list);
 
-                return {
-                    statusCode: 200,
-                    response: {url: url,}
-                };
-            }
-        }
-    });
+    //         let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
 
+    //         return {
+    //             statusCode: 200,
+    //             headers: {
+    //                 'Content-Type': 'text/plain',
+    //                 'Location': url
+    //             },
+    //             body: 'Location: ' + url,
+    //         };
+    //     },
+
+    //     post: {
+    //         action: function () {
+    //             let list = {};
+    //             _.extend(list, this.queryParams);
+
+    //             let diagram = Meteor.call("addPublicDiagram", list);
+
+    //             let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+
+    //             return {
+    //                 statusCode: 200,
+    //                 response: {url: url,}
+    //             };
+    //         }
+    //     }
+    // });
 
     console.log("End startup");
 });

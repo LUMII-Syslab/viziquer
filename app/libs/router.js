@@ -664,9 +664,28 @@ FlowRouter.route('/dump/tool/:tool_id', {
 //     // Session.set("activePanelItem", "structure");
 //     // BlazeLayout.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
 //   },
-  
+
 // });
 
+
+
+FlowRouter.route('/public-diagram', {
+  name: 'public-diagram-link',
+  action(params, queryParams) {
+    let list = {};
+    _.extend(list, queryParams);
+
+    Meteor.call("addPublicDiagram", list, function(err, resp) {
+      if (!err) {
+        FlowRouter.go('public-diagram', resp);
+      }
+      else {
+        console.error("Error:", err);
+      }
+
+    });
+  },
+});
 
 
 
