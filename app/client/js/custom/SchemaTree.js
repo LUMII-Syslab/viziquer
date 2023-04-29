@@ -225,7 +225,6 @@ async function  useFilterP (plus = 0) {
 }
 
 async function  useFilterI (plus = 0) {
-
 	if (Template.schemaInstances.showI.get()) {
 		var text = Template.schemaInstances.F3.get();
 		var instances;
@@ -234,17 +233,17 @@ async function  useFilterI (plus = 0) {
 			text = text.substring(text.indexOf(':')+1, text.length);
 			Template.schemaInstances.F3.set(text);
 		}
-		dataShapes.schema.tree.filterI = text;
+		//dataShapes.schema.tree.filterI = text;
 		var params = { limit: dataShapes.schema.tree.countI, filter:text};
 		var className = Template.schemaInstances.Class.get();
-		if ( dataShapes.schema.schemaType === 'wikidata') 
+		if ( className === '' || className === undefined || className === null ) 
 			className = 'All classes';
 
 		dataShapes.schema.tree.class = className;
 		
 		if (className.includes('All classes')) { // 'All classes' ir tikai DBpedia un Wikidata
 			if ( text == '' ) {
-				params.filter = 'First';
+			    params.filter = 'First';  // Filtrs būs vienmēr
 				text = 'First';
 			}
 					
@@ -254,20 +253,22 @@ async function  useFilterI (plus = 0) {
 				Template.schemaInstances.Instances.set(instances);	
 			}
 			else {
-				params.individualMode = 'Direct';  // Vispirms meklē tiešās sakritības
+				params.individualMode = 'Direct';  // Vispirms meklē tiešās sakritības (DBpedia)
 				iFull = await dataShapes.getTreeIndividuals(params, className);  
-				instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
+				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: ''}}); 
+				//instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
 				instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});	
 				Template.schemaInstances.Instances.set(instances);
 				params.individualMode = 'All';
 				iFull = await dataShapes.getTreeIndividuals(params, className);  
-				instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
+				instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: ''}}); 
+				//instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
 				Template.schemaInstances.Instances.set(instances);	
 			}
 		}
 		else {  // Zināma konkrēta klase ( wikidata klase vairs netiek ņemta vērā)
 			if ( text != '' ) { // Ir filtrs
-				if ( dataShapes.schema.schemaType === 'warsampo') {
+				if ( dataShapes.schema.schemaType !== 'dbpedia') {
 					instances = [{data_id: "...", localName: "Waiting ...", description: ''}];	
 					params.individualMode = 'All';
 					iFull = await dataShapes.getTreeIndividuals(params, className);
@@ -275,24 +276,26 @@ async function  useFilterI (plus = 0) {
 					Template.schemaInstances.Instances.set(instances);
 				}
 				else {
-					params.individualMode = 'Direct';
+					params.individualMode = 'Direct';  // TODO Šo saucam tikai DBpedia, bet tagad var visiem 
 					iFull = await dataShapes.getTreeIndividuals(params, className);  
-					instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
+					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: ''}}); 
+					//instances = _.map(iFull, function(p) {return { data_id: p, localName: p, description: ''}}); 
 					instances.push({data_id: "...", localName: "Waiting full answer...", description: ''});	
 					Template.schemaInstances.Instances.set(instances);
 					params.individualMode = 'All';
 					iFull = await dataShapes.getTreeIndividuals(params, className);  
-					instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
+					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: ''}}); 
+					//instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
 					Template.schemaInstances.Instances.set(instances);	
 				}
 			}
 			else { // ir klase, nav filtra		
 				Template.schemaInstances.Instances.set([{ data_id: "wait", localName: "Waiting answer...", description: ''}]);
 				iFull = await dataShapes.getTreeIndividuals(params, className);
-				if ( dataShapes.schema.schemaType === 'wikidata' || dataShapes.schema.schemaType === 'warsampo') 
-					instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
-				else
-					instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
+                //if ( dataShapes.schema.schemaType === 'wikidata' || dataShapes.schema.schemaType === 'warsampo') 
+                instances = _.map(iFull, function(p) {return {data_id: p.localName, localName: p.localName, description: p.description}});
+                //else
+                //    instances = _.map(iFull, function(p) {return {data_id: p, localName: p, description: ''}}); 
 				Template.schemaInstances.Instances.set(instances);
 			}
 		}
@@ -420,24 +423,6 @@ Template.schemaTree.events({
 			await useFilter();
 		}
 	},
-	'click #dbo': async function(e) {
-		//Template.schemaTree.Count.set(startCount)
-		setNS();
-		Template.schemaTree.F1.set($('#filter_text').val());
-		await useFilter ();
-	},
-	'click #local': async function(e) {
-		//Template.schemaTree.Count.set(startCount)
-		setNS();
-		Template.schemaTree.F1.set($('#filter_text').val());
-		await useFilter ();
-	},
-	'click #yago': async function(e) {
-		//Template.schemaTree.Count.set(startCount)
-		setNS();
-		Template.schemaTree.F1.set($('#filter_text').val());
-		await useFilter ();
-	},
 	'keyup #filter_text': async function(e){
 		if (e.keyCode == 13) {
 			Template.schemaTree.F1.set($('#filter_text').val());
@@ -457,7 +442,7 @@ Template.schemaTree.events({
 		Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
 		await useFilterP ();
 		//$("#class").val(dataShapes.schema.tree.class);	
-		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
+		Template.schemaInstances.F3.set('');
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
@@ -493,8 +478,7 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);
 		Template.schemaFilter.BL.set(dataShapes.schema.tree.dbp);
 		await useFilterP ();
-		
-		Template.schemaInstances.F3.set(dataShapes.schema.tree.filterI);
+		Template.schemaInstances.F3.set('');
 		Template.schemaInstances.Class.set(dataShapes.schema.tree.class);
 		Template.schemaInstances.showI.set(!dataShapes.schema.hide_individuals);
 		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');

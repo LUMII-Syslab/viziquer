@@ -337,6 +337,7 @@ return {
 		resolvedIndividualsF: {}, 
 		treeTopsC: {}, 
 		treeTopsP: {}, 
+		treeTopsI: {}, 
 		namespaces: [],
 		showPrefixes: "false", 
 		projectId: "",
@@ -694,10 +695,17 @@ dataShapes = {
 	getTreeIndividuals : async function(params = {}, className) {
 		// *** console.log("------------getTreeIndividuals ------------------")
 		var rr = [];
-		var allParams = {main: params, element:{className: className}};
+		var allParams = {main: params, element:{className: className}};	
 		
-		if ( className !== '')
+		if (this.schema.treeTopsI[className] !== undefined && params.filter === '' ) {
+			rr = this.schema.treeTopsI[className];
+		}
+		else {
 			rr = await this.callServerFunction("getTreeIndividuals", allParams);
+			if ( className !== '' && params.filter === '' && rr.error === undefined) {
+				this.schema.treeTopsI[className] = rr;
+			}	
+		}
 		
 		if (rr.error != undefined)
 			rr = [];
@@ -795,7 +803,7 @@ dataShapes = {
 				var prefix = params.name.substring(0, params.name.indexOf(':')+1);
 				var iri = '';
 				_.each(this.schema.namespaces, function(n) {
-					if (params.name.indexOf(n.name) == 0)
+					if (params.name.indexOf(n.name) == 0 && prefix.length == n.name.length + 1)
 						iri = params.name.replace(':','').replace(n.name,n.value);
 				});
 				var name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
@@ -852,6 +860,10 @@ dataShapes = {
 		 })
 		//console.log(el)
 		//el.getCompartmentValue("Name")
+
+	},
+	test : async function () {
+		await this.callServerFunction("xxx_test", {main: {}});
 
 	},
 	printLog : function() {
