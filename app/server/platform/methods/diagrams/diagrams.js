@@ -38,35 +38,37 @@ Meteor.methods({
 		}
 
 		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
-		const response = HTTP.call('GET', `${schema_server}/info`, {});
+		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
-		let schema = {};
-		if (response && response.data) {
-			schema = _.find(response.data, function(item) {
+		// let schema = {};
+		// if (response && response.data) {
+		const schema = _.find(response.data, function(item) {
 							return item.display_name == list_in.schema;
 						});
-		}
+		// }
 
 
 		// let project_id;
 		let public_project_name = "__publicVQ" + tool._id;
+		const project_obj = {name: public_project_name,	
+							toolId: tool._id,		
+							createdAt: new Date(),
+							createdBy: user_id,
+						};
 
-		// let project = Projects.findOne({name: public_project_name, toolId: tool._id,});
-		// if (!project) {
-		let project_id = Projects.insert({name: public_project_name,	
-											toolId: tool._id,		
-											createdAt: new Date(),
-											createdBy: user_id,
+		if (schema) {
+			_.extend(project_obj, {schema: list_in.schema,
+									endpoint: schema.sparql_url,
+									uri: schema.named_graph,
+									queryEngineType: schema.endpoint_type,
+									directClassMembershipRole: schema.direct_class_role,
+									indirectClassMembershipRole: schema.indirect_class_role,
+									// query: list_in.query,
+								});
+		}
 
-											schema: list_in.schema,
-											endpoint: schema.sparql_url,
-											uri: schema.named_graph,
-											queryEngineType: schema.endpoint_type,
-											directClassMembershipRole: schema.direct_class_role,
-											indirectClassMembershipRole: schema.indirect_class_role,
 
-											// query: list_in.query,
-										});
+		let project_id = Projects.insert(project_obj);
 
 		var version = Versions.findOne({projectId: project_id,});
 		if (!version) {
