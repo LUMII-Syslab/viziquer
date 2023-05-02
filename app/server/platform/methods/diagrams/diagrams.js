@@ -29,14 +29,25 @@ Meteor.methods({
 	},
 
 	addPublicDiagram: function(list_in) {
-		let user_id = get_unknown_public_user_name();
+		const user_id = get_unknown_public_user_name();
 
-		let tool = Tools.findOne({"$or": [{name: "Viziquer"}, {name: "ViziQuer",},]});
+		const tool = Tools.findOne({"$or": [{name: "Viziquer"}, {name: "ViziQuer",},]});
 		if (!tool) {
 			console.error("No Viziquer tool");
 			return;
 		}
-		
+
+		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
+		const response = HTTP.call('GET', `${schema_server}/info`, {});
+
+		let schema = {};
+		if (response && response.data) {
+			schema = _.find(response.data, function(item) {
+							return item.display_name == list_in.schema;
+						});
+		}
+
+
 		// let project_id;
 		let public_project_name = "__publicVQ" + tool._id;
 
@@ -46,14 +57,16 @@ Meteor.methods({
 											toolId: tool._id,		
 											createdAt: new Date(),
 											createdBy: user_id,
-											schema: list_in.schema,
-											query: list_in.query,
-										});
-		// }
-		// else {
-			// project_id = project["_id"];
-		// }
 
+											schema: list_in.schema,
+											endpoint: schema.sparql_url,
+											uri: schema.named_graph,
+											queryEngineType: schema.endpoint_type,
+											directClassMembershipRole: schema.direct_class_role,
+											indirectClassMembershipRole: schema.indirect_class_role,
+
+											// query: list_in.query,
+										});
 
 		var version = Versions.findOne({projectId: project_id,});
 		if (!version) {

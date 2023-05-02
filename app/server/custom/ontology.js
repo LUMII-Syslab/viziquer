@@ -69,8 +69,7 @@ Meteor.methods({
 			//console.log(schema);
 			Schema.batchInsert([schema]);
 		} 
-
-    },
+    	},
 
 	loadMOntology: function(list) {
 

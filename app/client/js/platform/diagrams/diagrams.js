@@ -857,6 +857,7 @@ Template.ontologySettings.events({
 					graphsInstructions: JSON.stringify(myRows)
 				};
 
+
 		Utilities.callMeteorMethod("updateProjectOntology", list);
 		list._id = Session.get("activeProject");
 		dataShapes.clearSchema();

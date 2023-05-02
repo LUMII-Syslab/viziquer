@@ -676,11 +676,15 @@ FlowRouter.route('/public-diagram', {
     _.extend(list, queryParams);
 
     Meteor.call("addPublicDiagram", list, function(err, resp) {
-      if (!err) {
-        FlowRouter.go('public-diagram', resp);
+      if (err) {
+        console.error("Error:", err);
       }
       else {
-        console.error("Error:", err);
+        let url = "/public/project/" + resp.projectId + "/diagram/" + resp._id + "/type/" + resp.diagramTypeId + "/version/" + resp.versionId;
+
+        // window.history.back();
+        window.location.replace(url);
+        // FlowRouter.go('public-diagram', resp);
       }
 
     });
