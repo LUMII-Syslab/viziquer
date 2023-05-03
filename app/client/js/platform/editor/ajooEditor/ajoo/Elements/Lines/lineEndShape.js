@@ -292,7 +292,7 @@ LineEndShape.prototype.updateEndShape = function(style) {
 
 		//computing the style
 		var base_style = {};
-		if (shapes.length > 0) {
+		if (_.size(shapes) > 0) {
 			base_style = shapes[0].getAttrs();
 		}
 
