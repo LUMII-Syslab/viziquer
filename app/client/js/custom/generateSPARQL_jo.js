@@ -1506,7 +1506,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		// prefixTable["rdf:"] = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 	}
 
-	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") != "" && clazz["instanceAlias"].indexOf(" ") >= 0) {
+	if(clazz["instanceAlias"] != null && clazz["instanceAlias"].replace(" ", "") != "" && clazz["instanceAlias"].indexOf(" ") >= 0 && clazz["instanceAlias"].indexOf("[") == -1) {
 		messages.push({
 			"type" : "Error",
 			"message" : "Whitespace characters not allowed in instance alias " + clazz["instanceAlias"],
