@@ -107,7 +107,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		}	
 
 		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
-			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
+			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias,true);	
 		}
 	}
 		  
@@ -637,7 +637,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
-						var cls = await dataShapes.getIndividualName(strURI)
+						var cls = await dataShapes.getIndividualName(strURI,true)
 						if(cls != null && cls != ""){
 							strURI = cls;
 						}
@@ -1486,7 +1486,7 @@ async function resolveTypeFromSchemaForIndividual(id, schemaName) {
 					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]"))) ){
 						id = "wd:"+id;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
-						var cls = await dataShapes.getIndividualName(id)
+						var cls = await dataShapes.getIndividualName(id,true)
 						if(cls != null && cls != ""){
 							return {local_name: cls.substring(3), prefix: "wd"};
 						}

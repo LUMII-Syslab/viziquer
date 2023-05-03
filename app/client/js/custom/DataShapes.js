@@ -786,6 +786,7 @@ dataShapes = {
 		//dataShapes.resolveIndividualByName({name: 'wd:Q633795'})
 		//dataShapes.resolveIndividualByName({name: 'dbr:Aaron_Cox'}) // dbpedia
 		//dataShapes.resolveIndividualByName({name: "wd:[first (Q19269277)]"})
+
 		if (params.name.indexOf('<') != -1)
 			params.name = params.name.substring(1, params.name.length-1);
 		
@@ -812,7 +813,7 @@ dataShapes = {
 				if (individuals.length > 0) { 
 					var rez = {};
 					_.each(individuals, function(i) {
-						if (i.concepturi == iri)
+						if (i.iri == iri)
 							rez = {name: params.name, localName: i.localName, label: i.label};
 					});
 					if ( rez.name != undefined) 
@@ -863,7 +864,15 @@ dataShapes = {
 
 	},
 	test : async function () {
-		await this.callServerFunction("xxx_test", {main: {}});
+		//await this.callServerFunction("xxx_test", {main: {}});
+		const pp = 'wdt:P31/wdt:P279*'
+		console.log('**************************')
+		var ll = pp.split('/');
+		var rez = [];
+		ll.forEach(l => { rez.push(l.split('*')); })
+		console.log(rez)
+		//console.log(pp.split('*'))
+		//console.log(pp.split('/'))
 
 	},
 	printLog : function() {
@@ -993,8 +1002,12 @@ dataShapes = {
 		var name = this.getIndividualName(localName);
 		return name;
 	},
-	getIndividualName: function(localName) {
+	getIndividualName: function(localName, gen = false) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
+		console.log('---getIndividualName--')
+		console.log(localName)
+		var rez = '';
+		var prefix = '';
 		if (localName.startsWith("="))
 			localName = localName.substring(1,localName.length);
 		if (localName.startsWith("["))	
@@ -1012,25 +1025,39 @@ dataShapes = {
 			return r;
 		}
 		if ( localName.indexOf('[') != -1){
-			const prefix = localName.substring(0,localName.indexOf(':'));  // TODO padomāt, vai nebūs arī bez prafiksa
+			prefix = localName.substring(0,localName.indexOf(':')); 
 			//const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
 			const name = localName.substring(getLastB(localName)+1,localName.length-2);
-			return `${prefix}:${name}`;
+			rez = `${prefix}:${name}`;
 		}
 		else if (localName.indexOf('//') != -1) {
 			var name = '';
 			_.each(this.schema.namespaces, function(ns) {
-				if (localName.indexOf(ns.value) == 0 && localName.length > ns.value.length)
+				if (localName.indexOf(ns.value) == 0 && localName.length > ns.value.length) {
 					name = `${ns.name}:${localName.replace(ns.value,'')}`;
+					prefix = ns.name;
+				}	
 			});
 			
 			if (name != '') 
-				return name;
+				rez = name;
 			else
-				return localName;
+				rez = localName;
 		}
 		else
-			return localName;
+			rez = localName;
+			
+		if ( prefix == '') 
+			prefix = rez.substring(0,localName.indexOf(':')); 
+
+		if ( gen && rez.indexOf('/') != -1) {
+			_.each(this.schema.namespaces, function(ns) {
+				if ( prefix == ns.name )
+					rez = `<${ns.value}${rez.replace(ns.name,'').replace(':','')}>`;
+			});
+		}
+
+		return rez;
 	}
 };
 
