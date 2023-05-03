@@ -21385,6 +21385,9 @@ options = arguments[1];
 					var props = await dataShapes.getPropertiesFull(params);				
 					
 					props = props["data"];
+					
+					
+					
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){
 							var prefix;
@@ -21398,10 +21401,18 @@ options = arguments[1];
 							}
 							if(isInv == false){
 								await addContinuation(await location(), propName, 100, false, 2);
-								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2);
+								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") {
+									if ( props[pr].mark === 'in' && isInv == false){
+										propName = "^"+props[pr]["prefix"]+":"+props[pr]["display_name"];
+									}else {
+										await addContinuation(await location(), propName, 100, false, 2);
+									}
+								}
 							}else if(isInv == true && props[pr].mark === 'in'){
 								await addContinuation(await location(), "^" + propName, 100, false, 2, "end");
-								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), "^"+props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2, "end");
+								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") {
+									await addContinuation(await location(), "^"+props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 2, "end");
+								}
 							}
 						}
 					}
