@@ -1350,7 +1350,7 @@ async function getResolveInformation(parsed_exp, schemaName, symbol_table, conte
 				await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType, isSimple)
 			}
 			
-			if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
+			if((exp == "PrimaryExpression" || exp == "PrimaryExpressionL" || exp == "PrimaryExpressionR") && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
 				parsed_exp[exp] = pathOrReference(parsed_exp[exp], symbol_table, context)
 			}
 		}
@@ -1652,7 +1652,6 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName, isSi
 function pathOrReference(o, symbol_table, context) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
-
     				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
