@@ -412,6 +412,7 @@ Template.AddLink.events({
 	                }, locLink, true, cl, currentElement);
 	            }
                 Template.AggregateWizard.endClassId.set(cl.obj._id);
+				Session.set("activeElement", cl.obj._id);
             }, newPosition);
 
 			if (document.getElementById("goto-wizard").checked == true ){
