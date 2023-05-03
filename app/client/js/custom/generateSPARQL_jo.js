@@ -1348,7 +1348,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 if (orderBy["orders"] != "") SPARQL_text = SPARQL_text + "\nORDER BY " + orderBy["orders"];
 
 			 //OFFSET
-			 if (rootClass["offset"] != null) {
+			 if (rootClass["offset"] != null && rootClass["offset"] != "") {		
 				if(!isNaN(rootClass["offset"])) SPARQL_text = SPARQL_text + "\nOFFSET " + rootClass["offset"];
 				else {
 					//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
@@ -1362,7 +1362,7 @@ function generateSPARQLtext(abstractQueryTable){
 			 }
 
 			 //LIMIT
-			 if (rootClass["limit"] != null) {
+			 if (rootClass["limit"] != null && rootClass["limit"] != "") {
 				if(!isNaN(rootClass["limit"]))SPARQL_text = SPARQL_text + "\nLIMIT " + rootClass["limit"];
 				else {
 					//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
@@ -3155,7 +3155,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 							 if (orderBy["orders"] != "") subQuery = subQuery + "\n"+SPARQL_interval+"ORDER BY " + orderBy["orders"];
 
 							 //OFFSET
-							 if (sparqlTable["subClasses"][subclass]["offset"] != null) {
+							 if (sparqlTable["subClasses"][subclass]["offset"] != null && sparqlTable["subClasses"][subclass]["offset"] != "") {
 								if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + "\n"+SPARQL_interval+"OFFSET " + sparqlTable["subClasses"][subclass]["offset"];
 								else {
 									//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
@@ -3168,7 +3168,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 								}
 							 }
 							 //LIMIT
-							if (sparqlTable["subClasses"][subclass]["limit"] != null) {
+							if (sparqlTable["subClasses"][subclass]["limit"] != null && sparqlTable["subClasses"][subclass]["limit"] != "") {
 								if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + "\n"+SPARQL_interval+"LIMIT " + sparqlTable["subClasses"][subclass]["limit"];
 								else {
 									//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
@@ -3614,7 +3614,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 						if (orderBy["orders"] != "") subQuery = subQuery + SPARQL_interval+"\nORDER BY " + orderBy["orders"];
 
 						//OFFSET
-						if (sparqlTable["subClasses"][subclass]["offset"] != null) {
+						if (sparqlTable["subClasses"][subclass]["offset"] != null && sparqlTable["subClasses"][subclass]["offset"] != "") {
 							if(!isNaN(sparqlTable["subClasses"][subclass]["offset"])) subQuery = subQuery + SPARQL_interval+"\nOFFSET " + sparqlTable["subClasses"][subclass]["offset"];
 							else {
 								//Interpreter.showErrorMsg("OFFSET should contain only numeric values");
@@ -3627,7 +3627,7 @@ function getUNIONClasses(sparqlTable, parentClassInstance, parentClassTriple, ge
 							}
 						}
 						//LIMIT
-						if (sparqlTable["subClasses"][subclass]["limit"] != null) {
+						if (sparqlTable["subClasses"][subclass]["limit"] != null && sparqlTable["subClasses"][subclass]["limit"] != "") {
 							if(!isNaN(sparqlTable["subClasses"][subclass]["limit"])) subQuery = subQuery + SPARQL_interval+"\nLIMIT " + sparqlTable["subClasses"][subclass]["limit"];
 							else {
 								//Interpreter.showErrorMsg("LIMIT should contain only numeric values");
