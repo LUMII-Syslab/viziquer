@@ -49,17 +49,19 @@ var sparql_form_events = {
 		e.preventDefault();
 
 		let yasqe = Template.sparqlForm_see_results.yasqe.get();
-	    let query = yasqe.getValue();
+    let query = yasqe.getValue();
 
-	    console.log("query ", query)
+    console.log("query ", query)
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
 	},
 
 	"click #next-sparql": function(e) {
 		e.preventDefault();
-	   	var query = yasqe.getValue();
-    	var obj = Session.get("executedSparql");
+
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
+    var query = yasqe.getValue();
+    var obj = Session.get("executedSparql");
 		var paging_info = {offset:obj.offset, limit:obj.limit, number_of_rows:obj.number_of_rows};
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
@@ -67,8 +69,10 @@ var sparql_form_events = {
 
 	"click #prev-sparql": function(e) {
 		e.preventDefault();
-       	var query = yasqe.getValue();
-    	var obj = Session.get("executedSparql");
+
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
+    var query = yasqe.getValue();
+    var obj = Session.get("executedSparql");
 		var paging_info = {offset:obj.offset - 100, limit:obj.limit, number_of_rows:obj.number_of_rows};
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query, paging_info);
@@ -76,6 +80,8 @@ var sparql_form_events = {
 
 	"click #download-results": function(e) {
 		e.preventDefault();
+
+		let yasqe = Template.sparqlForm_see_results.yasqe.get();
 		var query = yasqe.getValue();
 		var obj = Session.get("executedSparql");
 		var paging_info = {download: true, offset:obj.offset - 50, limit:obj.limit, number_of_rows:obj.number_of_rows}
@@ -93,9 +99,7 @@ var sparql_form_helpers = {
 	},
 
 	executedSparql: function() {
-
 		var result = Session.get("executedSparql");
-
 		return result;
 		/*return _.map(result, function(item, i) {
 			return {value: item, index: i+1};
@@ -103,49 +107,52 @@ var sparql_form_helpers = {
 	},
 
 	plusOne: function(number) {
-
-		  return number + 1;
+    return number + 1;
 	},
-	plusOneOffset: function(number, offset) {
+
+  plusOneOffset: function(number, offset) {
 		if (offset) {
 			return number + offset - 50 + 1}
 		else {
 		  return number + 1;
 		}
 	},
-	augmentedResult: function() {
-        var self = Session.get("executedSparql");
 
-        if (!self.sparql) {
-        	return;
-        }
+  augmentedResult: function() {
+    var self = Session.get("executedSparql");
+
+    if (!self.sparql) {
+      return;
+    }
 
 		var binding_map = _.map(self.sparql.head[0].variable, function(v) {
 			return v["$"].name;
 		});
 
-        _.each(self.sparql.results[0].result, function(res) {
+    _.each(self.sparql.results[0].result, function(res) {
 
-			 var new_bindings = _.map(binding_map, function(map_item) {
-             var  existing_binding = _.find(res.binding, function(binding) {return binding["$"].name==map_item});
-						 if (existing_binding) {
-							 return existing_binding;
-						 } else {
-							 return {};
-						 }
-				  });
-					res.binding = new_bindings;
-				})
+      var new_bindings = _.map(binding_map, function(map_item) {
+        var  existing_binding = _.find(res.binding, function(binding) {return binding["$"].name==map_item});
+        if (existing_binding) {
+          return existing_binding;
+        } else {
+          return {};
+        }
+      });
+      res.binding = new_bindings;
+    })
 
-        return _.map(self.sparql.results[0].result, function(p) {
-            p.parent = self;
-            return p;
-        });
-    },
-	showPrev: function(offset) {
+    return _.map(self.sparql.results[0].result, function(p) {
+      p.parent = self;
+      return p;
+    });
+  },
+
+  showPrev: function(offset) {
 		return offset>50;
 	},
-	showNext: function(offset, number) {
+
+  showNext: function(offset, number) {
 		return offset < number;
 	}
 

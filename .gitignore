@@ -87,6 +87,7 @@ typings/
 !.vscode/tasks.json
 #!.vscode/launch.json
 !.vscode/extensions.json
+*.code-workspace
 
 ### WebStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
