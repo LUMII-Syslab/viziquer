@@ -159,7 +159,8 @@ Template.editingMessage.helpers({
 			var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 
 			//diagram is being edited
-			if (diagram && diagram["editingUserId"]) {
+			// if (diagram && diagram["editingUserId"] && !diagram.isPublic) {
+			if (diagram && diagram["editingUserId"] && !diagram.isPublic) {
 
 				//diagram is being edited by someone else
 				if (diagram["editingUserId"] != user_id) {
@@ -172,7 +173,6 @@ Template.editingMessage.helpers({
 					}
 
 					remove_sections_sortable();
-
 					return res;
 				}
 
@@ -185,6 +185,9 @@ Template.editingMessage.helpers({
 
 			//diagram is not being edited
 			else {
+
+				console.log("ccc")
+
 				remove_sections_sortable();
 				return {lockingButton: true};
 			}
@@ -341,93 +344,93 @@ Template.addSectionsForm.events({
 })
 
 
-// Start of diagram editor
-Template.diagramEditor.helpers({
+// // Start of diagram editor
+// Template.diagramEditor.helpers({
 
-	//THIS is HACK
-	elements: function() {
-		var editor_type = Interpreter.getEditorType();
-		if (is_zoom_chart_editor(editor_type)) {
+// 	//THIS is HACK
+// 	elements: function() {
+// 		var editor_type = Interpreter.getEditorType();
+// 		if (is_zoom_chart_editor(editor_type)) {
 
-			var elems = Elements.find({isInVisible: {$ne: true}});
+// 			var elems = Elements.find({isInVisible: {$ne: true}});
 
-			var chart = Interpreter.editor;
-			if (!chart) {
-				return elems.count();
-			}
+// 			var chart = Interpreter.editor;
+// 			if (!chart) {
+// 				return elems.count();
+// 			}
 
-			var editor_node_ids = {};
-			_.each(get_zoomchart_nodes(), function(elem, id) {
-				editor_node_ids[id] = true;
-			});
+// 			var editor_node_ids = {};
+// 			_.each(get_zoomchart_nodes(), function(elem, id) {
+// 				editor_node_ids[id] = true;
+// 			});
 
-			var editor_link_ids = {};
-			_.each(get_zoomchart_links(), function(elem, id) {
-				editor_link_ids[id] = true;
-			});
+// 			var editor_link_ids = {};
+// 			_.each(get_zoomchart_links(), function(elem, id) {
+// 				editor_link_ids[id] = true;
+// 			});
 
-			var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-			if (diagram_type && !is_ajoo_editor(diagram_type["editorType"])) {
+// 			var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
+// 			if (diagram_type && !is_ajoo_editor(diagram_type["editorType"])) {
 
-				var nodes = [];
-				var links = [];
+// 				var nodes = [];
+// 				var links = [];
 
-				elems.forEach(function(elem) {
+// 				elems.forEach(function(elem) {
 
-					var id = elem["_id"];
+// 					var id = elem["_id"];
 
-					if (editor_node_ids[id]) {
-						editor_node_ids[id] = false;
-						return;
-					}
+// 					if (editor_node_ids[id]) {
+// 						editor_node_ids[id] = false;
+// 						return;
+// 					}
 
-					if (editor_link_ids[id]) {
-						editor_link_ids[id] = false;
-						return;
-					}
+// 					if (editor_link_ids[id]) {
+// 						editor_link_ids[id] = false;
+// 						return;
+// 					}
 
-					if (elem["type"] == "Box") {
-						build_zoom_chart_node(id, elem, nodes);
-					}
+// 					if (elem["type"] == "Box") {
+// 						build_zoom_chart_node(id, elem, nodes);
+// 					}
 
-					else if (elem["type"] == "Line") {
-						build_zoom_chart_link(id, elem, links);
-					}
-				});
+// 					else if (elem["type"] == "Line") {
+// 						build_zoom_chart_link(id, elem, links);
+// 					}
+// 				});
 
-				var data = {nodes: nodes, links: links};
-				chart.addData(data);
+// 				var data = {nodes: nodes, links: links};
+// 				chart.addData(data);
 
-				//data to remove
-				var nodes_to_remove = [];
-				_.each(editor_node_ids, function(node_val, node_id) {
+// 				//data to remove
+// 				var nodes_to_remove = [];
+// 				_.each(editor_node_ids, function(node_val, node_id) {
 
-					if (node_val) {
-						nodes_to_remove.push({id: node_id});
-					}
-				});
+// 					if (node_val) {
+// 						nodes_to_remove.push({id: node_id});
+// 					}
+// 				});
 
-				var links_to_remove = [];
-				_.each(editor_link_ids, function(link_val, link_id) {
+// 				var links_to_remove = [];
+// 				_.each(editor_link_ids, function(link_val, link_id) {
 
-					if (link_val) {
-						links_to_remove.push({id: link_id});
-					}
-				});
+// 					if (link_val) {
+// 						links_to_remove.push({id: link_id});
+// 					}
+// 				});
 
-				var data_to_remove = {nodes: nodes_to_remove, links: links_to_remove};
-				chart.removeData(data_to_remove);
+// 				var data_to_remove = {nodes: nodes_to_remove, links: links_to_remove};
+// 				chart.removeData(data_to_remove);
 
-				var active_element_id = Session.get("activeElement");
-				if (editor_node_ids[active_element_id] || editor_link_ids[active_element_id]) {
-					Interpreter.resetActiveElement();
-				}
+// 				var active_element_id = Session.get("activeElement");
+// 				if (editor_node_ids[active_element_id] || editor_link_ids[active_element_id]) {
+// 					Interpreter.resetActiveElement();
+// 				}
 
-				return elems.count();
-			}
-		}
-	},
-});
+// 				return elems.count();
+// 			}
+// 		}
+// 	},
+// });
 
 
 var is_mouse_down = false;
@@ -491,12 +494,10 @@ Template.diagramEditor.onRendered(function() {
 	// editor.switchEditMode();
 
 	//computing edit mode
-	var edit_mode = Diagrams.find({"editingUserId": Session.get("userSystemId")}).observeChanges({
+	var edit_mode = Diagrams.find({$or: [{editingUserId: Session.get("userSystemId")}, {isPublic: true,}]}).observeChanges({
 
 		added: function(id, fields) {
 			Session.set("editMode", true);
-
-			console.log("in edit mode mode", editor)
 
 			// if (is_ajoo_editor(editor_type)) {
 				editor.switchEditMode();
@@ -504,7 +505,6 @@ Template.diagramEditor.onRendered(function() {
 		},
 
 		removed: function(id) {
-			console.log("in remove")
 
 			Session.set("editMode", reset_variable());
 			// if (is_ajoo_editor(editor_type)) {

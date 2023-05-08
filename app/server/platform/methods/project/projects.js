@@ -272,9 +272,12 @@ function duplicateDiagram(diagram, new_project_id, new_version_id) {
 }
 
 
-function afterInsert(user_id, doc) {
+function afterInsert(user_id_in, doc) {
 
-	var user_id = user_id || get_unknown_public_user_name();
+	var user_id = doc["createdBy"];
+	if (!user_id) {
+		user_id = user_id_in;
+	}
 
 	var proj_id = doc["_id"];
 	var tool_id = doc["toolId"];

@@ -82,25 +82,6 @@ FlowRouter.route('/project/:projectId/version/:versionId/diagrams/:phrase?', {
     this.register('FoundDiagrams', Meteor.subscribe('FoundDiagrams', diagrams_query));
     this.register('DiagramTypes_UserVersionSettings', Meteor.subscribe('DiagramTypes_UserVersionSettings', {projectId: params.projectId, versionId: params.versionId,}));
     this.register('ProjectsGroups', Meteor.subscribe('ProjectsGroups', {projectId: params.projectId}));
-
-    // Deps.autorun(function () {
-    //     this.register('Searches', Meteor.subscribe('Searches', {projectId: proj_id}));
-    // });
-
-
-  //         Meteor.subscribe("Diagrams", Session.get("diagrams"));
-  //         Meteor.subscribe("FoundDiagrams", Session.get("diagrams"));
-
-  //         Meteor.subscribe("DiagramTypes_UserVersionSettings", {projectId: proj_id, versionId: version_id});
-
-  //         Meteor.subscribe("ProjectsGroups", {projectId: proj_id}),
-
-  //         //searching suggestions
-  //         Deps.autorun(function () {
-  //             Meteor.subscribe("Searches", Session.get("diagramsSearch"));
-  //         });
-
-
   },
 
   action(params, queryParams) {
@@ -127,54 +108,6 @@ function build_diagrams_query(params) {
 
     return diagrams_query;
 }
-
-
-  // this.route('diagrams', {
-  //     path: '/project/:projectId/version/:versionId/diagrams/:phrase?',
-  //     template: "diagramsTemplate",
-  //     layoutTemplate: "mainLayout",
-  //     yieldTemplates: {
-  //         'diagramsRibbon': {to: 'ribbon'},
-  //     },
-
-  //     waitOn: function() {
-  //       //sets panel item to activate
-  //         Session.set("activePanelItem", "diagrams");
-
-  //         Session.set("sortBy", {name: 1});
-
-  //         var proj_id = this.params.projectId;
-  //         var version_id = this.params.versionId;
-  //         Session.set("versionId", version_id);
-
-  //         var diagrams_query = {projectId: proj_id, versionId: version_id};
-  //         var phrase = this.params.phrase;
-  //         if (phrase)
-  //             diagrams_query["text"] = phrase;
-
-  //         Session.set("diagrams", diagrams_query);
-
-  //         Meteor.subscribe("Diagrams", Session.get("diagrams"));
-  //         Meteor.subscribe("FoundDiagrams", Session.get("diagrams"));
-
-  //         Meteor.subscribe("DiagramTypes_UserVersionSettings", {projectId: proj_id, versionId: version_id});
-
-  //         Meteor.subscribe("ProjectsGroups", {projectId: proj_id}),
-
-  //         //searching suggestions
-  //         Deps.autorun(function () {
-  //             Meteor.subscribe("Searches", Session.get("diagramsSearch"));
-  //         });
-  //     },
-
-  //     onStop: function() {
-  //        var no_query = Utilities.resetQuery();
-  //        Session.set("diagrams", no_query);
-  //        Session.set("sortBy", reset_variable());
-  //     },
-  // });
-
-
 
 
 FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/:editMode?', {
@@ -219,11 +152,7 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
   //sets panel item to activate
     Session.set("activePanelItem", "diagrams");
 
-    console.log("params ", params)
-
     if (params.editMode) {
-        console.log("in set edit mode")
-
         Session.set("editMode", true);
         Session.set("edited", true);
     }
@@ -285,20 +214,9 @@ FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/ve
     var type_id = params.diagramTypeId;
     var version_id = params.versionId;
 
-  //sets panel item to activate
-    // Session.set("activePanelItem", "diagrams");
-
-    console.log("params ", params)
-
-    // if (params.editMode) {
-        // console.log("in set edit mode")
-
     Session.set("editMode", true);
     Session.set("edited", true);
-    // }
-    // else {
-    //     Session.set("editMode", reset_variable());
-    // }
+
 
   //sets active diagram
     Session.set("activeDiagram", dgr_id);
@@ -312,105 +230,6 @@ FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/ve
     BlazeLayout.render('publicDiagramLayout', {main: 'publicDiagramTemplate'});
   },
 });
-
-
-
-
-
- // this.route('diagram', {
- //      path: '/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/:editMode?',
- //      template: "diagramTemplate",
- //      layoutTemplate: "mainLayout",
- //      yieldTemplates: {
- //          'diagramRibbon': {to: 'ribbon'},
- //      },
-
- //      onAfterAction: function() {
- //          var proj_id = this.params.projectId;
- //          var dgr_id = this.params._id;
- //          var type_id = this.params.diagramTypeId;
- //          var version_id = this.params.versionId;
-
- //          Deps.autorun(function () {
- //              Meteor.subscribe("Document_Sections", Session.get("documentSections"));
- //          });
-
- //          // Meteor.subscribe("ElementsSections_Sections", {
- //          //                                       diagramId: dgr_id, projectId: proj_id,
- //          //                                       versionId: version_id});
-
- //          Meteor.subscribe("ProjectsGroups", {projectId: proj_id});
-
- //          //loading posts dynamically depending on the limit value
- //          Deps.autorun(function () {
- //              Meteor.subscribe("DiagramLogs", Session.get("logs"));
- //          });
-
- //      },
-
- //      waitOn: function() {
-
- //        if (this.params.query.plain) {
- //          Session.set("plain", {showPlain: "inline", showDiagram: "none",});
- //        }
- //        else {
- //          Session.set("plain", {showPlain: "none", showDiagram: "inline",});
- //        }
-
- //        var proj_id = this.params.projectId;
- //        var dgr_id = this.params._id;
- //        var type_id = this.params.diagramTypeId;
- //        var version_id = this.params.versionId;
-
- //      //sets panel item to activate
- //        Session.set("activePanelItem", "diagrams");
-
- //        if (this.params.editMode) {
- //            Session.set("editMode", true);
- //            Session.set("edited", true);
- //        }
- //        else {
- //            Session.set("editMode", reset_variable());
- //        }
-
- //      //sets active diagram
- //        Session.set("activeDiagram", dgr_id);
- //        Session.set("diagramType", type_id);
- //        Session.set("activeElement", reset_variable());
-
- //      //sets version id
- //        Session.set("versionId", version_id);
-
- //        //reseting the editor
- //        // var stage = Interpreter.editor;
- //        // if (stage)
- //        //   stage["edit"] = reset_variable();
-
- //        return [
-
- //            Meteor.subscribe("Diagram_Types", {
- //                            id: dgr_id, projectId: proj_id, versionId: version_id,
- //                            diagramTypeId: type_id}),
-
- //            Meteor.subscribe("Diagram_Palette_ElementType", {
- //                          id: dgr_id, projectId: proj_id, versionId: version_id,
- //                          diagramTypeId: type_id}),
-
- //            Meteor.subscribe("Diagram_Locker", {projectId: proj_id,
- //                                              diagramId: dgr_id,
- //                                              versionId: version_id,
- //                                            }),
- //        ];
-
- //      },
-
- //  });
-
-
-
-
-
-
 
 
 FlowRouter.route('/project/:projectId/users', {
@@ -443,19 +262,6 @@ FlowRouter.route('/project/:projectId/users', {
           self.register('UserSearches', Meteor.subscribe('UserSearches', Session.get("usersSearch")));
 
     });
-
-
-
-
-    // //subscribes for project users
-    // Deps.autorun(function () {
-
-    //     //subscribes for the users
-    //     Meteor.subscribe("SearchNewProjectUsers", Session.get("searchUsers"));
-
-    //     //subscribes for the searched phrases for search bar drop-down
-    //     Meteor.subscribe("UserSearches", Session.get("usersSearch"));
-    // });
 
   },
 
@@ -503,11 +309,6 @@ FlowRouter.route('/project/:projectId/users', {
   //     },
 
   // });
-
-
-
-
-
 
 
 FlowRouter.route('/configurator', {
@@ -642,31 +443,6 @@ FlowRouter.route('/dump/tool/:tool_id', {
     BlazeLayout.render('dump');
   },
 });
-
-
-
-// FlowRouter.route('/public-diagram', {
-//   name: 'structure',
-//   waitOn() {
-//     // return import('/client/js/platform/signup/signup.js');
-//   },
-
-//   subscriptions: function(params, queryParams) {
-//     console.log("in new public diagram")
-//     console.log("params ", params)
-//     console.log("queryParams", queryParams)
-//     console.log("")
-
-//     // this.register('Structure_Tools', Meteor.subscribe('Structure_Tools', {}));
-//   },
-
-//   action() {
-//     // Session.set("activePanelItem", "structure");
-//     // BlazeLayout.render('mainLayout', {main: 'structureTemplate', ribbon: 'structureRibbon'});
-//   },
-
-// });
-
 
 
 FlowRouter.route('/public-diagram', {

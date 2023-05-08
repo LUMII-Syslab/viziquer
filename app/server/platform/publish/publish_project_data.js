@@ -33,7 +33,7 @@ Meteor.publish("Diagrams", function(list) {
 		}
 
 		var fields = {_id: 1, name: 1, imageUrl: 1, seenCount: 1, createdAt: 1,
-					diagramTypeId: 1, parentDiagrams: 1, allowedGroups: 1};
+					diagramTypeId: 1, parentDiagrams: 1, allowedGroups: 1, isPublic: 1,};
 
 		var query = {_id: {$ne: get_configurator_tool_id()}, isDeprecated: {$ne: true},};
 		
@@ -182,7 +182,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 						projectId: list["projectId"],
 						versionId: list["versionId"]};
 
-	var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1,
+	var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1, isPublic: 1,
 						allowedGroups: 1, diagramTypeId: 1, parentDiagrams: 1,
 						editingUserId: 1, editingStartedAt: 1, editorType: 1,
 						"edit.action": 1, "edit.userId": 1}};	
@@ -312,7 +312,6 @@ Meteor.publish("Diagram_Types", function(list) {
 		return this.stop();
 	}
 
-	console.log("listlist  a", list)
 	var diagram = Diagrams.find({_id: list.id});
 
 	var role;
