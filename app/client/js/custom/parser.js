@@ -148,7 +148,6 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 		// uniqueTriples = [];
 	}
 	
-	
 	if(uniqueTriples.length == 1 && uniqueTriples[0].startsWith("BIND(") && uniqueTriples[0].endsWith(result+")")){
 		result = uniqueTriples[0].substring(5, uniqueTriples[0].length-result.length-5);
 		uniqueTriples = [];
@@ -189,7 +188,6 @@ parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 }
 
 function createTriples(tripleTable, tripleType){
-	
 	var triples = []
 	var tripleStart= "";
 	var tripleEnd = "";
@@ -220,7 +218,7 @@ function createTriples(tripleTable, tripleType){
 						triples.push(triple);
 					}
 				}
-				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && triple["inFilter"] == null)) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
+				if(parseType == "class" || parseType == "aggregation" ||  (parseType == "condition" && (triple["inFilter"] == null || applyExistsToFilter == false))) triples.push(objectName + " " + triple["prefixedName"] + " " + triple["var"] + dot );
 			} else {
 				if(parseType == "different" || (parseType == "condition" && triple["inFilter"] == true)) triples.push(tripleStart + objectName + " " + triple["prefixedName"] + " " + triple["var"] + tripleEnd + dot);
 			}
@@ -2468,7 +2466,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 									&& symbolTable[classID][varName][k]["type"]["parentType"] != null){
 										isOwnProperty = true;
 									}
-									if(symbolTable[classID][varName][k]["context"] != classID && (alias == null || alias == "")) isReference = true;
+									if(symbolTable[classID][varName][k]["context"] != classID && (alias == null || alias == "") && typeof variableNamesTable[classID][varName] === "undefined") isReference = true;
 								}
 							}
 	
@@ -3536,7 +3534,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['RDFLiteral'] !== 'undefined'
 							&& typeof expressionTable[key]['NumericExpressionR']['AdditiveExpression']['MultiplicativeExpression']['UnaryExpression']['PrimaryExpression']['RDFLiteral']['iri'] === 'undefined'
 						){
-							console.log("55555555555")
 							var path = getPathFullGrammar(expressionTable[key]["NumericExpressionL"]["AdditiveExpression"]["MultiplicativeExpression"]["UnaryExpression"]["PrimaryExpression"]["PathProperty"]);
 							if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 							if(typeof path["variable"] !== 'undefined' &&

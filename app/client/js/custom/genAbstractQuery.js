@@ -107,7 +107,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		}	
 
 		if(obj_class.instanceIsConstant == true && (isURI(obj_class.instanceAlias) == 3 || isURI(obj_class.instanceAlias) == 4)) {
-			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias);	
+			obj_class.instanceAlias = await dataShapes.getIndividualName(obj_class.instanceAlias,true);	
 		}
 	}
 		  
@@ -637,7 +637,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
-						var cls = await dataShapes.getIndividualName(strURI)
+						var cls = await dataShapes.getIndividualName(strURI,true)
 						if(cls != null && cls != ""){
 							strURI = cls;
 						}
@@ -1350,7 +1350,7 @@ async function getResolveInformation(parsed_exp, schemaName, symbol_table, conte
 				await getResolveInformation( parsed_exp[exp], schemaName, symbol_table, context, exprType, isSimple)
 			}
 			
-			if(exp == "PrimaryExpression" && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
+			if((exp == "PrimaryExpression" || exp == "PrimaryExpressionL" || exp == "PrimaryExpressionR") && typeof parsed_exp[exp]["PathProperty"] !== "undefined"){
 				parsed_exp[exp] = pathOrReference(parsed_exp[exp], symbol_table, context)
 			}
 		}
@@ -1486,7 +1486,7 @@ async function resolveTypeFromSchemaForIndividual(id, schemaName) {
 					if(schemaName.toLowerCase() == "wikidata" && ((id.indexOf("[") > -1 && id.endsWith("]"))) ){
 						id = "wd:"+id;
 						// var cls = await dataShapes.resolveIndividualByName({name: id})
-						var cls = await dataShapes.getIndividualName(id)
+						var cls = await dataShapes.getIndividualName(id,true)
 						if(cls != null && cls != ""){
 							return {local_name: cls.substring(3), prefix: "wd"};
 						}
@@ -1652,7 +1652,6 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName, isSi
 function pathOrReference(o, symbol_table, context) {
     				//var classInstences = ["a", "b", "c"] // seit vajadzigas visas klases
             // It does not make sense calculate this every time function is called, but ...
-
     				if(typeof o["PathProperty"]["PathAlternative"] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0] !== "undefined" &&
     					typeof o["PathProperty"]["PathAlternative"][0]["PathSequence"] !== "undefined" &&
