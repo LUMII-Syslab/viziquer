@@ -283,6 +283,26 @@ Compartment.prototype = {
 		return text;
 	},
 
+	getTextWidth() {
+		var width = 0;
+		var presentation = this.presentation;
+		if (presentation) {
+			width = presentation.getTextWidth();
+		}
+
+		return width;
+	},
+
+	getTextHeight() {
+		var height = 0;
+		var presentation = this.presentation;
+		if (presentation) {
+			height = presentation.getTextHeight();
+		}
+
+		return height;
+	},
+
 	remove: function() {
 		var compart = this;
 		var text = compart.presentation;
