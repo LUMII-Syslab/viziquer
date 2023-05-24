@@ -63,10 +63,10 @@ Meteor.methods({
 									queryEngineType: schema.endpoint_type,
 									directClassMembershipRole: schema.direct_class_role,
 									indirectClassMembershipRole: schema.indirect_class_role,
+									showPrefixesForAllNames: false
 									// query: list_in.query,
 								});
 		}
-
 
 		let project_id = Projects.insert(project_obj);
 
