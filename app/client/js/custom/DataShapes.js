@@ -252,6 +252,9 @@ const findElementDataForIndividual = (vq_obj) => {
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
+	if (vq_obj.isIndirectClassMembership())
+		params.isIndirectClassMembership = true;
+
 	var pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
@@ -1004,8 +1007,6 @@ dataShapes = {
 	},
 	getIndividualName: function(localName, gen = false) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
-		console.log('---getIndividualName--')
-		console.log(localName)
 		var rez = '';
 		var prefix = '';
 		if (localName.startsWith("="))
