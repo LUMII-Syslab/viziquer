@@ -1024,11 +1024,16 @@ dataShapes = {
 			}
 			return r;
 		}
-		if ( localName.indexOf('[') != -1){
+		if ( localName.indexOf(')]') != -1){
 			prefix = localName.substring(0,localName.indexOf(':')); 
 			//const name = localName.substring(localName.indexOf('(')+1,localName.length-2);
 			const name = localName.substring(getLastB(localName)+1,localName.length-2);
 			rez = `${prefix}:${name}`;
+		}
+		else if (localName.indexOf(']') != -1) {
+			prefix = localName.substring(0,localName.indexOf(':'));
+			const name = localName.substring(localName.indexOf(':')+2,localName.length-1);	
+			rez = `${prefix}:${name}`;			
 		}
 		else if (localName.indexOf('//') != -1) {
 			var name = '';
@@ -1056,7 +1061,6 @@ dataShapes = {
 					rez = `<${ns.value}${rez.replace(ns.name,'').replace(':','')}>`;
 			});
 		}
-
 		return rez;
 	}
 };
