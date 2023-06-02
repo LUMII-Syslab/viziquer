@@ -190,27 +190,6 @@ ResizingShape.prototype = {
 		//resizing element size
 		var element_size = element.getSize();
 
-
-		console.log("")
-		console.log("stop dragging", element_size)
-		console.log("element ", element.compartments)
-		console.log("compartments w a", element.compartments.compartments[0].getTextWidth())
-		console.log("compartments ha ", element.compartments.compartments[0].getTextHeight())
-
-		// console.log("compartments ", element.compartments.computeCompartmentsArea())
-
-
-		// element -> compartments (array) -> in each compartment -> getTextWidth() 
-		// var element_size = element.getSize();
-		// element.updateElementSize(x1, y1, x2, y2);
-
-
-		// var lines = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
-		// element.collectLinkedLines(lines, {});
-
-		console.log("")
-
-
 		//returns the base state
 		element.addResizers();
 

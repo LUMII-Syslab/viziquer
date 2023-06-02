@@ -104,48 +104,48 @@ Meteor.startup(() => {
     // }
 
 
-    // var Api = new Restivus({
-    //     // useDefaultAuth: true,
-    //     prettyJson: true
-    // });
+    var Api = new Restivus({
+        // useDefaultAuth: true,
+        prettyJson: true
+    });
 
 
-    // Api.addRoute('public-diagram', {}, {
+    Api.addRoute('public-diagram', {}, {
 
-    //     get: function () {
-    //         let list = {};
-    //         _.extend(list, this.queryParams);
+        // get: function () {
+        //     let list = {};
+        //     _.extend(list, this.queryParams);
 
-    //         let diagram = Meteor.call("addPublicDiagram", list);
+        //     let diagram = Meteor.call("addPublicDiagram", list);
 
-    //         let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+        //     let url = "http://78.84.99.73:5000/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
 
-    //         return {
-    //             statusCode: 200,
-    //             headers: {
-    //                 'Content-Type': 'text/plain',
-    //                 'Location': url
-    //             },
-    //             body: 'Location: ' + url,
-    //         };
-    //     },
+        //     return {
+        //         statusCode: 200,
+        //         headers: {
+        //             'Content-Type': 'text/plain',
+        //             'Location': url
+        //         },
+        //         body: 'Location: ' + url,
+        //     };
+        // },
 
-    //     post: {
-    //         action: function () {
-    //             let list = {};
-    //             _.extend(list, this.queryParams);
+        post: {
+            action: function () {
+                let list = {};
+                _.extend(list, this.queryParams);
 
-    //             let diagram = Meteor.call("addPublicDiagram", list);
+                let diagram = Meteor.call("addPublicDiagram", list);
 
-    //             let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
+                let url = "/public/project/" + diagram.projectId + "/diagram/" + diagram._id + "/type/" + diagram.diagramTypeId + "/version/" + diagram.versionId;
 
-    //             return {
-    //                 statusCode: 200,
-    //                 response: {url: url,}
-    //             };
-    //         }
-    //     }
-    // });
+                return {
+                    statusCode: 200,
+                    response: {url: url,}
+                };
+            }
+        }
+    });
 
     console.log("End startup");
 });
