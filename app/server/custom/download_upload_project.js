@@ -79,10 +79,11 @@ Meteor.methods({
 
 				return diagram;
 			});
-			var schema = Schema.findOne({projectId: project_id});
-			if (!schema) { schema = {}; }
+			//var schema = Schema.findOne({projectId: project_id});
+			//if (!schema) { schema = {}; }
 
-			return {diagrams: diagrams, project: project, schema:schema };
+			//return {diagrams: diagrams, project: project, schema:schema };
+			return {diagrams: diagrams, project: project};
 		}
 	},
 

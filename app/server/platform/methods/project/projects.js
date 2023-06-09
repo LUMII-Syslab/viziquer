@@ -204,12 +204,12 @@ Meteor.methods({
 				duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
-			var schema = Schema.findOne({projectId: project_id});
-			if (schema) {
-				delete schema._id;
-				_.extend(schema, {projectId: new_project_id});
-				Schema.insert(schema);			
-			}
+			//var schema = Schema.findOne({projectId: project_id});
+			//if (schema) {
+			//	delete schema._id;
+			//	_.extend(schema, {projectId: new_project_id});
+			//	Schema.insert(schema);			
+			// }
 
 		}
 

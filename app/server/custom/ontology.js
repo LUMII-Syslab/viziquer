@@ -113,7 +113,7 @@ Meteor.methods({
 				
 	},
 	getProjectSchema: function(list) {
-
+		return { schema:{} };
 		var user_id = this.userId;
 		if (is_project_member(user_id, list)) {
 
