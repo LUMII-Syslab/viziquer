@@ -104,7 +104,7 @@ Meteor.startup(() => {
     // }
 
 
-    var Api = new Restivus({
+    let Api = new Restivus({
         // useDefaultAuth: true,
         prettyJson: true
     });

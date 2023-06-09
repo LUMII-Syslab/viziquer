@@ -7,13 +7,18 @@ Meteor.publish("Ontology", function(list) {
 	}
 
 	if (is_project_member(this.userId, list)) {
-		return [
-				Associations.find({projectId: list.projectId, versionId: list.versionId}),
-				Attributes.find({projectId: list.projectId, versionId: list.versionId}),
-				Classes.find({projectId: list.projectId, versionId: list.versionId}),
-				Schema.find({projectId: list.projectId}), //Schema.find({projectId: list.projectId, versionId: list.versionId}),
-				TriplesMaps.find({projectId: list.projectId, versionId: list.versionId}),
-			];
+		let result = [Associations.find({projectId: list.projectId, versionId: list.versionId}),
+						Attributes.find({projectId: list.projectId, versionId: list.versionId}),
+						Classes.find({projectId: list.projectId, versionId: list.versionId}),
+						//Schema.find({projectId: list.projectId}), //Schema.find({projectId: list.projectId, versionId: list.versionId}),
+						TriplesMaps.find({projectId: list.projectId, versionId: list.versionId}),
+					];
+
+		if (list.projectId) {
+			result.push(Schema.find({projectId: list.projectId}));
+		}
+
+		return result;
 	}
 	else {
 		//error_msg();
