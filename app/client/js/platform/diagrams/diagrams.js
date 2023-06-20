@@ -851,6 +851,7 @@ Template.ontologySettings.events({
 					completeRDFBoxesInDatetimeFunctions: $("#complete-RDF-boxes-in-datetime-functions").is(":checked"),
 					showGraphServiceCompartments: $("#show-graph-service-compartments").is(":checked"),
 					enableWikibaseLabelServices: $("#enable-wikibase-label-services").is(":checked"),
+					allowTopDownNamesInBINDs: $("#allow-top-down-names-in-BINDs").is(":checked"),
 					keepVariableNames: $("#keep-variable-names").is(":checked"),
 					endpointUsername: $("#endpoint-username").val(),
 					endpointPassword: $("#endpoint-password").val(),
@@ -904,6 +905,7 @@ Template.ontologySettings.events({
 		 $("#complete-RDF-boxes-in-datetime-functions").prop("checked", proj.completeRDFBoxesInDatetimeFunctions=="true");
 		 $("#show-graph-service-compartments").prop("checked", proj.showGraphServiceCompartments=="true");
 		 $("#enable-wikibase-label-services").prop("checked", proj.enableWikibaseLabelServices=="true");
+		 $("#allow-top-down-names-in-BINDs").prop("checked", proj.allowTopDownNamesInBINDs=="true");
 		 $("#keep-variable-names").prop("checked", proj.keepVariableNames=="true");
 		 $("#endpoint-username").val(proj.endpointUsername);
 		 $("#endpoint-password").val(proj.endpointPassword);

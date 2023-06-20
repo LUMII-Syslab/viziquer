@@ -1,13 +1,14 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Projects } from '/libs/platform/collections'
+import { Projects, Compartments, Elements, ElementTypes} from '/libs/platform/collections'
+import {OrthogonalCollectionRerouting} from '/client/js/platform/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
 // meteor npm install sparqljs
 
 var x = 10;
 var y = 10;
-var width = 300;
-var height = 150;
+var width = 500;
+var height = 120;
 var counter = 0;
 VQ_Elements = {};
 var directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -573,6 +574,62 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				}
 			//TODO create condition link
 		})
+		
+		
+		await delay(100);
+		var dragged_boxes = [];
+		var lines = {linkedLines: [], draggedLines: [], allLines: []};
+		
+		let editor = Interpreter.editor;
+		for(let elem_id in VQ_Elements){
+
+			let element_list = editor.getElements();
+			let element  = element_list[VQ_Elements[elem_id]];
+			
+			var elem_type = ElementTypes.findOne({name: "Class"});
+			
+			let compartments = element.compartments.compartments;
+			
+			var height  = compartments.length *22;
+			if(height < 30) height = 30;
+			
+			var longes_compartment_lenght = 100;
+			for(let compartment of compartments){
+				if(longes_compartment_lenght<compartment.getTextWidth()) longes_compartment_lenght = compartment.getTextWidth();
+			}
+			var element_size = element.getSize();
+
+			element_size.width = longes_compartment_lenght + 20;
+			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
+			
+			var box_obj = {resizedElement: element, minX: element_size.x, minY: element_size.y, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+element_size.y};
+			
+			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
+			element.collectLinkedLines(lines2, {});
+			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
+
+			var lines = [];
+			
+			_.each(lines2.draggedLines, function(line_obj) {
+				var link = line_obj.line;
+				var line_points = link.getPoints().slice();
+				lines.push({_id: link._id, points: line_points});
+			});
+
+			var list = {
+				elementId: element._id,
+				x: element_size.x,
+				y: element_size.y,
+				width: element_size["width"],
+				height: height,
+				lines: lines,
+				ports: [],
+			};
+			var resizing_shape = element.presentation;
+
+			list["diagramId"] = Session.get("activeDiagram");
+			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
+		}
 	  }
 	  });
   },
@@ -2427,13 +2484,14 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		var onlybgp = true;
 		var subject = null;
 		var object = null;
-				
+		
 		for(let u = 0; u < where["patterns"].length; u++){
 			var unionBlock = where["patterns"][u];	
 			var subjectCount = 0;
 			if(unionBlock["type"] != "bgp"){
 				onlybgp = false;
 			} else {
+				
 				if(subject == null){
 					subject = unionBlock["triples"][0]["subject"]["value"];
 				} else {
@@ -2445,12 +2503,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					if(object != unionBlock["triples"][unionBlock["triples"].length-1]["object"]["value"]) onlybgp = false;
 				}
 				if(typeof unionBlock["triples"][unionBlock["triples"].length-1]["predicate"]["termType"] !== "undefined" && unionBlock["triples"][unionBlock["triples"].length-1]["predicate"]["termType"] === "Variable")onlybgp = false;
-				// if(typeof unionBlock["triples"][unionBlock["triples"].length-1]["predicate"]["value"] === "string" && unionBlock["triples"][unionBlock["triples"].length-1]["predicate"]["value"].startsWith("?")) onlybgp = false;
 			}
 			
 			if(typeof unionBlock["triples"] !== "undefined"){
 				for(let triple = 0; triple < unionBlock["triples"].length; triple++){
-					if(unionBlock["triples"][triple]["subject"]["value"] == subject) subjectCount++;
+					if(unionBlock["triples"][triple]["subject"]["value"] == subject && unionBlock["triples"][triple]["predicate"]["value"] != directClassMembershipRole) subjectCount++;
 				}
 			}
 
@@ -8254,7 +8311,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			var graphInstruction = clazz["graphInstruction"];
 			
             //Link Coordinates
-            var coordX = newPosition.x + Math.round(newPosition.width/2);
+            // var coordX = newPosition.x + Math.round(newPosition.width/2);
+            var coordX = newPosition.x + 10;
             var coordY = oldPosition.y + oldPosition.height;
             var locLink = [];
 

@@ -598,7 +598,6 @@ Interpreter.customMethods({
 	},
 
 	AggregateWizard: function(e) {
-
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: parent_id});
@@ -713,7 +712,7 @@ Interpreter.customMethods({
                 // if (class_name) {
                 	if (class_name === null) class_name = "";
 					var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
-                  	if (userAlias !="") {
+                  	if (typeof userAlias !== "undefined" && userAlias !="") {
                     	Template.AggregateWizard.defaultAlias.set(userAlias);                    
                  	} else {
 						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
@@ -735,7 +734,6 @@ Interpreter.customMethods({
     },
 	
 	AddAggregate: function(e) {
-
 
 		 Template.AggregateWizard.expressionField.set("")
 		 Template.AggregateWizard.aliasField.set("")
@@ -811,8 +809,8 @@ Interpreter.customMethods({
                 // if (class_name) {
                 	if (class_name === null) class_name = "";
 					var userAlias = $("#479fc64e382dc2d31bdd0855 input").val();
-                  	if (userAlias !="") {
-                    	Template.AggregateWizard.defaultAlias.set(userAlias);                    
+                  	if (typeof userAlias !== "undefined" && userAlias !="") {
+                    	Template.AggregateWizard.defaultAlias.set(userAlias);     
                  	} else {
 						if(Template.AggregateWizard.expression.get() != "")Template.AggregateWizard.defaultAlias.set("");             
 						else Template.AggregateWizard.defaultAlias.set(class_name.charAt(0) + "_count");

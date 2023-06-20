@@ -76,25 +76,26 @@ Template.AddCondition.events({
 		} else {
 			var compart_type = CompartmentTypes.findOne({name: "Conditions", elementTypeId: act_el["elementTypeId"]});
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
-
-			var condition = $('#condition-expression').val();
-			if(condition != ""){
-				var fullText = condition;
-				var allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
-				var allowMultiplicationInput = "";
-				
-				if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
-					allowMultiplication = "true";
-					allowMultiplicationInput = "* ";
-					fullText = allowMultiplicationInput + fullText;
+			if(typeof compart !== "undefined"){
+				var condition = $('#condition-expression').val();
+				if(condition != ""){
+					var fullText = condition;
+					var allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
+					var allowMultiplicationInput = "";
+					
+					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
+						allowMultiplication = "true";
+						allowMultiplicationInput = "* ";
+						fullText = allowMultiplicationInput + fullText;
+					}
+					else allowMultiplication = "false";
+					
+					compart.subCompartments.Conditions.Conditions["Allow result multiplication"].input = allowMultiplication;
+					compart.subCompartments.Conditions.Conditions["Allow result multiplication"].value = allowMultiplicationInput;
+					compart.subCompartments.Conditions.Conditions.Expression.value = condition;
+					compart.subCompartments.Conditions.Conditions.Expression.input = condition;
+					Dialog.updateCompartmentValue(compart_type, condition, fullText, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 				}
-				else allowMultiplication = "false";
-				
-				compart.subCompartments.Conditions.Conditions["Allow result multiplication"].input = allowMultiplication;
-				compart.subCompartments.Conditions.Conditions["Allow result multiplication"].value = allowMultiplicationInput;
-				compart.subCompartments.Conditions.Conditions.Expression.value = condition;
-				compart.subCompartments.Conditions.Conditions.Expression.input = condition;
-				Dialog.updateCompartmentValue(compart_type, condition, fullText, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 			}
 		}
 		
