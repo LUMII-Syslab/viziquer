@@ -133,7 +133,8 @@ Meteor.startup(() => {
         post: {
             action: function () {
                 let list = {};
-                _.extend(list, this.queryParams);
+                // _.extend(list, this.queryParams);
+                _.extend(list, this.bodyParams);
 
                 let diagram = Meteor.call("addPublicDiagram", list);
 

@@ -40,13 +40,9 @@ Meteor.methods({
 		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
 		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
-		// let schema = {};
-		// if (response && response.data) {
 		const schema = _.find(response.data, function(item) {
 							return item.display_name == list_in.schema;
 						});
-		// }
-
 
 		// let project_id;
 		let public_project_name = "__publicVQ" + tool._id;
@@ -56,17 +52,35 @@ Meteor.methods({
 							createdBy: user_id,
 						};
 
+		let default_obj_values = {isInitialized: false,
+									isVisualizationNeeded: list_in.isVisualizationNeeded || false,
+									endpoint: list_in.endpoint || "",
+								};
+
+		_.extend(project_obj, default_obj_values);
+
+		let schema_obj = {};
 		if (schema) {
-			_.extend(project_obj, {schema: list_in.schema,
-									endpoint: schema.sparql_url,
-									uri: schema.named_graph,
-									queryEngineType: schema.endpoint_type,
-									directClassMembershipRole: schema.direct_class_role,
-									indirectClassMembershipRole: schema.indirect_class_role,
-									showPrefixesForAllNames: false
-									// query: list_in.query,
-								});
+			schema_obj = {schema: list_in.schema,
+							endpoint: schema.sparql_url,
+							uri: schema.named_graph,
+							queryEngineType: schema.endpoint_type,
+							directClassMembershipRole: schema.direct_class_role,
+							indirectClassMembershipRole: schema.indirect_class_role,
+							showPrefixesForAllNames: false
+						};
+
+			_.extend(project_obj, schema_obj);
 		}
+
+
+		let query_obj = {};
+		if (list_in.query) {
+			query_obj = {query: list_in.query,};
+			_.extend(project_obj, query_obj);
+
+		}
+
 
 		let project_id = Projects.insert(project_obj);
 
@@ -86,6 +100,11 @@ Meteor.methods({
 		build_diagram(list, user_id);
 		list["editingUserId"] = user_id;
 		list["editingStartedAt"] = new Date();
+
+		_.extend(list, schema_obj);
+		_.extend(list, query_obj);
+		_.extend(list, default_obj_values);
+
 		_.extend(list, {name: generate_id(),
 						projectId: project_id,
 						versionId: version._id,
