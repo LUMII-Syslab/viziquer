@@ -393,7 +393,11 @@ function updateInputValue(input, prefix, suggestion) {
 	let tail = input.value.slice(selEnd);
 	let newValue = prefix + suggestion + tail;
 	let cursorPos = prefix.length + suggestion.length;
+	
+	if(grammarType == "instance") newValue = "="+newValue;
+	
 	input.value = newValue;
+	
 	input.selectionStart = cursorPos;
 	input.selectionEnd = cursorPos;
 
@@ -636,6 +640,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 		for(let i = 0; i < inst.length; i++){
 			c["suggestions"].push({name: inst[i], priority:100, type:0})
 		}
+		
 	
 		return c;
 	}

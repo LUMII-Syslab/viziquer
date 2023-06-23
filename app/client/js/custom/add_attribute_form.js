@@ -252,7 +252,7 @@ Template.AddAttribute.events({
 		return;
 	},
 	
-	"click #required-existing-attribute": function(e) {
+	"click #required-existing-attribute": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
@@ -303,12 +303,17 @@ Template.AddAttribute.events({
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
+			var value = $("#mySearch-attribute").val().toLowerCase();
+			var attributes = await getAttributes(value);
+			var associations = await getAssociations(value);
+			Template.AddAttribute.attrList.set(attributes);
+			Template.AddAttribute.linkList.set(associations);
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
 		return;
 	},
 	
-	"click #attribute-helper-button": function(e) {
+	"click #attribute-helper-button": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
 			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
@@ -362,6 +367,11 @@ Template.AddAttribute.events({
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
+			var value = $("#mySearch-attribute").val().toLowerCase();
+			var attributes = await getAttributes(value);
+			var associations = await getAssociations(value);
+			Template.AddAttribute.attrList.set(attributes);
+			Template.AddAttribute.linkList.set(associations);
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
 		return;
@@ -574,7 +584,7 @@ Template.AddNewAttribute.helpers({
 
 Template.AddNewAttribute.events({
 
-	"click #ok-add-new-attribute": function(e, t) {
+	"click #ok-add-new-attribute": async function(e, t) {
 
 		var alias = document.getElementById("add-new-attribute-alias").value;
 		var expression = document.getElementById("add-new-attribute-expression").value;
@@ -693,7 +703,12 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
 			}
-			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());		
+			var value = $("#mySearch-attribute").val().toLowerCase();
+			var attributes = await getAttributes(value);
+			var associations = await getAssociations(value);
+			Template.AddAttribute.attrList.set(attributes);
+			Template.AddAttribute.linkList.set(associations);
+			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		}
 		
 		Template.AddNewAttribute.alias.set("");
@@ -833,7 +848,7 @@ async function getAttributes(filter, waiting){
 					} 
 
 					var prop = await dataShapes.getProperties(param, newStartElement);
-					
+
 					if(prop["complete"] == true) $("#more-attributes-button")[0].style.display = "none";
 					else $("#more-attributes-button")[0].style.display = "block";
 					

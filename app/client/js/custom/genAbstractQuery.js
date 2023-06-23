@@ -38,7 +38,6 @@ Interpreter.customMethods({
 // and creats symbol table with resolved types
 resolveTypesAndBuildSymbolTable = async function (query) {
 	count = 0;
-	var variableNamesTable = [];
   // TODO: This is not efficient to recreate schema each time
   // var schema = new VQ_Schema();
   // Adding default namespace
@@ -740,6 +739,19 @@ resolveTypesAndBuildSymbolTable = async function (query) {
                 }
 				f.isSimple = true;
                 break;
+			 case "DIRECT_PROPERTY":
+                if (f.alias) {
+                  updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addLabel == true) updateSymbolTable(f.alias+"Label", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addAltLabel == true) updateSymbolTable(f.alias+"AltLabel", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+			      if(f.addDescription == true) updateSymbolTable(f.alias+"Description", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+                } else {
+                  updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
+                  renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				  
+                }
+				f.isSimple = true;
+                break;
              case "PROPERTY_ALIAS":
                 if(typeof f.alias !== "undefined" && f.alias !== null && f.alias !== "")updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS");
 				else {
@@ -796,6 +808,19 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 
            switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
+                if (f.alias) {
+                  updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addLabel == true) updateSymbolTable(f.alias+"Label", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+				  if(f.addAltLabel == true) updateSymbolTable(f.alias+"AltLabel", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+			      if(f.addDescription == true) updateSymbolTable(f.alias+"Description", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
+                } else {
+                  updateSymbolTable( obj_class.identification._id+f.exp, obj_class.identification._id, "PROPERTY_NAME", var_obj["type"], var_obj["parentType"]);
+                  renameNameInSymbolTable(obj_class.identification._id+f.exp, f.exp);
+				  
+                }
+				f.isSimple = true;
+                break;
+			case "DIRECT_PROPERTY":
                 if (f.alias) {
                   updateSymbolTable(f.alias, obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
 				  if(f.addLabel == true) updateSymbolTable(f.alias+"Label", obj_class.identification._id, "PROPERTY_ALIAS", var_obj["type"]);
@@ -976,13 +1001,27 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
 genAbstractQueryForElementList = async function (element_id_list, virtual_root_id_list) {
+	var classAccessTable = [];
 	
   // conver id-s to VQ_Elements (filter out incorrect id-s)
   var element_list = _.filter(_.map(element_id_list, function(id) {return new VQ_Element(id)}), function(v) {if (v.obj) {return true} else {return false}});
   // determine which elements are root elements
   _.each(element_list, function(e) {
+	  if(e.obj.type == "Box"){
+		  classAccessTable[e.obj._id] = [];
+		  console.log(e.obj._id, e.getName())
+	  }
     e.setVirtualRoot(_.any(virtual_root_id_list, function(id) { return id == e._id() }));
   });
+  
+  for(let clazz in classAccessTable){
+	  if(typeof classAccessTable[clazz] !== "function"){
+		for(let clazzc in classAccessTable){
+			if(typeof classAccessTable[clazzc] !== "function" && clazzc != clazz) classAccessTable[clazz][clazzc] = null;
+		}
+	  }
+  }
+
   var root_elements = _.filter(element_list, function(e) {return e.isRoot();});
 
   // map each root element to AST
@@ -1080,19 +1119,57 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
       // {link:VQ_Element, start:bool} --> JSON for linked class
       var genLinkedElement = function(link) {
           var elem = null;
+		  var parentElem = null;
           var linkedElem_obj = {};
           if (link.start) {
             elem = link.link.getStartElement();
+            parentElem = link.link.getEndElement();
             linkedElem_obj["isInverse"] = !link.link.isInverse();
           } else {
             elem = link.link.getEndElement();
+            parentElem = link.link.getStartElement();
             linkedElem_obj["isInverse"] = link.link.isInverse();
           };
+		  
+		  
+		  
           // generate if the element on the other end is not visited AND the link is not conditional
           // AND it is within element_list AND the link is within element_list
           if (!visited[elem._id()] && !link.link.isConditional()
               && _.any(element_list, function(el) {return el.isEqualTo(elem)})
               && _.any(element_list, function(li) {return li.isEqualTo(link.link)})) {
+				  var isUnionUP = false;
+				  if(parentElem.getName() == "[ + ]"){
+					  isUnionUP = true;
+				  } 
+				  var isUnionDOWN = false;
+				  if(elem.getName() == "[ + ]"){
+					  isUnionDOWN = true;
+				  }
+				  
+				  classAccessTable[elem._id()][parentElem._id()] = [];
+				  classAccessTable[elem._id()][parentElem._id()].push({
+					  linkType:link.link.getType(), 
+					  isSubQuery: link.link.isSubQuery(),
+					  isGlobalSubQuery: link.link.isGlobalSubQuery(),
+                      isGraphToContents: link.link.isGraphToContents(),
+					  direction:"up",
+					  name:parentElem.getName(),
+					  alias:parentElem.getInstanceAlias(),
+					  isUnion:isUnionUP,
+				  })
+				  
+				  classAccessTable[parentElem._id()][elem._id()] = [];
+				  classAccessTable[parentElem._id()][elem._id()].push({
+					  linkType:link.link.getType(), 
+					  isSubQuery: link.link.isSubQuery(),
+					  isGlobalSubQuery: link.link.isGlobalSubQuery(),
+                      isGraphToContents: link.link.isGraphToContents(),
+					  direction:"down",
+					  name:elem.getName(),
+					  alias:elem.getInstanceAlias(),
+					  isUnion:isUnionDOWN,
+				  })  
 				  
               visited[elem._id()]=elem._id();
               _.extend(linkedElem_obj,
@@ -1187,6 +1264,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 		  if (proj.enableWikibaseLabelServices) {
             proj_params.enableWikibaseLabelServices = proj.enableWikibaseLabelServices;
           };
+		  if (proj.allowTopDownNamesInBINDs) {
+            proj_params.allowTopDownNamesInBINDs = proj.allowTopDownNamesInBINDs;
+          };
 		  if (proj.showGraphServiceCompartments) {
             proj_params.showGraphServiceCompartments = proj.showGraphServiceCompartments;
           };
@@ -1205,6 +1285,8 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
           return proj_params;
      }
    };
+   
+   
    
     var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), local_name: e.getName()},
@@ -1253,10 +1335,89 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 	
 	if(messages.length > 0)query_in_abstract_syntax["messages"] = messages;
 	if(warnings.length > 0)query_in_abstract_syntax["warnings"] = warnings;
-	
+	getConnectedClasses(classAccessTable);
+	query_in_abstract_syntax["classAccessTable"] = classAccessTable;
     return query_in_abstract_syntax;
   });
 };
+
+function printClassAccessTable(classT, interval){
+	for(let clazz in classT){
+		if(typeof classT[clazz] !== "function"){
+			var c = new VQ_Element(clazz);
+			var cName = c.getName();
+			if(cName == null) cName = c.getInstanceAlias();
+			console.log(interval+ cName);
+			intervalA = "  ";
+			for(let clazzA in classT[clazz]){
+				if(typeof classT[clazz][clazzA] !== "function"){
+					var c = new VQ_Element(clazzA);	
+					var path = "";
+					for(let p in classT[clazz][clazzA]){
+						if(typeof classT[clazz][clazzA][p] !== "function"){
+							var pp = classT[clazz][clazzA][p];
+							var name = pp.name;
+							if(name == null) name = pp.alias;
+							
+							path = path + pp.direction + "-" + name + "(union=" + pp.isUnion +")" +", ";
+						}
+					}
+					console.log(intervalA+  path, );
+				}
+			}
+			
+		}
+	}
+}
+
+function getConnectedClasses(classAccessTable){
+	for(let classM in classAccessTable){
+		if(typeof classAccessTable[classM] !== "function"){	
+			for(let classC in classAccessTable[classM]){
+				if(typeof classAccessTable[classM][classC] !== "function" && classAccessTable[classM][classC] !== null){
+				  for(let classCC in classAccessTable[classC]){
+						if(typeof classAccessTable[classC][classCC] !== "function" && classAccessTable[classC][classCC] !== null &&  classCC !== classM){
+						  if(classAccessTable[classM][classCC] == null){
+							  classAccessTable[classM][classCC] = [];
+							  for(let classMC in classAccessTable[classM][classC]){
+								 if(typeof classAccessTable[classM][classC][classMC] !== "function") classAccessTable[classM][classCC].push(classAccessTable[classM][classC][classMC]);
+							  } 
+							  for(let classMC in classAccessTable[classC][classCC]){
+								 if(typeof classAccessTable[classC][classCC][classMC] !== "function") classAccessTable[classM][classCC].push(classAccessTable[classC][classCC][classMC]);
+							  }  
+						  } else {
+							  
+							  var tempPath = [];
+							  for(let classMC in classAccessTable[classM][classC]){
+								 if(typeof classAccessTable[classM][classC][classMC] !== "function") tempPath.push(classAccessTable[classM][classC][classMC]);
+							  } 
+							  for(let classMC in classAccessTable[classC][classCC]){
+								 if(typeof classAccessTable[classC][classCC][classMC] !== "function") tempPath.push(classAccessTable[classC][classCC][classMC]);
+							  }  
+							  
+							  if(classAccessTable[classM][classCC].length > tempPath.length) classAccessTable[classM][classCC] = tempPath;
+						  }
+						}
+				  }
+				}
+			}
+		}
+	}
+	var notAll = false;
+	for(let classM in classAccessTable){
+		if(typeof classAccessTable[classM] !== "function"){	
+			for(let classC in classAccessTable[classM]){
+				if(typeof classAccessTable[classM][classC] !== "function" && classAccessTable[classM][classC] === null){
+				 notAll = true;
+				 break;
+				}
+			}
+		}
+	}
+	if(notAll == true) getConnectedClasses(classAccessTable);
+	
+	return classAccessTable
+}
 
 // string -> int
 // function checks if the text is uri
@@ -1585,7 +1746,7 @@ async function resolveKind(id, exprType, context, symbol_table, schemaName, isSi
 						var k = null;
 						if(exprType == "attribute" && isSimple == true){
 							if (await resolveTypeFromSchemaForAttributeAndLink(id, schemaName)) {
-        						k="PROPERTY_NAME";
+        						k="DIRECT_PROPERTY";
         					} else {
 								 k=await resolveKindFromSymbolTable(id, context, symbol_table);
 								 if (!k) {
