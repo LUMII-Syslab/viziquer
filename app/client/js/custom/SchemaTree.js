@@ -454,7 +454,7 @@ Template.schemaTree.events({
 });
 
 Template.schemaTree.rendered = async function() {
-	console.log("-----rendered schemaTree----")
+	//console.log("-----rendered schemaTree----")
 	var proj = Projects.findOne(Session.get("activeProject"));
 	if ( proj !== undefined && dataShapes.schema.projectId != proj._id) {
 		await dataShapes.changeActiveProjectFull(proj);
@@ -490,7 +490,7 @@ Template.schemaTree.rendered = async function() {
 }
 
 Template.schemaFilter.rendered = async function() {
-	console.log("-----rendered schemaFilter (Properties)----")
+	//console.log("-----rendered schemaFilter (Properties)----")
 	// Pārnests uz schemaTree.rendered
 	// Template.schemaFilter.F2.set(dataShapes.schema.tree.filterP);
 	// Template.schemaFilter.PropKind.set(dataShapes.schema.tree.pKind);

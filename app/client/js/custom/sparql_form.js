@@ -50,7 +50,7 @@ var sparql_form_events = {
 
 		let yasqe = Template.sparqlForm_see_results.yasqe.get();
     let query = yasqe.getValue();
-
+	
     console.log("query ", query)
 
 		Interpreter.customExtensionPoints.ExecuteSPARQL_from_text(query);
@@ -160,6 +160,7 @@ var sparql_form_helpers = {
 
 
 Template.sparqlForm.onRendered(function() {
+console.log('--sparqlForm.onRendered--')
 
 	let yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
 		sparql: {
@@ -182,13 +183,15 @@ Template.sparqlForm.onRendered(function() {
 		yasqe.setValue(val);
 		// yasqe.refresh();
 	});
-	//yasqe3.setValue("3");
+	Session.set("generatedSparql", undefined);
+	yasqe3.setValue("");
 });
 
 Template.sparqlForm.helpers(sparql_form_helpers);
 Template.sparqlForm.events(sparql_form_events);
 
 Template.sparqlForm_see_results.onDestroyed(function() {
+	console.log('-----------sparqlForm_see_results.onDestroyed(-----------')
 	Session.set("generatedSparql", undefined);
 	Session.set("executedSparql", {limit_set: false, number_of_rows: 0});
 
@@ -196,7 +199,7 @@ Template.sparqlForm_see_results.onDestroyed(function() {
 });
 
 Template.sparqlForm_see_results.onRendered(function() {
-
+console.log('----sparqlForm_see_results.onRendered-----')
 	var yasqe_config = {sparql: {
 							showQueryButton: false,
 			          	},

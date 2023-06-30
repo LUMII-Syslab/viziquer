@@ -342,6 +342,7 @@ return {
 		treeTopsP: {}, 
 		treeTopsI: {}, 
 		namespaces: [],
+		local_ns: "",
 		showPrefixes: "false", 
 		projectId: "",
 		limit: MAX_ANSWERS,
@@ -999,7 +1000,8 @@ dataShapes = {
 			if (this.schema.schemaType === 'wikidata' && type == 'P')
 				ns = 'wdt';
 			else
-				ns = this.schema.namespaces.filter(function(n){ return n.is_local == true})[0].name
+				ns = this.schema.local_ns;
+				//ns = this.schema.namespaces.filter(function(n){ return n.is_local == true})[0].name
 			localName = `${ns}:${localName}`;
 		}
 		var name = this.getIndividualName(localName);
