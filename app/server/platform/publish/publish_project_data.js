@@ -185,6 +185,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 	var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1, isPublic: 1,
 						allowedGroups: 1, diagramTypeId: 1, parentDiagrams: 1,
 						editingUserId: 1, editingStartedAt: 1, editorType: 1,
+						isInitialized: 1, sparqlText: 1, query: 1, isInitialized: 1, isVisualizationNeeded: 1, endpoint: 1, 
 						"edit.action": 1, "edit.userId": 1}};	
 
 	var diagrams = Diagrams.find(diagram_query, diagram_limit);
