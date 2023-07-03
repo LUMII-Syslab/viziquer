@@ -57,6 +57,68 @@ Template.diagramsRibbon.events({
 		$('#add-diagram').modal("show");
 	},
 
+
+
+// //shows button's tooltip on mouse over
+//     'mouseenter .btn-ribbon' : function(e, templ) {
+//     	Dialog.destroyTooltip(e);
+//     	Dialog.showTooltip(e);
+//     },
+
+// //removes tooltip on mouse leave
+//     'mouseleave .btn-ribbon' : function(e, templ) {
+//     	Dialog.destroyTooltip(e);
+//     },
+
+});
+
+Template.diagramsRibbon.helpers({
+
+	versionId: function() {
+		return Session.get("versionId");
+	},
+
+	//if the version is editable and there is atleast one diagram type
+	is_toolbar_enabled: function() {
+		if (is_toolbar_enabled()) {
+			Dialog.initTooltip();
+			return true;
+		}
+	},
+
+	project_id: function() {
+		return Session.get("activeProject");
+	},
+
+	tool: function() {
+		var project_id = Session.get("activeProject");
+		var project = Projects.findOne({_id: project_id,});
+
+		if (!project) {
+			// console.error("No project ", project_id);
+			return;
+		}
+
+		var tool = Tools.findOne({_id: project.toolId,});
+		if (!tool) {
+			console.error("No tool", project.toolId);
+			return;
+		}
+
+		// tool.toolbar = "diagramsToolbar";
+
+		return tool;
+	}
+
+
+});
+
+// End of diagramsRibbon template
+
+
+
+Template.diagramsToolbar.helpers({
+
 	'click #download-project': function(e) {
 		Dialog.destroyTooltip(e);
 
@@ -115,62 +177,8 @@ Template.diagramsRibbon.events({
 		$("#migrate-form").modal("show");
 	},
 
-// //shows button's tooltip on mouse over
-//     'mouseenter .btn-ribbon' : function(e, templ) {
-//     	Dialog.destroyTooltip(e);
-//     	Dialog.showTooltip(e);
-//     },
-
-// //removes tooltip on mouse leave
-//     'mouseleave .btn-ribbon' : function(e, templ) {
-//     	Dialog.destroyTooltip(e);
-//     },
-
 });
 
-Template.diagramsRibbon.helpers({
-
-	versionId: function() {
-		return Session.get("versionId");
-	},
-
-	//if the version is editable and there is atleast one diagram type
-	is_toolbar_enabled: function() {
-		if (is_toolbar_enabled()) {
-			Dialog.initTooltip();
-			return true;
-		}
-	},
-
-	project_id: function() {
-		return Session.get("activeProject");
-	},
-
-	tool_name: function() {
-		var project_id = Session.get("activeProject");
-		var project = Projects.findOne({_id: project_id,});
-
-		console.log("prject ", project)
-
-
-		if (!project) {
-			// console.error("No project ", project_id);
-			return;
-		}
-
-		var tool = Tools.findOne({_id: project.toolId,});
-		if (!tool) {
-			console.error("No tool", project.toolId);
-			return;
-		}
-
-		return tool.name;
-	}
-
-
-});
-
-// End of diagramsRibbon template
 
 //calculates view's drop-down element visibility
 Template.diagramsViewButton.helpers({

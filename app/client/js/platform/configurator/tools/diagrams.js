@@ -36,6 +36,10 @@ Template.toolDiagrams.events({
 		$('#migrate-project-form').modal("show");
 	},
 
+	'click #toolbar': function(e, templ) {
+		$('#toolbar-form').modal("show");
+	},
+
 });
 
 
@@ -153,3 +157,44 @@ Template.addConfiguratorDiagram.events({
 	}
 
 });
+
+
+Template.toolbarForm.helpers({
+
+	templateName: function() {
+		var tool = Tools.findOne({_id: Session.get("toolId")});
+		if (tool) {
+			return tool.toolbar;
+		}
+	},
+
+	// 'click #ok-toolbar-form' : function(e) {
+	// 	var list = {toolId: Session.get("toolId"),
+	// 				set: {toolbar: $("#toolbar-form-name").val(),}
+	// 			};
+
+	// 	Utilities.callMeteorMethod("updateTool", list);
+	// },
+
+});
+
+
+
+
+Template.toolbarForm.events({
+
+	'click #ok-toolbar-form' : function(e) {
+		var list = {toolId: Session.get("toolId"),
+					set: {toolbar: $("#toolbar-form-name").val(),}
+				};
+
+		Utilities.callMeteorMethod("updateTool", list);
+	},
+
+});
+
+
+
+
+
+// diagramsToolbar

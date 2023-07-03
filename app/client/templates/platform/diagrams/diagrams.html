@@ -502,22 +502,15 @@
 
         <!-- breadcrumb -->
         <ol class="breadcrumb">
-            <li><i class="fa fa-picture-o"></i> Diagrams ({{tool_name}})</li>
+            <li><i class="fa fa-picture-o"></i> Diagrams ({{tool.name}})</li>
         </ol>
         <!-- end breadcrumb -->
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right1">
                 <button id="add" class="btn btn-ribbon toolbar-button" data-title="New Diagram" data-toggle="tooltip" data-placement="bottom">New diagram</button>
-                <!-- <button id="import" class="btn btn-ribbon" data-title="Import VQ Schema"><i class="fa fa-upload"></i></button> -->
-				<!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
-            	<button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
-            	<a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
 
-            	<a id="upload-project" class="btn btn-ribbon toolbar-button" data-title="Upload Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-upload"></i></a>
-
-                <button id="migrate" class="btn btn-ribbon toolbar-button" data-title="Migrate" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-wrench"></i></button>
-
+                {{> Template.dynamic template=tool.toolbar }}
             </span>
         {{/if}}
 
@@ -525,17 +518,34 @@
     <!-- END RIBBON -->
 
     {{> addDiagram}}
-    {{> importOntology}}
-    {{> uploadProject}}
-    {{> ontologySettings}}
-    {{> migrateForm}}
-	{{> exportOntology}}
+
 
 <!--     <a id="download-hack" style="display:none;">project-data</a> -->
 
     <div id="download-hack" style="display:none;"></div>
 
 </template>
+
+
+<template name="diagramsToolbar">
+       
+    <!-- <button id="import" class="btn btn-ribbon" data-title="Import VQ Schema"><i class="fa fa-upload"></i></button> -->
+    <!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
+    <button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
+    <a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
+
+    <a id="upload-project" class="btn btn-ribbon toolbar-button" data-title="Upload Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-upload"></i></a>
+
+    <button id="migrate" class="btn btn-ribbon toolbar-button" data-title="Migrate" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-wrench"></i></button>
+
+    {{> importOntology}}
+    {{> uploadProject}}
+    {{> ontologySettings}}
+    {{> migrateForm}}
+    {{> exportOntology}}
+
+</template>
+
 
 
 <template name="ontologySettings">
