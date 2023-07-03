@@ -69,16 +69,41 @@ Meteor.methods({
 				var fs = Npm.require('fs');
 				var current_dir = process.env.PWD;
 
-				var file_name = "VQ_configuration_latest.json";
-				if (Meteor.settings && Meteor.settings.configurationName) {
-					file_name = Meteor.settings.configurationName;
-				}
+        var configList;
+        try {
+          if (Meteor.settings && Meteor.settings.configurationName) {
+            configList = [ Meteor.settings.configurationName ];
+          } else {
+            configList = JSON.parse(Assets.getText("jsons/autoload.json"));
+          }
+        } catch (err) {
+          console.log(`autoload file not found; will use [ "VQ_configuration_latest.json" ]`);
+          configList = [ "VQ_configuration_latest.json" ];
+        }
+        console.log('configurations to be loaded:', configList);
 
-				// var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
-				var file = JSON.parse(Assets.getText("jsons/" + file_name));
+        let configData = {}
+        for (let fn of configList) {
+          let data;
+          try {
+            data = JSON.parse(Assets.getText(`jsons/${fn}`));
+          } catch (err) {
+            console.error(`Error loading config file ${fn}; skipping it`);
+          }
+          if (data) configData = Object.assign(configData, data);
+        }
 
-				var list = {toolId: tool_id, versionId: version_id, data: file,};
+				// var file_name = "VQ_configuration_dss_latest.json";
+				// if (Meteor.settings && Meteor.settings.configurationName) {
+				// 	file_name = Meteor.settings.configurationName;
+				// }
 
+				// // var file = JSON.parse(fs.readFileSync(current_dir + "/jsons/" + file_name));
+				// var file = JSON.parse(Assets.getText("jsons/" + file_name));
+
+        // console.log(`loading configuration from ./private/jsons/${file_name}`);
+
+				var list = {toolId: tool_id, versionId: version_id, data: configData };
 				Meteor.call("importAjooConfiguration", list);
 			}
 
