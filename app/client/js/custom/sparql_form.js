@@ -199,18 +199,19 @@ Template.sparqlForm_see_results.onDestroyed(function() {
 });
 
 Template.sparqlForm_see_results.onRendered(function() {
-console.log('----sparqlForm_see_results.onRendered-----')
-	var yasqe_config = {sparql: {
-							showQueryButton: false,
-			          	},
+  console.log('----sparqlForm_see_results.onRendered-----')
+  var yasqe_config = {
+    sparql: {
+      showQueryButton: false,
+    },
 
-			          	extraKeys: {
-			          			Esc: function() {
-			          				console.log("esc pressed");
-			          			},
-			          	},
+    extraKeys: {
+      Esc: function () {
+        console.log("esc pressed");
+      },
+    },
 
-			  		};
+  };
   // var proj = Projects.findOne({_id: Session.get("activeProject")});
 	//
   // if (proj && proj.uri && proj.endpoint) {
