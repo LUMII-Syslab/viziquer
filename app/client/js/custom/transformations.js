@@ -508,7 +508,38 @@ Interpreter.customMethods({
 				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
 			} 
 	},
+	
+	visualizeSPARQLfromText: function(queries) {
 		
+		var x = 10;
+		var editor = Interpreter.editor;
+		
+		var e;
+			if (editor.data.ev) {
+				e = editor.data.ev;
+			}
+
+			var x, y;
+			if (e) {
+				var mouse_state_obj = editor.getMouseStateObject();
+				var mouse_pos = mouse_state_obj.getMousePosition(e);
+				x = mouse_pos["x"];
+				y = mouse_pos["y"];
+
+			}
+			if(x == 0 && y == 0){
+				x = e.evt.layerX;
+				y = e.evt.layerY;
+			}
+
+	
+		for (const query of queries) {
+			Interpreter.customExtensionPoints.generateVisualQuery(query, x, y);
+			x = x+170;
+		}
+		
+	},	
+	
 	visualizeSPARQL: function() {
 		
 		

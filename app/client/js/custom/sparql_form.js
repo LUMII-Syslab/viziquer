@@ -2,7 +2,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { is_system_admin } from '/libs/platform/user_rights'
-import { Diagrams } from '/libs/platform/collections'
+import { Projects, Diagrams } from '/libs/platform/collections'
 
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
@@ -185,6 +185,26 @@ console.log('--sparqlForm.onRendered--')
 	});
 	Session.set("generatedSparql", undefined);
 	yasqe3.setValue("");
+	
+	var project_id = Session.get("activeProject");
+	var project = Projects.findOne({_id: project_id,});
+	console.log(project)
+	
+	if (project.newPublicProject) {
+
+		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
+		console.log(diagram)	
+		if (diagram.query !== undefined && diagram.query.length > 0) {
+			yasqe3.setValue(diagram.query);
+			if (project.isVisualizationNeeded)
+				Interpreter.customExtensionPoints.visualizeSPARQLfromText([diagram.query]);
+		}
+		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
+		Utilities.callMeteorMethod("updateProject", list);	
+	}
+	
+	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
+
 });
 
 Template.sparqlForm.helpers(sparql_form_helpers);

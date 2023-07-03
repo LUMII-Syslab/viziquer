@@ -29,8 +29,14 @@ Meteor.methods({
 	},
 
 	addPublicDiagram: function(list_in) {
+		console.log(list_in)
+		// ******************************
+		list_in["query"] = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
+		list_in["isVisualizationNeeded"] = true;
+		list_in["endpoint"] = "https://dbpedia.org/sparql";  // TODO
+		// ******************************
 		const user_id = get_unknown_public_user_name();
-
+		
 		const tool = Tools.findOne({"$or": [{name: "Viziquer"}, {name: "ViziQuer",},]});
 		if (!tool) {
 			console.error("No Viziquer tool");
@@ -43,13 +49,14 @@ Meteor.methods({
 		const schema = _.find(response.data, function(item) {
 							return item.display_name == list_in.schema;
 						});
-
+						
 		// let project_id;
 		let public_project_name = "__publicVQ" + tool._id;
 		const project_obj = {name: public_project_name,	
 							toolId: tool._id,		
 							createdAt: new Date(),
 							createdBy: user_id,
+							newPublicProject: true,
 						};
 
 		let default_obj_values = {isInitialized: false,
@@ -138,19 +145,16 @@ Meteor.methods({
 
 	updateDiagram: function(list) {
 		var user_id = Meteor.userId() || is_public_diagram(list["diagramId"]);
-
 		var update = {};
 		update[list["attrName"]] = list["attrValue"];
 
 		if (is_project_version_admin(user_id, list) || get_unknown_public_user_name()) {
-
 			Diagrams.update({_id: list["diagramId"], projectId: list["projectId"],
 							versionId: list["versionId"]},
 							{$set: update});
 		}
 
 		else if (is_system_admin(user_id, list)) {
-
 			Diagrams.update({_id: list["diagramId"], toolId: list["toolId"],
 							versionId: list["versionId"]},
 							{$set: update});
