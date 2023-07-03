@@ -85,18 +85,29 @@ Template.diagramTemplate.helpers({
 
 	diagram_type: function() {
 		var diagram_type = DiagramTypes.findOne({_id: Session.get("diagramType")});
-		if (diagram_type && diagram_type["size"]) {
+		if (!diagram_type) {
+			return;
+		}
+
+		var header = diagram_type.header;
+		var footer = diagram_type.footer;
+
+		if (diagram_type["size"]) {
 
 			return {diagram_size: diagram_type["size"]["diagramSize"],
 					dialog_size: diagram_type["size"]["dialogSize"],
 					is_ajoo_editor: true,
+					header: header,
+					footer: footer,
 				};
 		}
 
 		else {
 			return {diagram_size: 10,
 					dialog_size: 2,
-					is_ajoo_editor: true
+					is_ajoo_editor: true,
+					header: header,
+					footer: footer,
 				};
 		}
 	},

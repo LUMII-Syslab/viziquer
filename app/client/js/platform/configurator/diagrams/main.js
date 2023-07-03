@@ -39,6 +39,15 @@ Template.diagramMain.helpers({
 	diagramName: function() {
 		return Configurator.getDiagramTypeProperty("name");
 	},
+
+	header: function() {
+		return Configurator.getDiagramTypeProperty("header");
+	},
+
+	footer: function() {
+		return Configurator.getDiagramTypeProperty("footer");
+	},
+
 });
 
 Template.diagramMain.events({

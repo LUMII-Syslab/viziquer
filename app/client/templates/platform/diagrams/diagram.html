@@ -41,9 +41,12 @@
                             {{> diagramEditor}}
                         </div>
                       </div>
-                      <div class="row">
-                          {{> sparqlForm}}
-                      </div>
+                        {{#if diagram_type.footer}}
+                            <div class="row">
+                                {{> Template.dynamic template=diagram_type.footer }}
+                                <!-- {{> sparqlForm}} -->
+                            </div>
+                        {{/if}}
                   </div>
 
 
