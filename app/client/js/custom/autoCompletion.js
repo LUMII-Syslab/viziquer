@@ -462,14 +462,9 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 			
 			cls = cls["data"];
 			
-			
-			// var proj = Projects.findOne({_id: Session.get("activeProject")});
 			var schemaName = dataShapes.schema.schemaType;
-			// if (proj) {
-				// if (proj.schema) {
-					// schemaName = proj.schema;
-				// };
-			// }
+			if(typeof schemaName === "undefined") schemaName = "";
+
 			for(let cl = 0; cl < cls.length; cl++){
 				var prefix;
 				if((cls[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") || 

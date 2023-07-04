@@ -3616,6 +3616,7 @@ vq_property_path_grammar_completion_parser = (function() {
       		var props= await dataShapes.getPropertiesFull(p)
 			
 			var schemaName = dataShapes.schema.schemaType;
+			if(typeof schemaName === "undefined") schemaName = "";
 
           	// var props = await dataShapes.getProperties(params, elFrom, elTo);
           	props = props["data"];
@@ -3674,6 +3675,7 @@ vq_property_path_grammar_completion_parser = (function() {
           	var props = await dataShapes.getPropertiesFull(params);
 			
 			var schemaName = dataShapes.schema.schemaType;
+			if(typeof schemaName === "undefined") schemaName = "";
 
           	props = props["data"];
       		
@@ -3717,6 +3719,7 @@ vq_property_path_grammar_completion_parser = (function() {
 
           	var props = await dataShapes.getPropertiesFull(params);
 			var schemaName = dataShapes.schema.schemaType;
+			if(typeof schemaName === "undefined") schemaName = "";
 
           	props = props["data"];
           	for(let pr in props){
@@ -3756,6 +3759,7 @@ vq_property_path_grammar_completion_parser = (function() {
 					props = props["data"];
 					
 					var schemaName = dataShapes.schema.schemaType;
+					if(typeof schemaName === "undefined") schemaName = "";
 	
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){

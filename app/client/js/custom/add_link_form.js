@@ -219,13 +219,8 @@ Template.SelectTargetClass.events({
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		
-		// var proj = Projects.findOne({_id: Session.get("activeProject")});
 		var schemaName = dataShapes.schema.schemaType;
-		// if (proj) {
-			// if (proj.schema) {
-				// schemaName = proj.schema;
-			// };
-		// }
+		if(typeof schemaName === "undefined") schemaName = "";
 		
 		var params = {};
 		var start_elem_id = Session.get("activeElement");
@@ -261,13 +256,8 @@ Template.SelectTargetClass.events({
 		var classes = await dataShapes.getClassesFull(params);
 		classes = classes.data;
 		
-		// var proj = Projects.findOne({_id: Session.get("activeProject")});
 		var schemaName = dataShapes.schema.schemaType;
-		// if (proj) {
-			// if (proj.schema) {
-				// schemaName = proj.schema;
-			// };
-		// }
+		if(typeof schemaName === "undefined") schemaName = "";
 		
 		_.each(classes, function(e){
 			var prefix;
@@ -481,13 +471,8 @@ Template.AddLink.events({
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 		
-		// var proj = Projects.findOne({_id: Session.get("activeProject")});
 		var schemaName = dataShapes.schema.schemaType;
-		// if (proj) {
-			// if (proj.schema) {
-				// schemaName = proj.schema;
-			// };
-		// }
+		if(typeof schemaName === "undefined") schemaName = "";
 		
 		Template.SelectTargetClass.classes.set([{text: "Waiting answer...", wait: true}]);
 		
@@ -857,13 +842,9 @@ async function getAllAssociations(){
 					
 					var allAssociations = prop["data"];
 					
-					// var proj = Projects.findOne({_id: Session.get("activeProject")});
 					var schemaName = dataShapes.schema.schemaType;
-					// if (proj) {
-						// if (proj.schema) {
-							// schemaName = proj.schema;
-						// };
-					// }
+					if(typeof schemaName === "undefined") schemaName = "";
+
 					
 					_.each(allAssociations, function(e){
 						if ( e.mark === 'out') {

@@ -2525,6 +2525,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					
 					var dataPropertyResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["value"]});
 					if(unionBlock["triples"][triple]["predicate"]["type"] == "path"){
+						
 						var pathText = [];
 						if(unionBlock["triples"][triple]["predicate"]["pathType"] == "/"){
 	
@@ -2610,16 +2611,21 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 								pathExpressionbgp.push(pathText.join("."))
 						}
 						/////////////////////////////////////////////
+
 					}
 					else if(dataPropertyResolved.complete==true){
 						var sn = dataPropertyResolved.data[0].display_name;
 						if(schemaName == "wikidata" && dataPropertyResolved.data[0].prefix == "wdt"){}
 						else if(dataPropertyResolved.data[0].is_local != true)sn = dataPropertyResolved.data[0].prefix+ ":" + sn;
 						pathExpressionbgp.push(sn)
-						
-					} else {pathExpressionbgp.push(unionBlock["triples"][triple]["predicate"]["value"]);}
+
+					} else {
+						if(unionBlock["triples"][triple]["predicate"]["value"].indexOf("://") != -1) pathExpressionbgp.push("<"+unionBlock["triples"][triple]["predicate"]["value"]+">");
+						else pathExpressionbgp.push(unionBlock["triples"][triple]["predicate"]["value"]);
+					}
 				}
 				pathExpression.push(pathExpressionbgp.join("."));
+				
 			}
 			
 			var subjectClass = findByVariableName(classesTable, subject);
