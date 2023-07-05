@@ -146,7 +146,8 @@ Meteor.startup(() => {
                       'Content-Type': 'application/json',
                       'Access-Control-Allow-Origin': '*',
                     },
-                    response: {url: url,}
+                    // response: {url: url,},
+                    body: { url }
                 };
             }
         }
