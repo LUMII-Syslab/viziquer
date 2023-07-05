@@ -20978,6 +20978,7 @@ options = arguments[1];
 						prop = prop["data"];
 						
 						var schemaName = dataShapes.schema.schemaType;
+						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
@@ -21032,6 +21033,7 @@ options = arguments[1];
 					prop = prop["data"];
 					
 					var schemaName = dataShapes.schema.schemaType;
+					if(typeof schemaName === "undefined") schemaName = "";
 					
 					for(let cl in prop){
 						if(typeof prop[cl] !== "function"){
@@ -21215,6 +21217,7 @@ options = arguments[1];
             	props = props["data"];
 				
 				var schemaName = dataShapes.schema.schemaType;
+				if(typeof schemaName === "undefined") schemaName = "";
 
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
@@ -21251,6 +21254,7 @@ options = arguments[1];
         		var props= await dataShapes.getPropertiesFull(p);
 				
 				var schemaName = dataShapes.schema.schemaType;
+				if(typeof schemaName === "undefined") schemaName = "";
 
             	props = props["data"];
             	for(let pr in props){
@@ -21364,6 +21368,7 @@ options = arguments[1];
 					props = props["data"];
 						
 					var schemaName = dataShapes.schema.schemaType;
+					if(typeof schemaName === "undefined") schemaName = "";
 					
 					if(isInv == false){
 						
@@ -21439,6 +21444,7 @@ options = arguments[1];
             		props = props["data"];
 					
 					var schemaName = dataShapes.schema.schemaType;
+					if(typeof schemaName === "undefined") schemaName = "";
 
             		for(let pr in props){
 						if(typeof props[pr] !== "function"){
@@ -21514,6 +21520,7 @@ options = arguments[1];
 						prop = prop["data"];
 						
 						var schemaName = dataShapes.schema.schemaType;
+						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){

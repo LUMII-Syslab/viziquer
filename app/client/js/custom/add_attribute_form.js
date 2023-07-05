@@ -856,6 +856,7 @@ async function getAttributes(filter, waiting){
 					
 					// var proj = Projects.findOne({_id: Session.get("activeProject")});
 					var schemaName = dataShapes.schema.schemaType;
+					if(typeof schemaName === "undefined") schemaName = "";
 					// if (proj) {
 						// if (proj.schema) {
 							// schemaName = proj.schema;
@@ -947,13 +948,9 @@ async function getAssociations(filter){
 			
 			prop = prop["data"];
 			
-			// var proj = Projects.findOne({_id: Session.get("activeProject")});
 			var schemaName = dataShapes.schema.schemaType;
-			// if (proj) {
-				// if (proj.schema) {
-					// schemaName = proj.schema;
-				// };
-			// }
+			if(typeof schemaName === "undefined") schemaName = "";
+
 			
 			for(let cl in prop){
 				if(typeof prop[cl] !== "function"){

@@ -98,6 +98,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // function recursively modifies query by adding identification info
   async function resolveClass(obj_class, parents_scope_table) {
 	var schemaName = await dataShapes.schema.schemaType;
+	if(typeof schemaName === "undefined") schemaName = "";
 	// for wikidata
 	
 	if(obj_class.instanceAlias != null && obj_class.instanceAlias.indexOf("[") !== -1 && (obj_class.instanceIsConstant == true || obj_class.instanceIsVariable == true)){
@@ -118,6 +119,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	if(obj_class.identification.local_name == "") obj_class.identification.local_name = null;
 
 	var pr = "";
+	
 	if(schemaName.toLowerCase() == "wikidata" && typeof obj_class.identification.local_name !== "undefined" && obj_class.identification.local_name != null && ((obj_class.identification.local_name.startsWith("[") && obj_class.identification.local_name.endsWith("]")) || obj_class.identification.local_name.indexOf(":") == -1)){
 		pr = "wd:";
 	}
@@ -399,6 +401,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
     try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  var schemaName = await dataShapes.schema.schemaType;
+		  if(typeof schemaName === "undefined") schemaName = "";
 
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
 		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType);
@@ -422,6 +425,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  // var schema = new VQ_Schema();
 		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
 		  var schemaName = await dataShapes.schema.schemaType;
+		  if(typeof schemaName === "undefined") schemaName = "";
 		  // if (proj) {
 			  // if (proj.schema) {
 				// schemaName = proj.schema;
@@ -464,6 +468,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			try {
 			  // var proj = Projects.findOne({_id: Session.get("activeProject")});
 			 var schemaName = await dataShapes.schema.schemaType;
+			 if(typeof schemaName === "undefined") schemaName = "";
 
 			    var tt=await resolveTypeFromSchemaForAttributeAndLink(exp_obj.exp, schemaName);
 				var isSimple = false;
@@ -632,6 +637,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
           if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
 			 var schemaName = await dataShapes.schema.schemaType;
+			 if(typeof schemaName === "undefined") schemaName = "";
 
 			if(schemaName.toLowerCase() == "wikidata" && ((strURI.indexOf("[") > -1 && strURI.endsWith("]"))) ){
 						if(strURI.indexOf(":") == -1)strURI = "wd:"+strURI;
@@ -1009,7 +1015,6 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
   _.each(element_list, function(e) {
 	  if(e.obj.type == "Box"){
 		  classAccessTable[e.obj._id] = [];
-		  console.log(e.obj._id, e.getName())
 	  }
     e.setVirtualRoot(_.any(virtual_root_id_list, function(id) { return id == e._id() }));
   });
@@ -1286,8 +1291,6 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
      }
    };
    
-   
-   
     var query_in_abstract_syntax = { root: {
       identification: { _id: e._id(), local_name: e.getName()},
       instanceAlias:replaceSymbols(e.getInstanceAlias()),
@@ -1335,8 +1338,9 @@ genAbstractQueryForElementList = async function (element_id_list, virtual_root_i
 	
 	if(messages.length > 0)query_in_abstract_syntax["messages"] = messages;
 	if(warnings.length > 0)query_in_abstract_syntax["warnings"] = warnings;
-	getConnectedClasses(classAccessTable);
-	query_in_abstract_syntax["classAccessTable"] = classAccessTable;
+	// getConnectedClasses(classAccessTable);
+	// query_in_abstract_syntax["classAccessTable"] = classAccessTable;
+	// printClassAccessTable(classAccessTable, "");
     return query_in_abstract_syntax;
   });
 };

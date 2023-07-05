@@ -1,6 +1,7 @@
 import { Projects } from '/libs/platform/collections'
 
 var tripleTable = [];
+var filetrAsTripleTable = [];
 var variableTable = [];
 var referenceTable = [];
 var referenceCandidateTable = [];
@@ -67,6 +68,7 @@ function getPrefix(givenPrefix){
 
 function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS, knPr, clID, attribNames, expr,  variableNT, variableNC, ord, fId, cl){
 	tripleTable = [];
+	filetrAsTripleTable = [];
 	variableTable = [];
 	referenceTable = [];
 	referenceCandidateTable = [];
@@ -153,7 +155,7 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 		uniqueTriples = [];
 	}
 	
-	return {"exp":result, "triples":uniqueTriples, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
+	return {"exp":result, "triples":uniqueTriples, "filetrAsTripleTable":filetrAsTripleTable, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
 parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, alias, className, classSchemaName, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr, ord, fId) {
@@ -2277,8 +2279,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 			}
 		}
 		if(key == "var") {	
-			
-		
 			if(expressionTable[key]["ref"] != null){
 				// isExpression = true;
 				var referenceName = getReferenceName(expressionTable[key]["name"], symbolTable[classID], classID);
@@ -2493,6 +2493,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					// variableTable.push("?" + expressionTable[key]["name"]);
 					
 				} else if (expressionTable[key]["name"].toLowerCase() == 'type'){
+					
+					
+					
 					var name = alias;
 					if(name == null || name == "") name = expressionTable[key]["name"];
 					
@@ -3603,13 +3606,14 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							var varTemp;
 							if(tripleTable[k]["var"] == VarL)varTemp = VarR;
 							else varTemp = VarL;
-							tripleTableTemp.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " " });
+							filetrAsTripleTable.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " " , isConstant :true});
 							// console.log("tripleTable 24")
 						}
-						if(tripleTable.length == 0) tripleTableTemp.push({"object":className, "prefixedName":VarL, "var":VarR + " " });
+						if(tripleTable.length == 0) filetrAsTripleTable.push({"object":className, "prefixedName":VarL, "var":VarR + " ", isConstant :true});
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
-						visited = 1;										
+						visited = 1;		
+						
 					}
 					
 					//<iri> = "string"
@@ -3637,11 +3641,54 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 						tripleTable = tripleTable.filter(function (el, i, arr) {
 							return arr.indexOf(el) === i;
 						});
-						tripleTableTemp.push({"object":className, "prefixedName":VarL, "var":VarR + " " });
+						filetrAsTripleTable.push({"object":className, "prefixedName":VarL, "var":VarR + " ", isConstant :true });
 
 						tripleTable = tripleTableTemp;
 						applyExistsToFilter = false;
-						visited = 1;										
+						visited = 1;				
+					}
+					// filter as triple
+					// property = reference
+					if(visited != 1 && (Usestringliteralconversion == "OFF" || className.startsWith("_")) 
+						&& typeof expressionTable[key]['Relation'] !== 'undefined' 
+						&& expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
+							(
+							   (((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME" && left["var"]["ref"] == null) 
+								|| typeof left["Path"] !== 'undefined' 
+								|| typeof left["Reference"] !== 'undefined'
+								|| (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined')
+								)
+								&& typeof right["var"] !== 'undefined' 
+								&& typeof right["Path"] === 'undefined' 
+								&& typeof right["Reference"] === 'undefined'
+								&& typeof right["iri"] === 'undefined'
+								)
+
+							))
+					{
+						
+						if(typeof symbolTable[classID][right["var"]["name"]] !== "undefined"){
+
+									var tripleTableTemp = tripleTable;
+									tripleTable = [];
+									var VarL = generateExpression(expressionTable[key]["NumericExpressionL"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+									var VarR = generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation);
+									
+									tripleTable = tripleTable.filter(function (el, i, arr) {
+										return arr.indexOf(el) === i;
+									});
+									 
+									for(let k = 0; k < tripleTable.length; k++){
+										var varTemp;
+										if(tripleTable[k]["var"] == VarL)varTemp = VarR;
+										else varTemp = VarL;
+										filetrAsTripleTable.push({"object":tripleTable[k]["object"], "prefixedName":tripleTable[k]["prefixedName"], "var":varTemp + " ", isConstant :false });
+									}
+									if(tripleTable.length == 0) filetrAsTripleTable.push({"object":className, "prefixedName":VarL, "var":VarR + " " , isConstant :false});
+									tripleTable = tripleTableTemp;
+									applyExistsToFilter = false;
+									visited = 1;
+						}
 					}
 					
 					if(visited != 1){
@@ -3665,7 +3712,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 								if(typeof Var["type"] !== 'undefined' && Var["type"] != null && typeof Var["type"]["data_type"] !== 'undefined' && (Var["type"]["data_type"] == "XSD_STRING" || Var["type"]["data_type"] == "xsd:string")){
 									SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, true) + ")";
 								}
-								else SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";//?????????????????? ExpressionList
+								else SPARQLstring = SPARQLstring + "(" + generateExpression(expressionTable[key]["ExpressionList"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, true) + ")";//?????????????????? ExpressionList
 							}
 							if (typeof expressionTable[key]["NumericExpressionR"] !== 'undefined') {
 								SPARQLstring = SPARQLstring  + generateExpression(expressionTable[key]["NumericExpressionR"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation); 
@@ -3866,10 +3913,15 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							prefixTable[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]] = "<"+ knownNamespaces[expressionTable[key]["iri"]["PrefixedName"]["Prefix"]]+">";
 							if(parseType == "attribute" || parseType == "condition"){
 								var name = alias;
-								if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
-								tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
-								// console.log("tripleTable 25")
-								valueString = "?"+name;
+								if(isUnderInRelation == true || (expressionTable[key]["iri"]["PrefixedName"]['var']['kind'] !== null && expressionTable[key]["iri"]["PrefixedName"]['var']['kind'].indexOf("ALIAS") != -1)){
+									valueString =expressionTable[key]["iri"]["PrefixedName"]["var"]["name"];
+								}
+								else {
+									if(name == null || name == "") name = expressionTable[key]["iri"]["PrefixedName"]["Name"];
+									tripleTable.push({"var":"?"+name, "prefixedName":expressionTable[key]["iri"]["PrefixedName"]["var"]["name"], "object":className, "inFilter" : true});
+									console.log("tripleTable 25",tripleTable, isUnderInRelation )
+									valueString = "?"+name;
+								}
 							}
 							if(parseType == "class"){
 								var name = alias;
