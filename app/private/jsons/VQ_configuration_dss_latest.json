@@ -287,6 +287,8 @@
         "createdBy": "BzQP6kPWc4fyvwCb6",
         "diagramId": "7RrwRcGyxshqjBh9p",
         "name": "Query",
+        "header": "",
+        "footer": "sparqlForm",
         "editorType": "ajooEditor",
         "style": {
           "fillPriority": "color",

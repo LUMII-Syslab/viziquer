@@ -117,7 +117,9 @@ Template.diagramsRibbon.helpers({
 
 
 
-Template.diagramsToolbar.helpers({
+// Template.diagramsToolbar.helpers({
+
+Template.diagramsToolbar.events({
 
 	'click #download-project': function(e) {
 		Dialog.destroyTooltip(e);
