@@ -34,7 +34,11 @@ Meteor.methods({
     if (!list_in["query"]) {
       list_in["query"] = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
     }
+
+    if (! "isVisualizationNeeded" in list_in ) {
 		list_in["isVisualizationNeeded"] = true;
+    }
+
     if (!list_in["endpoint"]) {
       list_in["endpoint"] = "https://dbpedia.org/sparql";  // TODO
     }
