@@ -510,10 +510,10 @@ Interpreter.customMethods({
 	},
 	
 	visualizeSPARQLfromText: function(queries) {
-		
 		var x = 10;
+		var y = 10;
 		var editor = Interpreter.editor;
-		
+
 		var e;
 			if (editor.data.ev) {
 				e = editor.data.ev;

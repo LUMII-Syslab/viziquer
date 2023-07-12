@@ -8126,7 +8126,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 	if(parentClass != null){
 		var d = 30; //distance between boxes
 		var oldPosition = parentClass.getCoordinates(); //Old class coordinates and size
-		newPosition = parentClass.getNewLocation(d); //New class coordinates and size
+		// newPosition = parentClass.getNewLocation(d); //New class coordinates and size
 	}
 	
 	var new_elem_id = Create_VQ_Element(function(classBox) {
@@ -8348,7 +8348,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		}
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
-			y = y + 100;
+			y = y + 200;
 			await visualizeQuery(subclazz, classBox, variableList);
 		})
 
