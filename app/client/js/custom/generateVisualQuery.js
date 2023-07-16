@@ -17,6 +17,9 @@ var schemaName = null;
 var isUnderUnion = false;
 var orderCounter = 1;
 var useRef = false;
+var boxMoveY = 0;
+var MinY = 10;
+var MaxY = 10;
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -24,6 +27,9 @@ Interpreter.customMethods({
 generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  x = xx;
 	  y = yy;
+	  MinY = yy;
+	  MaxY = yy+120;
+	  boxMoveY = 0;
 	  orderCounter = 1;
 	  useRef = false;
 	  
@@ -307,6 +313,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	orderCounter = 1;
+	boxMoveY = 0;
 	useRef = false;
 	isUnderUnion = false;
 	var prefixes = await dataShapes.getNamespaces();
@@ -330,6 +337,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		  
 		x = xx;
 		y = yy;
+		MinY = yy;
+		MaxY = y+120;
 		counter = 0;
 				  // console.log(JSON.stringify(parsedQuery, 0, 2));
 		parsedQuery = transformParsedQuery(parsedQuery);
@@ -590,20 +599,21 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			
 			let compartments = element.compartments.compartments;
 			
-			var height  = compartments.length *22;
-			if(height < 30) height = 30;
+			var height = 10;
 			
 			var longes_compartment_lenght = 100;
 			for(let compartment of compartments){
 				if(longes_compartment_lenght<compartment.getTextWidth()) longes_compartment_lenght = compartment.getTextWidth();
+				var num = ~~(compartment.getTextWidth() / 450)+1;
+				height = height + ((compartment.getTextHeight()+5) * num) ;
 			}
+			if(height < 30) height = 30;
 			var element_size = element.getSize();
 
 			element_size.width = longes_compartment_lenght + 20;
+			
+			var box_obj = {resizedElement: element, minX: element_size.x, minY: MinY, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+MinY};
 			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
-			
-			var box_obj = {resizedElement: element, minX: element_size.x, minY: element_size.y, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+element_size.y};
-			
 			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
 			element.collectLinkedLines(lines2, {});
 			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
@@ -613,22 +623,23 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			_.each(lines2.draggedLines, function(line_obj) {
 				var link = line_obj.line;
 				var line_points = link.getPoints().slice();
+				line_points[3] = MinY;
 				lines.push({_id: link._id, points: line_points});
 			});
 
 			var list = {
 				elementId: element._id,
 				x: element_size.x,
-				y: element_size.y,
+				y: MinY,
 				width: element_size["width"],
 				height: height,
 				lines: lines,
 				ports: [],
 			};
 			var resizing_shape = element.presentation;
-
 			list["diagramId"] = Session.get("activeDiagram");
 			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
+			MinY = MinY + height + 60;
 		}
 	  }
 	  });
@@ -8348,7 +8359,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		}
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
-			y = y + 200;
+			y = y + 180;
 			await visualizeQuery(subclazz, classBox, variableList);
 		})
 
