@@ -1,4 +1,4 @@
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
 
 
 Meteor.methods({
@@ -18,6 +18,7 @@ Meteor.methods({
 });
 
 ExportDiagramConfig = function() {
+	this.tool = {};
 	this.types = [];
 	this.presentations = [];
 }
@@ -26,10 +27,18 @@ ExportDiagramConfig.prototype = {
 
 	export: function(tool_id) {
 
+		this.exportTool(tool_id);
 		this.exportDiagramTypes(tool_id);
 		this.exportDiagrams(tool_id);
 
-		return {types: this.types, presentations: this.presentations,};
+		return {tool: this.tool, types: this.types, presentations: this.presentations,};
+	},
+
+	exportTool: function(tool_id) {
+		var tool = Tools.findOne({_id: tool_id});
+		if (tool) {
+			_.extend(this.tool, {name: tool.name, toolbar: tool.toolbar})
+		}
 	},
 
 	exportDiagramTypes: function(tool_id) {

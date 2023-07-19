@@ -1,6 +1,6 @@
 import { is_system_admin } from '/libs/platform/user_rights'
 import { generate_id } from '/libs/platform/lib'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
 
 Meteor.methods({
 
@@ -9,6 +9,7 @@ Meteor.methods({
 
 		var data = list.data;
 
+		_import.importTool(data.tool);
 		_import.importDiagrams(data.presentations);
 		_import.importDiagramTypes(data.types);
 	},
@@ -88,6 +89,12 @@ function ImportAjooConfiguration(tool_id, version_id) {
 }
 
 ImportAjooConfiguration.prototype = {
+
+	importTool: function(tool) {
+		Tools.update({_id: this.toolId},
+					 {$set: {name: tool.name, toolbar: tool.toolbar,}
+					});
+	},
 
 	importDiagramTypes: function(diagram_types) {
 
