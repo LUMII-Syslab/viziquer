@@ -508,81 +508,43 @@ Interpreter.customMethods({
 				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
 			} 
 	},
-	
-	visualizeSPARQLfromText: function(queries) {
 		
+	visualizeSPARQL: function(q) {
 		var x = 10;
-		var editor = Interpreter.editor;
+		var y = 10;
 		
-		var e;
-			if (editor.data.ev) {
-				e = editor.data.ev;
-			}
+		var queries = q;
+		if(typeof q === "undefined"){
+			let yasqe3 = Template.sparqlForm.yasqe3.get();
+			var query_text = yasqe3.getValue();
+			
+			var queries = query_text.split("--------------------------------------------\n");
+		
+			var editor = Interpreter.editor;
+			
+			var e;
+				if (editor.data.ev) {
+					e = editor.data.ev;
+				}
 
-			var x, y;
-			if (e) {
-				var mouse_state_obj = editor.getMouseStateObject();
-				var mouse_pos = mouse_state_obj.getMousePosition(e);
-				x = mouse_pos["x"];
-				y = mouse_pos["y"];
+				var x, y;
+				if (e) {
+					var mouse_state_obj = editor.getMouseStateObject();
+					var mouse_pos = mouse_state_obj.getMousePosition(e);
+					x = mouse_pos["x"];
+					y = mouse_pos["y"];
 
+				}
+				if(x == 0 && y == 0){
+					x = e.evt.layerX;
+					y = e.evt.layerY;
+				}
 			}
-			if(x == 0 && y == 0){
-				x = e.evt.layerX;
-				y = e.evt.layerY;
-			}
-
-	
 		for (const query of queries) {
 			Interpreter.customExtensionPoints.generateVisualQuery(query, x, y);
 			x = x+170;
 		}
-		
-	},	
-	
-	visualizeSPARQL: function() {
-		
-		
-		// let yasqe = Template.sparqlForm_see_results.yasqe.get();
-		let yasqe3 = Template.sparqlForm.yasqe3.get();
-
-		// console.log("yasqe", yasqe)
-
-		var query_text = yasqe3.getValue();
-		
-		var queries = query_text.split("--------------------------------------------\n");
-		var x = 10;
-		var editor = Interpreter.editor;
-		
-		var e;
-			if (editor.data.ev) {
-				e = editor.data.ev;
-			}
-
-			var x, y;
-			if (e) {
-				var mouse_state_obj = editor.getMouseStateObject();
-				var mouse_pos = mouse_state_obj.getMousePosition(e);
-				x = mouse_pos["x"];
-				y = mouse_pos["y"];
-
-			}
-			if(x == 0 && y == 0){
-				x = e.evt.layerX;
-				y = e.evt.layerY;
-			}
-
-		// Interpreter.customExtensionPoints.generateVisualQueryAll(queries, x, y);
-		
-		for (const query of queries) {
-			Interpreter.customExtensionPoints.generateVisualQuery(query, x, y);
-			x = x+170;
-		}
-		
-		
-		
-		
-		
+			
 		
 		// var query_text = yasqe3.getValue();	
 		// try {

@@ -142,7 +142,12 @@ Meteor.startup(() => {
 
                 return {
                     statusCode: 200,
-                    response: {url: url,}
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Access-Control-Allow-Origin': '*',
+                    },
+                    // response: {url: url,},
+                    body: { url }
                 };
             }
         }
