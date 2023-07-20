@@ -159,7 +159,7 @@ var sparql_form_helpers = {
 };
 
 
-Template.sparqlForm.onRendered(function() {
+Template.sparqlForm.onRendered( async function() {
 console.log('--sparqlForm.onRendered--')
 
 	let yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
@@ -190,8 +190,9 @@ console.log('--sparqlForm.onRendered--')
 	var project = Projects.findOne({_id: project_id,});
 	console.log(project)
 	
-	if (project.newPublicProject) {
-
+	if (project!== undefined && project.newPublicProject) {
+	
+		await dataShapes.changeActiveProject(project_id);
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
 		console.log(diagram)	
 		if (diagram.query !== undefined && diagram.query.length > 0) {
@@ -202,7 +203,7 @@ console.log('--sparqlForm.onRendered--')
 		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
 		Utilities.callMeteorMethod("updateProject", list);	
 	}
-	
+
 	//const vv = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX w: <http://ldf.fi/schema/warsa/>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nSELECT ?Person ?firstName ?familyName WHERE{\n  ?Person rdf:type w:Person.\n  OPTIONAL{?Person foaf:firstName ?firstName.}\n  OPTIONAL{?Person foaf:familyName ?familyName.}\n}"
 
 });
@@ -219,7 +220,7 @@ Template.sparqlForm_see_results.onDestroyed(function() {
 });
 
 Template.sparqlForm_see_results.onRendered(function() {
-  console.log('----sparqlForm_see_results.onRendered-----')
+
   var yasqe_config = {
     sparql: {
       showQueryButton: false,

@@ -345,6 +345,7 @@ return {
 		local_ns: "",
 		showPrefixes: "false", 
 		projectId: "",
+		projectId_in_process: "",
 		limit: MAX_ANSWERS,
 		use_pp_rels: false,
 		simple_prompt: false,
@@ -375,7 +376,7 @@ return {
 		}
 	}
 }
-
+const delay = ms => new Promise(res => setTimeout(res, ms));
 // ***********************************************************************************
 dataShapes = {
 	schema : getEmptySchema(),
@@ -404,14 +405,21 @@ dataShapes = {
 	},
 	changeActiveProjectFull : async function(proj) {
 		//console.log('------changeActiveProjectFull-------')
-		//console.log(proj)
-		if (proj !== undefined && this.schema.projectId != proj._id) {
+		var projectId_in_process = this.schema.projectId_in_process;
+		if ( proj !== undefined && projectId_in_process == proj._id ) {
+			while (projectId_in_process == proj._id) {
+				await delay(5000);
+				projectId_in_process = this.schema.projectId_in_process;
+			}
+		}
+		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.empty )) {
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.projectId = proj._id;
+				this.schema.projectId_in_process = proj._id;
 				this.schema.schemaName =  proj.schema;
 				this.schema.showPrefixes = proj.showPrefixesForAllNames.toString();
-				this.schema.empty = false;
+				//this.schema.empty = false;
 				this.schema.endpoint =  proj.endpoint;
 				if ( proj.uri != undefined && proj.uri !== '' )
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
@@ -468,6 +476,8 @@ dataShapes = {
 						this.schema.simple_prompt = true;
 					
 				}
+				this.schema.empty = false;
+				this.schema.projectId_in_process = "";
 
 			}
 		}
@@ -481,11 +491,10 @@ dataShapes = {
 		startTime = Date.now();
 		var s = this.schema.schema;
 		if (s === "" || s === undefined ) {
-			//console.log(Session.get("activeProject"))
 			await this.changeActiveProject(Session.get("activeProject"));
 			s = this.schema.schema;
 		}
-		
+
 		// *** console.log(params)
 		var rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
@@ -558,8 +567,6 @@ dataShapes = {
 		return await this.callServerFunction("getClasses", params);
 	},
 	getTreeClasses : async function(params) {
-		// *** console.log("------------GetTreeClasses------------------")
-		// *** console.log(params)
 		function makeTreeName(params) {
 			var nList = [];
 			if ( params.main.namespaces !== undefined) {
@@ -575,7 +582,7 @@ dataShapes = {
 		if ( params.main.treeMode === 'Top' && ( params.main.filter === undefined || params.main.filter === '' )) {
 			var nsString = makeTreeName(params);
 			//console.log(`in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}`)
-			if (this.schema.treeTopsC[nsString] !== undefined) {
+			if (this.schema.treeTopsC[nsString] !== undefined && this.schema.treeTopsC[nsString].error != undefined) {
 				rr = this.schema.treeTopsC[nsString];
 			}
 			else {
@@ -638,7 +645,7 @@ dataShapes = {
 		var rr;
 		if ( params.filter === undefined || params.filter === '' ) {
 			var tName = makeTreeName(params);
-			if (this.schema.treeTopsP[tName] !== undefined) {
+			if (this.schema.treeTopsP[tName] !== undefined && this.schema.treeTopsP[tName].error != undefined ) {
 				rr = this.schema.treeTopsP[tName];
 			}
 			else {
@@ -1003,13 +1010,13 @@ dataShapes = {
 				ns = this.schema.local_ns;
 				//ns = this.schema.namespaces.filter(function(n){ return n.is_local == true})[0].name
 			localName = `${ns}:${localName}`;
-		}
+		} 
 		var name = this.getIndividualName(localName);
 		return name;
 	},
 	getIndividualName: function(localName, gen = false) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
-		var rez = '';
+		var rez = ''; 
 		var prefix = '';
 		if (localName.startsWith("="))
 			localName = localName.substring(1,localName.length);

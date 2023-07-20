@@ -456,10 +456,9 @@ Template.schemaTree.events({
 Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
 	var proj = Projects.findOne(Session.get("activeProject"));
-	if ( proj !== undefined && dataShapes.schema.projectId != proj._id) {
+	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.empty && proj !== undefined)) {
 		await dataShapes.changeActiveProjectFull(proj);
 	}
-
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
 	if (dataShapes.schema.empty) {

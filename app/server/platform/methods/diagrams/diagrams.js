@@ -30,15 +30,15 @@ Meteor.methods({
 
 	addPublicDiagram: function(list_in) {
 		console.log(list_in)
-		// ******************************
+
     if (!list_in["query"]) {
       list_in["query"] = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
     }
 
-//		list_in["isVisualizationNeeded"] = true;
+		// list_in["isVisualizationNeeded"] = true;
 
     if (!list_in["endpoint"]) {
-      list_in["endpoint"] = "https://dbpedia.org/sparql";  // TODO
+      list_in["endpoint"] = "https://dbpedia.org/sparql"; 
     }
 		// ******************************
 		const user_id = get_unknown_public_user_name();
@@ -52,10 +52,21 @@ Meteor.methods({
 		const schema_server = Meteor.call("getEnvVariable", "SCHEMA_SERVER_URL");
 		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
-		const schema = _.find(response.data, function(item) {
+		let schema;
+		
+		if ( list_in.schema !== undefined && list_in.schema !== '') {
+			schema = _.find(response.data, function(item) {
 							return item.display_name == list_in.schema;
-						});
-						
+						});			
+		}
+		else if (list_in.endpoint !== undefined && list_in.endpoint !== '') {
+			// TODO vajadzēs atrast pareizo, ja būs vairākas
+			schema = _.find(response.data, function(item) {
+							return item.sparql_url == list_in.endpoint;
+						});	
+		}
+
+
 		// let project_id;
 		let public_project_name = "__publicVQ" + tool._id;
 		const project_obj = {name: public_project_name,	
@@ -74,7 +85,7 @@ Meteor.methods({
 
 		let schema_obj = {};
 		if (schema) {
-			schema_obj = {schema: list_in.schema,
+			schema_obj = {schema: schema.display_name,
 							endpoint: schema.sparql_url,
 							uri: schema.named_graph,
 							queryEngineType: schema.endpoint_type,

@@ -95,7 +95,7 @@ Template.structureTemplate.events({
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
-		dataShapes.changeActiveProject(proj_id);
+		await dataShapes.changeActiveProject(proj_id);
     	FlowRouter.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		//return;

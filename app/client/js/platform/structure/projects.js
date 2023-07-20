@@ -57,7 +57,7 @@ Template.projectsList.events({
       var proj_id = $(e.target).closest(".projects-dropdown-item").attr("id");
 	  
       Utilities.changeUserActiveProject(proj_id);
-	    dataShapes.changeActiveProject(proj_id);
+	  await dataShapes.changeActiveProject(proj_id);
   },
 });
 
