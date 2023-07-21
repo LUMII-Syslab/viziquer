@@ -4,29 +4,37 @@
     <div class="col-sm-12">
 
         <div class="dd" id="nestable">
-			{{#if empty}}
-				<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
+			{{#if waiting}}
+				<div class="describe">Waiting answer...</div>
 			{{else}}
-				<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
-				<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+				{{#if needReload}}
+					<button id="reload" type="button" class="btn btn-danger" data-dismiss="modal">Reload tree</button>
+				{{else}}
+					{{#if notEmpty}}
+						<input id="filter_text" type="text" class="form-control" autocomplete="off" value={{f1}} >
+						<button id="filter" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
 
-				{{#each ns}}
-					<label class="form-check-label">
-						<input class="form-check-input" name = {{name}} index={{index}} type="checkbox" checked={{checked}}>
-						<span class="custom-checkbox"></span>
-						{{caption}}
-					</label>
-				{{/each}}
+						{{#each ns}}
+							<label class="form-check-label">
+								<input class="form-check-input" name = {{name}} index={{index}} type="checkbox" checked={{checked}}>
+								<span class="custom-checkbox"></span>
+								{{caption}}
+							</label>
+						{{/each}}
 
-				<div class="describe">Double-click an item to start a query from it</div>
-	            <ol class="dd-list">
+						<div class="describe">Double-click an item to start a query from it</div>
+						<ol class="dd-list">
 
-					{{#each classes}}
-						{{> subTree}}
-					{{/each}}
+							{{#each classes}}
+								{{> subTree}}
+							{{/each}}
 
-            	</ol>
-			{{/if}}
+						</ol>
+					{{else}}
+						<div class="describe">The project is missing DSS schema information</div>
+					{{/if}}	
+				{{/if}}
+			{{/if}}	
         </div><!-- dd -->
 
     </div>
@@ -57,28 +65,30 @@
 
     <div class="col-sm-12">
         <div class="dd" id="nestable">
-			<div class="col-sm-12">
-				<select class="form-control" id="propType" value={{pKind}}>
-				  <option>All properties</option>
-				  <option>Object properties</option>
-				  <option>Data properties</option>
-				</select>
-			</div>
-			<input id="filter_text2" type="text" class="form-control" autocomplete="off" value={{f2}} >
-			<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
-			<label class="form-check-label">
-				<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
-				<span class="custom-checkbox"></span>
-				Basic order
-			</label>
-			<div class="describe">Double-click an item to start a query from it</div>
-            <ol class="dd-list">
+			{{#if notEmpty}}
+				<div class="col-sm-12">
+					<select class="form-control" id="propType" value={{pKind}}>
+					  <option>All properties</option>
+					  <option>Object properties</option>
+					  <option>Data properties</option>
+					</select>
+				</div>
+				<input id="filter_text2" type="text" class="form-control" autocomplete="off" value={{f2}} >
+				<button id="filter2" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+				<label class="form-check-label">
+					<input class="form-check-input" name = "dbp" id="dbp" value= "2" type="checkbox" checked={{dbp}}>
+					<span class="custom-checkbox"></span>
+					Basic order
+				</label>
+				<div class="describe">Double-click an item to start a query from it</div>
+				<ol class="dd-list">
 
-				{{#each properties}}
-				{{> subTreeP}}
-				{{/each}}
+					{{#each properties}}
+					{{> subTreeP}}
+					{{/each}}
 
-            </ol>
+				</ol>
+			{{/if}}
         </div><!-- dd -->
     </div>
 
@@ -108,34 +118,36 @@
     <div class="col-sm-12">
 	{{#if showI }}
         <div class="dd" id="nestable">
-			{{#if isWD }}
-			{{else}}
-				<div class="col-sm-12">
-					<select class="form-control" id="class" >
-						{{#each classes}}
-							<option style="height:30px" {{selected}} value="{{name}}">{{name}}</option>
-						{{/each}}
-					</select>
-				</div>
-				<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
-			{{/if}}
-			<input id="filter_text3" type="text" class="form-control" autocomplete="off" value={{f3}}>
-			{{#if isBigClass  }}
-				<div class="describe">Large class selected, results may come very slowly</div>
-			{{/if}}
-			<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
-			<div class="describe">Double-click an item to start a query from it</div>
-            <ol class="dd-list">
-			<!--{{#if isWD }} -->	
-				{{#each instances}}
-				{{> subSchemaInstancesWD}}
-				{{/each}}
-			<!--{{else}} 
-				{{#each instances}}
-				{{> subSchemaInstances}}
-				{{/each}}			
-			{{/if}}  -->
-            </ol>
+			{{#if notEmpty}}
+				{{#if isWD }}
+				{{else}}
+					<div class="col-sm-12">
+						<select class="form-control" id="class" >
+							{{#each classes}}
+								<option style="height:30px" {{selected}} value="{{name}}">{{name}}</option>
+							{{/each}}
+						</select>
+					</div>
+					<div class="describe">For individuals in any other specific class start with class symbol, then fill the instance information</div>
+				{{/if}}
+				<input id="filter_text3" type="text" class="form-control" autocomplete="off" value={{f3}}>
+				{{#if isBigClass  }}
+					<div class="describe">Large class selected, results may come very slowly</div>
+				{{/if}}
+				<button id="filter3" type="button" class="btn btn-primary" data-dismiss="modal">Use filter</button>
+				<div class="describe">Double-click an item to start a query from it</div>
+				<ol class="dd-list">
+				<!--{{#if isWD }} -->	
+					{{#each instances}}
+					{{> subSchemaInstancesWD}}
+					{{/each}}
+				<!--{{else}} 
+					{{#each instances}}
+					{{> subSchemaInstances}}
+					{{/each}}			
+				{{/if}}  -->
+				</ol>
+			{{/if}}	
         </div><!-- dd -->
 	{{else}}
 		<div class="describe">The values ​​of the individuals are not informative</div>

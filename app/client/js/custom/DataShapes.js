@@ -330,8 +330,8 @@ const classesWD = [
 ];
 
 const getEmptySchema  = () => {
-return {
-		empty: true,
+	return {
+		filling: 0,
 		resolvedClasses: {}, 
 		resolvedProperties: {}, 
 		resolvedIndividuals: {}, 
@@ -374,7 +374,7 @@ return {
 			class: '',
 			classes: [],
 		}
-	}
+	};
 }
 const delay = ms => new Promise(res => setTimeout(res, ms));
 // ***********************************************************************************
@@ -390,6 +390,15 @@ dataShapes = {
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
 			// *** console.log(rr)
+			return await rr;
+		}
+
+		return NaN;
+	},
+	getPublicNamespaces : async function() {
+		var rr = await callWithGet('public_ns/');
+		if (!_.isEmpty(rr)) {
+			this.schema.namespaces = rr;
 			return await rr;
 		}
 
@@ -412,7 +421,7 @@ dataShapes = {
 				projectId_in_process = this.schema.projectId_in_process;
 			}
 		}
-		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.empty )) {
+		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.filling === 0 )) {
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
 				this.schema.projectId = proj._id;
@@ -436,7 +445,7 @@ dataShapes = {
 					if (prop_id_list.length>0)
 						this.schema.deferred_properties = `id in ( ${prop_id_list})`;
 					
-					var ns = await this.getNamespaces();
+					var ns = await this.getNamespaces_0();
 					this.schema.namespaces = ns;
 					var local_ns = ns.filter(function(n){ return n.is_local == true});
 					this.schema.local_ns = local_ns[0].name;
@@ -476,10 +485,22 @@ dataShapes = {
 						this.schema.simple_prompt = true;
 					
 				}
-				this.schema.empty = false;
+				this.schema.filling = 3;
 				this.schema.projectId_in_process = "";
 
 			}
+			else {
+				await this.getPublicNamespaces();
+				if (proj.endpoint !== undefined && proj.endpoint !== "") {
+					this.schema.endpoint =  proj.endpoint;
+					if ( proj.uri != undefined && proj.uri !== '' )
+						this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
+						
+					this.schema.filling = 2;
+				}
+				else
+					this.schema.filling = 1;
+			}	
 		}
 	},
 	callServerFunction : async function(funcName, params) {
@@ -490,6 +511,7 @@ dataShapes = {
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		startTime = Date.now();
 		var s = this.schema.schema;
+		
 		if (s === "" || s === undefined ) {
 			await this.changeActiveProject(Session.get("activeProject"));
 			s = this.schema.schema;
@@ -533,13 +555,18 @@ dataShapes = {
 	getNamespaces : async function(params = {}) {
 		// *** console.log("------------getNamespaces ------------------")
 		//dataShapes.getNamespaces()
-		if ( this.schema.namespaces.length > 0)
+		if ( this.schema.namespaces.length > 0 )
 			return this.schema.namespaces;
 		else {
 			var rr = await this.callServerFunction("getNamespaces", {main:params});
 			this.schema.namespaces = rr;
 			return rr;
-		}
+		} 
+	},
+	getNamespaces_0 : async function(params = {}) {
+		var rr = await this.callServerFunction("getNamespaces", {main:params});
+		this.schema.namespaces = rr;
+		return rr;
 	},
 	getClasses : async function(params = {}, vq_obj = null) {
 		// *** console.log("------------GetClasses------------------")

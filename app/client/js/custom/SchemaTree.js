@@ -6,7 +6,9 @@ Template.schemaFilter.F2 = new ReactiveVar("");
 Template.schemaFilter.PropKind = new ReactiveVar("");
 Template.schemaFilter.BL = new ReactiveVar("");
 Template.schemaTree.Classes = new ReactiveVar("");
-Template.schemaTree.Empty = new ReactiveVar("");
+Template.schemaTree.Waiting = new ReactiveVar("");
+Template.schemaTree.NeedReload = new ReactiveVar("");
+Template.schemaTree.NotEmpty = new ReactiveVar("");
 Template.schemaTree.F1 = new ReactiveVar("");
 Template.schemaTree.Ns = new ReactiveVar("");
 Template.schemaInstances.Instances = new ReactiveVar("");
@@ -44,8 +46,14 @@ Template.schemaTree.helpers({
 	f1: function() {
 		return Template.schemaTree.F1.get();
 	},
-	empty: function() {
-	    return Template.schemaTree.Empty.get();
+	needReload: function() {
+		return Template.schemaTree.NeedReload.get();
+	},
+	waiting: function() {
+		return Template.schemaTree.Waiting.get();
+	},
+	notEmpty: function() {
+	    return Template.schemaTree.NotEmpty.get();
 	},
 });
 
@@ -432,8 +440,16 @@ Template.schemaTree.events({
 	},
 	'click #reload': async function(e){
 		//console.log('click #reload')
+		Template.schemaTree.Waiting.set(true);
 		await dataShapes.changeActiveProject(Session.get("activeProject"));
-		Template.schemaTree.Empty.set(false);
+		Template.schemaTree.Waiting.set(false);
+		Template.schemaTree.NeedReload.set(false);
+		if (dataShapes.schema.filling !== 3) {
+			Template.schemaTree.NotEmpty.set(false);
+		}
+		else {
+			Template.schemaTree.NotEmpty.set(true);
+		}
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		await useFilter ();	
@@ -455,18 +471,26 @@ Template.schemaTree.events({
 
 Template.schemaTree.rendered = async function() {
 	//console.log("-----rendered schemaTree----")
+	Template.schemaTree.Waiting.set(true);
 	var proj = Projects.findOne(Session.get("activeProject"));
-	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.empty && proj !== undefined)) {
+	if ( (proj !== undefined && dataShapes.schema.projectId != proj._id) || (dataShapes.schema.filling === 0 && proj !== undefined)) {
 		await dataShapes.changeActiveProjectFull(proj);
 	}
+	Template.schemaTree.Waiting.set(false);
+	//console.log(dataShapes.schema)
 	//console.log(Projects.findOne(Session.get("activeProject")));
 	//Template.schemaTree.Count.set(startCount);
-	if (dataShapes.schema.empty) {
-		Template.schemaTree.Empty.set(true);
+	if (dataShapes.schema.filling === 0) {
+		Template.schemaTree.NeedReload.set(true);
 		// *** Template.schemaTree.NsInclude.set(false);
 	}
+	else if (dataShapes.schema.filling !== 3) {
+		Template.schemaTree.NeedReload.set(false);
+		Template.schemaTree.NotEmpty.set(false);
+	}
 	else {
-		Template.schemaTree.Empty.set(false);
+		Template.schemaTree.NeedReload.set(false);
+		Template.schemaTree.NotEmpty.set(true);
 		Template.schemaTree.Ns.set(dataShapes.schema.tree.ns);
 		Template.schemaTree.F1.set(dataShapes.schema.tree.filterC);	
 		Template.schemaTree.Classes.set([dataShapes.schema.tree.classPath[dataShapes.schema.tree.classPath.length-1]]); 
@@ -513,6 +537,9 @@ Template.schemaInstances.rendered = async function() {
 Template.schemaFilter.helpers({
 	properties: function() {
 		return Template.schemaFilter.Properties.get();
+	},
+	notEmpty: function() {
+	    return Template.schemaTree.NotEmpty.get();
 	},
 	f2: function() {
 		return Template.schemaFilter.F2.get();
@@ -660,6 +687,9 @@ Template.schemaFilter.events({
 Template.schemaInstances.helpers({
 	instances: function() {
 		return Template.schemaInstances.Instances.get();
+	},
+	notEmpty: function() {
+	    return Template.schemaTree.NotEmpty.get();
 	},
 	f3: function() {
 		return Template.schemaInstances.F3.get();

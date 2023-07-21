@@ -35,7 +35,7 @@ Meteor.methods({
       list_in["query"] = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX dbr: <http://dbpedia.org/resource/>\nSELECT ?areaCode ?City WHERE{\n  ?City rdf:type dbo:City.\n  OPTIONAL{?City dbo:areaCode ?areaCode.}\n  FILTER(?City = dbr:Riga)\n}";
     }
 
-		// list_in["isVisualizationNeeded"] = true;
+		//list_in["isVisualizationNeeded"] = true;
 
     if (!list_in["endpoint"]) {
       list_in["endpoint"] = "https://dbpedia.org/sparql"; 
@@ -53,7 +53,7 @@ Meteor.methods({
 		const response = HTTP.call('GET', `${schema_server}/info`, {}) || {};
 
 		let schema;
-		
+	
 		if ( list_in.schema !== undefined && list_in.schema !== '') {
 			schema = _.find(response.data, function(item) {
 							return item.display_name == list_in.schema;
@@ -95,6 +95,15 @@ Meteor.methods({
 						};
 
 			_.extend(project_obj, schema_obj);
+		}
+		else if (list_in.endpoint !== undefined && list_in.endpoint !== '') {
+			schema_obj = {	endpoint: list_in.endpoint,
+							directClassMembershipRole: 'rdf:type',
+							indirectClassMembershipRole: '',
+							showPrefixesForAllNames: false
+						};
+
+			_.extend(project_obj, schema_obj);			
 		}
 
 
