@@ -60,9 +60,8 @@ Meteor.methods({
 						});			
 		}
 		else if (list_in.endpoint !== undefined && list_in.endpoint !== '') {
-			// TODO vajadzēs atrast pareizo, ja būs vairākas
 			schema = _.find(response.data, function(item) {
-							return item.sparql_url == list_in.endpoint;
+							return item.sparql_url == list_in.endpoint && item.is_default_for_endpoint ;
 						});	
 		}
 
