@@ -32,7 +32,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 	  boxMoveY = 0;
 	  orderCounter = 1;
 	  useRef = false;
-	  
+	  var prefixesText = [];
 	  schemaName = dataShapes.schema.schemaType;
 	  // schemaName = "wikidata";
 	   
@@ -58,7 +58,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		 
 		var prefixes = await dataShapes.getNamespaces();
 		if(typeof prefixes["complete"] === "undefined"){
-			var prefixesText = [];
+			prefixesText = [];
 			for (const p of prefixes) {
 				prefixesText.push("PREFIX " + p["name"] + ": <" + p["value"] + ">");
 			}
@@ -242,8 +242,6 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		if(abstractTable["serviceLabelLang"] !== '') classesTable["serviceLabelLang"] =  abstractTable["serviceLabelLang"];
 		if(abstractTable["fullSPARQL"] !== '') classesTable["fullSPARQL"] =  abstractTable["fullSPARQL"];
 
-		
-		// console.log("whereTriplesVaribles", whereTriplesVaribles);
 		// Visualize query based on tree structure
 		var queryId = queries[query]["id"];
 		var queryQuestion = queries[query]["question"];
@@ -294,7 +292,65 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 					}, locLink, true, source, target);
 				}
 			//TODO create condition link
-		})							   
+		})
+
+		await delay(100);
+		var dragged_boxes = [];
+		var lines = {linkedLines: [], draggedLines: [], allLines: []};
+		
+		let editor = Interpreter.editor;
+		for(let elem_id in VQ_Elements){
+
+			let element_list = editor.getElements();
+			let element  = element_list[VQ_Elements[elem_id]];
+			
+			var elem_type = ElementTypes.findOne({name: "Class"});
+			
+			let compartments = element.compartments.compartments;
+			
+			var height = 10;
+			
+			var longes_compartment_lenght = 100;
+			for(let compartment of compartments){
+				if(longes_compartment_lenght<compartment.getTextWidth()) longes_compartment_lenght = compartment.getTextWidth();
+				var num = ~~(compartment.getTextWidth() / 450)+1;
+				height = height + ((compartment.getTextHeight()+5) * num) ;
+			}
+			if(height < 30) height = 30;
+			var element_size = element.getSize();
+
+			element_size.width = longes_compartment_lenght + 20;
+			
+			var box_obj = {resizedElement: element, minX: element_size.x, minY: element_size.y, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+element_size.y};
+			
+			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
+			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
+			element.collectLinkedLines(lines2, {});
+			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
+
+			var lines = [];
+			
+			_.each(lines2.draggedLines, function(line_obj) {
+				var link = line_obj.line;
+				var line_points = link.getPoints().slice();
+				// line_points[3] = MinY;
+				lines.push({_id: link._id, points: line_points});
+			});
+
+			var list = {
+				elementId: element._id,
+				x: element_size.x,
+				y: element_size.y,
+				width: element_size["width"],
+				height: height,
+				lines: lines,
+				ports: [],
+			};
+			var resizing_shape = element.presentation;
+			list["diagramId"] = Session.get("activeDiagram");
+			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
+			MinY = MinY + height + 60;
+		}
 		
 	  });
 	  
@@ -327,10 +383,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		text  = prefixesText.join('\n') + text;
 	}
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
-
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
-		
 		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
 		else {
 		schemaName = dataShapes.schema.schemaType;
@@ -2631,12 +2685,24 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						pathExpressionbgp.push(sn)
 
 					} else {
-						if(unionBlock["triples"][triple]["predicate"]["value"].indexOf("://") != -1) pathExpressionbgp.push("<"+unionBlock["triples"][triple]["predicate"]["value"]+">");
-						else pathExpressionbgp.push(unionBlock["triples"][triple]["predicate"]["value"]);
+						if(unionBlock["triples"][triple]["predicate"]["value"].indexOf("://") != -1) {
+							var pathExpr = "<"+unionBlock["triples"][triple]["predicate"]["value"]+">";
+							var splittedUri = splitURI(unionBlock["triples"][triple]["predicate"]["value"]);
+							if(splittedUri == null) pathExpr = "<"+unionBlock["triples"][triple]["predicate"]["value"]+">";
+							else {
+								var prefixes = await dataShapes.getNamespaces()
+								for(let key = 0; key < prefixes.length; key++){
+									if(prefixes[key]["value"] == splittedUri.namespace) {
+										if(prefixes[key]["name"].slice(-1) == ":") return prefixes[key]["name"]+splittedUri.name;
+										pathExpr = prefixes[key]["name"]+":"+splittedUri.name;
+									}
+								}
+								pathExpressionbgp.push(pathExpr);
+							}
+						}else pathExpressionbgp.push(unionBlock["triples"][triple]["predicate"]["value"]);
 					}
 				}
-				pathExpression.push(pathExpressionbgp.join("."));
-				
+				pathExpression.push(pathExpressionbgp.join("."));				
 			}
 			
 			var subjectClass = findByVariableName(classesTable, subject);
