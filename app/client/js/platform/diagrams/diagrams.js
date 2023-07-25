@@ -559,8 +559,6 @@ Template.importOntology.helpers({
 
 		var project = Projects.findOne({_id: Session.get("activeProject")});
 
-		console.log("project ", project)
-
 		if (project) {
 			var tool_id = project.toolId;
 
@@ -581,7 +579,7 @@ Template.importOntology.helpers({
 			}
 		}
 
-		console.log("result ", result)
+		//console.log("result ", result)
 
 		return result;
 	},
@@ -802,13 +800,6 @@ Template.ontologySettings.directClassMembershipRole = new ReactiveVar("");
 Template.ontologySettings.indirectClassMembershipRole = new ReactiveVar("");
 Template.ontologySettings.graphs = new ReactiveVar([]);
 
-Template.ontologySettings.helpers({
-
-	msg: function() {
-		return Session.get("msg");
-	},
-
-});
 
 Template.ontologySettings.onCreated(function() {
 	Session.set("msg", undefined);
@@ -925,7 +916,11 @@ Template.ontologySettings.events({
 	 Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
 	 Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 	 Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
-	 Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+	 //Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+	 if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) 
+		Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+	 else 
+		Template.ontologySettings.graphs.set([]);
 
 	},
 
@@ -1027,23 +1022,35 @@ Template.ontologySettings.events({
 
 
 Template.ontologySettings.rendered = async function() {
-	var rr = await dataShapes.getOntologies(); 
-	Template.ontologySettings.schemas.set(rr);
+	var rr = await dataShapes.getOntologies();
 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+
 	if (proj) {
 		Template.ontologySettings.uri.set(proj.uri);
 		Template.ontologySettings.endpoint.set(proj.endpoint);
 		Template.ontologySettings.queryEngineType.set(proj.queryEngineType);
 		Template.ontologySettings.directClassMembershipRole.set(proj.directClassMembershipRole);
 		Template.ontologySettings.indirectClassMembershipRole.set(proj.indirectClassMembershipRole);
-		
-		if(typeof proj.graphsInstructions !== "undefined") Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
+
+		if(typeof proj.graphsInstructions !== "undefined" && proj.graphsInstructions !== "" ) Template.ontologySettings.graphs.set(JSON.parse(proj.graphsInstructions));
 		else Template.ontologySettings.graphs.set([]);
+		
+		if (proj.schema != undefined && proj.schema != "") {
+			var selected = rr.filter(function(o){ return o.display_name == proj.schema});
+			if ( selected.length > 0 ) {
+				selected[0]["selected"] = "selected";
+			}
+		}
 	}
+
+	Template.ontologySettings.schemas.set(rr);
 }
 
 Template.ontologySettings.helpers({
-
+	msg: function() {
+		return Session.get("msg");
+	},
+	
 	project: function() {
 		return Projects.findOne({_id: Session.get("activeProject")});
 	},
@@ -1065,23 +1072,13 @@ Template.ontologySettings.helpers({
 	},
 	
 	schemas: function() {
-		var ss = Template.ontologySettings.schemas.get();
-		var proj = Projects.findOne({_id: Session.get("activeProject")});
-		var s = "";
-		if (proj) { s = proj.schema; } ;		
-		for (var i=0;i<ss.length;i++) {
-			if (ss[i]["display_name"] == s ) {
-				ss[i]["selected"] = "selected";
-				break;
-			}
-		}
-		return ss;
+		return Template.ontologySettings.schemas.get();;
 	},
 	
 	useStringLiteralConversionList: function() {
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 
-		console.log("useStringLiteralConversionList ", proj)
+		//console.log("useStringLiteralConversionList ", proj)
 
 		var act = 'SIMPLE';
 		if (proj) {

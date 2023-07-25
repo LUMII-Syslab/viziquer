@@ -176,6 +176,34 @@ Template.structureRibbon.events({
 });
 
 Template.createProjectModal.loading = new ReactiveVar(false);
+Template.createProjectModal.services = new ReactiveVar("");
+
+function setServices (tool_id) {
+	var result = {};
+	Meteor.subscribe("Services", {});	
+	
+	if ( tool_id != 'undefined')
+	{
+		var services = Services.findOne({toolId: tool_id });
+		if (services && services.schemas)
+		{
+			result.schemas = [];
+			_.each(services.schemas, function (s){
+				result.schemas.push({caption: "Initialise project by " + s.caption, name: s.name, link: s.link});
+			});
+		}
+		
+		if (services && services.projects)
+		{
+			result.projects = [];
+			_.each(services.projects, function (p){
+				result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
+			});
+		}			
+	}
+				
+	Template.createProjectModal.services.set(result);
+}
 
 Template.createProjectModal.helpers({
 	loading: function() {
@@ -184,22 +212,35 @@ Template.createProjectModal.helpers({
 	tools: function() {
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
 		var result = {tools:[]};
+		var tool_id = "";
 
 		tools.forEach(function(t) {
-			result.tools.push({_id: t._id, name: t.name}); 
+			var tt = {_id: t._id, name: t.name};
+			if ( t.name == "Viziquer" || t.name == "ViziQuer") {
+				tt["selected"] = "selected";
+				tool_id = t._id;
+			}	
+			result.tools.push(tt); 
 		});
 		
-		if ( tools.count() > 0) 
-			Session.set("tool", result.tools[0]._id);
-	
-		else
-			Session.set("tool", reset_variable());
+		if ( tool_id == "" && tools.count() > 0) {
+			result.tools[0]["selected"] = "selected";
+			tool_id = t._id;
+		}
 		
+		if (tool_id != "")
+			setServices (tool_id); 
+			
+		//if ( tools.count() > 0) 
+		//	Session.set("tool", result.tools[0]._id);  // !!!!!!
+	
+		//else
+		//	Session.set("tool", reset_variable());
+
 		return result;
 	},
 	services: function() {
-		var result = {};
-	    var tool_id = Session.get("tool");
+		/*var result = {};
 	    Meteor.subscribe("Services", {});	
 		
 		if ( tool_id != 'undefined')
@@ -220,9 +261,9 @@ Template.createProjectModal.helpers({
 					result.projects.push({caption: "Initialise by " + p.caption, name: p.name, link: p.link});
 				});
 			}			
-		}
+		} */
 					
-		return result;
+		return Template.createProjectModal.services.get();
 	},
 
 });
@@ -236,7 +277,11 @@ Template.createProjectModal.events({
 		var category_obj = $("#category-name");
 
 		var project_name = project_name_obj.val();
+		var obj = $('input[name=stack-radio]:checked').closest(".schema");
 		
+		if(project_name == "" && obj.attr("name") != undefined && obj.attr("name") != "" && obj.attr("name") != "Def")
+			project_name = obj.attr("name");
+				
 		if(project_name != ""){
 			
 			document.getElementById("project-name-required").style.display = "none";
@@ -263,7 +308,7 @@ Template.createProjectModal.events({
 						decorateInstancePositionConstants: "true",
 					};
 
-			var obj = $('input[name=stack-radio]:checked').closest(".schema");
+			//var obj = $('input[name=stack-radio]:checked').closest(".schema");
 			var type = obj.attr("type");
 			if ( type == "schema" )
 				list.schema_link = obj.attr("link")
@@ -286,13 +331,14 @@ Template.createProjectModal.events({
 	},
 	'click #tool' : function(e){
 		var tool_id = $("#tool").find(":selected").attr("id");
-		Session.set("tool", tool_id);
+		setServices (tool_id); 
+		//Session.set("tool", tool_id);
 	},
 });
 
-Template.createProjectModal.onDestroyed(function() {
-	Session.set("tool", reset_variable()) ;  
-});
+//Template.createProjectModal.onDestroyed(function() {
+//	Session.set("tool", reset_variable()) ;  
+//});
 
 Template.editProjectModal.helpers({
 
