@@ -44,7 +44,9 @@ Meteor.methods({
                 var count_options = JSON.parse(JSON.stringify(options));
 
                 // inserting SELECT COUNT before the first occurence of SELECT
-                let query = buildEnhancedQuery(count_options.params.params.query, "SELECT", " SELECT (COUNT(*) as ?number_of_rows_in_query_xyz) WHERE { ", "}");
+                let query = count_options.params.params.query.toLowerCase().includes(' limit ')
+                  ? buildEnhancedQuery(count_options.params.params.query, "SELECT", " SELECT (COUNT(*) as ?number_of_rows_in_query_xyz) WHERE { ", "}")
+                  : buildEnhancedQuery(count_options.params.params.query, "SELECT", " SELECT (COUNT(*) as ?number_of_rows_in_query_xyz) WHERE { ", "  LIMIT 100000 }");
 
                 let namedGraph = count_options.params.params['default-graph-uri'];
 
