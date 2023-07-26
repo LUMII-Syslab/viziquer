@@ -1,3 +1,5 @@
+import { Mongo } from 'meteor/mongo';
+ 
 // Custom collections
 Associations = new Mongo.Collection("Associations");
 Attributes = new Mongo.Collection("Attributes");
@@ -6,6 +8,8 @@ Schema = new Mongo.Collection("Schema");
 TriplesMaps = new Mongo.Collection("TriplesMaps");
 Services = new Mongo.Collection("Services");
 
+const VQ_sparql_logs = new Mongo.Collection("VQ_Exec_SPARQL_Logs");
+
 export {
 	Associations,
 	Attributes,
@@ -13,4 +17,5 @@ export {
 	Schema,
 	TriplesMaps,
 	Services,
+  VQ_sparql_logs,
 }
