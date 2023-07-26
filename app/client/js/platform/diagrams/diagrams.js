@@ -960,7 +960,8 @@ Template.ontologySettings.events({
 		});
 
 	},
-	'click #dss-schema' : function(e) {
+	// 'click #dss-schema' : function(e) {
+	'change #dss-schema' : function(e) {
 		var schema = $("#dss-schema").val();
 		var schema_info = Template.ontologySettings.schemas.get().filter(function(o){ return o.display_name == schema});
 		if ( schema_info.length > 0 && schema_info[0].display_name != "") {
