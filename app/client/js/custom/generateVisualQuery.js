@@ -1702,7 +1702,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 			var classes = findByVariableName(classesTable, group[key]["expression"]["value"]);
 			if(Object.keys(classes).length > 0){
 				for(let clazz in classes){
-					if(typeof classes[clazz] !== "function"){
+					if(typeof classes[clazz] !== "function" && (typeof classesTable[clazz]["identification"] === "undefined" || classesTable[clazz]["identification"] == null)){
 						classesTable[clazz]["groupByThis"] = true;
 					}
 				}
