@@ -160,7 +160,7 @@ var sparql_form_helpers = {
 
 
 Template.sparqlForm.onRendered( async function() {
-console.log('--sparqlForm.onRendered--')
+//console.log('--sparqlForm.onRendered--')
 
 	let yasqe3 = YASQE.fromTextArea(document.getElementById("generated-sparql3"), {
 		sparql: {
@@ -188,13 +188,13 @@ console.log('--sparqlForm.onRendered--')
 	
 	var project_id = Session.get("activeProject");
 	var project = Projects.findOne({_id: project_id,});
-	console.log(project)
+	//console.log(project)
 	
 	if (project!== undefined && project.newPublicProject) {
 	
 		await dataShapes.changeActiveProject(project_id);
 		var diagram = Diagrams.findOne({_id: Session.get("activeDiagram")});
-		console.log(diagram)	
+		//console.log(diagram)	
 		if (diagram.query !== undefined && diagram.query.length > 0) {
 			yasqe3.setValue(diagram.query);
 			if (project.isVisualizationNeeded)
@@ -212,7 +212,7 @@ Template.sparqlForm.helpers(sparql_form_helpers);
 Template.sparqlForm.events(sparql_form_events);
 
 Template.sparqlForm_see_results.onDestroyed(function() {
-	console.log('-----------sparqlForm_see_results.onDestroyed(-----------')
+	//console.log('-----------sparqlForm_see_results.onDestroyed(-----------')
 	Session.set("generatedSparql", undefined);
 	Session.set("executedSparql", {limit_set: false, number_of_rows: 0});
 
