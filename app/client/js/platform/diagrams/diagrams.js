@@ -864,7 +864,7 @@ Template.ontologySettings.events({
 		list._id = Session.get("activeProject");
 		dataShapes.clearSchema();
 		await dataShapes.changeActiveProjectFull(list);
-		//await Template.schemaTree.rendered();
+		await Template.schemaTree.rendered();  // Šis ir vajadzīgs publiskajām diagrammām
 		
 	},
 

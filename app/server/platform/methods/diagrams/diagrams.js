@@ -40,6 +40,7 @@ Meteor.methods({
     if (!list_in["endpoint"]) {
       list_in["endpoint"] = "https://dbpedia.org/sparql"; 
     }
+
 		// ******************************
 		const user_id = get_unknown_public_user_name();
 		
@@ -60,9 +61,23 @@ Meteor.methods({
 						});			
 		}
 		else if (list_in.endpoint !== undefined && list_in.endpoint !== '') {
-			schema = _.find(response.data, function(item) {
-							return item.sparql_url == list_in.endpoint && item.is_default_for_endpoint ;
+			let schemas = _.filter(response.data, function(item) { 
+							return item.sparql_url == list_in.endpoint;
 						});	
+			if (schemas.length > 1) {
+				schema = _.find(response.data, function(item) { 
+							return item.sparql_url == list_in.endpoint && item.is_default_for_endpoint;
+						});	
+				if ( schema == undefined) {
+					schema = _.find(response.data, function(item) { 
+							return item.sparql_url == list_in.endpoint;
+						});
+				}		
+			}
+			else if (schemas.length == 1) {
+				schema = schemas[0];
+			}
+	
 		}
 
 
