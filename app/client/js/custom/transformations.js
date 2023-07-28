@@ -512,7 +512,7 @@ Interpreter.customMethods({
 	visualizeSPARQL: function(q) {
 		var x = 10;
 		var y = 10;
-		
+		console.log("transformation.js, visualizeSPARQL(), q =", q)
 		var queries = q;
 		if(typeof q === "undefined"){
 			let yasqe3 = Template.sparqlForm.yasqe3.get();
@@ -539,8 +539,9 @@ Interpreter.customMethods({
 					x = e.evt.layerX;
 					y = e.evt.layerY;
 				}
-			}
+		}
 		for (const query of queries) {
+			console.log("transformation.js, visualizeSPARQL(), query =", query)
 			Interpreter.customExtensionPoints.generateVisualQuery(query, x, y);
 			x = x+170;
 		}

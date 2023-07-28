@@ -197,8 +197,10 @@ Template.sparqlForm.onRendered( async function() {
 		//console.log(diagram)	
 		if (diagram.query !== undefined && diagram.query.length > 0) {
 			yasqe3.setValue(diagram.query);
-			if (project.isVisualizationNeeded)
+			if (project.isVisualizationNeeded){
+				console.log("sparql_form.js, onRendered(), diagram.query =", diagram.query, [diagram.query])
 				Interpreter.customExtensionPoints.visualizeSPARQL([diagram.query]);
+			}
 		}
 		var list = {projectId: project_id, set: {newPublicProject: false, isVisualizationNeeded: false},};
 		Utilities.callMeteorMethod("updateProject", list);	

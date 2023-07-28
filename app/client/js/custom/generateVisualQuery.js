@@ -368,6 +368,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   },
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
+	console.log("generateVisualQuery.js, generateVisualQuery(), text =", text)
 	orderCounter = 1;
 	boxMoveY = 0;
 	useRef = false;
@@ -385,6 +386,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
+		
+		console.log("generateVisualQuery.js, parseSPARQLText(), parsedQuery =", parsedQuery)
 		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
 		else {
 		schemaName = dataShapes.schema.schemaType;
@@ -419,18 +422,20 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			  
 			  
 		 }
-		
+		console.log("generateVisualQuery.js, parseSPARQLText(), transformedParsedQuery =", parsedQuery)
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
 		
-		// console.log("variableList", variableList["pubDate"]);
+		console.log("generateVisualQuery.js, parseSPARQLText(), variableList = ", variableList);
 		
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = await generateAbstractTable(parsedQuery, [], variableList, []);
 		
-		
+		console.log("generateVisualQuery.js, parseSPARQLText(), abstractTable = ", abstractTable);
 		
 		abstractTable["linkTable"] = removeDuplicateLinks(abstractTable["linkTable"]);
+		
+		console.log("generateVisualQuery.js, parseSPARQLText(), abstractTable removeDuplicateLinks = ", abstractTable);
 		
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
 		// console.log("abstractTable", abstractTable);
@@ -441,11 +446,10 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		var whereTriplesVaribles = getWhereTriplesVaribles(parsedQuery["where"]);
 		// Decide which class is a query start class 
-		
-		// console.log("whereTriplesVaribles", whereTriplesVaribles);
-		
+
 		var tempGetStartClass = getStartClass(classesTable, abstractTable["linkTable"]);
 
+		console.log("generateVisualQuery.js, parseSPARQLText(), getStartClass = ", tempGetStartClass);
 		
 		var startClass = tempGetStartClass["startClass"];
 		classesTable = tempGetStartClass["classesTable"];
@@ -560,7 +564,12 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		// Generate tree ViziQuer query structure, from class and link tables 
 		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
+		
+		console.log("generateVisualQuery.js, parseSPARQLText(), generateClassCtructure = ", generateClassCtructuretemp);
+		
 		generateClassCtructuretemp = optimizeAggregationInStartClass(generateClassCtructuretemp);
+		
+		console.log("generateVisualQuery.js, parseSPARQLText(), optimizeAggregationInStartClass = ", generateClassCtructuretemp);
 
 		classesTable = generateClassCtructuretemp.clazz;
 		conditionLinks = generateClassCtructuretemp.conditionLinks;
@@ -8142,7 +8151,8 @@ function buildPathElement(pathElement){
 
 // Visualize query based on tree structure
 async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQuestion ){
-	
+	console.log("generateVisualQuery.js, visualizeQuery(), clazz = ", clazz, parentClass);
+
 	//node type
 	var nodeType = "condition";
 	if(parentClass == null) nodeType = "query";
@@ -8180,7 +8190,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			else Interpreter.showErrorMsg("Instance identification '" + instanceAlias + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
 		}
 	}
-	
+	console.log("generateVisualQuery.js, visualizeQuery(), proj = ", proj);
 	
 	//name
 	var className = "";
@@ -8206,12 +8216,18 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		// newPosition = parentClass.getNewLocation(d); //New class coordinates and size
 	}
 	
+	console.log("generateVisualQuery.js, visualizeQuery(), newPosition = ", newPosition);
+	
 	var new_elem_id = Create_VQ_Element(function(classBox) {
+		console.log("generateVisualQuery.js, Create_VQ_Element(), classBoxA = ", classBox);
 		var indirectClassMembership = false;
 		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
 		
 		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 		classBox.setClassStyle(nodeType);
+		
+		console.log("generateVisualQuery.js, Create_VQ_Element(), className = ", className);
+		console.log("generateVisualQuery.js, Create_VQ_Element(), nodeType = ", nodeType);
 		
 		
 		if(typeof clazz["groupByThis"] !== 'undefined'){
@@ -8274,6 +8290,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			var graph = field["graph"];
 			var graphInstruction = field["graphInstruction"];
 			
+			console.log("generateVisualQuery.js, Create_VQ_Element(), field = ", expression,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
+			
 			//add attribute to class
 			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
 
@@ -8298,6 +8316,9 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 
 			//add aggregation to class
 			classBox.addAggregateField(expression, alias, requireValues);
+			
+			console.log("generateVisualQuery.js, Create_VQ_Element(), aggregation = ", expression, alias, requireValues);
+			
 		})
 
 		//conditions
@@ -8309,6 +8330,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 				var expression = condition;
 				//add condition to class
 				if(typeof expression !== "undefined" && expression != null && expression != "")classBox.addCondition(expression);
+				console.log("generateVisualQuery.js, Create_VQ_Element(), condition = ", expression);
+			
 			}
 		})
 
@@ -8373,6 +8396,8 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		var fullSPARQL = clazz["fullSPARQL"];
 		
 		classBox.setFullSPARQL(fullSPARQL);
+		
+		
 
 		//link
 		if(parentClass != null){
@@ -8402,6 +8427,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			if(isInverse != true){
 				locLink = [coordX, coordY, coordX, newPosition.y]; 
 				Create_VQ_Element(function(linkLine) {
+					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineA = ", linkLine);
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
@@ -8409,10 +8435,12 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 						linkLine.setGraphInstruction(graphInstruction);
 					}
+					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineB = ", linkLine);
 				}, locLink, true, parentClass, classBox);
 			} else {
 				locLink = [coordX, newPosition.y, coordX, coordY];
 				Create_VQ_Element(function(linkLine) {
+					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineC = ", linkLine);
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
@@ -8420,24 +8448,27 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 						linkLine.setGraphInstruction(graphInstruction);
 					}
+					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineD = ", linkLine);
 				}, locLink, true, classBox, parentClass);
 			}
 		}
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
 			y = y + 180;
+			console.log("generateVisualQuery.js, Create_VQ_Element(), visualizeQueryChild = ", subclazz, classBox);
 			await visualizeQuery(subclazz, classBox, variableList);
 		})
 
 		//conditionLinks
 		_.each(clazz["conditionLinks"],function(condLink) {
-			
+			console.log("generateVisualQuery.js, Create_VQ_Element(), condLink = ", condLink);
 			var linkName = condLink["identification"]["local_name"];
 			var isNot = condLink["isNot"];
 			var isInverse = condLink["isInverse"];
 		})
 	
 	VQ_Elements[clazz.c_id] = classBox.obj._id;
+	console.log("generateVisualQuery.js, Create_VQ_Element(), classBoxB = ", classBox);
 	}, newPosition);
 }
 
