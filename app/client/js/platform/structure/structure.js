@@ -177,6 +177,7 @@ Template.structureRibbon.events({
 
 Template.createProjectModal.loading = new ReactiveVar(false);
 Template.createProjectModal.services = new ReactiveVar("");
+Template.createProjectModal.schemas = new ReactiveVar([{name: ""}]);
 
 function setServices (tool_id) {
 	var result = {};
@@ -208,6 +209,9 @@ function setServices (tool_id) {
 Template.createProjectModal.helpers({
 	loading: function() {
 		return Template.createProjectModal.loading.get();
+	},
+	schemas: function() {
+		return Template.createProjectModal.schemas.get();
 	},
 	tools: function() {
 		var tools = Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}}); 
@@ -275,12 +279,21 @@ Template.createProjectModal.events({
 		var project_name_obj = $('#project-name');
 		var icon_name_obj = $("#icon-name");
 		var category_obj = $("#category-name");
+		var isProject = false;
+		var schema_name = $("#dss-schema").val();
 
 		var project_name = project_name_obj.val();
 		var obj = $('input[name=stack-radio]:checked').closest(".schema");
 		
-		if(project_name == "" && obj.attr("name") != undefined && obj.attr("name") != "" && obj.attr("name") != "Def")
+		if (project_name == "" && obj.attr("name") != undefined && obj.attr("name") != "" && obj.attr("name") != "Def") {
 			project_name = obj.attr("name");
+			isProject = true;
+		}
+		
+		if (project_name == "" && schema_name != "") {
+			project_name = schema_name;
+		}
+		
 				
 		if(project_name != ""){
 			
@@ -315,6 +328,19 @@ Template.createProjectModal.events({
 			if ( type == "project" )
 				list.project_link = obj.attr("link")	
 			//console.log("Jauna projekta taisīšana");
+			
+			if ( schema_name != "" && !isProject) {
+				var schema_info = Template.createProjectModal.schemas.get().filter(function(o){ return o.display_name == schema_name});
+				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
+					list.schema = schema_name;
+					list.endpoint = schema_info[0].sparql_url;
+					list.uri = schema_info[0].named_graph;
+					list.queryEngineType = schema_info[0].endpoint_type;
+					list.directClassMembershipRole = schema_info[0].direct_class_role;
+					list.indirectClassMembershipRole = schema_info[0].indirect_class_role;
+				}
+			}
+
 			Template.createProjectModal.loading.set(true);
 			Utilities.callMeteorMethod("insertProject", list, function(proj_id) {
 				$("#add-project").modal("hide");
@@ -329,13 +355,17 @@ Template.createProjectModal.events({
 			document.getElementById("project-name-required").style.display = "block";
 		}
 	},
-	'click #tool' : function(e){
+	'change #tool' : function(e){
 		var tool_id = $("#tool").find(":selected").attr("id");
 		setServices (tool_id); 
 		//Session.set("tool", tool_id);
 	},
 });
 
+Template.createProjectModal.rendered = async function() {
+	var rr = await dataShapes.getOntologies();
+	Template.createProjectModal.schemas.set(rr);
+}
 //Template.createProjectModal.onDestroyed(function() {
 //	Session.set("tool", reset_variable()) ;  
 //});
