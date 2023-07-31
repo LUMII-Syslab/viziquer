@@ -8,7 +8,7 @@ See https://viziquer.lumii.lv for the tool description.
 ## Acknowledgements
 
 The ViziQuer tool has been developed at Institute of Mathematics and Computer Science, University of Latvia, https://lumii.lv, 
-with partial support from Latvian Science Council project lzp-2021/1-0389 (since 2022).
+with partial support from Latvian Science Council project lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (since 2022).
 
 ## Context
 
