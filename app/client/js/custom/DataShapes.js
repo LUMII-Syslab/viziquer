@@ -934,24 +934,34 @@ dataShapes = {
 		this.schema.log = [];
 		this.schema.fullLog = [];
 	},
-	getClassList : async function(count, isLocal) {
+	getClassList : async function(par) {
+	// console.log(dataShapes.getClassList({}))
+		//par = {class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']};
+		//console.log(par)
 		var rr = [];
-		var allParams = {main: { limit: count, isLocal: isLocal }};
-		
+		var allParams = {main: { limit: par.class_count_limit, class_ind:par.class_ind, isLocal: par.only_local, not_in:par.not_in }};
+		allParams.main.not_in = allParams.main.not_in.map(v => this.schema.namespaces.filter(function(n){ return n.name == v})[0].id); // TODO būs jāpapildina
 		rr = await this.callServerFunction("xx_getClassList", allParams);
-		
-		var c_list = rr.data.map(v => v.id)
-		return c_list;		
+		//console.log(rr)
+		return rr.data;
+
+		//var c_list = rr.data.map(v => v.id);
+		//return c_list;		
 	},
-	makeDiagr : async function(par = {count:30, only_locals:true}) {
+	getClassCount: async function() {
+		rr = await this.callServerFunction("xx_getClassCount", {main:{}});
+		return rr; 
+	},
+	makeDiagr : async function(c_list) {
 	//dataShapes.makeDiagr({count:30, only_locals:true, properties_out:['rdf:type']})
+	    /*par = {count:30, only_locals:true}
 		var count = par.count;
 		var isLocal = par.only_locals;
 		var properties_out = [];
 		if (par.properties_out != undefined)
 			properties_out = par.properties_out;
 		
-		properties_ids = [];
+		var properties_ids = [];
 		for (var p of properties_out) {
 			var p_info = await this.resolvePropertyByName({name: p})
 			if (p_info.complete)
@@ -959,9 +969,10 @@ dataShapes = {
 		}
 
 		var c_list = await this.getClassList(count,isLocal);
-		if (c_list.length == 0)
-			await this.getClassList(count,false);
-		
+		if (c_list.length == 0) // Ja nav lokālais ns uzstādīts
+			c_list = await this.getClassList(count,false); */
+			
+		var properties_ids = [];
 		var rr;
 		var rez = [];
 		var tt = '';
@@ -972,7 +983,7 @@ dataShapes = {
 				//var rez =  rr.data.map(function(f) { return `${f.id};${f.prefix}:${f.display_name};${f.cnt_x};${f.data_prop};${f.obj_prop};aaa##bbb`});
 				//rez.unshift('id;name;cnt;data_prop;obj_prop;aa');
 				//rez.push('');
-		
+
 		var allParams = {main: { c_list: `${c_list}`}};
 		for (var cc of c_list) {		
 			allParams.main.cc = cc;
@@ -996,6 +1007,15 @@ dataShapes = {
 		//	rr = await this.callServerFunction("xx_getPropListInfo", allParams);
 		//	rr.data.map(function(f) { rez2.push(`Assoc;${cc};${f.class_id}`); return 1;});
 		// }
+		
+//		rr = await this.getProperties({limit: 10});
+//		var p_list = rr.data.map(v => v.id);
+//		for (var pp of p_list) {
+//			rr = await this.callServerFunction("xx_getPropInfo", {main: { prop_id: `${pp}`, c_list: `${c_list}`}});
+//			console.log(rr);
+//		}
+		
+//		return;
 		
 		if ( properties_ids.length > 0 )
 			allParams.main.properties_ids = properties_ids.join("','");

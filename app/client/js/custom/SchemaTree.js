@@ -18,6 +18,13 @@ Template.schemaInstances.Classes = new ReactiveVar("");
 Template.schemaInstances.F3 = new ReactiveVar("");
 Template.schemaInstances.showI = new ReactiveVar("");
 Template.schemaInstances.isWD = new ReactiveVar("");
+Template.schemaExtra.SchemaName = new ReactiveVar("");
+Template.schemaExtra.Classes = new ReactiveVar([]);
+Template.schemaExtra.isBig =  new ReactiveVar(true);
+Template.schemaExtra.isLocal =  new ReactiveVar(false);
+Template.schemaExtra.ClassCount = new ReactiveVar("");
+Template.schemaExtra.ClassCount2 = new ReactiveVar("");
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
@@ -204,6 +211,7 @@ async function  useFilterP (plus = 0) {
 	dataShapes.schema.tree.filterP = text;
 	var params = {propertyKind:'All', limit: dataShapes.schema.tree.countP, filter:text.toLowerCase()};
 	var col = 'cnt_x';
+	
 	if ($("#dbp").is(":checked") ) {
 		params.basicOrder = true;
 	}
@@ -308,6 +316,32 @@ async function  useFilterI (plus = 0) {
 			}
 		}
 	}
+}
+
+async function setClassList0() {
+	const classes = await dataShapes.getClassList({class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']});
+	Template.schemaExtra.Classes.set(classes);
+	Template.schemaExtra.ClassCount2.set(classes.length);	
+}
+
+async function setClassList() {
+	let par = {};
+	if ($("#onlyLocal").is(":checked")) 
+		par.only_local = true;
+	else
+		par.only_local = false;	
+		
+	if ($("#excludeOwl").is(":checked")) 
+		par.not_in = ['owl','rdf','rdfs'];
+	else
+		par.not_in = [];
+		
+	par.class_count_limit = Number($("#classCount").val());
+	par.class_ind = $("#indCount").val();
+		
+	const classes = await dataShapes.getClassList(par);
+	Template.schemaExtra.Classes.set(classes);
+	Template.schemaExtra.ClassCount2.set(classes.length);	
 }
 
 Template.schemaTree.events({
@@ -464,7 +498,17 @@ Template.schemaTree.events({
 		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
 		await setBC()
-		await useFilterI ();	
+		await useFilterI();	
+		Template.schemaExtra.SchemaName.set(dataShapes.schema.schemaName);
+		const class_count = await dataShapes.getClassCount();
+		Template.schemaExtra.ClassCount.set(class_count);
+		// TODO cik lielas shēmas vispār piedāvāju vizualizēt
+		if ( class_count < 250) {
+			Template.schemaExtra.isBig.set(false);
+			await setClassList0();
+		}
+		else
+			Template.schemaExtra.isBig.set(true);
 	},	
 	
 });
@@ -507,7 +551,17 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaInstances.isWD.set(dataShapes.schema.schemaType == 'wikidata');
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
 		await setBC();
-		await useFilterI();		
+		await useFilterI();	
+		const class_count = await dataShapes.getClassCount();
+		Template.schemaExtra.SchemaName.set(dataShapes.schema.schemaName);
+		Template.schemaExtra.ClassCount.set(class_count);
+		// TODO cik lielas shēmas vispār piedāvāju vizualizēt
+		if ( class_count < 250) {
+			Template.schemaExtra.isBig.set(false);
+			await setClassList0();	
+		}
+		else
+			Template.schemaExtra.isBig.set(true);
 	}
 	//Template.schemaTree.ClassPath.set([]);
 }
@@ -670,7 +724,7 @@ Template.schemaFilter.events({
 		Template.schemaFilter.F2.set($('#filter_text2').val());
 		useFilterP ();
 	},
-	'click #propType': async function(e) {
+	'change #propType': async function(e) {
 		//Template.schemaFilter.Count.set(startCount)
 		Template.schemaFilter.F2.set($('#filter_text2').val());
 		useFilterP ();
@@ -775,7 +829,7 @@ Template.schemaInstances.events({
 			await useFilterI();
 		}
 	},
-	'click #class': async function(e) {
+	'change #class': async function(e) {
 		var className = $("#class").val();
 		if ( className !== dataShapes.schema.tree.class) {
 			Template.schemaInstances.F3.set('');  
@@ -794,3 +848,50 @@ Template.schemaInstances.events({
 		return;
 	},
 });
+
+Template.schemaExtra.helpers({
+	classes: function() {
+		return Template.schemaExtra.Classes.get();
+	},
+	info_schema: function() {
+		return Template.schemaExtra.SchemaName.get();
+	},
+	isBig: function() {
+		return Template.schemaExtra.isBig.get();
+	},
+	classCount: function() {
+		return Template.schemaExtra.ClassCount.get();
+	},
+	classCount2: function() {
+		return Template.schemaExtra.ClassCount2.get();
+	},
+	onlyLocal_ch: function() {
+		return Template.schemaExtra.isLocal.get();
+	},
+	excludeOwl_ch: function() {
+		return true;
+	}
+	
+});
+
+Template.schemaExtra.events({
+	'click #makeDiagr': async function(e) {
+		let classList = Template.schemaExtra.Classes.get();
+		classList = classList.map(v => v.id);
+		await dataShapes.makeDiagr(classList);
+	},
+	"click .form-check-input": async function(e) {
+		await setClassList();
+	},
+	'change #classCount': async function(e) {
+		await setClassList();
+	},
+	'change #indCount': async function(e) {
+		await setClassList();
+	},
+});
+
+Template.schemaExtra.rendered = async function() {
+	//const classes = await dataShapes.getClassList();
+	//Template.schemaExtra.Classes.set(classes);
+}
