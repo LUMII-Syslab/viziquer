@@ -1,3 +1,11 @@
+// SPARQL Query Visualization
+
+// Software Module to generate visual queries in ViziQuer from their SPARQL textual form.
+
+// Authors: Jūlija Ovčiņņikova
+
+// The module has been developed with partial support from Latvian Science Council project lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (since 2022).
+
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { Projects, Compartments, Elements, ElementTypes} from '/libs/platform/collections'
