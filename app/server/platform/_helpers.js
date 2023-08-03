@@ -116,8 +116,10 @@ empty_query = function() {
 
 
 function is_public_diagram(diagram_id) {
+console.log("----is_public_diagram------")
 	let diagram = Diagrams.findOne({_id: diagram_id});
 	if (diagram) {
+		console.log("----is_public_diagram------")
 		return diagram.isPublic;
 	}
 }

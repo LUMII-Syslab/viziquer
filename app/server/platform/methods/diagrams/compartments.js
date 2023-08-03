@@ -40,12 +40,13 @@ Meteor.methods({
 
 	insertCompartment: function(list) {
 		var user_id = Meteor.userId() || get_unknown_public_user_name();
-
 		var compart_in = list.compartment;
+var log = !_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "");
+if (log) console.log("insertCompartment", Meteor.userId(),is_project_member(user_id, compart_in), list.compartment, CompartmentTypes.findOne({ _id:list.compartment.compartmentTypeId})["name"])
 		if (is_project_member(user_id, compart_in) || is_public_diagram(list["diagramId"])) {
-
+if (log) console.log("******************************************************")
 			if (!_.isUndefined(compart_in["value"]) && !_.isUndefined(compart_in["input"] && compart_in.input !== "")) {
-
+if (log) console.log("******************************************************")
 				compart_in["valueLC"] = compart_in["value"].toLowerCase();
 				Compartments.insert(compart_in);
 				// Compartments.insert(compart_in, {trimStrings: false});
