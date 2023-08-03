@@ -18,7 +18,9 @@ var y = 10;
 var width = 500;
 var height = 120;
 var counter = 0;
-VQ_Elements = {};
+var VQ_Elements = {};
+var link_count = 0;
+
 var directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 var indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 var schemaName = null;
@@ -257,7 +259,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		VQ_Elements = {};
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
-			
+	    console.log("---Vai ir šis izsaukums ?  261----")
 		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
 
 		var i = 0;
@@ -305,7 +307,6 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		await delay(100);
 		var dragged_boxes = [];
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
-		
 		let editor = Interpreter.editor;
 		for(let elem_id in VQ_Elements){
 
@@ -376,7 +377,6 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
   },
   
 generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
-	console.log("generateVisualQuery.js, generateVisualQuery(), text =", text)
 	orderCounter = 1;
 	boxMoveY = 0;
 	useRef = false;
@@ -395,7 +395,6 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		
-		console.log("generateVisualQuery.js, parseSPARQLText(), parsedQuery =", parsedQuery)
 		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
 		else {
 		schemaName = dataShapes.schema.schemaType;
@@ -430,20 +429,14 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			  
 			  
 		 }
-		console.log("generateVisualQuery.js, parseSPARQLText(), transformedParsedQuery =", parsedQuery)
+
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
-		
-		console.log("generateVisualQuery.js, parseSPARQLText(), variableList = ", variableList);
 		
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = await generateAbstractTable(parsedQuery, [], variableList, []);
 		
-		console.log("generateVisualQuery.js, parseSPARQLText(), abstractTable = ", abstractTable);
-		
 		abstractTable["linkTable"] = removeDuplicateLinks(abstractTable["linkTable"]);
-		
-		console.log("generateVisualQuery.js, parseSPARQLText(), abstractTable removeDuplicateLinks = ", abstractTable);
 		
 		// console.log(JSON.stringify(abstractTable["classesTable"], 0, 2));
 		// console.log("abstractTable", abstractTable);
@@ -457,8 +450,6 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		var tempGetStartClass = getStartClass(classesTable, abstractTable["linkTable"]);
 
-		console.log("generateVisualQuery.js, parseSPARQLText(), getStartClass = ", tempGetStartClass);
-		
 		var startClass = tempGetStartClass["startClass"];
 		classesTable = tempGetStartClass["classesTable"];
 			
@@ -572,12 +563,8 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		// Generate tree ViziQuer query structure, from class and link tables 
 		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
-		
-		console.log("generateVisualQuery.js, parseSPARQLText(), generateClassCtructure = ", generateClassCtructuretemp);
-		
+
 		generateClassCtructuretemp = optimizeAggregationInStartClass(generateClassCtructuretemp);
-		
-		console.log("generateVisualQuery.js, parseSPARQLText(), optimizeAggregationInStartClass = ", generateClassCtructuretemp);
 
 		classesTable = generateClassCtructuretemp.clazz;
 		conditionLinks = generateClassCtructuretemp.conditionLinks;
@@ -607,17 +594,22 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		
 		// Visualize query based on tree structure
 		VQ_Elements = {};
+		var link_count2 = abstractTable["linkTable"].length;
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
+console.log("---Vai ir šis izsaukums ?  597 ----", link_count2)
+console.log("klašu skaits", classCount, classesTable)
+console.log(abstractTable["linkTable"])
 
 		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
 		
 		var i = 0;
-		while(Object.keys(VQ_Elements).length < classCount && i < 100){
+		while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
+			console.log("--Viens solis------", i, "Klases ", Object.keys(VQ_Elements).length,"linki", link_count)
 			await delay(100);
 			i++;
 		}
-		
+		console.log("---Pēc cikla----------", Object.keys(VQ_Elements).length, link_count)
 		 _.each(conditionLinks,function(condLink) {
 			
 			var linkName = condLink["identification"]["display_name"];
@@ -655,12 +647,14 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			//TODO create condition link
 		})
 		
-		
-		await delay(100);
+	console.log("Gaidām....")	
+		//await delay(10000);
 		var dragged_boxes = [];
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
-		
+	console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+console.log(VQ_Elements)	
 		let editor = Interpreter.editor;
+
 		for(let elem_id in VQ_Elements){
 
 			let element_list = editor.getElements();
@@ -684,11 +678,13 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			element_size.width = longes_compartment_lenght + 20;
 			
 			var box_obj = {resizedElement: element, minX: element_size.x, minY: MinY, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+MinY};
+			console.log(box_obj)
 			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
 			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
 			element.collectLinkedLines(lines2, {});
 			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
-
+console.log("------------līnijas-------")
+			console.log(lines2)
 			var lines = [];
 			
 			_.each(lines2.draggedLines, function(line_obj) {
@@ -707,11 +703,13 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				lines: lines,
 				ports: [],
 			};
+			console.log(list)
 			var resizing_shape = element.presentation;
 			list["diagramId"] = Session.get("activeDiagram");
 			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
 			MinY = MinY + height + 60;
 		}
+//
 	  }
 	  });
   },
@@ -8198,7 +8196,6 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			else Interpreter.showErrorMsg("Instance identification '" + instanceAlias + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
 		}
 	}
-	console.log("generateVisualQuery.js, visualizeQuery(), proj = ", proj);
 	
 	//name
 	var className = "";
@@ -8443,6 +8440,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 						linkLine.setGraphInstruction(graphInstruction);
 					}
+					link_count = link_count + 1;
 					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineB = ", linkLine);
 				}, locLink, true, parentClass, classBox);
 			} else {
@@ -8456,6 +8454,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
 						linkLine.setGraphInstruction(graphInstruction);
 					}
+					link_count = link_count + 1;
 					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineD = ", linkLine);
 				}, locLink, true, classBox, parentClass);
 			}
