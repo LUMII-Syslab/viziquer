@@ -76,7 +76,7 @@ function is_project_version_admin_for_version(user_id, doc) {
 }	
 
 function is_project_member(user_id, doc) {
-
+console.log("------is_project_member--------", user_id, doc, is_system_admin(user_id))
 	if (!doc) {
 		return false;
 	}
@@ -87,6 +87,7 @@ function is_project_member(user_id, doc) {
 
 	if (doc["projectId"]) {
 		var role_name = build_project_role(doc["projectId"]);
+		console.log("------is_project_member--------", role_name, Roles.userIsInRole(user_id, [role_name]))
 		return Roles.userIsInRole(user_id, [role_name]);
 	}
 }
