@@ -2873,7 +2873,6 @@ VQ_Element.prototype = {
 	
   },
   setNameAndIndirectClassMembership: function(name,indirect) {
-    console.log("VQ_element -----------setNameAndIndirectClassMembership ----")
 	var indirectS = "false";
 	var nameValue = name;
 	
@@ -3659,9 +3658,8 @@ VQ_Element.prototype = {
 	// string, string, string, bool? -> int (0 ir update failed - no such type, 1 if compartment updated, 3 - compartment inserted)
   // If insert mode is true then new compartment is inserted regardless of existence
 	setCompartmentValue: function(comp_name, input, value, insertMode) {
-	console.log(" VQ_element  -----setCompartmentValue------ ")
+	//console.log(" VQ_element  -----setCompartmentValue------ ")
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
-		console.log(ct)
 		if (ct) {
 			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
 			if (c && !insertMode) {
@@ -3691,7 +3689,7 @@ VQ_Element.prototype = {
 											styleId: ct.styles[0]["id"],
 										},
 									};
-			console.log(c_to_create)
+
              Utilities.callMeteorMethod("insertCompartment", c_to_create);
           return 3;
 			};
