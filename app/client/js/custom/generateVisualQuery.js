@@ -259,7 +259,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		VQ_Elements = {};
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
-	    console.log("---Vai ir šis izsaukums ?  261----")
+
 		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
 
 		var i = 0;
@@ -597,19 +597,15 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		var link_count2 = abstractTable["linkTable"].length;
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
-console.log("---Vai ir šis izsaukums ?  597 ----", link_count2)
-console.log("klašu skaits", classCount, classesTable)
-console.log(abstractTable["linkTable"])
 
 		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
 		
 		var i = 0;
 		while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
-			console.log("--Viens solis------", i, "Klases ", Object.keys(VQ_Elements).length,"linki", link_count)
 			await delay(100);
 			i++;
 		}
-		console.log("---Pēc cikla----------", Object.keys(VQ_Elements).length, link_count)
+
 		 _.each(conditionLinks,function(condLink) {
 			
 			var linkName = condLink["identification"]["display_name"];
@@ -647,12 +643,10 @@ console.log(abstractTable["linkTable"])
 			//TODO create condition link
 		})
 		
-	console.log("Gaidām....")	
-		//await delay(10000);
+		//await delay(500); ?? TODO
 		var dragged_boxes = [];
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
-	console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-console.log(VQ_Elements)	
+	
 		let editor = Interpreter.editor;
 
 		for(let elem_id in VQ_Elements){
@@ -678,13 +672,12 @@ console.log(VQ_Elements)
 			element_size.width = longes_compartment_lenght + 20;
 			
 			var box_obj = {resizedElement: element, minX: element_size.x, minY: MinY, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+MinY};
-			console.log(box_obj)
+
 			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
 			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
 			element.collectLinkedLines(lines2, {});
 			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
-console.log("------------līnijas-------")
-			console.log(lines2)
+
 			var lines = [];
 			
 			_.each(lines2.draggedLines, function(line_obj) {
@@ -703,7 +696,7 @@ console.log("------------līnijas-------")
 				lines: lines,
 				ports: [],
 			};
-			console.log(list)
+
 			var resizing_shape = element.presentation;
 			list["diagramId"] = Session.get("activeDiagram");
 			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
@@ -8157,7 +8150,6 @@ function buildPathElement(pathElement){
 
 // Visualize query based on tree structure
 async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQuestion ){
-	console.log("generateVisualQuery.js, visualizeQuery(), clazz = ", clazz, parentClass);
 
 	//node type
 	var nodeType = "condition";
@@ -8221,19 +8213,13 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		// newPosition = parentClass.getNewLocation(d); //New class coordinates and size
 	}
 	
-	console.log("generateVisualQuery.js, visualizeQuery(), newPosition = ", newPosition);
-	
 	var new_elem_id = Create_VQ_Element(function(classBox) {
-		console.log("generateVisualQuery.js, Create_VQ_Element(), classBoxA = ", classBox);
+
 		var indirectClassMembership = false;
 		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
 		
 		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 		classBox.setClassStyle(nodeType);
-		
-		console.log("generateVisualQuery.js, Create_VQ_Element(), className = ", className);
-		console.log("generateVisualQuery.js, Create_VQ_Element(), nodeType = ", nodeType);
-		
 		
 		if(typeof clazz["groupByThis"] !== 'undefined'){
 			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
@@ -8295,8 +8281,6 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			var graph = field["graph"];
 			var graphInstruction = field["graphInstruction"];
 			
-			console.log("generateVisualQuery.js, Create_VQ_Element(), field = ", expression,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
-			
 			//add attribute to class
 			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
 
@@ -8321,9 +8305,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 
 			//add aggregation to class
 			classBox.addAggregateField(expression, alias, requireValues);
-			
-			console.log("generateVisualQuery.js, Create_VQ_Element(), aggregation = ", expression, alias, requireValues);
-			
+		
 		})
 
 		//conditions
@@ -8335,7 +8317,6 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 				var expression = condition;
 				//add condition to class
 				if(typeof expression !== "undefined" && expression != null && expression != "")classBox.addCondition(expression);
-				console.log("generateVisualQuery.js, Create_VQ_Element(), condition = ", expression);
 			
 			}
 		})
@@ -8432,7 +8413,6 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			if(isInverse != true){
 				locLink = [coordX, coordY, coordX, newPosition.y]; 
 				Create_VQ_Element(function(linkLine) {
-					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineA = ", linkLine);
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
@@ -8441,12 +8421,10 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraphInstruction(graphInstruction);
 					}
 					link_count = link_count + 1;
-					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineB = ", linkLine);
 				}, locLink, true, parentClass, classBox);
 			} else {
 				locLink = [coordX, newPosition.y, coordX, coordY];
 				Create_VQ_Element(function(linkLine) {
-					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineC = ", linkLine);
 					linkLine.setName(linkName);
 					linkLine.setLinkType(linkType);
 					linkLine.setNestingType(linkQueryType);
@@ -8455,27 +8433,23 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 						linkLine.setGraphInstruction(graphInstruction);
 					}
 					link_count = link_count + 1;
-					console.log("generateVisualQuery.js, Create_VQ_Element(), linkLineD = ", linkLine);
 				}, locLink, true, classBox, parentClass);
 			}
 		}
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
 			y = y + 180;
-			console.log("generateVisualQuery.js, Create_VQ_Element(), visualizeQueryChild = ", subclazz, classBox);
 			await visualizeQuery(subclazz, classBox, variableList);
 		})
 
 		//conditionLinks
 		_.each(clazz["conditionLinks"],function(condLink) {
-			console.log("generateVisualQuery.js, Create_VQ_Element(), condLink = ", condLink);
 			var linkName = condLink["identification"]["local_name"];
 			var isNot = condLink["isNot"];
 			var isInverse = condLink["isInverse"];
 		})
 	
 	VQ_Elements[clazz.c_id] = classBox.obj._id;
-	console.log("generateVisualQuery.js, Create_VQ_Element(), classBoxB = ", classBox);
 	}, newPosition);
 }
 
