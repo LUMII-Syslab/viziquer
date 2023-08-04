@@ -643,7 +643,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			//TODO create condition link
 		})
 		
-		//await delay(500); ?? TODO
+		await delay(500); // TODO - kaut kā savādāk būtu jānoķer kompartmentu izveidošana
 		var dragged_boxes = [];
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
 	
