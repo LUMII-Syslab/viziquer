@@ -20,10 +20,18 @@ Template.schemaInstances.showI = new ReactiveVar("");
 Template.schemaInstances.isWD = new ReactiveVar("");
 Template.schemaExtra.SchemaName = new ReactiveVar("");
 Template.schemaExtra.Classes = new ReactiveVar([]);
+Template.schemaExtra.RestClasses = new ReactiveVar([]);
+Template.schemaExtra.Properties = new ReactiveVar([]);
 Template.schemaExtra.isBig =  new ReactiveVar(true);
 Template.schemaExtra.isLocal =  new ReactiveVar(false);
-Template.schemaExtra.ClassCount = new ReactiveVar("");
-Template.schemaExtra.ClassCount2 = new ReactiveVar("");
+Template.schemaExtra.ClassCountAll = new ReactiveVar("");
+Template.schemaExtra.ClassCountSelected = new ReactiveVar("");
+Template.schemaExtra.ClassCountFiltered = new ReactiveVar("");
+Template.schemaExtra.ClassCountRest = new ReactiveVar("");
+Template.schemaExtra.ManualDisabled = new ReactiveVar("disabled");
+Template.schemaExtra.FilterDisabled = new ReactiveVar("");
+Template.schemaExtra.NsFilters = new ReactiveVar("");
+
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
@@ -318,30 +326,113 @@ async function  useFilterI (plus = 0) {
 	}
 }
 
-async function setClassList0() {
-	const classes = await dataShapes.getClassList({class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']});
+function setClassListInfo(classes, restClasses) {
 	Template.schemaExtra.Classes.set(classes);
-	Template.schemaExtra.ClassCount2.set(classes.length);	
+	Template.schemaExtra.ClassCountSelected.set(classes.length);	
+	Template.schemaExtra.RestClasses.set(restClasses);	
+	Template.schemaExtra.ClassCountRest.set(restClasses.length);
 }
 
-async function setClassList() {
-	let par = {};
-	if ($("#onlyLocal").is(":checked")) 
-		par.only_local = true;
+function setClassList0() {
+	Template.schemaExtra.ManualDisabled.set("disabled");
+	Template.schemaExtra.FilterDisabled.set("");
+	Template.schemaExtra.Properties.set([]);
+	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}]
+	var filteredClassList = dataShapes.schema.diagram.classList;	
+	filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
+	
+	if ( filteredClassList.length > 0 ) {
+		nsFilters.find(function(f){ return f.value == 'Local';}).selected = "selected";
+	}
+	else {
+		filteredClassList = dataShapes.schema.diagram.classList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
+		nsFilters.find(function(f){ return f.value == 'Exclude';}).selected = "selected";		
+	}
+	
+	Template.schemaExtra.NsFilters.set(nsFilters);
+
+	dataShapes.schema.diagram.filteredClassList = filteredClassList;
+	Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);	
+	var classes = [];
+	var restClasses = [];
+	
+	if ( filteredClassList.length > 30 ) {
+		classes = filteredClassList.slice(0, 30);
+		restClasses = filteredClassList.slice(30, filteredClassList.length+1);
+	}
+	else {
+		classes = filteredClassList;
+	}
+	setClassListInfo(classes, restClasses);
+}
+
+function sortClassList() {
+
+	var classList = dataShapes.schema.diagram.classList;
+	const sortP = $("#sortPar").val();
+	if  ( sortP == 1) 
+		classList = classList.sort(function(a,b){ return b.cnt-a.cnt;});
 	else
-		par.only_local = false;	
-		
-	if ($("#excludeOwl").is(":checked")) 
-		par.not_in = ['owl','rdf','rdfs'];
+		classList = classList.sort(function(a,b){ return a.order-b.order;});
+	
+	dataShapes.schema.diagram.classList = classList;
+	
+	if (Template.schemaExtra.ManualDisabled.get() == "") {
+		var classes = Template.schemaExtra.Classes.get();
+		var restClasses = Template.schemaExtra.RestClasses.get();
+		if  ( sortP == 1) { 
+			classes = classes.sort(function(a,b){ return b.cnt-a.cnt;});
+			restClasses = restClasses.sort(function(a,b){ return b.cnt-a.cnt;});
+		}	
+		else {
+			classes = classes.sort(function(a,b){ return a.order-b.order;});
+			restClasses = restClasses.sort(function(a,b){ return a.order-b.order;});
+		}
+		setClassListInfo(classes, restClasses);
+	}
 	else
-		par.not_in = [];
+		setClassList();
+}
+
+function setClassList() {
+
+	if (Template.schemaExtra.ManualDisabled.get() == "disabled") {
+		var filteredClassList = dataShapes.schema.diagram.classList;
+		const nsFilter = $("#nsFilter").val();
+		const classCount = $("#classCount").val();
+		const indCount = $("#indCount").val();
+
+		if ( nsFilter == 'Exclude')
+			filteredClassList = filteredClassList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
+		if ( nsFilter == 'Local')
+			filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
 		
-	par.class_count_limit = Number($("#classCount").val());
-	par.class_ind = $("#indCount").val();
+		if ( indCount > 1 )
+			filteredClassList = filteredClassList.filter(function(c){ return c.cnt >= indCount;});
+			
+		Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);	
 		
-	const classes = await dataShapes.getClassList(par);
-	Template.schemaExtra.Classes.set(classes);
-	Template.schemaExtra.ClassCount2.set(classes.length);	
+		var classes = [];
+		var restClasses = [];
+		if ( filteredClassList.length > classCount ) {
+			classes = filteredClassList.slice(0, classCount); 
+			restClasses = filteredClassList.slice(classCount, filteredClassList.length+1);
+		}
+		else {
+			classes = filteredClassList;
+		}
+		
+		dataShapes.schema.diagram.filteredClassList = filteredClassList;
+		setClassListInfo(classes, restClasses);
+	}
+}
+
+function makeClassLists() {
+
+	var classes = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+	var restClasses = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 0});
+	setClassListInfo(classes, restClasses);
+	sortClassList() 
 }
 
 Template.schemaTree.events({
@@ -499,13 +590,13 @@ Template.schemaTree.events({
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));		
 		await setBC()
 		await useFilterI();	
+		
 		Template.schemaExtra.SchemaName.set(dataShapes.schema.schemaName);
-		const class_count = await dataShapes.getClassCount();
-		Template.schemaExtra.ClassCount.set(class_count);
+		Template.schemaExtra.ClassCountAll.set(dataShapes.schema.classCount);
 		// TODO cik lielas shēmas vispār piedāvāju vizualizēt
-		if ( class_count < 250) {
+		if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
 			Template.schemaExtra.isBig.set(false);
-			await setClassList0();
+			setClassList0();
 		}
 		else
 			Template.schemaExtra.isBig.set(true);
@@ -552,13 +643,13 @@ Template.schemaTree.rendered = async function() {
 		Template.schemaInstances.Classes.set(dataShapes.schema.tree.classes.map( v => { if ( v == dataShapes.schema.tree.class ) return {name:v, selected: "selected"}; else return {name:v}; }));
 		await setBC();
 		await useFilterI();	
-		const class_count = await dataShapes.getClassCount();
+
 		Template.schemaExtra.SchemaName.set(dataShapes.schema.schemaName);
-		Template.schemaExtra.ClassCount.set(class_count);
+		Template.schemaExtra.ClassCountAll.set(dataShapes.schema.classCount);
 		// TODO cik lielas shēmas vispār piedāvāju vizualizēt
-		if ( class_count < 250) {
+		if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
 			Template.schemaExtra.isBig.set(false);
-			await setClassList0();	
+			setClassList0();	
 		}
 		else
 			Template.schemaExtra.isBig.set(true);
@@ -852,6 +943,9 @@ Template.schemaInstances.events({
 Template.schemaExtra.helpers({
 	classes: function() {
 		return Template.schemaExtra.Classes.get();
+	}, 
+	restClasses: function() {
+		return Template.schemaExtra.RestClasses.get();
 	},
 	info_schema: function() {
 		return Template.schemaExtra.SchemaName.get();
@@ -859,36 +953,126 @@ Template.schemaExtra.helpers({
 	isBig: function() {
 		return Template.schemaExtra.isBig.get();
 	},
-	classCount: function() {
-		return Template.schemaExtra.ClassCount.get();
+	classCountAll: function() {
+		return Template.schemaExtra.ClassCountAll.get();
 	},
-	classCount2: function() {
-		return Template.schemaExtra.ClassCount2.get();
+	classCountSelected: function() {
+		return Template.schemaExtra.ClassCountSelected.get();
 	},
-	onlyLocal_ch: function() {
-		return Template.schemaExtra.isLocal.get();
+	classCountFiltered: function() {
+		return Template.schemaExtra.ClassCountFiltered.get();
 	},
-	excludeOwl_ch: function() {
-		return true;
-	}
+	classCountRest: function() {
+		return Template.schemaExtra.ClassCountRest.get();
+	},
+	manualDisabled: function() {
+		return Template.schemaExtra.ManualDisabled.get();
+	},
+	filterDisabled: function() {
+		return Template.schemaExtra.FilterDisabled.get();
+	},
+	nsFilters: function() {
+		return Template.schemaExtra.NsFilters.get();
+	},
+	properties: function() {
+		return Template.schemaExtra.Properties.get();
+	},
 	
 });
 
 Template.schemaExtra.events({
 	'click #makeDiagr': async function(e) {
-		let classList = Template.schemaExtra.Classes.get();
+		var classList = Template.schemaExtra.Classes.get();
 		classList = classList.map(v => v.id);
-		await dataShapes.makeDiagr(classList);
+		var propList = Template.schemaExtra.Properties.get();
+		if ( propList.length == 0 ) {
+			var not_in = [];
+			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
+				not_in = ['owl','rdf','rdfs'];
+
+			var allParams = {main: { c_list: `${classList}`}};
+			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
+			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
+			propList = rr.data;
+		}
+		
+		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val());
+
 	},
-	"click .form-check-input": async function(e) {
-		await setClassList();
+	'click #getProperties': async function(e) {
+		var classList = Template.schemaExtra.Classes.get();
+		classList = classList.map(v => v.id);
+		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`}});
+		Template.schemaExtra.Properties.set(rr.data);
 	},
-	'change #classCount': async function(e) {
-		await setClassList();
+	
+	'change #classCount': function(e) {
+		setClassList();
 	},
-	'change #indCount': async function(e) {
-		await setClassList();
+	'change #indCount': function(e) {
+		setClassList();
 	},
+	'change #nsFilter': function(e) {
+		setClassList();
+	},
+	'change #sortPar': function(e) {
+		sortClassList();
+	},
+	'click #manual': function(e) {
+		if ( $("#manual").is(":checked") ) {
+			Template.schemaExtra.ManualDisabled.set("");
+			Template.schemaExtra.FilterDisabled.set("disabled");
+			var classList = Template.schemaExtra.Classes.get().map(v => v.id);
+			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+				if ( classList.includes(cl.id))
+					cl.selected = 1;
+			});
+		}
+		else {
+			Template.schemaExtra.ManualDisabled.set("disabled");
+			Template.schemaExtra.FilterDisabled.set("");
+		}
+	},
+	'click #removeAll': function(e) {
+		var classes = [];
+		var restClasses = dataShapes.schema.diagram.filteredClassList;
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) { cl.selected = 0; });
+		setClassListInfo(classes, restClasses);
+	},
+	'click #removeSelected': function(e) {
+		var selected = $("#selectedClasses").val().map(v => Number(v));
+
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( selected.includes(cl.id) )
+				cl.selected = 0; 
+		});
+		makeClassLists();
+	},
+	'click #addSelected': function(e) {
+		var selected = $("#restClasses").val().map(v => Number(v));
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( selected.includes(cl.id) )
+				cl.selected = 1; 
+		});
+		makeClassLists();
+	},		
+	'click #addWithN': function(e) {
+		var selected = $("#restClasses").val().map(v => Number(v));
+		if ( selected.length > 0 ) {
+			var list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id = selected[0]; }).c;
+			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+				if ( list.includes(cl.id) || cl.id == selected[0] )
+					cl.selected = 1; 
+			});
+			makeClassLists();			
+		}
+	},
+	'click #removeProperties': function(e) {
+		var selected = $("#selectedProperties").val().map(v => Number(v));
+		var propList = Template.schemaExtra.Properties.get();
+		propList = propList.filter(function(p){ return !selected.includes(p.id); })
+		Template.schemaExtra.Properties.set(propList);
+	},		
 });
 
 Template.schemaExtra.rendered = async function() {

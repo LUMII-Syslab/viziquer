@@ -175,67 +175,144 @@
         <div class="dd" id="nestable">
 		<form class="form-horizontal" role="form">
 			<div class="explain-form-group">
-			   <span>DSS schema <b>{{info_schema}}</b> has {{classCount}} classes.</span>
+			   <span>DSS schema <b>{{info_schema}}</b> has {{classCountAll}} ({{classCountFiltered}} filtered ) classes.</span>
 			</div>
 			{{#if isBig }}
 			{{else}}
-				<div class="form-group">
-					<label for="class-count" class="col-sm-3 control-label">Class count</label>
-					<div class="col-sm-9">
-						<select class="form-control" id="classCount" >
-							  <option value=15 >15</option>
-							  <option value=30 selected>30</option>
-							  <option value=40 >40</option>
-							  <option value=50 >50</option>
+			<div class="explain-form-group">
+			   <span>Class list filters:</span>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<select class="form-control" id="classCount" {{filterDisabled}}>
+							<option value=15 >15 classes in the diagram</option>
+							<option value=30 selected>30 classes in the diagram</option>
+							<option value=40 >40 classes in the diagram</option>
+							<option value=50 >50 classes in the diagram</option>
 						</select>
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="individual-count" class="col-sm-3 control-label">Individuals </label>
-					<div class="col-sm-9">
-						<select class="form-control" id="indCount" >
-							  <option selected value="1" >1...</option>
-							  <option value="10" >10...</option>
-							  <option value="50" >50...</option>
-							  <option value="100" >100...</option>
-						</select>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<div class="col-sm-9">
-						<label class="form-check-label">
-						 <input class="form-check-input" id="onlyLocal" name="onlyLocal" index = 1 type="checkbox" checked={{onlyLocal_ch}}>
-						 <span class="custom-checkbox"></span>
-						 Only local classes
-					  </label>
-					</div>
-				</div>
-				
-				
-				<div class="form-group">
-					<div class="col-sm-9">
-						<label class="form-check-label">
-						 <input class="form-check-input" id="excludeOwl" name="excludeOwl" index = 2 type="checkbox" checked={{excludeOwl_ch}}>
-						 <span class="custom-checkbox"></span>
-						 Exclude owl:, rdf:, rdfs:
-					  </label>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label for="class-list" class="col-sm-3 control-label">{{classCount2}} classes </label>
-					<div class="col-sm-9">
-						<select class="form-control" id="classList" >
-							{{#each classes}}
-								<option style="height:30px" value="{{id}}">{{display_name}}</option>
+						<select class="form-control" id="nsFilter" {{filterDisabled}}>
+							{{#each nsFilters}}
+								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
 							{{/each}}
 						</select>
 					</div>
+					<div class="col-sm-6">
+						<select class="form-control" id="indCount" {{filterDisabled}}>
+							  <option selected value=1 >Classes of all sizes</option>
+							  <option value=10 >At least 10 individuals</option>
+							  <option value=50 >At least 50 individuals</option>
+							  <option value=100 >At least 100 individuals</option>
+						</select>
+						<select class="form-control" id="sortPar" >
+							  <option selected value=1 >Sort by count</option>
+							  <option value=2 >Sort by namespaces</option>
+						</select>
+					</div>
 				</div>
-				<div class="col-sm-3">
-					<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal">Save data</button>
+			</div>
+			<div class="explain-form-group">
+			   <span>  </span>
+			</div>		
+			<div class="explain-form-group">
+			   <span>Manual class list selection</span>
+			   		<label class="form-check-label">
+						<input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
+						<span class="custom-checkbox"></span>
+					</label>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<button id="removeSelected" type="button" class="btn btn-primary" {{manualDisabled}}>Remove selected (multi select)</button>
+						</div>
+						<div class="form-group">
+							<button id="removeAll" type="button" class="btn btn-primary" {{manualDisabled}}>Remove all</button>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<button id="addSelected" type="button" class="btn btn-primary" {{manualDisabled}}>Add selected (multi select)</button>
+						</div>
+						<div class="form-group">
+							<button id="addWithN" type="button" class="btn btn-primary" {{manualDisabled}}>Add one selected with neighbors</button>
+						</div>
+					</div>
 				</div>
+			</div>	
+			<div class="explain-form-group">
+			   <span>Class lists:</span>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<label>Selected classes ({{classCountSelected}})</label>
+					</div>
+					<div class="col-sm-6">
+						<label>Rest classes ({{classCountRest}})</label>
+					</div>
+				</div>
+			</div>	
+			
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<select class="form-select" id="selectedClasses" size="20" multiple aria-label="multiple select 1">
+							{{#each classes}}
+								<option value="{{id}}" >{{display_name}}</option>
+							{{/each}}
+						</select>						
+					</div>
+					<div class="col-sm-6">
+						<select class="form-select" id="restClasses" size="20" multiple aria-label="multiple select 2">
+							{{#each restClasses}}
+								<option value="{{id}}">{{display_name}}</option>
+							{{/each}}
+						</select>					
+					</div>
+				</div>
+			</div>
+			
+			<div class="explain-form-group">
+			   <span>  </span>
+			</div>
+			<div class="explain-form-group">
+			   <span>Diagram parameters:</span>
+			</div>
+			
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<button id="getProperties" type="button" class="btn btn-primary" data-dismiss="modal">Show all properties</button>
+						</div>
+						<div class="form-group">
+							<button id="removeProperties" type="button" class="btn btn-primary" data-dismiss="modal">Remove selected properties</button>
+						</div>
+						<label> Make superclasses based on: </label>
+						<select class="form-control" id="superclassType" >
+							  <option selected value="1" >targets</option>
+							  <option value="2" >sources and targets</option>
+							  <option value="3" >Without superclasses</option>
+						</select>
+					
+					</div>
+					<div class="col-sm-8">
+						<select class="form-select" id="selectedProperties" size="10" multiple aria-label="multiple select 3">
+							{{#each properties}}
+								<option value="{{id}}">{{p_name}}</option>
+							{{/each}}
+						</select>					
+					</div>
+				</div>
+			</div>				
+
+
+			<div class="col-sm-3">
+				<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal">Save diagram data</button>
+			</div>
+
 			{{/if}}
 
 		</form>

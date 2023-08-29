@@ -20,6 +20,7 @@ const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
+const DIAGRAM_CLASS_LIMIT = 300;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
@@ -332,6 +333,7 @@ const classesWD = [
 const getEmptySchema  = () => {
 	return {
 		filling: 0,
+		classCount: 0,
 		resolvedClasses: {}, 
 		resolvedProperties: {}, 
 		resolvedIndividuals: {}, 
@@ -373,6 +375,12 @@ const getEmptySchema  = () => {
 			classPath: [],
 			class: '',
 			classes: [],
+		},
+		diagram: {
+			maxCount: DIAGRAM_CLASS_LIMIT,
+			mode: 1,
+			classList: [],
+			filteredClassList: [],
 		}
 	};
 }
@@ -424,6 +432,8 @@ dataShapes = {
 		else if (proj !== undefined && ( this.schema.projectId != proj._id || this.schema.filling === 0 )) {
 			this.schema = getEmptySchema();
 			if ( proj.schema !== undefined && proj.schema !== "") {
+				//this.schema.classCount = await this.getClassCount();
+				//if (classCount < )
 				this.schema.projectId = proj._id;
 				this.schema.projectId_in_process = proj._id;
 				this.schema.schemaName =  proj.schema;
@@ -484,6 +494,11 @@ dataShapes = {
 					if (this.schema.schemaType === 'wikidata')
 						this.schema.simple_prompt = true;
 					
+				}
+				this.schema.classCount = await this.getClassCount();
+				if ( this.schema.classCount < DIAGRAM_CLASS_LIMIT) {
+					this.schema.diagram.classList = await this.getClassListExt();
+					this.schema.diagram.filteredClassList = await this.getClassListExt();
 				}
 				this.schema.filling = 3;
 				this.schema.projectId_in_process = "";
@@ -901,6 +916,21 @@ dataShapes = {
 		//el.getCompartmentValue("Name")
 
 	},
+	tt2 : function () {
+		var el = new VQ_Element(Session.get("activeElement"));
+		console.log(el.getCoordinates());
+	},
+	tt3 : async function () {
+	console.log("***************************")
+		rr = ['xdf:type', 'skos:altLabel', 'skos:note'];
+		console.log(rr)
+		console.log(rr.sort())
+
+		var rr2 = rr.sort((a, b) => { return b - a; });
+		console.log(rr2)
+
+	
+	},
 	test : async function () {
 		//await this.callServerFunction("xxx_test", {main: {}});
 		const pp = 'wdt:P31/wdt:P279*'
@@ -934,6 +964,11 @@ dataShapes = {
 		this.schema.log = [];
 		this.schema.fullLog = [];
 	},
+	getClassListExt : async function() {
+		const rr = await this.callServerFunction("xx_getClassListExt", {main: {limit:DIAGRAM_CLASS_LIMIT}});
+		//console.log(rr)
+		return rr.data;	
+	},
 	getClassList : async function(par) {
 	// console.log(dataShapes.getClassList({}))
 		//par = {class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']};
@@ -952,8 +987,7 @@ dataShapes = {
 		rr = await this.callServerFunction("xx_getClassCount", {main:{}});
 		return rr; 
 	},
-	makeDiagr : async function(c_list) {
-	//dataShapes.makeDiagr({count:30, only_locals:true, properties_out:['rdf:type']})
+	makeDiagrOld : async function(c_list, not_in) {
 	    /*par = {count:30, only_locals:true}
 		var count = par.count;
 		var isLocal = par.only_locals;
@@ -980,7 +1014,7 @@ dataShapes = {
 				//var rr = await this.callServerFunction("xx_getClassListInfo", allParams);
 				//console.log(rr);
 				
-				//var rez =  rr.data.map(function(f) { return `${f.id};${f.prefix}:${f.display_name};${f.cnt_x};${f.data_prop};${f.obj_prop};aaa##bbb`});
+				//var rez =  rr.data.map(function(f) { return `${f.id};${f.prefix}:${f.display_name};${f.cnt_x};${f.data_prop};${f.obj_prop};aaa\nbbb`});
 				//rez.unshift('id;name;cnt;data_prop;obj_prop;aa');
 				//rez.push('');
 
@@ -989,13 +1023,16 @@ dataShapes = {
 			allParams.main.cc = cc;
 			rr = await this.callServerFunction("xx_getClassInfo", allParams);
 			tt = `${rr.data[0].id};${rr.data[0].prefix}:${rr.data[0].display_name};${rr.data[0].cnt_x};${rr.data[0].data_prop};${rr.data[0].obj_prop}`
+			allParams.main.not_in = not_in;
 			rr = await this.callServerFunction("xx_getClassInfoAtr", allParams);
 			var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
-			rr = await this.callServerFunction("xx_getClassInfoLink", allParams);
-			var tt3 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
-			tt = `${tt};${tt2.join("##")};${tt3.join("##")}`;
+			//rr = await this.callServerFunction("xx_getClassInfoLink", allParams);
+			//var tt3 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });
+			//tt = `${tt};${tt2.join("\n")};${tt3.join("\n")}`;
+			tt = `${tt};${tt2.join("\n")};`;
 			rez.push(tt);
 		}
+
 		rez.unshift('id;name;cnt;data_prop;obj_prop;aa;aa2');
 		rez.push('');
 		//console.log(rez)
@@ -1029,10 +1066,12 @@ dataShapes = {
 				rr = await this.callServerFunction("xx_getPropListInfo2", allParams);
 				if (rr.data.length > 0 ) {
 					var tt2 = rr.data.map(function(f) { return `${f.prefix}:${f.display_name}` });  
-					rr.data.map(function(f) { rez2.push(`Assoc;${cc};${cc2};${tt2.join("##")}`); return 1;});
+					rr.data.map(function(f) { rez2.push(`Assoc;${cc};${cc2};${tt2.join("\n")}`); return 1;});
 				} 
 			}
 		}
+		
+
 		rez2.unshift('type;c1;c2;aa');
 		rez2.push('');
 				
@@ -1046,6 +1085,202 @@ dataShapes = {
 				document.body.appendChild(link);
 				link.click();
 			
+	},
+	makeDiagr : async function(c_list, p_list, superclassType) {
+
+		var rr;
+		var rezFull = {classes:{}, assoc:{}};
+		var allParams = {main: { c_list: `${c_list}`}};
+		
+		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
+		
+		_.each(rr.data, function(cl) {
+			var id = `c_${cl.id}`;
+			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, isAbstract:false, prexif:cl.prefix, display_name:cl.display_name, cnt:cl.cnt_x, cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[] };
+		});
+		
+		rr = await this.callServerFunction("xx_getCCInfo", allParams);
+		
+		for (var cl of rr.data) {	
+			var id1 = `c_${cl.class_1_id}`;
+			var id2 = `c_${cl.class_2_id}`;
+			rezFull.classes[id1].super_classes.push(id2);
+			rezFull.classes[id2].used = true;
+		}
+		
+		var p_list_full = [];
+		
+		var super_classes = {};		
+		function add_superclass (sc_list) {
+			sc_id = `c_${sc_list.join('_')}`;
+			if ( super_classes[sc_id] == undefined )
+				super_classes[sc_id] = {count:1, cl_list:sc_list};
+			else
+				super_classes[sc_id].count = super_classes[sc_id].count + 1;
+		}
+		
+		for (var p of p_list) {	
+			var p_id = `p_${p.id}`;
+			var p_name = `${p.prefix}:${p.display_name}`;
+			allParams.main = {prop_id:p.id, c_list: `${c_list}`};
+			rr = await this.callServerFunction("xx_getPropInfo", allParams);
+
+			var c_from = rr.data.filter(function(p){ return p.type_id == 2});
+			var c_to = rr.data.filter(function(p){ return p.type_id == 1});
+			p_list_full[p_id] = {c_from:c_from, c_to:c_to, p_name:p_name };
+			
+			var rr1;
+
+			if (superclassType == 1) {
+				if (c_to.length > 1 && c_from.length > 0) {
+					rr1 = c_to.map( v => { return v.class_id});
+					add_superclass (rr1);
+					p_list_full[p_id].c_to_list = rr1.join('_');
+				}
+			}
+			if (superclassType == 2) {
+				if ( c_from.length > 1  && c_to.length > 0) {
+					rr1 = c_from.map( v => { return v.class_id});
+					add_superclass (rr1);
+					p_list_full[p_id].c_from_list = rr1.join('_');
+					
+					if (c_to.length > 1) {
+						rr1 = c_to.map( v => { return v.class_id});
+						add_superclass (rr1);
+						p_list_full[p_id].c_to_list = rr1.join('_');
+						
+					}
+				} else if (c_to.length > 1) {
+					rr1 = c_to.map( v => { return v.class_id});
+					add_superclass (rr1);
+					p_list_full[p_id].c_to_list = rr1.join('_');
+				}
+			}
+
+		}
+		
+		console.log(p_list_full)
+		console.log(super_classes)
+
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].count > 1 ) {  // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
+				rezFull.classes[sc] = { id:sc, fullName:' ', used:true, isAbstract:true, super_classes:[], sub_classes:[], atr_list:[] };
+				var sc_list = [];
+				var atr_tree = {};
+				for (var c of super_classes[sc].cl_list) {
+					rezFull.classes[`c_${c}`].super_classes.push(sc); // TODO padomāt, vai šo vilkt
+					sc_list.push(rezFull.classes[`c_${c}`]);
+
+				} 
+				
+				sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
+				rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
+			}
+		}
+
+		for (var p of Object.keys(p_list_full)) {	
+			var p_name = p_list_full[p].p_name;
+			var c_from = p_list_full[p].c_from;
+			var c_to = p_list_full[p].c_to;
+			var c_from_list = p_list_full[p].c_from_list;
+			var c_to_list = p_list_full[p].c_to_list;
+			
+			if ( c_from.length > 0  && c_to.length == 0) {
+				for (var cl of c_from) {
+					var id = `c_${cl.class_id}`;
+					rezFull.classes[id].atr_list.push(p_name);
+					rezFull.classes[id].used = true;
+				}
+			}
+			else {
+				if ( c_from_list != undefined && rezFull.classes[`c_${c_from_list}`] != undefined)
+					c_from = [{class_id:c_from_list}];
+				if ( c_to_list != undefined && rezFull.classes[`c_${c_to_list}`] != undefined)
+					c_to = [{class_id:c_to_list}];
+
+				for (var c_1 of c_from) {
+					for (var c_2 of c_to) {
+						var from_id = `c_${c_1.class_id}`;
+						var to_id = `c_${c_2.class_id}`;
+						var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
+						rezFull.classes[from_id].used = true;
+						rezFull.classes[to_id].used = true;
+						if ( rezFull.assoc[id] == undefined)
+							rezFull.assoc[id] = {list:[p_name], from:from_id, to:to_id};
+						else
+							rezFull.assoc[id].list.push(p_name);
+					}
+				}
+			}
+			
+		}
+		
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].count > 1 ) {  
+				var atr_tree = {};
+				for (var c of super_classes[sc].cl_list) {
+
+					for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+						if ( atr_tree[atr] == undefined)
+							atr_tree[atr] = 1
+						else 
+							atr_tree[atr] = atr_tree[atr]+1
+					}
+				} 
+
+				for (var atr of Object.keys(atr_tree)) {	
+					if ( atr_tree[atr] == super_classes[sc].cl_list.length) {
+						rezFull.classes[sc].atr_list.push(atr);
+					}
+				}
+				
+				for (var c of super_classes[sc].cl_list) {
+					var atr_list = [];
+					for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+						if ( atr_tree[atr] != super_classes[sc].cl_list.length) {
+							atr_list.push(atr);
+						}
+					}
+					rezFull.classes[`c_${c}`].atr_list = atr_list;
+				}
+				
+			}
+		}
+
+		for (var cl of Object.keys(rezFull.classes)) {
+
+			if ( !rezFull.classes[cl].used ) {
+				if ( rezFull.classes[cl].super_classes.length == 1 ) {
+					var sc = rezFull.classes[cl].super_classes[0];
+					//rezFull.classes[sc].sub_classes.push(rezFull.classes[cl].fullName);
+					rezFull.classes[sc].sub_classes.push(rezFull.classes[cl]);
+				}
+				else
+					rezFull.classes[cl].used = true;
+				
+			}
+		}
+
+		for (var cl of Object.keys(rezFull.classes)) {
+			rezFull.classes[cl].atr_string = rezFull.classes[cl].atr_list.sort().join('\n');
+				
+			var sortedList = rezFull.classes[cl].sub_classes.sort((a, b) => { return b.cnt0 - a.cnt0; });	
+			rezFull.classes[cl].sub_classes_string = sortedList.map(c => c.fullName).join('\n');
+		}
+
+		for (var aa of Object.keys(rezFull.assoc)) {
+			rezFull.assoc[aa].string = rezFull.assoc[aa].list.sort().join('\n');
+		}
+		
+
+		console.log(rezFull);
+
+		var link = document.createElement("a");
+		link.setAttribute("download", "diagr_data.json");
+		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
+		document.body.appendChild(link);
+		link.click();
+		
 	},
 	getCPName: function(localName, type) {
 		//dataShapes.getCPName('http://dbpedia.org/ontology/Year', 'C') 
