@@ -1059,7 +1059,7 @@ Template.schemaExtra.events({
 	'click #addWithN': function(e) {
 		var selected = $("#restClasses").val().map(v => Number(v));
 		if ( selected.length > 0 ) {
-			var list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id = selected[0]; }).c;
+			var list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id == selected[0]; }).c;
 			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
 				if ( list.includes(cl.id) || cl.id == selected[0] )
 					cl.selected = 1; 

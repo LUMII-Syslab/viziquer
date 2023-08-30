@@ -1090,16 +1090,17 @@ dataShapes = {
 
 		var rr;
 		var rezFull = {classes:{}, assoc:{}};
-		var allParams = {main: { c_list: `${c_list}`}};
+		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
 		
 		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
 		
 		_.each(rr.data, function(cl) {
 			var id = `c_${cl.id}`;
-			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, isAbstract:false, prexif:cl.prefix, display_name:cl.display_name, cnt:cl.cnt_x, cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[] };
+			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, isAbstract:false, prexif:cl.prefix, display_name:cl.display_name, cnt:cl.cnt_x, 
+				cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[] };
 		});
 		
-		rr = await this.callServerFunction("xx_getCCInfo", allParams);
+		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
 		
 		for (var cl of rr.data) {	
 			var id1 = `c_${cl.class_1_id}`;
@@ -1125,9 +1126,9 @@ dataShapes = {
 			allParams.main = {prop_id:p.id, c_list: `${c_list}`};
 			rr = await this.callServerFunction("xx_getPropInfo", allParams);
 
-			var c_from = rr.data.filter(function(p){ return p.type_id == 2});
-			var c_to = rr.data.filter(function(p){ return p.type_id == 1});
-			p_list_full[p_id] = {c_from:c_from, c_to:c_to, p_name:p_name };
+			var c_from = rr.data.filter(function(p){ return p.type_id == 2}); 
+			var c_to = rr.data.filter(function(p){ return p.type_id == 1}); 
+			p_list_full[p_id] = {c_from:c_from, c_to:c_to, p_name:p_name, max_cardinality:p.max_cardinality};
 			
 			var rr1;
 
@@ -1143,6 +1144,11 @@ dataShapes = {
 					rr1 = c_from.map( v => { return v.class_id});
 					add_superclass (rr1);
 					p_list_full[p_id].c_from_list = rr1.join('_');
+					var card = c_from.filter(function(p){ return p.x_max_cardinality  == 1}); 
+					if ( card.length == c_from.length)
+						p_list_full[p_id].c_from_list_card = 1;
+					else
+						p_list_full[p_id].c_from_list_card = -1;
 					
 					if (c_to.length > 1) {
 						rr1 = c_to.map( v => { return v.class_id});
@@ -1179,7 +1185,7 @@ dataShapes = {
 		}
 
 		for (var p of Object.keys(p_list_full)) {	
-			var p_name = p_list_full[p].p_name;
+			var p_name = `${p_list_full[p].p_name} [${p_list_full[p].max_cardinality}]`;
 			var c_from = p_list_full[p].c_from;
 			var c_to = p_list_full[p].c_to;
 			var c_from_list = p_list_full[p].c_from_list;
@@ -1188,13 +1194,14 @@ dataShapes = {
 			if ( c_from.length > 0  && c_to.length == 0) {
 				for (var cl of c_from) {
 					var id = `c_${cl.class_id}`;
-					rezFull.classes[id].atr_list.push(p_name);
+					var p_name_card = p_name; //`${p_name} [${cl.x_max_cardinality}]`;
+					rezFull.classes[id].atr_list.push(p_name_card);
 					rezFull.classes[id].used = true;
 				}
 			}
 			else {
 				if ( c_from_list != undefined && rezFull.classes[`c_${c_from_list}`] != undefined)
-					c_from = [{class_id:c_from_list}];
+					c_from = [{class_id:c_from_list, x_max_cardinality:p_list_full[p].c_from_list_card }];
 				if ( c_to_list != undefined && rezFull.classes[`c_${c_to_list}`] != undefined)
 					c_to = [{class_id:c_to_list}];
 
@@ -1203,12 +1210,13 @@ dataShapes = {
 						var from_id = `c_${c_1.class_id}`;
 						var to_id = `c_${c_2.class_id}`;
 						var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
+						var p_name_card = p_name;//`${p_name} [${c_1.x_max_cardinality}]`;
 						rezFull.classes[from_id].used = true;
 						rezFull.classes[to_id].used = true;
 						if ( rezFull.assoc[id] == undefined)
-							rezFull.assoc[id] = {list:[p_name], from:from_id, to:to_id};
+							rezFull.assoc[id] = {list:[p_name_card], from:from_id, to:to_id};
 						else
-							rezFull.assoc[id].list.push(p_name);
+							rezFull.assoc[id].list.push(p_name_card);
 					}
 				}
 			}
