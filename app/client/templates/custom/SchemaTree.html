@@ -296,10 +296,15 @@
 							  <option value="2" >sources and targets</option>
 							  <option value="3" >Without superclasses</option>
 						</select>
+						<label class="form-check-label">
+							<input class="form-check-input" name = "dataClass" id="dataClass" value= "2" type="checkbox" checked={{dataClass}}>
+							<span class="custom-checkbox"></span>
+							Connect data classes
+						</label>
 					
 					</div>
 					<div class="col-sm-7">
-						<select class="form-select" id="selectedProperties" size="10" multiple aria-label="multiple select 3">
+						<select class="form-select" id="selectedProperties" size="13" multiple aria-label="multiple select 3">
 							{{#each properties}}
 								<option value="{{id}}">{{p_name}}</option>
 							{{/each}}

@@ -31,7 +31,7 @@ Template.schemaExtra.ClassCountRest = new ReactiveVar("");
 Template.schemaExtra.ManualDisabled = new ReactiveVar("disabled");
 Template.schemaExtra.FilterDisabled = new ReactiveVar("");
 Template.schemaExtra.NsFilters = new ReactiveVar("");
-
+Template.schemaExtra.DataClass = new ReactiveVar("checked");
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
@@ -335,6 +335,7 @@ function setClassListInfo(classes, restClasses) {
 
 function setClassList0() {
 	Template.schemaExtra.ManualDisabled.set("disabled");
+	Template.schemaExtra.DataClass.set("checked");
 	Template.schemaExtra.FilterDisabled.set("");
 	Template.schemaExtra.Properties.set([]);
 	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}]
@@ -974,6 +975,9 @@ Template.schemaExtra.helpers({
 	nsFilters: function() {
 		return Template.schemaExtra.NsFilters.get();
 	},
+	dataClass: function() {
+		return Template.schemaExtra.DataClass.get();
+	},
 	properties: function() {
 		return Template.schemaExtra.Properties.get();
 	},
@@ -995,8 +999,8 @@ Template.schemaExtra.events({
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
 			propList = rr.data;
 		}
-		
-		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val());
+
+		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(), $("#dataClass").is(":checked"));
 
 	},
 	'click #getProperties': async function(e) {
@@ -1040,38 +1044,46 @@ Template.schemaExtra.events({
 		setClassListInfo(classes, restClasses);
 	},
 	'click #removeSelected': function(e) {
-		var selected = $("#selectedClasses").val().map(v => Number(v));
+		if ($("#selectedClasses").val() != undefined) {
+			var selected = $("#selectedClasses").val().map(v => Number(v));
 
-		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-			if ( selected.includes(cl.id) )
-				cl.selected = 0; 
-		});
-		makeClassLists();
+			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+				if ( selected.includes(cl.id) )
+					cl.selected = 0; 
+			});
+			makeClassLists();
+		}
 	},
 	'click #addSelected': function(e) {
-		var selected = $("#restClasses").val().map(v => Number(v));
-		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-			if ( selected.includes(cl.id) )
-				cl.selected = 1; 
-		});
-		makeClassLists();
-	},		
-	'click #addWithN': function(e) {
-		var selected = $("#restClasses").val().map(v => Number(v));
-		if ( selected.length > 0 ) {
-			var list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id == selected[0]; }).c;
+		if ($("#restClasses").val() != undefined) {
+			var selected = $("#restClasses").val().map(v => Number(v));
 			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-				if ( list.includes(cl.id) || cl.id == selected[0] )
+				if ( selected.includes(cl.id) )
 					cl.selected = 1; 
 			});
-			makeClassLists();			
+			makeClassLists();
+		}
+	},		
+	'click #addWithN': function(e) {
+		if ($("#restClasses").val() != undefined) {
+			var selected = $("#restClasses").val().map(v => Number(v));
+			if ( selected.length > 0 ) {
+				var list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id == selected[0]; }).c;
+				_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+					if ( list.includes(cl.id) || cl.id == selected[0] )
+						cl.selected = 1; 
+				});
+				makeClassLists();			
+			}
 		}
 	},
 	'click #removeProperties': function(e) {
-		var selected = $("#selectedProperties").val().map(v => Number(v));
-		var propList = Template.schemaExtra.Properties.get();
-		propList = propList.filter(function(p){ return !selected.includes(p.id); })
-		Template.schemaExtra.Properties.set(propList);
+		if ($("#selectedProperties").val() != undefined) {
+			var selected = $("#selectedProperties").val().map(v => Number(v));
+			var propList = Template.schemaExtra.Properties.get();
+			propList = propList.filter(function(p){ return !selected.includes(p.id); })
+			Template.schemaExtra.Properties.set(propList);
+		}
 	},		
 });
 

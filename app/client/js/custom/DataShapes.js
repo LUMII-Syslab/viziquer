@@ -1086,8 +1086,7 @@ dataShapes = {
 				link.click();
 			
 	},
-	makeDiagr : async function(c_list, p_list, superclassType) {
-
+	makeDiagr : async function(c_list, p_list, superclassType, connectDataClases) {
 		var rr;
 		var rezFull = {classes:{}, assoc:{}};
 		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
@@ -1096,8 +1095,8 @@ dataShapes = {
 		
 		_.each(rr.data, function(cl) {
 			var id = `c_${cl.id}`;
-			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, isAbstract:false, prexif:cl.prefix, display_name:cl.display_name, cnt:cl.cnt_x, 
-				cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[] };
+			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, hasGen:false, type:'Class', prexif:cl.prefix, displayName:cl.display_name, cnt:cl.cnt_x, 
+				cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[] };
 		});
 		
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
@@ -1107,6 +1106,8 @@ dataShapes = {
 			var id2 = `c_${cl.class_2_id}`;
 			rezFull.classes[id1].super_classes.push(id2);
 			rezFull.classes[id2].used = true;
+			rezFull.classes[id1].hasGen = true;
+			rezFull.classes[id2].hasGen = true;
 		}
 		
 		var p_list_full = [];
@@ -1115,7 +1116,7 @@ dataShapes = {
 		function add_superclass (sc_list) {
 			sc_id = `c_${sc_list.join('_')}`;
 			if ( super_classes[sc_id] == undefined )
-				super_classes[sc_id] = {count:1, cl_list:sc_list};
+				super_classes[sc_id] = {count:1, cl_list:sc_list, level:0};
 			else
 				super_classes[sc_id].count = super_classes[sc_id].count + 1;
 		}
@@ -1128,7 +1129,17 @@ dataShapes = {
 
 			var c_from = rr.data.filter(function(p){ return p.type_id == 2}); 
 			var c_to = rr.data.filter(function(p){ return p.type_id == 1}); 
-			p_list_full[p_id] = {c_from:c_from, c_to:c_to, p_name:p_name, max_cardinality:p.max_cardinality};
+			if ( p.max_cardinality == -1 )
+				p.max_cardinality = '*';
+			if ( p.inverse_max_cardinality == -1 )
+				p.inverse_max_cardinality = '*';
+			p_list_full[p_id] = {c_from:c_from, c_to:c_to, p_name:p_name, cnt:p.cnt,
+							     max_cardinality:p.max_cardinality, inverse_max_cardinality:p.inverse_max_cardinality};
+			
+			if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk
+				p_list_full[p_id].is_range = 'R';
+			else
+				p_list_full[p_id].is_range = '';
 			
 			var rr1;
 
@@ -1148,7 +1159,7 @@ dataShapes = {
 					if ( card.length == c_from.length)
 						p_list_full[p_id].c_from_list_card = 1;
 					else
-						p_list_full[p_id].c_from_list_card = -1;
+						p_list_full[p_id].c_from_list_card = '*';
 					
 					if (c_to.length > 1) {
 						rr1 = c_to.map( v => { return v.class_id});
@@ -1165,98 +1176,167 @@ dataShapes = {
 
 		}
 		
+		var temp = {};
+		for (var sc of Object.keys(super_classes)) {
+			if ( super_classes[sc].count > 1 ) // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
+				temp[sc] = super_classes[sc];
+		}
+		super_classes = temp;
+		
 		console.log(p_list_full)
 		console.log(super_classes)
-
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].count > 1 ) {  // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
-				rezFull.classes[sc] = { id:sc, fullName:' ', used:true, isAbstract:true, super_classes:[], sub_classes:[], atr_list:[] };
-				var sc_list = [];
-				var atr_tree = {};
-				for (var c of super_classes[sc].cl_list) {
-					rezFull.classes[`c_${c}`].super_classes.push(sc); // TODO padomāt, vai šo vilkt
-					sc_list.push(rezFull.classes[`c_${c}`]);
-
-				} 
-				
-				sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
-				rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
+		
+		for (var sc1ID of Object.keys(super_classes)) {	
+			for (var sc2ID of Object.keys(super_classes)) {
+				var sc1 = super_classes[sc1ID];
+				var sc2 = super_classes[sc2ID];
+				if ( sc1.cl_list.length < sc2.cl_list.length ) {
+					var ii = 0;
+					for (var c of sc1.cl_list) {
+						if ( sc2.cl_list.includes(c) )
+							ii = ii+1;
+					}
+					if ( ii == sc1.cl_list.length) {
+						var cl_list = [];
+						for (var c of sc2.cl_list) {
+							if ( !sc1.cl_list.includes(c) )
+								cl_list.push(c);
+						}
+						cl_list.push(sc1.cl_list.join('_'));
+						sc2.cl_list = cl_list;
+						sc2.level = 1;
+						
+					}
+				}
 			}
+		}
+	console.log(super_classes)
+
+		function makeSuperclass(sc) {
+			rezFull.classes[sc] = { id:sc, fullName:'', used:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[], atr_list:[], atr_list2:[], in_prop:[], out_prop:[]  };
+			var sc_list = [];
+			for (var c of super_classes[sc].cl_list) {
+				rezFull.classes[`c_${c}`].super_classes.push(sc); 
+				rezFull.classes[`c_${c}`].hasGen = true;
+				sc_list.push(rezFull.classes[`c_${c}`]);
+			}
+
+			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
+			var n_list = [];				
+			for (var c of sc_list) {
+				n_list.push(c.displayName);	
+			}
+			
+			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
+			rezFull.classes[sc].fullName = n_list.join(' or ');
+			rezFull.classes[sc].displayName = n_list.join(' or ');			
+		}  
+		
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].level == 0)
+				makeSuperclass(sc);
+		}
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].level == 1)
+				makeSuperclass(sc);
 		}
 
 		for (var p of Object.keys(p_list_full)) {	
-			var p_name = `${p_list_full[p].p_name} [${p_list_full[p].max_cardinality}]`;
-			var c_from = p_list_full[p].c_from;
-			var c_to = p_list_full[p].c_to;
-			var c_from_list = p_list_full[p].c_from_list;
-			var c_to_list = p_list_full[p].c_to_list;
+			pp = p_list_full[p];
+			//var p_name = `${pp.p_name} (${pp.cnt}) [${pp.max_cardinality}]`; 
+			var c_from = pp.c_from;
+			var c_to = pp.c_to;
+			var c_from_list = pp.c_from_list;
+			var c_to_list = pp.c_to_list;
 			
 			if ( c_from.length > 0  && c_to.length == 0) {
 				for (var cl of c_from) {
 					var id = `c_${cl.class_id}`;
-					var p_name_card = p_name; //`${p_name} [${cl.x_max_cardinality}]`;
-					rezFull.classes[id].atr_list.push(p_name_card);
+					//var p_name_card = p_name; //`${p_name} [${cl.x_max_cardinality}]`;
+					var p_info = {p_name:pp.p_name, cnt:Number(cl.cnt), cnt_all:pp.cnt, class_name: '',
+								  max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
+					rezFull.classes[id].atr_list.push(p_info);
 					rezFull.classes[id].used = true;
 				}
 			}
 			else {
-				if ( c_from_list != undefined && rezFull.classes[`c_${c_from_list}`] != undefined)
-					c_from = [{class_id:c_from_list, x_max_cardinality:p_list_full[p].c_from_list_card }];
-				if ( c_to_list != undefined && rezFull.classes[`c_${c_to_list}`] != undefined)
+				if ( c_from_list != undefined && rezFull.classes[`c_${c_from_list}`] != undefined) {
+					var cnt = 0;   
+					for (var l of c_from) {
+						cnt = cnt + Number(l.cnt);
+					}
+					c_from = [{class_id:c_from_list, x_max_cardinality:pp.c_from_list_card, cnt:cnt }];
+				}
+				if ( c_to_list != undefined && rezFull.classes[`c_${c_to_list}`] != undefined) {
 					c_to = [{class_id:c_to_list}];
+				}
 
 				for (var c_1 of c_from) {
 					for (var c_2 of c_to) {
 						var from_id = `c_${c_1.class_id}`;
 						var to_id = `c_${c_2.class_id}`;
 						var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
-						var p_name_card = p_name;//`${p_name} [${c_1.x_max_cardinality}]`;
+						var p_info = {p_name:pp.p_name, cnt:c_1.cnt, cnt_all: pp.cnt, is_range:pp.is_range,
+						max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
+						//var p_name_card = p_name;//`${p_name} [${c_1.x_max_cardinality}]`;
 						rezFull.classes[from_id].used = true;
 						rezFull.classes[to_id].used = true;
+						if ( !rezFull.classes[from_id].out_prop.includes(id) )
+							rezFull.classes[from_id].out_prop.push(id);
+						if ( !rezFull.classes[to_id].in_prop.includes(id) )
+							rezFull.classes[to_id].in_prop.push(id);
 						if ( rezFull.assoc[id] == undefined)
-							rezFull.assoc[id] = {list:[p_name_card], from:from_id, to:to_id};
+							rezFull.assoc[id] = {list:[p_info], from:from_id, to:to_id, removed:false};
 						else
-							rezFull.assoc[id].list.push(p_name_card);
+							rezFull.assoc[id].list.push(p_info);
 					}
 				}
 			}
 			
 		}
 		
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].count > 1 ) {  
-				var atr_tree = {};
-				for (var c of super_classes[sc].cl_list) {
-
-					for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
-						if ( atr_tree[atr] == undefined)
-							atr_tree[atr] = 1
-						else 
-							atr_tree[atr] = atr_tree[atr]+1
-					}
-				} 
-
-				for (var atr of Object.keys(atr_tree)) {	
-					if ( atr_tree[atr] == super_classes[sc].cl_list.length) {
-						rezFull.classes[sc].atr_list.push(atr);
+		function getSuperClassAttrList(sc) {
+			var atr_tree = {};
+			for (var c of super_classes[sc].cl_list) {
+				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+					if ( atr_tree[atr.p_name] == undefined)
+						atr_tree[atr.p_name] = {count:1, info:{p_name:atr.p_name, max_cardinality:atr.max_cardinality, cnt:Number(atr.cnt), cnt_all:atr.cnt_all, class_name:''}};
+					else {
+						atr_tree[atr.p_name].count = atr_tree[atr.p_name].count+1
+						if ( atr.max_cardinality == '*')
+							atr_tree[atr.p_name].info.max_cardinality = '*';
+						atr_tree[atr.p_name].info.cnt = atr_tree[atr.p_name].info.cnt + Number(atr.cnt);
 					}
 				}
-				
-				for (var c of super_classes[sc].cl_list) {
-					var atr_list = [];
-					for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
-						if ( atr_tree[atr] != super_classes[sc].cl_list.length) {
-							atr_list.push(atr);
-						}
-					}
-					rezFull.classes[`c_${c}`].atr_list = atr_list;
+			} 
+
+			for (var atr of Object.keys(atr_tree)) {	
+				if ( atr_tree[atr].count == super_classes[sc].cl_list.length) {
+					rezFull.classes[sc].atr_list.push(atr_tree[atr].info);
 				}
-				
 			}
+			
+			for (var c of super_classes[sc].cl_list) {
+				var atr_list = [];
+				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+					if ( atr_tree[atr.p_name].count != super_classes[sc].cl_list.length) {
+						atr_list.push(atr);
+					}
+				}
+				rezFull.classes[`c_${c}`].atr_list = atr_list;
+			}
+		
+		}
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].level == 0)
+				getSuperClassAttrList(sc)
+		}
+		for (var sc of Object.keys(super_classes)) {	
+			if ( super_classes[sc].level == 1)
+				getSuperClassAttrList(sc)
 		}
 
 		for (var cl of Object.keys(rezFull.classes)) {
-
 			if ( !rezFull.classes[cl].used ) {
 				if ( rezFull.classes[cl].super_classes.length == 1 ) {
 					var sc = rezFull.classes[cl].super_classes[0];
@@ -1265,19 +1345,51 @@ dataShapes = {
 				}
 				else
 					rezFull.classes[cl].used = true;
-				
 			}
 		}
 
-		for (var cl of Object.keys(rezFull.classes)) {
-			rezFull.classes[cl].atr_string = rezFull.classes[cl].atr_list.sort().join('\n');
+		for (var clId of Object.keys(rezFull.classes)) {
+			var cl = rezFull.classes[clId];
+			if ( !cl.hasGen && cl.out_prop.length == 0) {
+				cl.type = 'Data'
+				if ( !connectDataClases ) {
+					for (var p of cl.in_prop) {
+						var prop = rezFull.assoc[p];
+						prop.removed = true;
+						var c_from = rezFull.classes[prop.from];
+						for (var pr of prop.list) {
+							cl.atr_list2.push(`<- ${pr.p_name} [${pr.inverse_max_cardinality}] ${c_from.prexif}:${c_from.displayName}`); 
+							c_from.atr_list.push({p_name:pr.p_name, cnt:pr.cnt, cnt_all:pr.cnt_all, class_name:` -> ${cl.prexif}:${cl.displayName}`,
+									max_cardinality:pr.max_cardinality, inverse_max_cardinality:pr.inverse_max_cardinality});
+							//c_from.atr_list.push(`${pr.p_name} (${pr.cnt}) [${pr.max_cardinality}] -> ${cl.prexif}:${cl.displayName}`);
+						}
+					}
+				}
 				
-			var sortedList = rezFull.classes[cl].sub_classes.sort((a, b) => { return b.cnt0 - a.cnt0; });	
-			rezFull.classes[cl].sub_classes_string = sortedList.map(c => c.fullName).join('\n');
+			}
+		} 
+		
+		for (var cl of Object.keys(rezFull.classes)) {
+			var classInfo = rezFull.classes[cl];
+			classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.class_name}`).sort().join('\n');
+			classInfo.atr_string2 = classInfo.atr_list2.sort().join('\n');
+				
+			if ( classInfo.sub_classes.length == 1 ) {
+				rezFull.classes[`c_${classInfo.sub_classes[0].id}`].used = true;
+				classInfo.sub_classes = [];
+				classInfo.sub_classes_string = '';
+			}
+			else if ( classInfo.sub_classes.length > 1 ) {
+				var sortedList = classInfo.sub_classes.sort((a, b) => { return b.cnt0 - a.cnt0; });	
+				classInfo.sub_classes_string = sortedList.map(c => c.fullName).join('\n');
+			}
+			else {
+				classInfo.sub_classes_string = '';
+			}
 		}
 
 		for (var aa of Object.keys(rezFull.assoc)) {
-			rezFull.assoc[aa].string = rezFull.assoc[aa].list.sort().join('\n');
+			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) ${n.is_range} [${n.max_cardinality}]`).sort().join('\n');
 		}
 		
 
