@@ -6,7 +6,7 @@ import { is_public_diagram } from '/server/platform/_helpers';
 
 import { VQ_sparql_logs } from '/libs/custom/collections';
 
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 function removeMultilines(q) {
   return q
