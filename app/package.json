@@ -15,6 +15,7 @@
     "jquery": "^3.7.0",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.5",
+    "node-fetch": "^2.7.0",
     "sparqljs": "^3.7.1"
   },
   "meteor": {
@@ -22,5 +23,13 @@
       "server": "server/platform/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "@types/meteor": "^2.9.4",
+    "@types/node": "^14.18.56",
+    "@types/node-fetch": "^2.6.4",
+    "eslint": "^8.48.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1"
   }
 }
