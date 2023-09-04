@@ -1092,11 +1092,14 @@ dataShapes = {
 		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
 		
 		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
-		
+
 		_.each(rr.data, function(cl) {
 			var id = `c_${cl.id}`;
-			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, hasGen:false, type:'Class', prexif:cl.prefix, displayName:cl.display_name, cnt:cl.cnt_x, 
-				cnt0:cl.cnt, fullName:`${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[] };
+			var ct = '';
+			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+				ct = '(ct) '
+			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, hasGen:false, type:'Class', prefix:cl.prefix, displayName:cl.display_name, cnt:cl.cnt_x,
+				cnt0:cl.cnt, fullName:`${ct}${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[] };
 		});
 		
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
@@ -1140,6 +1143,11 @@ dataShapes = {
 				p_list_full[p_id].is_range = 'R';
 			else
 				p_list_full[p_id].is_range = '';
+				
+			if ( p.domain_class_id == c_from[0].class_id)  
+				p_list_full[p_id].is_domain = 'D';
+			else
+				p_list_full[p_id].is_domain = '';
 			
 			var rr1;
 
@@ -1224,7 +1232,7 @@ dataShapes = {
 			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
 			var n_list = [];				
 			for (var c of sc_list) {
-				n_list.push(c.displayName);	
+				n_list.push(`${c.prefix}:${c.displayName}`);	
 			}
 			
 			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
@@ -1253,7 +1261,7 @@ dataShapes = {
 				for (var cl of c_from) {
 					var id = `c_${cl.class_id}`;
 					//var p_name_card = p_name; //`${p_name} [${cl.x_max_cardinality}]`;
-					var p_info = {p_name:pp.p_name, cnt:Number(cl.cnt), cnt_all:pp.cnt, class_name: '',
+					var p_info = {p_name:pp.p_name, cnt:Number(cl.cnt), cnt_all:pp.cnt, class_name: '', is_domain:pp.is_domain,
 								  max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
 					rezFull.classes[id].atr_list.push(p_info);
 					rezFull.classes[id].used = true;
@@ -1272,11 +1280,13 @@ dataShapes = {
 				}
 
 				for (var c_1 of c_from) {
+					//if (c_to.length > 1)  // TODO šo te vajadzēs
+					//	c_1.cnt = ''
 					for (var c_2 of c_to) {
 						var from_id = `c_${c_1.class_id}`;
 						var to_id = `c_${c_2.class_id}`;
 						var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
-						var p_info = {p_name:pp.p_name, cnt:c_1.cnt, cnt_all: pp.cnt, is_range:pp.is_range,
+						var p_info = {p_name:pp.p_name, cnt:c_1.cnt, cnt_all: pp.cnt, is_range:pp.is_range, is_domain:pp.is_domain,
 						max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
 						//var p_name_card = p_name;//`${p_name} [${c_1.x_max_cardinality}]`;
 						rezFull.classes[from_id].used = true;
@@ -1300,7 +1310,7 @@ dataShapes = {
 			for (var c of super_classes[sc].cl_list) {
 				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name] == undefined)
-						atr_tree[atr.p_name] = {count:1, info:{p_name:atr.p_name, max_cardinality:atr.max_cardinality, cnt:Number(atr.cnt), cnt_all:atr.cnt_all, class_name:''}};
+						atr_tree[atr.p_name] = {count:1, info:{p_name:atr.p_name, max_cardinality:atr.max_cardinality, cnt:Number(atr.cnt), cnt_all:atr.cnt_all, class_name:'', is_domain:''}};
 					else {
 						atr_tree[atr.p_name].count = atr_tree[atr.p_name].count+1
 						if ( atr.max_cardinality == '*')
@@ -1358,10 +1368,10 @@ dataShapes = {
 						prop.removed = true;
 						var c_from = rezFull.classes[prop.from];
 						for (var pr of prop.list) {
-							cl.atr_list2.push(`<- ${pr.p_name} [${pr.inverse_max_cardinality}] ${c_from.prexif}:${c_from.displayName}`); 
-							c_from.atr_list.push({p_name:pr.p_name, cnt:pr.cnt, cnt_all:pr.cnt_all, class_name:` -> ${cl.prexif}:${cl.displayName}`,
+							cl.atr_list2.push(`<- ${pr.p_name} [${pr.inverse_max_cardinality}] ${c_from.prefix}:${c_from.displayName}`); 
+							c_from.atr_list.push({p_name:pr.p_name, cnt:pr.cnt, cnt_all:pr.cnt_all, class_name:` -> ${cl.prefix}:${cl.displayName}`,
 									max_cardinality:pr.max_cardinality, inverse_max_cardinality:pr.inverse_max_cardinality});
-							//c_from.atr_list.push(`${pr.p_name} (${pr.cnt}) [${pr.max_cardinality}] -> ${cl.prexif}:${cl.displayName}`);
+							//c_from.atr_list.push(`${pr.p_name} (${pr.cnt}) [${pr.max_cardinality}] -> ${cl.prefix}:${cl.displayName}`);
 						}
 					}
 				}
@@ -1371,7 +1381,8 @@ dataShapes = {
 		
 		for (var cl of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[cl];
-			classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.class_name}`).sort().join('\n');
+			classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
+			//classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
 			classInfo.atr_string2 = classInfo.atr_list2.sort().join('\n');
 				
 			if ( classInfo.sub_classes.length == 1 ) {
@@ -1389,7 +1400,8 @@ dataShapes = {
 		}
 
 		for (var aa of Object.keys(rezFull.assoc)) {
-			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) ${n.is_range} [${n.max_cardinality}]`).sort().join('\n');
+			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
+			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 		}
 		
 
