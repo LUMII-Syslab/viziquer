@@ -1132,6 +1132,7 @@ dataShapes = {
 
 			var c_from = rr.data.filter(function(p){ return p.type_id == 2}); 
 			var c_to = rr.data.filter(function(p){ return p.type_id == 1}); 
+
 			if ( p.max_cardinality == -1 )
 				p.max_cardinality = '*';
 			if ( p.inverse_max_cardinality == -1 )
@@ -1144,7 +1145,7 @@ dataShapes = {
 			else
 				p_list_full[p_id].is_range = '';
 				
-			if ( p.domain_class_id == c_from[0].class_id)  
+			if ( c_from.length > 0 && p.domain_class_id == c_from[0].class_id)  
 				p_list_full[p_id].is_domain = 'D';
 			else
 				p_list_full[p_id].is_domain = '';
@@ -1158,8 +1159,11 @@ dataShapes = {
 					p_list_full[p_id].c_to_list = rr1.join('_');
 				}
 			}
-			if (superclassType == 2) {
-				if ( c_from.length > 1  && c_to.length > 0) {
+			if (superclassType == 2 || superclassType == 3 ) {
+				var cond = true;
+				if ( superclassType == 2 )
+					cond = c_to.length > 0;
+				if ( c_from.length > 1 && cond) { // Bija šāds if ( c_from.length > 1  && c_to.length > 0) 
 					rr1 = c_from.map( v => { return v.class_id});
 					add_superclass (rr1);
 					p_list_full[p_id].c_from_list = rr1.join('_');
@@ -1184,6 +1188,7 @@ dataShapes = {
 
 		}
 		
+		console.log(super_classes)
 		var temp = {};
 		for (var sc of Object.keys(super_classes)) {
 			if ( super_classes[sc].count > 1 ) // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
@@ -1192,7 +1197,6 @@ dataShapes = {
 		super_classes = temp;
 		
 		console.log(p_list_full)
-		console.log(super_classes)
 		
 		for (var sc1ID of Object.keys(super_classes)) {	
 			for (var sc2ID of Object.keys(super_classes)) {
@@ -1218,7 +1222,7 @@ dataShapes = {
 				}
 			}
 		}
-	console.log(super_classes)
+		console.log(super_classes)
 
 		function makeSuperclass(sc) {
 			rezFull.classes[sc] = { id:sc, fullName:'', used:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[], atr_list:[], atr_list2:[], in_prop:[], out_prop:[]  };
@@ -1232,7 +1236,10 @@ dataShapes = {
 			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
 			var n_list = [];				
 			for (var c of sc_list) {
-				n_list.push(`${c.prefix}:${c.displayName}`);	
+				if ( c.type == 'Abstract' )
+					n_list.push(c.displayName);
+				else
+					n_list.push(`${c.prefix}:${c.displayName}`);	
 			}
 			
 			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
@@ -1381,8 +1388,8 @@ dataShapes = {
 		
 		for (var cl of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[cl];
-			classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
-			//classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
+			//classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
+			classInfo.atr_string = classInfo.atr_list.map(n => `${n.p_name} (${n.cnt}) [${n.max_cardinality}] ${n.is_domain} ${n.class_name}`).sort().join('\n');
 			classInfo.atr_string2 = classInfo.atr_list2.sort().join('\n');
 				
 			if ( classInfo.sub_classes.length == 1 ) {
@@ -1400,8 +1407,8 @@ dataShapes = {
 		}
 
 		for (var aa of Object.keys(rezFull.assoc)) {
-			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
-			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
+			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
+			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 		}
 		
 
