@@ -1190,18 +1190,20 @@ dataShapes = {
 		
 		console.log(super_classes)
 		var temp = {};
+		super_classes_list = [];
 		for (var sc of Object.keys(super_classes)) {
-			if ( super_classes[sc].count > 1 ) // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
+			if ( super_classes[sc].count > 1 ) { // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
 				temp[sc] = super_classes[sc];
+				super_classes[sc].id = sc;
+				super_classes_list.push(super_classes[sc])
+			}
 		}
 		super_classes = temp;
-		
+		super_classes_list = super_classes_list.sort((a, b) => { return a.cl_list.length - b.cl_list.length; });
 		console.log(p_list_full)
 		
-		for (var sc1ID of Object.keys(super_classes)) {	
-			for (var sc2ID of Object.keys(super_classes)) {
-				var sc1 = super_classes[sc1ID];
-				var sc2 = super_classes[sc2ID];
+		for (var sc1 of super_classes_list) {	
+			for (var sc2 of super_classes_list) {	
 				if ( sc1.cl_list.length < sc2.cl_list.length ) {
 					var ii = 0;
 					for (var c of sc1.cl_list) {
@@ -1216,18 +1218,22 @@ dataShapes = {
 						}
 						cl_list.push(sc1.cl_list.join('_'));
 						sc2.cl_list = cl_list;
-						sc2.level = 1;
+						sc2.level = sc2.level + 1;
 						
-					}
-				}
+					}	
+				}				
 			}
 		}
+		
+		super_classes_list = super_classes_list.sort((a, b) => { return a.level - b.level; });
+		console.log(super_classes_list)
 		console.log(super_classes)
 
-		function makeSuperclass(sc) {
+		for (var super_class of super_classes_list) {
+			var sc = super_class.id;
 			rezFull.classes[sc] = { id:sc, fullName:'', used:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[], atr_list:[], atr_list2:[], in_prop:[], out_prop:[]  };
 			var sc_list = [];
-			for (var c of super_classes[sc].cl_list) {
+			for (var c of super_class.cl_list) {
 				rezFull.classes[`c_${c}`].super_classes.push(sc); 
 				rezFull.classes[`c_${c}`].hasGen = true;
 				sc_list.push(rezFull.classes[`c_${c}`]);
@@ -1244,17 +1250,9 @@ dataShapes = {
 			
 			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
 			rezFull.classes[sc].fullName = n_list.join(' or ');
-			rezFull.classes[sc].displayName = n_list.join(' or ');			
-		}  
-		
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].level == 0)
-				makeSuperclass(sc);
+			rezFull.classes[sc].displayName = n_list.join(' or ');	
 		}
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].level == 1)
-				makeSuperclass(sc);
-		}
+
 
 		for (var p of Object.keys(p_list_full)) {	
 			pp = p_list_full[p];
@@ -1292,7 +1290,8 @@ dataShapes = {
 					for (var c_2 of c_to) {
 						var from_id = `c_${c_1.class_id}`;
 						var to_id = `c_${c_2.class_id}`;
-						var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
+						var id = `c_${c_1.class_id}_c_${c_2.class_id}_${pp.p_name}`;
+						//###var id = `c_${c_1.class_id}_c_${c_2.class_id}`;
 						var p_info = {p_name:pp.p_name, cnt:c_1.cnt, cnt_all: pp.cnt, is_range:pp.is_range, is_domain:pp.is_domain,
 						max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
 						//var p_name_card = p_name;//`${p_name} [${c_1.x_max_cardinality}]`;
@@ -1302,19 +1301,23 @@ dataShapes = {
 							rezFull.classes[from_id].out_prop.push(id);
 						if ( !rezFull.classes[to_id].in_prop.includes(id) )
 							rezFull.classes[to_id].in_prop.push(id);
+						/* ###
 						if ( rezFull.assoc[id] == undefined)
 							rezFull.assoc[id] = {list:[p_info], from:from_id, to:to_id, removed:false};
 						else
 							rezFull.assoc[id].list.push(p_info);
+						*/
+						rezFull.assoc[id] = {list:[p_info], from:from_id, to:to_id, removed:false, id2:`c_${c_1.class_id}_c_${c_2.class_id}`};
 					}
 				}
 			}
 			
 		}
 		
-		function getSuperClassAttrList(sc) {
+		for (var super_class of super_classes_list) {	
+			var sc = super_class.id;
 			var atr_tree = {};
-			for (var c of super_classes[sc].cl_list) {
+			for (var c of super_class.cl_list) {
 				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name] == undefined)
 						atr_tree[atr.p_name] = {count:1, info:{p_name:atr.p_name, max_cardinality:atr.max_cardinality, cnt:Number(atr.cnt), cnt_all:atr.cnt_all, class_name:'', is_domain:''}};
@@ -1328,30 +1331,22 @@ dataShapes = {
 			} 
 
 			for (var atr of Object.keys(atr_tree)) {	
-				if ( atr_tree[atr].count == super_classes[sc].cl_list.length) {
+				if ( atr_tree[atr].count == super_class.cl_list.length) {
 					rezFull.classes[sc].atr_list.push(atr_tree[atr].info);
 				}
 			}
 			
-			for (var c of super_classes[sc].cl_list) {
+			for (var c of super_class.cl_list) {
 				var atr_list = [];
 				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
-					if ( atr_tree[atr.p_name].count != super_classes[sc].cl_list.length) {
+					if ( atr_tree[atr.p_name].count != super_class.cl_list.length) {
 						atr_list.push(atr);
 					}
 				}
 				rezFull.classes[`c_${c}`].atr_list = atr_list;
 			}
-		
 		}
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].level == 0)
-				getSuperClassAttrList(sc)
-		}
-		for (var sc of Object.keys(super_classes)) {	
-			if ( super_classes[sc].level == 1)
-				getSuperClassAttrList(sc)
-		}
+
 
 		for (var cl of Object.keys(rezFull.classes)) {
 			if ( !rezFull.classes[cl].used ) {
@@ -1377,7 +1372,7 @@ dataShapes = {
 						for (var pr of prop.list) {
 							cl.atr_list2.push(`<- ${pr.p_name} [${pr.inverse_max_cardinality}] ${c_from.prefix}:${c_from.displayName}`); 
 							c_from.atr_list.push({p_name:pr.p_name, cnt:pr.cnt, cnt_all:pr.cnt_all, class_name:` -> ${cl.prefix}:${cl.displayName}`,
-									max_cardinality:pr.max_cardinality, inverse_max_cardinality:pr.inverse_max_cardinality});
+									max_cardinality:pr.max_cardinality, inverse_max_cardinality:pr.inverse_max_cardinality, is_domain:pr.is_domain});
 							//c_from.atr_list.push(`${pr.p_name} (${pr.cnt}) [${pr.max_cardinality}] -> ${cl.prefix}:${cl.displayName}`);
 						}
 					}
@@ -1406,6 +1401,20 @@ dataShapes = {
 			}
 		}
 
+		var assoc = {};
+		console.log(rezFull.assoc)
+		for (var aa of Object.keys(rezFull.assoc)) {
+			var a = rezFull.assoc[aa];
+			var id = a.id2;
+			if ( assoc[id] == undefined ){
+				assoc[id] = rezFull.assoc[aa];
+			}
+			else {
+				assoc[id].list.push(a.list[0]);
+			}
+		}
+		rezFull.assoc = assoc;
+		
 		for (var aa of Object.keys(rezFull.assoc)) {
 			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
