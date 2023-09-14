@@ -1535,11 +1535,17 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	
 		}
 	}else if(typeof clazz["indirectClassMembership"] === 'undefined' || clazz["indirectClassMembership"] != true && typeof parameterTable["directClassMembershipRole"] !== 'undefined' && parameterTable["directClassMembershipRole"] != null && parameterTable["directClassMembershipRole"] != ""){
-		classMembership =  parameterTable["directClassMembershipRole"];
-		var prefixMembership = getPrefixFromClassMembership(classMembership);
-		for(let prefix in prefixMembership) {
-			if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
+		if(typeof clazz["identification"]["classification_property"] !== "undefined" &&  clazz["identification"]["classification_property"] != "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
+			var shortForm = getPropertyShortForm(clazz["identification"]["classification_property"], knownPrefixes)
+			classMembership = shortForm.name;
+			if(typeof shortForm.prefix !== "undefined") prefixTable[shortForm.prefix] = "<"+shortForm.namespace+">";
+		} else {
+			classMembership =  parameterTable["directClassMembershipRole"];
+			var prefixMembership = getPrefixFromClassMembership(classMembership);
+			for(let prefix in prefixMembership) {
+				if(typeof prefixMembership[prefix] === 'string') prefixTable[prefix] = prefixMembership[prefix];
 
+			}
 		}
 	} else {
 		classMembership = "a";
@@ -1640,7 +1646,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			});
 		} else{
 			var resultClass = parse_attrib(clazz, clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
-				
+			
 			for(let prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 			}
@@ -1659,7 +1665,6 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				classSimpleTriples.push(tempTripleTable);
 			}
 			sparqlTable["classTriple"] = temp.join("\n"); // triples for class name
-
 			// sparqlTable["classTriple"] = "?" + instance + " a " + getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) + ":" + clazz["identification"]["local_name"] + ".";
 			var namespace = clazz["identification"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
@@ -5354,4 +5359,17 @@ function parseAggregationMultiple(expressionTable, symbolTable){
 	}
 
 	return {isMultipleAllowedAggregation:isMultipleAllowedAggregation, isMultipleAllowedCardinality:isMultipleAllowedCardinality}
+}
+
+function getPropertyShortForm(classM, knownNamespaces){
+	
+	if(classM.lastIndexOf("/") != -1){
+		var prefix = classM.substring(0, classM.lastIndexOf("/")+1)
+		var name = classM.substring(classM.lastIndexOf("/")+1)
+		for(let kp in knownNamespaces){
+			console.log(knownNamespaces[kp], prefix, kp)
+			if(knownNamespaces[kp]["value"] == prefix) return {name:knownNamespaces[kp]["name"]+":"+name, namespace:knownNamespaces[kp]["value"], prefix:knownNamespaces[kp]["name"]+":"};
+		}
+	}
+	return {name:"<"+ classM + ">"}
 }
