@@ -90,10 +90,6 @@ ANewBox.prototype = {
 	},
 
 	finishDragging: function() {
-
-		console.log("finishDragging new box")
-
-
 		var newBox = this;
 		var editor = newBox.editor;
 
@@ -110,11 +106,7 @@ ANewBox.prototype = {
 		//creates a new box in database
 		var new_box_event = new Event(editor, "newBoxCreated", new_box);
 
-		console.log("new_box_event ", new_box_event)
-
 		if (!new_box_event.result) {
-
-			console.log("in if")
 
 			// new_box.presentation.opacity(1);
 			new_box.presentation.destroy();

@@ -16,6 +16,8 @@ import AElements from './Elements/elements'
 import Selection from './Selection/select'
 import UnSelection from './Selection/unselect'
 
+import { IMCSDiagramLayout } from './layoutEngine'
+
 
 var AjooEditor = function(settings) {
     var editor = this;
@@ -147,6 +149,7 @@ var AjooEditor = function(settings) {
 
     editor.data = {};
 
+    editor.layoutEngine = new IMCSDiagramLayout();
 
     //this is a hack to refresh a palette layer when images are present in the scene
     setTimeout(function() {

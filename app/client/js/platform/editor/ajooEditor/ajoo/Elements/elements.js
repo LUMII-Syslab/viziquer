@@ -105,12 +105,10 @@ var AElements = function(editor, parent) {
                 return new ComputedDataPinSingle(editor);
             },
 
-            
             ComputedDataPinMultiple: function() {
                 return new ComputedDataPinMultiple(editor);
             },
             
-
             Package: function() {
                 return new APackage(editor);
             },
@@ -313,7 +311,6 @@ AElements.prototype = {
                             delete end_elem["inLines"][elem_id];
                         }
                     }
-
                 }
 
                 editor.unSelectElements([elem]);

@@ -557,12 +557,12 @@ function change_position(list, query, system_id) {
 	//updating boxes
 
 	if (list["boxes"]) {
-
 		var box_query = {_id: {$in: list["boxes"]}, type: "Box"};
 		_.extend(box_query, query);
 
 		Elements.update(box_query,
-						{$inc: {"location.x": list["deltaX"], "location.y": list["deltaY"]}}, {multi: true});
+						{$inc: {"location.x": list["deltaX"], "location.y": list["deltaY"]}},
+						{multi: true});
 
 	}
 
@@ -571,7 +571,29 @@ function change_position(list, query, system_id) {
 		_.each(list["movedBoxes"], function(box) {
 			var box_query = {_id: box.id, type: "Box"};
 			_.extend(box_query, query);
-			Elements.update(box_query, {$set: {"location.x": box.position.x, "location.y": box.position.y}});
+
+			var update = {};
+			if (_.isNumber(box.position.x)) {
+				update["location.x"] = box.position.x;
+			}
+
+			if (_.isNumber(box.position.y)) {
+				update["location.y"] = box.position.y;
+			}
+
+			if (_.isNumber(box.position.width)) {
+				update["location.width"] = box.position.width;
+			}
+
+			if (_.isNumber(box.position.height)) {
+				update["location.height"] = box.position.height;
+			}
+
+			// var update = {"location.x": box.position.x, "location.y": box.position.y};
+
+
+
+			Elements.update(box_query, {$set: update});
 		});
 
 	}
