@@ -227,7 +227,7 @@ Interpreter.methods({
 								// OrthogonalRerouting.recompute(link, state);
 				    		}
 
-				    		return {id: line._id, points: line_new_points}
+				    		return {id: line._id, points: line_new_points};
 				    	});
 
 		let list = {projectId: Session.get("activeProject"),
@@ -235,10 +235,6 @@ Interpreter.methods({
 					lines: new_lines,
 					movedBoxes: moved_boxes,
 				};
-
-
-		console.log("list", list)
-
 
 		Utilities.callMeteorMethod("changeCollectionPosition", list);
 	},

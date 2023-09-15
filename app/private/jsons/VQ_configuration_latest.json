@@ -221,6 +221,10 @@
           {
             "item": "Visualize SPARQL",
             "procedure": "visualizeSPARQL"
+          },
+          {
+            "item": "Layout",
+            "procedure": "ComputeLayout"
           }
         ],
         "readModeNoCollectionContextMenu": [

@@ -589,10 +589,6 @@ function change_position(list, query, system_id) {
 				update["location.height"] = box.position.height;
 			}
 
-			// var update = {"location.x": box.position.x, "location.y": box.position.y};
-
-
-
 			Elements.update(box_query, {$set: update});
 		});
 
