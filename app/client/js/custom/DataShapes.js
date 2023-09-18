@@ -539,9 +539,10 @@ dataShapes = {
 			params.main.endpointUrl = this.schema.endpoint;
 			params.main.use_pp_rels = this.schema.use_pp_rels;
 			params.main.simple_prompt = this.schema.simple_prompt;
-			params.main.makeLog = MakeLog;
+			// params.main.makeLog = MakeLog;
 			params.main.schemaName = this.schema.schemaName;
 			params.main.schemaType = this.schema.schemaType;
+			params.main.showPrefixes = this.schema.showPrefixes;
 			if ( params.main.limit === undefined )
 				params.main.limit = this.schema.limit;
 
@@ -801,7 +802,7 @@ dataShapes = {
 		}
 		
 		if (rr.complete == true)
-			rr.name = `${rr.data[0].prefix}:${rr.data[0].local_name}`;
+			rr.name = rr.data[0].full_name; //`${rr.data[0].prefix}:${rr.data[0].local_name}`;
 		else
 			rr.name = this.getCPName(params.name, 'C');
 		return rr;
@@ -829,7 +830,7 @@ dataShapes = {
 		}
 
 		if (rr.complete == true)
-			rr.name = `${rr.data[0].prefix}:${rr.data[0].local_name}`;
+			rr.name = rr.data[0].full_name; //`${rr.data[0].prefix}:${rr.data[0].local_name}`;
 		else
 			rr.name = this.getCPName(params.name, 'P');
 		return rr;

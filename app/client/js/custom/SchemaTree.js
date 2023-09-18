@@ -73,19 +73,31 @@ Template.schemaTree.helpers({
 });
 
 function getNameF(o, col = 'cnt_x') {
+	return `${o.full_name} (${o[col]})`;
+/*
 	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
 		return `${o.display_name} (${o[col]})`;
-	else 
-		return `${o.prefix}:${o.display_name} (${o[col]})`;
-
+	else  {
+		var name = `${o.prefix}:${o.display_name} (${o[col]})`;
+		if ( o.prefix == null) 
+			name = `${o.display_name} (${o[col]})`;
+		return name;
+	}
+*/	
 }
 
 function getName(o) {
+	return `${o.full_name}`;
+/*
 	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
 		return `${o.display_name}`;
-	else 
-		return `${o.prefix}:${o.display_name}`;
-
+	else {
+		var name = `${o.prefix}:${o.display_name}`;
+		if ( o.prefix == null) 
+			name = o.display_name;
+		return name;		
+	}
+*/	
 }
 
 function getNS() {
