@@ -2725,7 +2725,14 @@ VQ_Element.prototype = {
   // determines whether a class rather than instance is searched
   isVariable: function() {
     var name = this.getName();
-		return (name && name.charAt(0)=='?');
+	if(name != null){
+		const regex = /\([A-Za-z]+\) /g;
+		const found = name.search(regex);
+		if(found !== -1){
+			name = name.substring(name.indexOf(") ")+2)
+		}
+	}
+	return (name && name.charAt(0)=='?');
   },
   // determines whether a class rather than blank node is searched
   isBlankNode: function() {
@@ -2760,7 +2767,17 @@ VQ_Element.prototype = {
   },
   // gets class variable name (e.g. X for ?X)
   getVariableName: function() {
-    if (this.isVariable()) {return this.getName().substr(1)} else { return null }
+    if (this.isVariable()) {
+		var name = this.getName();
+		if(name != null){
+			const regex = /\([A-Za-z]+\) /g;
+			const found = name.search(regex);
+			if(found !== -1){
+				name = name.substring(name.indexOf(") ")+2)
+			}
+		}
+		return name.substr(1)
+	} else { return null }
   },
   
   getComment: function() {

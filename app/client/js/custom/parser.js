@@ -107,6 +107,50 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	}
 }
 
+parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTable, classMembership, knPr){
+	var messages = [];
+	var triples = [];
+	var prefixTable = [];
+	var exp = "";
+	
+	for(let key = 0; key < knPr.length; key++){
+		if(knPr[key]["name"] == emptyPrefix)knownNamespaces[":"] = knPr[key]["value"];
+		knownNamespaces[knPr[key]["name"]+":"] = knPr[key]["value"];
+		if(knPr[key].is_local == true) knownNamespaces[":"] = knPr[key]["value"];
+	}
+	console.log("parse_class", clazz, idTable[clazz.identification._id])
+	
+	if(typeof idTable[clazz.identification._id] !== "undefined") exp = "?"+ idTable[clazz.identification._id];
+	else {
+		messages.push({
+						"type" : "Error",
+						"message" : "Class name "+clazz.identification.display_name +" is undefined.",
+						"isBlocking" : true
+					});
+	}
+	var pr = clazz.identification.prefix;
+	if(typeof pr === "undefined" || pr === null) pr = "";
+	var object = pr+":"+clazz.identification.local_name;
+	if(clazz.identification.is_literal == true) object = '"'+ clazz.identification.local_name +'"'
+	var triple = exp + " "+ classMembership + " " + object+ ". ";	
+	triples.push(triple);
+	
+	
+	if(typeof knownNamespaces[pr +":"] !== "undefined"){
+		prefixTable[clazz.identification.prefix+":"] = "<"+ knownNamespaces[clazz.identification.prefix+":"]+ ">";
+	}
+	else {
+		messages.push({
+						"type" : "Error",
+						"message" : "Unknown prefix: "+clazz.identification.prefix,
+						"isBlocking" : true
+					});
+	}
+	
+	return {"exp":exp, "triples":triples, "prefixTable":prefixTable, "messages":messages};
+
+}
+
 parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId) {
 	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames, expr["exp"], variableNT, variableNC, 99999999999999, fId, cl);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);

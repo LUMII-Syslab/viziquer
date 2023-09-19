@@ -95,6 +95,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
+		var variableListAlias = await getAllVariablesForAlias(parsedQuery, []);
 		
 		// console.log("variableList", variableList);
 
@@ -260,7 +261,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
-		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
+		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
 
 		var i = 0;
 		while(Object.keys(VQ_Elements).length < classCount && i < 100){
@@ -432,6 +433,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		// Get all variables (except class names) from a query SELECT statements, including subqueries.
 		var variableList = await getAllVariablesInQuery(parsedQuery, []);
+		var variableListAlias = await getAllVariablesForAlias(parsedQuery, []);
 		
 		// Generate ViziQuer query abstract syntax tables
 		var abstractTable = await generateAbstractTable(parsedQuery, [], variableList, []);
@@ -598,7 +600,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
-		await visualizeQuery(classesTable, null, variableListCount, queryId, queryQuestion);
+		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
 		
 		var i = 0;
 		while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
@@ -7967,6 +7969,37 @@ async function getAllVariablesInQuery2(expression, variableTable){
 	return variableTable;
 }
 
+async function getAllVariablesForAlias(expression, variableAliasTable){
+	for(let key in expression){
+		if(typeof expression[key] === 'object'){
+			if(expression[key]["type"] == "bgp"){		
+				var triples = expression[key]["triples"];
+				for(let triple = 0; triple < triples.length; triple++) {
+					if(typeof triples[triple] !== "undefined"){
+						if(triples[triple]["subject"]["termType"] == "Variable" && variableAliasTable[triples[triple]["subject"]["value"]] != false) {
+							variableAliasTable[triples[triple]["subject"]["value"]] = true;
+						}
+					}
+				}
+			} else {
+				
+				if(key != "variables" && key != "group"){
+					if(expression[key]["termType"] == "Variable"){
+						variableAliasTable[expression[key]["value"]] = false;
+					}
+					var temp = await getAllVariablesForAlias(expression[key], variableAliasTable);
+					for(let t in temp){
+						if(typeof temp[t] !== "function"){
+							variableAliasTable[t] = temp[t];
+						}
+					}
+				}
+			}
+		} 
+	}
+	return variableAliasTable;
+}
+
 async function getAllVariablesInQuery(expression, variableTable){
 	for(let key in expression){
 		if(typeof expression[key] === 'object'){	
@@ -8149,7 +8182,7 @@ function buildPathElement(pathElement){
 }
 
 // Visualize query based on tree structure
-async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQuestion ){
+async function visualizeQuery(clazz, variableListAlias, parentClass, variableList, queryId, queryQuestion ){
 
 	//node type
 	var nodeType = "condition";
@@ -8158,7 +8191,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 	//instanceAlias
 	var instanceAlias = clazz["instanceAlias"];
 	
-	if(instanceAlias != null && instanceAlias.startsWith("g_")) instanceAlias = null;
+	if(instanceAlias != null && instanceAlias.startsWith("g_")) instanceAlias = null;	
 	if(instanceAlias != null && instanceAlias.trim() != ""){
 		
 	
@@ -8224,12 +8257,14 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		if(typeof clazz["groupByThis"] !== 'undefined'){
 			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
 			else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
-		} else if(instanceAlias != null) classBox.setInstanceAlias(instanceAlias);
+		} else if(instanceAlias != null ) {
+			if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true) {}
+			else classBox.setInstanceAlias(instanceAlias);
+		}
 	// elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
 		
 
 		// setIndirectClassMembership
-
 		//class not in a schema 
 		if(clazz["identification"] != null && typeof clazz["identification"]["notInSchema"] !== 'undefined' && clazz["identification"]["notInSchema"] != "variable"){
 			if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
@@ -8302,7 +8337,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 			var expression = field["exp"];
 			var requireValues = false;
 			if(typeof field["requireValues"] !== "undefined")requireValues = field["requireValues"] 
-
+			if(typeof variableListAlias[alias] === "undefined" || (typeof variableListAlias[alias] !== "undefined" && variableListAlias[alias] == true)) alias = ""
 			//add aggregation to class
 			classBox.addAggregateField(expression, alias, requireValues);
 		
@@ -8439,7 +8474,7 @@ async function visualizeQuery(clazz, parentClass, variableList, queryId, queryQu
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
 			y = y + 180;
-			await visualizeQuery(subclazz, classBox, variableList);
+			await visualizeQuery(subclazz, variableListAlias, classBox, variableList);
 		})
 
 		//conditionLinks

@@ -475,7 +475,8 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 				var type = 3;
 				if (cls[cl].principal_class === 0)
 					type = 0;
-				c["suggestions"].push({name: prefix+cls[cl]["display_name"], priority:100, type:type})
+				
+				c["suggestions"].push({name: cls[cl]["full_name"], priority:100, type:type})
 			}
 			return c;
 	}

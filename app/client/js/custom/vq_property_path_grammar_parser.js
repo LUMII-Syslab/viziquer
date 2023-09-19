@@ -2559,7 +2559,7 @@ vq_property_path_grammar_parser = (function() {
 						id = "wd:"+id;
 					}
 					var cls = await dataShapes.resolveClassByName({name: id})
-					if(cls["complite"] == false) return null;
+					if(cls["complete"] == false) return null;
 					if(cls["data"].length > 0){
 						return cls["data"][0];
 					}
@@ -2574,7 +2574,7 @@ vq_property_path_grammar_parser = (function() {
 					}
 					var aorl = await dataShapes.resolvePropertyByName({name: id})
 	
-					if(aorl["complite"] == false) return null;
+					// if(aorl["complete"] == false) return null;
 					
 					var res = aorl["data"][0];
 					if(res){

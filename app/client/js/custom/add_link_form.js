@@ -530,7 +530,8 @@ Template.AddLink.events({
 			var prefix;
 			if(proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
-			e.short_class_name = prefix + e.display_name;	
+			// e.short_class_name = prefix + e.display_name;
+			e.short_class_name = e.full_name;
 			if(e.principal_class == 2) e.clr = "color: purple";
 			else if(e.principal_class == 0) e.clr = "color: #bbbbbb";
 			else e.clr = "color: #777777";

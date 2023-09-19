@@ -1617,8 +1617,12 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 
 	if(clazz["isVariable"] == true) {
+		
+		if(clazz.identification.local_name.startsWith("?") == false){	
+			var clasificator = clazz.identification.local_name.substring(1, clazz.identification.local_name.indexOf(")"))
+		}
+		
 		var varName = clazz["variableName"];
-		// if(varName == "?") varName = "?class";
 		if(varName == "?") varName = instance;
 		if(clazz["variableName"].startsWith("?")) varName = varName.substr(1);
 		if(checkIfIsURI(instance) == "prefix_form") sparqlTable["classTriple"] = instance + " " + classMembership + " ?" + varName+ ".";
@@ -1637,16 +1641,19 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		if(instAlias != null && instAlias.replace(" ", "") =="") instAlias = null;
 		if(instAlias != null) instAlias = instAlias.replace(/ /g, '_');
 		
-		if(typeof clazz["identification"]["parsed_exp"] === 'undefined'){
-			messages.push({
-				"type" : "Error",
-				"message" : "Syntax error in class name " + clazz["identification"]["local_name"],
-				"listOfElementId" : [clazz["identification"]["_id"]],
-				"isBlocking" : true
-			});
-		} else{
-			var resultClass = parse_attrib(clazz, clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
-			
+		
+		// if(typeof clazz["identification"]["parsed_exp"] === 'undefined'){
+			// messages.push({
+				// "type" : "Error",
+				// "message" : "Syntax error in class name " + clazz["identification"]["local_name"],
+				// "listOfElementId" : [clazz["identification"]["_id"]],
+				// "isBlocking" : true
+			// });
+			// console.log("UUUUUUUUUUUUUUUUUUUUUUUU")
+		// } else{
+			// var resultClass = parse_attrib(clazz, clazz["identification"]["exp"], variableNamesTable, variableNamesCounter, attributesNames, clazz["identification"]["_id"], clazz["identification"]["parsed_exp"], instAlias, instance, clazz["identification"]["display_name"], variableNamesClass, variableNamesAll, counter, emptyPrefix, symbolTable, false, parameterTable, idTable, referenceTable, classMembership, "class", knownPrefixes);
+			var resultClass = parse_class(clazz, symbolTable, parameterTable, idTable, referenceTable, classMembership, knownPrefixes)
+	
 			for(let prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 			}
@@ -1669,7 +1676,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			var namespace = clazz["identification"]["Namespace"]
 			if(typeof namespace !== 'undefined' && namespace.endsWith("/") == false && namespace.endsWith("#") == false) namespace = namespace + "#";
 			if(typeof clazz["identification"]["Prefix"] !== 'undefined')prefixTable[getPrefix(emptyPrefix, clazz["identification"]["Prefix"]) +":"] = "<"+namespace+">";
-		}
+		// }
 	}
 
 	

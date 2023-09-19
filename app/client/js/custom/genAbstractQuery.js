@@ -137,8 +137,8 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	
 	var display_name = prefix+obj_class.identification.display_name;
 	if(typeof obj_class.identification.display_name === "undefined") display_name = obj_class.identification.local_name;
-	var par = await parseExpression(display_name, "CLASS_NAME", obj_class.identification)
-    _.extend(obj_class.identification, par);
+	// var par = await parseExpression(display_name, "CLASS_NAME", obj_class.identification)
+    // _.extend(obj_class.identification, par);
 
     if (obj_class.linkIdentification) {
 		//parser need link with prefix
@@ -398,7 +398,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   // Parses the text and returns object with property "parsed_exp"
   // Used only when parsing class name
   async function parseExpression(str_expr, exprType, context) {
-    try {
+	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  var schemaName = await dataShapes.schema.schemaType;
 		  if(typeof schemaName === "undefined") schemaName = "";
@@ -678,6 +678,26 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 			} else {
 				
 				if(obj_class.identification.local_name == null && (instanceAliasIsURI == 3 || instanceAliasIsURI == 4)){
+					if(obj_class.children.length == 0 && obj_class.fields.length == 1 && obj_class.fields[0]["exp"] == "(select this)"){
+						obj_class.distinct = true;
+						var field = {
+							"fulltext": "val<-??prop",
+							"exp": "??prop",
+							"alias": "val",
+							"Prefixes": "{h+} ",
+							"attributeConditionSelection": "",
+							"requireValues": true,
+							"addLabel": false,
+							"addAltLabel": false,
+							"addDescription": false,
+							"groupValues": false,
+							"isInternal": true,
+							"order": 2,
+							"_id": "fychWpy7uuiqiNHGQ"
+						}
+						await parseExpObject(field, obj_class.identification, "attribute");
+						obj_class.fields.push(field);
+					}
 					var condition = {exp:"(this) = " + strURI};
 					obj_class.instanceAlias = "expr";
 					await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
@@ -1621,7 +1641,7 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
 					
 					var cls = await dataShapes.resolveClassByName({name: id})
 
-    				if(cls["complite"] == false) return null;
+    				if(cls["complete"] == false) return null;
     				if(cls["data"].length > 0){
     					return cls["data"][0];
     				}  else if(typeof cls["name"] !== "undefined" && id != "[ + ]" && id != "[ ]" && !id.startsWith("?") && schemaName.toLowerCase() == "wikidata" && id.indexOf("[") != -1 && id.endsWith("]")) {
@@ -1668,14 +1688,14 @@ async function resolveTypeFromSchemaForAttributeAndLink(id, schemaName) {
 
     				var aorl = await dataShapes.resolvePropertyByName({name: id})
 
-    				if(aorl["complite"] == false) return null;
+    				if(aorl["complete"] == false) return null;
     				var res = aorl["data"][0];
     				if(res){
     					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
     					else if(res["data_cnt"] > 0) res["property_type"] = "DATA_PROPERTY";
     					else if(res["object_cnt"] > 0) res["property_type"] = "OBJECT_PROPERTY";
     					return res;
-    				 } 
+    			   } 
   return null
 };
     			// string -> idObject

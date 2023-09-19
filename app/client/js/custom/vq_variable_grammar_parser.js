@@ -736,7 +736,7 @@ vq_variable_grammar_parser = (function() {
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
     			async function resolveTypeFromSchemaForClass(id) {
     				var cls = await dataShapes.resolveClassByName({name: id})
-    				if(cls["complite"] == false) return null;
+    				if(cls["complete"] == false) return null;
     				if(cls["data"].length > 0){
     					return cls["data"][0];
     				}
@@ -749,7 +749,7 @@ vq_variable_grammar_parser = (function() {
     				
     				var aorl = await dataShapes.resolvePropertyByName({name: id})
     				// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
-    				if(aorl["complite"] == false) return null;
+    				if(aorl["complete"] == false) return null;
     				var res = aorl["data"][0];
     				if(res){
     					if(res["data_cnt"] > 0 && res["object_cnt"] > 0) res["property_type"] = "DATA_OBJECT_PROPERTY";
