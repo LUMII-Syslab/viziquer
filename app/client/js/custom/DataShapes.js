@@ -591,6 +591,8 @@ dataShapes = {
 		// dataShapes.getClasses({filter:'aa'})
 		// dataShapes.getClasses({namespaces: { in: ['dbo','foaf'], notIn: ['yago']}})
 		// dataShapes.getClasses({}, new VQ_Element(Session.get("activeElement")))
+		if ( params.filter !== undefined) 
+			params.filter = params.filter.replaceAll(' ','');
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
@@ -606,7 +608,9 @@ dataShapes = {
 		// ***  dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}, element: { pList: {in: [{name: 'super', type: 'in'}]}}})  23
 		// ***  dataShapes.getClassesFull({main:{ onlyPropsInSchema: true}, element:{ pList: {in: [{name: 'super', type: 'in'}, {name: 'dbo:president', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 20
 		// ***  dataShapes.getClassesFull({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
-
+		if ( params.main.filter !== undefined) 
+			params.main.filter = params.main.filter.replaceAll(' ','');
+			
 		return await this.callServerFunction("getClasses", params);
 	},
 	getTreeClasses : async function(params) {
@@ -1096,11 +1100,15 @@ dataShapes = {
 
 		_.each(rr.data, function(cl) {
 			var id = `c_${cl.id}`;
+			var isClasif = false;
 			var ct = '';
-			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
-				ct = '(ct) '
-			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, hasGen:false, type:'Class', prefix:cl.prefix, displayName:cl.display_name, cnt:cl.cnt_x,
-				cnt0:cl.cnt, fullName:`${ct}${cl.prefix}:${cl.display_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[] };
+			var type = 'Class';
+			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+				isClasif = true;
+				type = 'Classif'
+			}	
+			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, hasGen:false, isClasif:isClasif, type:type, prefix:cl.prefix, displayName:cl.full_name, cnt:cl.cnt_x,
+				cnt0:cl.cnt, fullName:`${cl.full_name} (${cl.cnt_x})`, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[] };
 		});
 		
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
@@ -1243,10 +1251,11 @@ dataShapes = {
 			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
 			var n_list = [];				
 			for (var c of sc_list) {
-				if ( c.type == 'Abstract' )
-					n_list.push(c.displayName);
-				else
-					n_list.push(`${c.prefix}:${c.displayName}`);	
+				n_list.push(c.displayName);
+				//if ( c.type == 'Abstract' )
+				//	n_list.push(c.displayName);
+				//else
+				//	n_list.push(`${c.prefix}:${c.displayName}`);	
 			}
 			
 			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
@@ -1363,7 +1372,7 @@ dataShapes = {
 
 		for (var clId of Object.keys(rezFull.classes)) {
 			var cl = rezFull.classes[clId];
-			if ( !cl.hasGen && cl.out_prop.length == 0) {
+			if ( !cl.hasGen && !cl.isClasif &&cl.out_prop.length == 0) {
 				cl.type = 'Data'
 				if ( !connectDataClases ) {
 					for (var p of cl.in_prop) {
@@ -1392,13 +1401,27 @@ dataShapes = {
 				rezFull.classes[`c_${classInfo.sub_classes[0].id}`].used = true;
 				classInfo.sub_classes = [];
 				classInfo.sub_classes_string = '';
+				classInfo.sub_classes_clasif_string = '';
 			}
 			else if ( classInfo.sub_classes.length > 1 ) {
-				var sortedList = classInfo.sub_classes.sort((a, b) => { return b.cnt0 - a.cnt0; });	
-				classInfo.sub_classes_string = sortedList.map(c => c.fullName).join('\n');
+				classInfo.sub_classes_string = '';
+				classInfo.sub_classes_clasif_string = '';
+				var list = classInfo.sub_classes.filter(function(c){ return c.isClasif == true});
+				if ( list.length > 0 ) {  // TODO teorētiski varētu būt arī tikai viena klase
+					list = list.sort((a, b) => { return b.cnt0 - a.cnt0; });	
+					classInfo.sub_classes_clasif_string = list.map(c => c.fullName).join('\n');
+				}
+				
+				list = classInfo.sub_classes.filter(function(c){ return c.isClasif == false});
+				if ( list.length > 0 ) {  // TODO teorētiski varētu būt arī tikai viena klase
+					list = list.sort((a, b) => { return b.cnt0 - a.cnt0; });	
+					classInfo.sub_classes_string = list.map(c => c.fullName).join('\n');
+				}
+				
 			}
 			else {
 				classInfo.sub_classes_string = '';
+				classInfo.sub_classes_clasif_string = '';
 			}
 		}
 
