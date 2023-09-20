@@ -100,6 +100,17 @@ function getName(o) {
 */	
 }
 
+function getNameDR(o) {
+	if ( dataShapes.schema.showPrefixes === "false" && o.is_local) 
+		return `${o.display_name}`;
+	else {
+		var name = `${o.prefix}:${o.display_name}`;
+		if ( o.prefix == null) 
+			name = o.display_name;
+		return name;		
+	}
+}
+
 function getNS() {
 	var namespaces = {};
 	_.each(dataShapes.schema.tree.ns, function(ns) {
@@ -758,9 +769,9 @@ Template.schemaFilter.events({
 			var domainName  = "";
 			var rangeName = "";
 			if ( prop_info.domain_class_id !== null)
-				domainName = getName({display_name: prop_info.dc_display_name, prefix: prop_info.dc_prefix, is_local: prop_info.dc_is_local });
+				domainName = getNameDR({display_name: prop_info.dc_display_name, prefix: prop_info.dc_prefix, is_local: prop_info.dc_is_local });
 			if ( prop_info.range_class_id !== null)
-				rangeName = getName({display_name: prop_info.rc_display_name, prefix: prop_info.rc_prefix, is_local: prop_info.rc_is_local });
+				rangeName = getNameDR({display_name: prop_info.rc_display_name, prefix: prop_info.rc_prefix, is_local: prop_info.rc_is_local });
 			
 			if ( pKind == 'Object') {
 
@@ -1099,7 +1110,3 @@ Template.schemaExtra.events({
 	},		
 });
 
-Template.schemaExtra.rendered = async function() {
-	//const classes = await dataShapes.getClassList();
-	//Template.schemaExtra.Classes.set(classes);
-}
