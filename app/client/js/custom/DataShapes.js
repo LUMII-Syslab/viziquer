@@ -671,6 +671,10 @@ dataShapes = {
 		params.main.deferred_properties = this.schema.deferred_properties;
 		return await this.callServerFunction("getProperties", params);
 	},
+	getClassifiers : async function() {
+		// TODO droši vien ar standarta limitu būs gana
+		return await this.callServerFunction("getClassifiers", {main: {}});
+	},
 	checkProperty : async function(params = {}) {
 		// *** console.log("------------checkProperty-----------------")
 		// *** dataShapes.checkProperty ({name:'onyx:EmotionSet', propertyName: 'onyx:hasEmotion'})
