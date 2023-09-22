@@ -118,7 +118,7 @@ parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTab
 		knownNamespaces[knPr[key]["name"]+":"] = knPr[key]["value"];
 		if(knPr[key].is_local == true) knownNamespaces[":"] = knPr[key]["value"];
 	}
-	console.log("parse_class", clazz, idTable[clazz.identification._id])
+
 	
 	if(typeof idTable[clazz.identification._id] !== "undefined") exp = "?"+ idTable[clazz.identification._id];
 	else {
@@ -137,7 +137,7 @@ parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTab
 	
 	
 	if(typeof knownNamespaces[pr +":"] !== "undefined"){
-		prefixTable[clazz.identification.prefix+":"] = "<"+ knownNamespaces[clazz.identification.prefix+":"]+ ">";
+		if(clazz.identification.prefix != null) prefixTable[clazz.identification.prefix+":"] = "<"+ knownNamespaces[clazz.identification.prefix+":"]+ ">";
 	}
 	else {
 		messages.push({

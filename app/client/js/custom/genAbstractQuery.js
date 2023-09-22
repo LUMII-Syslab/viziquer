@@ -49,6 +49,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   if (query && query.root) {
 	// query.root.defaultNamespace = schema.URI;
 	query.prefixes = await dataShapes.getNamespaces();
+	query.classifiers = await dataShapes.getClassifiers();
   }
 
   // string -->[IdObject]
@@ -1020,7 +1021,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
   cleanSymbolTable();
 
   
-  return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes}
+  return {root:query.root, symbolTable:symbol_table, params:query.params, prefixes:query.prefixes, classifiers:query.classifiers}
 };
 
 // [string]--> JSON

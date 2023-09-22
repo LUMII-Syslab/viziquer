@@ -1148,6 +1148,9 @@ function generateSPARQLtext(abstractQueryTable){
 
 		 var parameterTable = abstractQueryTable["params"];
 		 var knownPrefixes = abstractQueryTable["prefixes"];
+		 var classifiers = abstractQueryTable["classifiers"];
+		 if(typeof classifiers !== "undefined" && classifiers != null && typeof classifiers["data"] !== "undefined" )classifiers = classifiers["data"];
+		 else classifiers = [];
 
  		 //generate table with unique class names in form [_id] = class_unique_name
 		 var generateIdsResult = generateIds(rootClass, knownPrefixes);
@@ -1172,7 +1175,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 var attributesNames = tempAttrNames["attributeNames"];
 		 messages = messages.concat(tempAttrNames["messages"]);
 		 
-		 var result = forAbstractQueryTable(generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter, attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
+		 var result = forAbstractQueryTable(generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter, attributesNames, rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes, classifiers);
 
 		 messages = messages.concat(result["messages"]);
 
@@ -1513,7 +1516,7 @@ function getPrefixFromClassMembership(classMembership){
 // fieldNames - all field names in a query
 // symbolTable - table with symbols presented in a query
 // parameterTable - table with user set SPARQL generation parameters
-function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes){
+function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, clazz, parentClass, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes, classifiers){
 
 	var messages = [];
 	var prefixTable = [];
@@ -1619,7 +1622,24 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	if(clazz["isVariable"] == true) {
 		
 		if(clazz.identification.local_name.startsWith("?") == false){	
-			var clasificator = clazz.identification.local_name.substring(1, clazz.identification.local_name.indexOf(")"))
+			var classifier = clazz.identification.local_name.substring(1, clazz.identification.local_name.indexOf(")"))
+			if(classifiers.length > 0 ){	
+				for(let c = 0; c < classifiers.length; c++){
+	
+					if(classifiers[c]["classif_prefix"] == classifier){
+						classMembership = classifiers[c]["prefix"] + ":" + classifiers[c]["display_name"];
+						
+						for(let p = 0; p < knownPrefixes.length; p++){
+							if(knownPrefixes[p]["name"] == classifiers[c]["prefix"]) {
+								prefixTable[classifiers[c]["prefix"]+":"] = "<"+knownPrefixes[p]["value"]+">";
+								break;
+							}
+							
+						}
+						break;
+					}
+				}
+			}
 		}
 		
 		var varName = clazz["variableName"];
@@ -2221,7 +2241,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		
 		if(subclazz["linkType"] == 'NOT') underNotLink = true;
 
-		var temp = forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes);
+		var temp = forAbstractQueryTable(variableNamesTable, variableNamesCounter, attributesNames, subclazz, clazz, rootClassId, idTable, variableNamesAll, counter, sparqlTable, underNotLink, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable, knownPrefixes, classifiers);
 		if(subclazz.linkIdentification.local_name == "==") temp["sparqlTable"]["linkNameType"] = "sameDataLink";
 		else if(subclazz.linkIdentification.local_name == "++") temp["sparqlTable"]["linkNameType"] = "freeLink";
 		else if(subclazz.linkIdentification.local_name.startsWith("?")) temp["sparqlTable"]["linkNameType"] = "propertyVariableLink";

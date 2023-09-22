@@ -30,6 +30,7 @@ var useRef = false;
 var boxMoveY = 0;
 var MinY = 10;
 var MaxY = 10;
+var classifiers = [];
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -71,6 +72,13 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 			prefixesText = [];
 			for (const p of prefixes) {
 				prefixesText.push("PREFIX " + p["name"] + ": <" + p["value"] + ">");
+			}
+		}
+		var classif = await dataShapes.getClassifiers();
+	
+		if(classif["data"].length > 0){
+			for(let c = 0; c < classif["data"].length; c++){	
+				classifiers[classif["data"][c]["iri"]] = "("+ classif["data"][c]["classif_prefix"] + ") ";
 			}
 		}
 
@@ -383,6 +391,14 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 	useRef = false;
 	isUnderUnion = false;
 	var prefixes = await dataShapes.getNamespaces();
+	var classif = await dataShapes.getClassifiers();
+	
+	if(classif["data"].length > 0){
+		for(let c = 0; c < classif["data"].length; c++){	
+			classifiers[classif["data"][c]["iri"]] = "("+ classif["data"][c]["classif_prefix"] + ") ";
+		}
+	}
+
 	if(typeof prefixes["complete"] === "undefined"){
 		var prefixesText = [];
 	
@@ -2582,7 +2598,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			
 			if(typeof unionBlock["triples"] !== "undefined"){
 				for(let triple = 0; triple < unionBlock["triples"].length; triple++){
-					if(unionBlock["triples"][triple]["subject"]["value"] == subject && unionBlock["triples"][triple]["predicate"]["value"] != directClassMembershipRole) subjectCount++;
+					if(unionBlock["triples"][triple]["subject"]["value"] == subject && unionBlock["triples"][triple]["predicate"]["value"] != directClassMembershipRole && typeof classifiers[unionBlock["triples"][triple]["predicate"]["value"]] === "undefined") subjectCount++;
 				}
 			}
 
@@ -3122,7 +3138,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				
 
 				if(unionBlock["patterns"].length == 2){
-					if(unionBlock["patterns"][0]["type"] == "optional" && unionBlock["patterns"][1]["type"] == "bgp" && unionBlock["patterns"][1]["triples"].length ==1 && (unionBlock["patterns"][1]["triples"][1]["predicate"]["value"] == directClassMembershipRole)){
+					if(unionBlock["patterns"][0]["type"] == "optional" && unionBlock["patterns"][1]["type"] == "bgp" && unionBlock["patterns"][1]["triples"].length ==1 && (unionBlock["patterns"][1]["triples"][1]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[unionBlock["patterns"][1]["triples"][1]["predicate"]["value"]] !== "undefined")){
 						for(allClazz in classesBeforeUnion){
 							if(unionBlock["patterns"][1]["triples"][1]["subject"]["value"] == classesBeforeUnion[allClazz]["variableName"]){
 								linktype = "OPTIONAL";
@@ -3130,7 +3146,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							}
 						}
 					}
-					if(unionBlock["patterns"][1]["type"] == "optional" && unionBlock["patterns"][0]["type"] == "bgp" && unionBlock["patterns"][0]["triples"].length ==1 && (unionBlock["patterns"][0]["triples"][0]["predicate"]["value"] == directClassMembershipRole)){
+					if(unionBlock["patterns"][1]["type"] == "optional" && unionBlock["patterns"][0]["type"] == "bgp" && unionBlock["patterns"][0]["triples"].length ==1 && (unionBlock["patterns"][0]["triples"][0]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[unionBlock["patterns"][0]["triples"][0]["predicate"]["value"]] !== "undefined")){
 						for(allClazz in classesBeforeUnion){
 							if(unionBlock["patterns"][0]["triples"][0]["subject"]["value"] == classesBeforeUnion[allClazz]["variableName"]){
 								linktype = "OPTIONAL";
@@ -5491,7 +5507,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		
 		
 		
-		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate["value"] == directClassMembershipRole){
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && (patterns[0].triples[0].predicate["value"] == directClassMembershipRole || typeof classifiers[patterns[0].triples[0].predicate["value"]] !== "undefined")){
 			directClassMembershipRole = "";
 		}
 		
@@ -5533,7 +5549,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				bindTable = temp["bindTable"];
 			}
 		}
-		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && patterns[0].triples[0].predicate == directClassMembershipRole){
+		if(patterns.length == 1 && typeof patterns[0].type !== "undefined" && patterns[0].type == "bgp" && patterns[0].triples.length == 1 && (patterns[0].triples[0].predicate == directClassMembershipRole || typeof classifiers[patterns[0].triples[0].predicate["value"]] !== "undefined")){
 			directClassMembershipRole = directClassMembershipRoleTemp;
 		}
 		
@@ -5769,7 +5785,7 @@ async function collectNodeList(whereAll, propUnderOptional){
 			if(getVariable(triples[triple]["predicate"])["type"] == "varName") selectStarList.push(triples[triple]["predicate"]["value"]);
 
 			//class definitions
-			if(triples[triple]["predicate"]["value"] == directClassMembershipRole){
+			if((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")){
 				nodeList[triples[triple]["subject"]["value"]] = createNodeListInstance(nodeList, triples[triple]["subject"]["value"]);
 			} else{
 				//if class without definition
@@ -5909,7 +5925,8 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 	for(let triple = 0; triple < triples.length; triple++) {
 	  if(typeof triples[triple] !== "undefined"){
 		//class definitions
-		if((triples[triple]["predicate"]["value"] == directClassMembershipRole) && typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' && triples[triple]["object"]["termType"] !== "BlankNode"
+		console.log("classifiers", classifiers, triples[triple]["predicate"]["value"])
+		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")) && typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' && triples[triple]["object"]["termType"] !== "BlankNode"
 			&& typeof variableList[triples[triple]["object"]["value"]+"Label"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"Description"] === "undefined"){
 			var instanceAlias = null;
 			//var classResolvedR = await dataShapes.resolveClassByName({name: triples[triple]["object"]});
@@ -5919,10 +5936,11 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			if(classResolvedR.complete == true) {
 				classResolved = classResolvedR.data[0];
 
-				var sn = classResolved.display_name;
-				if(schemaName == "wikidata" && classResolved.prefix == "wd"){}
-				else if(classResolved.is_local != true)sn = classResolved.prefix+ ":" + sn;
-				classResolved.short_name = sn;			
+				var sn = classResolved.full_name;
+				if(schemaName == "wikidata" && classResolved.prefix == "wd"){sn = classResolved.display_name}
+				// else if(classResolved.is_local != true)sn = classResolved.prefix+ ":" + sn;	
+				classResolved.short_name = sn;	
+					
 			}
 			var subjectNameParsed = getVariable(triples[triple]["subject"]);
 			
@@ -5948,6 +5966,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						"notInSchema": "variable"
 					}
 				} else {
+					if(typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined") className = classifiers[triples[triple]["predicate"]["value"]] + className;
 					classResolved = {
 						"short_name":className,
 						"display_name":className,
@@ -6559,7 +6578,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				var objectNameParsed = getVariable(triples[triple]["object"]);
 
 				// filter as triple
-				if(objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral"){
+				if((objectNameParsed["type"] == "number" || objectNameParsed["type"] == "string" || objectNameParsed["type"] == "RDFLiteral") && typeof classifiers[triples[triple]["predicate"]["value"]] === "undefined"){
 					exprVariables = [];
 					var attrName;
 					if(attributeResolved.complete == true) attrName = attributeResolved.data[0]["short_name"];
@@ -6582,7 +6601,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							}
 						}
 					}
-				} else{
+				} else if (typeof classifiers[triples[triple]["predicate"]["value"]] === "undefined"){
 						
 					//id identification.localName not equeals to subject - use alias
 					// if(attributeResolved.data[0]["local_name"] != objectNameParsed["value"]) 
