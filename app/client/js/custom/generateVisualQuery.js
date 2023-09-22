@@ -316,6 +316,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		await delay(100);
 		var dragged_boxes = [];
 		var lines = {linkedLines: [], draggedLines: [], allLines: []};
+		
 		let editor = Interpreter.editor;
 		for(let elem_id in VQ_Elements){
 
@@ -8277,7 +8278,8 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
 			else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
 		} else if(instanceAlias != null ) {
-			if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true) {}
+			//console.log("className", className)
+			if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
 			else classBox.setInstanceAlias(instanceAlias);
 		}
 	// elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
