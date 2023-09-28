@@ -1253,20 +1253,27 @@ function generateSPARQLtext(abstractQueryTable){
 				});
 				SPARQL_text = SPARQL_text + " *";
 			 }
-				
+			
+			var fromText = "";
 			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
 				var graphService = null;
 
 				for(let g in rootClass["graphs"]){
 					if(typeof rootClass["graphs"][g] === "object"){
 						if(rootClass["graphs"][g]["graphInstruction"] == "FROM" || rootClass["graphs"][g]["graphInstruction"] == "FROM NAMED"){
-							SPARQL_text =  SPARQL_text +"\n"+ rootClass["graphs"][g]["graphInstruction"] + " " + rootClass["graphs"][g]["graph"] ;
+							fromText =  fromText +"\n"+ rootClass["graphs"][g]["graphInstruction"] + " " + rootClass["graphs"][g]["graph"] ;
 						} else if(graphService == null) {
 							graphService = rootClass["graphs"][g];
 						}
 					}
 				}
 			}
+			
+			if(graphService != null){
+				if(!graphService["graph"].startsWith("??") && graphService["graph"].startsWith("?")) SPARQL_text = SPARQL_text + " " +graphService["graph"];
+			 }
+			 SPARQL_text = SPARQL_text + fromText;
+			 
 			 SPARQL_text = SPARQL_text + " WHERE{\n";
 			 
 			 if(graphService != null){

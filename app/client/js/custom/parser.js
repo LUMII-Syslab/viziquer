@@ -1317,7 +1317,7 @@ function transformExistsOR(expressionTable, prefix, existsExpr, countOR, alias, 
 }
 
 function generatePrefixedNameVariable(prefix, existsExpr, alias, pe){
-
+	
 	var variable, prefixedName, className;
 			if(typeof pe["Reference"] !== 'undefined'){
 					variable = setVariableName(pe["var"]["name"] + "_" + pe["Reference"]["name"], alias, pe["var"]);
@@ -1972,6 +1972,9 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 		
 		//REFERENCE
 		if(key == "PrimaryExpression" && typeof expressionTable[key]["Reference"] !== 'undefined'){
+			
+			
+			
 			var underOptionalPlain = checkIfUnderOptionalPlain(expressionTable[key]["Reference"]["name"], classTable, false);
 			var underUnion = checkIfUnderUnion(expressionTable[key]["Reference"]["name"], classTable, false)
 			if(underOptionalPlain == false && underUnion == false){
@@ -2003,6 +2006,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				}else{
 					// var variable = setVariableName(expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"], alias, expressionTable[key]["var"])
 					var variable = expressionTable[key]["var"]["name"] + "_" + expressionTable[key]["Reference"]["name"];
+					if(alias != null && alias != "") variable = alias;
 					if(generateTriples == true && expressionTable[key]["var"]['type'] != null) {
 						var inFilter = true;
 						applyExistsToFilter = true;

@@ -821,9 +821,9 @@ async function getAttributes(filter, waiting){
 			if(waiting == null){
 				for (var  key in symbolTable) {	
 					for (var symbol in symbolTable[key]) {
-						if(symbolTable[key][symbol]["context"] != selected_elem_id){
+						if(typeof symbolTable[key][symbol] !== "function" && symbolTable[key][symbol]["context"] != selected_elem_id){
 							if(symbolTable[key][symbol]["upBySubQuery"] == 1 && (typeof symbolTable[key][symbol]["distanceFromClass"] === "undefined" || symbolTable[key][symbol]["distanceFromClass"] <= 1 )){
-								attr_list.push({name: key});
+								attr_list.push({name: key});	
 							}
 						}
 					}	

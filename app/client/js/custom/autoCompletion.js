@@ -614,6 +614,7 @@ runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 		c["prefix"] = "";
 		c["suggestions"] = [];
 		var params = {limit: dataShapes.schema.tree.countI};
+		fullText = fullText.trimStart();
 		if (fullText != "") params.filter = fullText;
 		
 		var selected_elem_id = Session.get("activeElement");

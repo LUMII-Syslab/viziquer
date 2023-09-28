@@ -124,12 +124,14 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	if(schemaName.toLowerCase() == "wikidata" && typeof obj_class.identification.local_name !== "undefined" && obj_class.identification.local_name != null && ((obj_class.identification.local_name.startsWith("[") && obj_class.identification.local_name.endsWith("]")) || obj_class.identification.local_name.indexOf(":") == -1)){
 		pr = "wd:";
 	}
+	//obj_class.identification.classes = [];
 	var localName = obj_class.identification.local_name;
 	
 	if(typeof localName !== "undefined" && localName != null) localName = pr+localName;
 		
     var resCl = await resolveClassByName(localName);
 
+	// obj_class.identification.classes.push(resCl)
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
 	var prefix = "";
@@ -328,14 +330,18 @@ resolveTypesAndBuildSymbolTable = async function (query) {
          for (const ca of  my_scope_table.CLASS_ALIAS) {
 		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
              clone_ca = _.clone(ca);
-             clone_ca["upByOptional"] = true;
+             if(obj_class.linkType == "OPTIONAL") clone_ca["upByOptional"] = true;
+			 if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
+             if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
+			   clone_ca["distanceFromClass"] = 1
+             }
              parents_scope_table.CLASS_ALIAS.push(clone_ca)
          }
 		 // );
 		 for (const ca of   my_scope_table.UNRESOLVED_FIELD_ALIAS) {
 		 // my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
            clone_ca = _.clone(ca);
-           if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true; };
+           if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true;};
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
 			 clone_ca["distanceFromClass"] = 1
