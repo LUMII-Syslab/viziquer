@@ -354,15 +354,6 @@
           "index": 3,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
-         },
-		{
-          "_id": "ZnHbEQt9jutbYY3E6",
-          "diagramId": "7RrwRcGyxshqjBh9p",
-          "diagramTypeId": "5MCHCcnGRwF5axfDj",
-          "name": "Extra",
-          "index": 4,
-          "toolId": "3v8WrqRP2oos7kaSA",
-          "versionId": "cMoFeT3YoEkLwDabd"
         }
       ],
       "compartmentTypes": [
@@ -496,50 +487,6 @@
             ],
             "label": "Individuals",
             "dialogTabId": "ZnHbEQt9jutbYY3E7"
-          }
-       },
-		{
-          "object": {
-            "_id": "WXuJFoqWMkM2ohtpR",
-            "toolId": "3v8WrqRP2oos7kaSA",
-            "versionId": "cMoFeT3YoEkLwDabd",
-            "diagramTypeId": "5MCHCcnGRwF5axfDj",
-            "diagramId": "7RrwRcGyxshqjBh9p",
-            "index": 1,
-            "noRepresentation": true,
-            "tabIndex": 4,
-            "name": "extra",
-            "isObjectRepresentation": false,
-            "inputType": {
-              "type": "custom",
-              "templateName": "schemaExtra"
-            },
-            "extensionPoints": [
-              {
-                "extensionPoint": "beforeUpdate"
-              },
-              {
-                "extensionPoint": "update",
-                "procedure": "UpdateCompartment"
-              },
-              {
-                "extensionPoint": "afterUpdate"
-              },
-              {
-                "extensionPoint": "dynamicPrefix"
-              },
-              {
-                "extensionPoint": "dynamicSuffix"
-              },
-              {
-                "extensionPoint": "dynamicDefaultValue"
-              },
-              {
-                "extensionPoint": "dynamicDropDown"
-              }
-            ],
-            "label": "Extra",
-            "dialogTabId": "ZnHbEQt9jutbYY3E6"
           }
         }
       ],
@@ -1860,6 +1807,25 @@
                           ]
                         },
                         "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "frys21a6u6q2fby5160t0bqq",
+                        "index": 15,
+                        "name": "AttributeConditionSelection",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "attributeConditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": " {",
+                        "suffix": "}",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Condition(s)"
                       },
 					  {
                         "_id": "i794avqh6vh6aa1cakgfrvni",

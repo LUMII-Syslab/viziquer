@@ -31,8 +31,11 @@ Template.schemaExtra.ClassCountRest = new ReactiveVar("");
 Template.schemaExtra.ManualDisabled = new ReactiveVar("disabled");
 Template.schemaExtra.FilterDisabled = new ReactiveVar("");
 Template.schemaExtra.NsFilters = new ReactiveVar("");
+Template.schemaExtra.ClassCount = new ReactiveVar("");
+Template.schemaExtra.IndCount = new ReactiveVar("");
+Template.schemaExtra.SuperclassType = new ReactiveVar("");
 Template.schemaExtra.DataClass = new ReactiveVar("checked");
-
+ 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
@@ -361,28 +364,74 @@ function setClassList0() {
 	Template.schemaExtra.DataClass.set("checked");
 	Template.schemaExtra.FilterDisabled.set("");
 	Template.schemaExtra.Properties.set([]);
-	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}]
+	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
+	var classCount = [{value:15 ,name:'15 classes in the diagram'}, {value:30 ,name:'30 classes in the diagram'}, {value:40 ,name:'40 classes in the diagram'}, {value:50 ,name:'50 classes in the diagram'}];
+	var indCount = [{value:1 ,name:'Classes of all sizes'}, {value:10 ,name:'At least 10 individuals'}, {value:50 ,name:'At least 50 individuals'}, {value:100 ,name:'At least 100 individuals'}];
+	var superclassType = [{value:1 ,name:'targets'}, {value:2 ,name:'sources and targets'}, {value:3 ,name:'object/data sources and targets'}, {value:0 ,name:'Without superclasses'},];
+	var schema = dataShapes.schema.schema;
+	var nsFiltersSel = '';
+	var classCountSel = 30;
+	var indCountSel = 1;
+	var superclassTypeSel = "1";
+	
 	var filteredClassList = dataShapes.schema.diagram.classList;	
 	filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
 	
-	if ( filteredClassList.length > 0 ) {
-		nsFilters.find(function(f){ return f.value == 'Local';}).selected = "selected";
+	// TODO  Šis ir manai ērtībai, vai nu jāmet ārā, vai jāliek konfigurācijā
+	if ( schema == 'iswc2017') {
+		classCountSel = 40;
+		nsFiltersSel = 'Exclude';
+		superclassTypeSel = 0;
+	}
+	else if ( schema == 'mondial' ) {
+		nsFiltersSel = 'Local';
+		superclassTypeSel = 2;
+	}
+	else if ( schema == 'europeana' ) {
+		nsFiltersSel = 'Exclude';
+		superclassTypeSel = 1;
+	}
+	else if ( schema == 'nobel_prizes_v0' ) {
+		nsFiltersSel = 'Exclude';
+		superclassTypeSel = 1;
+		indCountSel = 10;
+	}
+	else if ( schema == 'nobel_prizes_x' ) {
+		nsFiltersSel = 'Exclude';
+		superclassTypeSel = 1;
+		indCountSel = 10;
 	}
 	else {
-		filteredClassList = dataShapes.schema.diagram.classList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
-		nsFilters.find(function(f){ return f.value == 'Exclude';}).selected = "selected";		
+		if ( filteredClassList.length > 0 ) 
+			nsFiltersSel = 'Local';
+		else 
+			nsFiltersSel = 'Exclude';
 	}
 	
-	Template.schemaExtra.NsFilters.set(nsFilters);
-
+	if ( nsFiltersSel == 'Exclude' ) 
+		filteredClassList = dataShapes.schema.diagram.classList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
+	
+	if ( indCountSel > 1 )
+		filteredClassList = filteredClassList.filter(function(c){ return c.cnt >= indCountSel;});
+		
 	dataShapes.schema.diagram.filteredClassList = filteredClassList;
-	Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);	
+	Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);
+		
+	nsFilters.find(function(f){ return f.value == nsFiltersSel;}).selected = "selected";
+	classCount.find(function(f){ return f.value == classCountSel;}).selected = "selected";
+	indCount.find(function(f){ return f.value == indCountSel;}).selected = "selected";
+	superclassType.find(function(f){ return f.value == superclassTypeSel;}).selected = "selected";
+	
+	Template.schemaExtra.NsFilters.set(nsFilters);
+	Template.schemaExtra.ClassCount.set(classCount);
+	Template.schemaExtra.IndCount.set(indCount);
+	Template.schemaExtra.SuperclassType.set(superclassType);
+
 	var classes = [];
 	var restClasses = [];
-	
-	if ( filteredClassList.length > 30 ) {
-		classes = filteredClassList.slice(0, 30);
-		restClasses = filteredClassList.slice(30, filteredClassList.length+1);
+	if ( filteredClassList.length > classCountSel ) {
+		classes = filteredClassList.slice(0, classCountSel);
+		restClasses = filteredClassList.slice(classCountSel, filteredClassList.length+1);
 	}
 	else {
 		classes = filteredClassList;
@@ -391,7 +440,6 @@ function setClassList0() {
 }
 
 function sortClassList() {
-
 	var classList = dataShapes.schema.diagram.classList;
 	const sortP = $("#sortPar").val();
 	if  ( sortP == 1) 
@@ -882,7 +930,6 @@ Template.schemaInstances.helpers({
 	},
 });
 
-
 Template.schemaInstances.events({
 	"dblclick .class-body": async function(e) {
 		var i_name = $(e.target).closest(".class-body").attr("value");
@@ -998,6 +1045,15 @@ Template.schemaExtra.helpers({
 	nsFilters: function() {
 		return Template.schemaExtra.NsFilters.get();
 	},
+	classCount: function() {
+		return Template.schemaExtra.ClassCount.get();
+	},
+	indCount: function() {
+		return Template.schemaExtra.IndCount.get();
+	},
+	superclassType: function() {
+		return Template.schemaExtra.SuperclassType.get();
+	},
 	dataClass: function() {
 		return Template.schemaExtra.DataClass.get();
 	},
@@ -1007,9 +1063,28 @@ Template.schemaExtra.helpers({
 	
 });
 
+function addSuperclasses(classes) {
+	var all_s = [];
+	_.each(classes, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+	
+	_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+		if ( all_s.includes(cl.id)) cl.selected = 1;
+	});
+	
+	return dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+}
+
 Template.schemaExtra.events({
 	'click #makeDiagr': async function(e) {
 		var classList = Template.schemaExtra.Classes.get();
+		var all_s = [];
+		_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+		
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( all_s.includes(cl.id)) cl.selected = 1;
+		});
+		classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+
 		classList = classList.map(v => v.id);
 		var propList = Template.schemaExtra.Properties.get();
 		if ( propList.length == 0 ) {
@@ -1017,19 +1092,36 @@ Template.schemaExtra.events({
 			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
 				not_in = ['owl','rdf','rdfs'];
 
-			var allParams = {main: { c_list: `${classList}`}};
+			var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
 			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
 			propList = rr.data;
 		}
+		var info = [ `${$("#classCount").val()} classes in the diagram`,
+			Template.schemaExtra.NsFilters.get().find(function(f){ return f.value == $("#nsFilter").val();}).name,
+			Template.schemaExtra.IndCount.get().find(function(f){ return f.value == $("#indCount").val();}).name ];
+		
+		if ( $("#superclassType").val() != 0) {
+			info.push(`Superclasses based on ${Template.schemaExtra.SuperclassType.get().find(function(f){ return f.value == $("#superclassType").val();}).name}`);
+		}
+		if ( !$("#dataClass").is(":checked") )
+			info.push('Data classes are disconnected');
+		
+		if ( $("#remS").is(":checked") )
+			info.push('Small properties are removed');
+			
+		if ( $("#prop0").is(":checked") )
+			info.push('All class properties are added');				
 
-		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(), $("#dataClass").is(":checked"));
+		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(), $("#dataClass").is(":checked"), 
+			$("#prop0").is(":checked"), remSmall, $("#addIds").is(":checked"), dataShapes.schema.schema, info.join('\n'));
 
 	},
 	'click #getProperties': async function(e) {
 		var classList = Template.schemaExtra.Classes.get();
 		classList = classList.map(v => v.id);
-		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`}});
+		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`, remSmall:$("#remS").is(":checked")}});
 		Template.schemaExtra.Properties.set(rr.data);
 	},
 	
@@ -1061,10 +1153,11 @@ Template.schemaExtra.events({
 		}
 	},
 	'click #removeAll': function(e) {
-		var classes = [];
-		var restClasses = dataShapes.schema.diagram.filteredClassList;
+		//var classes = [];
+		//var restClasses = dataShapes.schema.diagram.filteredClassList;
 		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) { cl.selected = 0; });
-		setClassListInfo(classes, restClasses);
+		makeClassLists();
+		//setClassListInfo(classes, restClasses);
 	},
 	'click #removeSelected': function(e) {
 		if ($("#selectedClasses").val() != undefined) {

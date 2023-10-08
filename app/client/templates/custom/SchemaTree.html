@@ -186,10 +186,9 @@
 				<div class="row">
 					<div class="col-sm-6">
 						<select class="form-control" id="classCount" {{filterDisabled}}>
-							<option value=15 >15 classes in the diagram</option>
-							<option value=30 selected>30 classes in the diagram</option>
-							<option value=40 >40 classes in the diagram</option>
-							<option value=50 >50 classes in the diagram</option>
+							{{#each classCount}}
+								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
+							{{/each}}
 						</select>
 						<select class="form-control" id="nsFilter" {{filterDisabled}}>
 							{{#each nsFilters}}
@@ -199,10 +198,9 @@
 					</div>
 					<div class="col-sm-6">
 						<select class="form-control" id="indCount" {{filterDisabled}}>
-							  <option selected value=1 >Classes of all sizes</option>
-							  <option value=10 >At least 10 individuals</option>
-							  <option value=50 >At least 50 individuals</option>
-							  <option value=100 >At least 100 individuals</option>
+							{{#each indCount}}
+								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
+							{{/each}}
 						</select>
 						<select class="form-control" id="sortPar" >
 							  <option selected value=1 >Sort by count</option>
@@ -292,15 +290,29 @@
 						</div>
 						<label> Make superclasses based on: </label>
 						<select class="form-control" id="superclassType" >
-							  <option selected value="1" >targets</option>
-							  <option value="2" >sources and targets</option>
-							  <option value="3" >object/data sources and targets</option>
-							  <option value="0" >Without superclasses</option>
+							{{#each superclassType}}
+								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
+							{{/each}}
 						</select>
 						<label class="form-check-label">
-							<input class="form-check-input" name = "dataClass" id="dataClass" value= "2" type="checkbox" checked={{dataClass}}>
+							<input class="form-check-input" name = "dataClass" id="dataClass" type="checkbox" checked={{dataClass}}>
 							<span class="custom-checkbox"></span>
 							Connect data classes
+						</label>
+						<label class="form-check-label">
+							<input class="form-check-input" name = "prop0" id="prop0" type="checkbox">
+							<span class="custom-checkbox"></span>
+							Add all properties to classes
+						</label>
+						<label class="form-check-label">
+							<input class="form-check-input" name = "remS" id="remS" type="checkbox">
+							<span class="custom-checkbox"></span>
+							Remove small properties
+						</label>
+						<label class="form-check-label">
+							<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
+							<span class="custom-checkbox"></span>
+							Show IDS
 						</label>
 					
 					</div>

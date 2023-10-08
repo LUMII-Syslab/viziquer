@@ -3990,3 +3990,14 @@ VQ_Element.prototype = {
     },
 
 }
+
+// Create_VQ_Element = function(cb, location, isLink = false, source?, target?) { }
+const async_Create_VQ_Element = async (location, isLink, target, source) => new Promise(resolve => { 
+  Create_VQ_Element(newElem => { resolve(newElem) }, location, isLink, target, source);
+});
+
+export {
+  VQ_Element,
+  Create_VQ_Element,
+  async_Create_VQ_Element,
+}
