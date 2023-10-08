@@ -160,7 +160,7 @@ Interpreter.methods({
 
 	ComputeLayout: function() {
 		let editor = Interpreter.editor;
-		let layoutEngine = editor.layoutEngine;
+		let layoutEngine = editor.layoutEngine();
 
 		let elements_to_map = {};
 		let elements_from_map = {};
@@ -201,6 +201,10 @@ Interpreter.methods({
 
 		let moved_boxes = _.map(new_layout.boxes, function(box_in, key) {
 							let box = elements_from_map[key];
+							if (!box) {
+								console.error("No box", key, elements_from_map);
+								return;
+							}
 
 							box.setElementPosition(box_in.x, box_in.y);
 							box.updateSize(box_in.width, box_in.height);
@@ -212,7 +216,6 @@ Interpreter.methods({
 														},};
 						});
 
-
     	let new_lines = _.map(new_layout.lines, function(line_in, key) {
 				    		let line_new_points = [];
 				    		_.each(line_in, function(line) {
@@ -221,11 +224,14 @@ Interpreter.methods({
 				    		});
 
 				    		let line = elements_from_map[key];
-				    		if (line) {
-				    			line.setPoints(line_new_points);
-								// link.setPoints(line_points);
-								// OrthogonalRerouting.recompute(link, state);
-				    		}
+				    		if (!line) {
+								console.error("No line", key, elements_from_map);
+								return;
+							}
+
+			    			line.setPoints(line_new_points);
+							// link.setPoints(line_points);
+							// OrthogonalRerouting.recompute(link, state);
 
 				    		return {id: line._id, points: line_new_points};
 				    	});
@@ -237,6 +243,7 @@ Interpreter.methods({
 				};
 
 		Utilities.callMeteorMethod("changeCollectionPosition", list);
+
 	},
 
 });
