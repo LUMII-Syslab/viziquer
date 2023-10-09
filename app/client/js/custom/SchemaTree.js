@@ -1087,12 +1087,12 @@ Template.schemaExtra.events({
 
 		classList = classList.map(v => v.id);
 		var propList = Template.schemaExtra.Properties.get();
+		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
 			var not_in = [];
 			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
 				not_in = ['owl','rdf','rdfs'];
 
-			var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
 			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
 			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
@@ -1118,10 +1118,44 @@ Template.schemaExtra.events({
 			$("#prop0").is(":checked"), remSmall, $("#addIds").is(":checked"), dataShapes.schema.schema, info.join('\n'));
 
 	},
+	'click #makeDiagr2': async function(e) {
+		var classList = Template.schemaExtra.Classes.get();
+		var all_s = [];
+		_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+		
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( all_s.includes(cl.id)) cl.selected = 1;
+		});
+		classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+
+		classList = classList.map(v => v.id);
+		var propList = Template.schemaExtra.Properties.get();
+		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		if ( propList.length == 0 ) {
+			var not_in = [];
+			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
+				not_in = ['owl','rdf','rdfs'];
+			
+			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
+			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
+			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
+			propList = rr.data;
+		}
+		var info = [ `${$("#classCount").val()} classes in the diagram`,
+			Template.schemaExtra.NsFilters.get().find(function(f){ return f.value == $("#nsFilter").val();}).name,
+			Template.schemaExtra.IndCount.get().find(function(f){ return f.value == $("#indCount").val();}).name ];
+		
+		if ( $("#remS").is(":checked") )
+			info.push('Small properties are removed');
+
+		await dataShapes.makeSuperDiagr(classList, propList, remSmall, dataShapes.schema.schema, info.join('\n'));
+
+	},
 	'click #getProperties': async function(e) {
 		var classList = Template.schemaExtra.Classes.get();
 		classList = classList.map(v => v.id);
-		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`, remSmall:$("#remS").is(":checked")}});
+		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`, remSmall:remSmall}});
 		Template.schemaExtra.Properties.set(rr.data);
 	},
 	
