@@ -2623,6 +2623,12 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					"listOfElementId" : [clId],
 					"isBlocking" : true
 				});
+			 } else if(className == "[ ]" || className == "[ + ]"){
+				 messages.push({
+					"type" : "Error",
+					"message" : "Inline aggregation can not be used in control nodes not linked to a data instance",
+					"isBlocking" : true
+				});
 			 }
 				isAggregate = true
 				
@@ -2641,7 +2647,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 				else {
 					SPARQLstring = SPARQLstring + "(" + DISTINCT + generateExpression(expressionTable[key]["Expression"], "", className, classSchemaName, alias, generateTriples, isSimpleVariable, isUnderInRelation) + ")";
 				}
-	
 			visited = 1;
 		}
 		
@@ -4371,17 +4376,17 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 }
 
 countCardinality = async function(str_expr, context){	 
-
+	
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
 		  
 		  var proj = Projects.findOne({_id: Session.get("activeProject")});
 		  
-		  var schemaName = dataShapes.schema.schemaType;
-		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:{}, context:context});
+		  var schemaName = dataShapes.schema.schemaType; 
+		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:{}, exprType:"attribute", context:context});
+		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, {}, context, "attribute");
 		  
 		  var cardinality = countMaxExpressionCardinality(parsed_exp, -1);
-		  
 		  if(cardinality["isAggregation"] == true) return 1;
 		  if(cardinality["isMultiple"] == true) return -1;
 		  if(cardinality["isMultiple"] == false && cardinality["isAggregation"] == false) return 1;

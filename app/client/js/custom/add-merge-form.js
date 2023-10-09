@@ -15,7 +15,7 @@ Template.AddMergeValues.attribute = new ReactiveVar("");
 Template.AddMergeValues.isNotRootClass = new ReactiveVar(false);
 
 Interpreter.customMethods({
-	AddMergeValues: function (e) {
+	AddMergeValues: async function (e) {
 		
 		var expressionField = getExpression(e);
 		var requireField = getRequireField(e);//require
@@ -36,7 +36,7 @@ Interpreter.customMethods({
 		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
 		Template.AddMergeValues.distinct.set(distinct);
 		
-		var card = countCardinality(expr, Session.get("activeElement"))
+		var card = await countCardinality(expr, Session.get("activeElement"))
 		var proj = Projects.findOne({_id: Session.get("activeProject")});
 		if (proj){
       		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
@@ -67,8 +67,6 @@ Interpreter.customMethods({
 			}
 			if(typeof parentClass !== 'undefined')Template.AddMergeValues.isNotRootClass.set(true);
 		};
-		
-		
 		
 		Template.AddMergeValues.cardinality.set(card);
 		Template.AddMergeValues.expressionField.set(expressionField);

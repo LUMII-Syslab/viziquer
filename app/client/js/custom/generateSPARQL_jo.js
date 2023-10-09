@@ -1874,15 +1874,24 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						return arr.indexOf(el) === i;
 					});
 					var rootClass = "?" + idTable[clazz["identification"]["_id"]] + " ";
-					if(clazz["isUnion"] == true || clazz["isUnit"] == true) rootClass = "";
+					var clTriple = sparqlTable["classTriple"];
+					if(clazz["isUnion"] == true || clazz["isUnit"] == true) {
+						rootClass = "";
+						if(parentClass != null && parentClass["identification"] != null && parentClass["identification"]["local_name"] !== null){
+							clTriple = "?" + idTable[parentClass["identification"]["_id"]] + " " + classMembership + " " + parentClass["identification"]["prefix"] + ":" + parentClass["identification"]["local_name"]
+						}
+					}
 					var localAggregation = "{SELECT " + rootClass + "(" + result["exp"] + " AS ?" + alias + ") WHERE{";
 
-					if(field["requireValues"] != true && clazz["identification"]["local_name"] != "(no_class)" && typeof sparqlTable["classTriple"] !== "undefined") localAggregation = localAggregation + sparqlTable["classTriple"] + " OPTIONAL{";
-					else if(field["requireValues"] != true && clazz["identification"]["local_name"] != "(no_class)" && typeof sparqlTable["classTriple"] === "undefined") localAggregation = "OPTIONAL"+localAggregation;
+					if(field["requireValues"] != true && clazz["identification"]["local_name"] != "(no_class)" && typeof clTriple !== "undefined") {
+						localAggregation = localAggregation + clTriple; 
+						if(uniqueTriples.length > 0 ) localAggregation = localAggregation +" OPTIONAL{";
+					}
+					else if(field["requireValues"] != true && clazz["identification"]["local_name"] != "(no_class)" && typeof clTriple === "undefined") localAggregation = "OPTIONAL"+localAggregation;
 
 					localAggregation = localAggregation + uniqueTriples.join(" ");
 
-					if(field["requireValues"] != true && typeof sparqlTable["classTriple"] !== "undefined") localAggregation = localAggregation + "}";
+					if(field["requireValues"] != true && typeof clTriple !== "undefined" && uniqueTriples.length > 0) localAggregation = localAggregation + "}";
 
 					localAggregation = localAggregation +"} GROUP BY ?" + idTable[clazz["identification"]["_id"]] +"}";
 					sparqlTable["localAggregateSubQueries"].push(localAggregation);
