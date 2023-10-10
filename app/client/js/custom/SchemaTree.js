@@ -372,7 +372,7 @@ function setClassList0() {
 	var nsFiltersSel = '';
 	var classCountSel = 30;
 	var indCountSel = 1;
-	var superclassTypeSel = "1";
+	var superclassTypeSel = 1;
 	
 	var filteredClassList = dataShapes.schema.diagram.classList;	
 	filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
@@ -391,15 +391,14 @@ function setClassList0() {
 		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 	}
-	else if ( schema == 'nobel_prizes_v0' ) {
+	else if ( schema == 'nobel_prizes_v0' || schema == 'nobel_prizes_x' ) {
 		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 		indCountSel = 10;
 	}
-	else if ( schema == 'nobel_prizes_x' ) {
-		nsFiltersSel = 'Exclude';
-		superclassTypeSel = 1;
-		indCountSel = 10;
+	else if ( schema == 'war_sampo_2' || schema == 'war_sampo_2' ) {
+		nsFiltersSel = 'Local';
+		superclassTypeSel = 0;
 	}
 	else {
 		if ( filteredClassList.length > 0 ) 
