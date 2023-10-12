@@ -631,7 +631,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	  }
 	  // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {
-        if (obj_class.instanceAlias==null) {
+		if (obj_class.instanceAlias==null || obj_class.instanceAlias=="") {
           if (f.alias!=null && f.alias!="") {
 			  obj_class.instanceAlias=f.alias;
 			  obj_class.instanceIsConstant = false;
@@ -640,8 +640,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         } else{
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
-		  
-          if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
+		  if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
 			 var schemaName = await dataShapes.schema.schemaType;
 			 if(typeof schemaName === "undefined") schemaName = "";
@@ -666,7 +665,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					}
 				}
 			}
-			
+
 			if(obj_class.identification.local_name != null){
 				obj_class.instanceAlias = obj_class.identification.display_name;
 				if(typeof obj_class.instanceAlias === "undefined") obj_class.instanceAlias = obj_class.identification.local_name;
