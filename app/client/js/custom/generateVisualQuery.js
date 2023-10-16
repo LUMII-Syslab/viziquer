@@ -676,17 +676,17 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		let editor = Interpreter.editor;
 		
 		let element_list = editor.getElements();
-		var boxes = [];
-		var lines = [];
-		for(let elem_id in VQ_Elements){
-			let element  = element_list[VQ_Elements[elem_id]];
-			boxes.push(element)
-		}
+		// var boxes = [];
+		// var lines = [];
+		// for(let elem_id in VQ_Elements){
+			// let element  = element_list[VQ_Elements[elem_id]];
+			// boxes.push(element)
+		// }
 		
-		for(let elem_id in VQ_Links){
-			let element  = element_list[VQ_Links[elem_id]];
-			lines.push(element)
-		}
+		// for(let elem_id in VQ_Links){
+			// let element  = element_list[VQ_Links[elem_id]];
+			// lines.push(element)
+		// }
 		
 		for(let elem_id in VQ_Elements){
 
@@ -1981,9 +1981,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		classTableAdded = classTableAdded.concat(temp["classTableAdded"]);
 		attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
 	}
+	
+	
+	
 	//type=optional
 	if(where["type"] == "optional"){
-		
 		// bgptype = "optional";
 		var patterns = where["patterns"];
 		var visited = false;
@@ -5020,7 +5022,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		}	
 	}
 	if(where["type"] == "graph" || where["type"] == "service"){
-		
 		var nodeLitsTemp = nodeList;
 		var patterns =  where["patterns"];
 		var collectNodeListTemp = await collectNodeList(patterns);
@@ -5162,6 +5163,155 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				allClasses[clazz] = classesTable[clazz];
 			}
 		}
+		var subSel = where["patterns"][0];
+		console.log("abstractTable",subSel);
+		var isLocalAggregation = false;
+		
+		//local aggregation
+		if((subSel["variables"].length == 1 && typeof subSel["variables"][0]["expression"] !== "undefined" && typeof subSel["variables"][0]["expression"]["aggregation"] !== "undefined") || 
+		(subSel["variables"].length == 2 &&
+		((typeof subSel["variables"][0]["expression"] !== "undefined" && typeof subSel["variables"][0]["expression"]["aggregation"] !== "undefined" && typeof subSel["variables"][1]["termType"] !== "undefined" && subSel["variables"][1]["termType"] == "Variable" && typeof allClasses[subSel["variables"][1]["value"]] !== "undefined") 
+			|| 
+		 (typeof subSel["variables"][1]["expression"] !== "undefined" && typeof subSel["variables"][1]["expression"]["aggregation"] !== "undefined" && typeof subSel["variables"][0]["termType"] !== "undefined" && subSel["variables"][0]["termType"] == "Variable" && typeof allClasses[subSel["variables"][0]["value"]] !== "undefined")
+		))){
+			var aggregateExpression = null;
+				var alias = "";
+				
+				if(subSel["variables"].length == 1){
+					aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][0]["expression"]["expression"])["value"] + ")";
+					alias = subSel["variables"][0]["variable"]["value"];
+					console.log("aggregateExpression", aggregateExpression, temp, subSel["variables"][0]["expression"]);
+				} else if (subSel["variables"].length == 2){
+					if(typeof subSel["variables"][0]["expression"] !== "undefined"){
+						aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][0]["expression"]["expression"])["value"] + ")";
+						alias = subSel["variables"][0]["variable"]["value"];
+					}else {
+						aggregateExpression = subSel["variables"][1]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][1]["expression"]["expression"])["value"] + ")";	
+						alias = subSel["variables"][1]["variable"]["value"];
+					}
+				}		
+			
+			if(subSel["where"].length == 1){
+				var wherePattern = subSel["where"][0];
+				if(wherePattern["type"] == "bgp" ){
+					if(typeof wherePattern["triples"] !== "undefined" && wherePattern["triples"].length == 1){	
+						var triple = wherePattern["triples"][0];
+						var propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
+						if(propertyResolved.complete == true){
+							var data = propertyResolved["data"][0];
+							isLocalAggregation = true;
+							var attributeInfo = {
+								"alias":alias,
+								"identification":null,
+								"exp":aggregateExpression,
+								"requireValues":true,
+								"isInternal":false,
+								"addLabel":false,
+								"addAltLabel":false,
+								"addDescription":false,
+								"counter":orderCounter
+							}
+							attributeTable[alias] = {
+								"seen":true,
+							};
+							orderCounter++
+							variableList[alias] = 100;
+							classesTable[triple["subject"]["value"]] = addAttributeToClass(classesTable[triple["subject"]["value"]], attributeInfo);
+						}
+					} else if (typeof wherePattern["triples"] !== "undefined" && wherePattern["triples"].length == 2){
+						for(let t = 0; t < 2; t++){
+							var triple = wherePattern["triples"][t];
+							if(triple["object"]["termType"] == "Variable"){
+								var propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
+								if(propertyResolved.complete == true){
+									var data = propertyResolved["data"][0];
+									isLocalAggregation = true;
+									var attributeInfo = {
+										"alias":alias,
+										"identification":null,
+										"exp":aggregateExpression,
+										"requireValues":true,
+										"isInternal":false,
+										"addLabel":false,
+										"addAltLabel":false,
+										"addDescription":false,
+										"counter":orderCounter
+									}
+									orderCounter++
+									attributeTable[alias] = {
+										"seen":true,
+									};
+									variableList[alias] = 100;									
+									classesTable[triple["subject"]["value"]] = addAttributeToClass(classesTable[triple["subject"]["value"]], attributeInfo);
+								}
+							}
+						}	
+					}
+				} else if (wherePattern["type"] == "optional" && typeof wherePattern["patterns"] !== "undefined" && wherePattern["patterns"].length == 1
+				&& wherePattern["patterns"][0]["type"] == "bgp" && typeof wherePattern["patterns"][0]["triples"] !== "undefined" && wherePattern["patterns"][0]["triples"].length ==1){
+					var triple = wherePattern["patterns"][0]["triples"][0];
+					var propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
+					if(propertyResolved.complete == true){
+						var data = propertyResolved["data"][0];
+						isLocalAggregation = true;
+						var attributeInfo = {
+							"alias":alias,
+							"identification":null,
+							"exp":aggregateExpression,
+							"requireValues":false,
+							"isInternal":false,
+							"addLabel":false,
+							"addAltLabel":false,
+							"addDescription":false,
+							"counter":orderCounter
+						}
+						orderCounter++
+						attributeTable[alias] = {
+							"seen":true,
+						};		
+						variableList[alias] = 100;							
+						classesTable[triple["subject"]["value"]] = addAttributeToClass(classesTable[triple["subject"]["value"]], attributeInfo);
+					}
+				}
+				
+			} else if (subSel["where"].length == 2){
+				for(let w = 0; w < 2; w++){
+					var wherePattern = subSel["where"][w];
+					if (wherePattern["type"] == "optional" && typeof wherePattern["patterns"] !== "undefined" && wherePattern["patterns"].length == 1
+					&& wherePattern["patterns"][0]["type"] == "bgp" && typeof wherePattern["patterns"][0]["triples"] !== "undefined" && wherePattern["patterns"][0]["triples"].length ==1){
+						
+						var triple = wherePattern["patterns"][0]["triples"][0];
+						var propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
+						
+						if(propertyResolved.complete == true){
+							var data = propertyResolved["data"][0];
+							isLocalAggregation = true;
+							var attributeInfo = {
+								"alias":alias,
+								"identification":null,
+								"exp":aggregateExpression,
+								"requireValues":false,
+								"isInternal":false,
+								"addLabel":false,
+								"addAltLabel":false,
+								"addDescription":false,
+								"counter":orderCounter
+							}
+							orderCounter++
+												
+							attributeTable[alias] = {
+								"seen":true,
+							};
+							variableList[alias] = 100;				
+							classesTable[triple["subject"]["value"]] = addAttributeToClass(classesTable[triple["subject"]["value"]], attributeInfo);
+						}
+					}	
+				}
+			}
+		}
+		
+	if(isLocalAggregation == false){
+
 		// console.log("SUBQUERY", where["patterns"][0], classesTable, allClasses);
 		
 		var abstractTable = await generateAbstractTable(where["patterns"][0], allClasses, variableList, nodeList);
@@ -5196,7 +5346,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							for(let clazz in abstractTable["classesTable"]){
 								if(typeof abstractTable["classesTable"][clazz] !== "function"){
 									if(clazz !== subSelectMainClass && (typeof abstractTable["classesTable"][clazz]["aggregations"] !== "undefined" || abstractTable["classesTable"][clazz]["aggregations"] != null)){
-										
 										var underSubQuery = false;
 										for(let l = 0; l < abstractTable["linkTable"].length; l++){
 											if(abstractTable["linkTable"][l]["subject"] == clazz && (abstractTable["linkTable"][l]["isSubQuery"] == true || abstractTable["linkTable"][l]["isGlobalSubQuery"] == true )){
@@ -5494,8 +5643,24 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		for(let subClass in abstractTable["classesTable"]){
 			if(typeof abstractTable["classesTable"][subClass] !== "function"){
 				if(typeof classesTable[subClass] === 'undefined')classesTable[subClass] = abstractTable["classesTable"][subClass];
+				else {
+					
+					if(typeof abstractTable["classesTable"][subClass]["fields"] !== "undefined" && abstractTable["classesTable"][subClass]["fields"].length > 0){
+						var fields = abstractTable["classesTable"][subClass]["fields"];
+						for(let f = 0; f < fields.length; f++){
+							
+							if(fields[f].exp !== "(select this)" && abstractTable["classesTable"][subClass]["instanceAlias"] !== null && abstractTable["classesTable"][subClass]["instanceAlias"] !== "") {
+								fields[f].exp = abstractTable["classesTable"][subClass]["instanceAlias"] + "." + fields[f].exp;
+								abstractTable["classesTable"][subSelectMainClass] = addAttributeToClass(abstractTable["classesTable"][subSelectMainClass], fields[f]);
+							}
+						}
+					}
+				}
 			}
 		}
+		
+	}
+		
 	}
 	
 	if(where["type"] == "group" && typeof where["patterns"][0]["queryType"] === "undefined"){
@@ -5969,8 +6134,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 	
 	for(let triple = 0; triple < triples.length; triple++) {
 	  if(typeof triples[triple] !== "undefined"){
+		  
+		  
 		//class definitions
-		console.log("classifiers", classifiers, triples[triple]["predicate"]["value"])
+		
 		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")) && typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' && triples[triple]["object"]["termType"] !== "BlankNode"
 			&& typeof variableList[triples[triple]["object"]["value"]+"Label"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"Description"] === "undefined"){
 			var instanceAlias = null;
@@ -6598,7 +6765,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 	  if(typeof triples[triple] !== "undefined"){
 		if((triples[triple]["predicate"]["value"] != directClassMembershipRole) || ((triples[triple]["predicate"]["value"] == directClassMembershipRole) && triples[triple]["object"]["termType"] === "BlankNode") ||
 		typeof variableList[triples[triple]["object"]["value"]+"Label"] !== "undefined" || typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] !== "undefined" || typeof variableList[triples[triple]["object"]["value"]+"Description"] !== "undefined"){
-			
 			//data property
 			var objectNameParsed = getVariable(triples[triple]["object"]);
 			var attributeResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["value"]});
@@ -6656,9 +6822,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					if(bgptype == "optional") requireValues = false;
 					
 					var subjectClasses = nodeList[triples[triple]["subject"]["value"]]["uses"];
-
+					
 					for(let sclass in subjectClasses){
 					  if(typeof subjectClasses[sclass] !== "function"){
+						 
 						var createAttribute = true;
 						//var schema = new VQ_Schema();
 						// if class is in the schema, class does not have given attribute -> do not add attribute to this class
@@ -6668,9 +6835,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							if(resolvePropertyByNameAndClass.data.length == 0) createAttribute = false
 
 						};
-
+						
 						if(createAttribute == true){
 							if(typeof attributeTable[objectNameParsed["value"]] === 'undefined'){
+								
 								attributeTable[objectNameParsed["value"]] = {
 									"class":sclass,
 									"variableName":objectNameParsed["value"],
@@ -6684,7 +6852,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 								attributeTableAdded.push(objectNameParsed["value"]);
 								orderCounter++;
 							} else if(findAttributeInAttributeTable(attributeTable, objectNameParsed["value"], triples[triple]["object"]["value"], attributeResolved.data[0]) == null){
-								
 								attributeTable[objectNameParsed["value"]+counter] = {
 									"class":sclass,
 									"variableName":objectNameParsed["value"],
@@ -8318,16 +8485,13 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 		classBox.setClassStyle(nodeType);
 		
-		if(typeof clazz["groupByThis"] !== 'undefined'){
+		if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
 			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
 			else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
 		} else if(instanceAlias != null ) {
-			//console.log("className", className)
 			if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
 			else classBox.setInstanceAlias(instanceAlias);
 		}
-	// elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
-		
 
 		// setIndirectClassMembership
 		//class not in a schema 

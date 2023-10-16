@@ -1015,7 +1015,6 @@ dataShapes = {
 		_.each(rr.data, function(cl) {
 			var id = `c_${cl.id}`;
 			var isClasif = false;
-			var ct = '';
 			var type = 'Class';
 			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 				isClasif = true;
@@ -1106,7 +1105,7 @@ dataShapes = {
 				p.max_cardinality = '*';
 			if ( p.inverse_max_cardinality == -1 )
 				p.inverse_max_cardinality = '*';
-			p_list_full[p_id] = {id:p.id, c_from:c_from, c_to:c_to, c_to_full:c_to_full, p_name:p_name, cnt:p.cnt, object_cnt:p.object_cnt,
+			p_list_full[p_id] = {id:p.id, c_from:c_from, c_to:c_to, c_to_full:c_to_full, p_name:p_name, cnt:p.cnt, object_cnt:p.object_cnt, count:0,
 							     max_cardinality:p.max_cardinality, inverse_max_cardinality:p.inverse_max_cardinality};
 			
 			if ( c_to.length == 1 && p.range_class_id == c_to[0].class_id)  // TODO te varētu būt drusku savādāk
@@ -1120,45 +1119,43 @@ dataShapes = {
 				p_list_full[p_id].is_domain = '';
 			
 			var rr1;
-
-			if (superclassType == 1) {
+			// TODO šis būs tikai tad, ja ir parametrs, bet iespējams, ka nebūs nekad
+			/*
+			if ( c_to.length * c_from_sc.length > 10) {  // TODO šeit ir ielikta pagaidu konstante daudzgalu propertijām
+				if (c_to.length > 1 ) {
+					rr1 = c_to.map( v => { return v.class_id});
+					add_superclass (rr1, `${p_name}_1`);
+					add_superclass (rr1, `${p_name}_2`);
+				}
+				if (c_from_sc.length > 1 ) {
+					rr1 = c_from_sc.map( v => { return v.class_id});
+					add_superclass (rr1, `${p_name}_1`);
+					add_superclass (rr1, `${p_name}_2`);
+				}
+			}			*/
+			if ( superclassType > 0  ) {
 				if (c_to.length > 1 && c_from_sc.length > 0) {
 					rr1 = c_to.map( v => { return v.class_id});
 					add_superclass (rr1, p_name);
-					p_list_full[p_id].c_to_list = rr1.join('_');
+				}	
+			}
+			if ( superclassType == 2 ) {
+				if ( c_from_sc.length > 1 && c_to.length > 0) {
+					rr1 = c_from_sc.map( v => { return v.class_id}); 
+					add_superclass (rr1, p_name);
 				}
 			}
-			if (superclassType == 2 || superclassType == 3 ) {
-				var cond = true;
-				if ( superclassType == 2 )
-					cond = c_to.length > 0;
-				if ( c_from_sc.length > 1 && cond) { // Bija šāds if ( c_from.length > 1  && c_to.length > 0) 
-					rr1 = c_from_sc.map( v => { return v.class_id});
+			if ( superclassType == 3 ) {
+				if ( c_from.length > 1 ) {
+					rr1 = c_from.map( v => { return v.class_id}); 
 					add_superclass (rr1, p_name);
-					p_list_full[p_id].c_from_list = rr1.join('_');
-					var card = c_from_sc.filter(function(p){ return p.x_max_cardinality  == 1}); 
-					if ( card.length == c_from_sc.length)
-						p_list_full[p_id].c_from_list_card = 1;
-					else
-						p_list_full[p_id].c_from_list_card = '*';
-					
-					if (c_to.length > 1) {
-						rr1 = c_to.map( v => { return v.class_id});
-						add_superclass (rr1, p_name);
-						p_list_full[p_id].c_to_list = rr1.join('_');
-						
-					}
-				} else if (c_to.length > 1) {
-					rr1 = c_to.map( v => { return v.class_id});
-					add_superclass (rr1, p_name);
-					p_list_full[p_id].c_to_list = rr1.join('_');
 				}
 			}
 		}
 		
-		console.log(super_classes)
+		console.log("*** super_classes ***", super_classes)
 		var temp = {};
-		super_classes_list = [];
+		var super_classes_list = [];
 		for (var sc of Object.keys(super_classes)) {
 			if ( super_classes[sc].count > 1 ) { // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
 				temp[sc] = super_classes[sc];
@@ -1168,7 +1165,7 @@ dataShapes = {
 		}
 		super_classes = temp;
 		super_classes_list = super_classes_list.sort((a, b) => { return a.cl_list.length - b.cl_list.length; });
-		console.log(p_list_full)
+		console.log("*** p_list_full ***", p_list_full)
 		
 		// Izveido abstrakto virsklašu koku, TODO varētu nestrādāt visos gadījumos
 		for (var sc1 of super_classes_list) {	
@@ -1194,7 +1191,7 @@ dataShapes = {
 		}
 		
 		super_classes_list = super_classes_list.sort((a, b) => { return a.level - b.level; });
-		console.log(super_classes_list)
+		console.log("*** super_classes_list ***", super_classes_list)
 
 		// Pieliek sbstraktās virsklases klašu sarakstā
 		for (var super_class of super_classes_list) {
@@ -1226,7 +1223,7 @@ dataShapes = {
 		function addProperty(pp, c_from, c_to, c_to_full) {
 			if ( c_to.length == 0 && c_to_full.length > 0 ) {
 				c_to_full.sort((a, b) => { return b.cnt - a.cnt; });
-				c_to = c_to_full[0];
+				c_to = [c_to_full[0]];
 			}
 			if ( c_from.length > 0  && c_to.length == 0) {
 				for (var cl of c_from) {
@@ -1264,7 +1261,7 @@ dataShapes = {
 							if ( c_to.length == 1 && cnt == pp.cnt)
 								is_range = 'R';  
 							var id = `c_${c_1.class_id}_c_${c_2.class_id}_${pp.p_name}`;
-							var p_info = {p_name:pp.p_name, cnt:cnt, cnt2:c_1.object_cnt, cnt_all: pp.cnt, is_range:is_range, is_domain:is_domain,
+							var p_info = {p_name:pp.p_name, p_id:`p_${pp.id}`, cnt:cnt, cnt2:c_1.object_cnt, cnt_all: pp.cnt, is_range:is_range, is_domain:is_domain,
 							max_cardinality:pp.max_cardinality, inverse_max_cardinality:pp.inverse_max_cardinality}
 							rezFull.classes[from_id].used = true;
 							if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);
@@ -1341,6 +1338,7 @@ dataShapes = {
 			
 			}			
 		} 
+		
 
 		// kopējo atribūtu pārvietošana pie virsklases
 		for (var super_class of super_classes_list) {	
@@ -1390,7 +1388,7 @@ dataShapes = {
 						if ( atr_tree[p_name] == undefined)
 							atr_tree[p_name] = {count:1, id_list:[atr], p_name:`${assoc.from}_${sc}_${assoc.list[0].p_name}`, 
 												info:{ removed: false, from:assoc.from, to:sc, id2:`${assoc.from}_${sc}`,
-													list:[{p_name:assoc.list[0].p_name, max_cardinality:assoc.list[0].max_cardinality, cnt:assoc.list[0].cnt, cnt_all:assoc.list[0].cnt_all, is_domain:assoc.list[0].is_domain }]}};
+													list:[{p_name:assoc.list[0].p_name, p_id:assoc.list[0].p_id, max_cardinality:assoc.list[0].max_cardinality, cnt:assoc.list[0].cnt, cnt_all:assoc.list[0].cnt_all, is_domain:assoc.list[0].is_domain }]}};
 						else {
 							atr_tree[p_name].count = atr_tree[p_name].count+1;
 							atr_tree[p_name].id_list.push(atr);
@@ -1422,6 +1420,7 @@ dataShapes = {
 				}
 			}
 		}
+		
 		// kopējo izejošo propertiju pārvietošana pie virsklases
 		for (var super_class of super_classes_list) {
 			var sc = super_class.id;
@@ -1434,7 +1433,7 @@ dataShapes = {
 						if ( atr_tree[p_name] == undefined)
 							atr_tree[p_name] = {count:1, id_list:[atr], p_name:`${sc}_${assoc.to}_${assoc.list[0].p_name}`, 
 												info:{ removed: false, from:sc, to:assoc.to, id2:`${sc}_${assoc.to}`,
-													list:[{p_name:assoc.list[0].p_name, max_cardinality:assoc.list[0].max_cardinality, cnt:assoc.list[0].cnt, cnt_all:assoc.list[0].cnt_all, is_range:assoc.list[0].is_range }]}};
+													list:[{p_name:assoc.list[0].p_name, p_id:assoc.list[0].p_id, max_cardinality:assoc.list[0].max_cardinality, cnt:assoc.list[0].cnt, cnt_all:assoc.list[0].cnt_all, is_range:assoc.list[0].is_range }]}};
 						else {
 							atr_tree[p_name].count = atr_tree[p_name].count+1;
 							atr_tree[p_name].id_list.push(atr);
@@ -1467,6 +1466,34 @@ dataShapes = {
 			}
 		}
 
+		// Saskaita, cik vietās ir propertija iezīmēta
+		for (var aa of Object.keys(rezFull.assoc)) {
+			console.log(rezFull.assoc[aa])
+			if ( !rezFull.assoc[aa].removed) {
+				var pId = rezFull.assoc[aa].list[0].p_id;
+				p_list_full[pId].count = p_list_full[pId].count + 1;
+			}
+		}
+		
+		// Ievelk daudzgalu propertijas klasēs
+		for (var aa of Object.keys(rezFull.assoc)) {
+			if ( !rezFull.assoc[aa].removed) {
+				if ( p_list_full[rezFull.assoc[aa].list[0].p_id].count > 10) { // TODO šī pagaidām ir konstanstate, kuras propertijas ievilkt klasēs
+					var prop = rezFull.assoc[aa];
+					prop.removed = true;
+					var c_from = rezFull.classes[prop.from];
+					var c_to = rezFull.classes[prop.to];
+					for (var pr of prop.list) {
+						c_to.atr_list2.push(`<- ${pr.p_name} [${pr.inverse_max_cardinality}] ${c_from.prefix}${c_from.displayName}`); 
+						c_from.atr_list.push({p_name:pr.p_name, cnt:pr.cnt, cnt_all:pr.cnt_all, class_name:` -> ${c_to.prefix}${c_to.displayName}`,
+								max_cardinality:pr.max_cardinality, inverse_max_cardinality:pr.inverse_max_cardinality, is_domain:pr.is_domain});
+
+					}					 
+				
+				}
+			}
+		}
+		
 		// Savāc 'plānās' apakšklases pie virsklases
 		for (var cl of Object.keys(rezFull.classes)) {
 			if ( !rezFull.classes[cl].used ) {
@@ -1538,7 +1565,7 @@ dataShapes = {
 
 		// Asociāciju savilkšana kopā - pie vienas līnijas vairakas propertijas
 		var assoc = {};
-		console.log(rezFull.assoc)
+		//console.log(rezFull.assoc)
 		for (var aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) { 
 				if ( rezFull.assoc[aa].list[0].cnt == -1 )
@@ -1562,8 +1589,153 @@ dataShapes = {
 			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} ${n.cnt} [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 		}
 
-		console.log(rezFull);
+		console.log("*** rezFull ***", rezFull);
 
+		var link = document.createElement("a");
+		link.setAttribute("download", "diagr_data.json");
+		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
+		document.body.appendChild(link);
+		link.click();
+		
+	},
+	makeSuperDiagr : async function(c_list, p_list, remSmall, schema, info) {
+		// Tiek padots zīmējamo klašu un propertiju saraksts
+		var rr;
+		var rezFull = {classes:{}, supClasses:{}, schema:schema, info:info, type:'makeSuperDiagr'};
+		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
+		
+		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
+
+		_.each(rr.data, function(cl) {
+			rezFull.classes[`t_c_${cl.id}`] = { id:`t_c_${cl.id}`, used:false, displayName:`${cl.full_name} ID-${cl.id}`, type:'Data', parent:[]};
+			rezFull.classes[`s_t_c_${cl.id}`] = { id:`s_t_c_${cl.id}`, used:false, displayName:`${cl.full_name} ID-${cl.id}`, type:'Data', parent:[]};
+			rezFull.classes[`s_t_d_c_${cl.id}`] = { id:`s_t_d_c_${cl.id}`, used:false, displayName:`${cl.full_name} ID-${cl.id}`, type:'Data', parent:[]};
+		});
+		
+		var p_list_full = [];
+		
+		var super_classes = {t:{}, s_t:{}, s_t_d:{}};	
+		// Funkcija potenciālo virsklašu veidošanai
+		function add_superclass (key, sc_list, prop_name) {
+			sc_id = `c_${sc_list.join('_')}`;
+			if ( super_classes[key][sc_id] == undefined ) {
+				var sc_names = [];
+				for (var sc of sc_list) {	
+					rezFull.classes[`${key}_c_${sc}`].parent.push(`${key}_${sc_id}`);
+					rezFull.classes[`${key}_c_${sc}`].used = true;
+					sc_names.push(rezFull.classes[`t_c_${sc}`].displayName);
+				}
+				sc_names = sc_names.sort((a, b) => { return a < b; });
+				super_classes[key][sc_id] = {count:1, cl_list:sc_list, cl_names:sc_names.join('\n'), prop_list:[prop_name]};
+			}
+			else {
+				if ( !super_classes[key][sc_id].prop_list.includes(prop_name)) {
+					super_classes[key][sc_id].count = super_classes[key][sc_id].count + 1;
+					super_classes[key][sc_id].prop_list.push(prop_name);			
+				}
+			}
+		}
+		
+		allParams.main.p_list =  p_list.map(v => v.id);
+		rr = await this.callServerFunction("xx_getCPInfo", allParams); 
+		var cp_info = rr.data;
+		
+		// Mazo propertiju noņemšana, ja ir uzstādīts dotais parametrs
+		if ( remSmall > 0 ) {
+			var tt = [];
+			for (var ii of cp_info) {
+				if ( Number(ii.cnt) > remSmall-1 ) {
+					if ( ii.object_cnt < remSmall && ii.object_cnt != 0) {
+						ii.object_cnt = 0;
+					}
+					if ( Number(ii.cnt) - ii.object_cnt < remSmall && Number(ii.cnt) != ii.object_cnt ) {
+						ii.object_cnt = Number(ii.cnt);
+					}
+					tt.push(ii);
+				}
+			}
+			cp_info = tt;
+		}
+		
+		// Propertiju saraksta sākotnējā apstrāde, savāc galus, izveido potenciālās virsklases, skatoties uz padoto parametru
+		for (var p of p_list) {	
+			var p_id = `p_${p.id}`;
+			var p_name = `${p.prefix}:${p.display_name} (${p.id})`;
+
+			var cp_info_p = cp_info.filter(function(cp){ 
+				return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0;
+			}); 
+
+			var c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2}); 
+			var c_from_sc = cp_info_p.filter(function(cp){ return cp.type_id == 2 && cp.object_cnt > 0 }); 
+			var c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1}); 
+
+			var rr1;
+
+			if (c_to.length > 1 && c_from_sc.length > 0) {
+				rr1 = c_to.map( v => { return v.class_id});
+				add_superclass ('t', rr1, `->${p_name}`);
+				add_superclass ('s_t', rr1, `->${p_name}`);
+				add_superclass ('s_t_d', rr1, `->${p_name}`);
+			}
+			if ( c_from_sc.length > 1) {
+				if ( c_from_sc.length == c_from.length ) {
+					rr1 = c_from_sc.map( v => { return v.class_id});
+					add_superclass ('s_t', rr1, `${p_name}->`);
+					add_superclass ('s_t_d', rr1, `${p_name}->`);
+				}
+				else {
+					rr1 = c_from_sc.map( v => { return v.class_id});
+					add_superclass ('s_t', rr1, `${p_name}->`);
+					rr1 = c_from.map( v => { return v.class_id});
+					add_superclass ('s_t_d', rr1, `${p_name}->`);
+				}
+			}
+			else if ( c_from.length > 1) {
+				rr1 = c_from.map( v => { return v.class_id});
+				add_superclass ('s_t_d', rr1, p_name);
+			}
+		}
+		
+		console.log(super_classes)
+		function ProcessSC(sc_tree, pref) {
+			var temp = {};
+			var super_classes_list = [];
+			for (var sc of Object.keys(sc_tree)) {
+				temp[sc] = sc_tree[sc];
+				sc_tree[sc].id = sc;
+				sc_tree[sc].parent = [];
+				super_classes_list.push(sc_tree[sc])
+			}
+			super_classes_list = super_classes_list.sort((a, b) => { return a.cl_list.length - b.cl_list.length; });
+			
+			for (var sc1 of super_classes_list) {	
+				for (var sc2 of super_classes_list) {	
+					if ( sc1.cl_list.length < sc2.cl_list.length ) {
+						var ii = 0;
+						for (var c of sc1.cl_list) {
+							if ( sc2.cl_list.includes(c) )
+								ii = ii+1;
+						}
+						if ( ii == sc1.cl_list.length) {
+							sc1.parent.push(`${pref}${sc2.id}`);
+						}	
+					}				
+				}
+			}
+			return super_classes_list;
+		}
+
+		super_classes.t = ProcessSC(super_classes.t, 't_');
+		super_classes.s_t = ProcessSC(super_classes.s_t, 's_t_');
+		super_classes.s_t_d = ProcessSC(super_classes.s_t_d, 's_t_d_');
+		console.log(super_classes)
+		
+		_.each(super_classes.t, function(cl) { var id = `t_${cl.id}`; cl.id2 = id; cl.type = 'Class'; cl.prop_string = cl.prop_list.sort().join('\n'); rezFull.supClasses[id] = cl; });
+		_.each(super_classes.s_t, function(cl) { var id = `s_t_${cl.id}`; cl.id2 = id; cl.type = 'Classif'; cl.prop_string = cl.prop_list.sort().join('\n'); rezFull.supClasses[id] = cl; });
+		_.each(super_classes.s_t_d, function(cl) { var id = `s_t_d_${cl.id}`; cl.id2 = id; cl.type = 'Data'; cl.prop_string = cl.prop_list.sort().join('\n'); rezFull.supClasses[id] = cl; });
+		console.log(rezFull)
+		
 		var link = document.createElement("a");
 		link.setAttribute("download", "diagr_data.json");
 		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));

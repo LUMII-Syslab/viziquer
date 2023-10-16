@@ -417,7 +417,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	  } else return { parsed_exp: []};
     } catch (e) {
       // TODO: error handling
-      console.log(e)
+      Interpreter.showErrorMsg("Syntax error in attribute expression " + str_expr, -3);  
     } finally {
       // nothing
     }
@@ -444,8 +444,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  return { parsed_exp: parsed_exp};
 	  }else return { parsed_exp: []};
     } catch (e) {
-      // TODO: error handling
-      console.log(e)
+      Interpreter.showErrorMsg("Syntax error in path expression " + str_expr, -3);  
     } finally {
       // nothing
     }
@@ -462,8 +461,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  // parse_obj = await vq_variable_grammar.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		  parse_obj = await vq_variable_grammar_parser.parse(parse_obj, {schema:null, symbol_table:symbol_table, context:context});
 		} catch (e) {
-		  // TODO: error handling
-		 // console.log(e)
+		  Interpreter.showErrorMsg("Syntax error in attribute expression " + exp_obj.exp, -3);  
 		}
 	   }
 		if(parse_obj.startsWith("[[") == false && parse_obj.endsWith("]]") == false){
@@ -481,13 +479,15 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 				var isSimple = false;
 				if(tt != null) isSimple = true;
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
+			 
 			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple);
 			  
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
 			  // TODO: error handling
-			  console.log(e)
+			  // console.log(e)
+			  Interpreter.showErrorMsg("Syntax error in attribute expression " + exp_obj.exp, -3);  
 			} finally {
 			  //nothing
 			};
@@ -631,7 +631,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 	  }
 	  // CAUTION!!!!! Hack for (.)
       if (f.exp=="(.)" || f.exp=="(select this)") {
-        if (obj_class.instanceAlias==null) {
+		if (obj_class.instanceAlias==null || obj_class.instanceAlias=="") {
           if (f.alias!=null && f.alias!="") {
 			  obj_class.instanceAlias=f.alias;
 			  obj_class.instanceIsConstant = false;
@@ -640,8 +640,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
         } else{
 			
           var instanceAliasIsURI = isURI(obj_class.instanceAlias);
-		  
-          if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
+		  if (instanceAliasIsURI || obj_class.instanceIsConstant == true) {
             var strURI = (instanceAliasIsURI == 3 && obj_class.instanceAlias.indexOf("<") == -1) ? "<"+obj_class.instanceAlias+">" : obj_class.instanceAlias;
 			 var schemaName = await dataShapes.schema.schemaType;
 			 if(typeof schemaName === "undefined") schemaName = "";
@@ -666,7 +665,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 					}
 				}
 			}
-			
+
 			if(obj_class.identification.local_name != null){
 				obj_class.instanceAlias = obj_class.identification.display_name;
 				if(typeof obj_class.instanceAlias === "undefined") obj_class.instanceAlias = obj_class.identification.local_name;
@@ -991,6 +990,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		}
 		
     }
+	
 	// );
 	
 	if(obj_class.linkIdentification && obj_class.linkIdentification.local_name && obj_class.linkIdentification.local_name.startsWith("?")){
@@ -999,7 +999,55 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
 	}
 	
-	 for (const c of obj_class.conditions) {await parseExpObject(c,obj_class.identification);};
+	 for (const c of obj_class.conditions) {
+		await parseExpObject(c,obj_class.identification);
+		if(obj_class.isBlankNode == true ){
+			if(c.exp.indexOf("=") === -1){
+				obj_class.isBlankNode = false;
+				obj_class.instanceAlias = "expr_"+count;
+				obj_class.instanceIsVariable = true;
+				count++;
+			}else{
+				var rel = findINExpressionTable(c["parsed_exp"], "RelationalExpression");
+				var left = findINExpressionTable(rel["NumericExpressionL"], "PrimaryExpression");
+				var right = findINExpressionTable(rel["NumericExpressionR"], "PrimaryExpression");
+				var temp = checkIfIsSimpleVariable(c["parsed_exp"], true, null, true, false, false, false);
+				isSimpleFilter = temp["isSimpleFilter"];
+				
+				//filter as triple
+				if(typeof rel['Relation'] !== 'undefined' 
+						&& rel['Relation'] == "=" && isSimpleFilter == true &&
+							(
+							   (((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME" && left["var"]["ref"] == null) 
+								|| typeof left["Path"] !== 'undefined' 
+								|| typeof left["Reference"] !== 'undefined'
+								|| (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] !== 'undefined')
+								) && typeof right["var"] === 'undefined' 
+								&& typeof right["Path"] === 'undefined' 
+								&& typeof right["Reference"] === 'undefined'
+								&& typeof right["iri"] === 'undefined'
+								)
+								||(((typeof right["var"] !== 'undefined' && typeof right["var"]["kind"] !== 'undefined' && right["var"]["kind"] == "PROPERTY_NAME") 
+								|| typeof right["Path"] !== 'undefined' 
+								|| typeof right["Reference"] !== 'undefined'
+								)
+								&& typeof left["var"] === 'undefined' 
+								&& typeof left["Path"] === 'undefined' 
+								&& typeof left["Reference"] === 'undefined'
+								&& (typeof left["iri"] !== 'undefined' && typeof left["iri"]["PrefixedName"] === 'undefined')
+								)
+							))
+				{
+					
+				} else {
+					obj_class.isBlankNode = false;
+					obj_class.instanceAlias = "expr_"+count;
+					obj_class.instanceIsVariable = true;
+					count++;
+				}
+			}
+		}
+	 };
 	// obj_class.conditions.forEach(async function(c) {await parseExpObject(c,obj_class.identification);});
 	for (const a of obj_class.aggregations) {await parseExpObject(a,obj_class.identification);};
     // obj_class.aggregations.forEach(async function(a) {await parseExpObject(a,obj_class.identification);});
@@ -1528,7 +1576,7 @@ function getGraphFullForm(graph, prefixes){
 	return graph
 }
 
-async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
+getResolveInformation = async function(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
 	
 	for(let exp in parsed_exp){
 		if(typeof parsed_exp[exp] === "object"){
