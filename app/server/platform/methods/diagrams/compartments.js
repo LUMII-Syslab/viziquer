@@ -73,13 +73,10 @@ Meteor.methods({
 				update["valueLC"] = list["value"].toLowerCase();
 
 				if (list["value"] == "" && list["input"] == "") {
-					Compartments.remove({_id: list["id"], projectId: list["projectId"],
-															versionId: list["versionId"]});
+					Compartments.remove({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]});
 				}
-
 				else {
-					Compartments.update({_id: list["id"], projectId: list["projectId"],
-										versionId: list["versionId"]},
+					Compartments.update({_id: list["id"], projectId: list["projectId"], versionId: list["versionId"]},
 										{$set: update});
 									// {$set: update}, {trimStrings: false, removeEmptyStrings: false,});
 				}
@@ -88,7 +85,6 @@ Meteor.methods({
 					var elem_update = list["elementStyleUpdate"]
 					Elements.update({_id: list["elementId"]}, {$set: elem_update});
 				}
-
 			}
 		}
 

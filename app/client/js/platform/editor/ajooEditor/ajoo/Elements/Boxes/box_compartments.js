@@ -160,7 +160,7 @@ BoxCompartments.prototype = {
 		_.each(comparts, function(compart) {
 
 			var text = compart.presentation;
-
+			
 			text.width(text_width);
 			text.y(total_height);	
 

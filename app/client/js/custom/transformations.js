@@ -17,68 +17,156 @@ Interpreter.customMethods({
 		}
 	},
 	
-	VQsetGroupBy: function(params) {
-		 let act_elem = Session.get("activeElement");
-		 let elem = new VQ_Element(act_elem);
-		 let comp_val_inst = elem.getCompartmentValue("Instance");
-		 // let comp_val_group = elem.getCompartmentValue("Group by this");
-		 let comp_val_group = params["input"];
-		 if(params.compartmentType.name == "Instance") {
-			comp_val_group = elem.getCompartmentValue("Group by this");
-			comp_val_inst = params["input"];
-		 }
 
-		 let compartments = Compartments.find({elementId: act_elem}).fetch()
+	UpdateInstanceCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
+		let compart_type = this;
 
-		 if(comp_val_inst != null && comp_val_inst != ""){
-			 var proj = Projects.findOne({_id: Session.get("activeProject")});
-			 if (proj) {
+		let value = input;
+
+		let elem = new VQ_Element(Session.get("activeElement"));
+		let group_by_value = elem.getCompartmentValue("Group by this");
+
+		if (input != "" && input != null) {
+			let proj = Projects.findOne({_id: Session.get("activeProject")});
+			if (proj) {
+				let comp_val_inst = value;
 				Interpreter.destroyErrorMsg();
-				if(comp_val_inst!= null && !comp_val_inst.trim().startsWith("?") && !comp_val_inst.trim().startsWith("=")){
+				if (comp_val_inst!= null && !comp_val_inst.trim().startsWith("?") && !comp_val_inst.trim().startsWith("=")){
 					//uri
-					if(isURI(comp_val_inst) == 3 || isURI(comp_val_inst) == 4) {
+					if (isURI(comp_val_inst) == 3 || isURI(comp_val_inst) == 4) {
 						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					// number
-					else if(!isNaN(comp_val_inst)) {
+					else if (!isNaN(comp_val_inst)) {
 						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					// string in quotes
-					else if(comp_val_inst.startsWith("'") && comp_val_inst.endsWith("'") || comp_val_inst.startsWith('"') && comp_val_inst.endsWith('"')) {
-						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+					else if (comp_val_inst.startsWith("'") && comp_val_inst.endsWith("'") || comp_val_inst.startsWith('"') && comp_val_inst.endsWith('"')) {
+						if (proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					//display label
-					else if(comp_val_inst.startsWith('[') && comp_val_inst.endsWith(']')) {
-						if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+					else if (comp_val_inst.startsWith('[') && comp_val_inst.endsWith(']')) {
+						if (proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
 					}
 					//string
-					else if(comp_val_inst.match(/^[0-9a-z_]+$/i)) {
-						if(proj.decorateInstancePositionVariable == true) comp_val_inst = "?" + comp_val_inst;
+					else if (comp_val_inst.match(/^[0-9a-z_]+$/i)) {
+						if (proj.decorateInstancePositionVariable == true) comp_val_inst = "?" + comp_val_inst;
 					}
 					else Interpreter.showErrorMsg("Instance identification '" + comp_val_inst + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
 				} 	 
-			 }
-		 }
+			}
+
+			if (group_by_value == "true" || group_by_value == true) {
+				value = make_group_by_instance_value(input);
+			}
+
+			elem.setCompartmentValue("Group by this", group_by_value, "", false);
+		}
+
+		else {
+			if (group_by_value == "true") {
+				elem.setCompartmentValue("Group by this", group_by_value, group_by_value, false);
+			}
+		}
+
+		// elem.setCompartmentValue("Instance", input, value, false);
+		return Dialog.updateCompartmentValue(compart_type, input, value, src_id);
+	},
+
+
+	UpdateGroupByCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
+		let compart_type = this;
+		let value = input;
+
+		let elem = new VQ_Element(Session.get("activeElement"));
+		let instance_input = elem.getCompartmentValue("Instance") || "";
+
+		if (instance_input == "") {
+			value = "true";
+			if (input != "true") {
+				value = "";
+			}
+		}
+		else {
+			value = "";
+			if (input == "true") {
+				instance_new_value = make_group_by_instance_value(instance_input);
+				elem.setCompartmentValue("Instance", instance_input, instance_new_value, false);
+			}
+			else {
+				elem.setCompartmentValue("Instance", instance_input, instance_input, false);
+			}
+		}
+
+		// elem.setCompartmentValue("Group by this", input, value, false);
+		return Dialog.updateCompartmentValue(compart_type, input, value, src_id);
+	},
+
+	// VQsetGroupBy: function(params) {
+	// 	console.log("params ", params)
+	// 	 let act_elem = Session.get("activeElement");
+	// 	 let elem = new VQ_Element(act_elem);
+	// 	 let comp_val_inst = elem.getCompartmentValue("Instance");
+	// 	 // let comp_val_group = elem.getCompartmentValue("Group by this");
+	// 	 let comp_val_group = params["input"];
+	// 	 if(params.compartmentType.name == "Instance") {
+	// 		comp_val_group = elem.getCompartmentValue("Group by this");
+	// 		comp_val_inst = params["input"];
+	// 	 }
+
+	// 	 // let compartments = Compartments.find({elementId: act_elem}).fetch()
+
+	// 	 if(comp_val_inst != null && comp_val_inst != ""){
+	// 		 var proj = Projects.findOne({_id: Session.get("activeProject")});
+	// 		 if (proj) {
+	// 			Interpreter.destroyErrorMsg();
+	// 			if(comp_val_inst!= null && !comp_val_inst.trim().startsWith("?") && !comp_val_inst.trim().startsWith("=")){
+	// 				//uri
+	// 				if(isURI(comp_val_inst) == 3 || isURI(comp_val_inst) == 4) {
+	// 					if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+	// 				}
+	// 				// number
+	// 				else if(!isNaN(comp_val_inst)) {
+	// 					if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+	// 				}
+	// 				// string in quotes
+	// 				else if(comp_val_inst.startsWith("'") && comp_val_inst.endsWith("'") || comp_val_inst.startsWith('"') && comp_val_inst.endsWith('"')) {
+	// 					if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+	// 				}
+	// 				//display label
+	// 				else if(comp_val_inst.startsWith('[') && comp_val_inst.endsWith(']')) {
+	// 					if(proj.decorateInstancePositionConstants == true) comp_val_inst = "=" + comp_val_inst;
+	// 				}
+	// 				//string
+	// 				else if(comp_val_inst.match(/^[0-9a-z_]+$/i)) {
+	// 					if(proj.decorateInstancePositionVariable == true) comp_val_inst = "?" + comp_val_inst;
+	// 				}
+	// 				else Interpreter.showErrorMsg("Instance identification '" + comp_val_inst + "' can not be interpreted as an identifier (variable) or a constant (URI, number, string)", -3);
+	// 			} 	 
+	// 		 }
+	// 	 }
 		 
- 		 if (comp_val_group == "true" || comp_val_group == true){
-			
-			 
-		   if (comp_val_inst == null ) {
-		     elem.setCompartmentValue("Instance", "", "{group}");
-		   }
-		   else {
-		     elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
-		   }
-		 }
-		 else {
-		   if (typeof comp_val_inst === "undefined") {
-		     elem.setCompartmentValue("Instance", "", "", false);
-		   }
-		   else if ( comp_val_inst != null && comp_val_group == "false") {
-		     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
-		   }
-		 }
- 	},
+
+ 	// 	 if (comp_val_group == "true" || comp_val_group == true){
+						 
+	// 	   if (comp_val_inst == null ) {
+	// 	   		console.log("do nothing")
+	// 	     elem.setCompartmentValue("Instance", "", "", false);
+	// 	     // elem.setCompartmentValue("Instance", "", "{group}", false);
+	// 	   }
+	// 	   else {
+	// 	     elem.setCompartmentValue("Instance", comp_val_inst, "{group} " + comp_val_inst , false);
+	// 	   }
+	// 	 }
+	// 	 else {
+	// 	   if (typeof comp_val_inst === "undefined") {
+	// 	     elem.setCompartmentValue("Instance", "", "", false);
+	// 	   }
+	// 	   else if ( comp_val_inst != null && comp_val_group == "false") {
+	// 	     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
+	// 	   }
+	// 	 }
+ 	// },
 	
 	VQsetDistinct: function(params) {
 		 var act_elem = Session.get("activeElement");
@@ -1147,3 +1235,9 @@ isURI = function(text) {
     if(text.indexOf(":") != -1) return 4;
   return 0;
 };
+
+
+function make_group_by_instance_value(input) {
+	return "{group} " + input;
+}
+

@@ -3178,11 +3178,10 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateInstanceCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate",
-                    "procedure": "VQsetGroupBy"
+                    "extensionPoint": "afterUpdate"
                   },
 				  {
 					"extensionPoint": "processKeyStroke",
@@ -3224,13 +3223,13 @@
                   "type": "checkbox",
                   "values": [
                     {
-                      "value": "false",
+                      "value": "",
                       "input": "false",
                       "elementStyle": "NoStyle",
                       "compartmentStyle": "NoStyle"
                     },
                     {
-                      "value": "true",
+                      "value": "",
                       "input": "true",
                       "elementStyle": "NoStyle",
                       "compartmentStyle": "NoStyle"
@@ -3246,7 +3245,7 @@
                       "fill": "white",
                       "padding": 0,
                       "placement": "start-left",
-                      "visible": "false",
+                      "visible": "true",
                       "fontSize": 14,
                       "fontStyle": "normal",
                       "fontFamily": "Arial",
@@ -3260,11 +3259,10 @@
                   },
                   {
                     "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
+                    "procedure": "UpdateGroupByCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate",
-                    "procedure": "VQsetGroupBy"
+                    "extensionPoint": "afterUpdate"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"

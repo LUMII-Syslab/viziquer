@@ -247,7 +247,6 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 				return this.stop();				
 			}
 			else {
-
 				return [diagrams,
 						Elements.find(element_query, element_limit),
 						Compartments.find(element_query, compart_limit),

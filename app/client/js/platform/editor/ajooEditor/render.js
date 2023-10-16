@@ -300,77 +300,135 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 		   			else {
 		   				parent_layer.batchDraw();
-		   				//element_presentation.draw();	
+		   				// element_presentation.draw();	
 		   			}
 	   			}
    			}
    		},
 
    		changed: function(id, fields) {
+
+   			console.log("in compartment change ", fields, id)
+
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
-   			if (!compartment) {
 
-   				var compart_in = Compartments.findOne({_id: id});
-   				if (!compart_in) {
-   					return;
-   				}
+   			console.log("compartment1 ", compartment)
 
-   				var elem_id = compart_in.elementId;
-   				var elem = editor.elements.elementList[elem_id];
-   				if (!elem) {
-   					console.error("No element for compartment", elem_id, id);
-   					return;
-   				}
+			var compart_in = Compartments.findOne({_id: id});
+			if (!compart_in) {
+				return;
+			}
 
-   				elem.compartments.create([compart_in]);
-   				compartment = compart_list[id];
-   			}
+			var elem_id = compart_in.elementId;
+			var elem = editor.elements.elementList[elem_id];
+			if (!elem) {
+				console.error("No element for compartment", elem_id, id);
+				return;
+			}
 
 
-			if (compartment) {
-				var compart_presentation = compartment.presentation;
-				var compartments = compartment.compartments
+			elem.compartments.removeAllRespresentations();
+			var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+			elem.compartments.create(compartments);
 
-				var element = compartments.element;
-				var element_presentation = element.presentation;
 
-				if (!_.isUndefined(fields["value"])) {
-
-					if (compart_presentation) {
-						compart_presentation.text(fields["value"]);
-					}
-
-					if (element.type == "Swimlane") {
-						var swimlane_layer = element_presentation.getLayer();
-						swimlane_layer.batchDraw();
-
-						return;
-					}
-
-					else {
-
-						if (element.type == "Line") {
-							compartments.recomputeCompartmentsPosition(compartment);
-						}
-
-						else if (element.type == "Box") {
-							compartments.recomputeCompartmentsPosition();
-						}
-
-						//refreshin layer because resizers gets bold after multiple updates
-						var parent_layer = element_presentation.getLayer();
-						if (parent_layer.name == "DragLayer") {
-							parent_layer.batchDraw();
-						}
-
-						else {
-							element_presentation.draw();	
-						}
-
-						return;
-					}
+			if (!_.isUndefined(fields["value"])) {
+				// var element = compartments.element;
+				var element_presentation = elem.presentation;
+				
+				//refreshin layer because resizers gets bold after multiple updates
+				var parent_layer = element_presentation.getLayer();
+				if (parent_layer.name == "DragLayer") {
+					console.log("batch draw1")
+					parent_layer.draw();
 				}
+
+				else {
+					console.log("batch draw2")
+
+					parent_layer.draw();
+					// element_presentation.draw();
+				}
+
+				return;
+			}
+
+
+
+   			// if (!compartment) {
+
+   			// 	var compart_in = Compartments.findOne({_id: id});
+   			// 	if (!compart_in) {
+   			// 		return;
+   			// 	}
+
+   			// 	var elem_id = compart_in.elementId;
+   			// 	var elem = editor.elements.elementList[elem_id];
+   			// 	if (!elem) {
+   			// 		console.error("No element for compartment", elem_id, id);
+   			// 		return;
+   			// 	}
+
+   			// 	elem.compartments.create([compart_in]);
+   			// 	compartment = compart_list[id];
+   			// }
+
+
+			// if (compartment) {
+			// 	var compart_presentation = compartment.presentation;
+			// 	var compartments = compartment.compartments
+
+			// 	var element = compartments.element;
+			// 	var element_presentation = element.presentation;
+
+			// 	if (!_.isUndefined(fields["value"])) {
+
+			// 		console.log("compart_presentation ", compart_presentation)
+
+			// 		if (compart_presentation) {
+			// 			console.log("in setting value", fields["value"])
+
+			// 			compart_presentation.text(fields["value"]);
+			// 		}
+
+			// 		if (element.type == "Swimlane") {
+			// 			var swimlane_layer = element_presentation.getLayer();
+			// 			swimlane_layer.batchDraw();
+
+			// 			return;
+			// 		}
+
+			// 		else {
+
+			// 			if (element.type == "Line") {
+			// 				compartments.recomputeCompartmentsPosition(compartment);
+			// 			}
+
+			// 			else if (element.type == "Box") {
+			// 				console.log("recomputeCompartmentsPosition")
+			// 				compartments.recomputeCompartmentsPosition();
+
+			// 				console.log("compartments ", compartments)
+			// 			}
+
+			// 			//refreshin layer because resizers gets bold after multiple updates
+			// 			var parent_layer = element_presentation.getLayer();
+			// 			if (parent_layer.name == "DragLayer") {
+			// 				console.log("batch draw1")
+			// 				parent_layer.draw();
+			// 			}
+
+			// 			else {
+			// 				console.log("batch draw2")
+
+			// 				parent_layer.draw();
+			// 				// element_presentation.draw();
+			// 			}
+
+			// 			return;
+			// 		}
+			// 	}
 
 				if (fields["style"]) {
 
@@ -424,27 +482,38 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 					var swimlane_layer = element_presentation.getLayer();
 					swimlane_layer.batchDraw();
 				}
-			}
+			// }
    		},
 
    		removed: function(id) {
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
 
+   			if (!compartment) {
+   				console.log("no compartment", id);
+   				return;
+   			}
 
 			var compartments = compartment.compartments
 			var element = compartments.element;
 			var element_presentation = element.presentation;
 
-   			if (compartment && _.size(compartment.compartments) > 0) {
+   			// if (compartment && _.size(compartment.compartments) > 0) {
    				var compartments = compartment.compartments;
    				compartments.removeOne(id);
 
-   				compartments["placements"][compartment["placement"]["name"]]["height"] -= compartment["textHeight"];
+   				console.log("compartment", compartment)
 
-				compartments.computeGroupsPositions();
-				compartments.computeTextsPositions();
-   			}
+   				if (compartment["placement"] && compartment["placement"]["name"]) {
+   					let name = compartment["placement"]["name"];
+   					console.log("name ", name)
+
+   					compartments["placements"][name]["height"] -= compartment["textHeight"];
+
+					compartments.computeGroupsPositions();
+					compartments.computeTextsPositions();	   					
+   				}
+   			// }
    		},
 
    	});

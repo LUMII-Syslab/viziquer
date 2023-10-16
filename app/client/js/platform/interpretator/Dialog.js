@@ -14,7 +14,7 @@ Interpreter.methods({
 		if (elemStyleId) {
 			var elem_type = ElementTypes.findOne({_id: Session.get("activeElementType"), "styles.id": elemStyleId});
 			if (elem_type && elem_type["styles"]) {
-				elem_style = get_style_by_id(elem_type["styles"], elemStyleId);
+				elem_style = Dialog.get_style_by_id(elem_type["styles"], elemStyleId);
 			}
 		}
 
@@ -26,7 +26,7 @@ Interpreter.methods({
 
 			//if (compart_type_obj && compart_type_obj["styles"])
 			if (compart_type) {
-				compart_style = get_style_by_id(compart_type["styles"], compartStyleId);
+				compart_style = Dialog.get_style_by_id(compart_type["styles"], compartStyleId);
 			}
 		}
 
@@ -78,7 +78,6 @@ Dialog = {
 
 		//if there is a compartment, then updating it
 		if (src_id) {
-
 			var tmp_list = {id: src_id,
 							compartmentStyleUpdate: compart_style_out,
 							elementStyleUpdate: elem_style_out,
@@ -86,13 +85,13 @@ Dialog = {
 
 			_.extend(list, tmp_list);
 
+
 			//updating the compartment
 			update_compartment(list);
 		}
 
 		//if there is not a compartment, then creating one
 		else {
-
 			if (compart_type["styles"]) {
 
 				var compart_style_obj = compart_type["styles"][0];
@@ -600,18 +599,19 @@ Dialog = {
 		return compartments;
 	},
 
+
+	get_style_by_id(styles, id) {
+		if (id === "NoStyle") {
+			return;
+		}
+
+		return _.find(styles, function(style) {
+							return style.id === id;
+						});
+	},
+
 };
 
-function get_style_by_id(styles, id) {
-
-	if (id === "NoStyle") {
-		return;
-	}
-
-	return _.find(styles, function(style) {
-						return style.id === id;
-					});
-}
 
 function override_element_style(style_obj_in) {
 	if (!style_obj_in) {
