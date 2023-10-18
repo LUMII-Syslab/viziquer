@@ -158,7 +158,7 @@ Interpreter.methods({
 	},
 
 
-	ComputeLayout: function() {
+	ComputeLayout: function(boxes, lines) {
 		let editor = Interpreter.editor;
 		let layoutEngine = editor.layoutEngine();
 
@@ -166,16 +166,19 @@ Interpreter.methods({
 		let elements_from_map = {};
 
 		let elements = editor.getElements();
-		let boxes = _.filter(elements, function(elem) {
+		if(boxes == null){
+			boxes = _.filter(elements, function(elem) {
 						return elem.type == "Box";
 					});
-
+		}
+		if(lines == null){
 		let lines = _.filter(elements, function(elem) {
 						return elem.type == "Line";
 					});
-
+		}
 		_.each(boxes, function(box, i) {
 			let position = box.getElementPosition();
+
 			layoutEngine.addBox(i, position.x, position.y, position.width, position.height);
 
 			let box_id = box._id;

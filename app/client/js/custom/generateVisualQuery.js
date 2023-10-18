@@ -17,10 +17,10 @@ import {OrthogonalCollectionRerouting} from '/client/js/platform/editor/ajooEdit
 var x = 10;
 var y = 10;
 var width = 500;
-var height = 120;
+var height = 60;
 var counter = 0;
 var VQ_Elements = {};
-// var VQ_Links = {};
+var VQ_Links = {};
 var link_count = 0;
 var showPrefixesForAllNames = false;
 
@@ -271,7 +271,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 		var queryQuestion = queries[query]["question"];
 		
 		VQ_Elements = {};
-		//VQ_Links = {};
+		VQ_Links = {};
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
 
@@ -619,7 +619,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		
 		// Visualize query based on tree structure
 		VQ_Elements = {};
-		//VQ_Links = {};
+		VQ_Links = {};
 		var link_count2 = abstractTable["linkTable"].length;
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
@@ -676,17 +676,17 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		let editor = Interpreter.editor;
 		
 		let element_list = editor.getElements();
-		// var boxes = [];
-		// var lines = [];
-		// for(let elem_id in VQ_Elements){
-			// let element  = element_list[VQ_Elements[elem_id]];
-			// boxes.push(element)
-		// }
+		var boxes = [];
+		var lines = [];
+		for(let elem_id in VQ_Elements){
+			let element  = element_list[VQ_Elements[elem_id]];
+			boxes.push(element)
+		}
 		
-		// for(let elem_id in VQ_Links){
-			// let element  = element_list[VQ_Links[elem_id]];
-			// lines.push(element)
-		// }
+		for(let elem_id in VQ_Links){
+			let element  = element_list[VQ_Links[elem_id]];
+			lines.push(element)
+		}
 		
 		for(let elem_id in VQ_Elements){
 
@@ -713,18 +713,18 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			var box_obj = {resizedElement: element, minX: element_size.x, minY: MinY, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+MinY};
 
 			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
-			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
-			element.collectLinkedLines(lines2, {});
-			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
+			// var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
+			// element.collectLinkedLines(lines2, {});
+			// OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
 
-			var lines = [];
+			// var lines = [];
 			
-			_.each(lines2.draggedLines, function(line_obj) {
-				var link = line_obj.line;
-				var line_points = link.getPoints().slice();
-				line_points[3] = MinY;
-				lines.push({_id: link._id, points: line_points});
-			});
+			// _.each(lines2.draggedLines, function(line_obj) {
+				// var link = line_obj.line;
+				// var line_points = link.getPoints().slice();
+				// line_points[3] = MinY;
+				// lines.push({_id: link._id, points: line_points});
+			// });
 
 			var list = {
 				elementId: element._id,
@@ -732,7 +732,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				y: MinY,
 				width: element_size["width"],
 				height: height,
-				lines: lines,
+				lines: [],
 				ports: [],
 			};
 
@@ -742,7 +742,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			MinY = MinY + height + 60;
 		}
 		
-		//Interpreter.execute("ComputeLayout", [boxes, lines]);
+		Interpreter.execute("ComputeLayout", [boxes, lines]);
 //
 	  }
 	  });
@@ -8685,7 +8685,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 						linkLine.setGraphInstruction(graphInstruction);
 					}
 					link_count = link_count + 1;
-					//VQ_Links[linkLine.obj._id] = linkLine.obj._id;
+					VQ_Links[linkLine.obj._id] = linkLine.obj._id;
 				}, locLink, true, parentClass, classBox);
 			} else {
 				locLink = [coordX, newPosition.y, coordX, coordY];
@@ -8698,13 +8698,13 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 						linkLine.setGraphInstruction(graphInstruction);
 					}
 					link_count = link_count + 1;
-					//VQ_Links[linkLine.obj._id] = linkLine.obj._id;
+					VQ_Links[linkLine.obj._id] = linkLine.obj._id;
 				}, locLink, true, classBox, parentClass);
 			}
 		}
 		//subClasses
 		_.each(clazz["children"],async function(subclazz) {
-			y = y + 180;
+			y = y + 100;
 			await visualizeQuery(subclazz, variableListAlias, classBox, variableList);
 		})
 
