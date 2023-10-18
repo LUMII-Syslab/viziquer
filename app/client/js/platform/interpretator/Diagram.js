@@ -158,7 +158,7 @@ Interpreter.methods({
 	},
 
 
-	ComputeLayout: function() {
+	ComputeLayout: function(boxes, lines) {
 		let editor = Interpreter.editor;
 		let layoutEngine = editor.layoutEngine();
 
@@ -166,17 +166,23 @@ Interpreter.methods({
 		let elements_from_map = {};
 
 		let elements = editor.getElements();
-		let boxes = _.filter(elements, function(elem) {
+		if (boxes == null) {
+			boxes = _.filter(elements, function(elem) {
 						return elem.type == "Box";
 					});
+		}
 
-		let lines = _.filter(elements, function(elem) {
+		if (lines == null) {
+			lines = _.filter(elements, function(elem) {
 						return elem.type == "Line";
 					});
+		}
 
+		
 		_.each(boxes, function(box, i) {
 
 			let position = box.getElementPosition();
+
 
 			let width = position.width;
 			let height = position.height;
@@ -203,6 +209,7 @@ Interpreter.methods({
 			}
 
 			layoutEngine.addBox(i, position.x, position.y, width, height);
+
 
 			let box_id = box._id;
 			if (!_.isNumber(elements_to_map[box_id])) {
