@@ -1340,7 +1340,7 @@ var ImportTDAConfiguration = {
 						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
 					}
 
-					if (compart_type,name == "OrderBy") {
+					if (compart_type.name == "OrderBy") {
 						CompartmentTypes.update({_id: compart_type._id}, {$set: {defaultValue: "",}});
 					}
 

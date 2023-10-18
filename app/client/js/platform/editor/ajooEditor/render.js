@@ -264,6 +264,7 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    	var compart_handle = Compartments.find(comparts_query).observeChanges({
 
    		added: function (id, doc) {
+
    			if (!init) {
 
 	   			//selecting element object
@@ -307,13 +308,8 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    		},
 
    		changed: function(id, fields) {
-
-   			console.log("in compartment change ", fields, id)
-
    			var compart_list = editor.compartmentList;
    			var compartment = compart_list[id];
-
-   			console.log("compartment1 ", compartment)
 
 			var compart_in = Compartments.findOne({_id: id});
 			if (!compart_in) {
@@ -330,13 +326,14 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 
 			elem.compartments.removeAllRespresentations();
 			var compartments = Compartments.find({elementId: elem_id}, {sort: {index: 1}}).fetch();
+
 			elem.compartments.create(compartments);
 
 
 			if (!_.isUndefined(fields["value"])) {
 				// var element = compartments.element;
 				var element_presentation = elem.presentation;
-				
+
 				//refreshin layer because resizers gets bold after multiple updates
 				var parent_layer = element_presentation.getLayer();
 				if (parent_layer.name == "DragLayer") {

@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Elements, Diagrams, DiagramTypes } from '/libs/platform/collections'
+import { Compartments, Elements, Diagrams, DiagramTypes } from '/libs/platform/collections'
 
 
 Interpreter.methods({
@@ -175,8 +175,34 @@ Interpreter.methods({
 					});
 
 		_.each(boxes, function(box, i) {
+
 			let position = box.getElementPosition();
-			layoutEngine.addBox(i, position.x, position.y, position.width, position.height);
+
+			let width = position.width;
+			let height = position.height;
+
+			console.log("box ", box)
+
+			if (box.compartments) {
+
+				let compartments = Compartments.find({elementId: box._id}).fetch();
+
+				console.log("compartments ", compartments)
+				
+
+				// _.each(box.compartments.compartments, function(compart) {
+				// 	// width = Math.min(width, compart.presentation.textWidth + 5);
+				// 	// height = Math.min(height, compart.textHeight + 5);
+
+				// 	console.log("compart ", compart)
+
+				// 	width = compart.textWidth + 5;
+				// 	height = compart.textHeight + 5;
+
+				// });
+			}
+
+			layoutEngine.addBox(i, position.x, position.y, width, height);
 
 			let box_id = box._id;
 			if (!_.isNumber(elements_to_map[box_id])) {
@@ -185,6 +211,7 @@ Interpreter.methods({
 			}
 		});
 
+		let k = _.size(boxes) + _.size(lines);
 		_.each(lines, function(line, j) {
 			let i = _.size(boxes) + j;
 			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], {lineType: "ORTHOGONAL"})
@@ -194,10 +221,21 @@ Interpreter.methods({
 				elements_to_map[line_id] = i;
 				elements_from_map[i] = line;
 			}
+
+			if (line.compartments && line.compartments.compartments) {
+
+				_.each(line.compartments.compartments, function(compart) {
+					k++;
+					let placement = compart.placement;
+					layoutEngine.addLineLabel(k, i, placement.width, placement.height, placement.name);
+				});
+
+			}
+
 		});
 
-    	// let new_layout = layoutEngine.arrangeFromScratch()
-    	let new_layout = layoutEngine.arrangeIncrementally()
+    	let new_layout = layoutEngine.arrangeFromScratch()
+    	// let new_layout = layoutEngine.arrangeIncrementally();
 
 		let moved_boxes = _.map(new_layout.boxes, function(box_in, key) {
 							let box = elements_from_map[key];

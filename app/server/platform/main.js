@@ -56,7 +56,7 @@ import '/server/custom/ontology'
 import '/server/custom/publish'
 import '/server/custom/version_migration'
 import '/server/custom/ontologyParams'
-
+import '/server/custom/import_ontology'
 
 // libs custom
 import '/libs/custom/collections'
