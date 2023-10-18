@@ -165,11 +165,10 @@ Interpreter.methods({
 		let elements_to_map = {};
 		let elements_from_map = {};
 
-		let elements = editor.getElements();
-		
 		x = x || 0;
 		y = y || 0;
 
+		let elements = editor.getElements();
 		boxes = boxes || _.filter(elements, function(elem) {
 							return elem.type == "Box";
 						});	
@@ -179,36 +178,49 @@ Interpreter.methods({
 						});
 		
 		_.each(boxes, function(box, i) {
-
 			let position = box.getElementPosition();
-
 
 			let width = position.width;
 			let height = position.height;
-
-			console.log("box ", box)
-
 			if (box.compartments) {
+				let compart_width = 0;
+				let compart_height = 0;
 
-				let compartments = Compartments.find({elementId: box._id}).fetch();
+				Compartments.find({elementId: box._id}).forEach(function(compart) {
+					let value = compart.value;
+					if (value == "") {
+						return;
+					}
 
-				console.log("compartments ", compartments)
-				
+					let font_size = compart.style.fontSize;
+					let tmp_width = 0;
+					let tmp_height = 0;
 
-				// _.each(box.compartments.compartments, function(compart) {
-				// 	// width = Math.min(width, compart.presentation.textWidth + 5);
-				// 	// height = Math.min(height, compart.textHeight + 5);
+					let splitted_value = value.split(/\r?\n/);
+					_.each(splitted_value, function(row) {
+						if (row == "") {
+							return;
+						}
 
-				// 	console.log("compart ", compart)
+						let text_length = row.length * font_size;
+						tmp_width = Math.max(tmp_width, text_length);
+						tmp_height += font_size;
+					});
 
-				// 	width = compart.textWidth + 5;
-				// 	height = compart.textHeight + 5;
+					compart_width = Math.max(compart_width, tmp_width);
+					compart_height += tmp_height;
+				});
 
-				// });
+				if (compart_width != 0) {
+					width = compart_width + 5;
+				}
+	
+				if (compart_height != 0) {
+					height = compart_height + 5;
+				}
 			}
 
 			layoutEngine.addBox(i, position.x, position.y, width, height);
-
 
 			let box_id = box._id;
 			if (!_.isNumber(elements_to_map[box_id])) {
@@ -240,8 +252,8 @@ Interpreter.methods({
 
 		});
 
-    	let new_layout = layoutEngine.arrangeFromScratch()
-    	// let new_layout = layoutEngine.arrangeIncrementally();
+    	// let new_layout = layoutEngine.arrangeFromScratch()
+    	let new_layout = layoutEngine.arrangeIncrementally();
 
 		let moved_boxes = _.map(new_layout.boxes, function(box_in, key) {
 							let box = elements_from_map[key];
@@ -249,12 +261,14 @@ Interpreter.methods({
 								console.error("No box", key, elements_from_map);
 								return;
 							}
+							let box_x = x + box_in.x;
+							let box_y = y + box_in.y
 
-							box.setElementPosition(box_in.x, box_in.y);
+							box.setElementPosition(box_x, box_y);
 							box.updateSize(box_in.width, box_in.height);
 
-							return {id: box._id, position: {x: box_in.x,
-															y: box_in.y,
+							return {id: box._id, position: {x: box_x,
+															y: box_y,
 															width: box_in.width,
 															height: box_in.height,
 														},};
@@ -263,8 +277,8 @@ Interpreter.methods({
     	let new_lines = _.map(new_layout.lines, function(line_in, key) {
 				    		let line_new_points = [];
 				    		_.each(line_in, function(line) {
-				    			line_new_points.push(line.x);
-				    			line_new_points.push(line.y);
+				    			line_new_points.push(x + line.x);
+				    			line_new_points.push(y + line.y);
 				    		});
 
 				    		let line = elements_from_map[key];
@@ -287,7 +301,6 @@ Interpreter.methods({
 				};
 
 		Utilities.callMeteorMethod("changeCollectionPosition", list);
-
 	},
 
 });

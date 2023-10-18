@@ -412,7 +412,7 @@ function add_compartment(list, item, compartment_type, diagram_id, diagram_type_
 			fill = "rgb(65,113,156)";
 		}
 		else {
-			value = compartments.Type + "\n" + compartments.name + "\n" + compartments.A4 + "\n" + compartments.A6;
+			value = replace_newline(compartments.Type) + "\n" + replace_newline(compartments.name) + "\n" + replace_newline(compartments.A4) + "\n" + replace_newline(compartments.A6);
 			placement = "inside";
 			fill = "white";
 			// fill = "blue";
@@ -444,4 +444,9 @@ function add_compartment(list, item, compartment_type, diagram_id, diagram_type_
 					};
 
 	Compartments.insert(compart_obj);
+}
+
+
+function replace_newline(str) {
+	return str.replace(/\\n/g, "\n");
 }
