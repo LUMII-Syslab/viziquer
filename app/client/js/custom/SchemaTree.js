@@ -365,9 +365,9 @@ function setClassList0() {
 	Template.schemaExtra.FilterDisabled.set("");
 	Template.schemaExtra.Properties.set([]);
 	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
-	var classCount = [{value:15 ,name:'15 classes in the diagram'}, {value:30 ,name:'30 classes in the diagram'}, {value:40 ,name:'40 classes in the diagram'}, {value:50 ,name:'50 classes in the diagram'}];
+	var classCount = [{value:15 ,name:'15 classes in the diagram'}, {value:30 ,name:'30 classes in the diagram'}, {value:40 ,name:'40 classes in the diagram'}, {value:50 ,name:'50 classes in the diagram'}, {value:100 ,name:'100 classes in the diagram'}, {value:300 ,name:'300 classes in the diagram'}];
 	var indCount = [{value:1 ,name:'Classes of all sizes'}, {value:10 ,name:'At least 10 individuals'}, {value:50 ,name:'At least 50 individuals'}, {value:100 ,name:'At least 100 individuals'}];
-	var superclassType = [{value:1 ,name:'targets'}, {value:2 ,name:'sources and targets'}, {value:3 ,name:'object/data sources and targets'}, {value:0 ,name:'Without superclasses'},];
+	var superclassType = [{value:1 ,name:'targets'}, {value:2 ,name:'sources and targets'}, {value:0 ,name:'Without superclasses'},];
 	var schema = dataShapes.schema.schema;
 	var nsFiltersSel = '';
 	var classCountSel = 30;
@@ -396,9 +396,15 @@ function setClassList0() {
 		superclassTypeSel = 1;
 		indCountSel = 10;
 	}
+	else if ( schema == 'academy_sampo_x' || schema == 'academy_sampo' ) {
+		classCountSel = 300;
+		nsFiltersSel = 'Exclude';
+		superclassTypeSel = 2;
+	}
 	else if ( schema == 'war_sampo_2' || schema == 'war_sampo_2' ) {
+		classCountSel = 50;
 		nsFiltersSel = 'Local';
-		superclassTypeSel = 0;
+		superclassTypeSel = 2;
 	}
 	else {
 		if ( filteredClassList.length > 0 ) 
@@ -1088,19 +1094,18 @@ Template.schemaExtra.events({
 		var propList = Template.schemaExtra.Properties.get();
 		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
-			var not_in = [];
-			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
-				not_in = ['owl','rdf','rdfs'];
-
+			//var not_in = [];
+			//if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
+			//	not_in = ['owl','rdf','rdfs'];
+			// Ņemam visas propertijas, pagaidām nav ielikts lokālais propertiju filtrs
 			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
-			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
+			//allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
 			propList = rr.data;
 		}
-		var info = [ `${$("#classCount").val()} classes in the diagram`,
+		var info = [ `${Template.schemaExtra.ClassCountSelected.get()} classes in the diagram`,
 			Template.schemaExtra.NsFilters.get().find(function(f){ return f.value == $("#nsFilter").val();}).name,
 			Template.schemaExtra.IndCount.get().find(function(f){ return f.value == $("#indCount").val();}).name ];
-		
 		if ( $("#superclassType").val() != 0) {
 			info.push(`Superclasses based on ${Template.schemaExtra.SuperclassType.get().find(function(f){ return f.value == $("#superclassType").val();}).name}`);
 		}
@@ -1111,10 +1116,14 @@ Template.schemaExtra.events({
 			info.push('Small properties are removed');
 			
 		if ( $("#prop0").is(":checked") )
-			info.push('All class properties are added');				
+			info.push('All class properties are added');
+			
+		if ( $("#compView").is(":checked") )
+			info.push('Compact attribute view');			
 
 		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(), $("#dataClass").is(":checked"), 
-			$("#prop0").is(":checked"), remSmall, $("#addIds").is(":checked"), dataShapes.schema.schema, info.join('\n'));
+			$("#prop0").is(":checked"), remSmall, $("#addIds").is(":checked"), $("#disconnBig").val(), 
+			$("#compView").is(":checked"), dataShapes.schema.schema, info.join('\n')); 
 
 	},
 	'click #makeDiagr2': async function(e) {
@@ -1131,12 +1140,12 @@ Template.schemaExtra.events({
 		var propList = Template.schemaExtra.Properties.get();
 		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
-			var not_in = [];
-			if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
-				not_in = ['owl','rdf','rdfs'];
+			//var not_in = [];
+			//if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
+			//	not_in = ['owl','rdf','rdfs'];
 			
 			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
-			allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
+			//allParams.main.not_in = not_in.map(v => dataShapes.schema.namespaces.filter(function(n){ return n.name == v})[0].id);
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
 			propList = rr.data;
 		}
@@ -1157,7 +1166,6 @@ Template.schemaExtra.events({
 		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`, remSmall:remSmall}});
 		Template.schemaExtra.Properties.set(rr.data);
 	},
-	
 	'change #classCount': function(e) {
 		setClassList();
 	},

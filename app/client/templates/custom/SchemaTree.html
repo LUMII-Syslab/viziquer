@@ -299,6 +299,16 @@
 							<span class="custom-checkbox"></span>
 							Connect data classes
 						</label>
+						<select class="form-control" id="disconnBig" >
+							  <option selected value=7 >Disconnect prop > 7 </option>
+							  <option value=10 >Disconnect prop > 10 </option>
+							  <option value=0 >Show all properties</option>
+						</select>
+						<label class="form-check-label">
+							<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
+							<span class="custom-checkbox"></span>
+							Compact attribute view
+						</label>
 						<label class="form-check-label">
 							<input class="form-check-input" name = "prop0" id="prop0" type="checkbox">
 							<span class="custom-checkbox"></span>
@@ -308,20 +318,19 @@
 							<input class="form-check-input" name = "remS" id="remS" type="checkbox">
 							<span class="custom-checkbox"></span>
 							Remove small properties
-						</label>
+						</label>						
 						<label class="form-check-label">
 							<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
 							<span class="custom-checkbox"></span>
-							Show IDS
-						</label>
-					
+							Show DB IDs in names
+						</label>						
 					</div>
 					<div class="col-sm-7">
-						<select class="form-select" id="selectedProperties" size="13" multiple aria-label="multiple select 3">
+						<select class="form-select" id="selectedProperties" size="20" multiple aria-label="multiple select 3">
 							{{#each properties}}
 								<option value="{{id}}">{{p_name}}</option>
 							{{/each}}
-						</select>					
+						</select>	
 					</div>
 				</div>
 			</div>				
