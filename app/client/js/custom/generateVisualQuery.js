@@ -35,6 +35,10 @@ var MinY = 10;
 var MaxY = 10;
 var classifiers = [];
 
+const async_Create_VQ_Element = async (location, isLink, target, source) => new Promise(resolve => {
+    Create_VQ_Element(newElem => { resolve(newElem) }, location, isLink, target, source);
+});
+
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
 
@@ -277,116 +281,68 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 
 		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
 
-		var i = 0;
-		while(Object.keys(VQ_Elements).length < classCount && i < 100){
-			await delay(100);
-			i++;
-		}
-
-		 _.each(conditionLinks,function(condLink) {
-			var linkName = condLink["identification"]["display_name"];
-			if(typeof linkName === "undefined") linkName = condLink["identification"]["short_name"];
-			var isNot = condLink["isNot"];
-			var isInverse = condLink["isInverse"];
-			var linkType = "REQUIRED";
-			if(isNot == true) linkType = "NOT";
-			
-			 var target = new VQ_Element(VQ_Elements[condLink.target]);
-			 var source = new VQ_Element(VQ_Elements[condLink.source]);
+		for (let condLink of conditionLinks) {
+			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
+			const linkType = condLink.isNot ? "NOT" : "REQUIRED";
+			const isInverse = condLink["isInverse"];
+			const target = new VQ_Element(VQ_Elements[condLink.target]);
+			const source = new VQ_Element(VQ_Elements[condLink.source]);
 			 
 			 var tCoordinates = target.getCoordinates();
 			 var sCoordinates = source.getCoordinates();
 			 
-			  var coordX = tCoordinates.x + Math.round(tCoordinates.width/2)+20;
-				var coordY = sCoordinates.y + sCoordinates.height;
-				var locLink = [];
+			var coordX = tCoordinates.x + tCoordinates.width - 20;
+			let sourceAboveTarget = sCoordinates.y < tCoordinates.y;
+			let coordY1 = sourceAboveTarget ? sCoordinates.y + sCoordinates.height : tCoordinates.y + tCoordinates.height;
+			let coordY2 = sourceAboveTarget ? tCoordinates.y : sCoordinates.y;
 
-				if(isInverse != true){
-					locLink = [coordX, coordY, coordX, tCoordinates.y]; 
-					Create_VQ_Element(function(linkLine) {
-						linkLine.setName(linkName);
-						linkLine.setLinkType(linkType);
-						linkLine.setNestingType("CONDITION");
-					}, locLink, true, target, source);
-				} else {
-					locLink = [coordX, tCoordinates.y, coordX, coordY];
-					Create_VQ_Element(function(linkLine) {
-						linkLine.setName(linkName);
-						linkLine.setLinkType(linkType);
-						linkLine.setNestingType("CONDITION");
-					}, locLink, true, source, target);
-				}
-			//TODO create condition link
-		})
+			let linkLine;
+			if (condLink.isInverse) {
+			// locLink = [coordX, tCoordinates.y, coordX, coordY];
+				const locLink = [coordX, coordY1, coordX, coordY2];
+				linkLine = await async_Create_VQ_Element(locLink, true, source, target);
+			} else {
+			// locLink = [coordX, coordY, coordX, tCoordinates.y];
+				const locLink = [coordX, coordY2, coordX, coordY1];
+				linkLine = await async_Create_VQ_Element(locLink, true, target, source);
+			}
+			linkLine.setName(linkName);
+			linkLine.setLinkType(linkType);
+			linkLine.setNestingType("CONDITION");
+			
+		}
 
-		await delay(100);
-		var dragged_boxes = [];
-		var lines = {linkedLines: [], draggedLines: [], allLines: []};
+		// await delay(100);
+		// var lines = {linkedLines: [], draggedLines: [], allLines: []};
 		
 		let editor = Interpreter.editor;
+		
+		let element_list = editor.getElements();
+		var boxes = [];
+		var lines = [];
 		for(let elem_id in VQ_Elements){
-
-			let element_list = editor.getElements();
 			let element  = element_list[VQ_Elements[elem_id]];
-			
-			var elem_type = ElementTypes.findOne({name: "Class"});
-			
-			let compartments = element.compartments.compartments;
-			
-			var height = 10;
-			
-			var longes_compartment_lenght = 100;
-			for(let compartment of compartments){
-				if(longes_compartment_lenght<compartment.getTextWidth()) longes_compartment_lenght = compartment.getTextWidth();
-				var num = ~~(compartment.getTextWidth() / 450)+1;
-				height = height + ((compartment.getTextHeight()+5) * num) ;
-			}
-			if(height < 30) height = 30;
-			var element_size = element.getSize();
-
-			element_size.width = longes_compartment_lenght + 20;
-			
-			var box_obj = {resizedElement: element, minX: element_size.x, minY: element_size.y, maxX: element_size.x+longes_compartment_lenght + 20, maxY: height+element_size.y};
-			
-			element.updateElementSize(element_size.x, element_size.y, element_size.x+longes_compartment_lenght + 20, height+element_size.y);
-			var lines2 = {directLines: [], orthogonalLines: [], draggedLines: [], allLines: []};
-			element.collectLinkedLines(lines2, {});
-			OrthogonalCollectionRerouting.recomputeLines(editor, [box_obj], [], [], lines2.linkedOrthogonalLines, lines2.draggedLines);
-
-			var lines = [];
-			
-			_.each(lines2.draggedLines, function(line_obj) {
-				var link = line_obj.line;
-				var line_points = link.getPoints().slice();
-				// line_points[3] = MinY;
-				lines.push({_id: link._id, points: line_points});
-			});
-
-			var list = {
-				elementId: element._id,
-				x: element_size.x,
-				y: element_size.y,
-				width: element_size["width"],
-				height: height,
-				lines: lines,
-				ports: [],
-			};
-			var resizing_shape = element.presentation;
-			list["diagramId"] = Session.get("activeDiagram");
-			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
-			MinY = MinY + height + 60;
+			boxes.push(element)
 		}
 		
+		for(let elem_id in VQ_Links){
+			let element  = element_list[VQ_Links[elem_id]];
+			lines.push(element)
+		}
+		
+		await delay(500);
+		Interpreter.execute("ComputeLayout", [x, yy, boxes, lines]);
+
 	  });
 	  
-		await delay(15000);
+		await delay(5000);
 		var idNumb = parseInt(queries[query]["id"], 10);
 		if(idNumb % 10 === 0) {
 			x = 10;
 			yy = yy + 1000;
 			y = yy;
 		} else {
-			x = x+450;
+			x = x+800;
 			y = yy;
 		}
 	  }
@@ -626,52 +582,45 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 
 		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
 		
-		var i = 0;
-		while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
-			await delay(100);
-			i++;
-		}
+		// var i = 0;
+		// while((Object.keys(VQ_Elements).length < classCount || link_count < link_count2)&& i < 100){
+			// await delay(100);
+			// i++;
+		// }
 
-		 _.each(conditionLinks,function(condLink) {
-			
-			var linkName = condLink["identification"]["display_name"];
-			if(typeof linkName === "undefined") linkName = condLink["identification"]["short_name"];
-			var isNot = condLink["isNot"];
-			var isInverse = condLink["isInverse"];
-			var linkType = "REQUIRED";
-			if(isNot == true) linkType = "NOT";
-			 var target = new VQ_Element(VQ_Elements[condLink.target]);
-			 var source = new VQ_Element(VQ_Elements[condLink.source]);
+		for (let condLink of conditionLinks) {
+			const linkName = condLink.identification.display_name ?? condLink.identification.short_name;
+			const linkType = condLink.isNot ? "NOT" : "REQUIRED";
+			const isInverse = condLink["isInverse"];
+			const target = new VQ_Element(VQ_Elements[condLink.target]);
+			const source = new VQ_Element(VQ_Elements[condLink.source]);
 			 
 			 var tCoordinates = target.getCoordinates();
 			 var sCoordinates = source.getCoordinates();
 			 
-			  // var coordX = tCoordinates.x + Math.round(tCoordinates.width/2)+20;
-			  var coordX = tCoordinates.x +20;
-				var coordY = sCoordinates.y + sCoordinates.height;
-				var locLink = [];
+			var coordX = tCoordinates.x + tCoordinates.width - 20;
+			let sourceAboveTarget = sCoordinates.y < tCoordinates.y;
+			let coordY1 = sourceAboveTarget ? sCoordinates.y + sCoordinates.height : tCoordinates.y + tCoordinates.height;
+			let coordY2 = sourceAboveTarget ? tCoordinates.y : sCoordinates.y;
 
-				if(isInverse != true){
-					locLink = [coordX, coordY, coordX, tCoordinates.y]; 
-					Create_VQ_Element(function(linkLine) {
-						linkLine.setName(linkName);
-						linkLine.setLinkType(linkType);
-						linkLine.setNestingType("CONDITION");
-					}, locLink, true, target, source);
-				} else {
-					locLink = [coordX, tCoordinates.y, coordX, coordY];
-					Create_VQ_Element(function(linkLine) {
-						linkLine.setName(linkName);
-						linkLine.setLinkType(linkType);
-						linkLine.setNestingType("CONDITION");
-					}, locLink, true, source, target);
-				}
-			//TODO create condition link
-		})
+			let linkLine;
+			if (condLink.isInverse) {
+			// locLink = [coordX, tCoordinates.y, coordX, coordY];
+				const locLink = [coordX, coordY1, coordX, coordY2];
+				linkLine = await async_Create_VQ_Element(locLink, true, source, target);
+			} else {
+			// locLink = [coordX, coordY, coordX, tCoordinates.y];
+				const locLink = [coordX, coordY2, coordX, coordY1];
+				linkLine = await async_Create_VQ_Element(locLink, true, target, source);
+			}
+			linkLine.setName(linkName);
+			linkLine.setLinkType(linkType);
+			linkLine.setNestingType("CONDITION");
+			
+		}
 		
 		await delay(500); // TODO - kaut kā savādāk būtu jānoķer kompartmentu izveidošana
-		var dragged_boxes = [];
-		var lines = {linkedLines: [], draggedLines: [], allLines: []};
+		// var lines = {linkedLines: [], draggedLines: [], allLines: []};
 	
 		let editor = Interpreter.editor;
 		
@@ -688,7 +637,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			lines.push(element)
 		}
 		
-		for(let elem_id in VQ_Elements){
+		/*for(let elem_id in VQ_Elements){
 
 			let element_list = editor.getElements();
 			let element  = element_list[VQ_Elements[elem_id]];
@@ -740,9 +689,9 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 			list["diagramId"] = Session.get("activeDiagram");
 			Interpreter.executeExtensionPoint(elem_type, "resizeElement", list);
 			MinY = MinY + height + 60;
-		}
-		
-		Interpreter.execute("ComputeLayout", [boxes, lines]);
+		}*/
+
+		Interpreter.execute("ComputeLayout", [xx, yy, boxes, lines]);
 //
 	  }
 	  });
@@ -8416,19 +8365,16 @@ function buildPathElement(pathElement){
 async function visualizeQuery(clazz, variableListAlias, parentClass, variableList, queryId, queryQuestion ){
 
 	//node type
-	var nodeType = "condition";
+	let nodeType = parentClass ? "condition" : "query";
 	if(parentClass == null) nodeType = "query";
 
 	//instanceAlias
 	var instanceAlias = clazz["instanceAlias"];
 	
 	if(instanceAlias != null && instanceAlias.startsWith("g_")) instanceAlias = null;	
-	if(instanceAlias != null && instanceAlias.trim() != ""){
-		
-	
-		
-	var proj = Projects.findOne({_id: Session.get("activeProject")});
-		 if (proj) {
+	if(instanceAlias != null && instanceAlias.trim() != ""){	
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj) {
 			//uri
 			if(isURI(instanceAlias) == 3 || isURI(instanceAlias) == 4) {
 				if(proj.decorateInstancePositionConstants == true) instanceAlias = "=" + instanceAlias;
@@ -8455,7 +8401,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 	
 	//name
 	var className = "";
-	if(clazz["identification"] != null) className = clazz["identification"]["short_name"];
+	if(clazz.identification) className = clazz.identification.short_name;
 
 
 	if(clazz["isVariable"] == true) {
@@ -8470,57 +8416,53 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		className = "[ + ]"; //fasle
 	}
 
-	var newPosition = {x:x,y:y,width:width,height:height};
-	if(parentClass != null){
+	var newPosition = { x, y, width, height };
+	if(parentClass){
 		var d = 30; //distance between boxes
 		var oldPosition = parentClass.getCoordinates(); //Old class coordinates and size
-		// newPosition = parentClass.getNewLocation(d); //New class coordinates and size
+																				  
 	}
 	
-	var new_elem_id = Create_VQ_Element(function(classBox) {
+	const classBox = await async_Create_VQ_Element(newPosition);
 
-		var indirectClassMembership = false;
-		if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
+	var indirectClassMembership = false;
+	if(typeof clazz["indirectClassMembership"] !== "undefined" && clazz["indirectClassMembership"] == true) indirectClassMembership = true;
 		
-		if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
-		classBox.setClassStyle(nodeType);
+	if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
+	classBox.setClassStyle(nodeType);
 		
-		if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
-			if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
-			else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
-		} else if(instanceAlias != null ) {
-			if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
-			else classBox.setInstanceAlias(instanceAlias);
-		}
+	if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
+		if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
+		else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
+	} else if(instanceAlias != null ) {
+		if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
+		else classBox.setInstanceAlias(instanceAlias);
+	}
 
-		// setIndirectClassMembership
-		//class not in a schema 
-		if(clazz["identification"] != null && typeof clazz["identification"]["notInSchema"] !== 'undefined' && clazz["identification"]["notInSchema"] != "variable"){
-			if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
-				var comment = "Class not in the data schema;\n";
-				if(queryId != null && queryId != "") comment = comment + "ID = " + queryId;
-				if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
-				classBox.setComment(comment);
-			} else classBox.setComment("Class not in the data schema");
-		} else if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
-			var comment = "";
-			if(queryId != null && queryId != "") comment = "ID = " + queryId;
-			if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
-			classBox.setComment(comment);
-		}
+	// setIndirectClassMembership
+	//class not in a schema 
+	if(clazz["identification"] != null && typeof clazz["identification"]["notInSchema"] !== 'undefined' && clazz["identification"]["notInSchema"] != "variable"){
+		if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
+		var comment = "Class not in the data schema;\n";
+		if(queryId != null && queryId != "") comment = comment + "ID = " + queryId;
+		if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
+		classBox.setComment(comment);
+		} else classBox.setComment("Class not in the data schema");
+	} else if((queryId != null && queryId != "") || (queryQuestion != null && queryQuestion != "")){
+		var comment = "";
+		if(queryId != null && queryId != "") comment = "ID = " + queryId;
+		if(queryQuestion != null && queryQuestion != "") comment = comment + ",\nQuestion = " + queryQuestion;
+		classBox.setComment(comment);
+	}
 
-		//attributes	
-		if(typeof clazz["fields"] !== "undefined") clazz["fields"] = clazz["fields"].sort(function(a, b) {
-			return a["counter"] - b["counter"];
-		});
-		
-		_.each(clazz["fields"],function(field) {
-
-			var alias = field["alias"];
-			
-			var proj = Projects.findOne({_id: Session.get("activeProject")});
+	//attributes	
+	if (clazz.fields) {
+      clazz.fields = clazz.fields.sort((a, b) =>  a.counter - b.counter);
+      for (const field of clazz.fields) {
+        var alias = field["alias"];		
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
 	
-			if(((proj && proj.keepVariableNames == false) || typeof proj.keepVariableNames === "undefined") 
+		if(((proj && proj.keepVariableNames == false) || typeof proj.keepVariableNames === "undefined") 
 				&& typeof alias !== "undefined" 
 				&& typeof variableList[field["alias"]] !== "undefined" 
 				&& variableList[field["alias"]] <=1 
@@ -8528,195 +8470,166 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 				&& typeof variableList[field["alias"]+"AltLabel"] === "undefined" 
 				&& typeof variableList[field["alias"]+"Description"] === "undefined" 
 				&& !field["exp"].startsWith("?")
-				){
-					alias = "";
-				}
-			if(alias == field["exp"]){
-				alias = "";
-			}
-
-			var expression = field["exp"];
-			var requireValues = field["requireValues"];
-			var isInternal = field["isInternal"];
-			var groupValues = field["groupValues"]; // false
-			var addLabel = field["addLabel"];
-			var addAltLabel = field["addAltLabel"];
-			var addDescription = field["addDescription"];
-			var graph = field["graph"];
-			var graphInstruction = field["graphInstruction"];
-			
-			//add attribute to class
-			classBox.addField(expression,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
-
-		})
-
-		//aggregations
-		// remove duplicates
-		if(clazz != null && clazz["aggregations"] != null && typeof clazz["aggregations"] !== "undefined"){
-			clazz["aggregations"] = clazz["aggregations"].filter((value, index, self) =>
-			  index === self.findIndex((t) => (
-				t.alias === value.alias && t.exp === value.exp
-			  ))
-			)
+		){
+			alias = "";
 		}
-			
-		_.each(clazz["aggregations"],function(field) {
+		if(alias == field["exp"]){
+			alias = "";
+		}
+
+		const { exp, requireValues, isInternal, groupValues, addLabel, addAltLabel, addDescription, graph, graphInstruction } = field;
+        classBox.addField(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction);
+      }
+    }
+
+	//aggregations
+	// remove duplicates
+	if(clazz != null && clazz["aggregations"] != null && typeof clazz["aggregations"] !== "undefined"){
+		clazz["aggregations"] = clazz["aggregations"].filter((value, index, self) =>
+		  index === self.findIndex((t) => (
+		t.alias === value.alias && t.exp === value.exp
+		  ))
+		)
+	}
 	
-			var alias = field["alias"];
+	if (clazz.aggregations) {
+      for (const field of clazz.aggregations) {	
+		var alias = field["alias"];
 			var expression = field["exp"];
 			var requireValues = false;
 			if(typeof field["requireValues"] !== "undefined")requireValues = field["requireValues"] 
-			// if(typeof variableListAlias[alias] === "undefined" || (typeof variableListAlias[alias] !== "undefined" && variableListAlias[alias] == true)) alias = ""
 			//add aggregation to class
 			classBox.addAggregateField(expression, alias, requireValues);
-		
-		})
+      }
+    }
 
-		//conditions
-		
-		clazz["conditions"] = removeDuplicateConditions(clazz["conditions"]);
-		
-		_.each(clazz["conditions"],function(condition) {
-			if(typeof condition !== "function"){
-				var expression = condition;
-				//add condition to class
-				if(typeof expression !== "undefined" && expression != null && expression != "")classBox.addCondition(expression);
-			
-			}
-		})
-
-		//orderBy
-		_.each(clazz["orderings"],function(order) {
-			var expression = order["exp"];
-			var isDescending = order["isDescending"];
-
-			//add order to class
-			classBox.addOrdering(expression, isDescending);
-		})
-		
-		//graphs
-		
-		_.each(clazz["graphs"],function(graphs) {
-			var graph = graphs["graph"];
-			var graphInstruction = graphs["graphInstruction"];
-
-			//add graphs to class
-			classBox.addGraphs(graph, graphInstruction);
-		})
-		
-		
-		if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
-		
-		//groupBy
-		
-		if(typeof clazz["aggregations"] !== "undefined"){
-			_.each(clazz["groupings"],function(group) {
-				var expression = group["exp"];
-				var isDescending = group["isDescending"];
-
-				//add group to class
-				classBox.addGrouping(group);
-			})
-		}
-		//distinct
-		var distinct = clazz["distinct"];
-
-		if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"] == null || clazz["aggregations"].length == 0))classBox.setDistinct(distinct);
-		
-		//serviceLabelLang
-		var serviceLabelLang = clazz["serviceLabelLang"];
-		if(typeof serviceLabelLang !== "undefined" && serviceLabelLang !== ""){
-			if(serviceLabelLang != "[AUTO_LANGUAGE],en")classBox.setLabelServiceLanguages(serviceLabelLang);
-		}
-		
-		//selectAll
-		var selectAll = clazz["selectAll"];
-		if(typeof selectAll === "undefined") selectAll = false;
-		classBox.setSelectAll(selectAll);
-
-		//limit
-		var limit = clazz["limit"];
-		classBox.setLimit(limit);
-
-		//offset
-		var offset = clazz["offset"];
-		if(offset != 0) classBox.setOffset(offset);
-
-		//full SPARQL
-		var fullSPARQL = clazz["fullSPARQL"];
-		
-		classBox.setFullSPARQL(fullSPARQL);
-		
-		
-
-		//link
-		if(parentClass != null){
-			var linkName = "++";
-			if(typeof clazz["linkIdentification"] !== 'undefined') linkName = clazz["linkIdentification"]["short_name"];
-			// REQUIRED, NOT, OPTIONAL
-			var linkType  = clazz["linkType"];
-
-			// PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
-			var linkQueryType = "PLAIN";
-			
-			var isSubQuery = clazz["isSubQuery"];
-			if(isSubQuery == true) linkQueryType = "SUBQUERY";
-			var isGlobalSubQuery = clazz["isGlobalSubQuery"];
-			if(isGlobalSubQuery == true) linkQueryType = "GLOBAL_SUBQUERY";
-
-			var isInverse = clazz["isInverse"];
-			var graph = clazz["graph"];
-			var graphInstruction = clazz["graphInstruction"];
-			
-            //Link Coordinates
-            // var coordX = newPosition.x + Math.round(newPosition.width/2);
-            var coordX = newPosition.x + 10;
-            var coordY = oldPosition.y + oldPosition.height;
-            var locLink = [];
-
-			if(isInverse != true){
-				locLink = [coordX, coordY, coordX, newPosition.y]; 
-				Create_VQ_Element(function(linkLine) {
-					linkLine.setName(linkName);
-					linkLine.setLinkType(linkType);
-					linkLine.setNestingType(linkQueryType);
-					if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
-						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
-						linkLine.setGraphInstruction(graphInstruction);
-					}
-					link_count = link_count + 1;
-					VQ_Links[linkLine.obj._id] = linkLine.obj._id;
-				}, locLink, true, parentClass, classBox);
-			} else {
-				locLink = [coordX, newPosition.y, coordX, coordY];
-				Create_VQ_Element(function(linkLine) {
-					linkLine.setName(linkName);
-					linkLine.setLinkType(linkType);
-					linkLine.setNestingType(linkQueryType);
-					if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
-						linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
-						linkLine.setGraphInstruction(graphInstruction);
-					}
-					link_count = link_count + 1;
-					VQ_Links[linkLine.obj._id] = linkLine.obj._id;
-				}, locLink, true, classBox, parentClass);
-			}
-		}
-		//subClasses
-		_.each(clazz["children"],async function(subclazz) {
-			y = y + 100;
-			await visualizeQuery(subclazz, variableListAlias, classBox, variableList);
-		})
-
-		//conditionLinks
-		_.each(clazz["conditionLinks"],function(condLink) {
-			var linkName = condLink["identification"]["local_name"];
-			var isNot = condLink["isNot"];
-			var isInverse = condLink["isInverse"];
-		})
+	//conditions
+	clazz["conditions"] = removeDuplicateConditions(clazz["conditions"]);
 	
+	if (clazz.conditions) {
+      for (const condition of clazz.conditions) {	
+		//add condition to class
+		if(typeof condition !== "undefined" && condition != null && condition != "")classBox.addCondition(condition);
+      }
+    }
+	
+	//orderBy
+	if (clazz.orderings) {
+      for (const order of clazz.orderings) {	
+		const { exp, isDescending } = order;
+		//add order to class
+		classBox.addOrdering(exp, isDescending);
+      }
+    }
+		
+	//graphs
+	if (clazz.graphs) {
+      for (const gr of clazz.graphs) {	
+		const { graph, graphInstruction } = gr;
+		//add graphs to class
+		classBox.addGraphs(graph, graphInstruction);
+      }
+    }
+		
+	if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
+		
+	//groupBy	
+	if(typeof clazz.groupings !== "undefined"){
+		for (const group of clazz.groupings) {	
+			const expression = group["exp"];
+			//add group to class
+			classBox.addGrouping(group);
+		}
+	}
+	//distinct
+	var distinct = clazz["distinct"];
+
+	if(typeof distinct !== "undefined" && (typeof clazz["aggregations"] === "undefined" || clazz["aggregations"] == null || clazz["aggregations"].length == 0))classBox.setDistinct(distinct);
+	
+	//serviceLabelLang
+	var serviceLabelLang = clazz["serviceLabelLang"];
+	if(typeof serviceLabelLang !== "undefined" && serviceLabelLang !== ""){
+		if(serviceLabelLang != "[AUTO_LANGUAGE],en")classBox.setLabelServiceLanguages(serviceLabelLang);
+	}
+	
+	//selectAll
+	var selectAll = clazz["selectAll"];
+	if(typeof selectAll === "undefined") selectAll = false;
+	classBox.setSelectAll(selectAll);
+
+	//limit
+	var limit = clazz["limit"];
+	classBox.setLimit(limit);
+
+	//offset
+	var offset = clazz["offset"];
+	if(offset != 0) classBox.setOffset(offset);
+
+	//full SPARQL
+	var fullSPARQL = clazz["fullSPARQL"];
+	
+	classBox.setFullSPARQL(fullSPARQL);
+		
+	//link
+	if(parentClass){
+		var linkName = "++";
+		if(typeof clazz.linkIdentification !== 'undefined') linkName = clazz.linkIdentification.short_name;
+		// REQUIRED, NOT, OPTIONAL
+		var linkType  = clazz.linkType;
+
+		// PLAIN, SUBQUERY, GLOBAL_SUBQUERY, CONDITION
+		var linkQueryType = "PLAIN";
+			
+		var isSubQuery = clazz["isSubQuery"];
+		if(isSubQuery == true) linkQueryType = "SUBQUERY";
+		var isGlobalSubQuery = clazz["isGlobalSubQuery"];
+		if(isGlobalSubQuery == true) linkQueryType = "GLOBAL_SUBQUERY";
+
+		var isInverse = clazz["isInverse"];
+		var graph = clazz["graph"];
+		var graphInstruction = clazz["graphInstruction"];
+			
+        //Link Coordinates
+        // var coordX = newPosition.x + Math.round(newPosition.width/2);
+        var coordX = newPosition.x + 10;
+		var coordY = oldPosition.y + oldPosition.height;
+		var locLink = [];
+
+		if (!isInverse){
+			locLink = [coordX, coordY, coordX, newPosition.y]; 
+			let linkLine = await async_Create_VQ_Element(locLink, true, parentClass, classBox);
+			linkLine.setName(linkName);
+			linkLine.setLinkType(linkType);
+			linkLine.setNestingType(linkQueryType);
+			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
+				linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+				linkLine.setGraphInstruction(graphInstruction);
+			}
+			link_count = link_count + 1;
+			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
+		} else {
+			locLink = [coordX, newPosition.y, coordX, coordY];
+			let linkLine = await async_Create_VQ_Element(locLink, true, classBox, parentClass);
+			linkLine.setName(linkName);
+			linkLine.setLinkType(linkType);
+			linkLine.setNestingType(linkQueryType);
+			if(typeof graph !== "undefined" && typeof graphInstruction !== "undefined" && graph != null && graphInstruction != null && graph != "" && graphInstruction != ""){
+				linkLine.setGraph(graph, "{" + graphInstruction + ": " + graph + "}");
+				linkLine.setGraphInstruction(graphInstruction);
+			}
+			link_count = link_count + 1;
+			VQ_Links[linkLine.obj._id] = linkLine.obj._id;
+		}
+	}
+	//subClasses
+	if (clazz.children) {
+		for (const subclazz of clazz.children) {
+			y = y + 100;
+			// vizualizējām klases apakšklases
+			await visualizeQuery(subclazz, variableListAlias, classBox, variableList);		 
+		}
+	}
 	VQ_Elements[clazz.c_id] = classBox.obj._id;
-	}, newPosition);
 }
 
 async function generateInstanceAlias(uri, resolve){

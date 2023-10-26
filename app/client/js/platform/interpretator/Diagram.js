@@ -179,7 +179,7 @@ Interpreter.methods({
 		
 		_.each(boxes, function(box, i) {
 			let position = box.getElementPosition();
-
+			
 			let width = position.width;
 			let height = position.height;
 			if (box.compartments) {
@@ -187,28 +187,40 @@ Interpreter.methods({
 				let compart_height = 0;
 
 				Compartments.find({elementId: box._id}).forEach(function(compart) {
-					let value = compart.value;
-					if (value == "") {
-						return;
-					}
-
-					let font_size = compart.style.fontSize;
-					let tmp_width = 0;
-					let tmp_height = 0;
-
-					let splitted_value = value.split(/\r?\n/);
-					_.each(splitted_value, function(row) {
-						if (row == "") {
+					//calculate width and height only for visible compartments
+					if(compart.style.visible == true){
+						let value = compart.value.trimStart();
+						if (value == "") {
 							return;
 						}
 
-						let text_length = row.length * font_size;
-						tmp_width = Math.max(tmp_width, text_length);
-						tmp_height += font_size;
-					});
+						let font_size = compart.style.fontSize;
+						let tmp_width = 0;
+						let tmp_height = 0;
 
-					compart_width = Math.max(compart_width, tmp_width);
-					compart_height += tmp_height;
+						let splitted_value = value.split(/\r?\n/);
+						_.each(splitted_value, function(row) {
+							if (row == "") {
+								return;
+							}
+
+							//text_length = number_of_charecters_in_string / 2 rounded towards the greater value
+							let text_length = row.length * Math.ceil(font_size/2);
+							tmp_width = Math.max(tmp_width, text_length);
+							
+							//tmp_height = font_size + consant for gap between compartments
+							tmp_height += font_size + 5; // add a height gap between compartments
+							
+							// if compartment lenght if bigger than max box width
+							if(text_length > 500){
+								//compartment height = font_size * (text_length/max_box_width/2 rounded towards the greater value)
+								tmp_height += font_size * Math.ceil(text_length/500/2) + 5;
+							}
+						});
+
+						compart_width = Math.max(compart_width, tmp_width);
+						compart_height += tmp_height;
+					}
 				});
 
 				if (compart_width != 0) {
@@ -219,6 +231,10 @@ Interpreter.methods({
 					height = compart_height + 5;
 				}
 			}
+			//min height
+			if(height < 30) height = 30;
+			//min width
+			if(width < 120) width = 120;
 
 			layoutEngine.addBox(i, position.x, position.y, width, height);
 
