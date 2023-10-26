@@ -153,6 +153,8 @@ var AjooEditor = function(settings) {
         return new IMCSDiagramLayout();
     }
 
+    editor.isLayoutComputationNeededOnLoad = settings.isLayoutComputationNeededOnLoad || 0;
+
     //this is a hack to refresh a palette layer when images are present in the scene
     setTimeout(function() {
         editor.palette.refresh();  

@@ -32,7 +32,7 @@ Meteor.publish("Diagrams", function(list) {
 			diagrams_query["allowedGroups"] = role;
 		}
 
-		var fields = {_id: 1, name: 1, imageUrl: 1, seenCount: 1, createdAt: 1,
+		var fields = {_id: 1, name: 1, imageUrl: 1, seenCount: 1, createdAt: 1, isLayoutComputationNeededOnLoad: 1,
 					diagramTypeId: 1, parentDiagrams: 1, allowedGroups: 1, isPublic: 1,};
 
 		var query = {_id: {$ne: get_configurator_tool_id()}, isDeprecated: {$ne: true},};
@@ -184,7 +184,7 @@ Meteor.publish("Diagram_Palette_ElementType", function(list) {
 
 	var diagram_limit = {fields: {_id: 1, name: 1, imageUrl: 1, style: 1, seenCount: 1, isPublic: 1,
 						allowedGroups: 1, diagramTypeId: 1, parentDiagrams: 1,
-						editingUserId: 1, editingStartedAt: 1, editorType: 1,
+						editingUserId: 1, editingStartedAt: 1, editorType: 1, isLayoutComputationNeededOnLoad: 1,
 						isInitialized: 1, sparqlText: 1, query: 1, isInitialized: 1, isVisualizationNeeded: 1, endpoint: 1, 
 						"edit.action": 1, "edit.userId": 1}};	
 

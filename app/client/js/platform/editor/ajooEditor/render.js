@@ -337,13 +337,10 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 				//refreshin layer because resizers gets bold after multiple updates
 				var parent_layer = element_presentation.getLayer();
 				if (parent_layer.name == "DragLayer") {
-					console.log("batch draw1")
 					parent_layer.draw();
 				}
 
 				else {
-					console.log("batch draw2")
-
 					parent_layer.draw();
 					// element_presentation.draw();
 				}

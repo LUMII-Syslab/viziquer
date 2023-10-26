@@ -11,6 +11,10 @@ import {Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage,
         ThreeTrianglesAndRectangle, ThreeFilledTrianglesAndRectangle, RectangleAndThreeTriangles, ThreeTriangles, RectangleAndThreeFilledTriangles
 } from './Boxes/DrawingShapes/shapes3'
 
+
+import { Interpreter } from '/client/lib/interpreter'
+
+
 var AElements = function(editor, parent) {
 
     var elements = this;
@@ -278,6 +282,12 @@ AElements.prototype = {
             var drag_layer = editor.getLayer("DragLayer");
             drag_layer.draw();
         }
+
+        if (editor.isLayoutComputationNeededOnLoad == 1) {
+            Interpreter.execute("ComputeLayout");
+            editor.isLayoutComputationNeededOnLoad = 0;
+        }
+
     },
 
     removeElements: function(data, is_refresh_needed) {

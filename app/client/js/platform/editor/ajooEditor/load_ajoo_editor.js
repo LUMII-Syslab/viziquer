@@ -56,6 +56,7 @@ Interpreter.loadAjooEditor = function(diagram) {
 
 	                events: get_event_functions(),
 	                eventLogging: event_logging(),
+	                isLayoutComputationNeededOnLoad: diagram["isLayoutComputationNeededOnLoad"],
 
 			    };
 

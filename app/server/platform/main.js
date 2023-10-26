@@ -21,6 +21,7 @@ import '/server/platform/methods/diagrams/compartments'
 import '/server/platform/methods/diagrams/diagrams_sections'
 import '/server/platform/methods/diagrams/elements_sections'
 
+
 import '/server/platform/methods/chat/chats'
 import '/server/platform/methods/feed/posts'
 import '/server/platform/methods/forum/forum'

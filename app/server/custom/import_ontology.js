@@ -252,6 +252,7 @@ Meteor.methods({
 								seenCount: 0,
 								projectId: list.projectId,
 								versionId: list.versionId,
+								isLayoutComputationNeededOnLoad: 1,
 							};
 
 		let new_diagram_id = Diagrams.insert(diagram_object);
