@@ -617,7 +617,8 @@ function setText_In_SPARQL_Editor(text) {
 
 //generate table with unique class names in form [_id] = class_unique_name
 //rootClass - abstract syntax table starting with 'rootClass' object
-function generateIds(rootClass, knownPrefixes){
+function generateIds(rootClass, knownPrefixes, symbolTable){
+	
 	var counter = 0;
 	var idTable = [];
 	var referenceTable = [];
@@ -668,6 +669,7 @@ function generateIds(rootClass, knownPrefixes){
 	
 	
 	
+	
 	// if instance is uri in prefox form
 	if (checkIfIsURI(rootClassId) == "prefix_form") {
 		if(rootClassId.indexOf("(") !== -1 || rootClassId.indexOf(")") !== -1){
@@ -706,7 +708,17 @@ function generateIds(rootClass, knownPrefixes){
 		else rootClassId = "_" + varName;
 	}
 	// idTable[rootClass["identification"]["_id"]] = rootClassId;
-	idTable[rootClass["identification"]["_id"]] = {name:rootClassId, unionId:null};
+	var classNameGenerated = rootClassId;
+	if(typeof symbolTable[rootClass["identification"]["_id"]] !== "undefined" && typeof symbolTable[rootClass["identification"]["_id"]][rootClassId] !== "undefined"){
+		var stable = symbolTable[rootClass["identification"]["_id"]][rootClassId];
+		for(let st = 0; st < stable.length; st++){
+			if(stable[st]["kind"] !== null && stable[st]["kind"].indexOf("_ALIAS") != -1 && stable[st]["context"] != rootClass["identification"]["_id"]) {
+				classNameGenerated = classNameGenerated +"_"+ counter;
+				counter++;
+			}
+		}
+	}
+	idTable[rootClass["identification"]["_id"]] = {name:classNameGenerated, unionId:null};
 	
 	variableNamesCounter[rootClassId] = 1;
 	
@@ -725,7 +737,7 @@ function generateIds(rootClass, knownPrefixes){
 	_.each(rootClass["children"],function(subclazz) {
 		var unionClass = null;
 		if(rootClass["isUnion"] == true) unionClass = rootClass["identification"]["_id"];
-		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
+		var temp = generateClassIds(subclazz, idTable, counter, rootClass["identification"]["_id"], rootClass["isUnion"], unionClass, knownPrefixes, variableNamesTable, variableNamesCounter, symbolTable);
 		// variableNamesTable = temp["variableNamesTable"];
 	    // variableNamesCounter = temp["variableNamesCounter"];
 		counter = temp["counter"];
@@ -755,7 +767,7 @@ function generateIds(rootClass, knownPrefixes){
 // idTable - table with unique class names, generated so far
 // counter - counter for classes with equals names
 // parentClassId - parent class identificator
-function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter){
+function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsUnion, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter, symbolTable){
 	var referenceTable = [];
 	var prefixTable = [];
 	
@@ -857,6 +869,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 
 	}
 	else if((clazz["instanceAlias"] == null || clazz["instanceAlias"].replace(" ", "") =="") && (clazz["identification"]["local_name"] == null || clazz["identification"]["local_name"] == "" || clazz["identification"]["local_name"] == "(no_class)") || typeof clazz["identification"]["iri"] === 'undefined') {
+		
 		if(clazz["isUnit"] == true && typeof idTable[parentClassId] !== 'undefined')idTable[clazz["identification"]["_id"]] = idTable[parentClassId];
 		else idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:"expr_"+counter, unionId:unionClass};
 		counter++;
@@ -882,6 +895,9 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			}
 		}
 		if(foundInIdTable == false){
+			
+			
+			
 			for(let key in idTable) {
 				// if given class name is in the table, add counter to the class name
 				var className= clazz["identification"]["local_name"];
@@ -926,7 +942,19 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				if(t == null || t.length <3 ){
 					textPart = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				} else textPart = clazz["identification"]["local_name"].replace(/-/g, '_');
-				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:textPart, unionId:unionClass};
+				
+				var classNameGenerated = textPart;
+				if(typeof symbolTable[clazz["identification"]["_id"]] !== "undefined" && typeof symbolTable[clazz["identification"]["_id"]][classNameGenerated] !== "undefined"){
+					var stable = symbolTable[clazz["identification"]["_id"]][classNameGenerated];
+					for(let st = 0; st < stable.length; st++){
+						if(stable[st]["kind"] !== null && stable[st]["kind"].indexOf("_ALIAS") != -1 && stable[st]["context"] != clazz["identification"]["_id"]) {
+							classNameGenerated = classNameGenerated +"_"+ counter;
+							counter++;
+						}
+					}
+				}
+
+				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:classNameGenerated, unionId:unionClass};
 				
 				if(typeof variableNamesCounter[textPart] !== "undefined"){
 					variableNamesCounter[textPart] = variableNamesCounter[textPart]+1;
@@ -935,7 +963,18 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 				}
 				
 			} else {
-				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:clazz["identification"]["local_name"].replace(/-/g, '_'), unionId:unionClass};
+				var classNameGenerated = clazz["identification"]["local_name"].replace(/-/g, '_');
+				if(typeof symbolTable[clazz["identification"]["_id"]] !== "undefined" && typeof symbolTable[clazz["identification"]["_id"]][classNameGenerated] !== "undefined"){
+					var stable = symbolTable[clazz["identification"]["_id"]][classNameGenerated];
+					for(let st = 0; st < stable.length; st++){
+						if(stable[st]["kind"] !== null && stable[st]["kind"].indexOf("_ALIAS") != -1 && (stable[st]["context"] != clazz["identification"]["_id"])) {
+							classNameGenerated = classNameGenerated +"_"+ counter;
+							counter++;
+						}
+					}
+				}
+
+				idTable[clazz["identification"]["_id"]] = {local_name:clazz["identification"]["local_name"], name:classNameGenerated, unionId:unionClass};
 				
 				if(typeof variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')] !== "undefined"){
 					variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')] = variableNamesCounter[clazz["identification"]["local_name"].replace(/-/g, '_')]+1;
@@ -974,7 +1013,7 @@ function generateClassIds(clazz, idTable, counter, parentClassId, parentClassIsU
 			if(unionClass == null) unionClass = clazz["identification"]["_id"];
 		} else unionClass = null;
 
-		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter);
+		var temp = generateClassIds(subclazz, idTable, counter, clazz["identification"]["_id"], parentClassIsUnionTemp, unionClass, knownPrefixes, variableNamesTable, variableNamesCounter, symbolTable);
 		/*variableNamesTable = temp["variableNamesTable"];
 		variableNamesCounter = temp["variableNamesCounter"];*/
 
@@ -1153,7 +1192,7 @@ function generateSPARQLtext(abstractQueryTable){
 		 else classifiers = [];
 
  		 //generate table with unique class names in form [_id] = class_unique_name
-		 var generateIdsResult = generateIds(rootClass, knownPrefixes);
+		 var generateIdsResult = generateIds(rootClass, knownPrefixes, symbolTable);
 		 
 		 var idTable = generateIdsResult["idTable"];
 		 
@@ -5410,7 +5449,6 @@ function getPropertyShortForm(classM, knownNamespaces){
 		var prefix = classM.substring(0, classM.lastIndexOf("/")+1)
 		var name = classM.substring(classM.lastIndexOf("/")+1)
 		for(let kp in knownNamespaces){
-			console.log(knownNamespaces[kp], prefix, kp)
 			if(knownNamespaces[kp]["value"] == prefix) return {name:knownNamespaces[kp]["name"]+":"+name, namespace:knownNamespaces[kp]["value"], prefix:knownNamespaces[kp]["name"]+":"};
 		}
 	}

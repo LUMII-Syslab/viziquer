@@ -579,7 +579,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		var link_count2 = abstractTable["linkTable"].length;
 		
 		var variableListCount = getAllVariableCountInQuery(parsedQuery, []);
-
+		
 		await visualizeQuery(classesTable, variableListAlias, null, variableListCount, queryId, queryQuestion);
 		
 		// var i = 0;
@@ -4332,7 +4332,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
 					}
 				}
-				if(args[1].startsWith('"') && args[1].endsWith('"') && args[2] == '"i"'){
+				if(args[1].startsWith('"') && args[1].endsWith('"') && args[2] == '"i"' && where["args"][0]["termType"] == "Variable"){
 					viziQuerExpr["exprString"] = args[0] + " ~* " + args[1];
 				}
 				else viziQuerExpr["exprString"] = viziQuerExpr["exprString"] + args.join(", ") + ")";
@@ -8173,6 +8173,13 @@ async function getAllVariablesForAlias(expression, variableAliasTable){
 							variableAliasTable[t] = temp[t];
 						}
 					}
+				} else if(key == "variables"){
+					for(let variable = 0; variable < expression[key].length; variable++){
+						if(typeof expression[key][variable]["expression"] !== "undefined" && typeof expression[key][variable]["expression"]["aggregation"] !== "undefined"){
+							variableAliasTable[expression[key][variable]["expression"]["expression"]["value"]] = false;
+						}
+					}
+					
 				}
 			}
 		} 
@@ -8431,10 +8438,11 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 	if(className != null && className != "") classBox.setNameAndIndirectClassMembership(className, indirectClassMembership);
 	classBox.setClassStyle(nodeType);
 		
-	if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
-		if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
-		else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
-	} else if(instanceAlias != null ) {
+	// if(typeof clazz["groupByThis"] !== 'undefined' && typeof clazz.aggregations !== "undefined"){
+		// if(instanceAlias != null) classBox.setCompartmentValue("Instance", instanceAlias, "{group} " + instanceAlias , false);
+		// else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
+	// } else
+	if(instanceAlias != null ) {
 		if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
 		else classBox.setInstanceAlias(instanceAlias);
 	}
@@ -8531,7 +8539,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
       }
     }
 		
-	if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
+	// if(typeof clazz["groupByThis"] !== 'undefined') classBox.setGroupByThis(clazz["groupByThis"]);
 		
 	//groupBy	
 	if(typeof clazz.groupings !== "undefined"){

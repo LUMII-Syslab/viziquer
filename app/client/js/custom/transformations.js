@@ -81,13 +81,13 @@ Interpreter.customMethods({
 		let elem = new VQ_Element(Session.get("activeElement"));
 		let instance_input = elem.getCompartmentValue("Instance") || "";
 
-		if (instance_input == "") {
-			value = "true";
-			if (input != "true") {
-				value = "";
-			}
-		}
-		else {
+		// if (instance_input == "") {
+			// value = "";
+			// if (input != "true") {
+				// value = "";
+			// }
+		// }
+		// else {
 			value = "";
 			if (input == "true") {
 				instance_new_value = make_group_by_instance_value(instance_input);
@@ -96,13 +96,13 @@ Interpreter.customMethods({
 			else {
 				elem.setCompartmentValue("Instance", instance_input, instance_input, false);
 			}
-		}
-
+		// }
+	
 		// elem.setCompartmentValue("Group by this", input, value, false);
 		return Dialog.updateCompartmentValue(compart_type, input, value, src_id);
 	},
 
-	// VQsetGroupBy: function(params) {
+	VQsetGroupBy: function(params) {
 	// 	console.log("params ", params)
 	// 	 let act_elem = Session.get("activeElement");
 	// 	 let elem = new VQ_Element(act_elem);
@@ -166,7 +166,7 @@ Interpreter.customMethods({
 	// 	     elem.setCompartmentValue("Instance", comp_val_inst, comp_val_inst, false);
 	// 	   }
 	// 	 }
- 	// },
+ 	},
 	
 	VQsetDistinct: function(params) {
 		 var act_elem = Session.get("activeElement");
