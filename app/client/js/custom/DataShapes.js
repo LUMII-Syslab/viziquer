@@ -391,9 +391,21 @@ dataShapes = {
 	clearSchema : function() {
 		this.schema = getEmptySchema();
 	},
-	getOntologies : async function() {
+	getOntologiesOld : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
+
+		if (!_.isEmpty(rr)) {
+			rr.unshift({display_name:""});
+			// *** console.log(rr)
+			return await rr;
+		}
+
+		return NaN;
+	},
+	getOntologies : async function() {
+		//dataShapes.getOntologies()
+		var rr = await callWithGet('info2/');
 
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
