@@ -391,9 +391,21 @@ dataShapes = {
 	clearSchema : function() {
 		this.schema = getEmptySchema();
 	},
-	getOntologies : async function() {
+	getOntologiesOld : async function() {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info/');
+
+		if (!_.isEmpty(rr)) {
+			rr.unshift({display_name:""});
+			// *** console.log(rr)
+			return await rr;
+		}
+
+		return NaN;
+	},
+	getOntologies : async function() {
+		//dataShapes.getOntologies()
+		var rr = await callWithGet('info2/');
 
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
@@ -593,11 +605,23 @@ dataShapes = {
 		// dataShapes.getClasses({}, new VQ_Element(Session.get("activeElement")))
 		if ( params.filter !== undefined) 
 			params.filter = params.filter.replaceAll(' ','');
+		if ( params.filter !== undefined && params.filter.split(':').length > 1 ) {
+			var filter_split = params.filter.split(':');
+			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			if ( ns.length == 1 ) {
+				params.filter = filter_split[1];
+				params.namespaces = { in: [filter_split[0]]};
+			}
+			else {
+				params.filter = filter_split[1];
+			}
+		}		
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
 			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
 		}
+
 		return await this.callServerFunction("getClasses", allParams);
 	},
 	getClassesFull : async function(params = {}) {
@@ -610,6 +634,18 @@ dataShapes = {
 		// ***  dataShapes.getClassesFull({main: {onlyPropsInSchema: true}, element:{pList: {in: [{name: 'formerCallsigns', type: 'in'}], out: [{name: 'dbo:birthDate', type: 'out'}]}}}) 58
 		if ( params.main.filter !== undefined) 
 			params.main.filter = params.main.filter.replaceAll(' ','');
+			
+		if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
+			var filter_split = params.main.filter.split(':');
+			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			if ( ns.length == 1 ) {
+				params.main.filter = filter_split[1];
+				params.main.namespaces = { in: [filter_split[0]]};
+			}
+			else {
+				params.main.filter = filter_split[1];
+			}
+		}
 			
 		return await this.callServerFunction("getClasses", params);
 	},
@@ -637,8 +673,20 @@ dataShapes = {
 				this.schema.treeTopsC[nsString] = rr;
 			}
 		}
-		else
+		else {
+			if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
+				var filter_split = params.main.filter.split(':');
+				var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+				if ( ns.length == 1 ) {
+					params.main.filter = filter_split[1];
+					params.main.namespaces = { in: [filter_split[0]]};
+				}
+				else {
+					params.main.filter = filter_split[1];
+				}
+			}
 			rr =  await this.callServerFunction("getTreeClasses", params);
+		}
 
 		return rr;
 	},
@@ -651,6 +699,17 @@ dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}})
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
 		params.deferred_properties = this.schema.deferred_properties;
+		if ( params.filter !== undefined && params.filter.split(':').length > 1 ) {
+			var filter_split = params.filter.split(':');
+			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			if ( ns.length == 1 ) {
+				params.filter = filter_split[1];
+				params.namespaces = { in: [filter_split[0]]};
+			}
+			else {
+				params.filter = filter_split[1];
+			}
+		}
 		var allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForProperty(vq_obj);
@@ -669,6 +728,17 @@ dataShapes = {
 		// *** dataShapes.getProperties({main:{propertyKind:'Connect'}, element:{className: 'CareerStation'}, elementOE:{otherEndClassName:'umbel-rc:Crater'}})
 		// *** dataShapes.getProperties({main:{propertyKind:'All', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'}, element:{className: 'CareerStation'}})
 		params.main.deferred_properties = this.schema.deferred_properties;
+		if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
+			var filter_split = params.main.filter.split(':');
+			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			if ( ns.length == 1 ) {
+				params.main.filter = filter_split[1];
+				params.main.namespaces = { in: [filter_split[0]]};
+			}
+			else {
+				params.main.filter = filter_split[1];
+			}
+		}
 		return await this.callServerFunction("getProperties", params);
 	},
 	getClassifiers : async function() {
@@ -997,6 +1067,8 @@ dataShapes = {
 		var remCount = disconnBig; 
 		var rezFull = {classes:{}, assoc:{}, schema:schema, info:info};
 		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
+		var Gnum = 101;
+		var Snum = 101;
 		// Funkcija skaita noapaļošanai, izmanto klasēm un propertijām
 		function roundCount(cnt) {
 			if ( cnt == '' ) {
@@ -1040,6 +1112,7 @@ dataShapes = {
 		
 		var p_list_full = {};
 		var super_classes = {};	
+		var rem_props = {};
 		// Funkcija potenciālo virsklašu veidošanai
 		function add_superclass (sc_list, prop_name) {
 			sc_id = `c_${sc_list.join('_')}`;
@@ -1137,7 +1210,7 @@ dataShapes = {
 							var to_id = `c_${c_2.class_id}`;
 							var cnt = -1;
 							var cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id && i.other_class_id == c_2.class_id});
-							if ( has_cpc && cpc_i.length > 0 || !has_cpc) {  // Ja ir cpc, tad netiek ielikts tas klašu pāris, kura nav. Ja nu ir kāds iztrūkstošs pāris.
+							if ( has_cpc && cpc_i.length > 0 || !has_cpc ) {  // Ja ir cpc, tad netiek ielikts tas klašu pāris, kura nav. Ja nu ir kāds iztrūkstošs pāris.
 								if ( cpc_i.length > 0) 
 									cnt = cpc_i[0].cnt;
 								else {
@@ -1244,12 +1317,11 @@ dataShapes = {
 						addProperty(p_list_full[`p_${p}`], c_from, c_to);
 					}
 				}
-			
 			}			
 		} 
 		
 		console.log("*** super_classes ***", super_classes)
-		// Pieliek abstraktās virsklases pie klasēm 
+		// Saliek abstraktās virsklases sarakstā, lai var sakārtot 
 		var temp = {};
 		var super_classes_list = [];
 		for (var sc of Object.keys(super_classes)) {
@@ -1309,8 +1381,11 @@ dataShapes = {
 			}
 			
 			rezFull.classes[sc].subClasses = sc_list.map(c => c.fullName).join('\n');
-			rezFull.classes[sc].fullName = n_list.join(' or ');
-			rezFull.classes[sc].displayName = n_list.join(' or ');	
+			//rezFull.classes[sc].fullName = n_list.join(' or ');
+			//rezFull.classes[sc].displayName = n_list.join(' or ');	
+			rezFull.classes[sc].fullName = `S${Snum}`;
+			rezFull.classes[sc].displayName = `S${Snum}`;
+			Snum = Snum + 1;
 		}
 		
 		// kopējo atribūtu pārvietošana pie virsklases
@@ -1474,13 +1549,14 @@ dataShapes = {
 		for (var aa of Object.keys(rezFull.assoc)) {
 			var prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
-				if ( remBig && p_list_full[prop.list[0].p_id].count > remCount) { 
+				if ( remBig && p_list_full[prop.list[0].p_id].count > remCount ) { //5555 remCount
 					prop.removed = true;
 					disconnectProp(prop);
+					rem_props[prop.list[0].p_id] = p_list_full[prop.list[0].p_id].count;
 				}
 			}
 		}
-		
+		console.log("%%%%%%%%%%%%%%%%%%%%%%%",rem_props)
 		// Apstrādā tās klases, kurām nav izejošo propertiju, atvieno, ja ir vajadzīgais parametrs
 		for (var clId of Object.keys(rezFull.classes)) {
 			var cl = rezFull.classes[clId];
@@ -1687,6 +1763,9 @@ dataShapes = {
 					rezFull.classes[`c_${temp[t].class_list[0]}`].sub_classes_group_string = cl_list.sort().join('\n');
 					//rezFull.classes[`c_${temp[t].class_list[0]}`].id = `a_${rezFull.classes[`c_${temp[t].class_list[0]}`].id}`;
 					rezFull.classes[`c_${temp[t].class_list[0]}`].used = true; 
+					rezFull.classes[`c_${temp[t].class_list[0]}`].fullName = `G${Gnum}`;
+					rezFull.classes[`c_${temp[t].class_list[0]}`].displayName = `G${Gnum}`;
+					Gnum = Gnum + 1;
 					rezFull.classes[`c_${temp[t].class_list[0]}`].atr_list3 = atr_list;
 					rezFull.classes[`c_${temp[t].class_list[0]}`].atr_list4 = atr_list2;
 					rezFull.classes[`c_${temp[t].class_list[0]}`].type = 'Sub';
@@ -1716,7 +1795,8 @@ dataShapes = {
 				return r_atr_list;
 			}
 			
-			rezFull.classes[sc] = { id:`${cl_list.join('_')}`, fullName:'', displayName:'', used:true, used2:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[]};
+			rezFull.classes[sc] = { id:`${cl_list.join('_')}`, fullName:`S${Snum}`, displayName:`S${Snum}`, used:true, used2:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[]};
+			Snum = Snum + 1;
 			for (let cl of cl_list) {
 				classInfo = rezFull.classes[`c_${cl}`];
 				classInfo.super_classes.push(sc); 
@@ -1733,7 +1813,8 @@ dataShapes = {
 			rezFull.classes[sc].atr_list3 = sup_atr_list;
 			rezFull.classes[sc].atr_list4 = sup_atr_list2;
 		}
-
+		
+		// Izveido klašu kopas, kuras ir līdzīgas ( ir kāds kopīgs atribūtu komplekts)
 		if ( compView ) {
 			rezFull.lines = {};
 			var temp2 = {};
@@ -1764,7 +1845,7 @@ dataShapes = {
 								addAttrs(getCompactAtrList(classInfo2.atr_list, 'out'));
 								addAttrs(getCompactAtrList(classInfo1.atr_list2, 'in'));
 								addAttrs(getCompactAtrList(classInfo2.atr_list2, 'in'));
-								if ( ii_1 - ii_2 < 4 && ii_2 > 3 ) {  // TODO šīs ir patvaļīgi izvēlētas konstantes
+								if ( ii_1 - ii_2 < 4 && ii_2 > 3 ) {  // TODO šīs ir patvaļīgi izvēlētas konstantes ii_i kopīgais atribūtu skaits klašu pārim, ii_2 sakrītošais atribūtu skaits
 									var id = `l_${classInfo1.id}_${classInfo2.id}`;
 									rezFull.lines[id] = {id:id, from:`c_${classInfo1.id}`, to: `c_${classInfo2.id}`, val:`diff_${ii_1 - ii_2}` };
 									var used = false;
@@ -1942,7 +2023,7 @@ dataShapes = {
 		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
 		
 		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
-
+// ***
 		_.each(rr.data, function(cl) {
 			rezFull.classes[`t_c_${cl.id}`] = { id:`t_c_${cl.id}`, used:false, displayName:`${cl.full_name} ID-${cl.id}`, type:'Data', parent:[]};
 			rezFull.classes[`s_t_c_${cl.id}`] = { id:`s_t_c_${cl.id}`, used:false, displayName:`${cl.full_name} ID-${cl.id}`, type:'Data', parent:[]};
@@ -2026,7 +2107,7 @@ dataShapes = {
 			var temp = {};
 			var super_classes_list = [];
 			for (var sc of Object.keys(sc_tree)) {
-				if ( sc_tree[sc].count > 1 ) {
+				if ( sc_tree[sc].count > 0 ) {  // Visas vai tikai 'treknās'
 					temp[sc] = sc_tree[sc];
 					sc_tree[sc].id = sc;
 					sc_tree[sc].parent = [];
