@@ -1155,8 +1155,10 @@ Template.schemaExtra.events({
 		
 		if ( $("#remS").is(":checked") )
 			info.push('Small properties are removed');
-
-		await dataShapes.makeSuperDiagr(classList, propList, remSmall, dataShapes.schema.schema, info.join('\n'));
+			
+		await dataShapes.makeSuperDiagr(classList, propList, $("#addIds").is(":checked"), $("#disconnBig").val(), 
+			$("#compView").is(":checked"), dataShapes.schema.schema, info.join('\n'));
+		//await dataShapes.makeSuperDiagr(classList, propList, remSmall, dataShapes.schema.schema, info.join('\n'));
 
 	},
 	'click #getProperties': async function(e) {
