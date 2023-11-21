@@ -144,9 +144,9 @@ Template.AggregateWizard.events({
 
 			if (Template.AggregateWizard.linkId.curValue != "No link") {
 				var vq_link_obj = new VQ_Element(Template.AggregateWizard.linkId.curValue);
-				if (vq_link_obj.isLink()) {
-					vq_link_obj.setNestingType("SUBQUERY");
-				}
+				// if (vq_link_obj.isLink()) {
+					// vq_link_obj.setNestingType("SUBQUERY");
+				// }
 			}
 
 			// console.log(displayCase, minValue, maxValue);

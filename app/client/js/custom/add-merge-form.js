@@ -16,7 +16,6 @@ Template.AddMergeValues.isNotRootClass = new ReactiveVar(false);
 
 Interpreter.customMethods({
 	AddMergeValues: async function (e) {
-		
 		var expressionField = getExpression(e);
 		var requireField = getRequireField(e);//require
 		if(requireField[0].checked) Template.AddMergeValues.require.set("checked");
@@ -80,6 +79,70 @@ Interpreter.customMethods({
 	}
 })
 
+AddMergeValues2 = async function(e) {
+		var expressionField = document.getElementById("add-new-attribute-expression");
+		var requireField = document.getElementById("add-new-attribute-requireValues");
+		// var requireField = getRequireField(e);//require
+		if(requireField.checked) Template.AddMergeValues.require.set("checked");
+		else Template.AddMergeValues.require.set("");
+
+		var parsedExpression = parsedExpressionField(expressionField.value);
+		var expr = parsedExpression["expression"];
+		var aggregation = parsedExpression["aggregation"];
+		var distinct = parsedExpression["distinct"];
+		
+		Template.AddMergeValues.expression.set(expr);
+		// var mergeAlias = getAlais(e).val();
+		var mergeAlias = document.getElementById("add-new-attribute-alias").value;
+		if(mergeAlias == null || mergeAlias == "") mergeAlias = expr.substring(0,1).toUpperCase();
+		Template.AddMergeValues.mergeAlias.set(mergeAlias);
+		Template.AddMergeValues.aliasField.set(document.getElementById("add-new-attribute-alias").value);
+		Template.AddMergeValues.attribute.set(e);
+		if(aggregation != null && aggregation != "")Template.AddMergeValues.aggregation.set(aggregation);
+		Template.AddMergeValues.distinct.set(distinct);
+		
+		var card = await countCardinality(expr, Session.get("activeElement"))
+		var proj = Projects.findOne({_id: Session.get("activeProject")});
+		if (proj){
+      		if (typeof proj.showCardinalities ==='undefined' || proj.showCardinalities!=true){
+      			card = -1;
+      		}
+      	} else card = -1;
+		
+		if(card == -1)document.getElementById("merge-values-wizard-id").style.display = "none";
+		
+		
+		var selected_elem_id = Session.get("activeElement");
+		if (Elements.findOne({_id: selected_elem_id})){
+			var vq_obj = new VQ_Element(selected_elem_id);
+
+			var parentClass;
+			var links = vq_obj.getLinks();
+			for(let key in links) {
+				if(typeof links[key] !== "function"){
+					if(links[key].link.getRootDirection() == "start" && links[key].link.obj.startElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.startElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
+					if(links[key].link.getRootDirection() == "end" && links[key].link.obj.endElement != selected_elem_id) {
+						parentClass = new VQ_Element(links[key].link.obj.endElement);
+						links[key].link.setNestingType("SUBQUERY");
+					}
+				}
+			}
+			if(typeof parentClass !== 'undefined')Template.AddMergeValues.isNotRootClass.set(true);
+		};
+		
+		Template.AddMergeValues.cardinality.set(card);
+		Template.AddMergeValues.expressionField.set(expressionField);
+		Template.AddMergeValues.requireField.set(requireField);
+		
+		//Template.AddMergeValues.hideField.set(hideField);
+		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
+
+		if(expr != null && expr != "")$("#merge-values-form").modal("show");
+		else Interpreter.showErrorMsg("Please specify expression", -3);
+	}
 
 
 Template.AddMergeValues.helpers({
@@ -219,8 +282,10 @@ Template.AddMergeValues.events({
 
 				vq_obj.addAggregateField(expr,mergeAliasName,requireValues);
 				//Template.AddMergeValues.hideField.get().prop("checked", true);
-				Template.AddMergeValues.expressionField.get().val("");
-				Template.AddMergeValues.aliasField.get().val("");
+				
+				Template.AddMergeValues.expressionField.get().value = "";
+				// Template.AddMergeValues.expressionField.get().val("");
+				Template.AddMergeValues.aliasField.get().value = "";
 				
 				var list = {compartmentId: document.getElementById($(Template.AddMergeValues.attribute.get().target).closest(".multi-field").attr("id")).getAttribute("compartmentid"),
 					projectId: Session.get("activeProject"),
@@ -233,11 +298,12 @@ Template.AddMergeValues.events({
 				form.modal("hide");
 			};
 		} else {
-			Template.AddMergeValues.expressionField.get().val(expr);
+			Template.AddMergeValues.expressionField.get().value= expr;
+			// Template.AddMergeValues.expressionField.set(expr);
 			var requireValues = $('input[id=require-merge-check-box]:checked').val();	
 			if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
 			else requireValues = false;
-			Template.AddMergeValues.requireField.get()[0].checked = requireValues;
+			Template.AddMergeValues.requireField.get().checked = requireValues;
 		}
 		clearMergeValuesInput();
 		return;
@@ -343,6 +409,9 @@ function getRequireField(e){
 
 function getField(e, fieldName){
 		var parent = $(e.target).closest(".compart-type");
+		
+		
+		
 		var parent_id = parent.attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: parent_id});
 

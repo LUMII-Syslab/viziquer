@@ -1,5 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Projects, Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { process_sub_compart_types } from '/client/js/platform/diagrams/dialog/subCompartments'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
@@ -16,6 +17,8 @@ Template.AddNewAttribute.showGraph = new ReactiveVar("false");
 Template.AddNewAttribute.addLabel = new ReactiveVar("false");
 Template.AddNewAttribute.addAltLabel = new ReactiveVar("false");
 Template.AddNewAttribute.addDescription = new ReactiveVar("false");
+Template.AddNewAttribute.addNodeLevelCondition = new ReactiveVar("true");
+Template.AddNewAttribute.addAttributeCondition = new ReactiveVar("false");
 Template.AddNewAttribute.graphInstructionn = new ReactiveVar("");
 Template.AddNewAttribute.graphh = new ReactiveVar("");
 Template.AddNewAttribute.attributeConditionn = new ReactiveVar("");
@@ -484,6 +487,8 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.addLabel.set("false");
 		Template.AddNewAttribute.addAltLabel.set("false");
 		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.addNodeLevelCondition.set("true");
+		Template.AddNewAttribute.addAttributeCondition.set("false");
 		Template.AddNewAttribute.graphInstructionn.set("");		
 		Template.AddNewAttribute.graphh.set("");		
 		Template.AddNewAttribute.attributeConditionn.set("");		
@@ -507,6 +512,8 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.helper.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("helper"));		
 		Template.AddNewAttribute.attributeid.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"));		
 		Template.AddNewAttribute.addDescription.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addDescription"));		
+		Template.AddNewAttribute.addNodeLevelCondition.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addNodeLevelCondition"));		
+		Template.AddNewAttribute.addAttributeCondition.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addAttributeCondition"));		
 		Template.AddNewAttribute.addLabel.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addLabel"));		
 		Template.AddNewAttribute.addAltLabel.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("addAltLabel"));		
 		Template.AddNewAttribute.graphInstructionn.set($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("graphInstruction"));		
@@ -559,6 +566,12 @@ Template.AddNewAttribute.helpers({
 	addDescription: function() {
 		return Template.AddNewAttribute.addDescription.get();
 	},
+	addNodeLevelCondition: function() {
+		return Template.AddNewAttribute.addNodeLevelCondition.get();
+	},
+	addAttributeCondition: function() {
+		return Template.AddNewAttribute.addAttributeCondition.get();
+	},
 	
 	showLabel: function() {
 		return Template.AddNewAttribute.showLabel.get();
@@ -580,12 +593,99 @@ Template.AddNewAttribute.helpers({
 		return Template.AddNewAttribute.attributeConditionSelectionn.get();
 	},
 	
+	field_obj: function() {
+		var data_in = Template.currentData();
+		if (!data_in) {
+			return;
+		}
+
+		//var compart_type_id = $(this).$(".multi-field").attr("id");
+		//var compart_type_id = Session.get("multiRowCompartmentTypeId");
+
+		var compart_type_id = data_in["compartmentTypeId"];
+		var compart = Compartments.findOne({_id: Session.get("multFieldCompartmentId")});
+
+		var fields = [];
+
+		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		if (!compart_type) {
+			return {fields: fields};
+		}
+
+		var sub_compartment;
+		var compart_id;
+		if (compart) {
+			sub_compartment = compart["subCompartments"][compart_type["name"]];
+			compart_id = compart["_id"];
+		}
+
+		process_sub_compart_types(compart_type["subCompartmentTypes"], fields, sub_compartment);
+		let require = false;
+		for (let field = 0; field < fields.length; field++) {
+			fields[field][fields[field]["name"].replace(/\s/g, '').replace(/-/g, '')] = true;
+			if(fields[field]["name"] == "Require Values" && fields[field]["checked"] == true) require = true;
+			if(fields[field]["name"] == "Node-level Condition" && typeof compart_id === "undefined") fields[field]["checked"] = true;
+			if(fields[field]["name"] == "Node-level Condition" && require == true) fields[field]["isdisabled"] = "disabled";
+			if(fields[field]["name"] == "Attribute Condition" && require == true) fields[field]["isdisabled"] = "disabled";
+		}
+		
+		// console.log("NNNNNNNNNNNNNNNNNNNN", compart_id, fields)
+		
+		var field_obj = {_id: compart_type["_id"],
+						compartmentId: compart_id,
+						name: compart_type["name"],
+						label: compart_type["label"],
+						fields: fields,
+					};
+		return field_obj;
+	},
 });
 
 Template.AddNewAttribute.events({
+	
+	
+	"click #add-new-attribute-condition": function() {
+		if(document.getElementById("add-new-attribute-condition").checked == true) {
+			$('#add-new-node-level-condition').prop('checked', false);
+			$('#add-new-node-level-condition').prop('field_value', false);
+		}
+	},
+	
+	"click #add-new-node-level-condition": function() {
+		if(document.getElementById("add-new-node-level-condition").checked == true) {
+			$('#add-new-attribute-condition').prop('checked', false);
+			$('#add-new-attribute-condition').prop('field_value', false);
+		}
+	},
+	
+	"click #add-new-attribute-requireValues": function() {
+		if(document.getElementById("add-new-attribute-requireValues").checked == true) {
+			document.getElementById("add-new-attribute-condition").setAttribute('disabled', '');
+			document.getElementById("add-new-node-level-condition").setAttribute('disabled', '');
+		} else {
+			document.getElementById("add-new-attribute-condition").removeAttribute('disabled');
+			document.getElementById("add-new-node-level-condition").removeAttribute('disabled');
+		}
+	},
+	
+	"click #merge-values-attribute": function(e) {
+		AddMergeValues2(e);
+	},
+	
 
 	"click #ok-add-new-attribute": async function(e, t) {
-
+		var elem = document.getElementById("add-new-attribute-form");
+		var selected_elem_id = Session.get("activeElement");
+		var act_el = Elements.findOne({_id: selected_elem_id}); 
+		if(elem.getAttribute("compartmentId") === null){
+			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+			//Read user's choise
+			  var vq_obj = new VQ_Element(selected_elem_id);
+			
+			};
+		}
+		
+		
 		var alias = document.getElementById("add-new-attribute-alias").value;
 		var expression = document.getElementById("add-new-attribute-expression").value;
 		var requireValues = document.getElementById("add-new-attribute-requireValues").checked ;
@@ -593,6 +693,8 @@ Template.AddNewAttribute.events({
 		var addLabel = "";
 		var addAltLabel = "";
 		var addDescription = "";
+		var addNodeLevelCondition = "";
+		var addAttributeCondition = "";
 		var selectionCondition = "";
 		var requiredCondition = "";
 		var graph = "";
@@ -602,6 +704,8 @@ Template.AddNewAttribute.events({
 		if(document.getElementById("add-new-attribute-add-label") != null) addLabel = document.getElementById("add-new-attribute-add-label").checked;
 		if(document.getElementById("add-new-attribute-add-alt-label") != null) addAltLabel = document.getElementById("add-new-attribute-add-alt-label").checked;
 		if(document.getElementById("add-new-attribute-add-description") != null) addDescription = document.getElementById("add-new-attribute-add-description").checked;
+		if(document.getElementById("add-new-node-level-condition") != null) addNodeLevelCondition = document.getElementById("add-new-node-level-condition").checked;
+		if(document.getElementById("add-new-attribute-condition") != null) addAttributeCondition = document.getElementById("add-new-attribute-condition").checked;
 		if(document.getElementById("add-new-attribute-selection-condition") != null) selectionCondition = document.getElementById("add-new-attribute-selection-condition").value;
 		// if(document.getElementById("add-new-attribute-required-condition") != null) requiredCondition = document.getElementById("add-new-attribute-required-condition").value;
 		if(document.getElementById("add-new-attribute-graph") != null) graph = document.getElementById("add-new-attribute-graph").value;
@@ -638,34 +742,41 @@ Template.AddNewAttribute.events({
 		}
 		
 		if(selectionCondition != ""){
-			fullText = fullText + " {" + selectionCondition + "}";
+			fullText = fullText + " ";
+			if(addAttributeCondition == true)  fullText = fullText + "@";
+			fullText = fullText + "{" + selectionCondition + "}";
 		}
 		
 		// if(requiredCondition != ""){
 			// fullText = fullText + " !{" + requiredCondition + "}";
 		// }
 		
-		if($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
+		var elem = document.getElementById("add-new-attribute-form");
+
+		if(elem.getAttribute("compartmentId") === null || $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				var vq_obj = new VQ_Element(selected_elem_id);
-				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,requiredCondition,selectionCondition);
+				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);
 			};
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		} else {
 			var attribute = document.getElementsByName($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"))[0];
-			attribute.setAttribute("alias", alias);
-			attribute.setAttribute("expression", expression);
-			attribute.setAttribute("requireValues", requireValues);
-			attribute.setAttribute("helper", helper);
-			attribute.setAttribute("addLabel", addLabel);
-			attribute.setAttribute("addAltLabel", addAltLabel);
-			attribute.setAttribute("addDescription", addDescription);
-			attribute.setAttribute("selectionCondition", selectionCondition);
-			// attribute.setAttribute("requiredCondition", requiredCondition);
-			attribute.setAttribute("graph", graph);
-			attribute.setAttribute("graphInstruction", graphInstruction);
-			
+			if(typeof attribute !== "undefined"){
+				attribute.setAttribute("alias", alias);
+				attribute.setAttribute("expression", expression);
+				attribute.setAttribute("requireValues", requireValues);
+				attribute.setAttribute("helper", helper);
+				attribute.setAttribute("addLabel", addLabel);
+				attribute.setAttribute("addAltLabel", addAltLabel);
+				attribute.setAttribute("addDescription", addDescription);
+				attribute.setAttribute("addNodeLevelCondition", addNodeLevelCondition);
+				attribute.setAttribute("addAttributeCondition", addAttributeCondition);
+				attribute.setAttribute("selectionCondition", selectionCondition);
+				// attribute.setAttribute("requiredCondition", requiredCondition);
+				attribute.setAttribute("graph", graph);
+				attribute.setAttribute("graphInstruction", graphInstruction);
+			}
 			// attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
@@ -687,6 +798,8 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Add AltLabel"]["input"] = addAltLabel.toString() ;
 				compart.subCompartments["Attributes"]["Attributes"]["Add Description"]["input"] = addDescription.toString() ;
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["AttributeConditionSelection"]["input"] = selectionCondition;
+				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Attribute Condition"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Attribute Condition"]["input"] = addAttributeCondition.toString();
+				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Node-level Condition"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Node-level Condition"]["input"] = addNodeLevelCondition.toString();
 				// compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
 				compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
 				compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
@@ -697,11 +810,10 @@ Template.AddNewAttribute.events({
 					});
 					compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] = {input: prefixesValue, value:prefixesValue}
 				}
-				
-				
+
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
-				Dialog.updateCompartmentValue(compart_type, fullText, value, $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"), null, null, compart.subCompartments);
+				Dialog.updateCompartmentValue(compart_type, fullText, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 			}
 			var value = $("#mySearch-attribute").val().toLowerCase();
 			var attributes = await getAttributes(value);
@@ -718,6 +830,8 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.addLabel.set("false");
 		Template.AddNewAttribute.addAltLabel.set("false");
 		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.addNodeLevelCondition.set("true");
+		Template.AddNewAttribute.addAttributeCondition.set("false");
 		Template.AddNewAttribute.graphInstructionn.set("");		
 		Template.AddNewAttribute.graphh.set("");		
 		Template.AddNewAttribute.attributeConditionn.set("");		
@@ -730,10 +844,15 @@ Template.AddNewAttribute.events({
 		if(document.getElementById("add-new-attribute-add-label") != null)document.getElementById("add-new-attribute-add-label").checked = false;
 		if(document.getElementById("add-new-attribute-add-alt-label") != null)document.getElementById("add-new-attribute-add-alt-label").checked = false;
 		if(document.getElementById("add-new-attribute-add-description") != null)document.getElementById("add-new-attribute-add-description").checked = false;
+		if(document.getElementById("add-new-node-level-condition") != null) document.getElementById("add-new-node-level-condition").checked = true;
+		if(document.getElementById("add-new-attribute-condition") != null) document.getElementById("add-new-attribute-condition").checked = false;
 		if(document.getElementById("add-new-attribute-graph") != null)document.getElementById("add-new-attribute-graph").value = "";
 		if(document.getElementById("add-new-attribute-graph-instruction") != null)document.getElementById("add-new-attribute-graph-instruction").value = "";
 		if(document.getElementById("add-new-attribute-selection-condition") != null)document.getElementById("add-new-attribute-selection-condition").value = "";
 		if(document.getElementById("add-new-attribute-required-condition") != null)document.getElementById("add-new-attribute-required-condition").value = "";
+		
+		document.getElementById("more-condition-options-node").style.display = "none";
+		document.getElementById("more-condition-options").style.display = "none";
 	
 		return;
 	},
@@ -746,6 +865,8 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.addLabel.set("false");
 		Template.AddNewAttribute.addAltLabel.set("false");
 		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.addNodeLevelCondition.set("true");
+		Template.AddNewAttribute.addAttributeCondition.set("false");
 		Template.AddNewAttribute.graphInstructionn.set("");		
 		Template.AddNewAttribute.graphh.set("");		
 		Template.AddNewAttribute.attributeConditionn.set("");		
@@ -759,10 +880,15 @@ Template.AddNewAttribute.events({
 		if(document.getElementById("add-new-attribute-add-label") != null)document.getElementById("add-new-attribute-add-label").checked = false;
 		if(document.getElementById("add-new-attribute-add-alt-label") != null)document.getElementById("add-new-attribute-add-alt-label").checked = false;
 		if(document.getElementById("add-new-attribute-add-description") != null)document.getElementById("add-new-attribute-add-description").checked = false;
+		if(document.getElementById("add-new-node-level-condition") != null) document.getElementById("add-new-node-level-condition").checked = true;
+		if(document.getElementById("add-new-attribute-condition") != null) document.getElementById("add-new-attribute-condition").checked = false;
 		if(document.getElementById("add-new-attribute-graph") != null)document.getElementById("add-new-attribute-graph").value = "";
 		if(document.getElementById("add-new-attribute-graph-instruction") != null)document.getElementById("add-new-attribute-graph-instruction").value = "";
 		if(document.getElementById("add-new-attribute-selection-condition") != null)document.getElementById("add-new-attribute-selection-condition").value = "";
 		if(document.getElementById("add-new-attribute-required-condition") != null)document.getElementById("add-new-attribute-required-condition").value = "";
+		
+		document.getElementById("more-condition-options-node").style.display = "none";
+		document.getElementById("more-condition-options").style.display = "none";
 		
 		return;
 
@@ -782,10 +908,21 @@ Template.AddNewAttribute.events({
 		Template.AddNewAttribute.addLabel.set("false");
 		Template.AddNewAttribute.addAltLabel.set("false");
 		Template.AddNewAttribute.addDescription.set("false");
+		Template.AddNewAttribute.addNodeLevelCondition.set("true");
+		Template.AddNewAttribute.addAttributeCondition.set("false");
 		Template.AddNewAttribute.graphInstructionn.set("");		
 		Template.AddNewAttribute.graphh.set("");		
 		Template.AddNewAttribute.attributeConditionn.set("");		
 		Template.AddNewAttribute.attributeConditionSelectionn.set("");
+	},
+	
+	'click #more-options-attribute-button': function(e) {
+		if(document.getElementById("more-condition-options").style.display == "none") document.getElementById("more-condition-options").style.display = "block";
+		else document.getElementById("more-condition-options").style.display = "none";
+		
+		if(document.getElementById("more-condition-options-node").style.display == "none") document.getElementById("more-condition-options-node").style.display = "block";
+		else document.getElementById("more-condition-options-node").style.display = "none";
+		return;
 	},
 });
 

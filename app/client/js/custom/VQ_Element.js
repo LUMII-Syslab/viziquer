@@ -2995,8 +2995,9 @@ VQ_Element.prototype = {
     {title:"Prefixes",name:"Prefixes"},
     {title:"graph",name:"Graph"},
     {title:"graphInstruction",name:"Graph instruction"},
-    {title:"attributeCondition",name:"AttributeCondition"},
     {title:"attributeConditionSelection",name:"AttributeConditionSelection"},
+	{title:"attributeCondition",name:"Attribute Condition", transformer:function(v) {return v=="true"}},
+    {title:"nodeLevelCondition",name:"Node-level Condition", transformer:function(v) {return v=="true"}},
     {title:"requireValues",name:"Require Values",transformer:function(v) {return v=="true"}},
     {title:"addLabel",name:"Add Label",transformer:function(v) {return v=="true"}},
     {title:"addAltLabel",name:"Add AltLabel",transformer:function(v) {return v=="true"}},
@@ -3020,7 +3021,7 @@ VQ_Element.prototype = {
 	return compratmentList;
   },
   // string,string,bool,bool,bool -->
-  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction,condition,conditionSelection) {
+  addField: function(exp,alias,requireValues,groupValues,isInternal,addLabel,addAltLabel,addDescription,graph,graphInstruction, condition, isAttributeCondition, isNodeLevelCondition) {
     
 	var prefixesValue = "";
 	var graphPrefixValue = "";
@@ -3033,8 +3034,10 @@ VQ_Element.prototype = {
 	this.addCompartmentSubCompartments("Attributes",[
       {name:"Expression",value:exp},
       {name:"Field Name",value:alias},
-      {name:"AttributeCondition",value:condition},
-      {name:"AttributeConditionSelection",value:conditionSelection},
+      // {name:"AttributeCondition",value:condition},
+      {name:"Attribute Condition",value:this.boolToString(isAttributeCondition)},
+      {name:"Node-level Condition",value:this.boolToString(isNodeLevelCondition)},
+      {name:"AttributeConditionSelection",value:condition},
       {name:"Graph",value:graph, input:""},
       {name:"Graph instruction",value:graphInstruction,input:""},
       {name:"Require Values",value:this.boolToString(requireValues)},
@@ -3706,7 +3709,6 @@ VQ_Element.prototype = {
 											styleId: ct.styles[0]["id"],
 										},
 									};
-
              Utilities.callMeteorMethod("insertCompartment", c_to_create);
           return 3;
 			};

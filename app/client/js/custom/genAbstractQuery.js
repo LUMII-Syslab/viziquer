@@ -610,14 +610,14 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 		  f.graph = getGraphFullForm(f.graph, prefixes);
 	  }
      
-	  if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != null && f.attributeCondition != ""){
-		var variableName = f.exp;
-		if (f.alias!=null && f.alias!="")variableName = f.alias;
-		var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeCondition, {"variable":variableName});
-		var condition = {exp:conditionExpression};
-		await parseExpObject(condition, obj_class.identification);
-		obj_class.conditions.push(condition);
-	  } 
+	  // if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != null && f.attributeCondition != ""){
+		// var variableName = f.exp;
+		// if (f.alias!=null && f.alias!="")variableName = f.alias;
+		// var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeCondition, {"variable":variableName});
+		// var condition = {exp:conditionExpression};
+		// await parseExpObject(condition, obj_class.identification);
+		// obj_class.conditions.push(condition);
+	  // } 
 	  if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != null && f.attributeConditionSelection != ""){
 		var variableName = f.exp;
 		if (f.alias!=null && f.alias!="")variableName = f.alias;

@@ -1862,6 +1862,80 @@
                         "subCompartmentTypes": []
                       },
 					  {
+                       "_id": "frys21a6u6q2fby5160t0bqq",
+                        "index": 17,
+                        "name": "AttributeConditionSelection",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "processKeyStroke",
+                            "procedure": "attributeConditionAutoCompletion"
+                          }
+                        ],
+                        "prefix": "{",
+                        "suffix": "}",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Condition(s)"
+                      },
+					  {
+                        "_id": "hbj9fw0gj1d3u7xi0v1mub4g",
+                        "index": 16,
+                        "name": "Attribute Condition",
+						"label": "Attribute Condition: filter expression values only, rows without expression values can be kept",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": false,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": "@"
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": ""
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "ev7y7e5m0e364zox10mri2nc",
+                        "index": 15,
+                        "name": "Node-level Condition",
+						"label": "Node-level Condition: Include or exclude data rows, based on the condition",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": true,
+                        "inputType": {
+                          "type": "checkbox",
+                          "values": [
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "true",
+                              "value": " "
+                            },
+                            {
+                              "compartmentStyle": "NoStyle",
+                              "elementStyle": "NoStyle",
+                              "input": "false",
+                              "value": " "
+                            }
+                          ]
+                        },
+                        "subCompartmentTypes": []
+                      },
                         "_id": "i794avqh6vh6aa1cakgfrvni",
                         "index": 3,
                         "name": "Prefixes",

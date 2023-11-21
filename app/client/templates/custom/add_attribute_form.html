@@ -214,8 +214,9 @@ You can always edit the attibute list also from the node property pane to the ri
 </template>
 
 <template name="AddNewAttribute">
+  {{#with field_obj}}
 	<!-- Modal for new document -->
-    <div id="add-new-attribute-form" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div id="add-new-attribute-form" class="modal fade row-form compart-type" data-backdrop="static" data-keyboard="false" compartmentId={{compartmentId}}>
 
         <div class="modal-dialog">
             <div class="modal-content">
@@ -223,10 +224,118 @@ You can always edit the attibute list also from the node property pane to the ri
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Attributes</h4>
                 </div>
-                <div class="modal-body multi-field" style="width: 550px" attributeid="{{attributeid}}">
-	                <form autocomplete="off">
+                <div class="modal-body" style="width: 550px" attributeid="{{attributeid}}">
+	                <form autocomplete="off" onsubmit="return false;">
+					{{#if fields}}
+					
+						{{#each fields}}
+							{{#if Graphinstruction}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Graph instruction</label>
+									<input id="add-new-attribute-graph-instruction" type="text" class="form-control" list="graph-instruction-list" value="{{field_value}}">
+										<datalist id="graph-instruction-list" class="datalist">
+												<option mappedvalue="GRAPH" input="GRAPH">GRAPH</option>
+												<option mappedvalue="SERVICE" input="SERVICE">SERVICE</option>
+										</datalist>
+								</div>
+							{{/if}}
+							{{#if Graph}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Graph</label>
+									<input id="add-new-attribute-graph" autocomplete="off" class="form-control" value="{{field_value}}">
+								</div>
+							{{/if}}
+							{{#if FieldName}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Alias</label>
+									<input id="add-new-attribute-alias" type="text" class="form-control" value="{{field_value}}">
+								</div>
+							{{/if}}
+						
+							{{#if Expression}}
+								<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
+									<label>Expression</label>
+									<input id="add-new-attribute-expression" type="text" class="form-control" value="{{field_value}}">
+									<span class="help-block">Use Ctrl+Space for text auto-completion</span>
+								</div>
+							{{/if}}
+							{{#if RequireValues}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">					
+										<input id="add-new-attribute-requireValues" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Require Values
+									</label>
+								</div>
+							{{/if}}
+							{{#if IsInternal}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-helper" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Helper (do not include in selection)
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddLabel}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-label" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add Label
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddAltLabel}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-alt-label" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add AltLabel
+									</label>
+								</div>
+							{{/if}}
+							{{#if AddDescription}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-add-description" type="checkbox" checked="{{checked}}">
+										<span class="custom-checkbox"></span>
+										Add Description
+									</label>
+								</div>
+							{{/if}}
+							{{#if AttributeConditionSelection}}
+								<div class="form-group" style="margin-bottom:10px;">
+									<label>Condition(s)</label>
+									<div>
+									<input autocomplete="off" class="form-control" type="text" id="add-new-attribute-selection-condition" value="{{field_value}}" style="width:89%; display: inline-block;">
+									<a id="more-options-attribute-button" class="btn btn-xs btn-success"><i>More...</i></a>
+									</div>
+								</div>
+							{{/if}}
+							{{#if NodelevelCondition}}
+								<div class="form-group"  id = "more-condition-options-node" style="margin-bottom:10px;  display: none;">
+									<label class="label-checkbox">
+										<input id="add-new-node-level-condition" type="checkbox" checked="{{checked}}" {{isdisabled}}>
+										<span class="custom-checkbox"></span>
+										Node-level Condition: Include or exclude data rows, based on the condition
+									</label>
+								</div>
+							{{/if}}
+							{{#if AttributeCondition}}
+								<div class="form-group" id = "more-condition-options" style="margin-bottom:10px;  display: none;">
+									<label class="label-checkbox">
+										<input id="add-new-attribute-condition" type="checkbox" checked="{{checked}}" {{isdisabled}}>
+										<span class="custom-checkbox"></span>
+										Attribute Condition: filter expression values only, rows without expression values can be kept
+									</label>
+								</div>
+							{{/if}}
+						{{/each}}
+					
+					{{else}}
 						{{#if showGraph}}
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group" style="margin-bottom:10px;">
 							<label>Graph instruction</label>
 							<input id="add-new-attribute-graph-instruction" type="text" class="form-control dialog-combobox input-sm" list="graph-instruction-list" value="{{graphInstruction}}">
 								<datalist id="graph-instruction-list" class="datalist">
@@ -234,17 +343,17 @@ You can always edit the attibute list also from the node property pane to the ri
 										<option mappedvalue="SERVICE" input="SERVICE">SERVICE</option>
 								</datalist>
 						</div>
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group" style="margin-bottom:10px;">
 							<label>Graph</label>
 							<input id="add-new-attribute-graph" autocomplete="off" class="form-control dialog-input input-sm" value="{{graph}}">
 						</div>
 						{{/if}}
 						
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group" style="margin-bottom:10px;">
 							<label>Alias</label>
 							<input id="add-new-attribute-alias" class="form-control dialog-input input-sm" value="{{alias}}">
 						</div>
-						<div id = "add-new-attribute-expression-field" class="form-group compart-type" style="margin-bottom:10px;">
+						<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
 							<label>Expression</label>
 							<input id="add-new-attribute-expression" type="text" class="form-control dialog-combobox input-sm" value="{{expression}}" list="row_c93c1c24e95aac9deb851c91">
 
@@ -253,14 +362,14 @@ You can always edit the attibute list also from the node property pane to the ri
 							
 							<span class="help-block">Use Ctrl+Space for text auto-completion</span>
 						</div>
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group" style="margin-bottom:10px;">
 							<label class="label-checkbox">					
 								<input id="add-new-attribute-requireValues" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{requireValues}}>
 								<span class="custom-checkbox"></span>
 								Require Values
 							</label>
 						</div>
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group " style="margin-bottom:10px;">
 							<label class="label-checkbox">
 								<input id="add-new-attribute-helper" type="checkbox" class="dialog-checkbox input-sm" {{selectThis}} {{helper}}>
 								<span class="custom-checkbox"></span>
@@ -268,21 +377,21 @@ You can always edit the attibute list also from the node property pane to the ri
 							</label>
 						</div>
 						{{#if showLabel}}
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group " style="margin-bottom:10px;">
 							<label class="label-checkbox">
 								<input id="add-new-attribute-add-label" type="checkbox" class="dialog-checkbox input-sm" {{addLabel}}>
 								<span class="custom-checkbox"></span>
 								Add Label
 							</label>
 						</div>
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group " style="margin-bottom:10px;">
 							<label class="label-checkbox">
 								<input id="add-new-attribute-add-alt-label" type="checkbox" class="dialog-checkbox input-sm" {{addAltLabel}}>
 								<span class="custom-checkbox"></span>
 								Add AltLabel
 							</label>
 						</div>
-						<div class="form-group compart-type" style="margin-bottom:10px;">
+						<div class="form-group " style="margin-bottom:10px;">
 							<label class="label-checkbox">
 								<input id="add-new-attribute-add-description" type="checkbox" class="dialog-checkbox input-sm" {{addDescription}}>
 								<span class="custom-checkbox"></span>
@@ -291,19 +400,41 @@ You can always edit the attibute list also from the node property pane to the ri
 						</div>
 						{{/if}}
 						
-						<!-- <div class="form-group compart-type" style="margin-bottom:10px;"> -->
-							<!-- <label>Condition(s)</label> -->
-							<!-- <input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-selection-condition" value="{{attributeConditionSelection}}"> -->
-						<!-- </div> -->
-						<!-- <div class="form-group compart-type" style="margin-bottom:10px;"> -->
+						<div class="form-group " style="margin-bottom:10px;">
+							<label>Condition(s)</label>
+							<div>
+							<input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-selection-condition" value="{{attributeConditionSelection}}" style="width:89%; display: inline-block;">
+							<a id="more-options-attribute-button" class="btn btn-xs btn-success"><i>More...</i></a>
+							</div>
+						</div>
+						<!-- <div class="form-group " style="margin-bottom:10px;"> -->
 							<!-- <label>Required condition</label> -->
 							<!-- <input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-required-condition" value="{{attributeConditionSelection}}"> -->
 						<!-- </div> -->
-   
+						
+						<div class="form-group "  id = "more-condition-options-node" style="margin-bottom:10px;  display: none;">
+							<label class="label-checkbox">
+								<input id="add-new-node-level-condition" type="checkbox" class="dialog-checkbox input-sm" {{addNodeLevelCondition}}>
+								<span class="custom-checkbox"></span>
+								Node-level Condition: Include or exclude data rows, based on the condition
+							</label>
+						</div>
+						<div class="form-group " id = "more-condition-options" style="margin-bottom:10px;  display: none;">
+							<label class="label-checkbox">
+								<input id="add-new-attribute-condition" type="checkbox" class="dialog-checkbox input-sm" {{addAttributeCondition}}>
+								<span class="custom-checkbox"></span>
+								Attribute Condition: filter expression values only, rows without expression values can be kept
+							</label>
+						</div>
+					 {{/if}}
 	                </form>
+
 	            </div>
 
                 <div class="modal-footer">
+					<div class="col-md-2 pull-left">
+						   <button id="merge-values-attribute" type="button" class="btn btn-warning yellow-button">Merge values ..</button>
+					</div>
                     <button id="cancel-add-new-attribute" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-new-attribute" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
@@ -311,5 +442,5 @@ You can always edit the attibute list also from the node property pane to the ri
         </div><!-- /.modal-dialog -->
 
     </div><!-- /.modal -->
-
+  {{/with}}
 </template>

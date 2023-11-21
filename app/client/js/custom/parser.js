@@ -151,7 +151,7 @@ parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTab
 
 }
 
-parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId) {
+parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId, generateTriple) {
 	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames, expr["exp"], variableNT, variableNC, 99999999999999, fId, cl);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
@@ -178,7 +178,7 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 	});
 		
 	// if in filter expression is used variable name, then put filter inside EXISTS
-	if(applyExistsToFilter != null && applyExistsToFilter == true){
+	if(applyExistsToFilter != null && applyExistsToFilter == true && generateTriple != false){
 		var uniqueTriplesFilter = createTriples(tripleTable, "filter").filter(function (el, i, arr) {
 			return arr.indexOf(el) === i;
 		});
@@ -194,7 +194,7 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 		// uniqueTriples = [];
 	}
 	
-	if(uniqueTriples.length == 1 && uniqueTriples[0].startsWith("BIND(") && uniqueTriples[0].endsWith(result+")")){
+	if(uniqueTriples.length == 1 && typeof uniqueTriples[0] === "string" && uniqueTriples[0].startsWith("BIND(") && uniqueTriples[0].endsWith(result+")")){
 		result = uniqueTriples[0].substring(5, uniqueTriples[0].length-result.length-5);
 		uniqueTriples = [];
 	}
@@ -651,6 +651,7 @@ getReferenceName = function(referenceName, symbolTable, classID){
 }
 
 function setVariableName(varName, alias, variableData, generateNewName){
+	
 	var reserverNames = ["constructor", "length", "prototype"];
 	if(reserverNames.indexOf(varName) != -1) varName = varName + " ";
 	if(reserverNames.indexOf(alias) != -1) alias = alias + " ";
@@ -3621,7 +3622,6 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					//property = 5
 					//propety = "string"
 					// filter as triple
-					
 					if(visited != 1 && (Usestringliteralconversion == "OFF" || className.startsWith("_")) 
 						&& typeof expressionTable[key]['Relation'] !== 'undefined' 
 						&& expressionTable[key]['Relation'] == "=" && isSimpleFilter == true && 
