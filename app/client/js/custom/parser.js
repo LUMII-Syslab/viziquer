@@ -119,9 +119,12 @@ parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTab
 		if(knPr[key].is_local == true) knownNamespaces[":"] = knPr[key]["value"];
 	}
 
-	
-	if(typeof idTable[clazz.identification._id] !== "undefined") exp = "?"+ idTable[clazz.identification._id];
-	else {
+	if(typeof idTable[clazz.identification._id] !== "undefined"){
+		var classForm = checkIfIsURI(idTable[clazz.identification._id])
+		if(classForm == "not_uri")exp = "?"+ idTable[clazz.identification._id];
+		else if(classForm == "full_form") exp = "<" + idTable[clazz.identification._id] +">";
+		else if(classForm == "prefix_form") exp = idTable[clazz.identification._id];
+	} else {
 		messages.push({
 						"type" : "Error",
 						"message" : "Class name "+clazz.identification.display_name +" is undefined.",
@@ -4444,4 +4447,11 @@ function typeStringFromSymbolTable(symbolTable, expression){
 			|| symbolTable[expression][key]["type"]["data_type"]== 'xsd:string')) value = true;	
 	}
 	return value;
+}
+
+function checkIfIsURI(text){
+	if(text == null) return "not_uri";
+	if(text.indexOf("://") != -1) return "full_form";
+	else if(text.indexOf(":") != -1) return "prefix_form";
+	return "not_uri";
 }
