@@ -843,9 +843,9 @@
 			
 			Comma = comma_c "," 
 
-			LANGTAG =  at "@" string
-			LANGTAG_MUL = at "@" br_open "(" (string2 (LANGTAG_LIST)*) br_close ")"
-			LANGTAG_LIST = (Comma space string2)
+			LANGTAG =  at "@" ([a-zA-ZāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] ('-' / [a-zA-Z0-9āčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])*)
+			LANGTAG_MUL = at "@" br_open "(" (([a-zA-ZāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] ('-' / [a-zA-Z0-9āčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])*) (LANGTAG_LIST)*) br_close ")"
+			LANGTAG_LIST = (Comma space ([a-zA-ZāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] ('-' / [a-zA-Z0-9āčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])*))
 
 			RDFLiteralC = StringQuotes 
 

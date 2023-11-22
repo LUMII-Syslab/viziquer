@@ -107,11 +107,11 @@
 			Main = (AllElse (Expression AllElse)*)
 			AllElse = ([^A-Za-z0-9:_-] / [0-9] / "-" )*
 			//Expression = IRIREF / PrefixedName
-			Expression = PrefixedName:(PNAME_NS? Variable) {return checkIfVariable(makeVar(PrefixedName))}
+			Expression = PrefixedName:(PNAME_NS? Variable StringLang?) {return checkIfVariable(makeVar(PrefixedName))}
 			//IRIREF = IRIREF:("<" ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / ":" / "." / "#" / "/" / "-" / [0-9])+ ">") {return makeVar(IRIREF)}
 			PNAME_NS = Prefix:(PN_PREFIX? ":") {return makeVar(Prefix)}
 			Variable = Variable:(Chars_String_variables / Chars_String_prefix) {return makeVar(Variable)}
 			Chars_String_variables = ("[" Chars_String_variables:Chars_String_prefix "]") {return Chars_String_variables}
 			PN_PREFIX = Chars_String_prefix
 			Chars_String_prefix = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "-"/ [0-9])*)
-			
+			StringLang =StringLang:( "@" [a-zA-ZāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] ('-' / [a-zA-Z0-9āčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ])*) {return makeVar(StringLang)}
