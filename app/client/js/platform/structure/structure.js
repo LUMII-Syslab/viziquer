@@ -330,7 +330,10 @@ Template.createProjectModal.events({
 			//console.log("Jauna projekta taisīšana");
 			
 			if ( schema_name != "" && !isProject) {
-				var schema_info = Template.createProjectModal.schemas.get().filter(function(o){ return o.display_name == schema_name});
+				var schemas = Template.createProjectModal.schemas.get();
+				var schema_info = _.filter(schemas, function(o){ return o.display_name == schema_name});
+
+				// var schema_info = .filter(function(o){ return o.display_name == schema_name});
 				if ( schema_info.length > 0 && schema_info[0].display_name != "") {
 					list.schema = schema_name;
 					list.endpoint = schema_info[0].sparql_url;
