@@ -224,7 +224,7 @@ You can always edit the attibute list also from the node property pane to the ri
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">Attributes</h4>
                 </div>
-                <div class="modal-body" style="width: 550px" attributeid="{{attributeid}}">
+                <div id="add-new-attribute-id" class="modal-body" style="width: 550px" attributeid="{{attributeid}}">
 	                <form autocomplete="off" onsubmit="return false;">
 					{{#if fields}}
 					
@@ -345,21 +345,17 @@ You can always edit the attibute list also from the node property pane to the ri
 						</div>
 						<div class="form-group" style="margin-bottom:10px;">
 							<label>Graph</label>
-							<input id="add-new-attribute-graph" autocomplete="off" class="form-control dialog-input input-sm" value="{{graph}}">
+							<input id="add-new-attribute-graph" autocomplete="off" class="form-control input-sm" value="{{graph}}">
 						</div>
 						{{/if}}
 						
 						<div class="form-group" style="margin-bottom:10px;">
 							<label>Alias</label>
-							<input id="add-new-attribute-alias" class="form-control dialog-input input-sm" value="{{alias}}">
+							<input id="add-new-attribute-alias" class="form-control input-sm" value="{{alias}}">
 						</div>
 						<div id = "add-new-attribute-expression-field" class="form-group" style="margin-bottom:10px;">
 							<label>Expression</label>
-							<input id="add-new-attribute-expression" type="text" class="form-control dialog-combobox input-sm" value="{{expression}}" list="row_c93c1c24e95aac9deb851c91">
-
-							<datalist id="row_c93c1c24e95aac9deb851c91" class="datalist">
-							</datalist>
-							
+							<input id="add-new-attribute-expression" type="text" class="form-control input-sm" value="{{expression}}">	
 							<span class="help-block">Use Ctrl+Space for text auto-completion</span>
 						</div>
 						<div class="form-group" style="margin-bottom:10px;">
@@ -403,7 +399,7 @@ You can always edit the attibute list also from the node property pane to the ri
 						<div class="form-group " style="margin-bottom:10px;">
 							<label>Condition(s)</label>
 							<div>
-							<input autocomplete="off" class="form-control dialog-input input-sm" id="add-new-attribute-selection-condition" value="{{attributeConditionSelection}}" style="width:89%; display: inline-block;">
+							<input autocomplete="off" class="form-control input-sm" id="add-new-attribute-selection-condition" value="{{attributeConditionSelection}}" style="width:89%; display: inline-block;">
 							<a id="more-options-attribute-button" class="btn btn-xs btn-success"><i>More...</i></a>
 							</div>
 						</div>
@@ -432,9 +428,12 @@ You can always edit the attibute list also from the node property pane to the ri
 	            </div>
 
                 <div class="modal-footer">
+				{{#if fields}}
 					<div class="col-md-2 pull-left">
+					
 						   <button id="merge-values-attribute" type="button" class="btn btn-warning yellow-button">Merge values ..</button>
 					</div>
+				{{/if}}
                     <button id="cancel-add-new-attribute" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="ok-add-new-attribute" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>

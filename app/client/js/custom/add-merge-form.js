@@ -139,6 +139,7 @@ AddMergeValues2 = async function(e) {
 		
 		//Template.AddMergeValues.hideField.set(hideField);
 		Template.AddMergeValues.e.set(e.target.parentElement.parentElement.parentElement.parentElement);
+		document.getElementById("merge-values-form").style.zIndex = "1051";
 
 		if(expr != null && expr != "")$("#merge-values-form").modal("show");
 		else Interpreter.showErrorMsg("Please specify expression", -3);
