@@ -114,7 +114,6 @@ ImportAjooConfiguration.prototype = {
 
 			delete object._id;
 
-
 			var new_diagram_type_id = DiagramTypes.insert(object);
 			self.obj_type_map[diagram_type_id] = new_diagram_type_id;
 

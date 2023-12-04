@@ -42,24 +42,31 @@ ExportDiagramConfig.prototype = {
 	},
 
 	exportDiagramTypes: function(tool_id) {
+		var self = this;
 
-		var diagram_type = DiagramTypes.findOne({toolId: tool_id});
-		if (!diagram_type) {
-			console.error("No diagram type");
-			return;
-		}
+		// var diagram_type = DiagramTypes.findOne({toolId: tool_id});
+		this.types = DiagramTypes.find({toolId: tool_id}).map(function(diagram_type) {
 
-		var diagram_type_id = diagram_type._id;
-			
-		var diagram_type_out = {object: diagram_type,
-								dialog: this.exportDiagramTypeDialog(diagram_type_id),
-								compartmentTypes: this.exportDiagramTypeCompartmentTypes(diagram_type_id),
-								boxTypes: this.exportBoxTypes(diagram_type_id),
-								lineTypes: this.exportLineTypes(diagram_type_id),
-								paletteButtons: this.exportPalette(diagram_type_id),
-							};
+						if (!diagram_type) {
+							console.error("No diagram type");
+							return;
+						}
 
-		this.types.push(diagram_type_out);
+						var diagram_type_id = diagram_type._id;
+							
+						var diagram_type_out = {object: diagram_type,
+												dialog: self.exportDiagramTypeDialog(diagram_type_id),
+												compartmentTypes: self.exportDiagramTypeCompartmentTypes(diagram_type_id),
+												boxTypes: self.exportBoxTypes(diagram_type_id),
+												lineTypes: self.exportLineTypes(diagram_type_id),
+												paletteButtons: self.exportPalette(diagram_type_id),
+											};
+
+						return diagram_type_out;
+					});
+
+			// this.types.push(diagram_type_out);
+		// }
 	},
 
 	exportBoxTypes: function(diagram_type_id) {
@@ -129,22 +136,26 @@ ExportDiagramConfig.prototype = {
 
 		var self = this;
 
-		var diagram = Diagrams.findOne({toolId: tool_id,});
-		if (!diagram) {
-			console.error("No diagram");
-			return;
-		}
+		self.presentations = Diagrams.find({toolId: tool_id,}).map(function(diagram) {
 
-		var diagram_id = diagram._id;
-		self.exportBoxes(diagram_id);
-		self.exportLines(diagram_id);
+			if (!diagram) {
+				console.error("No diagram");
+				return;
+			}
 
-		var diagram_out = {object: diagram,
-							boxes: self.exportBoxes(diagram_id),
-							lines: self.exportLines(diagram_id),
-						};
+			var diagram_id = diagram._id;
+			self.exportBoxes(diagram_id);
+			self.exportLines(diagram_id);
 
-		self.presentations.push(diagram_out);
+			var diagram_out = {object: diagram,
+								boxes: self.exportBoxes(diagram_id),
+								lines: self.exportLines(diagram_id),
+							};
+
+			return diagram_out;
+		});
+
+		// self.presentations.push(diagram_out);
 	},
 
 	exportBoxes: function(diagram_id) {

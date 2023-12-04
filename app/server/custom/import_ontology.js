@@ -1,4 +1,4 @@
-import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/libs/platform/collections'
 
 let ontology1 = {
   Gen: {
@@ -2177,13 +2177,23 @@ Meteor.methods({
 	importOntology: function(list, ontology) {
 		var user_id = Meteor.userId();
 
-		let tool = Tools.findOne({name: "Viziquer"});
-		if (!tool) {
-			console.error("No tool");
-			return;
-		}
+		// let tool = Tools.findOne({name: "Viziquer"});
+		// if (!tool) {
+		// 	console.error("No tool");
+		// 	return;
+		// }
 
-		let diagram_type = DiagramTypes.findOne({name: "Ontology", toolId: tool._id,});
+
+        let project = Projects.findOne({_id: list.projectId,});
+        if (!project) {
+         console.error("No Project");
+         return;
+        }
+
+        let tool_id = project.toolId;
+
+
+		let diagram_type = DiagramTypes.findOne({name: "Ontology", toolId: tool_id,});
 		if (!diagram_type) {
 			console.error("No diagram type");
 			return;
@@ -2353,11 +2363,11 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 	}
 
 
-		let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id,});
-		if (!compartment_type) {
-			console.error("No compartment type");
-			return;
-		}
+	let compartment_type = CompartmentTypes.findOne({elementTypeId: element_type_id,});
+	if (!compartment_type) {
+		console.error("No compartment type");
+		return;
+	}
 
 
 	let style_obj = compartment_type["styles"][0];
