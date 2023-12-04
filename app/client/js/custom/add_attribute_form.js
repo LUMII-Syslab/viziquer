@@ -498,6 +498,7 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.attributeid.set("newAttribute");
 		
 		autoCompletionCleanup();
+		document.getElementById("add-new-attribute-form").style.zIndex = "1051";
 
 		$("#add-new-attribute-form").modal("show");
 		return;
@@ -525,6 +526,7 @@ Template.AddAttribute.events({
 		Template.AddNewAttribute.selectThis.set(selectThis);
 
 		autoCompletionCleanup();
+		document.getElementById("add-new-attribute-form").style.zIndex = "1051";
 		
 		$("#add-new-attribute-form").modal("show");
 		return;
@@ -629,7 +631,6 @@ Template.AddNewAttribute.helpers({
 			if(fields[field]["name"] == "Attribute Condition" && require == true) fields[field]["isdisabled"] = "disabled";
 		}
 		
-		// console.log("NNNNNNNNNNNNNNNNNNNN", compart_id, fields)
 		
 		var field_obj = {_id: compart_type["_id"],
 						compartmentId: compart_id,
@@ -637,6 +638,7 @@ Template.AddNewAttribute.helpers({
 						label: compart_type["label"],
 						fields: fields,
 					};
+		Template.AddNewAttribute.attributeid.set("newAttribute");
 		return field_obj;
 	},
 });
@@ -752,8 +754,10 @@ Template.AddNewAttribute.events({
 		// }
 		
 		var elem = document.getElementById("add-new-attribute-form");
+		
 
-		if(elem.getAttribute("compartmentId") === null || $(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid") == "newAttribute"){
+		if(elem.getAttribute("compartmentId") === null && document.getElementById("add-new-attribute-id").getAttribute("attributeid") == "newAttribute"){
+
 			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 				var vq_obj = new VQ_Element(selected_elem_id);
@@ -761,7 +765,8 @@ Template.AddNewAttribute.events({
 			};
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
 		} else {
-			var attribute = document.getElementsByName($(document.getElementById("add-new-attribute-alias")).closest(".multi-field")[0].getAttribute("attributeid"))[0];
+			
+			var attribute = document.getElementsByName(document.getElementById("add-new-attribute-id").getAttribute("attributeid"))[0];
 			if(typeof attribute !== "undefined"){
 				attribute.setAttribute("alias", alias);
 				attribute.setAttribute("expression", expression);
