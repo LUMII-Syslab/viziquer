@@ -1,67 +1,67 @@
 import { Meteor } from 'meteor/meteor'
-import { CompartmentTypes } from '/libs/platform/collections'
+import { CompartmentTypes } from '/imports/db/platform/collections'
 
 
 // import
-import '/server/platform/import/import_ajoo_configuration'
-import '/server/platform/import/import_TDA_configuration'
+import '/imports/server/platform/import/import_ajoo_configuration'
+import '/imports/server/platform/import/import_TDA_configuration'
 
 
 // server methods
-import '/server/platform/user_account';
-import '/server/platform/settings';
-import '/server/platform/toolVersions';
+import '/imports/server/platform/user_account';
+import '/imports/server/platform/settings';
+import '/imports/server/platform/toolVersions';
 
-import '/server/platform/methods/project/projects'
-import '/server/platform/methods/project/project_users'
+import '/imports/server/platform/methods/project/projects'
+import '/imports/server/platform/methods/project/project_users'
 
-import '/server/platform/methods/diagrams/diagrams'
-import '/server/platform/methods/diagrams/elements'
-import '/server/platform/methods/diagrams/compartments'
-import '/server/platform/methods/diagrams/diagrams_sections'
-import '/server/platform/methods/diagrams/elements_sections'
+import '/imports/server/platform/methods/diagrams/diagrams'
+import '/imports/server/platform/methods/diagrams/elements'
+import '/imports/server/platform/methods/diagrams/compartments'
+import '/imports/server/platform/methods/diagrams/diagrams_sections'
+import '/imports/server/platform/methods/diagrams/elements_sections'
 
 
-import '/server/platform/methods/chat/chats'
-import '/server/platform/methods/feed/posts'
-import '/server/platform/methods/forum/forum'
-import '/server/platform/methods/notifications/notifications'
-import '/server/platform/methods/search/searches'
-import '/server/platform/methods/users/projects_groups'
-import '/server/platform/methods/versions/versions'
+import '/imports/server/platform/methods/chat/chats'
+import '/imports/server/platform/methods/feed/posts'
+import '/imports/server/platform/methods/forum/forum'
+import '/imports/server/platform/methods/notifications/notifications'
+import '/imports/server/platform/methods/search/searches'
+import '/imports/server/platform/methods/users/projects_groups'
+import '/imports/server/platform/methods/versions/versions'
 
 
 // configurator
-import '/server/platform/methods/configurator/tools'
-import '/server/platform/methods/configurator/diagram_types'
-import '/server/platform/methods/configurator/element_types'
-import '/server/platform/methods/configurator/compartment_types'
-import '/server/platform/methods/configurator/dialog_tabs'
-import '/server/platform/methods/configurator/documentTypes'
+import '/imports/server/platform/methods/configurator/tools'
+import '/imports/server/platform/methods/configurator/diagram_types'
+import '/imports/server/platform/methods/configurator/element_types'
+import '/imports/server/platform/methods/configurator/compartment_types'
+import '/imports/server/platform/methods/configurator/dialog_tabs'
+import '/imports/server/platform/methods/configurator/documentTypes'
 
 
 // publish
-import '/server/platform/publish/publish_configurator_data'
-import '/server/platform/publish/publish_data_analytics'
-import '/server/platform/publish/publish_project_data'
-import '/server/platform/publish/publish_user_data'
+import '/imports/server/platform/publish/publish_configurator_data'
+import '/imports/server/platform/publish/publish_data_analytics'
+import '/imports/server/platform/publish/publish_project_data'
+import '/imports/server/platform/publish/publish_user_data'
 
 
 // server custom
-import '/server/custom/convertJson2CSV'
-import '/server/custom/download_upload_project'
-import '/server/custom/execute_sparql'
-import '/server/custom/export_configruation'
-import '/server/custom/generate_query_from_SPARQL'
-import '/server/custom/ontology'
-import '/server/custom/publish'
-import '/server/custom/version_migration'
-import '/server/custom/ontologyParams'
-import '/server/custom/import_ontology'
+import '/imports/server/custom/convertJson2CSV'
+import '/imports/server/custom/download_upload_project'
+import '/imports/server/custom/execute_sparql'
+import '/imports/server/custom/export_configruation'
+import '/imports/server/custom/generate_query_from_SPARQL'
+import '/imports/server/custom/ontology'
+import '/imports/server/custom/publish'
+import '/imports/server/custom/version_migration'
+import '/imports/server/custom/ontologyParams'
+import '/imports/server/custom/import_ontology'
 
 // libs custom
-import '/libs/custom/collections'
-import '/libs/custom/mytest'
+import '/imports/db/custom/vq/collections'
+import '/imports/libs/custom/mytest'
 // import '/libs/custom/ontologyParams'
 
 
