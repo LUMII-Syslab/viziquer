@@ -1038,7 +1038,7 @@ function setFieldAliases(clazz, fields, variableNamesTable, variableNamesCounter
 			variableNamesCounter[alias] = 1;
 			if(typeof variableNamesTable[classId] === "undefined") variableNamesTable[classId] = [];
 			if(typeof variableNamesTable[classId][alias] === "undefined") variableNamesTable[classId][alias] = [];
-			variableNamesTable[classId][alias][field["_id"]] = {name:alias, order:field.order, exp:alias, isPath:false, isAlias:true};
+			variableNamesTable[classId][alias][field["_id"]] = {name:alias, order:field.order, exp:alias, isPath:false, isAlias:true, requireValues:field.requireValues};
 		}
 	})
 	
@@ -1151,7 +1151,8 @@ function setFieldNamesForProperties(clazz, fields, variableNamesTable, variableN
 						var fieldExp = field["exp"];
 						if(fieldExp.startsWith("^") == true) fieldExp = fieldExp.substring(1);
 						if(fieldExp.startsWith("inv(") == true && fieldExp.endsWith(")") == true) fieldExp = fieldExp.substring(4, fieldExp.length-1);
-						variableNamesTable[classId][generatedName][field["_id"]] = {name:attributeName, order:field.order, exp:fieldExp, isPath:isPath};
+						variableNamesTable[classId][generatedName][field["_id"]] = {name:attributeName, order:field.order, exp:fieldExp, isPath:isPath, requireValues:field.requireValues};
+		
 					}
 				} 
 			
@@ -1193,6 +1194,7 @@ function generateSPARQLtext(abstractQueryTable){
 
  		 //generate table with unique class names in form [_id] = class_unique_name
 		 var generateIdsResult = generateIds(rootClass, knownPrefixes, symbolTable);
+		 // console.log("abstractQueryTable", abstractQueryTable)
 		 
 		 var idTable = generateIdsResult["idTable"];
 		 
@@ -3438,9 +3440,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	//filter as triples. phase 1, phase 3
 	for(let expression in sparqlTable["filetrAsTripleTable"]){
 		if(typeof sparqlTable["filetrAsTripleTable"][expression] === 'object'){
-			if(sparqlTable["filetrAsTripleTable"][expression]["isConstant"] != true ) classes.push("?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + ".");
-			else if(sparqlTable["filetrAsTripleTable"][expression]["object"].startsWith("<") == true)filterTriples.push(sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + ".");	
-			else filterTriples.push("?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + ".");	
+			var triplePrefix = "";
+			var tripleSufix = "";
+			if(sparqlTable["filetrAsTripleTable"][expression]["applyExists"] == true){
+				triplePrefix = "FILTER EXISTS{";
+				tripleSufix = "}";
+			}
+			if(sparqlTable["filetrAsTripleTable"][expression]["isConstant"] != true ) classes.push(triplePrefix + "?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "."+ tripleSufix);
+			else if(sparqlTable["filetrAsTripleTable"][expression]["object"].startsWith("<") == true)filterTriples.push(triplePrefix + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "." + tripleSufix);	
+			else filterTriples.push(triplePrefix + "?" + sparqlTable["filetrAsTripleTable"][expression]["object"] + " " + sparqlTable["filetrAsTripleTable"][expression]["prefixedName"]+ " " + sparqlTable["filetrAsTripleTable"][expression]["var"] + "." + tripleSufix);	
 		}
 	}
 	

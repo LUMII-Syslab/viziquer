@@ -3550,6 +3550,10 @@
                 "item": "Connect classes",
                 "procedure": "linkConnectClasses"
               },
+			  {
+                "item": "Change direction",
+                "procedure": "linkChangeDirection"
+              },
               {
                 "item": "Delete",
                 "procedure": "Delete"
