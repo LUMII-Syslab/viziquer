@@ -1,5 +1,5 @@
-import { is_project_version_admin, is_system_admin } from '/libs/platform/user_rights'
-import { Elements } from '/libs/platform/collections'
+import { is_project_version_admin, is_system_admin } from '/imports/libs/platform/user_rights'
+import { Elements } from '/imports/db/platform/collections'
 
 Meteor.methods({
 

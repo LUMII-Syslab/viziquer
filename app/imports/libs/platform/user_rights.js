@@ -1,5 +1,5 @@
 import { Roles } from 'meteor/alanning:roles'
-import { Tools, Users, ProjectsUsers} from '/libs/platform/collections'
+import { Tools, Users, ProjectsUsers} from '/imports/db/platform/collections'
 
 function is_power_user(user_id) {
 	var role_name = build_power_user_role();
@@ -188,20 +188,21 @@ function build_power_user_role() {
 }
 
 
-export {is_power_user,
-		is_project_version_reader,
-		is_project_version_admin,
-		is_project_version_admin_for_version,
-		is_project_member,
-		is_project_admin,
-		is_system_admin,
-		is_author,
-		is_logged_in,
-		is_id_in_array,
-		build_project_role,
-		build_project_admin_role,
-		build_project_version_reader_role,
-		build_project_version_admin_role,
-		build_power_user_role
+export {
+  is_power_user,
+  is_project_version_reader,
+  is_project_version_admin,
+  is_project_version_admin_for_version,
+  is_project_member,
+  is_project_admin,
+  is_system_admin,
+  is_author,
+  is_logged_in,
+  is_id_in_array,
+  build_project_role,
+  build_project_admin_role,
+  build_project_version_reader_role,
+  build_project_version_admin_role,
+  build_power_user_role
 }
 

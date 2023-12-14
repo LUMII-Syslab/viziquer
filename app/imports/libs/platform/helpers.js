@@ -1,6 +1,6 @@
-import { Tools } from '/libs/platform/collections'
+import { Tools } from '/imports/db/platform/collections'
 
-fill_priorities = function() {
+function fill_priorities() {
 	return [
 			{option: "color"},
 			{option: "linear-gradient"},
@@ -9,7 +9,7 @@ fill_priorities = function() {
 }
 
 
-compute_new_width_height = function(shape_name, new_width, new_height) {
+function compute_new_width_height(shape_name, new_width, new_height) {
 
 	var radius = Math.max(new_width / 2, new_height / 2);
 
@@ -211,7 +211,7 @@ function circle(res, new_radius) {
 	return res;
 }
 
-get_diagram_edit_state = function(user_id, type, is_configurator) {
+ function get_diagram_edit_state(user_id, type, is_configurator) {
 	var item = {userId: user_id,
 				action: type,
 				time: new Date()};
@@ -222,14 +222,14 @@ get_diagram_edit_state = function(user_id, type, is_configurator) {
 	return item;
 }
 
-get_configurator_tool_id = function() {
+function get_configurator_tool_id() {
 	var configurator = Tools.findOne({isConfigurator: true});
 	if (configurator)
 		return configurator["_id"];
 }
 
 
-convert_assoc_array_to_array = function(assoc_array) {
+function convert_assoc_array_to_array(assoc_array) {
 	var array = [];
 	for (var key in assoc_array) {
 		array.push(key);

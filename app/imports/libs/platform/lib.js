@@ -1,6 +1,6 @@
+import { Contacts } from '/imports/db/platform/collections'
 
-
-get_contacts = function(system_id) {
+function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});
 	var user_ids = [];
 	if (contacts.count() > 0) {
@@ -15,7 +15,7 @@ get_contacts = function(system_id) {
 }
 
 //checks if variable is empty sting or undefined
-is_empty = function(str) {
+function is_empty(str) {
 	if (str == "" || typeof str == 'undefined')
 		return true;
 	else
@@ -23,20 +23,20 @@ is_empty = function(str) {
 }
 
 //checks if variable is not empty or undefined
-is_not_empty = function(str) {
+function is_not_empty(str) {
 	return !is_empty(str);
 }
 
-get_configurator_project_id = function() {
+function get_configurator_project_id() {
 	return 0;
 }
 
-generate_id = function() {
+function generate_id() {
 	var obj = new Meteor.Collection.ObjectID();
 	return obj._str;
 }
 
-is_ajoo_editor = function(editor_type) {
+function is_ajoo_editor(editor_type) {
 
 	if (editor_type == "ajooEditor")
 		return true;
@@ -44,7 +44,7 @@ is_ajoo_editor = function(editor_type) {
 		return;
 }
 
-is_zoom_chart_editor = function(editor_type) {
+function is_zoom_chart_editor(editor_type) {
 
 	if (editor_type == "ZoomChart")
 		return true;
@@ -52,7 +52,7 @@ is_zoom_chart_editor = function(editor_type) {
 		return;
 }
 
-check_captcha = function(connection, captcha) {
+function check_captcha(connection, captcha) {
 
 	if (connection && captcha) {
 
@@ -79,7 +79,7 @@ check_captcha = function(connection, captcha) {
 	return;
 }
 
-send_email = function(list) {
+function send_email(list) {
 
 	if (Meteor.isServer) {
 
@@ -106,13 +106,14 @@ send_email = function(list) {
 
 
 
-export {get_contacts,
-		is_empty,
-		is_not_empty,
-		get_configurator_project_id,
-		generate_id,
-		is_ajoo_editor,
-		is_zoom_chart_editor,
-		check_captcha,
-		send_email,
-	}
+export {
+  get_contacts,
+  is_empty,
+  is_not_empty,
+  get_configurator_project_id,
+  generate_id,
+  is_ajoo_editor,
+  is_zoom_chart_editor,
+  check_captcha,
+  send_email,
+}
