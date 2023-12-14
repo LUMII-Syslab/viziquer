@@ -1,33 +1,34 @@
-import { Diagrams } from '/libs/platform/collections'
+import { Diagrams } from '/imports/db/platform/collections'
+import { is_not_empty } from '/imports/libs/platform/lib'
 
-convert_dictionary_to_array = function(list) {
+function convert_dictionary_to_array(list) {
 	var element_list = [];
 	for (var key in list)
 		element_list.push(key);
 	return element_list;
 }
 
-get_current_time = function() {
+function get_current_time() {
 	return new Date;
 }
 
-user_not_logged_in = function() {
+function user_not_logged_in() {
 	console.log("User is not logged in");
 }
 
-add_date_to_list = function(list) {
+function add_date_to_list(list) {
 	var date = get_current_time();
 	list["createdAt"] = date;
 	list["lastModified"] = date;
 }
 
-no_rights_to_access_msg = function() {
+function no_rights_to_access_msg() {
 	var msg = "You have no rights to perform the specified operation";
 	console.log(msg);
 	return msg;
 }
 
-get_attr_name = function(list_item) {
+function get_attr_name(list_item) {
 	for (var key in list_item) {
 		return key;
 	}
@@ -58,7 +59,7 @@ get_attr_name = function(list_item) {
 
 
 
-create_compartment_list = function(compart_type, list) {
+function create_compartment_list(compart_type, list) {
 	
 	// computes compartment value
 	var value = compart_type["defaultValue"];
@@ -106,11 +107,11 @@ create_compartment_list = function(compart_type, list) {
 	return compart_type_list;
 }
 
-not_loggedin_msg = function() {
+function not_loggedin_msg() {
 	console.log("User is not logged in");
 }
 
-empty_query = function() {
+function empty_query() {
 	return {_id: -1};
 }
 
