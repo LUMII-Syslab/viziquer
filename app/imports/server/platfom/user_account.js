@@ -1,8 +1,10 @@
 import { Roles } from 'meteor/alanning:roles'
-import { get_current_time } from '/server/platform/_helpers';
-import { build_power_user_role } from '/libs/platform/user_rights';
-import { load_configurator } from '/server/platform/load_configuration';
-import { Users, Tools, ToolVersions } from '/libs/platform/collections';
+
+import { get_current_time } from '/imports/server/platfom/_helpers';
+import { build_power_user_role } from '/imports/libs/platform/user_rights';
+import { load_configurator } from '/imports/server/platfom/load_configuration';
+import { Users, Tools, ToolVersions } from '/imports/db/platform/collections';
+import { is_test_user } from '/imports/server/platfom/_global_functions';
 
 
 Meteor.methods({

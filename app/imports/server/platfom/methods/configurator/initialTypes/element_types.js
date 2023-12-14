@@ -1,6 +1,6 @@
-import { generate_id, is_ajoo_editor } from '/libs/platform/lib'
+import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
 
-build_initial_element_type = function(list, editor_type) {
+function build_initial_element_type(list, editor_type) {
 		
 	if (!editor_type)
 		editor_type = "ajooEditor";
@@ -91,7 +91,7 @@ build_initial_element_type = function(list, editor_type) {
 	return res;
 }
 
-build_initial_line_style = function(editor_type) {
+function build_initial_line_style(editor_type) {
 
 	if (is_ajoo_editor(editor_type)) {
 
@@ -160,7 +160,7 @@ build_initial_line_style = function(editor_type) {
 
 }
 
-build_initial_box_style = function(editor_type) {
+function build_initial_box_style(editor_type) {
 
 	if (!editor_type)
 		editor_type = "ajooEditor";
@@ -212,4 +212,8 @@ build_initial_box_style = function(editor_type) {
 }
 
 
-export { build_initial_element_type, build_initial_line_style, build_initial_box_style }
+export { 
+  build_initial_element_type, 
+  build_initial_line_style, 
+  build_initial_box_style 
+}

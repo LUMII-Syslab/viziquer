@@ -1,6 +1,6 @@
-import { is_project_member } from '/libs/platform/user_rights'
-import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
-import { DiagramLogs, Diagrams, Elements, Compartments, CompartmentTypes  } from '/libs/platform/collections'
+import { is_project_member } from '/imports/libs/platform/user_rights'
+import { DiagramLogs, Diagrams, Elements, Compartments, CompartmentTypes  } from '/imports/db/platform/collections'
+import { is_public_diagram, get_unknown_public_user_name } from '/imports/server/platfom/_helpers'
 
 Compartments.after.update(function (user_id, doc, fields, modifier, options) {
 
@@ -128,7 +128,7 @@ function update_compartment(user_id, doc) {
 	}
 }
 
-add_compartments_by_values = function(list, compartments) {
+function add_compartments_by_values(list, compartments) {
 
 	var compart_ids = _.map(compartments, function(item) {
 							return item.compartmentTypeId;
@@ -142,7 +142,7 @@ add_compartments_by_values = function(list, compartments) {
 
 
 //adding compartments in the DB
-add_compartments = function(list) {
+function add_compartments(list) {
 
 	CompartmentTypes.find({elementTypeId: list["elementTypeId"]}, {$sort: {index: 1}}).forEach(
 		function(compart_type) {
@@ -155,12 +155,12 @@ add_compartments = function(list) {
 		});
 }
 
-add_compartment = function(compart_type, list, compart_in) {
+function add_compartment(compart_type, list, compart_in) {
 	var compart = build_compartment(compart_type, list, compart_in);
 	Compartments.insert(compart);
 }
 
-build_compartment = function(compart_type, list, compart_in) {
+function build_compartment(compart_type, list, compart_in) {
 
 	if (compart_type["styles"] && compart_type["styles"][0]) {
 
@@ -229,4 +229,9 @@ function get_prefix(compart_type, default_value) {
 
 function get_suffix(compart_type, default_value) {
 	return compart_type["suffix"] || "";
+}
+
+export {
+  add_compartments_by_values,
+  build_compartment,
 }

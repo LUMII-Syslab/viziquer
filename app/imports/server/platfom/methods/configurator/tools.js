@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
-import { Tools, ToolVersions, UserTools, Projects } from '/libs/platform/collections'
-import { is_system_admin } from '/libs/platform/user_rights'
+import { Tools, ToolVersions, UserTools, Projects } from '/imports/db/platform/collections'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
 
 
 Tools.after.remove(function (user_id, doc) {

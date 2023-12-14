@@ -3,6 +3,7 @@ import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 
 import { Elements, ElementTypes } from '/libs/platform/collections'
+import { generate_id } from '/imports/libs/platform/lib'
 
 Interpreter.methods({
 

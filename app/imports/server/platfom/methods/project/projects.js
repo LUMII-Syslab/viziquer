@@ -1,9 +1,10 @@
 import { Roles } from 'meteor/alanning:roles'
-import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/libs/platform/user_rights'
-import { generate_id } from '/libs/platform/lib'
-import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, Posts, ForumPosts } from '/libs/platform/collections'
-import { Schema } from '/libs/custom/collections'
-import { get_unknown_public_user_name } from '/server/platform/_helpers'
+
+import { is_project_admin, is_project_member, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/imports/libs/platform/user_rights'
+import { generate_id } from '/imports/libs/platform/lib'
+import { Projects, ProjectsUsers, ToolVersions, Versions, UserVersionSettings, Users, Diagrams, Elements, Compartments, Posts, ForumPosts } from '/imports/db/platform/collections'
+import { Schema } from '/imports/db/custom/vq/collections'
+import { get_unknown_public_user_name } from '/imports/server/platfom/_helpers'
 
 //creating a new project version and adds the project creator to the project
 Projects.after.insert(function (user_id, doc) {

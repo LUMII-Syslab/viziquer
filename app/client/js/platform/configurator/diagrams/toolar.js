@@ -1,7 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { DiagramTypes } from '/libs/platform/collections'
-import { generate_id } from '/libs/platform/lib'
+import { generate_id } from '/imports/libs/platform/lib'
 
 
 //Start of toolbar

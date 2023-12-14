@@ -1,5 +1,5 @@
-import { is_system_admin } from '/libs/platform/user_rights'
-import { Tools, ToolVersions, Versions, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { Tools, ToolVersions, Versions, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
 
 Meteor.methods({
 

@@ -1,8 +1,10 @@
-import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons } from '/libs/platform/collections';
-import { generate_id } from '/libs/platform/lib'
-import { get_current_time } from '/server/platform/_helpers'
-import { build_initial_box_style, build_initial_line_style } from '/server/platform/methods/configurator/initialTypes/element_types'
-import { build_initial_compartment_type, get_default_compartment_style, build_box_compartment_style, build_line_compartment_style } from '/server/platform/methods/configurator/initialTypes/compartment_types'
+import { Tools, ToolVersions, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons } from '/imports/db/platform/collections';
+import { generate_id } from '/imports/libs/platform/lib'
+import { get_current_time } from '/imports/server/platfom/_helpers'
+import { build_initial_box_style, build_initial_line_style } from '/imports/server/platfom/methods/configurator/initialTypes/element_types'
+import { 
+  build_initial_compartment_type, get_default_compartment_style, build_box_compartment_style, build_line_compartment_style 
+} from '/imports/server/platfom/methods/configurator/initialTypes/compartment_types'
 
 
 function load_configurator(user_id) {
@@ -670,4 +672,6 @@ function build_swimlane_compart_type_obj(name, tool_id, version_id, diagram_type
 
 
 
-export {load_configurator}
+export {
+  load_configurator
+}

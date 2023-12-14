@@ -1,7 +1,8 @@
-import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, Compartments } from '/libs/platform/collections';
-import { is_system_admin } from '/libs/platform/user_rights'
-import { build_initial_box_style, build_initial_line_style } from '/server/platform/methods/configurator/initialTypes/element_types'
-import { is_version_not_published } from '/server/platform/_global_functions'
+import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, Compartments } from '/imports/db/platform/collections';
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { build_initial_box_style, build_initial_line_style } from '/imports/server/platfom/methods/configurator/initialTypes/element_types'
+import { is_version_not_published } from '/imports/server/platfom/_global_functions'
+import { generate_id } from '/imports/libs/platform/lib'
 
 
 ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {

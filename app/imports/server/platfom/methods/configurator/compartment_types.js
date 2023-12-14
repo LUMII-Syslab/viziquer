@@ -1,6 +1,7 @@
-import { is_system_admin } from '/libs/platform/user_rights'
-import { CompartmentTypes, Compartments, Elements, ElementTypes, DialogTabs } from '/libs/platform/collections'
-import { build_initial_compartment_type, get_default_compartment_style } from '/server/platform/methods/configurator/initialTypes/compartment_types'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { CompartmentTypes, Compartments, Elements, ElementTypes, DialogTabs } from '/imports/db/platform/collections'
+import { build_initial_compartment_type, get_default_compartment_style } from '/imports/server/platform/methods/configurator/initialTypes/compartment_types'
+import { generate_id } from '/imports/libs/platform/lib'
 
 CompartmentTypes.before.insert(function (user_id, doc) {
 	if (!doc) {

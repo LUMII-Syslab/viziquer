@@ -1,7 +1,7 @@
-import { is_system_admin, is_project_admin, is_project_version_admin, is_project_version_reader } from '/libs/platform/user_rights'
-import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
-import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '/libs/platform/collections'
-import { generate_id } from '/libs/platform/lib'
+import { is_system_admin, is_project_admin, is_project_version_admin, is_project_version_reader } from '/imports/libs/platform/user_rights'
+import { is_public_diagram, get_unknown_public_user_name } from '/imports/server/platfom/_helpers'
+import { Tools, DiagramTypes, Projects, Versions, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
+import { generate_id } from '/imports/libs/platform/lib'
 
 Diagrams.after.remove(function (user_id, doc) {
 	if (!doc)

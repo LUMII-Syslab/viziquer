@@ -1,6 +1,6 @@
-import { generate_id, is_ajoo_editor } from '/libs/platform/lib'
+import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
 
-get_default_compartment_style = function(type, editor_type) {
+function get_default_compartment_style(type, editor_type) {
 	if (type == "Box") {
 		return build_box_compartment_style(editor_type);
 	}
@@ -9,7 +9,7 @@ get_default_compartment_style = function(type, editor_type) {
 		return build_line_compartment_style(editor_type);
 }
 
-build_initial_compartment_type = function(list, elem_type, editor_type) {
+function build_initial_compartment_type(list, elem_type, editor_type) {
 
 	list["name"] = "NewCompartment";
 	list["description"] = "";
@@ -47,7 +47,7 @@ build_initial_compartment_type = function(list, elem_type, editor_type) {
 							];
 }
 
-build_box_compartment_style = function(editor_type) {
+function build_box_compartment_style(editor_type) {
 	if (is_ajoo_editor(editor_type)) {
 		return {
 				align: "center",
@@ -64,7 +64,7 @@ build_box_compartment_style = function(editor_type) {
 	}
 }
 
-build_line_compartment_style = function(editor_type) {
+function build_line_compartment_style(editor_type) {
 
 	if (is_ajoo_editor(editor_type)) {
 		return {
@@ -84,4 +84,9 @@ build_line_compartment_style = function(editor_type) {
 }
 
 
-export { build_initial_compartment_type, get_default_compartment_style, build_box_compartment_style, build_line_compartment_style }
+export { 
+  build_initial_compartment_type, 
+  get_default_compartment_style, 
+  build_box_compartment_style, 
+  build_line_compartment_style 
+}

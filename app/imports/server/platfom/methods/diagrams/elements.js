@@ -1,5 +1,5 @@
-import { is_system_admin, is_project_version_admin, is_version_not_published } from '/libs/platform/user_rights'
-import { is_public_diagram, get_unknown_public_user_name } from '/server/platform/_helpers'
+import { is_system_admin, is_project_version_admin, is_version_not_published } from '/imports/libs/platform/user_rights'
+import { is_public_diagram, get_unknown_public_user_name } from '/imports/server/platfom/_helpers'
 import { DiagramLogs, Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, DialogTabs, DiagramFiles, DiagramNotifications, ElementsSections, PaletteButtons, Clipboard  } from '/libs/platform/collections'
 
 Elements.after.insert(function (user_id, doc) {

@@ -1,6 +1,6 @@
-import { is_system_admin } from '/libs/platform/user_rights'
-import { generate_id } from '/libs/platform/lib'
-import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/libs/platform/collections'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { generate_id } from '/imports/libs/platform/lib'
+import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments, DialogTabs, PaletteButtons } from '/imports/db//platform/collections'
 
 Meteor.methods({
 

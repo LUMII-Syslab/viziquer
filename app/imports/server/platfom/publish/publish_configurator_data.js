@@ -1,8 +1,10 @@
 import { Meteor } from 'meteor/meteor'
-import { Tools, ToolVersions, UserTools, DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, ImportedTranslets, Diagrams, Elements, Compartments, PaletteButtons } from '/libs/platform/collections'
-import { get_configurator_tool_id } from '/libs/platform/helpers'
-import { is_system_admin } from '/libs/platform/user_rights'
-import { error_msg } from '/server/platform/_global_functions'
+import { 
+  Tools, ToolVersions, UserTools, DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, ImportedTranslets, Diagrams, Elements, Compartments, PaletteButtons 
+} from '/imports/db/platform/collections'
+import { get_configurator_tool_id } from '/imports/libs/platform/helpers'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { error_msg } from '/imports/server/platfom/_global_functions'
 
 
 Meteor.publish("Structure_Tools", function(list) {

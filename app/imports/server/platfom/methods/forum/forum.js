@@ -1,5 +1,6 @@
 import { is_project_member } from '/libs/platform/user_rights'
 import { ForumPosts, ForumPostComments, ForumPostTags } from '/libs/platform/collections'
+import { generate_id } from '/imports/libs/platform/lib'
 
 Meteor.methods({
 

@@ -1,10 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { ProjectsUsers, ProjectsGroups, Versions, UserVersionSettings, Searches, Users, Projects, Diagrams, Elements, Compartments, Tools, DiagramTypes, ElementTypes, CompartmentTypes, PaletteButtons, DialogTabs, ForumPostTags } from '/libs/platform/collections'
-import { get_configurator_tool_id } from '/libs/platform/helpers'
-import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/libs/platform/user_rights'
-import { error_msg } from '/server/platform/_global_functions'
-import { get_unknown_public_user_name } from '/server/platform/_helpers'
-import { is_public_diagram } from '/server/platform/_helpers'
+import { get_configurator_tool_id } from '/imports/libs/platform/helpers'
+import { is_project_version_reader, is_project_member, is_project_admin, is_system_admin } from '/imports/libs/platform/user_rights'
+import { error_msg } from '/imports/server/platfom/_global_functions'
+import { get_unknown_public_user_name, is_public_diagram } from '/imports/server/platfom/_helpers'
 
 
 Meteor.publish("Diagrams", function(list) {

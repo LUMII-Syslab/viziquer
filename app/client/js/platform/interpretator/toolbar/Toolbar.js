@@ -3,6 +3,7 @@ import { Interpreter } from '/client/lib/interpreter'
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
 
 import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/libs/platform/collections'
+import { generate_id } from '/imports/libs/platform/lib'
 
 //Start of diagram ribbon
 Interpreter.methods({

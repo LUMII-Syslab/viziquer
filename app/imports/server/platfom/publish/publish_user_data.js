@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
-import { Users, Notifications, Chats, Searches, Tools, Projects, ProjectsUsers, UserChatsAuthors } from '/libs/platform/collections'
-import { not_loggedin_msg } from '/server/platform/_helpers'
+import { Users, Notifications, Chats, Searches, Tools, Projects, ProjectsUsers, UserChatsAuthors } from '/imports/db/platform/collections'
+import { not_loggedin_msg } from '/imports/server/platfom/_helpers'
 
 
 

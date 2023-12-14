@@ -1,5 +1,6 @@
+import { generate_id } from '/imports/libs/platform/lib'
 
-build_initial_diagram_type = function(list, editor_type) {
+function build_initial_diagram_type(list, editor_type) {
 
 	list["extensionPoints"] = [
 		{extensionPoint: "beforeCreateDiagram", procedure: ""},
@@ -152,7 +153,7 @@ build_initial_diagram_type = function(list, editor_type) {
 	list["size"] = {diagramSize: 8, dialogSize: 4};
 }
 
-diagram_default_style = function() {
+function diagram_default_style() {
 	return	{fillPriority: "color",
 			fill: "#fff",
 
@@ -176,4 +177,7 @@ diagram_default_style = function() {
 
 
 
-export {diagram_default_style, build_initial_diagram_type}
+export {
+  diagram_default_style, 
+  build_initial_diagram_type
+}

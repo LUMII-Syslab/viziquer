@@ -1,5 +1,5 @@
-import { is_system_admin } from '/libs/platform/user_rights'
-import { DocumentTypes } from '/libs/platform/collections'
+import { is_system_admin } from '/imports/libs/platform/user_rights'
+import { DocumentTypes } from '/imports/db/platform/collections'
 
 Meteor.methods({
 

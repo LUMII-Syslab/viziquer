@@ -1,7 +1,7 @@
-
+import { ProjectsUsers, Versions, ToolVersions } from '/imports/db/platform/collections'
 
 //checks whether user is allowed to access the project
-get_user_rights_to_access_project = function(list, user_system_id) {
+function get_user_rights_to_access_project(list, user_system_id) {
 	if (list) {
 		var proj_id = list["projectId"];
 		
@@ -84,7 +84,7 @@ get_user_rights_to_access_project = function(list, user_system_id) {
 		return {isValidUser: false, error: "No arguments specified"};
 }
 
-check_user_rights = function(user_rights, privacy_level) {
+function check_user_rights(user_rights, privacy_level) {
 	if (user_rights["isValidUser"]) {
 		if (privacy_level == "All")
 			return true;
@@ -100,7 +100,7 @@ check_user_rights = function(user_rights, privacy_level) {
 }
 
 //checks if the project version is in the state that can be edited
-is_allowed_version = function(list) {
+function is_allowed_version(list) {
 	var version = Versions.findOne({_id: list["versionId"],
 									projectId: list["projectId"],
 									status: "New"});
@@ -111,14 +111,14 @@ is_allowed_version = function(list) {
 		return false;
 }
 
-error_msg = function(err) {
+function error_msg(err) {
 	if (err)
 		console.log(err["error"]);
 	else
 		console.log("Unspecified error");
 }
 
-is_version_not_published = function(list) {
+function is_version_not_published(list) {
 	var tool_version = ToolVersions.findOne({_id: list["versionId"],
 											toolId: list["toolId"],
 											status: "New",
@@ -129,7 +129,7 @@ is_version_not_published = function(list) {
 		return false;
 }
 
-build_user_search_query = function(text) {
+function build_user_search_query(text) {
 	var search_entered = text.toLowerCase();
 	var search_items = search_entered.split(" ");
 	var query = {};
@@ -161,7 +161,7 @@ build_user_search_query = function(text) {
    	return query;
 }
 
-get_user_query_limit = function() {
+function get_user_query_limit() {
 	return {fields: {lastModified: 0,
 					date: 0,
 					activeProject: 0,
@@ -175,7 +175,7 @@ get_user_query_limit = function() {
 			};
 }
 
-get_maximal_user_query_limit = function() {
+function get_maximal_user_query_limit() {
 	var limit = get_user_query_limit();
 	var fields = limit["fields"];
 	fields["tags"] = 0;
@@ -184,15 +184,15 @@ get_maximal_user_query_limit = function() {
 	return limit;
 }
 
-build_site_name = function() {
+function build_site_name() {
 	return "viziquer";
 }
 
-build_from_address = function() {
+function build_from_address() {
 	return 'ajoo <no-reply-viziquer@lumii.lv>';
 }
 
-is_test_user = function(email) {
+function is_test_user(email) {
 
 	var test_email = "@test.com";
 	var test_email_len = test_email.length;

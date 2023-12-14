@@ -1,4 +1,6 @@
-import { UserTools, Tools, ToolVersions, Versions, DialogTabs, PaletteButtons, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { 
+  UserTools, Tools, ToolVersions, Versions, DialogTabs, PaletteButtons, DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments 
+} from '/imports/db/platform/collections'
 
 
 ToolVersions.after.insert(function (user_id, doc) {

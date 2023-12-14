@@ -1,3 +1,4 @@
+import { is_project_admin , is_project_version_admin } from '/imports/libs/platform/user_rights'
 
 Meteor.methods({
 
@@ -79,6 +80,6 @@ Meteor.methods({
 
 });
 
-build_file_key = function(list, file_name) {
+function build_file_key(list, file_name) {
     return list["projectId"] + "/" + list["versionId"] + "/" + file_name;
 }

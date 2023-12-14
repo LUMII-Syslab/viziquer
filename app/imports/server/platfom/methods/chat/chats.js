@@ -1,4 +1,4 @@
-import { Chats, Contacts } from '/libs/platform/collections'
+import { Chats, Contacts } from '/imports/db/platform/collections'
 
 Meteor.methods({
 
