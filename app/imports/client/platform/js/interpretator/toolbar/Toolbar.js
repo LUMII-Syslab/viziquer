@@ -4,6 +4,7 @@ import { Dialog } from '/client/js/platform/interpretator/Dialog'
 
 import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 //Start of diagram ribbon
 Interpreter.methods({

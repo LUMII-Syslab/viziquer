@@ -1,5 +1,6 @@
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '/imports/db/platform/collections'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './widgets.html'
 

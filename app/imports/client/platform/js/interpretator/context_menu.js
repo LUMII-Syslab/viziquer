@@ -2,6 +2,7 @@ import { Interpreter } from '/client/lib/interpreter'
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
 import { ElementTypes } from '/imports/db/platform/collections'
 import { _contextMenu } from '/client/lib/global_variables'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 
 _.extend(Interpreter, {

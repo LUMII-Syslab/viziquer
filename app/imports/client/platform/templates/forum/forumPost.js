@@ -1,3 +1,5 @@
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+
 import './forumPost.html'
 
 Template.forumPostMessage.helpers({

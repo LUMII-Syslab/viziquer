@@ -1,5 +1,6 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Users, Searches } from '/imports/db/platform/collections'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 //Binding data to render the search drop-down depending on search type
 Template.searchMenu.helpers({

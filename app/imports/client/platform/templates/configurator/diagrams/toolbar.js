@@ -1,7 +1,7 @@
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { Utilities } from '/client/js/platform/utilities/utils'
 import { DiagramTypes } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
+import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './toolbar.html'
 

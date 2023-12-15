@@ -1,3 +1,5 @@
+import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
+
 import './feed.html'
 
 //Start of postsT

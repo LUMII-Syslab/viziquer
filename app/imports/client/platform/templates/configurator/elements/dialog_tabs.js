@@ -1,5 +1,5 @@
-import { Utilities } from '/client/js/platform/utilities/utils'
 import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs } from '/imports/db/platform/collections'
+import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './dialog_tabs.html'
 

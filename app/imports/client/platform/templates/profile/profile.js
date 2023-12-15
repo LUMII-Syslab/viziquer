@@ -1,7 +1,7 @@
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
-import { Utilities } from '/client/js/platform/utilities/utils'
 import { analytics } from '/client/lib/global_variables'
 import { Users } from '/imports/db/platform/collections'
+import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './profile.html'
 

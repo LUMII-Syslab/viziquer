@@ -1,7 +1,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { Utilities } from '/client/js/platform/utilities/utils'
 import { CompartmentTypes, ElementTypes } from '/imports/db/platform/collections'
+import { Utilities. reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './styles.html'
 

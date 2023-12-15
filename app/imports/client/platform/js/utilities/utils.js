@@ -1,7 +1,7 @@
 import { build_project_version_admin_role } from '/imports/libs/platform/user_rights'
 import { ProjectsUsers, ProjectsGroups, DiagramTypes } from '/imports/db/platform/collections'
 
-Utilities = {
+const Utilities = {
 					
 	isAdmin: function() {
 		var user = ProjectsUsers.findOne({userSystemId: Session.get("userSystemId"), projectId: Session.get("activeProject"),});
@@ -112,9 +112,12 @@ Utilities = {
 
  
 //resets session variable
-reset_variable = function() {
+const reset_variable = function() {
 	return undefined;
 }
 
 
-export {reset_variable, Utilities}
+export {
+  reset_variable, 
+  Utilities
+}
