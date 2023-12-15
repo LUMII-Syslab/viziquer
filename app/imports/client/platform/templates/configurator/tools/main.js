@@ -1,5 +1,5 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Tools, Projects } from '/libs/platform/collections'
+import { Tools, Projects } from '/imports/db/platform/collections'
 
 Template.renameTool.helpers({
 	tool: function() {

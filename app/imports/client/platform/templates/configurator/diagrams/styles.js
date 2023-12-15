@@ -1,6 +1,6 @@
-import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { DiagramTypes, Diagrams } from '/libs/platform/collections'
+import { DiagramTypes, Diagrams } from '/imports/db/platform/collections'
 
 // Start of diagram style accordion
 Template.diagramStyle.helpers({

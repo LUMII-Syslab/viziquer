@@ -1,6 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { DiagramTypes, Elements } from '/libs/platform/collections'
+import { DiagramTypes, Elements } from '/imports/db/platform/collections'
 
 Interpreter.methods({
 

@@ -1,6 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 
 Template.multiField.helpers({
 	multi_fields_obj: get_multi_fields_obj,

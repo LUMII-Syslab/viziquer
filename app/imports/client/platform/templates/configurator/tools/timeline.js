@@ -1,6 +1,6 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { ToolVersions, UserTools } from '/libs/platform/collections'
+import { ToolVersions, UserTools } from '/imports/db/platform/collections'
 
 
 Template.timeline.helpers({

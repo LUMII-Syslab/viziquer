@@ -1,5 +1,5 @@
-import { Configurator } from '/client/js/platform/configurator/config_utils'
-import { ElementTypes, Diagrams } from '/libs/platform/collections'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
+import { ElementTypes, Diagrams } from '/imports/db/platform/collections'
 
 
 // Start of element accordion

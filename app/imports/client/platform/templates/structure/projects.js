@@ -1,5 +1,5 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Users, Projects, ProjectsUsers } from '/libs/platform/collections'
+import { Users, Projects, ProjectsUsers } from '/imports/db/platform/collections'
 
 import './projects.html'
 

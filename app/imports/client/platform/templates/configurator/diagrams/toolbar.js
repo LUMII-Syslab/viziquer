@@ -1,6 +1,6 @@
-import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { DiagramTypes } from '/libs/platform/collections'
+import { DiagramTypes } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 
 import './toolbar.html'

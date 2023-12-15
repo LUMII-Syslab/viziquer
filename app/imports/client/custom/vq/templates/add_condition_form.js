@@ -1,6 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements, Compartments, CompartmentTypes} from '/libs/platform/collections'
-import { process_sub_compart_types } from '/client/js/platform/diagrams/dialog/subCompartments'
+import { Elements, Compartments, CompartmentTypes} from '/imports/db/platform/collections'
+import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
 
 Interpreter.customMethods({
 	AddCondition: function () {

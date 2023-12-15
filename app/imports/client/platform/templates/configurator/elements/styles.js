@@ -1,4 +1,4 @@
-import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { ElementTypes, Elements } from '/imports/db/platform/collections'
 
 import './styles.html'

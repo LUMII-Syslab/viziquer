@@ -1,5 +1,5 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Elements } from '/libs/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Elements } from '/imports/db/platform/collections'
 
 var Configurator = {
 

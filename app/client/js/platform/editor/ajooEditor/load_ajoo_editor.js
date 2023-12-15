@@ -2,7 +2,7 @@ import { Utilities } from '/client/js/platform/utilities/utils'
 import { Interpreter } from '/client/lib/interpreter'
 import { analytics } from '/client/lib/global_variables'
 import AjooEditor from '/client/js/platform/editor/ajooEditor/ajoo/AjooEditor'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/libs/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
 
 
 Interpreter.loadAjooEditor = function(diagram) {

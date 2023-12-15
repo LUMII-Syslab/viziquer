@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects, Elements } from '/libs/platform/collections'
+import { Projects, Elements } from '/imports/db/platform/collections'
 
 var count = 0;
 

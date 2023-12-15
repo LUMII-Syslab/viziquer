@@ -1,5 +1,5 @@
 // import { Interpreter } from '/client/lib/interpreter'
-import { get_multi_fields_obj } from '/client/js/platform/diagrams/dialog/subCompartments'
+import { get_multi_fields_obj } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
 
 Template.classConditionsField.helpers({
 

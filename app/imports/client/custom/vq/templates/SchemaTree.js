@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects } from '/libs/platform/collections'
+import { Projects } from '/imports/db/platform/collections'
 
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaFilter.F2 = new ReactiveVar("");

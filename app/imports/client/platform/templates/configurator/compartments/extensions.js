@@ -1,4 +1,4 @@
-import { Configurator } from '/imports/client/js/platform/configurator/config_utils'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { CompartmentTypes } from '/imports/db/platform/collections'
 

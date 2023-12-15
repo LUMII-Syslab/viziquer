@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { TriplesMaps, Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { TriplesMaps, Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 
 
 VQ_r2rml = function (schema) {

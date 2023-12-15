@@ -1,6 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects, Elements, Compartments, CompartmentTypes } from '/libs/platform/collections'
-import { process_sub_compart_types } from '/client/js/platform/diagrams/dialog/subCompartments'
+import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
+import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);

@@ -2,7 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Interpreter } from '/client/lib/interpreter'
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
 
-import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/libs/platform/collections'
+import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 
 //Start of diagram ribbon

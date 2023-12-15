@@ -1,7 +1,7 @@
-import { Configurator } from '/client/js/platform/configurator/config_utils'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { ElementTypes, CompartmentTypes, DialogTabs } from '/libs/platform/collections'
+import { ElementTypes, CompartmentTypes, DialogTabs } from '/imports/db/platform/collections'
 
 import './main.html'
 

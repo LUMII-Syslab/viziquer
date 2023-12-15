@@ -1,6 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Configurator } from '/client/js/platform/configurator/config_utils'
-import { ElementTypes, Elements } from '/libs/platform/collections'
+import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
+import { ElementTypes, Elements } from '/imports/db/platform/collections'
 
 import './box_styles.html'
 

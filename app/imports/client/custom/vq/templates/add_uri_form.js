@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements } from '/libs/platform/collections'
+import { Elements } from '/imports/db/platform/collections'
 
 
 Interpreter.customMethods({

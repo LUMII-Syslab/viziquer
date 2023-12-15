@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/libs/platform/collections'
+import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/imports/db/platform/collections'
 
 var symbolTable = {};
 var grammarType = "class";

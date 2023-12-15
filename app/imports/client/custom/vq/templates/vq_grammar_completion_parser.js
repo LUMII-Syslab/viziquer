@@ -1,4 +1,4 @@
-import { Elements } from '/libs/platform/collections'
+import { Elements } from '/imports/db/platform/collections'
 (function() {
 vq_grammar_completion_parser = (function() {	
   "use strict";

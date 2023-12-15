@@ -16,7 +16,7 @@ import AElements from './Elements/elements'
 import Selection from './Selection/select'
 import UnSelection from './Selection/unselect'
 
-import { IMCSDiagramLayout } from './layoutEngine'
+import { IMCSDiagramLayout } from './layoutEngine' //FIXME: saskaņot eksportu un importu
 
 
 var AjooEditor = function(settings) {

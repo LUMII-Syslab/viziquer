@@ -1,4 +1,4 @@
-import { Projects } from '/libs/platform/collections'
+import { Projects } from '/imports/db/platform/collections'
 
 var tripleTable = [];
 var filetrAsTripleTable = [];

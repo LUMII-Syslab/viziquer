@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Elements, Compartments, CompartmentTypes, Projects } from '/libs/platform/collections'
+import { Elements, Compartments, CompartmentTypes, Projects } from '/imports/db/platform/collections'
 
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");

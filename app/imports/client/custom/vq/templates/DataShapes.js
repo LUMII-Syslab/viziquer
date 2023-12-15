@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects, Compartments, CompartmentTypes } from '/libs/platform/collections'
+import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';

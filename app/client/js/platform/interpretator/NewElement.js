@@ -2,7 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 
-import { Elements, ElementTypes } from '/libs/platform/collections'
+import { Elements, ElementTypes } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 
 Interpreter.methods({

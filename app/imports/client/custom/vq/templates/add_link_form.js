@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { Projects } from '/libs/platform/collections'
+import { Projects } from '/imports/db/platform/collections'
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;

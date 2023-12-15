@@ -1,6 +1,7 @@
 import Box from './../Boxes/DrawingShapes/_render_boxes';
 
-Swimlane = function(editor) {
+import { SwimlaneCompartments } from './add_compartment'
+const Swimlane = function(editor) {
 
 	var swimlane = this;
 	swimlane.editor = editor;
@@ -545,3 +546,6 @@ Swimlane.prototype.getSize = function() {
 	return {x: x1, y: y1, width: (x2 - x1), height: (y2 - y1), x2: x2, y2: y2};
 }
 
+export {
+  Swimlane,
+}

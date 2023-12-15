@@ -213,3 +213,7 @@ SwimlaneCompartments.prototype = {
 	},
 
 }
+
+export {
+  SwimlaneCompartments,
+}

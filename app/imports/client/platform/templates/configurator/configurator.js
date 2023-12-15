@@ -1,5 +1,5 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Tools, UserTools } from '/libs/platform/collections'
+import { Tools, UserTools } from '/imports/db/platform/collections'
 import { Interpreter } from '/client/lib/interpreter'
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
 

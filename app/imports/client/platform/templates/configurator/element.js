@@ -1,5 +1,5 @@
 import { Interpreter } from '/client/lib/interpreter'
-import { ElementTypes } from '/libs/platform/collections'
+import { ElementTypes } from '/imports/db/platform/collections'
 
 
 //functions makes element type

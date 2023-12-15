@@ -1,5 +1,5 @@
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
-import { Tools, ToolVersions } from '/libs/platform/collections'
+import { Tools, ToolVersions } from '/imports/db/platform/collections'
 
 Template.toolRibbon.helpers({
 
