@@ -1,6 +1,7 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { Users, Projects, ProjectsUsers } from '/libs/platform/collections'
 
+import './projects.html'
 
 //#######################
 

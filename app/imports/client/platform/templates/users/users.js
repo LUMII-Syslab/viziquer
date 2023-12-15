@@ -1,5 +1,7 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Users, ProjectsUsers, ProjectsGroups } from '/libs/platform/collections'
+import { Users, ProjectsUsers, ProjectsGroups } from '/imports/db/platform/collections'
+
+import './users.html'
 
 // Start of members tab
 Template.membersTab.helpers({

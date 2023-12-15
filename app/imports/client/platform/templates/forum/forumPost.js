@@ -1,4 +1,4 @@
-
+import './forumPost.html'
 
 Template.forumPostMessage.helpers({
 

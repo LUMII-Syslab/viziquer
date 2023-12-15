@@ -3,6 +3,7 @@ import { ClientStorage } from 'ClientStorage';
 import { Users } from '/libs/platform/collections'
 import { reset_variable } from '/client/js/platform/utilities/utils'
 
+import './index.html'
 
 Template.index.events({
 

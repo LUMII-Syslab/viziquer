@@ -3,6 +3,8 @@ import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { ElementTypes, CompartmentTypes, DialogTabs } from '/libs/platform/collections'
 
+import './main.html'
+
 Template.compartmentsAccordion.helpers({
 	element: function() {
 		return Session.get("activeElement");

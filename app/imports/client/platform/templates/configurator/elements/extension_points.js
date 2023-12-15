@@ -1,5 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
 
+import './extension_points.html'
+
 // Start of element extensions
 Template.elementExtensions.helpers({
 	beforeCreateElement: function() {

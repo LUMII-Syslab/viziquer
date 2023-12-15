@@ -1,8 +1,9 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { Interpreter } from '/client/lib/interpreter'
-import { DiagramTypes } from '/libs/platform/collections'
+import { DiagramTypes } from '/imports/db/platform/collections'
 
+import './settings.html'
 
 Template.diagramAdanced.helpers({
 

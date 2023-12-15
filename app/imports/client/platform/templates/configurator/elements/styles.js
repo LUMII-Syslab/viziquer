@@ -1,6 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
-import { ElementTypes, Elements } from '/libs/platform/collections'
+import { ElementTypes, Elements } from '/imports/db/platform/collections'
 
+import './styles.html'
 
 // Start of style
 

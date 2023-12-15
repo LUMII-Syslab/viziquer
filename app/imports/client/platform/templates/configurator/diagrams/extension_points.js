@@ -1,5 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
-import { DiagramTypes } from '/libs/platform/collections'
+import { DiagramTypes } from '/imports/db/platform/collections'
+
+import './extension_points.html'
 
 //Start of diagram extensions
 

@@ -3,6 +3,7 @@ import { Utilities } from '/client/js/platform/utilities/utils'
 import { DiagramTypes } from '/libs/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 
+import './toolbar.html'
 
 //Start of toolbar
 Template.toolbarButtons.helpers({

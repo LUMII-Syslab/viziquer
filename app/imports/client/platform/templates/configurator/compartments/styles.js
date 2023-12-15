@@ -1,7 +1,9 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Configurator } from '/client/js/platform/configurator/config_utils'
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { CompartmentTypes, ElementTypes } from '/libs/platform/collections'
+import { CompartmentTypes, ElementTypes } from '/imports/db/platform/collections'
+
+import './styles.html'
 
 Template.compartmentTypeStyles.events({
 	'change #compartmentStyle' : function(e) {

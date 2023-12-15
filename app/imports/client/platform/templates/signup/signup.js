@@ -1,5 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 
+import './signup.html'
+
 Template.signup.events({
 
 	'keyup #email' : function(e) {

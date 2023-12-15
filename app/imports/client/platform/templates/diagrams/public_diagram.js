@@ -4,7 +4,7 @@ import { Utilities } from '/client/js/platform/utilities/utils'
 import { is_system_admin } from '/libs/platform/user_rights'
 import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Sections, Documents } from '/libs/platform/collections'
 
-
+import './public_diagram.html'
 
 Template.publicDiagramTemplate.onRendered(function() {
 	// $("#lockDiagram").trigger("click");

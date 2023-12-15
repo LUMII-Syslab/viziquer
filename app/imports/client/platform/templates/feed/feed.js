@@ -1,3 +1,4 @@
+import './feed.html'
 
 //Start of postsT
 

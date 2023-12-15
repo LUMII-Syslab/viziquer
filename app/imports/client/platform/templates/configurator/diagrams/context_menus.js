@@ -1,6 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
-import { DiagramTypes } from '/libs/platform/collections'
+import { DiagramTypes } from '/imports/db/platform/collections'
 
+import './context_menus.html'
 
 // Start of collection context menu template
 Template.editCollectionContextMenu.helpers({

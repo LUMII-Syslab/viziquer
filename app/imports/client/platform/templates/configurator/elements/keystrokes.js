@@ -1,5 +1,7 @@
 import { Configurator } from '/client/js/platform/configurator/config_utils'
 
+import './keystrokes.html'
+
 // Start of keystrokes tab
 Template.editKeystroke.helpers({
 

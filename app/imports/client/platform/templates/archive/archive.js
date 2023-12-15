@@ -1,3 +1,4 @@
+import './archive.html'
 
 Template.archiveTemplate.events({
 

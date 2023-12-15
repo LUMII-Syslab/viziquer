@@ -1,8 +1,9 @@
 import { Dialog } from '/client/js/platform/interpretator/Dialog'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { analytics } from '/client/lib/global_variables'
-import { Users } from '/libs/platform/collections'
+import { Users } from '/imports/db/platform/collections'
 
+import './profile.html'
 
 //builds user object to render it
 Template.profileInfo.helpers({

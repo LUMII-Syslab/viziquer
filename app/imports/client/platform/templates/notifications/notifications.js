@@ -1,6 +1,7 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
-import { Notifications, Users, Projects } from '/libs/platform/collections'
+import { Notifications, Users, Projects } from '/imports/db/platform/collections'
 
+import './notifications.html'
 
 //sets new notification count
 Template.newNotificationsCountT.helpers({

@@ -1,3 +1,5 @@
+import './forum.html'
+
 Template.forumPosts.helpers({
 
 	forum_posts: function() {

@@ -1,4 +1,6 @@
-import { Tools, Projects, Users } from '/libs/platform/collections'
+import { Tools, Projects, Users } from '/imports/db/platform/collections'
+
+import './panel.html'
 
 //Panel
 Template.panel.helpers({
