@@ -1,6 +1,8 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Projects } from '/imports/db/platform/collections'
 
+import './SchemaTree.html'
+
 Template.schemaFilter.Properties = new ReactiveVar("");
 Template.schemaFilter.F2 = new ReactiveVar("");
 Template.schemaFilter.PropKind = new ReactiveVar("");

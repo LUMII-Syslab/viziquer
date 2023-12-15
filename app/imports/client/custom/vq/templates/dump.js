@@ -1,5 +1,7 @@
 import { Utilities } from '/client/js/platform/utilities/utils'
 
+import './dump.html'
+
 Template.dump.helpers({
 
 	json: function() {

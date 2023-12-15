@@ -1,6 +1,8 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Elements, Compartments, CompartmentTypes, Projects } from '/imports/db/platform/collections'
 
+import './add_merge_form.html'
+
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
 Template.AddMergeValues.mergeAlias = new ReactiveVar("");

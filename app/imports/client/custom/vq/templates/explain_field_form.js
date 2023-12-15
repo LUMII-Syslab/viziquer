@@ -1,5 +1,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 
+import './explain_field_form.html'
+
 Interpreter.customMethods({
 	ExplainField: function () {
 		$("#explain-field-form").modal("show");

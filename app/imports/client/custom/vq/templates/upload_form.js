@@ -1,6 +1,8 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 
+import './upload_form.html'
+
 Interpreter.customMethods({
 
 	UploadOntology: function() {

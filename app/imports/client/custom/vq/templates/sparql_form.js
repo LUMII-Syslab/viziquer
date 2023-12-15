@@ -4,6 +4,7 @@ import { Utilities } from '/client/js/platform/utilities/utils'
 import { is_system_admin } from '/libs/platform/user_rights'
 import { Projects, Diagrams } from '/imports/db/platform/collections'
 
+import './sparql_form.html'
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
 YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);

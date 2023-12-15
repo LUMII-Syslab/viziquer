@@ -1,3 +1,5 @@
+import './aggregate_wizard_form.html'
+
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);
 Template.AggregateWizard.startClassId = new ReactiveVar("No start id");

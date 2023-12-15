@@ -1,6 +1,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
+import './add_uri_form.html'
 
 Interpreter.customMethods({
 	AddUriName: function () {

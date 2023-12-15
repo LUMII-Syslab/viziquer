@@ -1,5 +1,6 @@
 import { Interpreter } from '/client/lib/interpreter'
 
+import './connect_classes_form.html'
 
 Interpreter.customMethods({
 //From selection

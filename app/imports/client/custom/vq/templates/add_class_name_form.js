@@ -1,6 +1,8 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
+import './add_class_name_form.html'
+
 Interpreter.customMethods({
 	AddClassName: function () {
 		

@@ -2,6 +2,8 @@ import { Interpreter } from '/client/lib/interpreter'
 import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
 
+import './add_attribute_form.html'
+
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.existingAttributeList = new ReactiveVar([{name: "No_attribute"}]);

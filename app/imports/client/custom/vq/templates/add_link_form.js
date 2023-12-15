@@ -1,6 +1,8 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Projects } from '/imports/db/platform/collections'
 
+import './add_link_form.html'
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;
 var linkKeyDownTimeStamp;
