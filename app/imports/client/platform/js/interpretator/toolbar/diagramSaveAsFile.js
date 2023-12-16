@@ -1,5 +1,5 @@
-import { Interpreter } from '/client/lib/interpreter'
-import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import { Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, ElementsSections } from '/imports/db/platform/collections'
 

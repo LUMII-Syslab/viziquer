@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { Tools, Diagrams, DiagramTypes } from '/imports/db/platform/collections'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 Template.toolDiagrams.helpers({
 

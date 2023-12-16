@@ -1,3 +1,5 @@
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+
 // ***********************************************************************************
 // const FAAS_SERVER_URL = 'http://localhost:59286/api';
 let _faasServerUrl = null;
@@ -126,7 +128,7 @@ const callFAASFindProperties = async (faasPParams) => {
     return await callFAASGet(callText);
 }
 
-faas = {
+const faas = {
     isEnabled : async function() {
         // .env variables are set once at the startup, thus it is ok to call FAAS url just once
         if (_faasEnabled == undefined) {
@@ -360,4 +362,8 @@ faas = {
 
 		return rez;
 	}
+}
+
+export {
+  faas
 }

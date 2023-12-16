@@ -1,4 +1,7 @@
-import { Elements } from '/imports/db/platform/collections'
+import { Elements } from '/imports/db/platform/collections';
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
+
 (function() {
 vq_grammar_completion_parser = (function() {	
   "use strict";

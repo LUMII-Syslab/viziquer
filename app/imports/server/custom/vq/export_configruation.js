@@ -17,7 +17,7 @@ Meteor.methods({
 
 });
 
-ExportDiagramConfig = function() {
+function ExportDiagramConfig() {
 	this.tool = {};
 	this.types = [];
 	this.presentations = [];
@@ -208,3 +208,6 @@ ExportDiagramConfig.prototype = {
 
 
 
+export {
+  ExportDiagramConfig,
+}

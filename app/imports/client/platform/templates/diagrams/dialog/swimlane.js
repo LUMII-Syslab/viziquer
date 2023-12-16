@@ -1,3 +1,10 @@
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+
+import {
+  CompartmentTypes,
+  Compartments,
+} from '/imports/db/platform/collections.js'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 Template.swimlane_TopLine.helpers({
 

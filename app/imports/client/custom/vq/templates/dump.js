@@ -1,4 +1,4 @@
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 
 import './dump.html'
 

@@ -1,6 +1,10 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './connect_classes_form.html'
+import { Create_VQ_Element, VQ_Element, VQ_Schema } from '../js/VQ_Element';
+import { Elements, Projects } from '/imports/db/platform/collections';
 
 Interpreter.customMethods({
 //From selection

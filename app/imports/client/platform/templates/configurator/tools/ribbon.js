@@ -1,4 +1,4 @@
-import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { Tools, ToolVersions } from '/imports/db/platform/collections'
 
 Template.toolRibbon.helpers({

@@ -1,4 +1,4 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { ElementTypes, Elements } from '/imports/db/platform/collections'
 

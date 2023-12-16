@@ -1,8 +1,15 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { process_sub_compart_types } from '/imports/client/platform/templates/diagrams/dialog/subCompartments'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { generateSymbolTable } from '/imports/client/custom/vq/js/transformations.js'
+import { autoCompletionAddAttribute, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
 
 import './add_attribute_form.html'
+import { AddMergeValues2 } from './add_merge_form'
 
 Template.AddAttribute.attrList = new ReactiveVar([{name: "No_attribute"}]);
 Template.AddAttribute.linkList = new ReactiveVar([{name: "No_attribute"}]);

@@ -1,10 +1,11 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { is_system_admin } from '/imports/libs/platform/user_rights'
 import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Sections, Documents, Users } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './diagram.html'
+import { is_ajoo_editor, is_zoom_chart_editor } from '/imports/libs/platform/lib'
 
 Interpreter.methods({
 

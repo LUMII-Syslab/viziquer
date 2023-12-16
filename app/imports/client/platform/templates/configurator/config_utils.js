@@ -1,5 +1,6 @@
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { DiagramTypes, ElementTypes, CompartmentTypes, Elements } from '/imports/db/platform/collections'
+import { fill_priorities } from '/imports/libs/platform/helpers';
 
 var Configurator = {
 

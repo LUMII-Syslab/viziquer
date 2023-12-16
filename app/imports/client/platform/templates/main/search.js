@@ -285,7 +285,7 @@ function save_query(collection_type, text) {
 	});	
 }
 
-search_keyup = function(e) {
+function search_keyup(e) {
 
 	//if enter, then searching
 	if (e.keyCode == 13)
@@ -411,7 +411,7 @@ function remove_selected_item() {
 	get_selected_elem().removeClass("selected-item");
 }
 
-compute_index = function(arrow_type, count, compute_index_fn) {
+function compute_index(arrow_type, count, compute_index_fn) {
 
 	if (arrow_type == "up") {
 		var step_direction = -1;
@@ -438,14 +438,14 @@ compute_index = function(arrow_type, count, compute_index_fn) {
 	return index;
 }
 
-get_display_mode = function(count) {
+function get_display_mode(count) {
 	if (count && count > 0)
 		return "display:block;";
 	else	
 		return "display:none;";
 }
 
-remove_caret_move_on_keyup = function(e) {
+function remove_caret_move_on_keyup(e) {
 
 	//avoids the caret move in the input field
 	if (e.keyCode == 38) {

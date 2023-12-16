@@ -3,6 +3,8 @@ import { Projects, ProjectsUsers, Tools } from '/imports/db/platform/collections
 import { Services } from '/imports/db/custom/vq/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+
 import './structure.html'
 
 Template.structureTemplate.helpers({

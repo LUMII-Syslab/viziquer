@@ -474,3 +474,7 @@ ImportAjooConfiguration.prototype = {
 	},
 
 }
+
+export {
+  ImportAjooConfiguration,
+}

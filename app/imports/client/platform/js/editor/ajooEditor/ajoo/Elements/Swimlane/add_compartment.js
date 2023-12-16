@@ -1,5 +1,5 @@
 
-SwimlaneCompartments = function(element, comparts_in) {
+function SwimlaneCompartments(element, comparts_in) {
 
 	var compartments = this;
 	compartments.element = element;

@@ -1,5 +1,7 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
+
+import { faas } from '/imports/client/custom/vq/js/faas.js'
 
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
@@ -386,7 +388,7 @@ const getEmptySchema  = () => {
 }
 const delay = ms => new Promise(res => setTimeout(res, ms));
 // ***********************************************************************************
-dataShapes = {
+const dataShapes = {
 	schema : getEmptySchema(),
 	clearSchema : function() {
 		this.schema = getEmptySchema();
@@ -2606,3 +2608,6 @@ dataShapes = {
 
 // ***********************************************************************************
 
+export {
+  dataShapes,
+}

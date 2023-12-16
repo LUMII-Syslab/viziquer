@@ -1,5 +1,7 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/imports/db/platform/collections'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
 
 Interpreter.customMethods({
 	
@@ -1085,7 +1087,7 @@ Interpreter.customMethods({
 	
 });
 
-VQsetAssociationName = function(start, end) {
+function VQsetAssociationName(start, end) {
 		var start_element = new VQ_Element(start);
 		var end_element = new VQ_Element(end);
 		
@@ -1138,7 +1140,7 @@ VQsetAssociationName = function(start, end) {
 }
 
 
-getAggregatedField = function(e, fieldName){
+function getAggregatedField(e, fieldName){
 		var parent = $(e.target).closest(".compart-type");
 		var parent_id = parent.attr("id");
 		var compart_type = CompartmentTypes.findOne({_id: parent_id});
@@ -1155,7 +1157,7 @@ getAggregatedField = function(e, fieldName){
 		return parent.find("." + exression_id);
 }
 
-findAttributeInAbstractTable = function(context, clazz, fieldValue){
+function findAttributeInAbstractTable(context, clazz, fieldValue){
 	var fieldInContext = {};
 
 	if(clazz["identification"]["_id"] == context){
@@ -1176,7 +1178,7 @@ findAttributeInAbstractTable = function(context, clazz, fieldValue){
 
 }
 
-generateSymbolTable = async function() {
+async function generateSymbolTable() {
  // console.log("    generateSymbolTable")
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
@@ -1228,7 +1230,7 @@ generateSymbolTable = async function() {
   // string -> int
 // function checks if the text is uri
 // 0 - not URI, 3 - full form, 4 - short form
-isURI = function(text) {
+ function isURI(text) {
   if(text.indexOf("://") != -1)
     return 3;
   else
@@ -1241,3 +1243,7 @@ function make_group_by_instance_value(input) {
 	return "{group} " + input;
 }
 
+export {
+  generateSymbolTable,
+  findAttributeInAbstractTable,
+}

@@ -2,7 +2,7 @@ import { ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Elements, C
 import { is_system_admin } from '/imports/libs/platform/user_rights'
 import { build_initial_box_style, build_initial_line_style } from '/imports/server/platform/methods/configurator/initialTypes/element_types'
 import { is_version_not_published } from '/imports/server/platform/_global_functions'
-import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
+import { generate_id, is_ajoo_editor, is_zoom_chart_editor } from '/imports/libs/platform/lib'
 import { build_initial_element_type } from './initialTypes/element_types.js'
 
 ElementTypes.after.update(function (user_id, doc, fields, modifier, options) {

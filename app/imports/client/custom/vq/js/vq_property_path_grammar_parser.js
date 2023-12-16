@@ -1,3 +1,5 @@
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
+
 (function() {
 vq_property_path_grammar_parser = (function() {																	 
   "use strict";

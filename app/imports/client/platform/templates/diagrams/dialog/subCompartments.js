@@ -1,4 +1,4 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 

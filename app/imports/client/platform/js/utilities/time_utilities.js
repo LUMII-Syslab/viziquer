@@ -1,5 +1,5 @@
 
-joined_date = function(date_obj) {
+function joined_date(date_obj) {
 	if (date_obj) {
     date_obj = new Date(date_obj);
 		var date = date_obj.getDate();
@@ -12,7 +12,7 @@ joined_date = function(date_obj) {
 	}
 }
 
-months = function() {
+function months() {
 	return ["January", 
           "February", 
           "March", 
@@ -28,7 +28,7 @@ months = function() {
         ];
 }
 
-time_interval_from_given_date = function(date, current_date) {
+function time_interval_from_given_date(date, current_date) {
 
   if (!current_date)
     current_date = get_current_date();
@@ -89,7 +89,7 @@ time_interval_from_given_date = function(date, current_date) {
   return diff_text;
 }
 
-date_interval_in_mail_form = function(date, current_date) {
+function date_interval_in_mail_form(date, current_date) {
   if (!current_date)
     current_date = new Date;
 
@@ -144,15 +144,15 @@ date_interval_in_mail_form = function(date, current_date) {
   }
 }
 
-get_time_in_miliseconds = function() {
+function get_time_in_miliseconds() {
   var date = new Date();
   return date.getTime();
 }
 
-get_current_time = function() {
+function get_current_time() {
   return new Date();
 }
 
-get_current_date = function() {
+function get_current_date() {
   return new Date;
 }

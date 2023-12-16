@@ -1,8 +1,9 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { TriplesMaps, Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 
-VQ_r2rml = function (schema) {
+function VQ_r2rml (schema) {
 //console.log(schema);
    this.triplesMaps = {};
    this.views = {};
@@ -64,7 +65,7 @@ VQ_r2rml.prototype = {
   views: null,
 }
 
-TriplesMap = function(name){
+function TriplesMap(name){
 	this.name = name;
 	this.predicateObjectMap = [];
 }
@@ -450,7 +451,7 @@ function makeSubTree(classes, deep) {
 var druka = false;
 var startTime = null;
 VQ_Schema_copy = null; 	
-VQ_Schema = function ( data = {}, tt = 0) {
+function VQ_Schema ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
    druka = false;
@@ -1912,7 +1913,7 @@ function findPrefix(arr, pos) {
   return arr[pos].split("#")[0];
 }
 
-VQ_ontology = function (URI, prefix) {
+function VQ_ontology (URI, prefix) {
   if ( URI.endsWith("/#"))
     URI = URI.substring(0, URI.length -1);
   if ( URI.endsWith(":"))
@@ -1963,7 +1964,7 @@ VQ_ontology.prototype = {
   namesAreUnique:null
 }
 
-VQ_Elem = function (elemInfo, elemType){
+function VQ_Elem (elemInfo, elemType){
     var localName = " ";
 	var fullName = " ";
 	this.Info = elemInfo;
@@ -2039,7 +2040,7 @@ VQ_Elem.prototype = {
   }
 }
 
-VQ_Class = function (classInfo, isAbstract = false){
+function VQ_Class (classInfo, isAbstract = false){
     VQ_Elem.call(this, classInfo, "class");
 	this.isAbstract = isAbstract;
 	this.ontologies = {};
@@ -2210,7 +2211,7 @@ VQ_Class.prototype.getClassInfo = function() {
   return this.getElemInfo();
   };
 
-VQ_Attribute = function (attrInfo){
+function VQ_Attribute (attrInfo){
 	VQ_Elem.call(this, attrInfo, "attribute");
 	this.schemaAttribute = {}; 
 	var type = attrInfo.type;  // !!! Šeit vajadzētu tā elegantāk pārvērst
@@ -2291,7 +2292,7 @@ VQ_Attribute.prototype.getAttributeInfo = function() {
   };
 
 
-VQ_SchemaAttribute = function (attrInfo){
+function VQ_SchemaAttribute (attrInfo){
 	VQ_Elem.call(this, attrInfo, "schemaAttribute");
 	this.attribute = {};
 	this.sourceClass = {};
@@ -2305,7 +2306,7 @@ VQ_SchemaAttribute.prototype.minCardinality = null;
 VQ_SchemaAttribute.prototype.maxCardinality = null;
 
 
-VQ_Role = function (roleInfo){
+function VQ_Role (roleInfo){
 	VQ_Elem.call(this, roleInfo, "role");
 	this.schemaRole = {};
 	//var e = schema.findAssociationByName(roleInfo.localName);  
@@ -2381,7 +2382,7 @@ VQ_Role.prototype.getAssociationInfo = function() {
   return _.extend(this.getElemInfo(), this.getAssocInfo());
   };
 
-VQ_SchemaRole = function (roleInfo, cpInfo, role){
+function VQ_SchemaRole (roleInfo, cpInfo, role){
 	//VQ_Elem.call(this, cpInfo, "schemaRole");
 	VQ_Elem.call(this, roleInfo, "schemaRole");
 	this.role = {};
@@ -2438,7 +2439,7 @@ VQ_SchemaRole.prototype.getSchemaRoleInfo = function() {
 //  - source Class (for Link)
 //  - target Class (for Link)
 //    funtion(VQ_Element), location, bool, VQ_Element, VQ_Element  -->
-Create_VQ_Element = function(func, location, isLink, source, target) {
+function Create_VQ_Element(func, location, isLink, source, target) {
   var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
 
   if (isLink) {
@@ -2516,7 +2517,7 @@ var VQ_Element_cache = {};
 
 // ajoo element id --> VQ_Element
 
-VQ_Element = function(id) {
+function VQ_Element(id) {
   // obj contains correspondind ajoo Element object
  // look in the cache
  //console.log(VQ_Element_cache);
@@ -4002,4 +4003,12 @@ export {
   VQ_Element,
   Create_VQ_Element,
   async_Create_VQ_Element,
+  VQ_Class,
+  VQ_Attribute,
+  VQ_Schema,
+  VQ_Role,
+  VQ_SchemaRole,
+  VQ_r2rml,
+  VQ_SchemaAttribute,
+  VQ_ontology,
 }

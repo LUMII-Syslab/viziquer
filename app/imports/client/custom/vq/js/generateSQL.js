@@ -1,5 +1,6 @@
-import { Interpreter } from '/client/lib/interpreter'
-
+import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Elements } from '/imports/db/platform/collections'
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
@@ -998,7 +999,7 @@ function optimizeAttributeSQLs(classSQL, fromSQL){
 	return {"classSQL":classSQL, "fromSQL":fromSQL};
 }
 
- optimizeAllAttributes = function(fromSQL){
+function optimizeAllAttributes(fromSQL){
 	//console.log("optimizeAllAttributes", fromSQL);
 	for (var clazz in fromSQL) {
 		for (var attr in fromSQL) {
@@ -1158,7 +1159,7 @@ function generateSELECTSQL(sqlTable){
 
 // genrerate SQL FROM info
 // sqlTable - table with sql parts
- generateSQLWHEREInfo = function (sqlTable, ws, fil, counter, parentClassJoinOn, countSel){
+function generateSQLWHEREInfo(sqlTable, ws, fil, counter, parentClassJoinOn, countSel){
 
  console.log("parentClassJoinOn", parentClassJoinOn);
  
@@ -1566,7 +1567,7 @@ function generateWherePart(whereInfo){
 	return whereInfo.join(" AND ");
 }
 
-generateFromPart = function (whereInfo, countSel){
+function generateFromPart(whereInfo, countSel){
 	if(whereInfo.length == 0) return "";
 	else if(whereInfo.length == 1) {
 		if(countSel != 1) return whereInfo[0]["select"] + " " + whereInfo[0]["name"];
@@ -1665,7 +1666,7 @@ function findJoinOnConditions(select1, select2){
 	return "1=1";
 }
 
- getJoinOn = function(whereInfo){
+function getJoinOn(whereInfo){
 	var selectJoin = [];
 	for (var expr in whereInfo){
 		for (var expression in whereInfo[expr]["SelectJoin"]){
@@ -1675,7 +1676,7 @@ function findJoinOnConditions(select1, select2){
 	return selectJoin;
 }
 
- generateJoinPart = function(fromPart, countSel){
+ function generateJoinPart(fromPart, countSel){
 	var unionTable = [];
 	var countUnion = 0;
 	for (var expression in fromPart){

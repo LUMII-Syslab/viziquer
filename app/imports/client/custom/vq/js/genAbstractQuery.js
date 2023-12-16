@@ -1,5 +1,8 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements } from '/imports/db/platform/collections'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
 
 var count = 0;
 
@@ -36,7 +39,7 @@ Interpreter.customMethods({
 // For the query in abstract syntax
 // this function resolves the types (adds to identification property what is missing)
 // and creats symbol table with resolved types
-resolveTypesAndBuildSymbolTable = async function (query) {
+async function resolveTypesAndBuildSymbolTable(query) {
 	count = 0;
   // TODO: This is not efficient to recreate schema each time
   // var schema = new VQ_Schema();
@@ -1081,7 +1084,7 @@ resolveTypesAndBuildSymbolTable = async function (query) {
 // [string]--> JSON
 // Returns query AST-s for the ajoo elements specified by an array of id-s
 // element_id_list is the list of potential root elements
-genAbstractQueryForElementList = async function (element_id_list, virtual_root_id_list) {
+const genAbstractQueryForElementList = async function (element_id_list, virtual_root_id_list) {
 	var classAccessTable = [];
 	
   // conver id-s to VQ_Elements (filter out incorrect id-s)
@@ -1576,7 +1579,7 @@ function getGraphFullForm(graph, prefixes){
 	return graph
 }
 
-getResolveInformation = async function(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
+async function getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple){
 	
 	for(let exp in parsed_exp){
 		if(typeof parsed_exp[exp] === "object"){
@@ -1986,4 +1989,9 @@ function chechIfSimplePath(expressionTable, isSimple, isPath){
 		}
 	}
 	return {isSimple:isSimple, isPath:isPath}
+}
+
+export {
+  resolveTypesAndBuildSymbolTable,
+  genAbstractQueryForElementList,
 }

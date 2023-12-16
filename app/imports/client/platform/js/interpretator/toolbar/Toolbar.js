@@ -1,8 +1,9 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/client/lib/interpreter'
-import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
-import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets } from '/imports/db/platform/collections'
+import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets, Users } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
@@ -331,7 +332,7 @@ function add_toolbar_button(res, toolbar_item, editable) {
 }
 
 
-build_element_names_array = function(elementIds) {
+function build_element_names_array(elementIds) {
 
 	return _.map(elementIds, function(elem_id) {
 
@@ -363,4 +364,8 @@ build_element_names_array = function(elementIds) {
 		return name
 	});
 
+}
+
+export {
+  build_element_names_array,
 }

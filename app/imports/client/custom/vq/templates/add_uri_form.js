@@ -1,4 +1,4 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
 import './add_uri_form.html'

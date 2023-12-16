@@ -1,8 +1,8 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { ElementTypes, CompartmentTypes, Compartments, DiagramFiles, CloudFiles } from '/imports/db/platform/collections'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
-
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 Interpreter.methods({
 
@@ -63,7 +63,7 @@ Interpreter.methods({
 
 
 //Dialog methods
-Dialog = {
+const Dialog = {
 
 	updateCompartmentValue: function(compart_type, input, value, src_id, compart_style, elem_style, sub_comparts) {
 
@@ -707,4 +707,6 @@ function update_compartment(list) {
 
 
 
-export {Dialog}
+export {
+  Dialog,
+}

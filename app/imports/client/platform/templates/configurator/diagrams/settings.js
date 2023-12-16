@@ -1,10 +1,11 @@
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { Utilities } from '/client/js/platform/utilities/utils'
-import { Interpreter } from '/client/lib/interpreter'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { DiagramTypes } from '/imports/db/platform/collections'
-import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
+import { is_ajoo_editor } from '/imports/libs/platform/lib'
 
 import './settings.html'
+import { Dialog } from '../../../js/interpretator/Dialog'
 
 Template.diagramAdanced.helpers({
 

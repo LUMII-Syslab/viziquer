@@ -12,7 +12,7 @@ import {Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage,
 } from './Boxes/DrawingShapes/shapes3'
 
 
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 
 
 var AElements = function(editor, parent) {

@@ -150,7 +150,7 @@ Template.signup.onDestroyed(function() {
 
 });
 
-blur_password_fields = function(e) {
+function blur_password_fields(e) {
 
 	var field = $(e.target);
 

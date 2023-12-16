@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Interpreter } from '/client/lib/interpreter'
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import { Elements, ElementTypes } from '/imports/db/platform/collections'
 import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
@@ -82,7 +83,7 @@ Interpreter.methods({
 
 
 
-compute_new_line_type = function(elem_types, start_elem, end_elem) {
+function compute_new_line_type(elem_types, start_elem, end_elem) {
 
 	//checks if there is start and end element for the line
 	if (start_elem && end_elem) {
@@ -306,3 +307,6 @@ function get_line_type(elem_type_ids, start_elem_type_id, end_elem_type_id) {
 	}
 }
 
+export {
+  compute_new_line_type,
+}

@@ -1,4 +1,4 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 
 import './explain_link_form.html'
 

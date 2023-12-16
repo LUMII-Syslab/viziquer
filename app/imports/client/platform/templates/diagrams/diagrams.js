@@ -1,6 +1,10 @@
-import { Interpreter } from '/client/lib/interpreter'
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { UserVersionSettings, Projects, ProjectsGroups, Tools, DiagramTypes, Diagrams, FoundDiagrams } from '/imports/db/platform/collections'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+import { Services } from '/imports/db/custom/vq/collections.js'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './diagrams.html'
 

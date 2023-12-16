@@ -6,11 +6,13 @@
 
 // The module has been developed with partial support from Latvian Science Council project lzp-2021/1-0389 "Visual Queries in Distributed Knowledge Graphs" (since 2022).
 
-import { Interpreter } from '/client/lib/interpreter'
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 
 import { Projects, Compartments, Elements, ElementTypes} from '/imports/db/platform/collections'
-import {OrthogonalCollectionRerouting} from '/client/js/platform/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
+import {OrthogonalCollectionRerouting} from '/imports/client/platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 // meteor npm install sparqljs
 

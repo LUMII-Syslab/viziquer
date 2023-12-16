@@ -1,7 +1,8 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { ClientStorage } from 'ClientStorage';
 import { Users } from '/imports/db/platform/collections'
-import { reset_variable } from '/client/js/platform/utilities/utils'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 import './index.html'
 
@@ -128,7 +129,7 @@ function loginWithPassword(name, password) {
 }
 
 
-login_on_success = function() {
+function login_on_success() {
 
 	console.log("login_on_success")
 
@@ -171,5 +172,3 @@ function redirect_on_login(user) {
 		FlowRouter.go("structure");
 	}
 }
-
-

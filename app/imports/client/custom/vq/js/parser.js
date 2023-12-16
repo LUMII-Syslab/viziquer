@@ -1,5 +1,8 @@
 import { Projects } from '/imports/db/platform/collections'
 
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring } from './parserCommon';
+
 var tripleTable = [];
 var filetrAsTripleTable = [];
 var variableTable = [];
@@ -107,7 +110,7 @@ function initiate_variables(vna, count, pt, ep, st,internal, prt, idT, ct, memS,
 	}
 }
 
-parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTable, classMembership, knPr){
+function parse_class(clazz, symbolTable, parameterTable, idTable, referenceTable, classMembership, knPr){
 	var messages = [];
 	var triples = [];
 	var prefixTable = [];
@@ -154,7 +157,7 @@ parse_class = function(clazz, symbolTable, parameterTable, idTable, referenceTab
 
 }
 
-parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId, generateTriple) {
+function parse_filter(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, className, classSchemaName, vnc, vna, count, ep, st, classTr, prt, idT, rTable, memS, knPr, fId, generateTriple) {
 	initiate_variables(vna, count, "condition", ep, st, false, prt, idT, rTable, memS, knPr, clID, attribNames, expr["exp"], variableNT, variableNC, 99999999999999, fId, cl);
 	//initiate_variables(vna, count, "different", ep, st, false, prt, idT);
 	variableNamesClass = vnc;
@@ -205,7 +208,7 @@ parse_filter = function(cl, expr, variableNT, variableNC, attribNames, clID, par
 	return {"exp":result, "triples":uniqueTriples, "filetrAsTripleTable":filetrAsTripleTable, "expressionLevelNames":expressionLevelNames, "references":referenceTable,  "counter":counter, "isAggregate":isAggregate, "isFunction":isFunction, "isExpression":isExpression, "isTimeFunction":isTimeFunction, "prefixTable":prefixTable, "referenceCandidateTable":referenceCandidateTable, "messages":messages};
 }
 
-parse_attrib = function(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, alias, className, classSchemaName, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr, ord, fId) {
+function parse_attrib(cl, expr, variableNT, variableNC, attribNames, clID, parsed_exp, alias, className, classSchemaName, vnc, vna, count, ep, st, internal, prt, idT, rTable, memS, parType, knPr, ord, fId) {
 
 	alias = alias || "";
 	
@@ -337,7 +340,7 @@ function getLastField(referenceName, referenceDefinitions){
 	return refName;
 }
 
-getReferenceName = function(referenceName, symbolTable, classID){
+function getReferenceName(referenceName, symbolTable, classID){
 	
 	//var referenceName = expressionTable["name"];
 	
@@ -1145,7 +1148,7 @@ function setVariableName2(varName, alias, variableData, generateNewName){
 	}
 }
 
-getPathFullGrammar = function(expressionTable){
+function getPathFullGrammar(expressionTable){
 	
 	var prTable = [];
 	var path = "";
@@ -4378,7 +4381,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 	return SPARQLstring
 }
 
-countCardinality = async function(str_expr, context){	 
+async function countCardinality(str_expr, context){	 
 	
 	try {
       if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
@@ -4402,7 +4405,7 @@ countCardinality = async function(str_expr, context){
 	return -1;
 }
 
-countMaxExpressionCardinality = function (expressionTable){
+function countMaxExpressionCardinality(expressionTable){
 	var isMultiple = false;
 	var isAggregation = false;
 	
@@ -4454,4 +4457,9 @@ function checkIfIsURI(text){
 	if(text.indexOf("://") != -1) return "full_form";
 	else if(text.indexOf(":") != -1) return "prefix_form";
 	return "not_uri";
+}
+
+export {
+  countCardinality,
+  getPathFullGrammar,
 }

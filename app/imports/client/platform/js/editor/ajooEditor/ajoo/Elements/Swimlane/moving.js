@@ -1,5 +1,5 @@
 
-MovingSwimlane = function(line, swimlane) {
+function MovingSwimlane(line, swimlane) {
 
 	var moving = this;
 	moving.line = line;

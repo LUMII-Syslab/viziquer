@@ -1,5 +1,9 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements, ElementTypes, CompartmentTypes, Compartments } from '/imports/db/platform/collections'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+import { generateSymbolTable, findAttributeInAbstractTable, } from '/imports/client/custom/vq/js/transformations.js'
 
 var symbolTable = {};
 var grammarType = "class";
@@ -66,7 +70,7 @@ Interpreter.customMethods({
 var currentFocus = 0;
 
 
-generateSymbolTableAC = async function() {
+const generateSymbolTableAC = async function() {
  
 	var tempSymbolTable = await generateSymbolTable();
 	var st = tempSymbolTable["symbolTable"];
@@ -74,44 +78,44 @@ generateSymbolTableAC = async function() {
 	return st;
   }
 
-autoCompletionAddCondition = async function(e) {
+const autoCompletionAddCondition = async function(e) {
 	grammarType = "class"
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
-},
+}
 
-autoCompletionClass = async function(e) {
+const autoCompletionClass = async function(e) {
 	grammarType = "className"
 	await autoCompletion(e);
-},
+}
 
-autoCompletionAddAttribute = async function(e) {
+const autoCompletionAddAttribute = async function(e) {
 	grammarType = "attribute"
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
-},
+}
 
-autoCompletionAddLink = async function(e) {
+const autoCompletionAddLink = async function(e) {
 	grammarType = "linkPath"
 	const d = new Date();
 	time = d.getTime();
 	if(typeof symbolTable === "undefined" || symbolTable == null)symbolTable = await generateSymbolTableAC();
 	await autoCompletion(e);
-},
+}
 
-autoCompletionInstance = async function(e) {
+const autoCompletionInstance = async function(e) {
 	grammarType = "instance"
 	let ev = e.originalEvent;
 	if ((ev.ctrlKey || ev.metaKey) && ev.code === 'Space') {
 		await autoCompletion(e);
 	}	
-},
+}
 
-autoCompletion = async function(e) {
+const autoCompletion = async function(e) {
 	
 	removeMessage();
 	// if ((e.ctrlKey || e.metaKey) && (e.keyCode === 32 || e.keyCode === 0)) {
@@ -139,7 +143,7 @@ autoCompletion = async function(e) {
 	}
 }
 
-autoCompletionCleanup = function() {
+const autoCompletionCleanup = function() {
 	// console.log('auto completion cleanup');
 	removeMessage();
 	closeAllLists();
@@ -431,7 +435,7 @@ function isURI(text) {
   return 0;
 };
 
-runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
+const runCompletionNew = async function (text, fullText, cursorPosition, symbolTable){
 
 	if(grammarType == "className"){
 						
@@ -856,4 +860,10 @@ function findClassInAbstractQueryTable(elemId, abstractQueryTable){
 		}
 	}
 	return clazz;
+}
+
+export {
+  autoCompletionAddCondition,
+  autoCompletionAddAttribute,
+  autoCompletionCleanup,
 }

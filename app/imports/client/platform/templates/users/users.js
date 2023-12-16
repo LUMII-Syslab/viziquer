@@ -379,7 +379,7 @@ function set_role(ev, role) {
 	Utilities.callMeteorMethod("updateProjectsUsers", list);
 }
 
-build_user_search_query = function(search_entered) {
+function build_user_search_query(search_entered) {
 	if (!search_entered)
 		return {};
 
@@ -464,7 +464,7 @@ function render_members() {
 	});
 }
 
-is_default_role = function(role) {
+function is_default_role(role) {
 	if (role == "Admin" || role == "Reader")
 		return true;
 }

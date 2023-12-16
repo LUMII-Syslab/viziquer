@@ -1,8 +1,10 @@
-import { Interpreter } from '/client/lib/interpreter'
-import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Interpreter } from '/imports/client/lib/interpreter'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { ElementTypes } from '/imports/db/platform/collections'
-import { _contextMenu } from '/client/lib/global_variables'
+import { _contextMenu } from '/imports/client/lib/global_variables'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 
 _.extend(Interpreter, {
@@ -16,7 +18,7 @@ _.extend(Interpreter, {
 		});
 
 //Context menu
-ContextMenu = function(e, menu, params, isZoomChart) {
+function ContextMenu(e, menu, params, isZoomChart) {
 
 	this.params = params || [];
 	this.isZoomChart = isZoomChart;
@@ -133,7 +135,7 @@ ContextMenu.prototype = {
 
 }
 
-get_context_menu_list = function(obj_type, property, extension_point) {
+function get_context_menu_list(obj_type, property, extension_point) {
 	var prop_name = Interpreter.getExtensionPointProcedure(extension_point, obj_type);
 	if (prop_name && prop_name != "") {
 		return {menu: Interpreter.execute(prop_name)};
@@ -304,9 +306,13 @@ Template.contextMenuTemplate.destroyed = function() {
 }
 
 //hides the context menu
-context_menu_hide = function() {
+function context_menu_hide() {
 	Session.set("contextMenu", reset_variable());
 } 
 
 
-export {ContextMenu, context_menu_hide}
+export {
+  ContextMenu, 
+  context_menu_hide,
+  get_context_menu_list,
+}

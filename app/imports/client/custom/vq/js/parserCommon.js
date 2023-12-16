@@ -1,5 +1,5 @@
 
-makeString = function (o){
+function makeString(o){
 	var str='';
 	_.each(o, function(val) {
 
@@ -17,7 +17,7 @@ makeString = function (o){
 	return str;
 }
 
-checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf, isIRIREF){
+function checkIfIsSimpleVariable(expressionTable, isSimpleVariable, isUnderInRelation, isSimpleFilter, isUnderOr, isUnderIf, isIRIREF){
 	
 	for(let key in expressionTable){
 		
@@ -49,7 +49,7 @@ checkIfIsSimpleVariable = function(expressionTable, isSimpleVariable, isUnderInR
 	return {isSimpleVariable:isSimpleVariable, isSimpleFilter:isSimpleFilter, isUnderOr:isUnderOr, isUnderIf:isUnderIf, isIRIREF};
 }
 
-checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableForNameDef){
+function checkIfIsSimpleVariableForNameDef(expressionTable, isSimpleVariableForNameDef){
 	
 	for(let key in expressionTable){
 		
@@ -70,7 +70,7 @@ checkIfIsSimpleVariableForNameDef = function(expressionTable, isSimpleVariableFo
 // find necessary level in expressionTable and return it
 // expressionTable - parsed expression table
 // level - level name
-findINExpressionTable = function(expressionTable, level){
+function findINExpressionTable(expressionTable, level){
 	// var v = [];
 	if(typeof expressionTable !== "undefined"){
 		for(let key in expressionTable){
@@ -87,7 +87,7 @@ findINExpressionTable = function(expressionTable, level){
 	return v;
 }
 //???
-transformSubstring = function(expressionTable){
+ function transformSubstring(expressionTable){
 	for(let key in expressionTable){
 		
 		if(typeof expressionTable[key] == 'object'){
@@ -213,7 +213,7 @@ function isDateVarSymbolTable(symbolTable, expression, dateType){
 }
 
 // if add symbolTable
-isDateVar = function(v, dateType, symbolTable){
+function isDateVar(v, dateType, symbolTable){
 	if(typeof v["var"] !== 'undefined'){
 		if((v["var"]["type"]!=null && dateType.indexOf(v["var"]["type"]["data_type"])> -1) || isDateVarSymbolTable(symbolTable, v["var"]["name"], dateType) == true) return true;
 		// if((v["var"]["type"]!=null && v["var"]["type"]["data_type"] == dateType) || (typeof symbolTable[v["var"]["name"]] !== 'undefined' && symbolTable[v["var"]["name"]]["type"] != null && symbolTable[v["var"]["name"]]["type"]["data_type"] == dateType)) return true;
@@ -242,7 +242,7 @@ isDateVar = function(v, dateType, symbolTable){
 	return false
 }
 
-isValidForConvertation = function(v, symbolTable){
+function isValidForConvertation(v, symbolTable){
 	var dateArray = ["xsd:date", "XSD_DATE", "xsd_date"];
 	if(isDateVar(v, dateArray, symbolTable) == true) return true;
 	else{
@@ -255,7 +255,7 @@ isValidForConvertation = function(v, symbolTable){
 	return false
 }
 
-isFunctionExpr = function(value){
+function isFunctionExpr(value){
 	var r = false;
 	if (typeof value == 'object') {
 		for(let k in value){
@@ -264,4 +264,16 @@ isFunctionExpr = function(value){
 		}
 	}
 	return r;
+}
+
+export {
+  findINExpressionTable,
+  isFunctionExpr,
+  isValidForConvertation,
+  isDateVar,
+  isDateVarSymbolTable,
+  transformSubstring,
+  checkIfIsSimpleVariable,
+  checkIfIsSimpleVariableForNameDef,
+  makeString,
 }

@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { Users, Notifications, Chats, Searches, Tools, Projects, ProjectsUsers, UserChatsAuthors } from '/imports/db/platform/collections'
 import { not_loggedin_msg } from '/imports/server/platform/_helpers'
 
-
+import { error_msg, get_maximal_user_query_limit, get_user_query_limit, build_user_search_query } from '/imports/server/platform/_global_functions'
 
 //This is for roles package
 Meteor.publish(null, function (){ 

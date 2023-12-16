@@ -1,4 +1,4 @@
-import { Utilities } from '/client/js/platform/utilities/utils'
+import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { Tools, Projects } from '/imports/db/platform/collections'
 
 Template.renameTool.helpers({

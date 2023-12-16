@@ -1,4 +1,5 @@
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import './forum.html'
 
@@ -287,7 +288,7 @@ function compute_pagination_count() {
 	return Math.ceil(post_count / posts_per_page);
 }
 
-get_post_form_values = function(is_cleaning_needed) {
+function get_post_form_values(is_cleaning_needed) {
 
 	var title = $("#title").val();
 	var message = $("#message").val();
@@ -309,7 +310,7 @@ get_post_form_values = function(is_cleaning_needed) {
 	return {title: title, text: message, tags: tags};
 }
 
-remove_hash_tag = function(hash_tag) {
+function remove_hash_tag(hash_tag) {
 	if (hash_tag)
 		return hash_tag.substring(1, hash_tag.length);
 }

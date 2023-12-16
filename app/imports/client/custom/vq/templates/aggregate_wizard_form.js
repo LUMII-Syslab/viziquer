@@ -1,3 +1,10 @@
+import { 
+  generateSymbolTable, 
+  findAttributeInAbstractTable,
+ } from '/imports/client/custom/vq/js/transformations.js'
+
+import { autoCompletionAddAttribute } from '/imports/client/custom/vq/js/autoCompletion.js'
+
 import './aggregate_wizard_form.html'
 
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");

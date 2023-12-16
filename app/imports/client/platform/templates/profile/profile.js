@@ -1,4 +1,4 @@
-import { Dialog } from '/client/js/platform/interpretator/Dialog'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { analytics } from '/client/lib/global_variables'
 import { Users } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
@@ -317,7 +317,7 @@ function user_profile_info() {
 	return Users.findOne({systemId: Session.get("userSystemId")});
 }
 
-check_password_complexity = function(password) {
+function check_password_complexity(password) {
 	if (password) {
 		if (password.length > 7)
 			return {status: true};

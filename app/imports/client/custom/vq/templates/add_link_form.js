@@ -1,7 +1,11 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects } from '/imports/db/platform/collections'
 
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
+
 import './add_link_form.html'
+import { Create_VQ_Element, VQ_Element } from '../js/VQ_Element';
+import { autoCompletionCleanup } from '../js/autoCompletion';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;

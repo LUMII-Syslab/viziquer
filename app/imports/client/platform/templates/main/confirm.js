@@ -1,4 +1,4 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 Template.delete_confirmation.helpers({

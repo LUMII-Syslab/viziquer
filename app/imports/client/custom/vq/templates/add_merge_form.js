@@ -1,7 +1,9 @@
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements, Compartments, CompartmentTypes, Projects } from '/imports/db/platform/collections'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 import './add_merge_form.html'
+import { countCardinality } from '../js/parser';
 
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");
@@ -81,7 +83,7 @@ Interpreter.customMethods({
 	}
 })
 
-AddMergeValues2 = async function(e) {
+async function AddMergeValues2(e) {
 		var expressionField = document.getElementById("add-new-attribute-expression");
 		var requireField = document.getElementById("add-new-attribute-requireValues");
 		// var requireField = getRequireField(e);//require
@@ -428,4 +430,8 @@ function getField(e, fieldName){
 		var expression_value = parent.find("." + exression_id).val();
 
 		return parent.find("." + exression_id);
+}
+
+export {
+  AddMergeValues2,
 }

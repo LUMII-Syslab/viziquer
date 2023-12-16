@@ -1,8 +1,9 @@
 // import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
 // const { SpacebarsCompiler } = require('meteor/spacebars-compiler');
-import { Interpreter } from '/client/lib/interpreter'
+import { Interpreter } from '/imports/client/lib/interpreter'
 import { ElementTypes, CompartmentTypes, Diagrams, Compartments, DiagramFiles, CloudFiles, DialogTabs } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 Template.dialogTabContent.helpers({
 
@@ -357,7 +358,7 @@ function add_template_helpers(id) {
 }
 
 
-build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
+function build_sub_compartment_tree(parent, compart_type, compart_tree) {
 
 	var sub_compart_types = compart_type["subCompartmentTypes"];
 	var len = sub_compart_types.length;
@@ -448,7 +449,7 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 }
 
 
-render_dialog_fields = function(compart_type, compartment) {
+function render_dialog_fields(compart_type, compartment) {
 
 	if (compartment) {
  		compart_type["field_value"] = compartment["input"];
