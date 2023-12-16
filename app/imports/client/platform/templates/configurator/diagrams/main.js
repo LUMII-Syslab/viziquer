@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
-import { ElementTypes } from '/libs/platform/collections'
+import { ElementTypes } from '/imports/db/platform/collections'
+import { is_ajoo_editor } from '/imports/libs/platform/lib'
 
 
 Template.configuratorDiagramTemplate.helpers({

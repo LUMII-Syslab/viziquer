@@ -1,7 +1,7 @@
-settings.json
 # package-lock.json
 _doc
 build
+jsconfig.json
 
 # MongoDB data directory
 data/mongo

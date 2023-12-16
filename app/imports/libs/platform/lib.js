@@ -1,5 +1,5 @@
 import { Contacts } from '/imports/db/platform/collections'
-import { is_test_user } from '/imports/server/platfom/_global_functions'
+import { is_test_user } from '/imports/server/platform/_global_functions'
 
 function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});

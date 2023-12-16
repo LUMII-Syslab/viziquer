@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
-// import { Diagrams } from '/libs/platform/collections';
+// import { Diagrams } from '/imports/db/platform/collections';
 import { is_project_member } from '/imports/libs/platform/user_rights';
-import { is_public_diagram } from '/imports/server/platfom/_helpers'
+import { is_public_diagram } from '/imports/server/platform/_helpers'
 
 import { VQ_sparql_logs } from '/imports/db/custom/vq/collections';
 

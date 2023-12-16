@@ -1,6 +1,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { Projects, Diagrams, DiagramTypes } from '/imports/db/platform/collections'
+import { is_ajoo_editor } from '/imports/libs/platform/lib'
 
 
 Interpreter.methods({

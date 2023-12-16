@@ -48,16 +48,16 @@ import '/imports/server/platform/publish/publish_user_data'
 
 
 // server custom
-import '/imports/server/custom/convertJson2CSV'
-import '/imports/server/custom/download_upload_project'
-import '/imports/server/custom/execute_sparql'
-import '/imports/server/custom/export_configruation'
-import '/imports/server/custom/generate_query_from_SPARQL'
-import '/imports/server/custom/ontology'
-import '/imports/server/custom/publish'
-import '/imports/server/custom/version_migration'
-import '/imports/server/custom/ontologyParams'
-import '/imports/server/custom/import_ontology'
+import '/imports/server/custom/vq/convertJson2CSV'
+import '/imports/server/custom/vq/download_upload_project'
+import '/imports/server/custom/vq/execute_sparql'
+import '/imports/server/custom/vq/export_configruation'
+import '/imports/server/custom/vq/generate_query_from_SPARQL'
+import '/imports/server/custom/vq/ontology'
+import '/imports/server/custom/vq/publish'
+import '/imports/server/custom/vq/version_migration'
+import '/imports/server/custom/vq/ontologyParams'
+import '/imports/server/custom/vq/import_ontology'
 
 // libs custom
 import '/imports/db/custom/vq/collections'

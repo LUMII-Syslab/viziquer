@@ -2,6 +2,7 @@ import { Configurator } from '/imports/client/platform/templates/configurator/co
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 import { ElementTypes, Elements } from '/imports/db/platform/collections'
+import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
 
 import './line_styles.html'
 

@@ -1,7 +1,7 @@
 import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
 import { Schema } from '/imports/db/custom/vq/collections'
 import { is_project_member } from '/imports/libs/platform/user_rights'
-import { is_public_diagram } from '/imports/server/platfom/_helpers'
+import { is_public_diagram } from '/imports/server/platform/_helpers'
 
 Meteor.methods({	
 

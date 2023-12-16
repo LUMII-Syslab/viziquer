@@ -9,7 +9,7 @@
 import { Interpreter } from '/client/lib/interpreter'
 import { Utilities } from '/client/js/platform/utilities/utils'
 
-import { Projects, Compartments, Elements, ElementTypes} from '/libs/platform/collections'
+import { Projects, Compartments, Elements, ElementTypes} from '/imports/db/platform/collections'
 import {OrthogonalCollectionRerouting} from '/client/js/platform/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
 // meteor npm install sparqljs
