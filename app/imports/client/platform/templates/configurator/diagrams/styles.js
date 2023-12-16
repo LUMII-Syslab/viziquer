@@ -2,6 +2,8 @@ import { Configurator } from '/imports/client/platform/templates/configurator/co
 import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { DiagramTypes, Diagrams } from '/imports/db/platform/collections'
 
+import './styles.html'
+
 // Start of diagram style accordion
 Template.diagramStyle.helpers({
 	is_edit_mode: function() {

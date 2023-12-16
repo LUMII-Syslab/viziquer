@@ -1,7 +1,7 @@
 import { Projects } from '/imports/db/platform/collections'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring } from './parserCommon';
+import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring } from './parserCommon';
 
 var tripleTable = [];
 var filetrAsTripleTable = [];

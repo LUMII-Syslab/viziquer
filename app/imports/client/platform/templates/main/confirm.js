@@ -1,6 +1,8 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
+import './confirm.html'
+
 Template.delete_confirmation.helpers({
 	text: function() {
 		return Session.get("confirmationText");

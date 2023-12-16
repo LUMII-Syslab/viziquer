@@ -6,6 +6,7 @@ import { generate_id, is_ajoo_editor } from '/imports/libs/platform/lib'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import './line_styles.html'
+
 import { fill_priorities } from '/imports/libs/platform/helpers'
 
 Template.lineStyle.helpers({

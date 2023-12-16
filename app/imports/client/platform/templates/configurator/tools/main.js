@@ -1,6 +1,8 @@
 import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { Tools, Projects } from '/imports/db/platform/collections'
 
+import './main.html'
+
 Template.renameTool.helpers({
 	tool: function() {
 		var tool = Tools.findOne({_id: Session.get("toolId")});

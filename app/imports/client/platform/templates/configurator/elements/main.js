@@ -1,6 +1,7 @@
 import { Configurator } from '/imports/client/platform/templates/configurator/config_utils'
 import { ElementTypes, Diagrams } from '/imports/db/platform/collections'
 
+import './main.html'
 
 // Start of element accordion
 Template.elementAccordion.helpers({

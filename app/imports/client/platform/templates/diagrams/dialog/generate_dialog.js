@@ -5,6 +5,8 @@ import { ElementTypes, CompartmentTypes, Diagrams, Compartments, DiagramFiles, C
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
+import './generate_dialog.html'
+
 Template.dialogTabContent.helpers({
 
 	compart_types: function() {

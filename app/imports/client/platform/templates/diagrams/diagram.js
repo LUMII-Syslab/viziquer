@@ -5,6 +5,7 @@ import { Diagrams, Elements, ElementsSections, DiagramTypes, ElementTypes, Secti
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './diagram.html'
+
 import { is_ajoo_editor, is_zoom_chart_editor } from '/imports/libs/platform/lib'
 
 Interpreter.methods({

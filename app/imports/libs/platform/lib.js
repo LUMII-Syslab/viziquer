@@ -1,5 +1,4 @@
 import { Contacts } from '/imports/db/platform/collections'
-import { is_test_user } from '/imports/server/platform/_global_functions'
 
 function get_contacts(system_id) {
 	var contacts = Contacts.find({userSystemId: system_id});
@@ -78,6 +77,11 @@ function check_captcha(connection, captcha) {
 	}
 
 	return;
+}
+
+function is_test_user(email) {
+	const test_email = "@test.com";
+  if (email && email.endsWith(test_email)) return true;
 }
 
 function send_email(list) {

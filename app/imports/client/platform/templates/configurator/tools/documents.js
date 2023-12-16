@@ -1,6 +1,8 @@
 import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { DocumentTypes } from '/imports/db/platform/collections'
 
+import './documents.html'
+
 Template.toolDocuments.helpers({
 
 	document_type: function() {

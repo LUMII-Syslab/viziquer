@@ -5,6 +5,7 @@ import { DiagramTypes } from '/imports/db/platform/collections'
 import { is_ajoo_editor } from '/imports/libs/platform/lib'
 
 import './settings.html'
+
 import { Dialog } from '../../../js/interpretator/Dialog'
 
 Template.diagramAdanced.helpers({

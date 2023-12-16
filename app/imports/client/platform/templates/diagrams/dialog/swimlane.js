@@ -1,3 +1,5 @@
+import './swimlane.html'
+
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import {

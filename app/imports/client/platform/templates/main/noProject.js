@@ -1,4 +1,4 @@
-
+import './noProject.html'
 
 Template.noProject.events({
 

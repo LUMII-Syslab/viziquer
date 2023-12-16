@@ -3,6 +3,8 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { Tools, Diagrams, DiagramTypes } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
+import './diagrams.html'
+
 Template.toolDiagrams.helpers({
 
 	diagrams: function() {
