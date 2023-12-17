@@ -4,6 +4,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import './configurator.html'
+import { joined_date } from '../../js/utilities/time_utilities'
 
 Interpreter.methods({
 

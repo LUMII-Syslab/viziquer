@@ -3,6 +3,7 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils'
 import { ToolVersions, UserTools } from '/imports/db/platform/collections'
 
 import './timeline.html'
+import { joined_date } from '../../../js/utilities/time_utilities';
 
 Template.timeline.helpers({
 

@@ -7,6 +7,7 @@ import { Services } from '/imports/db/custom/vq/collections.js'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './diagrams.html'
+import { joined_date } from '../../js/utilities/time_utilities'
 
 // Start of diagramsTemplate template
 

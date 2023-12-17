@@ -6,6 +6,7 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLogs, ImportedTranslets, Users } from '/imports/db/platform/collections'
 import { generate_id } from '/imports/libs/platform/lib'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+import { joined_date } from '../../utilities/time_utilities'
 
 //Start of diagram ribbon
 Interpreter.methods({

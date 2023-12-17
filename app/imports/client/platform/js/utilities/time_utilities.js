@@ -156,3 +156,7 @@ function get_current_time() {
 function get_current_date() {
   return new Date;
 }
+
+export {
+  joined_date,
+}

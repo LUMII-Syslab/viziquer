@@ -2,6 +2,7 @@ import { Users, ProjectsUsers, ProjectsGroups } from '/imports/db/platform/colle
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import './users.html'
+import { joined_date } from '../../js/utilities/time_utilities';
 
 // Start of members tab
 Template.membersTab.helpers({
