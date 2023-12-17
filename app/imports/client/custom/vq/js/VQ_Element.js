@@ -1,6 +1,8 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { TriplesMaps, Projects, Diagrams, Elements, ElementTypes, Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
+import { Schema } from '/imports/db/custom/vq/collections';
+import { Dialog } from '/imports/client/platform/js/interpretator/Dialog';
 
 
 function VQ_r2rml (schema) {

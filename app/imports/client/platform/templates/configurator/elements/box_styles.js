@@ -3,6 +3,7 @@ import { Configurator } from '/imports/client/platform/templates/configurator/co
 import { ElementTypes, Elements } from '/imports/db/platform/collections'
 
 import './box_styles.html'
+import { Dialog } from '../../../js/interpretator/Dialog';
 
 //Box style properties
 

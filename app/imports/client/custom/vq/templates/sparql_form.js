@@ -7,6 +7,7 @@ import { Projects, Diagrams } from '/imports/db/platform/collections'
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './sparql_form.html'
+import { VQ_Schema } from '../js/VQ_Element'
 
 YASQE.registerAutocompleter('customClassCompleter', customClassCompleter);
 YASQE.registerAutocompleter('customPropertyCompleter', customPropertyCompleter);

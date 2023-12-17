@@ -1,5 +1,5 @@
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
-import { analytics } from '/client/lib/global_variables'
+import { analytics } from '/imports/client/lib/global_variables'
 import { Users } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 

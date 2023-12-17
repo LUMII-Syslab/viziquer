@@ -14,6 +14,6 @@ import './sparql_form.js'
 import './upload_form.js'
 import './SchemaTree.js'
 
-import './add_subquery_form.html'
+// import './add_subquery_form.html'
 import './ajoo_bkus.html'
 import './loginBranding.html'

@@ -4,6 +4,7 @@ import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { generateSymbolTable, findAttributeInAbstractTable, } from '/imports/client/custom/vq/js/transformations.js'
+import { VQ_Element } from './VQ_Element'
 
 var symbolTable = {};
 var grammarType = "class";
