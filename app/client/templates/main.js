@@ -9,6 +9,9 @@ import '/imports/client/platform/templates/index.js'
 // VQ
 import '/imports/client/custom/vq/templates/index.js'
 
+// interpreter methods
+import '/imports/client/platform/interpreter_index.js'
+
 Template.nav.helpers({
 
     skin: function() {
