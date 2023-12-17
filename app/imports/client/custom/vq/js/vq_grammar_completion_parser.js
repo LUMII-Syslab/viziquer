@@ -1,6 +1,7 @@
 import { Elements } from '/imports/db/platform/collections';
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
+import { makeString } from './parserCommon';
 
 (function() {
 vq_grammar_completion_parser = (function() {	

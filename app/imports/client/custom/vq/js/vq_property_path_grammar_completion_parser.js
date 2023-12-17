@@ -1,3 +1,4 @@
+import { makeString } from './parserCommon';
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 
 (function() {

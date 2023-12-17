@@ -1,3 +1,5 @@
+const { makeString } = require("./parserCommon");
+
 (function() {
 vq_grammar_parser = (function() {
   "use strict";
