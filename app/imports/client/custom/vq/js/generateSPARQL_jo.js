@@ -2,6 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements } from '/imports/db/platform/collections'
 import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
+import { VQ_Element } from './VQ_Element';
 
 Interpreter.customMethods({
   // These method can be called by ajoo editor, e.g., context menu
