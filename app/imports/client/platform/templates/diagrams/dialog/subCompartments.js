@@ -4,6 +4,9 @@ import { Utilities, reset_variable } from '/imports/client/platform/js/utilities
 import { Dialog } from '../../../js/interpretator/Dialog';
 import { autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion';
 
+import './multiField.html'
+import './value_from_subcompartments.html'
+
 Template.multiField.helpers({
 	multi_fields_obj: get_multi_fields_obj,
 });

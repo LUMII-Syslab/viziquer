@@ -2,6 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Utilities } from '/imports/client/platform/js/utilities/utils'
 
 import './upload_form.html'
+import '/imports/client/platform/templates/diagrams/diagram.html'
 
 Interpreter.customMethods({
 
