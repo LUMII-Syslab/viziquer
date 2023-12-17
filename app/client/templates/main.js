@@ -7,10 +7,11 @@ import '/imports/client/platform/templates/index.js'
 
 // custom templates
 // VQ
-import '/imports/client/custom/vq/templates/index.js'
+import '/imports/client/custom/vq/templates/import_index.js'
 
 // interpreter methods
-import '/imports/client/platform/interpreter_index.js'
+import '/imports/client/platform/import_index.js'
+import '/imports/client/custom/vq/js/import_index.js'
 
 Template.nav.helpers({
 
