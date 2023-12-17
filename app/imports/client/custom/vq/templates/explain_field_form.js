@@ -9,11 +9,11 @@ Interpreter.customMethods({
 })
 
 
-Template.ExplainLink.helpers({
+Template.ExplainField.helpers({
 
 });
 
 
-Template.ExplainLink.events({
+Template.ExplainField.events({
 
 });
