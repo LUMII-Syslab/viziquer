@@ -2,6 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Compartments, CompartmentTypes } from '/imports/db/platform/collections'
 import { Utilities, reset_variable } from '/imports/client/platform/js/utilities/utils'
 import { Dialog } from '../../../js/interpretator/Dialog';
+import { autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion';
 
 Template.multiField.helpers({
 	multi_fields_obj: get_multi_fields_obj,

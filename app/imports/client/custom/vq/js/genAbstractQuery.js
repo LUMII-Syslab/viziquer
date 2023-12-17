@@ -3,6 +3,7 @@ import { Projects, Elements } from '/imports/db/platform/collections'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
+import { VQ_Element } from './VQ_Element';
 
 var count = 0;
 
