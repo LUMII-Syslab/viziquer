@@ -1,4 +1,5 @@
-import { Elements } from '/libs/platform/collections'
+import { Elements } from '/imports/db/platform/collections'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 $(document).on('keypress', function (e) {
 

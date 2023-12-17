@@ -1,5 +1,13 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-import { Users, DiagramTypes } from '/libs/platform/collections'
+import { Users, DiagramTypes } from '/imports/db/platform/collections'
+import { reset_variable } from '/imports/client/platform/js/utilities/utils'
+
+import '/imports/client/platform/templates/publicLayout.html'
+import '/imports/client/custom/vq/templates/loginBranding.html'
+import '/imports/client/platform/templates/structure/projects.js'
+import '/imports/client/platform/templates/structure/structure.js'
+import '/imports/client/platform/templates/notifications/notifications.js'
+import '/imports/client/platform/templates/panel/panel.js'
 
 // DISABLE QUERY STRING COMPATIBILITY
 // WITH OLDER FlowRouter AND Meteor RELEASES
@@ -9,7 +17,7 @@ FlowRouter.decodeQueryParamsOnce = true;
 FlowRouter.route('/', {
   name: 'index',
   waitOn() {
-    return import('/client/js/platform/index/index.js');
+    return import('/imports/client/platform/templates/index/index.js');
   },
   action() {
     BlazeLayout.render('publicLayout', {main: 'index'});
@@ -20,7 +28,7 @@ FlowRouter.route('/', {
 FlowRouter.route('/signup', {
   name: 'signup',
   waitOn() {
-    return import('/client/js/platform/signup/signup.js');
+    return import('/imports/client/platform/templates/signup/signup.js');
   },
   action() {
     BlazeLayout.render('publicLayout', {main: 'signup'});
@@ -55,7 +63,7 @@ FlowRouter.route('/enroll-account/:token', {
 FlowRouter.route('/structure', {
   name: 'structure',
   waitOn() {
-    // return import('/client/js/platform/signup/signup.js');
+    // return import('/imports/client/platform/templates/signup/signup.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -72,7 +80,7 @@ FlowRouter.route('/structure', {
 FlowRouter.route('/project/:projectId/version/:versionId/diagrams/:phrase?', {
   name: 'diagrams',
   waitOn() {
-    // return import('/client/js/platform/signup/signup.js');
+    // return import('/imports/client/platform/templates/signup/signup.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -113,7 +121,7 @@ function build_diagrams_query(params) {
 FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId/:editMode?', {
   name: 'diagram',
   waitOn() {
-    // return import('/client/js/platform/signup/signup.js');
+    // return import('/imports/client/platform/templates/signup/signup.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -178,7 +186,7 @@ FlowRouter.route('/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:
 FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/version/:versionId', {
   name: 'public-diagram',
   waitOn() {
-    // return import('/client/js/platform/signup/signup.js');
+    // return import('/imports/client/platform/templates/signup/signup.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -235,7 +243,7 @@ FlowRouter.route('/public/project/:projectId/diagram/:_id/type/:diagramTypeId/ve
 FlowRouter.route('/project/:projectId/users', {
   name: 'users',
   waitOn() {
-    // return import('/client/js/platform/configurator/configurator.js');
+    // return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -314,7 +322,7 @@ FlowRouter.route('/project/:projectId/users', {
 FlowRouter.route('/configurator', {
   name: 'configurator',
   waitOn() {
-    return import('/client/js/platform/configurator/configurator.js');
+    return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -332,7 +340,7 @@ FlowRouter.route('/configurator', {
 FlowRouter.route('/tool/:toolId/version/:versionId/diagram/:_id/diagramType/:diagramTypeId', {
   name: 'configuratorDiagram',
   waitOn() {
-    // return import('/client/js/platform/configurator/configurator.js');
+    // return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -389,7 +397,7 @@ FlowRouter.route('/tool/:toolId/version/:versionId/diagram/:_id/diagramType/:dia
 FlowRouter.route('/tool/:_id/:versionId?', {
   name: 'tool',
   waitOn() {
-    // return import('/client/js/platform/configurator/configurator.js');
+    // return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -416,7 +424,7 @@ FlowRouter.route('/tool/:_id/:versionId?', {
 FlowRouter.route('/profile', {
   name: 'profile',
   waitOn() {
-    // return import('/client/js/platform/configurator/configurator.js');
+    // return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   subscriptions: function(params, queryParams) {
@@ -433,7 +441,7 @@ FlowRouter.route('/profile', {
 FlowRouter.route('/dump/tool/:tool_id', {
   name: 'dump',
   waitOn() {
-    // return import('/client/js/platform/configurator/configurator.js');
+    // return import('/imports/client/platform/templates/configurator/configurator.js');
   },
 
   action(params, queryParams) {
