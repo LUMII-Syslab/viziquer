@@ -867,4 +867,7 @@ export {
   autoCompletionAddCondition,
   autoCompletionAddAttribute,
   autoCompletionCleanup,
+  autoCompletionClass,
+  autoCompletionAddLink,
+  autoCompletionInstance,
 }

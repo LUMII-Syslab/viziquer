@@ -1,3 +1,4 @@
+import { getPathFullGrammar } from './parser';
 
 function makeString(o){
 	var str='';

@@ -5,7 +5,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './add_link_form.html'
 import { Create_VQ_Element, VQ_Element } from '../js/VQ_Element';
-import { autoCompletionCleanup } from '../js/autoCompletion';
+import { autoCompletionCleanup, autoCompletionAddLink } from '../js/autoCompletion';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const delayTime = 500;

@@ -2,6 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements } from '/imports/db/platform/collections'
 import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
+import { parse_class, parse_attrib, parse_filter, getPathFullGrammar } from './parser';
 import { VQ_Element } from './VQ_Element';
 
 Interpreter.customMethods({
@@ -1322,9 +1323,9 @@ function generateSPARQLtext(abstractQueryTable){
 				 SPARQL_text = SPARQL_text + graphService["graphInstruction"] + " " + graphService["graph"] + " {\n";
 			 }
 
-			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, variableNamesTable, variableNamesCounter);
+			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter);
 
-			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, variableNamesTable, variableNamesCounter);
+			var groupByFromFields = getGroupBy(rootClass["groupings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, symbolTable, classMembership, knownPrefixes, generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter);
 			 var groupByTemp = selectResult["groupBy"].concat(orderBy["orderGroupBy"]);
 			 var groupByTemp = groupByTemp.concat(groupByFromFields["groupings"]);
 

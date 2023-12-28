@@ -1247,4 +1247,5 @@ function make_group_by_instance_value(input) {
 export {
   generateSymbolTable,
   findAttributeInAbstractTable,
+  isURI,
 }

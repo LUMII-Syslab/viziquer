@@ -13,7 +13,9 @@ import { Projects, Compartments, Elements, ElementTypes} from '/imports/db/platf
 import {OrthogonalCollectionRerouting} from '/imports/client/platform/js/editor/ajooEditor/ajoo/Elements/Lines/routing/orthogonal_rerouting';
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { Create_VQ_Element } from './VQ_Element';
+import { Create_VQ_Element, VQ_Element } from './VQ_Element';
+
+import { isURI } from '/imports/client/custom/vq/js/transformations.js'
 
 // meteor npm install sparqljs
 

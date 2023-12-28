@@ -1,6 +1,9 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
 import { Elements } from '/imports/db/platform/collections'
 
+import { autoCompletionClass, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
+import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
+
 import './add_class_name_form.html'
 
 Interpreter.customMethods({

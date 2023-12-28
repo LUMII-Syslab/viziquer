@@ -4,6 +4,7 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 import './add_merge_form.html'
 import { countCardinality } from '../js/parser';
+import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
 Template.AddMergeValues.expression = new ReactiveVar("");
 Template.AddMergeValues.aliasField = new ReactiveVar("");

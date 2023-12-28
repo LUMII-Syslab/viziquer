@@ -4,8 +4,10 @@ import {
  } from '/imports/client/custom/vq/js/transformations.js'
 
 import { autoCompletionAddAttribute } from '/imports/client/custom/vq/js/autoCompletion.js'
-
+import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 import './aggregate_wizard_form.html'
+
+
 
 Template.AggregateWizard.defaultAlias = new ReactiveVar("No_class");
 Template.AggregateWizard.attList = new ReactiveVar([{attribute: "No_attribute"}]);

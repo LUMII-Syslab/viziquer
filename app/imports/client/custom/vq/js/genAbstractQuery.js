@@ -2,8 +2,10 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements } from '/imports/db/platform/collections'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
+import { checkIfIsSimpleVariable, findINExpressionTable, countMaxExpressionCardinality } from './parserCommon';
 import { VQ_Element } from './VQ_Element';
+
+import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'
 
 var count = 0;
 
@@ -415,12 +417,14 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		  if(typeof schemaName === "undefined") schemaName = "";
 
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
+		  console.log("111 ddddddddd", parsed_exp)
 		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType);
 		  
 		  return { parsed_exp: parsed_exp};
 	  } else return { parsed_exp: []};
     } catch (e) {
       // TODO: error handling
+	  console.log("qqqqq", e)
       Interpreter.showErrorMsg("Syntax error in attribute expression " + str_expr, -3);  
     } finally {
       // nothing
@@ -483,14 +487,14 @@ async function resolveTypesAndBuildSymbolTable(query) {
 				var isSimple = false;
 				if(tt != null) isSimple = true;
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
-			 
+			   console.log("222 ddddddddd", parsed_exp)
 			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple);
 			  
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
 			  // TODO: error handling
-			  // console.log(e)
+			  console.log(e)
 			  Interpreter.showErrorMsg("Syntax error in attribute expression " + exp_obj.exp, -3);  
 			} finally {
 			  //nothing

@@ -3,6 +3,8 @@ import { Projects, Compartments, CompartmentTypes } from '/imports/db/platform/c
 
 import { faas } from '/imports/client/custom/vq/js/faas.js'
 
+import { VQ_Element } from './VQ_Element';
+
 // ***********************************************************************************
 // const SCHEMA_SERVER_URL = 'http://localhost:3344/api';
 let _schemaServerUrl = null;

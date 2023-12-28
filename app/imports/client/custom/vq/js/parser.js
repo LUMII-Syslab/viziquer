@@ -1,7 +1,7 @@
 import { Projects } from '/imports/db/platform/collections'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring } from './parserCommon';
+import { checkIfIsSimpleVariable, checkIfIsSimpleVariableForNameDef, findINExpressionTable, isFunctionExpr, transformSubstring, isDateVar, isValidForConvertation } from './parserCommon';
 
 var tripleTable = [];
 var filetrAsTripleTable = [];
@@ -4462,4 +4462,8 @@ function checkIfIsURI(text){
 export {
   countCardinality,
   getPathFullGrammar,
+  parse_class,
+  parse_attrib,
+  parse_filter,
+  countMaxExpressionCardinality,
 }
