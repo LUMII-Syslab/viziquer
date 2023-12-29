@@ -6,15 +6,16 @@
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "dev": "meteor --inspect --exclude-archs web.cordova,web.browser.legacy --port 3333",
-    "visualize": "meteor --production --extra-packages bundle-visualizer"
+    "visualize": "meteor --production --extra-packages bundle-visualizer",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.23.6",
     "ClientStorage": "^4.0.1",
     "dotenv": "^16.3.1",
     "jquery": "^3.7.0",
     "json2csv": "^5.0.7",
-    "meteor-node-stubs": "^1.2.5",
+    "meteor-node-stubs": "^1.2.7",
     "node-fetch": "^2.7.0",
     "sparqljs": "^3.7.1"
   },
@@ -26,7 +27,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
-    "@types/meteor": "^2.9.4",
+    "@types/meteor": "^2.9.7",
     "@types/node": "^14.18.56",
     "@types/node-fetch": "^2.6.4",
     "eslint": "^8.56.0",
