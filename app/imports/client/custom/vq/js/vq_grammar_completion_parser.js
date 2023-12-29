@@ -2,6 +2,7 @@ import { Elements } from '/imports/db/platform/collections';
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 import { makeString } from './parserCommon';
+import { VQ_Element } from '/imports/client/custom/vq/js/VQ_Element.js';
 
   "use strict";
 
