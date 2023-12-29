@@ -6,6 +6,9 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { generateSymbolTable, findAttributeInAbstractTable, } from '/imports/client/custom/vq/js/transformations.js'
 import { VQ_Element } from './VQ_Element'
 
+import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser'
+import * as vq_property_path_grammar_completion_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_completion_parser'
+
 var symbolTable = {};
 var grammarType = "class";
 var time;
@@ -857,7 +860,7 @@ function findClassInAbstractQueryTable(elemId, abstractQueryTable){
 	if(abstractQueryTable["identification"]["_id"] == elemId) clazz = abstractQueryTable;
 	else{
 		for(child in abstractQueryTable["children"]){
-			clazz = findClassInAbstractQueryTable(elemId, abstractQueryTable["children"][child])
+			if(typeof abstractQueryTable["children"][child] !== "function") clazz = findClassInAbstractQueryTable(elemId, abstractQueryTable["children"][child])
 		}
 	}
 	return clazz;

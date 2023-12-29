@@ -419,7 +419,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		  if(typeof schemaName === "undefined") schemaName = "";
 
 		  var parsed_exp = await vq_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, exprType:exprType, context:context});
-		  console.log("111 ddddddddd", parsed_exp)
 		  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType);
 		  
 		  return { parsed_exp: parsed_exp};
@@ -489,7 +488,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 				var isSimple = false;
 				if(tt != null) isSimple = true;
 			  var parsed_exp = await vq_grammar_parser.parse(parse_obj, {schema:null,schemaName:schemaName, symbol_table:symbol_table, context:context});
-			   console.log("222 ddddddddd", parsed_exp)
 			  parsed_exp = await getResolveInformation(parsed_exp, schemaName, symbol_table, context, exprType, isSimple);
 			  
 			  // var parsed_exp = vq_grammar.parse(parse_obj, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context});
@@ -2001,4 +1999,5 @@ function chechIfSimplePath(expressionTable, isSimple, isPath){
 export {
   resolveTypesAndBuildSymbolTable,
   genAbstractQueryForElementList,
+  getResolveInformation
 }
