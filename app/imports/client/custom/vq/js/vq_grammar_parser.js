@@ -1,7 +1,5 @@
 const { makeString } = require("./parserCommon");
 
-(function() {
-vq_grammar_parser = (function() {
   "use strict";
 
   /*
@@ -16410,9 +16408,7 @@ vq_grammar_parser = (function() {
     }
   }
 
-  return {
-    SyntaxError: peg$SyntaxError,
-    parse:       peg$parse
-  };
-})()
-}).call(this);
+  export {
+    peg$SyntaxError as SyntaxError,
+    peg$parse as parse
+  }

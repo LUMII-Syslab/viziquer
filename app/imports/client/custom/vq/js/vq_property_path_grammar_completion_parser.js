@@ -1,8 +1,6 @@
 import { makeString } from './parserCommon';
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 
-(function() {
-vq_property_path_grammar_completion_parser = (function() {														  
   "use strict";
 
   /*
@@ -3928,9 +3926,7 @@ vq_property_path_grammar_completion_parser = (function() {
     }
   }
 
-  return {
-    SyntaxError: peg$SyntaxError,
-    parse:       peg$parse
-  };
-})()
-}).call(this);
+  export {
+    peg$SyntaxError as SyntaxError,
+    peg$parse as parse
+  }

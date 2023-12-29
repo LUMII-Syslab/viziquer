@@ -3,8 +3,6 @@ import { Elements } from '/imports/db/platform/collections';
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 import { makeString } from './parserCommon';
 
-(function() {
-vq_grammar_completion_parser = (function() {	
   "use strict";
 
   /*
@@ -21767,9 +21765,7 @@ options = arguments[1];
     }
   }
 
-  return {
-    SyntaxError: peg$SyntaxError,
-    parse:       peg$parse
-  };
-})()
-}).call(this);
+  export {
+    peg$SyntaxError as SyntaxError,
+    peg$parse as parse
+  }

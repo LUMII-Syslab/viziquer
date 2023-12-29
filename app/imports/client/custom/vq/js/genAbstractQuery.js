@@ -6,6 +6,8 @@ import { checkIfIsSimpleVariable, findINExpressionTable, countMaxExpressionCardi
 import { VQ_Element } from './VQ_Element';
 
 import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'
+import * as vq_variable_grammar_parser from '/imports/client/custom/vq/js/vq_variable_grammar_parser'
+import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser'
 
 var count = 0;
 
