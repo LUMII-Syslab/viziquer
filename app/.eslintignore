@@ -1,0 +1,4 @@
+node_modules
+.meteor
+libs/3rdparty
+imports/client/platform/js/editor/ajooEditor/ajoo/layoutEngine.js
