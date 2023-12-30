@@ -7,7 +7,6 @@ import { Diagrams, Elements, Compartments, DiagramTypes, ElementTypes, DiagramLo
 import { generate_id } from '/imports/libs/platform/lib'
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 import { joined_date } from '../../utilities/time_utilities'
-import { ExportDiagramConfig } from '/imports/server/custom/vq/export_configruation'
 
 //Start of diagram ribbon
 Interpreter.methods({
