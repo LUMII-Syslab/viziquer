@@ -3,6 +3,7 @@ import {BoxCompartments} from '../box_compartments'
 import ElementHandlers from '../../element_handlers'
 import Resizers from '../add_remove_resizers'
 import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'
+import { Elements } from '/imports/db/platform/collections'
 
 var Box = function(editor) {
 

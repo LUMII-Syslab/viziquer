@@ -1,6 +1,7 @@
 import { DiagramTypes, ElementTypes, CompartmentTypes, DialogTabs, PaletteButtons, Diagrams, ImportedTranslets } from '/imports/db/platform/collections';
 import { is_system_admin } from '/imports/libs/platform/user_rights'
 import { diagram_default_style, build_initial_diagram_type } from './initialTypes/diagram_types'
+import { error_msg } from '../../_global_functions';
 
 
 DiagramTypes.after.update(function (user_id, doc, fields, modifier, options) {

@@ -385,7 +385,7 @@ APentagon.prototype.toSVG = function(x, y, radius) {
     var x3 = x + delta_x2 + side;
     var x4 = x + delta_x2;
 
-    y3 = y + radius * (1 + Math.sin(54 * Math.PI / 180));
+    var y3 = y + radius * (1 + Math.sin(54 * Math.PI / 180));
 
     return "M" + x_middle + "," + y
 	        + " L" + x2 + "," + y2
@@ -423,15 +423,15 @@ APentagon.prototype.side = function(radisu) {
 
 
 //Xexagon
-var AXexagon = function(editor) {
+var AHexagon = function(editor) {
 	Box.call(this, editor);
 	this.sides = 6;
 }
 
-AXexagon.prototype = Object.create(RPolygon.prototype);
-AXexagon.prototype.constructor = AXexagon;
+AHexagon.prototype = Object.create(RPolygon.prototype);
+AHexagon.prototype.constructor = AHexagon;
 
-AXexagon.prototype.toSVG = function(x, y, width, height) {
+AHexagon.prototype.toSVG = function(x, y, width, height) {
 
 	var radius = Math.max(width, height) / 2;
 
@@ -452,7 +452,7 @@ AXexagon.prototype.toSVG = function(x, y, width, height) {
 	       	+ " Z";
 }
 
-AXexagon.prototype.compartmentArea = function() {
+AHexagon.prototype.compartmentArea = function() {
 
 	var box = this;
 	var shape = box.shapes[0];
@@ -722,7 +722,7 @@ export {ARectangle,
 		ASquare,
 		ADiamond,
 		APentagon,
-		AXexagon,
+		AHexagon,
 		AOctagon,
 		ACircle,
 		AEllipse,

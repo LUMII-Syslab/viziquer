@@ -382,7 +382,7 @@ ConnArea.prototype.simplifyPaths = function() {
         }
     });
     segments.sort(function(a, b) {
-        af = a.forward(id);
+        let af = a.forward(id);
         if (af === b.forward(id))
             if (a.lev === b.lev)
                 return 0;

@@ -1,5 +1,5 @@
 import { is_system_admin, is_project_version_admin } from '/imports/libs/platform/user_rights'
-import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, PaletteButtons, DialogTabs } from '/imports/db/platform/collections'
+import { DiagramTypes, ElementTypes, CompartmentTypes, Diagrams, PaletteButtons, DialogTabs, Elements, Compartments } from '/imports/db/platform/collections'
 import { Services } from '/imports/db/custom/vq/collections'
 import { build_initial_diagram_type, diagram_default_style } from '/imports/server/platform/methods/configurator/initialTypes/diagram_types'
 import { build_initial_element_type, build_initial_line_style, build_initial_box_style } from '/imports/server/platform/methods/configurator/initialTypes/element_types'

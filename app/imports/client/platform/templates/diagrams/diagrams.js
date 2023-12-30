@@ -8,6 +8,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './diagrams.html'
 import { joined_date } from '../../js/utilities/time_utilities'
+import { VQ_Schema } from '/imports/client/custom/vq/js/VQ_Element'
 
 // Start of diagramsTemplate template
 
@@ -825,7 +826,7 @@ Template.ontologySettings.events({
 		var myRows = [];
 		var $headers = $("th");
 		var $rows = $("tbody tr").each(function(index) {
-		  $cells = $(this).find("td");
+		  let $cells = $(this).find("td");
 		  myRows[index] = {};
 		  $cells.each(function(cellIndex) {
 			  if($($headers[cellIndex]).html() == "Graph/Service shorthand" || $($headers[cellIndex]).html() == "Expansion (e.g., URI)"){
@@ -1003,7 +1004,7 @@ Template.ontologySettings.events({
 		var myRows = [];
 		var $headers = $("th");
 		var $rows = $("tbody tr").each(function(index) {
-		  $cells = $(this).find("td");
+		  let $cells = $(this).find("td");
 		  myRows[index] = {};
 		  $cells.each(function(cellIndex) {
 			  if($($headers[cellIndex]).html() == "Instruction" || $($headers[cellIndex]).html() == "Graph"){

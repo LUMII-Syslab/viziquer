@@ -299,7 +299,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 			// );
 			for (const ca of my_scope_table.AGGREGATE_ALIAS) {
             // my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
-				clone_ca = _.clone(ca);
+				let clone_ca = _.clone(ca);
 				if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
 				  if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
 			    };
@@ -313,14 +313,14 @@ async function resolveTypesAndBuildSymbolTable(query) {
   
 		 for (const ca of my_scope_table.CLASS_ALIAS) {
 		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
-             clone_ca = _.clone(ca);
+             let clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
              parents_scope_table.CLASS_ALIAS.push(clone_ca)
          }
 		 // );
 		 for (const ca of my_scope_table.AGGREGATE_ALIAS) {
          // my_scope_table.AGGREGATE_ALIAS.forEach(function(ca) {
-             clone_ca = _.clone(ca);
+             let clone_ca = _.clone(ca);
              clone_ca["upByOptional"] = true;
              if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
 			   if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
@@ -337,7 +337,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
          for (const ca of  my_scope_table.CLASS_ALIAS) {
 		 // my_scope_table.CLASS_ALIAS.forEach(function(ca) {
-             clone_ca = _.clone(ca);
+             let clone_ca = _.clone(ca);
              if(obj_class.linkType == "OPTIONAL") clone_ca["upByOptional"] = true;
 			 if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
@@ -348,7 +348,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		 // );
 		 for (const ca of   my_scope_table.UNRESOLVED_FIELD_ALIAS) {
 		 // my_scope_table.UNRESOLVED_FIELD_ALIAS.forEach(function(ca) {
-           clone_ca = _.clone(ca);
+           let clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") {clone_ca["upByOptional"] = true;};
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {clone_ca["upBySubQuery"] = clone_ca["upBySubQuery"] + 1}
@@ -361,7 +361,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		 // );
 		  for (const ca of   my_scope_table.UNRESOLVED_NAME) {
          // my_scope_table.UNRESOLVED_NAME.forEach(function(ca) {
-           clone_ca = _.clone(ca);
+           let clone_ca = _.clone(ca);
            if (obj_class.linkType == "OPTIONAL") { clone_ca["upByOptional"] = true; };
            if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) {
              if (!clone_ca["upBySubQuery"]) {clone_ca["upBySubQuery"] = 1} else {
@@ -508,7 +508,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
   function updateSymbolTable(name, context, kind, type, parentType) {
       _.each(symbol_table, function(name_list, current_context) {
           if (name_list[name]) {
-            name_in_context = _.find(name_list[name], function(n) {return n.context == context} );
+            let name_in_context = _.find(name_list[name], function(n) {return n.context == context} );
             if (name_in_context) {
               if (kind) {
                 name_in_context["kind"] = kind;
@@ -592,7 +592,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
             if (!oc_st[id]) { oc_st[id] = []; };
             if (!_.any(oc_st[id], async function(oc_st_id_entry) { return ((oc_st_id_entry.context == entry.context)&&(oc_st_id_entry.kind == entry.kind))})) {
                 // Note that _.clone does SHALLOW copy. Thus type is not copied, but referenced.
-                entry_clone = _.clone(entry);
+                let entry_clone = _.clone(entry);
                 if (obj_class.isSubQuery || obj_class.isGlobalSubQuery) { entry_clone["downBySubquery"] = true; };
                 oc_st[id].push(entry_clone);
             };

@@ -229,7 +229,7 @@ const faas = {
         //console.log(`getIndividualProperties allParams=${JSON.stringify(allParams)}`)
 
         // output result template
-        rez = {
+        let rez = {
             "complete":false,
             "data":[],
             "error":"DSS schema not found"

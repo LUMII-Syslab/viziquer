@@ -1,3 +1,4 @@
+import { Compartment } from "../Boxes/box_compartments";
 
 function SwimlaneCompartments(element, comparts_in) {
 

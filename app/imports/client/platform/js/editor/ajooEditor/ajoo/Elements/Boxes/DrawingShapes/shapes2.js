@@ -2,7 +2,7 @@
 import Box from './_render_boxes';
 import {BoxCompartments} from '../box_compartments';
 import Resizers from '../add_remove_resizers'
-import {ACircle } from './shapes1';
+import {ACircle, ADiamond } from './shapes1';
 import { reset_variable } from '/imports/client/platform/js/utilities/utils'
 
 import {SVGObject, LineSVGObject} from '../../Lines/routing/svg_collisions'

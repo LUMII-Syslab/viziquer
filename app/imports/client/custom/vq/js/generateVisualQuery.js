@@ -551,7 +551,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		visitedClasses[ startClass["name"]] = true;
 
 		// Generate tree ViziQuer query structure, from class and link tables 
-		generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
+		let generateClassCtructuretemp = generateClassCtructure(startClass["class"], startClass["name"], classesTable, abstractTable["linkTable"], whereTriplesVaribles, visitedClasses, [], variableList);
 
 		generateClassCtructuretemp = optimizeAggregationInStartClass(generateClassCtructuretemp);
 
@@ -3174,7 +3174,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 
 				if(unionBlock["patterns"].length == 2){
 					if(unionBlock["patterns"][0]["type"] == "optional" && unionBlock["patterns"][1]["type"] == "bgp" && unionBlock["patterns"][1]["triples"].length ==1 && (unionBlock["patterns"][1]["triples"][1]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[unionBlock["patterns"][1]["triples"][1]["predicate"]["value"]] !== "undefined")){
-						for(allClazz in classesBeforeUnion){
+						for(let allClazz in classesBeforeUnion){
 							if(unionBlock["patterns"][1]["triples"][1]["subject"]["value"] == classesBeforeUnion[allClazz]["variableName"]){
 								linktype = "OPTIONAL";
 								break;
@@ -3182,7 +3182,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						}
 					}
 					if(unionBlock["patterns"][1]["type"] == "optional" && unionBlock["patterns"][0]["type"] == "bgp" && unionBlock["patterns"][0]["triples"].length ==1 && (unionBlock["patterns"][0]["triples"][0]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[unionBlock["patterns"][0]["triples"][0]["predicate"]["value"]] !== "undefined")){
-						for(allClazz in classesBeforeUnion){
+						for(let allClazz in classesBeforeUnion){
 							if(unionBlock["patterns"][0]["triples"][0]["subject"]["value"] == classesBeforeUnion[allClazz]["variableName"]){
 								linktype = "OPTIONAL";
 								break;
@@ -3450,9 +3450,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			var unionSubject = null;
 			var moreThenOneClassFound = false;
 			// if union has parrent query class "copy"
-			for(allClazz in classesBeforeUnion){
+			for(let allClazz in classesBeforeUnion){
 				// from class boxes under union
-				for(clazz in allClassesUnderUnion){
+				for(let clazz in allClassesUnderUnion){
 					if(allClassesUnderUnion[clazz]["variableName"] == classesBeforeUnion[allClazz]["variableName"]){
 						// if more then one class from parrent query found
 						if(unionSubject != null && unionSubject != allClazz){
@@ -3462,7 +3462,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					}
 				}
 				// from node list under union
-				for(clazz in allNodesUnderUnion){
+				for(let clazz in allNodesUnderUnion){
 					if(clazz == classesBeforeUnion[allClazz]["variableName"]){
 						// if more then one class from parrent query found
 						if(unionSubject != null && unionSubject != allClazz){
@@ -3516,9 +3516,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			}
 			
 			// replace union ++ links with link properties, remove duplicate parrent classes from union query part
-			for(allClazz in classesBeforeUnion){
+			for(let allClazz in classesBeforeUnion){
 				// replace ++ links, remove duplicates
-				for(clazz in allClassesUnderUnion){
+				for(let clazz in allClassesUnderUnion){
 					if(allClassesUnderUnion[clazz]["variableName"] == classesBeforeUnion[allClazz]["variableName"]){
 						
 						
@@ -4528,7 +4528,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					} else {
 						
 						// dataPropertyResolved.data[0]["short_name"] = dataPropertyResolved.data[0]["prefix"]+":"+dataPropertyResolved.data[0]["display_name"];
-						exprVariables = [];
+						let exprVariables = [];
 						exprVariables.push(dataPropertyResolved.data[0]["short_name"]);
 						filterTable.push({filterString:"NOT EXISTS " + dataPropertyResolved.data[0]["short_name"], filterVariables:exprVariables});
 						

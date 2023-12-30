@@ -453,13 +453,13 @@ var is_mouse_down = false;
 Template.diagramEditor.events({
 
 	"mouseover #horizontal-line": function(e) {
-		$obj = $(e.target);
+		let $obj = $(e.target);
 		$obj.css('cursor', 'ns-resize');
 	},
 
 	"mouseout #horizontal-line": function(e) {
 		if (!is_mouse_down) {
-			$obj = $(e.target);
+			let $obj = $(e.target);
 			$obj.css('cursor', 'initial');
 		}
 	},

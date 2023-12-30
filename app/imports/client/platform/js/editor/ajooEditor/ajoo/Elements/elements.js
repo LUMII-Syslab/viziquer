@@ -1,7 +1,7 @@
 // import { _ } from 'vue-underscore';
 import Link from './Lines/render_lines';
 import Event from '../Editor/events';
-import {ARectangle, ARoundRectangle, HorizontalLine, VerticalLine, RPolygon, ATriangle, ASquare, ADiamond, APentagon, AXexagon, AOctagon, ACircle, AEllipse, Arrow,} from './Boxes/DrawingShapes/shapes1' 
+import {ARectangle, ARoundRectangle, HorizontalLine, VerticalLine, RPolygon, ATriangle, ASquare, ADiamond, APentagon, AHexagon, AOctagon, ACircle, AEllipse, Arrow,} from './Boxes/DrawingShapes/shapes1' 
 import {BPMNShape, BPMNTerminate, BPMNMultiple, BPMNDiamondPlus, BPMNCancel, BPMNDiamondX,} from './Boxes/DrawingShapes/shapes2'
 
 import {Shoes, StarEmpty, Xex, Note, ADocument, TwitterBird, APackage, 

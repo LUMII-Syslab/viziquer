@@ -1061,7 +1061,7 @@ const dataShapes = {
 		//return c_list;		
 	},
 	getClassCount: async function() {
-		rr = await this.callServerFunction("xx_getClassCount", {main:{}});
+		let rr = await this.callServerFunction("xx_getClassCount", {main:{}});
 		return rr; 
 	},
 	makeDiagr : async function(c_list, p_list, superclassType, connectDataClases, addAllProp, remSmall, addIds, disconnBig, compView, schema, info ) {
@@ -1119,7 +1119,7 @@ const dataShapes = {
 		var rem_props = {};
 		// Funkcija potenciālo virsklašu veidošanai
 		function add_superclass (sc_list, prop_name) {
-			sc_id = `c_${sc_list.join('_')}`;
+			let sc_id = `c_${sc_list.join('_')}`;
 			if ( super_classes[sc_id] == undefined )
 				super_classes[sc_id] = {count:1, cl_list:sc_list, id0:`${sc_list.join('_')}`, prop_list:[prop_name], level:0};
 			else {
@@ -1292,7 +1292,7 @@ const dataShapes = {
 		// Iztūkstošo propertiju pievienošana (pārbaudot arī apkārtni), skatās arī uz parametru
 		var val = (addAllProp) ? -1 : 0;	
 		for (var cl of Object.keys(rezFull.classes)) {
-			cl_info = rezFull.classes[cl];
+			let cl_info = rezFull.classes[cl];
 			if ( cl_info.type != 'Abstract') {
 				for (var s of cl_info.sub) {
 					if ( s != cl_info.id) {

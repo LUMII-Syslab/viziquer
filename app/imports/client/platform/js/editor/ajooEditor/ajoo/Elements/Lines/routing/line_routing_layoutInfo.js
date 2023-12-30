@@ -1,6 +1,9 @@
 // import { _ } from 'vue-underscore';
 //******************************************************************************
 // LayoutInfo 
+
+const { BoxCompartments } = require("../../Boxes/box_compartments");
+
 //******************************************************************************
 function my_layout_diagram(diagram) {
     console.log("\ndiagram with ", diagram.boxes.length, " boxes and ", diagram.lines.length, " lines.");
@@ -251,7 +254,7 @@ FlowGraph.prototype.routeDummyOrthogonal = function() {
     var dir = this.getDir();
     var source, target, sng, sz;
     _.each(this.paths, function(path, i) {
-        line = path.parent;
+        let line = path.parent;
         line.style.lineType = "Orthogonal";
         source = self.idToObject[line.startElement];
         target = self.idToObject[line.endElement];
@@ -751,7 +754,7 @@ FlowGraph.prototype.arrangeLayout = function(nodes, incrementally) {
                 options = {lineType: lineStyle, startSides: self.fromSide(), endSides: self.toSide()};
                 line = layout.addLine(path.id, path.from, path.to, options);
 //                console.log(path.id, path.from, path.to, options);
-                // TODO haks lai saglabâtu atskirigus trasesanas stilus
+                // TODO haks lai saglabï¿½tu atskirigus trasesanas stilus
 //                if (!path.fixed)
             }
         });

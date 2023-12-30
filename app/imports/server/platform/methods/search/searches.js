@@ -1,5 +1,6 @@
 import { is_project_member } from '/imports/libs/platform/user_rights'
 import { Searches } from '/imports/db/platform/collections'
+import { error_msg } from '../../_global_functions';
 
 
 Meteor.methods({

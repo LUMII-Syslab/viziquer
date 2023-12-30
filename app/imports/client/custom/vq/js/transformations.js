@@ -2,7 +2,7 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
-import { VQ_Element, VQ_Schema } from './VQ_Element';
+import { Create_VQ_Element, VQ_Element, VQ_Schema } from './VQ_Element';
 
 Interpreter.customMethods({
 	

@@ -6,6 +6,7 @@ import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { autoCompletionAddCondition, autoCompletionCleanup } from '/imports/client/custom/vq/js/autoCompletion.js'
 
 import './add_condition_form.html'
+import { VQ_Element } from '../js/VQ_Element'
 
 Interpreter.customMethods({
 	AddCondition: function () {

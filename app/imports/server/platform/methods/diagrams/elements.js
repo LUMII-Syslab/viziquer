@@ -1,5 +1,5 @@
 import { is_system_admin, is_project_version_admin } from '/imports/libs/platform/user_rights'
-import { is_version_not_published } from '/imports/server/platform/_global_functions'
+import { error_msg, is_version_not_published } from '/imports/server/platform/_global_functions'
 import { is_public_diagram, get_unknown_public_user_name } from '/imports/server/platform/_helpers'
 import { DiagramLogs, Diagrams, Elements, Compartments, ElementTypes, CompartmentTypes, DialogTabs, DiagramFiles, DiagramNotifications, ElementsSections, PaletteButtons, Clipboard  } from '/imports/db/platform/collections'
 import { add_compartments_by_values } from './compartments.js';

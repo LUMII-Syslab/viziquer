@@ -1,4 +1,4 @@
-import { is_project_version_admin } from '/imports/libs/platform/user_rights'
+import { is_project_member, is_project_version_admin } from '/imports/libs/platform/user_rights'
 import { Schema, Associations, Attributes, Classes } from '/imports/db/custom/vq/collections'
 
 Meteor.methods({

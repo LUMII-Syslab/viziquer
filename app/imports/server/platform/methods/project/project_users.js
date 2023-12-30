@@ -1,6 +1,7 @@
 import { is_project_admin, build_project_role, build_project_admin_role, build_project_version_admin_role, build_project_version_reader_role } from '/imports/libs/platform/user_rights'
 import { ProjectsUsers, Notifications, Versions, UserVersionSettings, Users, Projects } from '/imports/db/platform/collections'
 import { get_unknown_public_user_name } from '/imports/server/platform/_helpers'
+import { send_email } from '/imports/libs/platform/lib';
 
 ProjectsUsers.before.insert(function (user_id, doc) {
 
