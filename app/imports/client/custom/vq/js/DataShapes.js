@@ -284,7 +284,7 @@ const findPropertiesIds = async (direct_class_role, indirect_class_role, prop_li
 		
 		await addProperty(direct_class_role);
 		await addProperty(indirect_class_role);
-		for (var element of prop_list) {
+		for (const element of prop_list) {
 			await addProperty(element);
 		}
 		return await id_list;
@@ -1105,7 +1105,7 @@ const dataShapes = {
 		
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
 		// DB virsklašu informācijas pielikšana
-		for (var cl of rr.data) {	
+		for (const cl of rr.data) {	
 			var id1 = `c_${cl.class_1_id}`;
 			var id2 = `c_${cl.class_2_id}`;
 			rezFull.classes[id1].super_classes.push(id2);
@@ -1141,7 +1141,7 @@ const dataShapes = {
 		// Mazo propertiju noņemšana, ja ir uzstādīts dotais parametrs
 		if ( remSmall > 0 ) {
 			var tt = [];
-			for (var ii of cp_info) {
+			for (const ii of cp_info) {
 				if ( Number(ii.cnt) > remSmall-1 ) {
 					if ( ii.object_cnt < remSmall && ii.object_cnt != 0) {
 						ii.object_cnt = 0;
@@ -1156,7 +1156,7 @@ const dataShapes = {
 		}
 		
 		// Propertiju saraksta sākotnējā apstrāde, savāc galus
-		for (var p of p_list) {	
+		for (const p of p_list) {	
 			var p_id = `p_${p.id}`;
 			var p_name = `${p.prefix}:${p.display_name}`;
 			if ( addIds ) 
@@ -1192,7 +1192,7 @@ const dataShapes = {
 			}
 			
 			if ( c_from.length > 0  && c_to.length == 0) {
-				for (var cl of c_from) {
+				for (const cl of c_from) {
 					var id = `c_${cl.class_id}`;
 					var class_name = ( cl.object_cnt > 0 ) ? '-> IRI' : '';	
 					addAttribute(cl, pp, class_name);
@@ -1200,17 +1200,17 @@ const dataShapes = {
 			}
 			else if ( c_from.length > 0  && c_to.length > 0) {
 				var temp_info = {sources:{}, targets:{}};
-				for (var c_1 of c_from) { 
+				for (const c_1 of c_from) { 
 					temp_info.sources[c_1.class_id] = 0; 
 				}
-				for (var c_2 of c_to) { 
+				for (const c_2 of c_to) { 
 					temp_info.targets[c_2.class_id] = 0; 
 				}
-				for (var c_1 of c_from) {
+				for (const c_1 of c_from) {
 					var from_id = `c_${c_1.class_id}`;
 					var addedToAtr = false;
 					if ( c_1.object_cnt > 0 ) {
-						for (var c_2 of c_to) {
+						for (const c_2 of c_to) {
 							var to_id = `c_${c_2.class_id}`;
 							var cnt = -1;
 							var cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id && i.other_class_id == c_2.class_id});
@@ -1261,7 +1261,7 @@ const dataShapes = {
 				}
 				var rr1;
 				var ok = true;
-				for (var cc of Object.keys(temp_info.targets)) {
+				for (const cc of Object.keys(temp_info.targets)) {
 					if ( temp_info.targets[cc] != c_from.length)
 						ok = false;
 				}
@@ -1270,7 +1270,7 @@ const dataShapes = {
 					add_superclass (rr1, pp.p_name);
 				}
 				ok = true;
-				for (var cc of Object.keys(temp_info.sources)) {
+				for (const cc of Object.keys(temp_info.sources)) {
 					if ( temp_info.sources[cc] != c_to.length)
 						ok = false;
 				}
@@ -1282,7 +1282,7 @@ const dataShapes = {
 		}
 		
 		// Pamata propertiju pielikšana
-		for (var p of Object.keys(p_list_full)) {	
+		for (const p of Object.keys(p_list_full)) {	
 			var pp = p_list_full[p];
 			var c_from = pp.c_from;
 			var c_to = pp.c_to;
@@ -1291,22 +1291,22 @@ const dataShapes = {
 	
 		// Iztūkstošo propertiju pievienošana (pārbaudot arī apkārtni), skatās arī uz parametru
 		var val = (addAllProp) ? -1 : 0;	
-		for (var cl of Object.keys(rezFull.classes)) {
+		for (const cl of Object.keys(rezFull.classes)) {
 			let cl_info = rezFull.classes[cl];
 			if ( cl_info.type != 'Abstract') {
-				for (var s of cl_info.sub) {
+				for (const s of cl_info.sub) {
 					if ( s != cl_info.id) {
 						cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
 					}
 				}
-				for (var s of cl_info.sup) {
+				for (const s of cl_info.sup) {
 					if ( s != cl_info.id) {
 						cl_info.all_atr = [...new Set([...cl_info.all_atr, ...rezFull.classes[`c_${s}`].all_atr])];
 					}
 				}
 				
 				var cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > val;}).map(cp => cp.property_id); // TODO - Te ir jautājums par cover set (tagad var no saskarnes pamainīt)
-				for (var p of cp_info_p) {
+				for (const p of cp_info_p) {
 					if ( !cl_info.all_atr.includes(p)) {
 						console.log('******** Pieliek papildus propertiju ***********', cl_info.fullName, p_list_full[`p_${p}`].p_name)
 						var c_from = cp_info.filter(function(cp){ 
@@ -1328,7 +1328,7 @@ const dataShapes = {
 		// Saliek abstraktās virsklases sarakstā, lai var sakārtot 
 		var temp = {};
 		var super_classes_list = [];
-		for (var sc of Object.keys(super_classes)) {
+		for (const sc of Object.keys(super_classes)) {
 			if ( super_classes[sc].count > 1 ) { // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
 				super_classes[sc].cl_list_orig = super_classes[sc].cl_list;
 				temp[sc] = super_classes[sc];
@@ -1341,17 +1341,17 @@ const dataShapes = {
 		console.log("*** p_list_full ***", p_list_full)
 		
 		// Izveido abstrakto virsklašu koku, TODO !!! varētu nestrādāt visos gadījumos
-		for (var sc1 of super_classes_list) {	
-			for (var sc2 of super_classes_list) {	
+		for (const sc1 of super_classes_list) {	
+			for (const sc2 of super_classes_list) {	
 				if ( sc1.cl_list.length < sc2.cl_list.length ) {
 					var ii = 0;
-					for (var c of sc1.cl_list) {
+					for (const c of sc1.cl_list) {
 						if ( sc2.cl_list.includes(c) )
 							ii = ii+1;
 					}
 					if ( ii == sc1.cl_list.length) {
 						var cl_list = [];
-						for (var c of sc2.cl_list) {
+						for (const c of sc2.cl_list) {
 							if ( !sc1.cl_list.includes(c) )
 								cl_list.push(c);
 						}
@@ -1367,12 +1367,12 @@ const dataShapes = {
 		console.log("*** super_classes_list ***", super_classes_list)
 
 		// Pieliek abstraktās virsklases klašu sarakstā
-		for (var super_class of super_classes_list) {
+		for (const super_class of super_classes_list) {
 			var sc = super_class.id;
 			rezFull.classes[sc] = { id:super_class.id0, fullName:'', used:true, used2:true, hasGen:true, type:'Abstract', cl_list: super_class.cl_list_orig, super_classes:[], sub_classes:[],
 									atr_list:[], atr_list2:[], in_prop:[], out_prop:[], all_atr:[] };
 			var sc_list = [];
-			for (var c of super_class.cl_list) {
+			for (const c of super_class.cl_list) {
 				rezFull.classes[`c_${c}`].super_classes.push(sc); 
 				rezFull.classes[`c_${c}`].hasGen = true;
 				sc_list.push(rezFull.classes[`c_${c}`]);
@@ -1380,7 +1380,7 @@ const dataShapes = {
 
 			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
 			var n_list = [];				
-			for (var c of sc_list) {
+			for (const c of sc_list) {
 				n_list.push(c.displayName);
 			}
 			
@@ -1393,11 +1393,11 @@ const dataShapes = {
 		}
 		
 		// kopējo atribūtu pārvietošana pie virsklases
-		for (var super_class of super_classes_list) {	
+		for (const super_class of super_classes_list) {	
 			var sc = super_class.id;
 			var atr_tree = {};
-			for (var c of super_class.cl_list) {
-				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+			for (const c of super_class.cl_list) {
+				for (const atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name] == undefined)
 						atr_tree[atr.p_name] = {count:1, info:{p_name:atr.p_name, p_id:atr.p_id, cnt:-1, object_cnt:-1, max_cardinality:atr.max_cardinality, class_name:atr.class_name, is_domain:''}};
 					else {
@@ -1410,15 +1410,15 @@ const dataShapes = {
 				}
 			} 
 
-			for (var atr of Object.keys(atr_tree)) {	
+			for (const atr of Object.keys(atr_tree)) {	
 				if ( atr_tree[atr].count == super_class.cl_list.length) {
 					rezFull.classes[sc].atr_list.push(atr_tree[atr].info);
 				}
 			}
 			
-			for (var c of super_class.cl_list) {
+			for (const c of super_class.cl_list) {
 				var atr_list = [];
-				for (var atr of rezFull.classes[`c_${c}`].atr_list ) {
+				for (const atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name].count != super_class.cl_list.length) {
 						atr_list.push(atr);
 					}
@@ -1428,11 +1428,11 @@ const dataShapes = {
 		}
 
 		// kopējo ienākošo propertiju pārvietošana pie virsklases
-		for (var super_class of super_classes_list) {	
+		for (const super_class of super_classes_list) {	
 			var sc = super_class.id;
 			var atr_tree = {};
-			for (var c of super_class.cl_list) {
-				for (var atr of rezFull.classes[`c_${c}`].in_prop ) {
+			for (const c of super_class.cl_list) {
+				for (const atr of rezFull.classes[`c_${c}`].in_prop ) {
 					var assoc = rezFull.assoc[atr];
 					if ( !assoc.removed ) {
 						var p_name = `${assoc.from}_${assoc.list[0].p_name}`;
@@ -1450,9 +1450,9 @@ const dataShapes = {
 				}
 			} 
 
-			for (var atr of Object.keys(atr_tree)) {	
+			for (const atr of Object.keys(atr_tree)) {	
 				if ( atr_tree[atr].count == super_class.cl_list.length) {
-					for (var p_id of atr_tree[atr].id_list) {
+					for (const p_id of atr_tree[atr].id_list) {
 						rezFull.assoc[p_id].removed = true;
 					}
 					rezFull.classes[atr_tree[atr].info.from].out_prop.push(atr_tree[atr].p_name);
@@ -1463,11 +1463,11 @@ const dataShapes = {
 		}
 		
 		// kopējo izejošo propertiju pārvietošana pie virsklases
-		for (var super_class of super_classes_list) {
+		for (const super_class of super_classes_list) {
 			var sc = super_class.id;
 			var atr_tree = {};
-			for (var c of super_class.cl_list) {
-				for (var atr of rezFull.classes[`c_${c}`].out_prop ) {
+			for (const c of super_class.cl_list) {
+				for (const atr of rezFull.classes[`c_${c}`].out_prop ) {
 					var assoc = rezFull.assoc[atr];
 					if ( !assoc.removed) {
 						var p_name = `${assoc.to}_${assoc.list[0].p_name}`;
@@ -1485,9 +1485,9 @@ const dataShapes = {
 				}
 			} 
 
-			for (var atr of Object.keys(atr_tree)) {	
+			for (const atr of Object.keys(atr_tree)) {	
 				if ( atr_tree[atr].count == super_class.cl_list.length) {
-					for (var p_id of atr_tree[atr].id_list) {
+					for (const p_id of atr_tree[atr].id_list) {
 						rezFull.assoc[p_id].removed = true;
 					}
 					rezFull.classes[atr_tree[atr].info.to].in_prop.push(atr_tree[atr].p_name);
@@ -1498,7 +1498,7 @@ const dataShapes = {
 		}
 
 		// Saskaita, cik vietās ir propertija iezīmēta
-		for (var aa of Object.keys(rezFull.assoc)) {
+		for (const aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) {
 				var pId = rezFull.assoc[aa].list[0].p_id;
 				p_list_full[pId].count = p_list_full[pId].count + 1;
@@ -1520,7 +1520,7 @@ const dataShapes = {
 				var c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
 				c_from.atr_list.push({p_name:pr.p_name, p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to.displayName}`,
 						max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
-				for (var from_id of c_from_id_list) {
+				for (const from_id of c_from_id_list) {
 					var c_from_sub = rezFull.classes[from_id];
 					c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from_sub.displayName}); 
 				}
@@ -1528,7 +1528,7 @@ const dataShapes = {
 			if ( rezFull.classes[prop.from].type != 'Abstract' && rezFull.classes[prop.to].type == 'Abstract') {
 				var c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
 				c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from.displayName}); 
-				for (var to_id of c_to_id_list) {
+				for (const to_id of c_to_id_list) {
 					var c_to_sub = rezFull.classes[to_id];
 					c_from.atr_list.push({p_name:pr.p_name, p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to_sub.displayName}`,
 								max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
@@ -1537,8 +1537,8 @@ const dataShapes = {
 			if ( rezFull.classes[prop.from].type == 'Abstract' && rezFull.classes[prop.to].type == 'Abstract') {
 				var c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
 				var c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
-				for (var from_id of c_from_id_list) {
-					for (var to_id of c_to_id_list) {
+				for (const from_id of c_from_id_list) {
+					for (const to_id of c_to_id_list) {
 						var c_from_sub = rezFull.classes[from_id];
 						var c_to_sub = rezFull.classes[to_id];
 						c_from.atr_list.push({p_name:pr.p_name,  p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to_sub.displayName}`,
@@ -1550,7 +1550,7 @@ const dataShapes = {
 		}
 		
 		// Ievelk daudzgalu propertijas klasēs
-		for (var aa of Object.keys(rezFull.assoc)) {
+		for (const aa of Object.keys(rezFull.assoc)) {
 			var prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
 				if ( remBig && p_list_full[prop.list[0].p_id].count > remCount ) { //5555 remCount
@@ -1562,12 +1562,12 @@ const dataShapes = {
 		}
 		console.log("%%%%%%%%%%%%%%%%%%%%%%%",rem_props)
 		// Apstrādā tās klases, kurām nav izejošo propertiju, atvieno, ja ir vajadzīgais parametrs
-		for (var clId of Object.keys(rezFull.classes)) {
+		for (const clId of Object.keys(rezFull.classes)) {
 			var cl = rezFull.classes[clId];
 			if ( !cl.hasGen && !cl.isClasif && cl.out_prop.length == 0) { // !cl.hasGen &&
 				cl.type = 'Data';
 				if ( !connectDataClases ) {
-					for (var p of cl.in_prop) {
+					for (const p of cl.in_prop) {
 						var prop = rezFull.assoc[p];
 						if ( !prop.removed) {
 							prop.removed = true;
@@ -1579,7 +1579,7 @@ const dataShapes = {
 		}
 		
 		// Pārbauda klašu aktuālo saistību ar citām
-		for (var aa of Object.keys(rezFull.assoc)) {
+		for (const aa of Object.keys(rezFull.assoc)) {
 			var prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
 				rezFull.classes[prop.from].used2 = true;	
@@ -1588,7 +1588,7 @@ const dataShapes = {
 		}
 		
 		// Savāc 'plānās' apakšklases pie virsklases TODO varētu būt 'plānas' arī klases zem abstraktajām
-		for (var cl of Object.keys(rezFull.classes)) {
+		for (const cl of Object.keys(rezFull.classes)) {
 			if ( !rezFull.classes[cl].used ) {
 				if ( rezFull.classes[cl].super_classes.length == 1 ) {
 					var sc = rezFull.classes[cl].super_classes[0];
@@ -1606,7 +1606,7 @@ const dataShapes = {
 			var temp = {};
 			var temp2 = {};
 			if ( type == 'out') {
-				for (var a of atr_list) {
+				for (const a of atr_list) {
 					var ii = `${a.p_name}#${a.p_id}`;
 					var ii2 = `${a.p_name}_${a.p_id}_${a.class_name}`;
 					if( temp[ii] == undefined ) {
@@ -1619,7 +1619,7 @@ const dataShapes = {
 						}
 					}
 				}
-				for (var t of Object.keys(temp)) {
+				for (const t of Object.keys(temp)) {
 					if ( temp[t].length > 1) {
 						var p_id = t.split('#')[1];
 						if ( class_id >  0) {
@@ -1636,7 +1636,7 @@ const dataShapes = {
 				}			
 			}
 			else {  // priekš atr_list2
-				for (var a of atr_list) {
+				for (const a of atr_list) {
 					var ii = a.p_name;
 					if( temp[ii] == undefined ) {
 						temp[ii] = 1;
@@ -1645,7 +1645,7 @@ const dataShapes = {
 					else
 						temp[ii] = temp[ii] + 1;
 				}
-				for (var t of Object.keys(temp)) {
+				for (const t of Object.keys(temp)) {
 					if ( temp[t] > 1)
 						if ( class_id >  0) 
 							comp_atr_list.push({p_name:t, class_name:`IRI(${temp[t]})`});
@@ -1658,7 +1658,7 @@ const dataShapes = {
 			return comp_atr_list;
 		}
 
-		for (var cl of Object.keys(rezFull.classes)) {
+		for (const cl of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[cl];   
 			rezFull.classes[cl].sub_classes_group_string = '';
 		}
@@ -1667,12 +1667,12 @@ const dataShapes = {
 		if ( !compView ) {
 			// Savāc vientuļo klašu atribūtus, meklē līdzīgās (pirmā iterācija)
 			var temp = {};
-			for (var clId of Object.keys(rezFull.classes)) {
+			for (const clId of Object.keys(rezFull.classes)) {
 				var classInfo = rezFull.classes[clId];
 				if ( !classInfo.used2 && !classInfo.hasGen && !classInfo.isClasif ) {
 					classInfo.type = 'Data';
 					var atr_list = [];
-					for (var a of classInfo.atr_list) {
+					for (const a of classInfo.atr_list) {
 						var aa = {p_name:a.p_name, p_id:a.p_id, cnt:-1, object_cnt:-1, class_name:a.class_name, is_domain:'', max_cardinality:'*'};
 						atr_list.push(aa);
 					}
@@ -1690,7 +1690,7 @@ const dataShapes = {
 			
 			// Otrā iterācija līdzīgo vientuļo klasu savākšanai
 			var temp2 = {};
-			for (var t of Object.keys(temp)) {
+			for (const t of Object.keys(temp)) {
 				var cc = [getCompactAtrList(temp[t].atr_list, 'out').map(n => `${n.p_name}`).sort().join('\n')];
 				cc.push(getCompactAtrList(temp[t].atr_list2,'in').map(n => `${n.p_name}`).sort().join('\n'));
 				cc = cc.join('\n');
@@ -1700,7 +1700,7 @@ const dataShapes = {
 					temp2[cc].push(`c_${temp[t].class_list[0]}`);	
 				if (temp[t].class_list.length > 1 ) {
 					var cl_list = [];
-					for (var cl_id of temp[t].class_list) {
+					for (const cl_id of temp[t].class_list) {
 						cl_list.push(rezFull.classes[`c_${cl_id}`].fullName);
 						rezFull.classes[`c_${cl_id}`].used = false;
 					}
@@ -1714,12 +1714,12 @@ const dataShapes = {
 			}
 			
 			// Līdzīgo klašu virsklases izveidošana
-			for (var t of Object.keys(temp2)) {
+			for (const t of Object.keys(temp2)) {
 				if ( temp2[t].length > 1 ) {
 					var sc = `c_${temp2[t].join('_')}`;
 					rezFull.classes[sc] = { id:`${temp2[t].join('_')}`, fullName:'', displayName:'', used:true, used2:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[],
 											atr_list:[], atr_list2:[], in_prop:[], out_prop:[], all_atr:[] };
-					for (var c of temp2[t]) {
+					for (const c of temp2[t]) {
 						rezFull.classes[c].super_classes.push(sc); 
 						rezFull.classes[c].hasGen = true;
 					}
@@ -1731,7 +1731,7 @@ const dataShapes = {
 		if ( compView ) {
 			// Savāc vientuļo klašu atribūtus, meklē līdzīgās 
 			var temp = {};
-			for (var clId of Object.keys(rezFull.classes)) {
+			for (const clId of Object.keys(rezFull.classes)) {
 				var classInfo = rezFull.classes[clId];
 				if ( !classInfo.used2 && !classInfo.hasGen && !classInfo.isClasif ) {
 					classInfo.type = 'Data';
@@ -1752,13 +1752,13 @@ const dataShapes = {
 			
 			console.log("^^^^^^^^^^^^^^ līdzīgie atribūti", temp)
 			// Apvieno līdzīgās klases
-			for (var t of Object.keys(temp)) {
+			for (const t of Object.keys(temp)) {
 				if (temp[t].class_list.length > 1 ) {
 					console.log("****",t, temp[t])
 					var cl_list = [];
 					var atr_list = [];
 					var atr_list2 = [];
-					for (var cl_id of temp[t].class_list) {
+					for (const cl_id of temp[t].class_list) {
 						cl_list.push(rezFull.classes[`c_${cl_id}`].fullName);
 						rezFull.classes[`c_${cl_id}`].used = false;
 						atr_list = [...new Set([...atr_list, ... rezFull.classes[`c_${cl_id}`].atr_list ])];
@@ -1823,10 +1823,10 @@ const dataShapes = {
 			rezFull.lines = {};
 			var temp2 = {};
 			// Apstrādā klašu pārus, apvieno grupās
-			for (var clId_1 of Object.keys(rezFull.classes)) {
+			for (const clId_1 of Object.keys(rezFull.classes)) {
 				var classInfo1 = rezFull.classes[clId_1];
 				if ( (classInfo1.used && classInfo1.free) || classInfo1.group ) {
-					for (var clId_2 of Object.keys(rezFull.classes)) {
+					for (const clId_2 of Object.keys(rezFull.classes)) {
 						var classInfo2 = rezFull.classes[clId_2];
 						if ( (classInfo2.used && classInfo2.free) || classInfo2.group ) {
 							if ( classInfo1.id != classInfo2.id  && classInfo1.displayName < classInfo2.displayName) {
@@ -1834,7 +1834,7 @@ const dataShapes = {
 								var ii_1 = 0;
 								var ii_2 = 0;
 								function addAttrs(atr_list) {
-									for (var a of atr_list) {
+									for (const a of atr_list) {
 										if ( temp[a.p_name] == undefined) {
 											temp[a.p_name] = 1;
 											ii_1 = ii_1 + 1;
@@ -1877,18 +1877,18 @@ const dataShapes = {
 			
 			// Atrastajām grupām izveido virsklases, sakārto atribūtus
 			console.log(temp2)
-			for (var k of Object.keys(temp2)) {
+			for (const k of Object.keys(temp2)) {
 				var temp = {};
-				for (var cl of temp2[k]) {
+				for (const cl of temp2[k]) {
 					classInfo = rezFull.classes[`c_${cl}`];
-					for (var atr of getCompactAtrList(classInfo.atr_list,'out') ) {
+					for (const atr of getCompactAtrList(classInfo.atr_list,'out') ) {
 						var prop = atr.p_name;
 						if ( temp[prop] == undefined)
 							temp[prop] = 1;
 						else
 							temp[prop] = temp[prop] + 1
 					}
-					for (var atr of getCompactAtrList(classInfo.atr_list2, 'in') ) {
+					for (const atr of getCompactAtrList(classInfo.atr_list2, 'in') ) {
 						var prop = atr.p_name;
 						if ( temp[prop] == undefined)
 							temp[prop] = 1;
@@ -1911,7 +1911,7 @@ const dataShapes = {
 			var class_id = classInfo.id;
 			var atr_list = [];
 			if ( class_id >  0) {
-				for (var a of classInfo.atr_list) {
+				for (const a of classInfo.atr_list) {
 					var cl_info = p_list_full[`p_${a.p_id}`].c_from.filter(function(i){ return i.class_id == class_id});
 					if ( cl_info.length > 0 ) {  // parastās klases
 						var cnt = Number(cl_info[0].cnt);
@@ -1943,7 +1943,7 @@ const dataShapes = {
 		}
 
 		// Klases vizuālo atribūtu formēšana
-		for (var cl of Object.keys(rezFull.classes)) {
+		for (const cl of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[cl];   
 			if ( compView ) {
 				if ( classInfo.atr_list3 != undefined) {
@@ -1986,7 +1986,7 @@ const dataShapes = {
 		
 		// Asociāciju savilkšana kopā - pie vienas līnijas vairākas propertijas
 		var assoc = {};
-		for (var aa of Object.keys(rezFull.assoc)) {
+		for (const aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) { 
 				rezFull.assoc[aa].list[0].cnt = ( rezFull.assoc[aa].list[0].cnt == -1  ) ? '' : ` (${roundCount(rezFull.assoc[aa].list[0].cnt)})`;	
 				//if ( rezFull.assoc[aa].list[0].cnt == -1 )
@@ -2005,7 +2005,7 @@ const dataShapes = {
 		}
 		rezFull.assoc = assoc;
 		
-		for (var aa of Object.keys(rezFull.assoc)) {
+		for (const aa of Object.keys(rezFull.assoc)) {
 			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name}${n.cnt} [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 		}
@@ -2020,7 +2020,7 @@ const dataShapes = {
 		console.log("**********************************");
 		if ( false ) { // Diagrammas formāts, kas atbilst TDA struktūrai
 			var table_representation = { SH:{}, Line3:{}, Gen:{}};
-			for (var k of Object.keys(rezFull.classes)) {
+			for (const k of Object.keys(rezFull.classes)) {
 				var el = rezFull.classes[k];
 				if ( el.used ) {
 					if ( el.type == 'Data' )
@@ -2046,14 +2046,14 @@ const dataShapes = {
 							table_representation.SH[k] = { compartments: { name: el.fullName, A4: el.atr_string, A6: el.atr_string2, Type: el.type}}
 						}
 					}
-					for (var s of el.super_classes) {
+					for (const s of el.super_classes) {
 						var gen_id = k+"_"+ s
 						table_representation.Gen[gen_id] = { source: s, target:k, compartments: { Val: " "}}
 					}
 				}
 			}
 			
-			for (var k of Object.keys(rezFull.assoc)) {
+			for (const k of Object.keys(rezFull.assoc)) {
 				var el = rezFull.assoc[k];
 				if ( el.removed == false  )
 					table_representation.Line3[k] = { source: el.from, target: el.to, compartments:{ name: k, A: el.string}}
@@ -2114,7 +2114,7 @@ const dataShapes = {
 		
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
 		// DB virsklašu informācijas pielikšana
-		for (var cl of rr.data) {	
+		for (const cl of rr.data) {	
 			var id1 = `c_${cl.class_1_id}`;
 			var id2 = `c_${cl.class_2_id}`;
 			rezFull.classes[id1].super_classes.push(id2);
@@ -2132,7 +2132,7 @@ const dataShapes = {
 		cp_info = rr.data;
 		
 		// Propertiju saraksta sākotnējā apstrāde, savāc galus
-		for (var p of p_list) {	
+		for (const p of p_list) {	
 			var p_id = `p_${p.id}`;
 			var p_name = `${p.prefix}:${p.display_name}`;
 			if ( addIds ) 
@@ -2160,7 +2160,7 @@ const dataShapes = {
 		// Funkcija propertijas pielikšanai, tiek izsaukta divās vietās
 		function addProperty(pp, c_from, c_to) {
 			if ( c_from.length > 0  && c_to.length == 0) {	
-				for (var cl of c_from) {
+				for (const cl of c_from) {
 					var cl_id = `c_${cl.class_id}`;
 					var p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), object_cnt:cl.object_cnt, is_domain:pp.is_domain, max_cardinality:pp.max_cardinality, class_list:[]};
 					rezFull.classes[cl_id].atr_list.push(p_info);
@@ -2169,7 +2169,7 @@ const dataShapes = {
 				}
 			}
 			else if ( c_from.length > 0  && c_to.length > 0) {
-				for (var c_1 of c_from) {
+				for (const c_1 of c_from) {
 					var from_id = `c_${c_1.class_id}`;
 					// if ( c_1.object_cnt > 0 ) { TODO nez vai šo vajag pārbaudīt?
 					var cl_list = c_to.map( c => c.class_id);;
@@ -2181,7 +2181,7 @@ const dataShapes = {
 					rezFull.classes[from_id].used = true;
 					if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);						
 				}	
-				for (var c_2 of c_to) {
+				for (const c_2 of c_to) {
 					var to_id = `c_${c_2.class_id}`;
 					var cl_list = c_from.map( c => c.class_id);
 					var cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_2.id }); 
@@ -2195,7 +2195,7 @@ const dataShapes = {
 		}	
 		
 		// Pamata propertiju pielikšana
-		for (var p of Object.keys(p_list_full)) {	
+		for (const p of Object.keys(p_list_full)) {	
 			var pp = p_list_full[p];
 			var c_from = pp.c_from;
 			var c_to = pp.c_to;
@@ -2208,7 +2208,7 @@ const dataShapes = {
 				if ( list.length > 1 ) {
 					var g_id = `g_${Gnum}`;
 					var i = 0;
-					for (var c of list) {
+					for (const c of list) {
 						c.used = false;
 						i = i + c.cnt;
 					}
@@ -2231,7 +2231,7 @@ const dataShapes = {
 		// Atrod dažādas klašu grupas, bez atribūtiem, bez vai ar virsklasēm
 		var empty_classes = [];
 		var empty_sub_classes = {};
-		for (var clId of Object.keys(rezFull.classes)) {
+		for (const clId of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[clId];
 			if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 0 ) {
 				empty_classes.push(classInfo);
@@ -2251,12 +2251,12 @@ const dataShapes = {
 		if ( empty_classes.length > 0 ) {
 			makeClassGroup(empty_classes); 
 		}
-		for (var sup_id of Object.keys(empty_sub_classes)) {
+		for (const sup_id of Object.keys(empty_sub_classes)) {
 			makeClassGroup(empty_sub_classes[sup_id], [sup_id])
 		}
 		// Veido klašu grupas, skatoties uz atribūtiem, klasēm, kas neietilpst vispārinašanās
 		var temp = {};
-		for (var clId of Object.keys(rezFull.classes)) {
+		for (const clId of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[clId];
 			if ( !classInfo.hasGen ) {
 				var cc = classInfo.atr_list.map(n => `${n.p_name}_${n.type}_${n.class_list.join('_')}`).sort().join('\n'); 
@@ -2270,7 +2270,7 @@ const dataShapes = {
 		}
 			
 		//console.log("^^^^^^^^^^^^^^ līdzīgie atribūti", temp)
-		for (var t of Object.keys(temp)) {
+		for (const t of Object.keys(temp)) {
 			if ( temp[t].class_list.length > 1) {
 				makeClassGroup(temp[t].class_list); 
 			}
@@ -2279,10 +2279,10 @@ const dataShapes = {
 		rezFull.lines = {};
 		var temp2 = {};
 		// Apstrādā klašu pārus, apvieno grupās (kompaktajam varaintam)
-		for (var clId_1 of Object.keys(rezFull.classes)) {
+		for (const clId_1 of Object.keys(rezFull.classes)) {
 			var classInfo1 = rezFull.classes[clId_1];
 			if ( classInfo1.used && ( !classInfo1.hasGen || classInfo1.hasGen && classInfo1.super_classes.length == 0 )) {
-				for (var clId_2 of Object.keys(rezFull.classes)) {
+				for (const clId_2 of Object.keys(rezFull.classes)) {
 					var classInfo2 = rezFull.classes[clId_2];
 					if ( classInfo2.used && ( !classInfo2.hasGen || classInfo2.hasGen && classInfo2.super_classes.length == 0 )) {
 						if ( classInfo1.id != classInfo2.id  && classInfo1.displayName < classInfo2.displayName) {
@@ -2290,7 +2290,7 @@ const dataShapes = {
 							var ii_1 = 0;
 							var ii_2 = 0;
 							function addAttrs(atr_list) {
-								for (var a of atr_list) {
+								for (const a of atr_list) {
 									var p_id = `${a.p_name}_${a.type}_${a.class_list.join('_')}`;
 									if ( temp[p_id] == undefined) {
 										temp[p_id] = 1;
@@ -2364,11 +2364,11 @@ const dataShapes = {
 		}
 		
 		// Cikls pa klašu grupām 
-		for (var k of Object.keys(temp2)) {
+		for (const k of Object.keys(temp2)) {
 			var temp = {};
-			for (var cl of temp2[k]) {
+			for (const cl of temp2[k]) {
 				classInfo = rezFull.classes[cl];
-				for (var atr of classInfo.atr_list ) {
+				for (const atr of classInfo.atr_list ) {
 					var prop = `${atr.p_name}_${atr.type}`;
 					if ( temp[prop] == undefined)
 						temp[prop] = 1;
@@ -2386,7 +2386,7 @@ const dataShapes = {
 			// TODO te būs daudz sarežģītāk
 			return `${atr_info.p_name } ${atr_info.type} (${atr_info.class_list.length})`;
 		}
-		for (var clId of Object.keys(rezFull.classes)) {
+		for (const clId of Object.keys(rezFull.classes)) {
 			var classInfo = rezFull.classes[clId];
 			classInfo.atr_string = classInfo.atr_list.map( a => getAtrString(a)).join('\n');
 		}
@@ -2421,7 +2421,7 @@ const dataShapes = {
 			sc_id = `c_${sc_list.join('_')}`;
 			if ( super_classes[key][sc_id] == undefined ) {
 				var sc_names = [];
-				for (var sc of sc_list) {	
+				for (const sc of sc_list) {	
 					rezFull.classes[`${key}_c_${sc}`].parent.push(`${key}_${sc_id}`);
 					rezFull.classes[`${key}_c_${sc}`].used = true;
 					sc_names.push(rezFull.classes[`t_c_${sc}`].displayName);
@@ -2444,7 +2444,7 @@ const dataShapes = {
 		// Mazo propertiju noņemšana, ja ir uzstādīts dotais parametrs
 		if ( remSmall > 0 ) {
 			var tt = [];
-			for (var ii of cp_info) {
+			for (const ii of cp_info) {
 				if ( Number(ii.cnt) > remSmall-1 ) {
 					if ( ii.object_cnt < remSmall && ii.object_cnt != 0) {
 						ii.object_cnt = 0;
@@ -2459,7 +2459,7 @@ const dataShapes = {
 		}
 		
 		// Propertiju saraksta sākotnējā apstrāde, savāc galus, izveido potenciālās virsklases, skatoties uz padoto parametru
-		for (var p of p_list) {	
+		for (const p of p_list) {	
 			var p_id = `p_${p.id}`;
 			var p_name = `${p.prefix}:${p.display_name} (${p.id})`;
 
@@ -2489,7 +2489,7 @@ const dataShapes = {
 		function ProcessSC(sc_tree, pref) {
 			var temp = {};
 			var super_classes_list = [];
-			for (var sc of Object.keys(sc_tree)) {
+			for (const sc of Object.keys(sc_tree)) {
 				if ( sc_tree[sc].count > 0 ) {  // Visas vai tikai 'treknās'
 					temp[sc] = sc_tree[sc];
 					sc_tree[sc].id = sc;
@@ -2499,11 +2499,11 @@ const dataShapes = {
 			}
 			super_classes_list = super_classes_list.sort((a, b) => { return a.cl_list.length - b.cl_list.length; });
 			
-			for (var sc1 of super_classes_list) {	
-				for (var sc2 of super_classes_list) {	
+			for (const sc1 of super_classes_list) {	
+				for (const sc2 of super_classes_list) {	
 					if ( sc1.cl_list.length < sc2.cl_list.length ) {
 						var ii = 0;
-						for (var c of sc1.cl_list) {
+						for (const c of sc1.cl_list) {
 							if ( sc2.cl_list.includes(c) )
 								ii = ii+1;
 						}
