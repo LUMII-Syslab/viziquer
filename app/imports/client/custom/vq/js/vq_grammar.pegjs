@@ -409,7 +409,7 @@
 			squareVariable = "["  Chars_String_square  "]"
 			
 
-			Relation = "=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
+			Relation = "->" /"=" / "!=" / "<>" / "<=" / ">=" /"<" / ">"
 			space = ((" ")*) {return }
 			spaceObl = ((" ")+) {return }
 			string = string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+) {return {string: string.join("")}}

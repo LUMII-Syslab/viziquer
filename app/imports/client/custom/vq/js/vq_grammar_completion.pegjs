@@ -978,7 +978,7 @@
 			squareVariable = squere_br_open "["  Chars_String_square  squere_br_close "]"
 			Chars_String_square = (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_") ([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / "_" / "." / " "/ "/" / "-" / "," / "(" / ")" / [0-9])*)
 			
-			Relation = relations ("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
+			Relation = relations ("->" /"=" / "!=" / "<>" / "<=" / ">=" /"<" / ">")
 			space = ((" ")*) 
 			spaceObl = space_c (" ")+
 			string =  string:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / [-_.:, ^$/])+)
@@ -1111,7 +1111,7 @@
 			squere_br_close = "" {addContinuation(location(), "]", 28, false, 4);}
 			double_squere_br_open = "" {addContinuation(location(), "[[", 28, false, 4);}
 			double_squere_br_close = "" {addContinuation(location(), "]]", 28, false, 4);}
-			relations = "" {addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);}
+			relations = "" {addContinuation(location(), "->", 10, false, 4);addContinuation(location(), "=", 10, false, 4); addContinuation(location(), "!=", 10, false, 4);  addContinuation(location(), "<>", 10, false, 4);  addContinuation(location(), "<=", 10, false, 4);  addContinuation(location(), ">=", 10, false, 4);  addContinuation(location(), "<", 10, false, 4); addContinuation(location(), ">", 10, false, 4);}
 			like_c = "" {addContinuation(location(), "LIKE", 30, true, 4); addContinuation(location(), "~*", 30, true, 4); addContinuation(location(), "~", 30, true, 4);}
 			more = "" {addContinuation(location(), ">", 10, false, 4);}
 			less = "" {addContinuation(location(), "<", 10, false, 4);}

@@ -2017,7 +2017,8 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			bgptype = "optionalLink";
 		}
 		
-		if(patterns.length == 2 && patterns[0]["type"] == "bgp" && patterns[1]["type"] == "filter"){
+		if(patterns.length == 2 && patterns[0]["type"] == "bgp" && patterns[1]["type"] == "filter" && visited == false){
+									  
 			bgptype = "optional";
 			var temp = await parseSPARQLjsStructureWhere(patterns[0], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
 			if(temp["attributeTableAdded"].length == 1){		
@@ -2392,7 +2393,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		
 		var temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, patternType, bindTable, checkIfOrAndInFilter(where["expression"], generateOnlyExpression));
 		
-		
+		let allowMul = "";
+		let relations = ["=", "!=", "<", ">", "<=", ">="];
+		if(where["expression"]["type"] == "operation" && relations.indexOf(where["expression"]["operator"]) !== -1) {allowMul = "* ";}
 		
 		classesTable = temp["classesTable"];
 		attributeTable = temp["attributeTable"];
@@ -2499,21 +2502,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 				
 
-				// for(let expr in temp.viziQuerExpr.exprVariables){
-					// var prop = await dataShapes.resolvePropertyByName({name: temp.viziQuerExpr.exprVariables[expr]});
-					
-					// if(prop.complete == true && prop.data[0].is_local == true 
-					   // && typeof variableList[temp.viziQuerExpr.exprVariables[expr]] !== "undefined"
-					   // && variableList[temp.viziQuerExpr.exprVariables[expr]] > 1
-					   // && className != temp.viziQuerExpr.exprVariables[expr]
-					   // && ((classes[className]["identification"] != null
-					   // && classes[className]["identification"]["short_name"].replace(/\?/g, "") != temp.viziQuerExpr.exprVariables[expr]) || 
-					   // classes[className]["identification"] == null)
-					   // ){
-						// viziQuerExpr["exprString"] = viziQuerExpr["exprString"].replace(temp.viziQuerExpr.exprVariables[expr], "@"+temp.viziQuerExpr.exprVariables[expr])
-					// }
-				// }
-
 				// var classes = findByVariableName(classesTable, className);
 				if(generateOnlyExpression != true){
 					for(let clazz in classes){
@@ -2522,8 +2510,18 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									if(typeof classesTable[clazz]["conditions"] === 'undefined') {
 										classesTable[clazz]["conditions"] = [];
 									}
-									classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
-									// console.log("condition 7", viziQuerExpr["exprString"])
+									let conditionString = allowMul + viziQuerExpr["exprString"];
+									if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
+										conditionString = conditionString.substring(2);
+									};
+									if(allowMul == ""){
+										if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
+											classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
+										}
+									}
+									classesTable[clazz]["conditions"].push(conditionString);
+									
+									// console.log("condition 7", conditionString, viziQuerExpr["exprString"], classesTable[clazz]["conditions"].indexOf(conditionString))
 									
 									filterAdded = true;
 									break;
@@ -2543,8 +2541,17 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									if(typeof classesTable[clazz]["conditions"] === 'undefined') {
 										classesTable[clazz]["conditions"] = [];
 									}
-									classesTable[clazz]["conditions"].push(viziQuerExpr["exprString"]);
-									// console.log("condition 8", viziQuerExpr["exprString"])
+									let conditionString = allowMul + viziQuerExpr["exprString"];
+									if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
+										conditionString = conditionString.substring(2);
+									};
+									if(allowMul == ""){
+										if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
+											classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
+										}
+									}
+									classesTable[clazz]["conditions"].push(conditionString);
+									// console.log("condition 8", conditionString, viziQuerExpr["exprString"])
 									filterAdded = true;
 									break;
 								}
@@ -4727,21 +4734,39 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					
 					// dataPropertyResolved.data[0]["short_name"] = dataPropertyResolved.data[0]["prefix"] +":"+ dataPropertyResolved.data[0]["display_name"];
 					exprVariables.push(dataPropertyResolved.data[0]["short_name"]);
-					filterTable.push({filterString:"EXISTS " + dataPropertyResolved.data[0]["short_name"], filterVariables:exprVariables});
-					
-					var classes = findByVariableName(classesTable, where["args"][0]["triples"][0]["subject"]["value"])
-					if(generateOnlyExpression != true){
-						for(let clazz in classes){
-							if(typeof classes[clazz] !== "function"){
-								if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
-								classesTable[clazz]["conditions"].push("EXISTS " + dataPropertyResolved.data[0]["short_name"]);
 
-								break;
+					var classes = findByVariableName(classesTable, where["args"][0]["triples"][0]["subject"]["value"])
+					filterTable.push({filterString:"EXISTS " + dataPropertyResolved.data[0]["short_name"], filterVariables:exprVariables});
+					if(where["args"][0]["triples"][0]["object"]["termType"] == "Literal"){
+						var temp = await generateTypebgp(where["args"][0]["triples"], nodeLitsTemp, nodeList, classesTable, attributeTable, linkTable, bgptype, allClasses, false, variableList, selectVariables);
+						
+						filterTable = temp["filterTable"];
+						for(let filter = 0; filter < temp["filterTable"].length; filter++){
+							if(generateOnlyExpression != true){
+								for(let clazz in classes){
+									if(typeof classes[clazz] !== "function"){
+										if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
+										classesTable[clazz]["conditions"].push(temp["filterTable"][filter]["filterString"]);
+										break;
+									}
+								}
 							}
 						}
 					}
-					viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ "EXISTS " + dataPropertyResolved.data[0]["short_name"];
-					viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(exprVariables);
+					else{
+						if(generateOnlyExpression != true){
+							for(let clazz in classes){
+								if(typeof classes[clazz] !== "function"){
+									if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
+									classesTable[clazz]["conditions"].push("EXISTS " + dataPropertyResolved.data[0]["short_name"]);
+
+									break;
+								}
+							}
+						}
+						viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ "EXISTS " + dataPropertyResolved.data[0]["short_name"];
+						viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(exprVariables);
+					}
 				}else if(typeof where["args"][0]["triples"][0]["predicate"] == "object"){
 					var temp = await generateTypebgp(where["args"][0]["triples"], nodeLitsTemp, nodeList, classesTable, attributeTable, linkTable, bgptype, allClasses, generateOnlyExpression, variableList, selectVariables);
 					exprVariables = [];
@@ -6785,7 +6810,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					
 					exprVariables.push(attrName);
 					
-					filterTable.push({filterString:attrName+ " = " + objectNameParsed["value"], filterVariables:exprVariables});
+					filterTable.push({filterString:attrName+ " -> " + objectNameParsed["value"], filterVariables:exprVariables});
 					
 					var classes = findByVariableName(classesTable, triples[triple]["subject"]["value"]);
 					
@@ -6793,7 +6818,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 						if(typeof classes[clazz] !== "function"){
 							if(classTableAdded.indexOf(clazz) !== -1){
 								if(typeof classesTable[clazz]["conditions"] === 'undefined') classesTable[clazz]["conditions"] = [];
-								classesTable[clazz]["conditions"].push(attrName+ " = " + objectNameParsed["value"]);
+								classesTable[clazz]["conditions"].push("* "+attrName+ " -> " + objectNameParsed["value"]);
 								break;
 							}
 						}
@@ -8041,7 +8066,7 @@ function getStartClass(classesTable, linkTable) {
 		if(typeof classesTable[clazz]["fields"] !== "undefined"){
 			for(let field = 0; field< classesTable[clazz]["fields"].length; field++){
 				let f = classesTable[clazz]["fields"][field];
-				if(typeof f["isInternal"] === "undefined" || f["isInternal"] == false) return {startClass:{"name":clazz, "class":classesTable[clazz]}, classesTable:classesTable}
+				if((typeof f["isInternal"] === "undefined" || f["isInternal"] == false) && f["exp"] != "(select this)") {return {startClass:{"name":clazz, "class":classesTable[clazz]}, classesTable:classesTable}}
 			}
 		}
 		if(typeof classesTable[clazz]["aggregations"] !== 'undefined' && classesTable[clazz]["aggregations"] != null){
@@ -8556,7 +8581,13 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 	if (clazz.conditions) {
       for (const condition of clazz.conditions) {	
 		//add condition to class
-		if(typeof condition !== "undefined" && condition != null && condition != "")classBox.addCondition(condition);
+		let conditionName = condition;
+		let allowMul = false;
+		if(conditionName.startsWith("* ")){
+			allowMul = true;
+			conditionName = conditionName.substring(2);
+		}
+		if(typeof condition !== "undefined" && condition != null && condition != "")classBox.addCondition(conditionName, allowMul);
       }
     }
 	

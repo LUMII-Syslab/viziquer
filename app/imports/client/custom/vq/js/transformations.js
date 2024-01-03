@@ -6,6 +6,76 @@ import { Create_VQ_Element, VQ_Element, VQ_Schema } from './VQ_Element';
 
 Interpreter.customMethods({
 	
+	linkChangeDirection: async function(){
+		let elem = new VQ_Element(Session.get("activeElement"));
+		
+		let linkElements =  elem.getElements();
+		let startClass = linkElements.start;
+		let endClass = linkElements.end;
+		let locLink = elem.obj.points;
+		let locLinkTempX1 = locLink[0];
+		let locLinkTempY1 = locLink[1];
+		let locLinkTempX2 = locLink[2];
+		let locLinkTempY2 = locLink[3];
+		
+		let name = elem.getName();
+		let parsed_exp = await vq_property_path_grammar_parser.parse(name, {schema:null, schemaName:"", symbol_table:[], context:Session.get("activeElement")});
+		
+		let res = getPathFullGrammarChangeDirection(parsed_exp).path;
+		name = res.split("!!!!!").reverse().join(".");
+		// elem.setName(name);
+		
+		// let editor = Interpreter.editor;
+		// let element_list = editor.getElements();
+		
+		// let linkElement2 = Elements.findOne({_id: Session.get("activeElement")});
+		// let linkElement = element_list[Session.get("activeElement")];
+		// let vq_link_obj = new VQ_Element(Session.get("activeElement"));
+		
+		// linkElement.startElementId = endClass.obj._id;
+		// linkElement.endElementId = startClass.obj._id;
+		// let tempStartElement = linkElement.startElement;
+		// let tempEndElement = linkElement.endElement;
+		// linkElement.startElement = tempEndElement;
+		// linkElement.endElement = tempStartElement;
+		
+		// linkElement2.points = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
+		
+		// linkElement["elementId"] = Session.get("activeElement")
+		// linkElement["projectId"] = Session.get("activeProject");
+		// linkElement["versionId"] = Session.get("versionId");
+
+		// Utilities.callMeteorMethod("updateElementStyle", linkElement);
+		
+		var NestingTypeMap = {"Join":"PLAIN", "Subquery":"SUBQUERY","Subquery + Global":"GLOBAL_SUBQUERY", "Graph to contents":"GRAPH", "Reference":"CONDITION"};
+		var nestingType = elem.getNestingType();
+		if(typeof NestingTypeMap[elem.getNestingType()] !== "undefined") nestingType = NestingTypeMap[elem.getNestingType()];
+
+		let lintType = "REQUIRED";
+		if(elem.isOptional())lintType = "OPTIONAL";
+		else if(elem.isNegation())lintType = "NOT";
+		else if(elem.isFilterExists())lintType = "FILTER_EXISTS";
+		newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
+		console.log("linkChangeDirection",lintType, elem, elem.getNestingType())
+		Create_VQ_Element(function(lnk) {
+	       lnk.setName(name);
+	       lnk.setLinkType(lintType);	                    
+	       // lnk.setNestingType(NestingTypeMap[elem.getNestingType()]);						
+	       lnk.setNestingType(nestingType);						
+			
+	   }, newLoc, true, endClass,startClass);
+	   
+	   
+	    let list = {
+			elements: [ Session.get("activeElement") ],
+			elementNames: [ Session.get("activeElement")+'(Link)' ],
+			diagramId: Session.get("activeDiagram"),
+			projectId: Session.get("activeProject"),
+			versionId: Session.get("versionId")
+		}
+		Utilities.callMeteorMethod("deleteElements", list);
+	},
+	
 	VQTransformLinkToSubQuery:function(classId){
 		
 		// var classObj = new VQ_Element(classId);
