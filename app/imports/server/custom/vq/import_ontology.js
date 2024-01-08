@@ -2309,8 +2309,11 @@ Meteor.methods({
 			let object = {diagramId: new_diagram_id,
 							type: "Line",
 							points: [0, 20, 20, 20],
-							startElement: element_map[item.source],
-							endElement: element_map[item.target],
+                            startElement: element_map[item.target],
+							endElement: element_map[item.source],
+
+                            startSides: gen_type.startSides || 1,
+                            endSides: gen_type.endSides || 4,
 
 							styleId: gen_style_id,
 
@@ -2327,6 +2330,7 @@ Meteor.methods({
 							projectId: list.projectId,
 							versionId: list.versionId,
 						};
+
 
 			let new_line_id = Elements.insert(object);
 			element_map[key] = new_line_id;

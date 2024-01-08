@@ -248,7 +248,17 @@ Interpreter.methods({
 		let k = _.size(boxes) + _.size(lines);
 		_.each(lines, function(line, j) {
 			let i = _.size(boxes) + j;
-			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], {lineType: "ORTHOGONAL"})
+
+			let options = {lineType: "ORTHOGONAL",};
+			if (_.isNumber(line.startSides)) {
+				_.extend(options, {startSides: line.startSides,});
+			}
+
+			if (_.isNumber(line.endSides)) {
+				_.extend(options, {endSides: line.endSides,});
+			}
+
+			layoutEngine.addLine(i, elements_to_map[line.startElementId], elements_to_map[line.endElementId], options);
 
 			let line_id = line._id;
 			if (!_.isNumber(elements_to_map[line_id])) {

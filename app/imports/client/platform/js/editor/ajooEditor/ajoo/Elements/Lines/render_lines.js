@@ -36,6 +36,9 @@ Link.prototype = {
 
 		link.startElementId = element["startElement"];
 		link.endElementId = element["endElement"];
+
+		link.startSides = element["startSides"];
+		link.endSides = element["endSides"];
 	},
 
 	render: function(parent, list) {
