@@ -542,7 +542,6 @@
     {{> uploadProject}}
     {{> ontologySettings}}
     {{> migrateForm}}
-    {{> exportOntology}}
 
 </template>
 
@@ -990,75 +989,4 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 <!-- End of modal -->
-</template>
-
-<template name="exportOntology">
-
-    <!-- Modal for new document -->
-    <div id="export-ontology-form" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Export</h4>
-                </div>
-                <div class="modal-body">
-					<form class="form-horizontal" role="form">
-						<label for="formBody" class="control-label col-sm-20">{{parameters.label}}</label>
-						{{#if parameters.schema}}
-							<div class="form-group">
-											<div class="col-lg-10 choice" name="Ch1" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="Ch1" Ch1>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}"> Export VQ Schema </span>
-												</label>
-											</div>
-											
-											<div class="col-lg-10 choice" name="Ch1a" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="Ch1a" Ch1a>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}"> Export in SHACL format </span>
-												</label>
-											</div>
-											
-											<div class="col-lg-10 choice" name="Ch2" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="Ch2" Ch2>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}"> Export in Owl format - Restriction Style </span>
-												</label>
-											</div>
-											
-											<div class="col-lg-10 choice" name="Ch3" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="Ch3" Ch3>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}">Export in Owl format - Annotation Style Export </span>
-												</label>
-											</div>
-											
-											<div class="col-lg-10 choice" name="Ch4" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="Ch4" Ch4>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}">Export in Owl format - Combined Export</span>
-												</label>
-											</div>
-							</div>
-						 {{/if}}
-                    </form>
-                </div>
-                <div class="modal-footer">
-				    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "close"}}</button>
-					{{#if parameters.schema}}
-						<button id="ok-export-ontology" type="button" class="btn btn-primary">Export</button>
-					{{/if}}	
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End of modal -->
-
 </template>
