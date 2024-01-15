@@ -3744,7 +3744,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           async function getAssociations(place, priority){
 				var pathParts = options.text.split(/[.\/]/);
 				if(pathParts.length <= 1){
-					var params = {propertyKind:'Connect'};
+					let params = {propertyKind:'Connect'};
 					// if (fullText != "") params.filter = fullText;
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
@@ -3753,7 +3753,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 						var elTo=options.link.getEndElement();
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {
-						var params = {main:{propertyKind:'ObjectExt',"limit": 30}};
+						let params = {main:{propertyKind:'ObjectExt',"limit": 30}};
 						if (typeof options.className !== 'undefined') params.element = {className: options.className};
 						props = await dataShapes.getPropertiesFull(params);
 					}
@@ -3801,7 +3801,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
            } else {
              return null
            }
-           return null
+
           };
 		  
           // string -> idObject
@@ -3826,7 +3826,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
              } else {
                return null
              }
-               return null
+            
           };
           // string -> idObject
           // returns type of the identifier from schema assuming that it is name of the class. Null if does not exist

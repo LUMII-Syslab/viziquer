@@ -128,7 +128,7 @@ Template.AggregateWizard.events({
 		if(typeof required !== "undefined" && required == "on") required = true;
 		else required = false;
 	
-		var fld = $('option[name=field-name]:selected').val();
+		// var fld = $('option[name=field-name]:selected').val();
 		var fld = document.getElementById('field-list').value;
 		if (fld == "") {
 			if(typeof distinct !== "undefined" && distinct == "on") expr = expr.concat("(DISTINCT .)");
@@ -146,8 +146,8 @@ Template.AggregateWizard.events({
 			var maxValue = $('input[id=results-most]').val();
 			
 			if ((displayCase || (minValue != "") || (maxValue != "")) && (alias == null || alias == "")) {
-				var cName = vq_end_obj.getName();
-				var newFunction = $('input[name=aggregate-list-radio]:checked').val()
+				let cName = vq_end_obj.getName();
+				let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 				alias = cName.charAt(0) + "_" + newFunction;
 			}
 			//console.log(alias + " " + expr);
@@ -165,9 +165,9 @@ Template.AggregateWizard.events({
 				// console.log("display or min/max");
 				var vq_start_obj = new VQ_Element(Template.AggregateWizard.startClassId.curValue);
 				if (alias == null || alias == "") {
-					var cName = vq_start_obj.getName();
+					let cName = vq_start_obj.getName();
 					// var newFunction = $('option[name=function-name]:selected').val();
-					var newFunction = $('input[name=aggregate-list-radio]:checked').val()
+					let newFunction = $('input[name=aggregate-list-radio]:checked').val()
 					alias = cName.charAt(0) + "_" + newFunction;
 				}
 				//addField: function(exp,alias,requireValues,groupValues,isInternal)

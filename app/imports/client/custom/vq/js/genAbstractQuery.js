@@ -8,6 +8,7 @@ import { VQ_Element } from './VQ_Element';
 import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'
 import * as vq_variable_grammar_parser from '/imports/client/custom/vq/js/vq_variable_grammar_parser'
 import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser'
+import * as vq_attribute_condition_grammar_parser from '/imports/client/custom/vq/js/vq_attribute_condition_grammar_parser'
 
 var count = 0;
 
@@ -64,13 +65,13 @@ async function resolveTypesAndBuildSymbolTable(query) {
   async function resolveClassByName(className) {
     
 	if(typeof className !== "undefined" && className !== null){
-		var cls = await dataShapes.resolveClassByName({name: className})
+		let cls = await dataShapes.resolveClassByName({name: className})
 		if(cls["data"].length > 0){
 			return cls["data"][0];
 		} else if(typeof cls["name"] !== "undefined" && className.indexOf("[ + ]") == -1 && className.indexOf("[ ]") == -1 && className.indexOf("?") == -1) {
-			var name = cls["name"];
-			var prefix;
-			var display_name = className;
+			let name = cls["name"];
+			let prefix;
+			let display_name = className;
 			if(display_name.indexOf(":") !== -1){
 				display_name = display_name.substring(display_name.indexOf(":")+1);
 			}
@@ -142,7 +143,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	// obj_class.identification.classes.push(resCl)
     _.extend(obj_class.identification, resCl);
 	//parser need class with prefix
-	var prefix = "";
+	let prefix = "";
 
 	if(typeof obj_class.identification.prefix !== 'undefined' && obj_class.identification.prefix != "") prefix = obj_class.identification.prefix + ":";
 	
@@ -153,7 +154,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
     if (obj_class.linkIdentification) {
 		//parser need link with prefix
-		var prefix = "";
+		let prefix = "";
 		// _.extend(obj_class.linkIdentification, resolveLinkByName(obj_class.linkIdentification.local_name));
 		if(typeof obj_class.linkIdentification.prefix !== 'undefined' && obj_class.linkIdentification.prefix != "") prefix = obj_class.linkIdentification.prefix + ":";
 		var pathExpression = await parsePathExpression(prefix+obj_class.linkIdentification.local_name, obj_class.identification);
@@ -162,7 +163,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		//link is variable name
 		if(typeof pathExpression.parsed_exp !== "undefined" && pathExpression.parsed_exp !== null
 		&& typeof pathExpression.parsed_exp.PathProperty !== "undefined" && typeof pathExpression.parsed_exp.PathProperty.VariableName !== "undefined"){
-			 var expr = pathExpression.parsed_exp.PathProperty.VariableName.substring(1);
+			 let expr = pathExpression.parsed_exp.PathProperty.VariableName.substring(1);
 			 if(expr.startsWith("?")) expr = expr.substring(1);
 			 my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
 		}
@@ -172,7 +173,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		// var className = obj_class.identification.display_name;
 		// if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
 		// if(typeof className !== "undefined" && className != null) className = pr+className;
-		var type =  resCl;
+		let type =  resCl;
 	   if(type != null && typeof obj_class.linkIdentification !== "undefined" && typeof obj_class.linkIdentification.max_cardinality !== "undefined") {type["max_cardinality"] = obj_class.linkIdentification.max_cardinality}
 	     
 	   my_scope_table.CLASS_ALIAS.push({id:obj_class.instanceAlias, type:type, context:obj_class.identification._id});
@@ -185,7 +186,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		// var className = obj_class.identification.display_name;
 		// if(typeof className === "undefined" || className == null || className == "") className = obj_class.identification.local_name;
 		// if(typeof className !== "undefined" && className != null) className = pr+className;
-		var type =  resCl;
+		let type =  resCl;
 		my_scope_table.CLASS_ALIAS.push({id:obj_class.variableName.replace("?", ""), type:type, context:obj_class.identification._id});
 	}
 	
@@ -248,13 +249,13 @@ async function resolveTypesAndBuildSymbolTable(query) {
 			 if(f.addDescription == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Description", type:null, context:obj_class.identification._id});
 			 if(f.exp.startsWith("?")){
 				//atribute is variable name with alias
-				var expr = f.exp.substring(1);
+				let expr = f.exp.substring(1);
 				if(expr.startsWith("?")) expr = expr.substring(1);
 			    my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
 			}
         } else if(f.exp.startsWith("?")){
 			//atribute is variable name
-			var expr = f.exp.substring(1);
+			let expr = f.exp.substring(1);
 			 if(expr.startsWith("?")) expr = expr.substring(1);
 			 my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:expr, type:null, context:obj_class.identification._id});
 		} else {
@@ -425,7 +426,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	  } else return { parsed_exp: []};
     } catch (e) {
       // TODO: error handling
-	  console.log("qqqqq", e)
       Interpreter.showErrorMsg("Syntax error in attribute expression " + str_expr, -3);  
     } finally {
       // nothing
@@ -494,7 +494,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 			  exp_obj.parsed_exp = parsed_exp;
 			} catch (e) {
 			  // TODO: error handling
-			  console.log(e)
+			  // console.log(e)
 			  Interpreter.showErrorMsg("Syntax error in attribute expression " + exp_obj.exp, -3);  
 			} finally {
 			  //nothing
@@ -560,7 +560,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	// console.log('---resolveClassExpressions--')
 	// console.log(obj_class)
 	  if(obj_class.graphs){
-		  var prefixes = query.prefixes;
+		  let prefixes = query.prefixes;
 		  for (let g = 0; g < obj_class.graphs.length; g++) {
 			obj_class.graphs[g]["graph"] = getGraphFullForm(obj_class.graphs[g]["graph"], prefixes);
 		  }
@@ -574,13 +574,10 @@ async function resolveTypesAndBuildSymbolTable(query) {
   if (parent_class) {
 	  
 	  if(obj_class.graph){
-		  var prefixes = query.prefixes;		
+		  let prefixes = query.prefixes;		
 		  obj_class.graph = getGraphFullForm(obj_class.graph, prefixes);
 	  }
-	  
-	 
-	  
-	  
+	   
       var pc_st = symbol_table[parent_class.identification._id];
       var oc_st = symbol_table[obj_class.identification._id];
 
@@ -614,23 +611,15 @@ async function resolveTypesAndBuildSymbolTable(query) {
     // await obj_class.fields.forEach(async function(f) {
 		
 	  if(f.graph){
-		  var prefixes = query.prefixes;		
+		  let prefixes = query.prefixes;		
 		  f.graph = getGraphFullForm(f.graph, prefixes);
 	  }
-     
-	  // if(typeof f.attributeCondition !== "undefined" && f.attributeCondition != null && f.attributeCondition != ""){
-		// var variableName = f.exp;
-		// if (f.alias!=null && f.alias!="")variableName = f.alias;
-		// var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeCondition, {"variable":variableName});
-		// var condition = {exp:conditionExpression};
-		// await parseExpObject(condition, obj_class.identification);
-		// obj_class.conditions.push(condition);
-	  // } 
+      
 	  if(typeof f.attributeConditionSelection !== "undefined" && f.attributeConditionSelection != null && f.attributeConditionSelection != ""){
 		var variableName = f.exp;
 		if (f.alias!=null && f.alias!="")variableName = f.alias;
-		var conditionExpression = vq_attribute_condition_grammar.parse(f.attributeConditionSelection, {"variable":variableName});
-		var condition = {exp:conditionExpression};
+		let conditionExpression = await vq_attribute_condition_grammar_parser.parse(f.attributeConditionSelection, {"variable":variableName});
+		let condition = {exp:conditionExpression};
 		await parseExpObject(condition, obj_class.identification);
 		
 		f.attributeConditionSelection = condition;
@@ -663,9 +652,9 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
 			}
 			else if(strURI.indexOf("(") !== -1 || strURI.indexOf(")") !== -1 || strURI.indexOf(",") !== -1){
-				var prefix = strURI.substring(0, strURI.indexOf(":"));
-				var name = strURI.substring(strURI.indexOf(":")+1);
-				var prefixes = query.prefixes;
+				let prefix = strURI.substring(0, strURI.indexOf(":"));
+				let name = strURI.substring(strURI.indexOf(":")+1);
+				let prefixes = query.prefixes;
 				for(let kp = 0; kp < prefixes.length; kp++){
 					if(prefixes[kp]["name"] == prefix) {
 						strURI = "<"+prefixes[kp]["value"]+name+">";
@@ -685,7 +674,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 					textPart = textPart.trim();
 					obj_class.instanceAlias = textPart.replace(/([\s]+)/g, "_").replace(/([\s]+)/g, "_").replace(/[^0-9a-z_]/gi, '');
 				}
-				var condition = {exp:"(this) = " + strURI};
+				let condition = {exp:"(this) = " + strURI};
 			    await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 			    obj_class.conditions.push(condition);
 				if(obj_class.isVariable == true) obj_class.instanceAlias = null;
@@ -712,7 +701,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 						await parseExpObject(field, obj_class.identification, "attribute");
 						obj_class.fields.push(field);
 					}
-					var condition = {exp:"(this) = " + strURI};
+					let condition = {exp:"(this) = " + strURI};
 					obj_class.instanceAlias = "expr";
 					await parseExpObject(condition, obj_class.identification, "CLASS_NAME");
 					obj_class.conditions.push(condition);
@@ -763,7 +752,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
-           var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+           let var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
              
 		   switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
@@ -844,7 +833,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"]
          ) {
-           var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
+           let var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
 
            switch (var_obj["kind"]) {
              case "PROPERTY_NAME":
@@ -921,19 +910,19 @@ async function resolveTypesAndBuildSymbolTable(query) {
          } else {
            if (f.alias) {
             
-			 var type = null;
+			 let type = null;
 			 if(countMaxExpressionCardinality(f.parsed_exp)["isMultiple"] == false) type = {max_cardinality : 1};
 			  updateSymbolTable(f.alias, obj_class.identification._id, "BIND_ALIAS", type);
 			  
 			  if(f.exp.startsWith("?")){
-				  var expr = f.exp.substring(1);
+				  let expr = f.exp.substring(1);
 				  if(expr.startsWith("?")) expr = expr.substring(1);
 				  updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
 			 }
            } else {
 			   
 			 if(f.exp.startsWith("?")){
-				  var expr = f.exp.substring(1);
+				  let expr = f.exp.substring(1);
 				  if(expr.startsWith("?")) expr = expr.substring(1);
 				  updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
 			 }
@@ -958,12 +947,12 @@ async function resolveTypesAndBuildSymbolTable(query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"]
          ) {
-            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
+            let var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression["var"];
 
 			if (var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
-              var expression = f.exp;
+              let expression = f.exp;
 			        if (f.alias) expression = f.alias;
-			        var condition = {exp:"EXISTS(" + expression + ")"};
+			        let condition = {exp:"EXISTS(" + expression + ")"};
 			        await parseExpObject(condition, obj_class.identification);
 			        obj_class.conditions.push(condition);
             }
@@ -986,11 +975,11 @@ async function resolveTypesAndBuildSymbolTable(query) {
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName
              && p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"]
          ) {
-            var var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
+            let var_obj = p[1].ConditionalOrExpression[0].ConditionalAndExpression[0].RelationalExpression.NumericExpressionL.AdditiveExpression.MultiplicativeExpression.UnaryExpression.PrimaryExpression.iri.PrefixedName["var"];
 			if (var_obj["kind"] !== null && var_obj["kind"].indexOf("_ALIAS") !== -1 && obj_class.instanceAlias != f.exp) {
-              var expression = f.exp;
+              let expression = f.exp;
 			        if (f.alias) expression = f.alias;
-			        var condition = {exp:"EXISTS(" + expression + ")"};
+			        let condition = {exp:"EXISTS(" + expression + ")"};
 			        await parseExpObject(condition, obj_class.identification);
 			        obj_class.conditions.push(condition);
             }
@@ -1002,7 +991,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	// );
 	
 	if(obj_class.linkIdentification && obj_class.linkIdentification.local_name && obj_class.linkIdentification.local_name.startsWith("?")){
-		var expr = obj_class.linkIdentification.local_name.substring(1);
+		let expr = obj_class.linkIdentification.local_name.substring(1);
 		if(expr.startsWith("?")) expr = expr.substring(1);
 		updateSymbolTable(expr, obj_class.identification._id, "PROPERTY_ALIAS", null);
 	}
@@ -1020,7 +1009,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 				var left = findINExpressionTable(rel["NumericExpressionL"], "PrimaryExpression");
 				var right = findINExpressionTable(rel["NumericExpressionR"], "PrimaryExpression");
 				var temp = checkIfIsSimpleVariable(c["parsed_exp"], true, null, true, false, false, false);
-				isSimpleFilter = temp["isSimpleFilter"];
+				let isSimpleFilter = temp["isSimpleFilter"];
 				
 				//filter as triple
 				if(typeof rel['Relation'] !== 'undefined' 
@@ -1431,14 +1420,14 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 function printClassAccessTable(classT, interval){
 	for(let clazz in classT){
 		if(typeof classT[clazz] !== "function"){
-			var c = new VQ_Element(clazz);
+			let c = new VQ_Element(clazz);
 			var cName = c.getName();
 			if(cName == null) cName = c.getInstanceAlias();
 			console.log(interval+ cName);
-			intervalA = "  ";
+			let intervalA = "  ";
 			for(let clazzA in classT[clazz]){
 				if(typeof classT[clazz][clazzA] !== "function"){
-					var c = new VQ_Element(clazzA);	
+					let c = new VQ_Element(clazzA);	
 					var path = "";
 					for(let p in classT[clazz][clazzA]){
 						if(typeof classT[clazz][clazzA][p] !== "function"){
@@ -1569,8 +1558,8 @@ function getGraphFullForm(graph, prefixes){
 	
 	var graphIsUri = isURI(graph)
 	if(graphIsUri == 4){
-		var prefix = graph.substring(0, graph.indexOf(":"));
-		var name = graph.substring(graph.indexOf(":")+1);
+		let prefix = graph.substring(0, graph.indexOf(":"));
+		let name = graph.substring(graph.indexOf(":")+1);
 		for (let kp = 0; kp < prefixes.length; kp++) {
 			if(prefixes[kp]["name"] == prefix) {
 				graph = "<"+prefixes[kp]["value"]+name+">";
@@ -1607,8 +1596,8 @@ async function getResolveInformation(parsed_exp, schemaName, symbol_table, conte
 	return parsed_exp;
 }
 
-async function resolveTypeFromSymbolTable(id, context, symbol_table) {
-    var context = context._id;
+async function resolveTypeFromSymbolTable(id, cont, symbol_table) {
+    let context = cont._id;
 
     if(typeof symbol_table[context] === 'undefined') return null;
 
@@ -1618,20 +1607,19 @@ async function resolveTypeFromSymbolTable(id, context, symbol_table) {
     		if(st_row.length == 1){
     				return st_row[0].type
     		}
-    					if(st_row.length > 1){
-    						for (var symbol in st_row) {
-    							if(st_row[symbol]["context"] == context) return st_row[symbol].type;
-    						}
-    					}
-    					return st_row.type
-    				} else {
-    					return null
-    				}
-    				return null
+    		if(st_row.length > 1){
+    			for (var symbol in st_row) {
+    				if(st_row[symbol]["context"] == context) return st_row[symbol].type;
+    			}
+    		}
+    		return st_row.type
+    	} else {
+    		return null
+    	}
 };
 
-async function resolveTypeFromSymbolTableForContext(id, context, symbol_table) {
-    var context = context._id;
+async function resolveTypeFromSymbolTableForContext(id, cont, symbol_table) {
+    let context = cont._id;
 	
     if(typeof symbol_table[context] === 'undefined') return null;
 
@@ -1647,12 +1635,11 @@ async function resolveTypeFromSymbolTableForContext(id, context, symbol_table) {
     } else {
     	return null
     }
-    return null
 };
     			// string -> idObject
     			// returns kind of the identifier from symbol table. Null if does not exist.
-async function resolveKindFromSymbolTable(id, context, symbol_table) {
-    				var context = context._id;
+async function resolveKindFromSymbolTable(id, cont, symbol_table) {
+    				let context = cont._id;
 
     				if(typeof symbol_table[context] === 'undefined') return null;
 
@@ -1672,11 +1659,10 @@ async function resolveKindFromSymbolTable(id, context, symbol_table) {
     				} else {
     					return null
     				}
-    				return null
 };
 
-async function resolveKindFromSymbolTableForContext(id, context, symbol_table) {
-    var context = context._id;
+async function resolveKindFromSymbolTableForContext(id, cont, symbol_table) {
+    let context = cont._id;
 	
     if(typeof symbol_table[context] === 'undefined') return null;
 
@@ -1692,7 +1678,6 @@ async function resolveKindFromSymbolTableForContext(id, context, symbol_table) {
     } else {
     	return null
     }
-    return null
 };
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist
@@ -1709,8 +1694,8 @@ async function resolveTypeFromSchemaForClass(id, schemaName) {
     					return cls["data"][0];
     				}  else if(typeof cls["name"] !== "undefined" && id != "[ + ]" && id != "[ ]" && !id.startsWith("?") && schemaName.toLowerCase() == "wikidata" && id.indexOf("[") != -1 && id.endsWith("]")) {
 						var name = cls["name"];
-						var prefix;
-						var display_name = id;
+						let prefix;
+						let display_name = id;
 						if(display_name.indexOf(":") !== -1){
 							display_name = display_name.substring(display_name.indexOf(":")+1);
 						}

@@ -225,7 +225,7 @@ Template.SelectTargetClass.events({
 		var name = obj.attr("name");
 		var line_direct = obj.attr("line_direct");
 		
-		var schemaName = dataShapes.schema.schemaType;
+		let schemaName = dataShapes.schema.schemaType;
 		if(typeof schemaName === "undefined") schemaName = "";
 		
 		var params = {};
@@ -237,10 +237,10 @@ Template.SelectTargetClass.events({
 		if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
 		if(schemaName.toLowerCase() == "wikidata"  && ((name.startsWith("[") && name.endsWith("]")) || name.indexOf(":") == -1)) name = "wdt:"+name;
 			if(line_direct == "=>") {
-				var elementParams = [{"name": name, "type": "in",}]
+				let elementParams = [{"name": name, "type": "in",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
-					var cls = dataShapes.getIndividualName(startElementAlias);
+					let cls = dataShapes.getIndividualName(startElementAlias);
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
@@ -248,10 +248,10 @@ Template.SelectTargetClass.events({
 					"element": {"pList": {"in": elementParams}}
 				}
 			} else {
-				var elementParams = [{"name": name, "type": "out",}]
+				let elementParams = [{"name": name, "type": "out",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
-					var cls = dataShapes.getIndividualName(startElementAlias);
+					let cls = dataShapes.getIndividualName(startElementAlias);
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
@@ -262,7 +262,6 @@ Template.SelectTargetClass.events({
 		var classes = await dataShapes.getClassesFull(params);
 		classes = classes.data;
 		
-		var schemaName = dataShapes.schema.schemaType;
 		if(typeof schemaName === "undefined") schemaName = "";
 		
 		_.each(classes, function(e){
@@ -477,7 +476,7 @@ Template.AddLink.events({
 		// if(line_direct == "<=") line_direct = "out"; else line_direct = "in";
 		var class_name = $(e.target).closest(".association").attr("className");
 		
-		var schemaName = dataShapes.schema.schemaType;
+		let schemaName = dataShapes.schema.schemaType;
 		if(typeof schemaName === "undefined") schemaName = "";
 		
 		Template.SelectTargetClass.classes.set([{text: "Waiting answer...", wait: true}]);
@@ -503,10 +502,10 @@ Template.AddLink.events({
 			if(schemaName.toLowerCase() == "wikidata"  && typeof startElementName != "undefined" && startElementName !== null && startElementName != "" && ((startElementName.startsWith("[") && startElementName.endsWith("]")) || startElementName.indexOf(":") == -1)) startElementName = "wd:"+startElementName;
 			
 			if(line_direct == "=>") {
-				var elementParams = [{"name": name, "type": "in",}]
+				let elementParams = [{"name": name, "type": "in",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
-					var cls = dataShapes.getIndividualName(startElementAlias);
+					let cls = dataShapes.getIndividualName(startElementAlias);
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
@@ -514,10 +513,10 @@ Template.AddLink.events({
 					"element": {"pList": {"in": elementParams,}}
 				}
 			} else {
-				var elementParams = [{"name": name, "type": "out",}]
+				let elementParams = [{"name": name, "type": "out",}]
 				if(typeof startElementName != "undefined" && startElementName != null && startElementName != "") elementParams[0]["className"] = startElementName;
 				if(typeof startElementAlias != "undefined" && startElementAlias != null && startElementAlias != ""){
-					var cls = dataShapes.getIndividualName(startElementAlias);
+					let cls = dataShapes.getIndividualName(startElementAlias);
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
@@ -567,11 +566,11 @@ Template.AddLink.events({
 		if (activeClass.isUnion() && !activeClass.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
 			if (activeClass.getLinkToRoot()){
 				var element = activeClass.getLinkToRoot().link.getElements();
-				var newStartClass = "";
+				let newStartClass = "";
 				if (activeClass.getLinkToRoot().start) {
-					var newStartClass = new VQ_Element(element.start.obj._id);
+					newStartClass = new VQ_Element(element.start.obj._id);
     			} else {
-    				var newStartClass = new VQ_Element(element.end.obj._id);
+    				newStartClass = new VQ_Element(element.end.obj._id);
     			} 
     			Template.ConnectClasses.IDS.set({name: newStartClass.getName(), id: activeClass.obj["_id"]});						
 			}					
@@ -849,7 +848,7 @@ async function getAllAssociations(){
 					
 					var allAssociations = prop["data"];
 					
-					var schemaName = dataShapes.schema.schemaType;
+					let schemaName = dataShapes.schema.schemaType;
 					if(typeof schemaName === "undefined") schemaName = "";
 
 					

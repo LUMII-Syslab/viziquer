@@ -2,7 +2,9 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';
+import { getPathFullGrammarChangeDirection } from './parser.js';
 import { Create_VQ_Element, VQ_Element, VQ_Schema } from './VQ_Element';
+import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser.js'
 
 Interpreter.customMethods({
 	
@@ -55,7 +57,7 @@ Interpreter.customMethods({
 		if(elem.isOptional())lintType = "OPTIONAL";
 		else if(elem.isNegation())lintType = "NOT";
 		else if(elem.isFilterExists())lintType = "FILTER_EXISTS";
-		newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
+		let newLoc = [locLinkTempX2, locLinkTempY2, locLinkTempX1, locLinkTempY1];
 		console.log("linkChangeDirection",lintType, elem, elem.getNestingType())
 		Create_VQ_Element(function(lnk) {
 	       lnk.setName(name);
@@ -163,7 +165,7 @@ Interpreter.customMethods({
 		// else {
 			value = "";
 			if (input == "true") {
-				instance_new_value = make_group_by_instance_value(instance_input);
+				let instance_new_value = make_group_by_instance_value(instance_input);
 				elem.setCompartmentValue("Instance", instance_input, instance_new_value, false);
 			}
 			else {
@@ -325,7 +327,7 @@ Interpreter.customMethods({
  				var klass = schema.findClassByName(compart["input"]);
 
  				_.each(klass.getAllAttributes(), function(att){
- 					var att_val = "avg("+att["name"]+")";
+ 					let att_val = "avg("+att["name"]+")";
  					atr_names.push({value: att_val, input: att_val});
 					att_val = "min("+att["name"]+")";
  					atr_names.push({value: att_val, input: att_val});
@@ -345,7 +347,7 @@ Interpreter.customMethods({
 			for (var  key in symbolTable) {	
 				for (var symbol in symbolTable[key]) {
 					if (symbolTable[key][symbol]["upBySubQuery"] == 1 || (typeof symbolTable[key][symbol]["upBySubQuery"] === "undefined" && symbolTable[key][symbol]["kind"] == "CLASS_ALIAS")){
-						var att_val = "avg("+key+")";
+						let att_val = "avg("+key+")";
 						atr_names.push({value: att_val, input: att_val});
 						att_val = "min("+key+")";
 						atr_names.push({value: att_val, input: att_val});
@@ -358,7 +360,7 @@ Interpreter.customMethods({
 					} else {
 						var attributeFromAbstractTable = findAttributeInAbstractTable(symbolTable[key][symbol]["context"], tempSymbolTable["abstractQueryTable"], key);
 						if(typeof attributeFromAbstractTable["isInternal"] !== "undefined" && attributeFromAbstractTable["isInternal"] == true){
-							var att_val = "avg("+key+")";
+							let att_val = "avg("+key+")";
 							atr_names.push({value: att_val, input: att_val});
 							att_val = "min("+key+")";
 							atr_names.push({value: att_val, input: att_val});
@@ -677,14 +679,14 @@ Interpreter.customMethods({
 	},
 		
 	visualizeSPARQL: function(q) {
-		var x = 10;
-		var y = 10;
+		let x = 10;
+		let y = 10;
 		var queries = q;
 		if(typeof q === "undefined"){
 			let yasqe3 = Template.sparqlForm.yasqe3.get();
 			var query_text = yasqe3.getValue();
 			
-			var queries = query_text.split("--------------------------------------------\n");
+			queries = query_text.split("--------------------------------------------\n");
 		
 			var editor = Interpreter.editor;
 			
@@ -693,7 +695,7 @@ Interpreter.customMethods({
 					e = editor.data.ev;
 				}
 
-				var x, y;
+				let x, y;
 				if (e) {
 					var mouse_state_obj = editor.getMouseStateObject();
 					var mouse_pos = mouse_state_obj.getMousePosition(e);
@@ -1069,8 +1071,7 @@ Interpreter.customMethods({
 						// var proj = Projects.findOne({_id: Session.get("activeProject")});
 						// lnk.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				 	}, locLink, true, cl, currentElement);
-				 	
-				 	var proj = Projects.findOne({_id: Session.get("activeProject")});
+
 					cl.setIndirectClassMembership(proj && proj.indirectClassMembershipRole);
 				}, locClass);											
 			} else {
@@ -1164,8 +1165,8 @@ function VQsetAssociationName(start, end) {
 		
 		var name_list = [];
 		
-		var start_class = Elements.findOne({_id: start});
-		var end_class = Elements.findOne({_id: end});
+		let start_class = Elements.findOne({_id: start});
+		let end_class = Elements.findOne({_id: end});
 
 		var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: start_class["elementTypeId"]});
 		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: start});
@@ -1174,8 +1175,8 @@ function VQsetAssociationName(start, end) {
 		var schema = new VQ_Schema();
 
 		if (typeof compart !== "undefined" && typeof compart_end !== "undefined" && schema.classExist(compart["input"]) && schema.classExist(compart_end["input"])) {
-			var start_class = schema.findClassByName(compart["input"]);
-			var end_class = schema.findClassByName(compart_end["input"]);
+			let start_class = schema.findClassByName(compart["input"]);
+			let end_class = schema.findClassByName(compart_end["input"]);
 				
 			var all_assoc_from_start = start_class.getAllAssociations();
 			var all_sub_super_of_end = _.union(end_class.allSuperSubClasses,end_class);

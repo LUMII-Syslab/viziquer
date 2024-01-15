@@ -66,14 +66,14 @@ Interpreter.customMethods({
 		 }
 
 		Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
-		var attributes = await getAttributes(null, true);
+		let attributes = await getAttributes(null, true);
 		Template.AddAttribute.attrList.set(attributes);
 		
 		// Template.AddAttribute.attrList.set([{name: "Waiting answer...", wait: true}]);
 		
 		$("#add-attribute-form").modal("show");
 		
-		var attributes = await getAttributes()
+		attributes = await getAttributes()
 		// var associations = await getAssociations()
 		Template.AddAttribute.attrList.set(attributes);
 		
@@ -110,10 +110,10 @@ Template.AddAttribute.events({
 
 	"click #ok-add-attribute": async function(e) {
 
-		var selected_elem_id = Session.get("activeElement");
+		let selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
+		  let vq_obj = new VQ_Element(selected_elem_id);
 			
 			
 			
@@ -162,10 +162,10 @@ Template.AddAttribute.events({
 	
 	"click #save-add-attribute": async function(e) {
 
-		var selected_elem_id = Session.get("activeElement");
+		let selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 		//Read user's choise
-		  var vq_obj = new VQ_Element(selected_elem_id);
+		  let vq_obj = new VQ_Element(selected_elem_id);
 		  var buttonn = $('button[name=required-attribute-to-add]').closest(".attribute");
 		  buttonn.each(async function () {
 		    
@@ -204,8 +204,8 @@ Template.AddAttribute.events({
 			}
 		  });
 		};
-		var value = $("#mySearch-attribute").val().toLowerCase();
-		var attributes = await getAttributes(value);
+		let value = $("#mySearch-attribute").val().toLowerCase();
+		let attributes = await getAttributes(value);
 		var associations = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attributes);
 		Template.AddAttribute.linkList.set(associations);
@@ -229,7 +229,7 @@ Template.AddAttribute.events({
 		  if (x.style.display !== "none") {
 			x.style.display = "none";
 		  } else {
-			var value = $("#mySearch-attribute").val().toLowerCase();
+			let value = $("#mySearch-attribute").val().toLowerCase();
 			var associations = await getAssociations(value)
 			Template.AddAttribute.linkList.set(associations);
 			x.style.display = "block";
@@ -269,7 +269,7 @@ Template.AddAttribute.events({
 	"click #required-existing-attribute": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
 				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
 				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
@@ -313,12 +313,12 @@ Template.AddAttribute.events({
 				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
 				fullText = fullText + attributeInformation.getAttribute("expression");
 				
-				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
-			var value = $("#mySearch-attribute").val().toLowerCase();
-			var attributes = await getAttributes(value);
+			let value = $("#mySearch-attribute").val().toLowerCase();
+			let attributes = await getAttributes(value);
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
@@ -330,7 +330,7 @@ Template.AddAttribute.events({
 	"click #attribute-helper-button": async function(e) {
 		if($(e.target).closest(".attribute")[0].childNodes[1].getAttribute("expression") != "(select this)"){
 			var act_elem = Session.get("activeElement");
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
 				var compart = Compartments.findOne({_id: $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name")});
 				var attributeInformation = $(e.target).closest(".attribute")[0].childNodes[1];
@@ -377,12 +377,12 @@ Template.AddAttribute.events({
 				if(attributeInformation.getAttribute("alias") != null && attributeInformation.getAttribute("alias") != "") fullText = fullText + attributeInformation.getAttribute("alias") + "<-";
 				fullText = fullText + attributeInformation.getAttribute("expression");
 				
-				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
 				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
-			var value = $("#mySearch-attribute").val().toLowerCase();
-			var attributes = await getAttributes(value);
+			let value = $("#mySearch-attribute").val().toLowerCase();
+			let attributes = await getAttributes(value);
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
@@ -435,7 +435,7 @@ Template.AddAttribute.events({
 				};
 
 		Utilities.callMeteorMethod("removeCompartment", list);
-		var value = $("#mySearch-attribute").val().toLowerCase();
+		let value = $("#mySearch-attribute").val().toLowerCase();
 		var attr_list = await getAttributes(value);
 		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
@@ -449,7 +449,7 @@ Template.AddAttribute.events({
 		attributeKeyDownTimeStamp = e.timeStamp;
 		await delay(delayTime);
 		if (attributeKeyDownTimeStamp === e.timeStamp ) {
-			var value = $("#mySearch-attribute").val().toLowerCase();
+			let value = $("#mySearch-attribute").val().toLowerCase();
 			var attr_list = await getAttributes(value);
 			var link_list = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attr_list);
@@ -459,7 +459,7 @@ Template.AddAttribute.events({
 	},
 	
 	'click #attribute-apply-button': async function(e) {
-		var value = $("#mySearch-attribute").val().toLowerCase();
+		let value = $("#mySearch-attribute").val().toLowerCase();
 		var attr_list = await getAttributes(value);
 		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
@@ -467,14 +467,14 @@ Template.AddAttribute.events({
 		return;
 	},
 	'click #dbp_for_attributes': async function(e) {
-		var value = $("#mySearch-attribute").val().toLowerCase();
+		let value = $("#mySearch-attribute").val().toLowerCase();
 		var attr_list = await getAttributes(value);
 		var link_list = await getAssociations(value);
 		Template.AddAttribute.attrList.set(attr_list);
 	},
 	
 	'click #more-attributes-button': async function(e) {
-		var value = $("#mySearch-attribute").val().toLowerCase();
+		let value = $("#mySearch-attribute").val().toLowerCase();
 		var count = Template.AddAttribute.Count.get();
 			count = count + plusCount;
 			Template.AddAttribute.Count.set(count);
@@ -482,7 +482,7 @@ Template.AddAttribute.events({
 		Template.AddAttribute.attrList.set(attr_list);
 	},
 	'click #more-associations-button': async function(e) {
-		var value = $("#mySearch-attribute").val().toLowerCase();
+		let value = $("#mySearch-attribute").val().toLowerCase();
 		var count = Template.AddAttribute.CountAssoc.get();
 			count = count + plusCount;
 			Template.AddAttribute.CountAssoc.set(count);
@@ -687,13 +687,13 @@ Template.AddNewAttribute.events({
 	
 
 	"click #ok-add-new-attribute": async function(e, t) {
-		var elem = document.getElementById("add-new-attribute-form");
-		var selected_elem_id = Session.get("activeElement");
-		var act_el = Elements.findOne({_id: selected_elem_id}); 
+		let elem = document.getElementById("add-new-attribute-form");
+		let selected_elem_id = Session.get("activeElement");
+		let act_el = Elements.findOne({_id: selected_elem_id}); 
 		if(elem.getAttribute("compartmentId") === null){
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			//Read user's choise
-			  var vq_obj = new VQ_Element(selected_elem_id);
+			  let vq_obj = new VQ_Element(selected_elem_id);
 			
 			};
 		}
@@ -764,14 +764,13 @@ Template.AddNewAttribute.events({
 			// fullText = fullText + " !{" + requiredCondition + "}";
 		// }
 		
-		var elem = document.getElementById("add-new-attribute-form");
+		elem = document.getElementById("add-new-attribute-form");
 		
 
 		if(elem.getAttribute("compartmentId") === null && document.getElementById("add-new-attribute-id").getAttribute("attributeid") == "newAttribute"){
 
-			var selected_elem_id = Session.get("activeElement");
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-				var vq_obj = new VQ_Element(selected_elem_id);
+				let vq_obj = new VQ_Element(selected_elem_id);
 				vq_obj.addField(expression,alias,requireValues,false,helper,addLabel,addAltLabel,addDescription,graph,graphInstruction,selectionCondition,addAttributeCondition,addNodeLevelCondition);
 			};
 			Template.AddAttribute.existingAttributeList.set(getExistingAttributes());
@@ -796,10 +795,10 @@ Template.AddNewAttribute.events({
 			// attribute.textContent = fullText;
 
 			var act_elem = Session.get("activeElement");
-			var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+			let act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 			if(typeof act_el !== 'undefined'){
 				var compart_type = CompartmentTypes.findOne({name: "Attributes", elementTypeId: act_el["elementTypeId"]});
-				var value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
+				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 
 				compart.subCompartments["Attributes"]["Attributes"]["Expression"]["value"] = expression;
@@ -831,8 +830,8 @@ Template.AddNewAttribute.events({
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
 				Dialog.updateCompartmentValue(compart_type, fullText, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 			}
-			var value = $("#mySearch-attribute").val().toLowerCase();
-			var attributes = await getAttributes(value);
+			let value = $("#mySearch-attribute").val().toLowerCase();
+			let attributes = await getAttributes(value);
 			var associations = await getAssociations(value);
 			Template.AddAttribute.attrList.set(attributes);
 			Template.AddAttribute.linkList.set(associations);
@@ -947,7 +946,7 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 	var param = {propertyKind: propertyKind};	
 	if (filter != null) param["filter"] = filter;
 	if (limit != null) param["limit"] = limit;
-	var value = $("#mySearch-attribute").val()
+	let value = $("#mySearch-attribute").val()
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		param.basicOrder = true;
 	}
@@ -956,12 +955,12 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 }
 
 async function getAttributes(filter, waiting){
-	var selected_elem_id = Session.get("activeElement");
+	let selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			
 			var attr_list = [];
 			
-			var vq_obj = new VQ_Element(selected_elem_id);
+			let vq_obj = new VQ_Element(selected_elem_id);
 
 			if(vq_obj.isUnit() != true && vq_obj.isUnion() != true) attr_list.push({name:"(select this)"});
 			
@@ -1067,12 +1066,12 @@ async function getAttributes(filter, waiting){
 }
 
 async function getAssociations(filter){
-	var selected_elem_id = Session.get("activeElement");
+	let selected_elem_id = Session.get("activeElement");
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 			var attr_list = [];
 			
-			var vq_obj = new VQ_Element(selected_elem_id);
+			let vq_obj = new VQ_Element(selected_elem_id);
 			
 				
 			var param = formParams(vq_obj, 'Object', filter, Template.AddAttribute.CountAssoc.get());
@@ -1145,9 +1144,9 @@ async function getAssociations(filter){
 }
 
 function getExistingAttributes(){
-	var selected_elem_id = Session.get("activeElement");
+	let selected_elem_id = Session.get("activeElement");
 	if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
-		var vq_obj = new VQ_Element(selected_elem_id);
+		let vq_obj = new VQ_Element(selected_elem_id);
 		
 		// var field_list = field_list.map(function(f) {
 		var field_list = vq_obj.getFields().map(function(f) {

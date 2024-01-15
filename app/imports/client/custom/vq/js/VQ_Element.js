@@ -46,11 +46,11 @@ function VQ_r2rml (schema) {
 		if (d.predicate == "http://www.w3.org/ns/r2rml#predicateObjectMap") {
 			var predicateObjectMap = tr.addPredicateObjectMap(d, tmpData, r2rml);
 			if (predicateObjectMap.objectMap.column){
-				var ontProperty = schema.findAttributeByName(predicateObjectMap.predicate);
+				let ontProperty = schema.findAttributeByName(predicateObjectMap.predicate);
 				ontProperty.triplesMaps = _.union(ontProperty.triplesMaps, [tr]);
 			}
 			else{
-				var ontProperty = schema.findAssociationByName(predicateObjectMap.predicate);
+				let ontProperty = schema.findAssociationByName(predicateObjectMap.predicate);
 				ontProperty.triplesMaps = _.union(ontProperty.triplesMaps, [tr]);
 			}
 
@@ -452,7 +452,7 @@ function makeSubTree(classes, deep) {
 
 var druka = false;
 var startTime = null;
-VQ_Schema_copy = null; 	
+var VQ_Schema_copy = null; 	
 function VQ_Schema ( data = {}, tt = 0) {
 //console.log("***************************************")
 //console.log(tt.toString().concat("  - data ", _.size(data).toString()," schema  ", Schema.find().count().toString()))
@@ -862,7 +862,7 @@ VQ_Schema.prototype = {
 	
 		_.each(this.Classes, function (cl){
 			if (cl.isAbstract && cl.localName != " ") {
-				for (i = 1; i < _.size(cl.cycle); i++) { 
+				for (let i = 1; i < _.size(cl.cycle); i++) { 
 					cl.ontologies[cl.cycle[i].prefix] = 1;
 				}
 			}  
@@ -997,7 +997,7 @@ VQ_Schema.prototype = {
 		var cycle_top_class = new VQ_Class({localName:n.concat(ii),namespace:schema.namespace,SuperClasses:[],instanceCount:cc.inst_count}, true);
 		schema.addClass(cycle_top_class);
 		_.each(cc.cycle, function(c) {
-			c_class = schema.findClassByName(c);
+			let c_class = schema.findClassByName(c);
 			c_class.originalSuperClasses = _.union(c_class.originalSuperClasses,cycle_top_class.getClassName());
 		})		
 		var new_cycle = [];
@@ -1269,7 +1269,7 @@ VQ_Schema.prototype = {
 	
 	if ( _.size(ontologies) == 1 || _.size(schema.Classes) <= const_small_schema ){
 		//var ont_top_classes =  _.filter(good_classes, function (cl) { return _.size(cl.superClasses) == 0 } );
-		var ont_top_classes =  _.filter(good_classes, function (cl){ 
+		let ont_top_classes =  _.filter(good_classes, function (cl){ 
 			var ownSuperClasses = _.filter(cl.superClasses, function(c) { return  c.ontology.dprefix == cl.ontology.dprefix && !c.isAbstract || c.ontologies[cl.ontology.dprefix] && c.isAbstract;})
 				return _.size(ownSuperClasses) == 0; });
 		var top_classes_list = _.map(ont_top_classes, function(cl){
@@ -1286,7 +1286,7 @@ VQ_Schema.prototype = {
 		
 		_.each(ontologies, function(ont){
 			var tr_local_name = "";
-			var ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.namespace == ont.namespace && !cl.isAbstract });
+			let ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.namespace == ont.namespace && !cl.isAbstract });
 			ont_top_classes = _.union(ont_top_classes, _.filter(good_classes, function (cl) { return  cl.ontologies[ont.dprefix] && cl.isAbstract  }));
 			
 			ont_top_classes =  _.filter(ont_top_classes, function (cl){ 
@@ -1321,7 +1321,7 @@ VQ_Schema.prototype = {
 		{
 			var tree_node_id = schema.getNewIdString("__");
 			var children = [];
-			var ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.classCount == 1 && cl.localName != " " });
+			let ont_top_classes =  _.filter(good_classes, function (cl) { return cl.ontology.classCount == 1 && cl.localName != " " });
 			_.each(ont_top_classes, function(cl){
 				var subtree_node_id = schema.getNewIdString(cl.localName);
 				var tr_local_name = makeTreeNodeLocalName(cl.getClassName());
@@ -1546,7 +1546,7 @@ VQ_Schema.prototype = {
 	_.each(schema.Classes, function(cl){
 		if (!cl.isAbstract && checkInstances(cl))
 		{
-			cl_name = cl.getElementOntName();
+			let cl_name = cl.getElementOntName();
 			schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"], newLine.concat("Declaration(Class(",cl_name,"))"));
 			if (cl.instanceCount > 0)
 			{			
@@ -1555,7 +1555,7 @@ VQ_Schema.prototype = {
 			if (_.size(cl.originalSubClasses) > 0)
 			{
 				_.each(cl.originalSubClasses, function(sc_full_name) {
-					sc_name = schema.findClassByName(sc_full_name).getElementOntName();
+					let sc_name = schema.findClassByName(sc_full_name).getElementOntName();
 					if (checkInstances(cl) && checkInstances(schema.findClassByName(sc_full_name)))
 						schema.OwlFormat["2_Common"] = _.union(schema.OwlFormat["2_Common"],newLine.concat("SubClassOf(",sc_name," ",cl_name,")"));
 				}) 
@@ -1565,7 +1565,7 @@ VQ_Schema.prototype = {
 	
 	_.each(schema.Cycles, function(cycle){
 		var cycle_classes = [];
-		for (i = 1; i < _.size(cycle); i++) { 
+		for (let i = 1; i < _.size(cycle); i++) { 
 			var cycle_class = schema.findClassByName(cycle[i].name)
 			if (checkInstances(cycle_class))
 				cycle_classes = _.union(cycle_classes, cycle_class.getElementOntName());
@@ -1816,7 +1816,7 @@ VQ_Schema.prototype = {
   var sparql = [];
 
 	var attr = null;
-	for (i = 0; i < 50; i++) 
+	for (let i = 0; i < 50; i++) 
 	{
 		attr = attr_data[i];
 		sparql = _.union(sparql,["{ SELECT \""+attr.name+"\" AS ?NN (COUNT(?Cl) AS ?AA) WHERE{ ?Cl a :"+class_info.localName+". ?Cl :"+attr.name+" ?attr.}}"]);
@@ -1924,7 +1924,7 @@ function VQ_ontology (URI, prefix) {
   this.elementCount = 1;
   this.classCount = 0;
   this.instanceCount = 0;
-  p = "";
+  let p = "";
   this.namesAreUnique = true;
   if (prefix) 
   {
@@ -2445,8 +2445,8 @@ function Create_VQ_Element(func, location, isLink, source, target) {
   var active_diagram_type_id = Diagrams.findOne({_id:Session.get("activeDiagram")})["diagramTypeId"];
 
   if (isLink) {
-    var elem_type = ElementTypes.findOne({name:"Link", diagramTypeId:active_diagram_type_id});
-    var elem_style = _.find(elem_type.styles, function(style) {
+    let elem_type = ElementTypes.findOne({name:"Link", diagramTypeId:active_diagram_type_id});
+    let elem_style = _.find(elem_type.styles, function(style) {
                 return style.name === "Default";
     });
 
@@ -2471,7 +2471,7 @@ function Create_VQ_Element(func, location, isLink, source, target) {
         endElement: target._id(),
       };
 
-      var compartments = Dialog.buildCopartmentDefaultValue(new_line);
+      let compartments = Dialog.buildCopartmentDefaultValue(new_line);
 
       if (_.size(compartments) > 0) {
         new_line.initialCompartments = compartments;
@@ -2483,8 +2483,8 @@ function Create_VQ_Element(func, location, isLink, source, target) {
       });
 
   } else {
-    var elem_type = ElementTypes.findOne({name:"Class", diagramTypeId:active_diagram_type_id});
-    var elem_style = _.find(elem_type.styles, function(style) {
+    let elem_type = ElementTypes.findOne({name:"Class", diagramTypeId:active_diagram_type_id});
+    let elem_style = _.find(elem_type.styles, function(style) {
                 return style.name === "Default";
     });
 
@@ -2501,7 +2501,7 @@ function Create_VQ_Element(func, location, isLink, source, target) {
             location:  location
     };
 
-    var compartments = Dialog.buildCopartmentDefaultValue(new_box);
+    let compartments = Dialog.buildCopartmentDefaultValue(new_box);
 
     if (_.size(compartments) > 0) {
       new_box.initialCompartments = compartments;
@@ -2782,15 +2782,7 @@ VQ_Element.prototype = {
 		return name.substr(1)
 	} else { return null }
   },
-  
-  getComment: function() {
-    return this.getCompartmentValue("Comment")
-  },
-  
-  setComment: function(name, input) {
-      this.setCompartmentValue("Comment",name,input);
-  },
-  
+    
   getGraph: function() {
     return this.getCompartmentValue("Graph")
   },
@@ -2862,13 +2854,9 @@ VQ_Element.prototype = {
     this.setLinkQueryType(type);
   },
   isLabelServiceLanguages: function() {
-    // var useLabelService = this.getCompartmentValue("Use Label Service");
     var labelServiceLanguages = this.getCompartmentValue("Label Service Languages");
-	// if(useLabelService == "true"){
-		if(labelServiceLanguages == null || labelServiceLanguages.replace(/ /g, "") == "") labelServiceLanguages = "[AUTO_LANGUAGE],en";
-		return labelServiceLanguages;
-	// }
-	return null;
+	if(labelServiceLanguages == null || labelServiceLanguages.replace(/ /g, "") == "") labelServiceLanguages = "[AUTO_LANGUAGE],en";
+	return labelServiceLanguages;
   },
   // determines whether the indirect class membership should be used (if configured) by translator
   isIndirectClassMembership: function() {
@@ -3396,7 +3384,7 @@ VQ_Element.prototype = {
 																]);
 						if (this.isSubQuery() ) {
 						//	 this.setLinkQueryType("PLAIN");
-						   var root_dir =this.getRootDirection();
+						   let root_dir =this.getRootDirection();
                if (root_dir=="start") {
 								 this.setCustomStyle([
 																	{attrName:"startShapeStyle.fill",attrValue:"#ff0000"},
@@ -3407,7 +3395,7 @@ VQ_Element.prototype = {
 																 ]);
 							 };
 						} else if (this.isGlobalSubQuery()) {
-							var root_dir =this.getRootDirection();
+							let root_dir =this.getRootDirection();
 							if (root_dir=="start") {
 								this.setCustomStyle([
 																 {attrName:"startShapeStyle.fill",attrValue:"#ffffff"},
@@ -3434,7 +3422,7 @@ VQ_Element.prototype = {
 
 						} else if (this.isSubQuery() ) {
 						//	 this.setLinkQueryType("PLAIN");
-						   var root_dir =this.getRootDirection();
+						   let root_dir =this.getRootDirection();
                if (root_dir=="start") {
 								 this.setCustomStyle([
 																	{attrName:"startShapeStyle.fill",attrValue:"#18b6d1"},
@@ -3463,7 +3451,7 @@ VQ_Element.prototype = {
 
 						} else if (this.isSubQuery() ) {
 						//	 this.setLinkQueryType("PLAIN");
-						   var root_dir =this.getRootDirection();
+						   let root_dir =this.getRootDirection();
                if (root_dir=="start") {
 								 this.setCustomStyle([
 																	{attrName:"startShapeStyle.fill",attrValue:"#000000"},
@@ -3482,7 +3470,7 @@ VQ_Element.prototype = {
 																{attrName:"endShapeStyle.stroke", attrValue:"#000000"},
 															]);
 				  if (this.isSubQuery() ) {
-										var root_dir =this.getRootDirection();
+										let root_dir =this.getRootDirection();
 									  if (root_dir=="start") {
 																	 this.setCustomStyle([
 																										{attrName:"startShapeStyle.fill",attrValue:"#000000"},

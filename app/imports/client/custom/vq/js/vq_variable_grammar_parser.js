@@ -839,7 +839,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
     				} else {
     					return null
     				}
-    				return null
+    				
     			};
     			// string -> idObject
     			// returns type of the identifier from schema assuming that it is name of the class. Null if does not exist

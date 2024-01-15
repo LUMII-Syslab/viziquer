@@ -21160,17 +21160,17 @@ options = arguments[1];
 						var prop = await dataShapes.getProperties({propertyKind:'Data'}, newStartElement);
 						prop = prop["data"];
 						
-						var schemaName = dataShapes.schema.schemaType;
+						let schemaName = dataShapes.schema.schemaType;
 						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
-								var prefix;
+								let prefix;
 								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
-								var propName = prefix+prop[cl]["display_name"]
+								let propName = prefix+prop[cl]["display_name"]
 								await addContinuation(place, propName, 100, false, 1);
 								if(prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(place, prop[cl]["prefix"]+":"+prop[cl]["display_name"], 100, false, 1);
 							}
@@ -21215,17 +21215,17 @@ options = arguments[1];
 					var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, newStartElement);
 					prop = prop["data"];
 					
-					var schemaName = dataShapes.schema.schemaType;
+					let schemaName = dataShapes.schema.schemaType;
 					if(typeof schemaName === "undefined") schemaName = "";
 					
 					for(let cl in prop){
 						if(typeof prop[cl] !== "function"){
-							var prefix;
+							let prefix;
 							if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 							else prefix = prop[cl]["prefix"]+":";
 
-							var propName = prefix+prop[cl]["display_name"]
+							let propName = prefix+prop[cl]["display_name"]
 							if(prop[cl]["mark"] == "in") propName = "^" + propName;
 							await addContinuation(place, propName, priority, false, 2);
 							var mark = "";
@@ -21277,7 +21277,7 @@ options = arguments[1];
             	} else {
 					return null
             	}
-            	return null
+
            };
 		   
             // string -> idObject
@@ -21302,7 +21302,7 @@ options = arguments[1];
             	} else {
             		return null
             	}
-            	return null
+
             };
             			
 			// string -> idObject
@@ -21385,31 +21385,31 @@ options = arguments[1];
             };
 						  
 			async function getInverseAssociations(o){
-				var loc = await location();
+				let loc = await location();
 				var textEnd = loc.end.offset;
 				var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
         		// var varibleName = makeVar(o);
-        		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+        		let params = {main:{propertyKind:'ObjectExt',"limit": 30}}
         		if(pathParts.length > 1){
         			 params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
         		} else {
         			if (typeof options.className !== 'undefined') params.element = {className: options.className};	
         		}
 
-				var props = await dataShapes.getPropertiesFull(params);
+				let props = await dataShapes.getPropertiesFull(params);
             	props = props["data"];
 				
-				var schemaName = dataShapes.schema.schemaType;
+				let schemaName = dataShapes.schema.schemaType;
 				if(typeof schemaName === "undefined") schemaName = "";
 
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
-						var prefix;
+						let prefix;
 						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
-						var propName = prefix+props[pr]["display_name"];
+						let propName = prefix+props[pr]["display_name"];
 						if ( props[pr].mark === 'in'){
 							var mark = ""
 							if(o == "^"){
@@ -21433,39 +21433,39 @@ options = arguments[1];
             	var targetSourceClass = "targetClass";
             	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 
-				var p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-        		var props= await dataShapes.getPropertiesFull(p);
+				let p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+        		let props= await dataShapes.getPropertiesFull(p);
 				
-				var schemaName = dataShapes.schema.schemaType;
+				let schemaName = dataShapes.schema.schemaType;
 				if(typeof schemaName === "undefined") schemaName = "";
 
             	props = props["data"];
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
-						var prefix;
+						let prefix;
 						if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 							|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
-						var propName = prefix+props[pr]["display_name"];
+						let propName = prefix+props[pr]["display_name"];
 									
 						await addContinuation(await location(), propName, 100, false, 1, "end");
 						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 					}
 				}
 							
-				var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-        		var props= await dataShapes.getPropertiesFull(p);
+				p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+        		props= await dataShapes.getPropertiesFull(p);
 
             	props = props["data"];
 
             	for(let pr in props){
 					if(typeof props[pr] !== "function"){
-						var prefix;
+						let prefix;
 						if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")prefix = "";
 						else prefix = props[pr]["prefix"]+":";
 										
-						var propName = prefix+props[pr]["display_name"];
+						let propName = prefix+props[pr]["display_name"];
 						var mark = "";
 						if ( props[pr].mark === 'in'){
 							propName = "^"+propName;
@@ -21493,7 +21493,7 @@ options = arguments[1];
         	}
 			
     		async function afterVar(o) {
-				var varibleName = makeVar(o);
+				let varibleName = makeVar(o);
 				var selected_elem_id = Session.get("activeElement");
     			var act_el;
     			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -21516,11 +21516,11 @@ options = arguments[1];
 					}
 					
 					
-					var loc = await location();
+					let loc = await location();
 					var textEnd = loc.end.offset;
 					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-					var varibleName = makeVar(o);
-					var params = {main:{propertyKind:'Data',"limit": 30}}
+					let varibleName = makeVar(o);
+					let params = {main:{propertyKind:'Data',"limit": 30}}
 					var isInv = false;
 								
 					if(pathParts.length > 1){
@@ -21547,10 +21547,10 @@ options = arguments[1];
 						if(pathParts[0].startsWith("^"))isInv = true;
 					}
 					
-					var props = await dataShapes.getPropertiesFull(params);
+					let props = await dataShapes.getPropertiesFull(params);
 					props = props["data"];
 						
-					var schemaName = dataShapes.schema.schemaType;
+					let schemaName = dataShapes.schema.schemaType;
 					if(typeof schemaName === "undefined") schemaName = "";
 					
 					if(isInv == false){
@@ -21558,11 +21558,11 @@ options = arguments[1];
 						
 						for(let pr in props){
 							if(typeof props[pr] !== "function"){
-								var prefix;
+								let prefix;
 								if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 									|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 								else prefix = props[pr]["prefix"]+":";
-								var propName = prefix+props[pr]["display_name"];
+								let propName = prefix+props[pr]["display_name"];
 								await addContinuation(await location(), propName, 100, false, 1);
 								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1);
 							}
@@ -21570,7 +21570,7 @@ options = arguments[1];
 					}
 					// var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
 					params.main.propertyKind = 'ObjectExt'
-					var props = await dataShapes.getPropertiesFull(params);				
+					props = await dataShapes.getPropertiesFull(params);				
 					
 					props = props["data"];
 					
@@ -21578,12 +21578,12 @@ options = arguments[1];
 					
 					for(let pr in props){
 						if(typeof props[pr] !== "function"){
-							var prefix;
+							let prefix;
 							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") 
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 											
-							var propName = prefix+props[pr]["display_name"];
+							let propName = prefix+props[pr]["display_name"];
 							if ( props[pr].mark === 'in' && isInv == false){
 								propName = "^"+propName;
 							}
@@ -21617,42 +21617,42 @@ options = arguments[1];
 						}
 					}
         		};
-				var loc = await location();
+				let loc = await location();
         		if(typeof classAliasTable[o] !== 'undefined') {
 					continuations[loc["end"]["offset"]] = {};
-					var params = {main:{propertyKind:'Data',"limit": 30}};
+					let params = {main:{propertyKind:'Data',"limit": 30}};
 					params.element = {className: classAliasTable[o]};	
 
-            		var props = await dataShapes.getPropertiesFull(params);
+            		let props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
 					
-					var schemaName = dataShapes.schema.schemaType;
+					let schemaName = dataShapes.schema.schemaType;
 					if(typeof schemaName === "undefined") schemaName = "";
 
             		for(let pr in props){
 						if(typeof props[pr] !== "function"){
-							var prefix;
+							let prefix;
 							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 										
-							var propName = prefix+props[pr]["display_name"];
+							let propName = prefix+props[pr]["display_name"];
 							await addContinuation(await location(), propName, 100, false, 1, "end");
 							if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 						}
 					}
 					params.main.propertyKind = "Object";
-					var props = await dataShapes.getPropertiesFull(params);
+					props = await dataShapes.getPropertiesFull(params);
             		props = props["data"];
 
             		for(let pr in props){
 						if(typeof props[pr] !== "function"){
-							var prefix;
+							let prefix;
 							if((props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 								|| (schemaName.toLowerCase() == "wikidata" && props[pr]["prefix"] == "wdt"))prefix = "";
 							else prefix = props[pr]["prefix"]+":";
 										
-							var propName = prefix+props[pr]["display_name"];
+							let propName = prefix+props[pr]["display_name"];
 							if ( props[pr].mark === 'in'){
 								if(o == "^")propName = "^"+propName;
 								else propName = "inv("+propName+")";
@@ -21667,7 +21667,7 @@ options = arguments[1];
 						act_el = new VQ_Element(selected_elem_id)
 					}
 					if((act_el.isUnit() != true && act_el.isUnion() != true) || !act_el.isRoot()) {	
-						var loc = await location();
+						let loc = await location();
 						var textEnd = loc.end.offset;
 						var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
 						
@@ -21688,7 +21688,7 @@ options = arguments[1];
 								
 						var prop;
 						if(pathParts.length > 1){
-							var params = {main:{propertyKind:'Data',"limit": 30}}
+							let params = {main:{propertyKind:'Data',"limit": 30}}
 							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
 							if(pathParts[pathParts.length-1].startsWith("^")){
 								params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
@@ -21702,25 +21702,25 @@ options = arguments[1];
 								
 						prop = prop["data"];
 						
-						var schemaName = dataShapes.schema.schemaType;
+						let schemaName = dataShapes.schema.schemaType;
 						if(typeof schemaName === "undefined") schemaName = "";
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
-								var prefix;
+								let prefix;
 								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
-								var propName = prefix+prop[cl]["display_name"]
+								let propName = prefix+prop[cl]["display_name"]
 								// await addContinuation(place, propName, priority, false, 2);
 								await addContinuation(await location(), propName, 99, false, 1, "end");
-								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
+								// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), props[pr]["prefix"]+":"+props[pr]["display_name"], 100, false, 1, "end");
 							}
 						}
 								
 						if(pathParts.length > 1){
-							var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+							let params = {main:{propertyKind:'ObjectExt',"limit": 30}}
 							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
 									// if(pathParts[pathParts.length-1].startsWith("^")){
 										// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
@@ -21735,12 +21735,12 @@ options = arguments[1];
 						
 						for(let cl in prop){
 							if(typeof prop[cl] !== "function"){
-								var prefix;
+								let prefix;
 								if((prop[cl]["is_local"] == true && await dataShapes.schema.showPrefixes === "false")
 									|| (schemaName.toLowerCase() == "wikidata" && prop[cl]["prefix"] == "wdt"))prefix = "";
 								else prefix = prop[cl]["prefix"]+":";
 
-								var propName = prefix+prop[cl]["display_name"]
+								let propName = prefix+prop[cl]["display_name"]
 								var mark = "";
 								if(prop[cl]["mark"] == "in") {
 									propName = "^" + propName;
@@ -21748,7 +21748,7 @@ options = arguments[1];
 								}
 								// await addContinuation(place, propName, priority, false, 2);
 								await addContinuation(await location(), propName, 99, false, 2, "end");
-								if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), mark+props[pr]["prefix"]+":"+props[pr]["display_name"], 99, false, 2, "end");
+								// if(props[pr]["is_local"] == true && await dataShapes.schema.showPrefixes === "false") await addContinuation(await location(), mark+props[pr]["prefix"]+":"+props[pr]["display_name"], 99, false, 2, "end");
 							}
 						}
 					}

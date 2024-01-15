@@ -282,7 +282,7 @@ Template.AddMergeValues.events({
 					//if(alias != null && alias !="") expr =  aggregation + "(" + alias + ")";
 				}
 				
-				var requireValues = $('input[id=require-merge-check-box]:checked').val();	
+				let requireValues = $('input[id=require-merge-check-box]:checked').val();	
 				if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
 				else requireValues = false;
 
@@ -306,7 +306,7 @@ Template.AddMergeValues.events({
 		} else {
 			Template.AddMergeValues.expressionField.get().value= expr;
 			// Template.AddMergeValues.expressionField.set(expr);
-			var requireValues = $('input[id=require-merge-check-box]:checked').val();	
+			let requireValues = $('input[id=require-merge-check-box]:checked').val();	
 			if(typeof requireValues !== "undefined" && requireValues == "on") requireValues = true;
 			else requireValues = false;
 			Template.AddMergeValues.requireField.get().checked = requireValues;
@@ -364,7 +364,7 @@ function parsedExpressionField(expression){
 		var aggregation = expression.substring(0, expression.indexOf("("));
 		var aggregationList = ["count", "count_distinct", "sum", "avg", "max", "min", "sample", "group_concat"];
 		if(aggregationList.indexOf(aggregation.toLowerCase()) != -1) {
-			var expression = expression.substring(expression.indexOf("(")+1, expression.length-1)
+			expression = expression.substring(expression.indexOf("(")+1, expression.length-1)
 			var distinct = "";
 			if(expression.toLowerCase().startsWith("distinct ")) {		
 				distinct = "checked";

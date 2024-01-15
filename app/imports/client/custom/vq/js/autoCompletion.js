@@ -6,8 +6,9 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 import { generateSymbolTable, findAttributeInAbstractTable, } from '/imports/client/custom/vq/js/transformations.js'
 import { VQ_Element } from './VQ_Element'
 
-import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser'
-import * as vq_property_path_grammar_completion_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_completion_parser'
+import * as vq_grammar_completion_parser from '/imports/client/custom/vq/js/vq_grammar_completion_parser.js'
+import * as vq_property_path_grammar_completion_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_completion_parser.js'
+import * as vq_language_grammar_completion_parser from '/imports/client/custom/vq/js/vq_language_grammar_completion_parser.js'
 
 var symbolTable = {};
 var grammarType = "class";
@@ -197,8 +198,8 @@ async function keyUpHandler(e){
 		var m = document.getElementById("message");
 		if(m != null) {
 			removeMessage();
-			var text = e.target.value;
-			var textBefore = text.substring(0, e.target.selectionStart);
+			const text = e.target.value;
+			let textBefore = text.substring(0, e.target.selectionStart);
 			requestAndProcessContinuationsDebounced(textBefore, text, textBefore.length, symbolTable);
 		}
 	}
@@ -206,8 +207,8 @@ async function keyUpHandler(e){
 	if (e.keyCode !== 40 && e.keyCode !== 38 && e.keyCode !== 13 && e.keyCode !== 9 && e.keyCode !== 27){
 		if(document.getElementsByClassName("autocomplete-items").length > 0){
 			removeMessage();
-			var text = e.target.value;
-			var textBefore = text.substring(0, e.target.selectionStart);
+			const text = e.target.value;
+			let textBefore = text.substring(0, e.target.selectionStart);
 			requestAndProcessContinuationsDebounced(textBefore, text, textBefore.length, symbolTable);
 		}
 	}
@@ -412,16 +413,15 @@ function updateInputValue(input, prefix, suggestion) {
 	input.blur();
 	input.focus();
 
-	var act_elem = Session.get("activeElement");
-	var act_el = Elements.findOne({_id: act_elem});
+	const act_elem = Session.get("activeElement");
+	const act_el = Elements.findOne({_id: act_elem});
 	if(typeof act_el !== 'undefined'){
-		var compart_type_id = $(input).closest(".compart-type").attr("id");
-		var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-		var compartAll = Compartments.find({ elementId: act_elem});
-
-		var compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
+		const compart_type_id = $(input).closest(".compart-type").attr("id");
+		const compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+	
+		const compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
 		if(typeof compart !== "undefined"){
-			var elem = new VQ_Element(act_elem);
+			let elem = new VQ_Element(act_elem);
             if (elem.isIndirectClassMembership()) {
 				Dialog.updateCompartmentValue(compart_type, newValue, ".. "+newValue, compart["_id"]);
 			} else {
@@ -443,16 +443,16 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 
 	if(grammarType == "className"){
 						
-			var c = {};
+		let c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
 			var cls;
 			
-			var params = {};
+			let params = {};
 			var vq_obj;
 			if(fullText != "") params.filter = fullText;
 			
-			var selected_elem_id = Session.get("activeElement");			
+			const selected_elem_id = Session.get("activeElement");			
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
 				vq_obj = new VQ_Element(selected_elem_id);
@@ -485,32 +485,33 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			return c;
 	}
 	else if(grammarType == "order"){
-		var c = {};
+		let c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
 		
-		var act_elem = Session.get("activeElement");
+		const act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
 		if (!act_elem) {
 			return [];
 		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
+		const act_comp = Compartments.findOne({elementId: act_elem})
 		if (!act_comp) {
 			return [];
 		}
 
-		var elem_type = ElementTypes.findOne({name: "Class"});
+		const elem_type = ElementTypes.findOne({name: "Class"});
 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
 			return [];
 		}
 		
-		var compart_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: act_comp["elementTypeId"]});
- 		var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+		const compart_type = CompartmentTypes.findOne({name: "ClassType", elementTypeId: act_comp["elementTypeId"]});
+ 		const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 		
 		
 		if(compart.input == "query"){
-			var tempSymbolTable = await generateSymbolTable();
-			var symbolTable = tempSymbolTable["symbolTable"];
+			
+			const tempSymbolTable = await generateSymbolTable();
+			let symbolTable = tempSymbolTable["symbolTable"];
 			var rootSymbolTable = tempSymbolTable["rootSymbolTable"];
 			
 			for(let key in rootSymbolTable) {
@@ -527,11 +528,11 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 						
 			
 		} else {
-			var tempSymbolTable = await generateSymbolTable();
-			var abstractQueryTable = tempSymbolTable["abstractQueryTable"];
+			const tempSymbolTable = await generateSymbolTable();
+			const abstractQueryTable = tempSymbolTable["abstractQueryTable"];
 			
 			if(findClassInAbstractQueryTable(act_elem, abstractQueryTable).isGlobalSubQuery == true){
-				var symbolTable = tempSymbolTable["symbolTable"];
+				let symbolTable = tempSymbolTable["symbolTable"];
 	
 				for(let key in symbolTable) {
 					for(let k = 0; k < symbolTable[key].length; k++){
@@ -549,21 +550,21 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		return c;
 	}
 	else if(grammarType == "group"){
-		var c = {};
+		let c = {};
 			c["prefix"] = "";
 			c["suggestions"] = [];
 			
-		var act_elem = Session.get("activeElement");
+		const act_elem = Session.get("activeElement");
 		//Active element does not exist OR has no Name OR is of an unpropriate type
 		if (!act_elem) {
 			return [];
 		}
-		var act_comp = Compartments.findOne({elementId: act_elem})
+		const act_comp = Compartments.findOne({elementId: act_elem})
 		if (!act_comp) {
 			return [];
 		}
 
-		var elem_type = ElementTypes.findOne({name: "Class"});
+		const elem_type = ElementTypes.findOne({name: "Class"});
 		if (elem_type && act_comp["elementTypeId"] != elem_type._id) {
 			return [];
 		}
@@ -574,11 +575,11 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		var group_by_list_sub = [];
 		var group_by_list_vissible_sub = [];
 
-		var selected_elem_id = Session.get("activeElement");
+		const selected_elem_id = Session.get("activeElement");
 		
-		var tempSymbolTable = await generateSymbolTable();
+		const tempSymbolTable = await generateSymbolTable();
 		// console.log("group by", tempSymbolTable);
-		var symbolTable = tempSymbolTable["symbolTable"];
+		let symbolTable = tempSymbolTable["symbolTable"];
 
 
 		
@@ -614,15 +615,15 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		return c;
 	}
 	else if(grammarType == "instance"){
-		var c = {};
+		let c = {};
 		c["prefix"] = "";
 		c["suggestions"] = [];
-		var params = {limit: dataShapes.schema.tree.countI};
+		let params = {limit: dataShapes.schema.tree.countI};
 		fullText = fullText.trimStart();
 		if (fullText != "") params.filter = fullText;
 		
-		var selected_elem_id = Session.get("activeElement");
-		var act_el;
+		const selected_elem_id = Session.get("activeElement");
+		let act_el;
 		if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			act_el = new VQ_Element(selected_elem_id);
 		}
@@ -646,58 +647,56 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		return c;
 	}
 	else {
-		var act_elem = Session.get("activeElement");
-		
-		
-		
+		const act_elem = Session.get("activeElement");
+
 		try {
 			// var schema = new VQ_Schema();
 			
 			if(grammarType == "link"){
-				var name_list = [];
+				let name_list = [];
 
 				if (act_elem) {
 					var vq_link = new VQ_Element(act_elem);
 					if (vq_link.isLink()) {
 						// console.log("PPPPPPPPP", fullText, text)
 						// var parsed_exp = await vq_property_path_grammar_completion.parse(text, {schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
-						var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
+						let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:vq_link.getStartElement(), link:vq_link});
 						
 					};
 				};
 			} else if(grammarType == "linkPath"){
-				var name_list = [];
+				let name_list = [];
 				//var act_elem = Session.get("activeElement");
 				if (act_elem) {
-					var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
-					var className = compart["input"];
-					var parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
+					const act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+					const compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					let className = compart["input"];
+					let parsed_exp = await vq_property_path_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, context:act_elem, className:className});
 				};
 			}else if(grammarType == "language"){
-				var name_list = [];
+				let name_list = [];
 				//var act_elem = Session.get("activeElement");
 				if (act_elem) {
-					var parsed_exp = vq_language_grammar_completion.parse(text, {time:time});
+					let parsed_exp = await vq_language_grammar_completion_parser.parse(text, {time:time});
 				};
 			} else {
 
-				var className = "";
+				let className = "";
 
-				var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
+				const act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
 				if(typeof act_el !== 'undefined'){
-					var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
-					var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
+					const compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+					const compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 					if(typeof compart !== 'undefined') className = compart["input"];
 				}
 
 				if(typeof symbolTable === 'undefined'){
-					var tempSymbolTable = await generateSymbolTable();
+					const tempSymbolTable = await generateSymbolTable();
 					symbolTable = tempSymbolTable["symbolTable"];
 				}
 				// var parsed_exp = vq_grammar_completion.parse(text, {schema:schema, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
-				var parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
+				let parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
 			// console.log(com);
@@ -705,7 +704,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			// console.log(JSON.parse(com["message"]));
 			var cont = JSON.parse(com["message"]);
 			if(time == cont.time){
-				var c = getContinuationsNew(text, text.length, cont);			
+				let c = getContinuationsNew(text, text.length, cont);			
 				return c;
 			} else {return "leaveOldRessult"}
 		}
@@ -761,7 +760,7 @@ function getContinuationsNew(text, length, continuations) {
 	}
 
 	if (farthest_pos_prev != -1) {
-		for (i = farthest_pos; i >=0; i--) {
+		for (let i = farthest_pos; i >=0; i--) {
 			if (continuations[i] != null) {
 				var varrible = text.substring(i, farthest_pos);
 
@@ -816,10 +815,9 @@ function getContinuationsNew(text, length, continuations) {
 			return {prefix:prefix, suggestions:TermMessages}
 		//ja nebija sakritibu iespejamo turpinajumu tabulaa, tad ir kluda
 		} else {
-			var uniqueMessages = getCompletionTableNew(continuations_to_report, text)
-			var messages = [];
-
-			var messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
+			let uniqueMessages = getCompletionTableNew(continuations_to_report, text)
+			
+			let messages = "ERROR: in a position " + farthest_pos + ", possible continuations are:";
 
 			for(let pos in uniqueMessages) {
 				if(uniqueMessages.length-1 > pos)messages = messages+ "\n" + uniqueMessages[pos]["name"] + ",";
@@ -828,13 +826,13 @@ function getContinuationsNew(text, length, continuations) {
 			return messages
 		}
 	}
-	var uniqueMessages = getCompletionTableNew(continuations_to_report, text);
+	let uniqueMessages = getCompletionTableNew(continuations_to_report, text);
 	return {prefix:prefix, suggestions:uniqueMessages}
 }
 
 function errorMessage(message, elem){
 	if(elem.parentNode.id.length > 0 && elem.parentNode.nodeName == "DIV"){
-		m = document.createElement("DIV");
+		let m = document.createElement("DIV");
 
 		m.style.color = '#691715';
 		m.style.background= '#feded9';
@@ -859,7 +857,7 @@ function findClassInAbstractQueryTable(elemId, abstractQueryTable){
 	var clazz;
 	if(abstractQueryTable["identification"]["_id"] == elemId) clazz = abstractQueryTable;
 	else{
-		for(child in abstractQueryTable["children"]){
+		for(let child in abstractQueryTable["children"]){
 			if(typeof abstractQueryTable["children"][child] !== "function") clazz = findClassInAbstractQueryTable(elemId, abstractQueryTable["children"][child])
 		}
 	}

@@ -236,7 +236,7 @@ function isDateVar(v, dateType, symbolTable){
 	}
 	if(typeof v["PathProperty"] !== 'undefined'){
 		var path = getPathFullGrammar(v["PathProperty"]);
-		if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
+		// if(path["messages"].length > 0) messages = messages.concat(path["messages"]);
 		if((path["variable"]["var"]["type"]!=null && dateType.indexOf(path["variable"]["var"]["type"]["data_type"]) > -1) || isDateVarSymbolTable(symbolTable, path["variable"]["var"]["name"], dateType) == true) return true;
 		else return false;
 	}

@@ -71,9 +71,9 @@ Template.AddCondition.events({
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 			//Read user's choise
 			  var vq_obj = new VQ_Element(selected_elem_id);
-				var condition = $('#condition-expression').val();
+				let condition = $('#condition-expression').val();
 				if(condition != ""){
-					var allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
+					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") allowMultiplication = true;
 					else allowMultiplication = false;
 					vq_obj.addCondition(condition, allowMultiplication);
@@ -83,10 +83,10 @@ Template.AddCondition.events({
 			var compart_type = CompartmentTypes.findOne({name: "Conditions", elementTypeId: act_el["elementTypeId"]});
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: selected_elem_id});
 			if(typeof compart !== "undefined"){
-				var condition = $('#condition-expression').val();
+				let condition = $('#condition-expression').val();
 				if(condition != ""){
 					var fullText = condition;
-					var allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
+					let allowMultiplication = $('input[id=allow-multiplication-check-box]:checked').val();
 					var allowMultiplicationInput = "";
 					
 					if(typeof allowMultiplication !== "undefined" && allowMultiplication == "on") {
