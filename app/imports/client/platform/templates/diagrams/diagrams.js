@@ -687,7 +687,6 @@ Template.importOntology.events({
 						else {
 							VQ_Schema_copy = null;
 							list.data = { Data: data };
-							Utilities.callMeteorMethod("loadTriplesMaps", list );
 						}
 
 					}
