@@ -232,7 +232,7 @@ Template.createProjectModal.helpers({
 		
 		if ( tool_id == "" && tools.count() > 0) {
 			result.tools[0]["selected"] = "selected";
-			tool_id = t._id;
+			tool_id = result.tools[0]._id;
 		}
 		
 		if (tool_id != "")
