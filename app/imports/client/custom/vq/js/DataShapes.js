@@ -694,6 +694,15 @@ const dataShapes = {
 
 		return rr;
 	},
+	getPropertiesF : async function(params) {
+		params.main.limit = params.main.limit + 1;
+		let rr = await this.callServerFunction("getProperties", params);
+		if ( rr.data.length == params.main.limit ) {
+			rr.data.pop();
+			rr.complete = false;
+		}
+		return rr;
+	},
 	getProperties : async function(params = {}, vq_obj = null, vq_obj_2 = null) {
 		// *** console.log("------------GetProperties------------------")
 		//dataShapes.getProperties({propertyKind:'Data'})  -- Data, Object, All (Data + Object), ObjectExt (in/out object properties), Connect
@@ -719,7 +728,7 @@ const dataShapes = {
 			allParams.element = findElementDataForProperty(vq_obj);
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
 			allParams.elementOE = findElementDataForProperty(vq_obj_2);
-		return await this.callServerFunction("getProperties", allParams);
+		return await this.getPropertiesF(allParams); //this.callServerFunction("getProperties", allParams);
 	},
 	getPropertiesFull : async function(params = {}) {
 		// *** console.log("------------GetProperties------------------")
@@ -743,7 +752,7 @@ const dataShapes = {
 				params.main.filter = filter_split[1];
 			}
 		}
-		return await this.callServerFunction("getProperties", params);
+		return await this.getPropertiesF(params); //this.callServerFunction("getProperties", params);
 	},
 	getClassifiers : async function() {
 		// TODO droši vien ar standarta limitu būs gana
