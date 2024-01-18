@@ -48,13 +48,7 @@ Interpreter.customMethods({
 async function resolveTypesAndBuildSymbolTable(query) {
 	count = 0;
   // TODO: This is not efficient to recreate schema each time
-  // var schema = new VQ_Schema();
   // Adding default namespace
- /* if (schema && query && query.root) {
-     query.root.defaultNamespace = schema.URI;
-     query.prefixes = schema.getPrefixes();
-     //console.log(schema.getPrefixes());
-  };*/
   if (query && query.root) {
 	// query.root.defaultNamespace = schema.URI;
 	query.prefixes = await dataShapes.getNamespaces();
@@ -87,19 +81,16 @@ async function resolveTypesAndBuildSymbolTable(query) {
 		}
 	}
 	return null;
-	// return schema.resolveClassByName(className)
   };
 
   // string -->[IdObject]
   async function resolveLinkByName(linkName) {
 	return await dataShapes.resolvePropertyByName({name: linkName})
-    // return schema.resolveLinkByName(linkName)
   };
 
   // string, string -->[IdObject]
   async function resolveAttributeByName(className, attributeName) {
     return await dataShapes.resolvePropertyByName({name: attributeName})
-	// return schema.resolveAttributeByName(className, attributeName)
   };
 
   var symbol_table = {};
@@ -212,36 +203,6 @@ async function resolveTypesAndBuildSymbolTable(query) {
 
      for (const f of obj_class.fields) {
 
-    // obj_class.fields.forEach(async function(f) {
-        // CAUTION .............
-        // HACK: * and ** fields
-        // if (f.exp=="*") {
-           // var cl =schema.findClassByName(obj_class.identification.local_name);
-           // if (cl) {
-              // var attr_list = cl.getAllAttributes();
-              // attr_list.forEach(async function(attr) {
-                // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                // var attr_is_simple = attr_info && attr_info["max_cardinality"] && attr_info["max_cardinality"]==1;
-                // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
-              // });
-
-			  // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
-           // };
-        // } else if (f.exp=="(*attr)") {
-           // var cl =schema.findClassByName(obj_class.identification.local_name);
-           // if (cl) {
-              // var attr_list = cl.getAllAttributes()
-              // attr_list.forEach(async function(attr) {
-                // var attr_info = resolveAttributeByName(cl["name"],attr["name"]);
-                // var attr_is_simple = attr_info && attr_info["max_cardinality"] && attr_info["max_cardinality"]==1;
-                // obj_class.fields.unshift({exp:attr["name"],alias:null,requireValues:f.requireValues,groupValues:!attr_is_simple, isInternal:false});
-              // });
-
-           // };
-        // } else if (f.exp=="(*sub)") {
-           // obj_class.fields.unshift({exp:"[*sub]",alias:null, requireValues:false, groupValues:false, isInternal:false});
-        // } else if (f.alias) {
-				
         if (f.alias) {
              my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias, type:null, context:obj_class.identification._id});
 			 if(f.addLabel == true) my_scope_table.UNRESOLVED_FIELD_ALIAS.push({id:f.alias+"Label", type:null, context:obj_class.identification._id});
@@ -438,15 +399,9 @@ async function resolveTypesAndBuildSymbolTable(query) {
   async function parsePathExpression(str_expr, context) {
 	try {
 	  if(typeof str_expr !== 'undefined' && str_expr != null && str_expr != ""){
-		  // var schema = new VQ_Schema();
 		  // var proj = Projects.findOne({_id: Session.get("activeProject")});
 		  var schemaName = await dataShapes.schema.schemaType;
 		  if(typeof schemaName === "undefined") schemaName = "";
-		  // if (proj) {
-			  // if (proj.schema) {
-				// schemaName = proj.schema;
-			  // };
-		  // }
   
 		  // var parsed_exp = vq_property_path_grammar_2.parse(str_expr, {schema:schema, schemaName:schemaName, symbol_table:symbol_table, context:context._id});
 		  var parsed_exp = await vq_property_path_grammar_parser.parse(str_expr, {schema:null, schemaName:schemaName, symbol_table:symbol_table, context:context._id});

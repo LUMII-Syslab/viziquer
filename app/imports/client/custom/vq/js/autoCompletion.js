@@ -650,7 +650,6 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 		const act_elem = Session.get("activeElement");
 
 		try {
-			// var schema = new VQ_Schema();
 			
 			if(grammarType == "link"){
 				let name_list = [];

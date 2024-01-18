@@ -160,11 +160,6 @@ Template.diagramsToolbar.events({
 		});
 	},
 
-	'click #export': function(e) {
-		Dialog.destroyTooltip(e);
-		$('#export-ontology-form').modal("show");
-	},
-
 	'click #upload-project': function(e, templ) {
 		// e.preventDefault();
 		Dialog.destroyTooltip(e);
@@ -559,149 +554,6 @@ Template.addDiagram.events({
 
 });
 
-Template.importOntology.helpers({
-
-	schemas: function() {
-		var result = null;
-
-		var project = Projects.findOne({_id: Session.get("activeProject")});
-
-		if (project) {
-			var tool_id = project.toolId;
-
-		    Meteor.subscribe("Services", {});
-
-			if ( tool_id && tool_id != 'undefined')
-			{
-				var services = Services.findOne({toolId: tool_id });
-
-				if (services && services.schemas)
-				{
-					result = [];
-					_.each(services.schemas, function (s){
-						result.push({caption: "Import " + s.caption, name: s.name, link: s.link});
-					});
-				}
-
-			}
-		}
-
-		//console.log("result ", result)
-
-		return result;
-	},
-
-});
-
-Template.importOntology.events({
-
-	'click #ok-import-ontology' : function(e, templ) {
-
-		//hidding the form
-		$('#import-ontology-form').modal("hide");
-
-		var list = {projectId: Session.get("activeProject"),
-					versionId: Session.get("versionId"),
-				};
-
-		var url_value = $("#import-url").val();
-		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");
-
-		if (url_value) {
-			//***VQ_Schema_copy = null;
-			list.url = url_value;
-			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
-		}
-		else if (url_value_from_list) {
-			//***VQ_Schema_copy = null;
-			list.url = url_value_from_list;
-			Utilities.callMeteorMethod("loadMOntologyByUrl", list);
-		}
-		else {
-			var fileList = $("#fileList")[0].files;
-		    _.each(fileList, function(file) {
-
-		        var reader = new FileReader();
-
-		        reader.onload = function(event) {
-					var data = JSON.parse(reader.result)
-
-					if (data) {
-						if ( data.Classes ) {
-							_.each(data.Classes, function(el) {
-								if (el.localName)
-									el.localName = decodeURIComponent(el.localName);
-								if (el.fullName)
-									el.fullName = decodeURIComponent(el.fullName);
-								var superclasses = [];
-								_.each(el.SuperClasses, function (sc){
-									superclasses.push(decodeURIComponent(sc));
-								});
-								el.SuperClasses = superclasses;
-							});
-							_.each(data.Attributes, function(el) {
-								if (el.localName)
-									el.localName = decodeURIComponent(el.localName);
-								if (el.fullName)
-									el.fullName = decodeURIComponent(el.fullName);
-								var sourceclasses = [];
-								_.each(el.SourceClasses, function (sc){
-									sourceclasses.push(decodeURIComponent(sc));
-								});
-								el.SourceClasses = sourceclasses;
-							});
-							_.each(data.Associations, function(el) {
-								if (el.localName)
-									el.localName = decodeURIComponent(el.localName);
-								if (el.fullName)
-									el.fullName = decodeURIComponent(el.fullName);
-								var classpairs = [];
-								_.each(el.ClassPairs, function (cp){
-									var cp_new = {};
-									if ( cp.SourceClass )
-										cp_new.SourceClass = decodeURIComponent(cp.SourceClass)
-									if ( cp.TargetClass )
-										cp_new.TargetClass = decodeURIComponent(cp.TargetClass)
-									cp_new.instanceCount = cp.instanceCount
-									cp_new.minCardinality = cp.minCardinality
-									cp_new.maxCardinality = cp.maxCardinality
-									cp_new.inverseRole = cp.inverseRole
-									cp_new.tripleCount = cp.tripleCount
-  					
-									classpairs.push(cp_new);
-								});
-								el.ClassPairs = classpairs;
-							});
-							if (data.ExtensionMode)
-							{
-								if (data.Parameters)
-									data.Parameters.push({name:"ExtensionMode",value:data.ExtensionMode})
-								else
-									data.Parameters = [{name:"ExtensionMode",value:data.ExtensionMode}];
-							}
-							//***VQ_Schema_copy = null;
-							list.data = data;
-
-							Utilities.callMeteorMethod("loadMOntology", list);
-						}
-						else {
-							//***VQ_Schema_copy = null;
-							list.data = { Data: data };
-						}
-
-					}
-					//else  Te būs kļūdas ziņojums lietotājam};
-		        }
-
-		        reader.onerror = function(error) {
-		            console.error("Error: ", error);
-		        }
-		        reader.readAsText(file);
-		    });
-		}
-	},
-
-});
 
 Template.uploadProject.loading = new ReactiveVar(false);
 
@@ -752,7 +604,6 @@ Template.uploadProject.events({
 		var url_value_from_list = $('input[name=stack-radio]:checked').closest(".schema").attr("link");;
 
 		if (url_value) {
-			//***VQ_Schema_copy = null;
 			list.url = url_value;
 			Template.uploadProject.loading.set(true);
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list, function() {
@@ -761,7 +612,6 @@ Template.uploadProject.events({
 			});
 		}
 		else if (url_value_from_list) {
-			//***VQ_Schema_copy = null;
 			list.url = url_value_from_list;
 			Template.uploadProject.loading.set(true);
 			Utilities.callMeteorMethod("uploadProjectDataByUrl", list, function() {
@@ -778,7 +628,6 @@ Template.uploadProject.events({
 				reader.onload = function(event) {
 					var diagrams = JSON.parse(reader.result)
 					list.data = diagrams;
-					//***VQ_Schema_copy = null;
 					Template.uploadProject.loading.set(true);
 					Utilities.callMeteorMethod("uploadProjectData", list,function() {
 						$('#upload-project-form').modal("hide");

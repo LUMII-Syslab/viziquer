@@ -268,7 +268,6 @@ Template.sparqlForm_see_results.events(sparql_form_events);
 
 
 function customClassCompleter(yasqe_doc) {
-
 	return {
 		isValidCompletionPosition: function(){return YASQE.Autocompleters.classes.isValidCompletionPosition(yasqe_doc)},
 		preProcessToken: function(token) {return token},
@@ -277,15 +276,16 @@ function customClassCompleter(yasqe_doc) {
 		async: false,
 		autoShow: false,
 		get: function(token, callback) {
-		 	var schema = new VQ_Schema();
-		 	var list =  _.filter(_.sortBy(schema.getAllClasses(), function(v) {return v.name}).map(function(c) {return ":"+c.name}), function(n) {return n!=": "});
-		 	return list;
+			// TODO te varētu arī no jaunās shēmas informāciju dabūt, ja nav pārāk liela
+			return [];
+		 	//var schema = new VQ_Schema();
+		 	//var list =  _.filter(_.sortBy(schema.getAllClasses(), function(v) {return v.name}).map(function(c) {return ":"+c.name}), function(n) {return n!=": "});
+		 	//return list;
 		}
 	};
 }
 
 function customPropertyCompleter(yasqe_doc) {
-
 	return {
 		isValidCompletionPosition: function(){return YASQE.Autocompleters.properties.isValidCompletionPosition(yasqe_doc)},
 		preProcessToken: function(token) {return token},
@@ -294,10 +294,12 @@ function customPropertyCompleter(yasqe_doc) {
 		async: false,
 		autoShow: false,
 		get: function(token, callback) {
-			var schema = new VQ_Schema();
-			var list =  _.filter(_.map(schema.Attributes,function(c) {return ":"+c.localName}), function(n) {return n!=": "});
-			list = _.sortBy(_.union(list,_.filter(_.map(schema.Associations, function(c) {return ":"+c.localName}), function(n) {return n!=": "}) ), function(v) {return v});
-			return list;
+			// TODO te varētu arī no jaunās shēmas informāciju dabūt, ja nav pārāk liela
+			return [];
+			//var schema = new VQ_Schema();
+			//var list =  _.filter(_.map(schema.Attributes,function(c) {return ":"+c.localName}), function(n) {return n!=": "});
+			//list = _.sortBy(_.union(list,_.filter(_.map(schema.Associations, function(c) {return ":"+c.localName}), function(n) {return n!=": "}) ), function(v) {return v});
+			//return list;
 		}
 	};
 

@@ -324,30 +324,12 @@ function onAggregationChange(){
 
 		//Select suitable atributes for Field form
 		defaultFieldList();
-		// var schema = new VQ_Schema();
-		// console.log(schema.resolveAttributeByName(Template.AggregateWizard.startClassId.curValue, fieldName).type);
 		var attrArray = Template.AggregateWizard.attList.curValue;
 		var newAttrList = [];
 		if (newFunction == "count" || newFunction == "count_distinct" || newFunction == "sample") {
 			newAttrList.push({attribute: ""});
 		}
-		// if (schema.classExist(cName)){
-			// var klass = schema.findClassByName(cName);
-			// _.each(klass.getAllAttributes(), function(att){
-				// var attrType = schema.resolveAttributeByName(cName, att["short_name"]).type;
-				// if (newFunction == "sum" || newFunction == "avg") {
-					// if (attrType == "xsd:integer" || attrType == "xsd:decimal" || attrType == "xsd:double"
-						// || attrType == "xsd:float" || attrType == "xsd:int" || attrType == "xsd:long"
-						// || attrType == "xsd:short") {
-						// newAttrList.push({attribute: att["name"]})
-					// }
-				// } else {
-					// newAttrList.push({attribute: att["name"]});
-				// }
-			// })
 
-			// newAttrList = _.sortBy(newAttrList, "attribute");
-		// }
 		var tempSymbolTable = generateSymbolTable();
 		var symbolTable = tempSymbolTable["symbolTable"];
 		for (var  key in symbolTable) {	

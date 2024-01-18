@@ -396,7 +396,6 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		parsedQuery = transformParsedQuery(parsedQuery);
 		// console.log(JSON.stringify(parsedQuery, 0, 2));
 
-		// var schema = new VQ_Schema();
 		directClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		indirectClassMembershipRole = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		
@@ -714,7 +713,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 async function generateAbstractTable(parsedQuery, allClasses, variableList, parentNodeList){
 	// x = 200;
 	// y = 10;
-	// var schema = new VQ_Schema();
 
 	var selectVariables = transformSelectVariables(parsedQuery["variables"]);
 	
@@ -2663,7 +2661,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						/////////////////////////////////////////////
 						for(let item = 0; item < unionBlock["triples"][triple]["predicate"]["items"].length; item++){
 									if(typeof unionBlock["triples"][triple]["predicate"]["items"][item]["termType"] !== "undefined"){
-										//var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["value"]});
 										
 										if(linkResolved.complete == true) {
@@ -2682,7 +2679,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									} 
 									// ^
 									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "^"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
 										
 										if(linkResolved.complete == true) {
@@ -2696,12 +2692,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 											let alias = await generateInstanceAlias(predicateParsed, false)
 											pathText.push("^" + alias);
 										}
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push("^" + buildPathElement(linkResolved.data[0]));
 									}
 									// *
 									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "*"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
 										
 										if(linkResolved.complete == true) {
@@ -2715,11 +2709,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 											let alias = await generateInstanceAlias(predicateParsed, false)
 											pathText.push(alias +"*");
 										}
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"*");
 									}// ?
 									else if(unionBlock["triples"][triple]["predicate"]["items"][item]["type"] == "path" && unionBlock["triples"][triple]["predicate"]["items"][item]["pathType"] == "?"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: unionBlock["triples"][triple]["predicate"]["items"][item]["items"][0]});
 										
 										if(linkResolved.complete == true) {
@@ -2734,7 +2726,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 											pathText.push(alias +"?");
 										}
 										
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"?");
 									}
 								}
@@ -4071,11 +4062,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					}
 				}
 							
-				// var schema = new VQ_Schema();
-					
 				let dataPropertyResolved = await dataShapes.resolvePropertyByName({name: where["args"][0]["triples"][0]["predicate"]["value"]});
-				// var dataPropertyResolved = schema.resolveAttributeByName(null, where["args"][0]["triples"][0]["predicate"]);
-				// if(dataPropertyResolved == null) dataPropertyResolved = schema.resolveLinkByName(where["args"][0]["triples"][0]["predicate"]);
 
 				if(dataPropertyResolved.complete==true){
 					
@@ -4285,7 +4272,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 									let addedAttribute = attributeTableAdded[attr];
 
 									// is not defined in attribute table and is schema property
-									// if(typeof attributeTable[addedAttribute] !== 'undefined' && (schema.resolveLinkByName(attributeTable[addedAttribute]["variableName"]) != null) || schema.resolveAttributeByName(null, attributeTable[addedAttribute]["variableName"]) != null) attributeTable[addedAttribute]["seen"] = true;
 									let propertyResolved = await dataShapes.resolvePropertyByName({name: attributeTable[addedAttribute]["variableName"]});
 									if(typeof attributeTable[addedAttribute] !== 'undefined' && propertyResolved.complete == true) attributeTable[addedAttribute]["seen"] = true;
 								}
@@ -4371,11 +4357,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					}
 				}
 				
-				// var schema = new VQ_Schema();
-				// var dataPropertyResolved = schema.resolveAttributeByName(null, where["args"][0]["triples"][0]["predicate"]);
 				let dataPropertyResolved = await dataShapes.resolvePropertyByName({name: where["args"][0]["triples"][0]["predicate"]["value"]});
-				// if(dataPropertyResolved == null) dataPropertyResolved = schema.resolveLinkByName(where["args"][0]["triples"][0]["predicate"]);
-				
 				
 				
 				if(dataPropertyResolved.complete==true){
@@ -4492,7 +4474,6 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 										// (if not in attribute table and is schema OP) or (is schema DP)
 										let propertyResolved = await dataShapes.resolvePropertyByName({name: attributeTable[addedAttribute]["variableName"]});
 										if(typeof attributeTable[addedAttribute] !== 'undefined' && propertyResolved.complete == true && propertyResolved.data[0].object_cnt > 0 || (propertyResolved.complete == true  && propertyResolved.data[0].data_cnt > 0))  attributeTable[addedAttribute]["seen"] = true;
-										// if(typeof attributeTable[addedAttribute] !== 'undefined' && (schema.resolveLinkByName(attributeTable[addedAttribute]["variableName"]) != null) || schema.resolveAttributeByName(null, attributeTable[addedAttribute]["variableName"]) != null) attributeTable[addedAttribute]["seen"] = true;
 									}
 								} else{
 									temp = await parseSPARQLjsStructureWhere(patterns[pattern], nodeLitsTemp, nodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, bgptype, allClasses, variableList, patternType, bindTable, generateOnlyExpression);
@@ -4533,11 +4514,10 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						}
 						
 						if(where["args"][arg]["type"] == "bgp"){
-							// var schema = new VQ_Schema();
 							let triples = where["args"][arg]["triples"];
 							for(let triple = 0; triple < triples.length; triple++) {
 							  if(typeof triples[triple] !== "undefined"){
-								//var dataPropertyResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
+
 								let dataPropertyResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["value"]});
 									// is schema data property
 								if(dataPropertyResolved.complete == true && dataPropertyResolved.data[0].data_cnt> 0 && dataPropertyResolved.data[0].object_cnt == 0){
@@ -6262,7 +6242,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				}
 			}
 			//from object property
-			else {//if(schema.resolveLinkByName(triples[triple]["predicate"]) != null || bgptype == "optionalLink"){
+			else {
 				//subjest
 				let subjectNameParsed = getVariable(triples[triple]["subject"]);
 				
@@ -6448,7 +6428,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 			&& Object.keys(findByVariableName(classesTable, triples[triple]["object"]["value"])).length == 0 
 			&& Object.keys(findByVariableName(classesTable, getVariable(triples[triple]["object"])["value"])).length == 0 
 		    && getVariable(triples[triple]["object"])["type"] != "iri"
-			//&& schema.resolveAttributeByName(null, triples[triple]["predicate"]) != null && await dataShapes.resolveClassByName({name: getVariable(triples[triple]["object"])["value"]}) == null)){
 			&& attributeResolved.complete == true && attributeResolved.data[0].data_cnt > 0 && attributeResolved.data[0].object_cnt == 0 && await dataShapes.resolveClassByName({name: getVariable(triples[triple]["object"])["value"]}).complete != true)){
 				 // console.log("DATA PROPERTY", triples[triple]);
 				let alias = "";
@@ -6493,7 +6472,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					  if(typeof subjectClasses[sclass] !== "function"){
 						 
 						var createAttribute = true;
-						//var schema = new VQ_Schema();
 						// if class is in the schema, class does not have given attribute -> do not add attribute to this class
 						if (classesTable[sclass]["identification"] != null && Object.keys(subjectClasses).length>1) {
 							
@@ -6586,7 +6564,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							attributeResolved.data[0].short_name = sn;
 						}
 						// if not OP and is DP
-						// if (bgptype == "optionalLink" && linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]);
 						if(linkResolved == null){
 			
 							let predicateParsed = getVariable(triples[triple]["predicate"])["value"];
@@ -6701,7 +6678,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 							if((pathPropertyResolved.complete == true && pathPropertyResolved.data[0].object_cnt > 0) || pathPropertyResolved.complete == false || schemaName == "wikidata"){
 								for(let item = 0; item < triples[triple]["predicate"]["items"].length; item++){
 									if(typeof triples[triple]["predicate"]["items"][item]["termType"] !== "undefined"){
-										//var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["items"][item]["value"]});
 										
 										if(linkResolved.complete == true) {
@@ -6720,7 +6696,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									} 
 									// ^
 									else if(triples[triple]["predicate"]["items"][item]["type"] == "path" && triples[triple]["predicate"]["items"][item]["pathType"] == "^"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["items"][item]["items"][0]["value"]});
 										
 										if(linkResolved.complete == true) {
@@ -6734,12 +6709,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											let alias = await generateInstanceAlias(predicateParsed, false)
 											pathText.push("^" + alias);
 										}
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push("^" + buildPathElement(linkResolved.data[0]));
 									}
 									// *
 									else if(triples[triple]["predicate"]["items"][item]["type"] == "path" && triples[triple]["predicate"]["items"][item]["pathType"] == "*"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["items"][item]["items"][0]["value"]});
 										
 										if(linkResolved.complete == true) {
@@ -6753,11 +6726,9 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											let alias = await generateInstanceAlias(predicateParsed, false)
 											pathText.push(alias +"*");
 										}
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"*");
 									}// ?
 									else if(triples[triple]["predicate"]["items"][item]["type"] == "path" && triples[triple]["predicate"]["items"][item]["pathType"] == "?"){
-										// var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
 										let linkResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["items"][item]["items"][0]["value"]});
 										
 										if(linkResolved.complete == true) {
@@ -6772,7 +6743,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 											pathText.push(alias +"?");
 										}
 										
-										//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0])
 										if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]) +"?");
 									}
 								}
@@ -6931,7 +6901,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 									// if(typeof triples[triple]["predicate"]["items"][item] == "string"){
 									if(triples[triple]["predicate"]["items"][item]["termType"] == "NamedNode"){
 										if(item != triples[triple]["predicate"]["items"].length - 1){
-											//var linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]);
 											let linkResolved = await dataShapes.resolvePropertyByName({name: triples[triple]["predicate"]["items"][item]["value"]});
 											if(linkResolved.complete == true) {
 												// linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;
@@ -6940,7 +6909,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												else if(linkResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
-											//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]);
 											if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]));
 										}
 										//last element
@@ -6953,7 +6921,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												else if(linkResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
-											//var linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]);
 											if(linkResolved.complete == true)pathText.push(buildPathElement(linkResolved.data[0]));
 										}
 									} 
@@ -6968,8 +6935,6 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												else if(linkResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
-											//linkResolved = schema.resolveLinkByName(triples[triple]["predicate"]["items"][item]["items"][0]);
-											//if(linkResolved == null) linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0]);
 											if(linkResolved.complete == true) pathText.push("^" + buildPathElement(linkResolved.data[0]));
 										}
 										//last element
@@ -6982,8 +6947,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 												else if(linkResolved.data[0].is_local != true || showPrefixesForAllNames == true)sn = linkResolved.data[0].prefix+ ":" + sn;
 												linkResolved.data[0].short_name = sn;
 											}
-											//linkResolved = schema.resolveAttributeByName(null, triples[triple]["predicate"]["items"][item]["items"][0]);
-											if(linkResolved.complete == true) pathText.push("^" + buildPathElement(linkResolved.data[0]));
+													if(linkResolved.complete == true) pathText.push("^" + buildPathElement(linkResolved.data[0]));
 										}
 									}
 								}
@@ -7266,7 +7230,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 		var pathText = [];
 		for(let item = 0; item < predicate["items"].length; item++){
 			if(typeof predicate["items"][item]["termType"] !== "undefined"){
-				//var linkResolved = schema.resolveLinkByName(predicate["items"][item]);
 				let linkResolved = await dataShapes.resolvePropertyByName({name: predicate["items"][item]["value"]});
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
@@ -7277,7 +7240,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) pathText.push(buildPathElement(linkResolved.data[0]));
 				else {
-					//var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
 					if(linkResolved.complete == true && linkResolved.data[0].data_cnt > 0) pathText.push(buildPathElement(linkResolved.data[0]));
 					else {
 						let predicateParsed = getVariable(predicate)["value"];
@@ -7288,7 +7250,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 			} 
 			// ^
 			else if(predicate["items"][item]["type"] == "path" && predicate["items"][item]["pathType"] == "^"){
-				//var linkResolved = schema.resolveLinkByName(predicate["items"][item]["items"][0]);
 				let linkResolved = await dataShapes.resolvePropertyByName({name: predicate["items"][item]["items"][0]["value"]});
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
@@ -7299,7 +7260,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) pathText.push("^" + buildPathElement(linkResolved.data[0]));
 				else {
-					//var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
 					if(linkResolved.complete == true && linkResolved.data[0].data_cnt > 0) pathText.push("^" + buildPathElement(linkResolved.data[0]));
 					else {
 						let predicateParsed = getVariable(predicate)["value"];
@@ -7314,7 +7274,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 	} else if(predicate["pathType"] == "^"){
 		for(let item = 0; item < predicate["items"].length; item++){
 			if(typeof predicate["items"][item]["termType"] !== "undefined"){
-				//var linkResolved = schema.resolveLinkByName(predicate["items"][item]);
 				let linkResolved = await dataShapes.resolvePropertyByName({name: predicate["items"][item]["value"]});
 				if(linkResolved.complete == true) {
 					//linkResolved.data[0].short_name = linkResolved.data[0].prefix + ":" + linkResolved.data[0].display_name;	
@@ -7325,7 +7284,6 @@ async function generatePropertyPath(triple, predicate, linkTable, linkTableAdded
 				}
 				if(linkResolved.complete == true && linkResolved.data[0].object_cnt > 0) propertyPathText = propertyPathText + "^" + buildPathElement(linkResolved.data[0]);
 				else {
-					//var linkResolved = schema.resolveAttributeByName(null, predicate["items"][item]);
 					if(linkResolved.complete == true && linkResolved.data[0].data_cnt > 0) propertyPathText = propertyPathText + "^" + buildPathElement(linkResolved.data[0]);
 					else {
 						let predicateParsed = getVariable(predicate)["value"];

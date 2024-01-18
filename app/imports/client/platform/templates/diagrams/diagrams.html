@@ -268,95 +268,6 @@
 </template>
 
 
-<template name="importOntology">
-
-    <!-- Modal for new document -->
-    <div id="import-ontology-form" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Import</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="panel panel-default">
-                        <div class="panel-tab clearfix">
-                            <ul class="tab-bar">
-                                <li class="active" id="project-members"><a href="#file" data-toggle="tab">File</a></li>
-                                <li id="find-people"><a href="#url" data-toggle="tab">URL</a></li>
-								{{#if schemas}}
-								    <li id="project-list"><a href="#schemaslist" data-toggle="tab">List</a></li>
-								{{/if}}
-                            </ul>
-                        </div>
-
-                        <div class="panel-body">
-                            <div class="tab-content user-tab-content">
-
-                                <!-- tab1 -->
-                                <div class="tab-pane fade in active" id="file">
-
-                                    <form class="form-horizontal" role="form">
-                                        <div class="form-group">
-                                            <div class="col-sm-10">
-                                                <input id="fileList" type='file' multiple/>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
-                                <!-- end of tab1 -->
-
-                                <!-- tab2 -->
-                                <div class="tab-pane fade padding-10" id="url">
-
-                                    <form class="form-horizontal" role="form">
-                                        <div class="form-group">
-                                            <label for="import-url" class="col-sm-1 control-label">URL</label>
-                                            <div class="col-sm-11">
-                                                <input id="import-url" type="text" class="form-control" value="" autocomplete="off" >
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
-                                <!-- end of tab2 -->
-													
-								<!-- tab3 -->
-								{{#if schemas}}
-								<div class="tab-pane fade padding-10" id="schemaslist">
-									<div class="form-group">  
-										{{#each schemas}}
-											<div class="col-lg-10 schema" name="{{name}}" type = "schema" link = "{{link}}" >
-												<label class="label-radio">
-													<input type="radio" name="stack-radio" value="{{name}}" {{name}}>
-													<span class="custom-radio"></span>
-													 <span style="{{clr}}">{{caption}} </span>
-												</label>
-											</div>
-										{{/each}}
-									</div>
-								</div>
-								{{/if}}
-				
-                                <!-- end of tab3 -->
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-				    <button type="button" class="btn btn-default" data-dismiss="modal">{{_ "close"}}</button>
-                    <button id="ok-import-ontology" type="button" class="btn btn-primary">Import</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- End of modal -->
-
-</template>
-
-
 <template name="uploadProject">
 
     <!-- Modal for new document -->
@@ -529,8 +440,6 @@
 
 <template name="diagramsToolbar">
        
-    <!-- <button id="import" class="btn btn-ribbon" data-title="Import VQ Schema"><i class="fa fa-upload"></i></button> -->
-    <!-- <button id="export" class="btn btn-ribbon" data-title="Export Ontology"><i class="fa fa-download"></i></button> -->
     <button id="settings" class="btn btn-ribbon toolbar-button" data-title="Settings" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-gear" ></i></button>
     <a id="download-project" class="btn btn-ribbon toolbar-button" data-title="Download Project" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-cloud-download"></i></a>
 
@@ -538,7 +447,6 @@
 
     <button id="migrate" class="btn btn-ribbon toolbar-button" data-title="Migrate" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-wrench"></i></button>
 
-    {{> importOntology}}
     {{> uploadProject}}
     {{> ontologySettings}}
     {{> migrateForm}}

@@ -3843,7 +3843,6 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
          async function resolveTypeFromSchemaForAttributeAndLink(id) {
                       	
             var aorl = await dataShapes.resolvePropertyByName({name: id})
-            // var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
             if(aorl["complete"] == false) return null;
             var res = aorl["data"][0];
             if(res){

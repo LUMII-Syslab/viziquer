@@ -415,17 +415,6 @@ Template.AddLink.events({
 				//Fields
 				var attr_list = [{attribute: ""}];
 				
-				// var schema = new VQ_Schema();
-
-				// if (schema.classExist(class_name)) {
-
-					// var klass = schema.findClassByName(class_name);
-
-					// _.each(klass.getAllAttributes(), function(att){
-						// attr_list.push({attribute: att["name"]});
-					// })
-					// attr_list = _.sortBy(attr_list, "attribute");
-				// }
 				attr_list = attr_list.filter(function(obj, index, self) { 
 					return index === self.findIndex(function(t) { return t['attribute'] === obj['attribute']});
 				});
@@ -555,13 +544,8 @@ Template.AddLink.events({
 
 	"click #add-long-link": function() {
 		//Generate data for Connect Classes
-		// var schema = new VQ_Schema();
 		var data = [];
 		var count = 0;
-		// _.each(schema.getAllClasses(), function(c){
-			// data.push({name: c.name, id: count});
-			// count++;
-		// });
 		var activeClass = new VQ_Element(Session.get("activeElement"));
 		if (activeClass.isUnion() && !activeClass.isRoot()) { console.log(239);// [ + ] element, that has link to upper class 
 			if (activeClass.getLinkToRoot()){
@@ -812,7 +796,6 @@ async function getAllAssociations(){
 				
 			if(typeof className === "undefined" || className === null) className= "";
 				
-			// var schema = new VQ_Schema();
 			var proj = Projects.findOne({_id: Session.get("activeProject")});
 			if((startElement.isUnit() != true && startElement.isUnion() != true) || !startElement.isRoot()) {
 				var newStartElement = startElement;
@@ -833,8 +816,6 @@ async function getAllAssociations(){
 
 				// if (schema.classExist(className)) {
 					
-					// var allAssociations = schema.findClassByName(className).getAllAssociations();
-
 					var param = {propertyKind:'ObjectExt', linksWithTargets:true};
 					var filter = $("#mySearch").val().toLowerCase();
 					if(filter != null) param["filter"] = filter;
@@ -887,7 +868,6 @@ async function getAllAssociations(){
 									cardinality = cardinality.concat("[*]");
 									colorLetters = colorLetters.concat("color: purple");
 								} else {
-									//var maxCard = schema.resolveSchemaRoleByName(e.name,className,e.class).maxCardinality; maxCard tiek padota uzreiz LL
 									var maxCard = e.x_max_cardinality;
 									
 									if (maxCard == null || !maxCard || maxCard == -1 || maxCard > 1) {
@@ -911,7 +891,7 @@ async function getAllAssociations(){
 									
 								}*/
 							}
-						} //console.log(e.type, schema.resolveLinkByName(e.name).maxCardinality, cardinality, colorLetters);				
+						} 			
 						
 						
 						//prefix:name

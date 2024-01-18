@@ -325,11 +325,7 @@ Template.createProjectModal.events({
 					};
 
 			//var obj = $('input[name=stack-radio]:checked').closest(".schema");
-			var type = obj.attr("type");
-			if ( type == "schema" )
-				list.schema_link = obj.attr("link")
-			if ( type == "project" )
-				list.project_link = obj.attr("link")	
+			list.project_link = obj.attr("link")	
 			//console.log("Jauna projekta taisīšana");
 			
 			if ( schema_name != "" && !isProject) {

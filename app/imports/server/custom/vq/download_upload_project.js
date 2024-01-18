@@ -1,5 +1,4 @@
 import { Tools, DiagramTypes, ElementTypes, CompartmentTypes, Projects, Diagrams, Elements, Compartments } from '/imports/db/platform/collections'
-import { Schema } from '/imports/db/custom/vq/collections'
 import { is_project_member } from '/imports/libs/platform/user_rights'
 import { is_public_diagram } from '/imports/server/platform/_helpers'
 
@@ -79,10 +78,7 @@ Meteor.methods({
 
 				return diagram;
 			});
-			//var schema = Schema.findOne({projectId: project_id});
-			//if (!schema) { schema = {}; }
 
-			//return {diagrams: diagrams, project: project, schema:schema };
 			return {diagrams: diagrams, project: project};
 		}
 	},
@@ -308,16 +304,6 @@ function uploadProject(list) {
 				
 				});
 			});
-			
-			var schema = data.schema;
-			if (_.size(schema) > 0 )
-			{
-				Schema.remove({projectId: project_id});
-				delete schema._id;
-				//_.extend(schema, {projectId: project_id, versionId: version_id	});
-				_.extend(schema, {projectId: project_id});
-				Schema.batchInsert([schema]);
-			}
 			
 		}
 }

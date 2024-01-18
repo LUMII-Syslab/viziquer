@@ -108,7 +108,6 @@ Projects.hookOptions.after.remove = {fetchPrevious: false};
 Meteor.methods({
 
 	insertProject: function(list) {
-		var schema_link = null;
 		var project_link = null;
 		var versionId = null;
 		var user_id = Meteor.userId();
@@ -116,11 +115,6 @@ Meteor.methods({
 			list["createdAt"] = new Date();
 			list["createdBy"] = user_id;
             
-			if (list.schema_link)
-			{
-				schema_link = list.schema_link;
-				delete 	list.schema_link;
-			}
 			if (list.project_link)
 			{
 				project_link = list.project_link;
@@ -137,18 +131,7 @@ Meteor.methods({
 			//console.log(project)
 			//console.log(projectsUsers)
 			
-			if (schema_link)
-			{
-				//console.log("Ir shēmas links")
-				var list = { projectId: project._id,
-							 versionId: versionId, 	
-							 url: schema_link,
-							};
-				Meteor.call("loadMOntologyByUrl", list);
-			}
-			
-			if (project_link)
-			{
+			if (project_link) {
 				//console.log("Ir projekta links")
 				var list = { projectId: project._id,
 							 versionId: versionId, 	
@@ -205,13 +188,6 @@ Meteor.methods({
 				duplicateDiagram(diagram, new_project_id, new_version_id);
 			});
 			
-			//var schema = Schema.findOne({projectId: project_id});
-			//if (schema) {
-			//	delete schema._id;
-			//	_.extend(schema, {projectId: new_project_id});
-			//	Schema.insert(schema);			
-			// }
-
 		}
 
 	},

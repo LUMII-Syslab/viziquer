@@ -21322,7 +21322,6 @@ options = arguments[1];
             async function resolveTypeFromSchemaForAttributeAndLink(id) {
 
             	var aorl = await dataShapes.resolvePropertyByName({name: id})
-            	// var aorl = options.schema.resolveAttributeByNameAndClass(options.context["localName"], id);
             	if(aorl["complete"] == false) return null;
             	var res = aorl["data"][0];
             	if(res){
@@ -21484,7 +21483,6 @@ options = arguments[1];
         				
         				// if(typeof o.var !== "undefined") varibleName = makeVar(o.Prefix) + makeVar(o.var.name);
         				// else  varibleName = makeVar(o);
-        				// if(options.schema.resolveLinkByName(varibleName) != null) await addContinuation(await location(), ".", 99, false, 4, "end");
         				// if(await resolveTypeFromSchemaForAttributeAndLink(varibleName) == null) await addContinuation(await location(), ":", 30, false, 4, "end");
         				
         				//console.log(o, varibleName, resolveTypeFromSchemaForAttributeAndLink(varibleName));
