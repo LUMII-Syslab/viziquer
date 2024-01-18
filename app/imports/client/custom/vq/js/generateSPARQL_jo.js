@@ -2799,7 +2799,7 @@ function getOrderBy(orderings, fieldNames, rootClass_id, idTable, emptyPrefix, r
 							}
 							orderTable.push(descendingStart +  orederExp + descendingEnd + " ");
 							orderGroupBy.push(orederExp);
-							orderTripleTable.push(result["triples"]);
+							if(typeof symbolTable[rootClass_id][order["exp"]] === "undefined") orderTripleTable.push(result["triples"]);
 						 } else if(order["exp"] == "(select this)"){
 							 descendingStart = "";
 							 descendingEnd = "";

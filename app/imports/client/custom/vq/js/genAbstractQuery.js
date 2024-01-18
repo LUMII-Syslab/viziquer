@@ -2,7 +2,8 @@ import { Interpreter } from '/imports/client/lib/interpreter'
 import { Projects, Elements } from '/imports/db/platform/collections'
 
 import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
-import { checkIfIsSimpleVariable, findINExpressionTable, countMaxExpressionCardinality } from './parserCommon';
+import { checkIfIsSimpleVariable, findINExpressionTable } from './parserCommon';
+import { countMaxExpressionCardinality } from './parser.js';
 import { VQ_Element } from './VQ_Element';
 
 import * as vq_grammar_parser from '/imports/client/custom/vq/js/vq_grammar_parser'

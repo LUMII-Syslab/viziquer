@@ -522,7 +522,7 @@ Template.AddLink.events({
 
 		_.each(classes, function(e){
 			var prefix;
-			if(proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
+			if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
 			// e.short_class_name = prefix + e.display_name;
 			e.short_class_name = e.full_name;
@@ -896,10 +896,10 @@ async function getAllAssociations(){
 						
 						//prefix:name
 						var prefix;
-						if(proj.showPrefixesForAllNames != true && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
+
+						if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
 						else prefix = e.prefix+":";
 						var eName = prefix + e.display_name;
-						
 						
 						if(e.mark == "out") asc.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
 						else ascReverse.push({name: eName, class: e.short_class_name, type: e.type, card: cardinality, clr: colorLetters, is:e.is, of:e.of});
@@ -954,7 +954,7 @@ async function getAllAssociations(){
 					}
 				}
       		}
-
+			
       		asc = asc.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 			}); 

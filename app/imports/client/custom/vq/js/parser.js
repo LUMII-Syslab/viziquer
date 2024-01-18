@@ -614,10 +614,11 @@ function getReferenceName(referenceName, symbolTable, classID){
 							return "";
 						}
 						
-						let refName = null;
+						// let refName = null;
 						// for(var name in variableNamesTable[referenceNameST[0]["context"]][referenceName]){
 							// refName = variableNamesTable[referenceNameST[0]["context"]][referenceName][name]["name"];
 						// }
+						let refName = referenceName.substring(referenceName.indexOf(":")+1);
 						refName = getLastField(refName, variableNamesTable[referenceNameST[0]["context"]][referenceName]);
 						
 						return refName;
@@ -788,7 +789,6 @@ function setVariableName(varName, alias, variableData, generateNewName){
 			}
 		}
 	}
-	
 	return setVariableName2(varName, alias, variableData, generateNewName);
 }
 
@@ -1788,7 +1788,7 @@ function transformBetweenLike(expressionTable){
 		 if (key == "PrimaryExpression" && typeof expressionTable[key]["FunctionLike"]!== 'undefined' && expressionTable[key]["FunctionLike"] != null) {
 			 
 			 let t = expressionTable[key];
-			 var arg3 = null;
+			 let arg3 = null;
 			
 			 let regaxExpression = expressionTable[key]["FunctionLike"]["string"];
 			  if(typeof regaxExpression !== "string"){
@@ -1799,6 +1799,7 @@ function transformBetweenLike(expressionTable){
 			 if (expressionTable[key]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
 			 if (expressionTable[key]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
 			 if(arg3 == null){
+				
 				expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
@@ -1858,6 +1859,7 @@ function transformBetweenLike(expressionTable){
                                  } ]
                              }
 			} else {
+				
 				expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
@@ -1957,9 +1959,19 @@ function transformBetweenLike(expressionTable){
 			 
 			 let t = expressionTable[key];
 			 let regaxExpression = expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["string"];
-			 if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
-			 if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
+			 
+			 
+			 let arg3 = null;
+			  if(typeof regaxExpression !== "string"){
+				  arg3 = expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["case"];
+				  regaxExpression = regaxExpression["string"];
+			  } else {
+			 
+				if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
+				if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
+			 }
 			
+			 if(arg3 == null){
 			 expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
@@ -2018,6 +2030,97 @@ function transformBetweenLike(expressionTable){
                                      } ]
                                  } ]
                              } 
+			 } else {
+				 expressionTable["PrimaryExpression"] = {
+                               "RegexExpression" : [
+                            	   "REGEX",
+                                   "(",
+                                   {
+                                   "OrExpression" : [ {
+                                      "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : t
+                                                           },
+                                                           "UnaryExpressionList" :[]
+                                                         },
+                                                         "MultiplicativeExpressionList" : []
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 }, 
+                                 {
+                                     "Comma": ","
+                                 },
+                                 {
+                                   "OrExpression" : [ {
+                                       "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : {
+                                                               "RDFLiteral" : { 
+                                                            	   "String":'"' + regaxExpression  + '"'
+                                                            	}
+                                                             }
+                                                           },
+                                                           "UnaryExpressionList" : {}
+                                                         },
+                                                         "MultiplicativeExpressionList" : {}
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 },
+								 {
+                                     "Comma": ","
+                                 },
+                                 {
+                                   "OrExpression" : [ {
+                                       "ANDExpression" : [ {
+                                           "ConditionalOrExpression" : [ {
+                                               "ConditionalAndExpression" : [ {
+                                                   "RelationalExpression" : {
+                                                     "NumericExpressionL" : {
+                                                       "AdditiveExpression" : {
+                                                         "MultiplicativeExpression" : {
+                                                           "UnaryExpression" : {
+                                                             "PrimaryExpression" : {
+                                                               "RDFLiteral" : { 
+                                                            	   "String":'"' + arg3  + '"'
+                                                            	}
+                                                             }
+                                                           },
+                                                           "UnaryExpressionList" : {}
+                                                         },
+                                                         "MultiplicativeExpressionList" : {}
+                                                       }
+                                                     }
+                                                   }
+                                                 } ]
+                                             } ]
+                                         } ]
+                                     } ]
+                                 }
+								 ]
+                             }
+			 }
 		}
 	}
 	return expressionTable
@@ -2493,6 +2596,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 					let variable;
 								
 					if(variableToUse == null && expressionTable[key]["ref"] == null) {
+						
 						variable = setVariableName(varName, alias, expressionTable[key]);
 					}
 					else variable = variableToUse;
@@ -2537,6 +2641,7 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							
 						} else {
 							let inFilter = false;
+							
 							let variableData = expressionTable[key];
 							
 							/*if(typeof variableNamesClass[varName] !== 'undefined' 
@@ -2558,10 +2663,19 @@ function generateExpression(expressionTable, SPARQLstring, className, classSchem
 							){
 								inFilter = true;
 								applyExistsToFilter = true;
-							}else if((parseType == "condition") && variableData["type"]["max_cardinality"] == 1){
+							}else if(parseType == "condition" && variableData["type"]["max_cardinality"] == 1){
 								inFilter = null;
 								applyExistsToFilter = false;
 								if(typeof symbolTable[classID] !== 'undefined' && typeof symbolTable[classID][varName] !== 'undefined') inFilter = true;
+							} else if(parseType == "condition" && expressionTable[key]["name"] != varName && 
+							typeof variableNamesTable[classID] !== 'undefined' && typeof variableNamesTable[classID][varName] !== "undefined"
+							){
+								for(let vn in variableNamesTable[classID][varName]){
+									if(typeof variableNamesTable[classID][varName][vn] !== "function" && variableNamesTable[classID][varName][vn]["isAlias"] === true){
+										inFilter = true;
+										applyExistsToFilter = true;
+									}
+								}
 							}
 							
 							let inv = "";
