@@ -6,7 +6,7 @@ import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 
 Interpreter.methods({
 
-	UpdateCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	UpdateCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
 		var compart_type = this;
 		var value = Dialog.buildCompartmentValue(compart_type, input, mapped_value);
 
@@ -31,7 +31,7 @@ Interpreter.methods({
 			}
 		}
 
-		return Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style);
+		return Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style);
 	},
 
 	TestDynamicDropDown: function() {
@@ -65,9 +65,9 @@ Interpreter.methods({
 //Dialog methods
 const Dialog = {
 
-	updateCompartmentValue: function(compart_type, input, value, src_id, compart_style, elem_style, sub_comparts) {
+	updateCompartmentValue: function(compart_type, elem_id, input, value, src_id, compart_style, elem_style, sub_comparts) {
 
-		var list = Dialog.buildCompartmentList(compart_type, input, value);
+		var list = Dialog.buildCompartmentList(compart_type, elem_id, input, value);
 
 		if (sub_comparts) {
 			list["subCompartments"] = sub_comparts;
@@ -113,12 +113,12 @@ const Dialog = {
 		return {input: list["input"], value: list["value"]};
 	},
 
-	buildCompartmentList: function(compart_type, input, value) {
+	buildCompartmentList: function(compart_type, elem_id, input, value) {
 
 		var compart = {
 				projectId: Session.get("activeProject"),
-				elementId: Session.get("activeElement"),
 				diagramId: Session.get("activeDiagram"),
+				elementId: elem_id,
 				diagramTypeId: compart_type["diagramTypeId"],
 				elementTypeId: compart_type["elementTypeId"],
 				versionId: Session.get("versionId"),
@@ -286,12 +286,17 @@ const Dialog = {
 	renderDialogFields: function(compart_type, compartment) {
 
 		if (compartment) {
-	 		compart_type["field_value"] = compartment["input"];
-	 		compart_type["compartmentId"] = compartment["_id"];
+	 		_.extend(compart_type, {field_value: compartment["input"],
+	 								compartmentId: compartment["_id"],
+	 								elementId: compartment.elementId,
+	 							});
+
 		}
 		else {
-	 		compart_type["field_value"] = "";
-	 		compart_type["compartmentId"] = reset_variable();
+	 		_.extend(compart_type, {field_value: "",
+	 								compartmentId: reset_variable(),
+	 								elementId: Session.get("activeElement"),
+	 							});
 		}
 
 		if (compart_type["inputType"]) {

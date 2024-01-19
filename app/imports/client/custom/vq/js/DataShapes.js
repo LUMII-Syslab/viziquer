@@ -411,9 +411,10 @@ const dataShapes = {
 		//dataShapes.getOntologies()
 		var rr = await callWithGet('info2/');
 
-		if (!_.isEmpty(rr)) {
-			rr.unshift({display_name:""});
-			// *** console.log(rr)
+		if (!_.isEmpty(rr) && !rr.error) {
+			console.log("rr ", rr)
+
+			rr.unshift({display_name: ""});
 			return await rr;
 		}
 
@@ -460,6 +461,13 @@ const dataShapes = {
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
 				var info = await callWithGet('info/');
+
+				if (info.error) {
+					console.error(info);
+					return;
+				}
+
+
 				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
 					var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
 					this.schema.schema = schema_info.db_schema_name;

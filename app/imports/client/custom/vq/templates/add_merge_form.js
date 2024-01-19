@@ -162,8 +162,12 @@ Template.AddMergeValues.helpers({
 	className: function() {
 		var act_elem = Session.get("activeElement");
 		var act_el = Elements.findOne({_id: act_elem}); //Check if element ID is valid
-		if(typeof act_el !== 'undefined'){
+		if(typeof act_el !== 'undefined') {
 			var compart_type = CompartmentTypes.findOne({name: "Name", elementTypeId: act_el["elementTypeId"]});
+			if (!compart_type) {
+				return;
+			}
+
 			var compart = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: act_elem});
 			if(typeof compart !== 'undefined') return compart["input"];
 		}

@@ -170,6 +170,10 @@ VQ_Element.prototype = {
   // string --> string
   // Returns the value (INPUT) of the given compartment by name or null if such compartment does not exist
   getCompartmentValue: function(compartment_name) {
+    if (!this.obj) {
+      console.error(this.obj);
+      return;
+    }
 
     var elem_type_id = this.obj["elementTypeId"];
     var comp_type = CompartmentTypes.findOne({name: compartment_name, elementTypeId: elem_type_id});
@@ -1283,6 +1287,12 @@ VQ_Element.prototype = {
   // If insert mode is true then new compartment is inserted regardless of existence
 	setCompartmentValue: function(comp_name, input, value, insertMode) {
 	//console.log(" VQ_element  -----setCompartmentValue------ ")
+
+    if (!this.obj) {
+      console.error(this.obj);
+      return;
+    }
+
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
 			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});

@@ -200,9 +200,6 @@ Template.editingMessage.helpers({
 
 			//diagram is not being edited
 			else {
-
-				console.log("ccc")
-
 				remove_sections_sortable();
 				return {lockingButton: true};
 			}

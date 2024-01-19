@@ -101,7 +101,7 @@
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input autocomplete="off" type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
-				placeholder="{{_placeholder}}" >
+				placeholder="{{_placeholder}}" data-element="{{elementId}}" data-value="{{field_value}}">
 			</div>
 			{{#if description}}
 				<span class="help-block">{{description}}</span>
@@ -114,7 +114,7 @@
 				<textarea type="text" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
 				style="overflow:auto;resize:none;" id="{{compartmentId}}"
 				rows="{{_rows}}" disabled="{{disabled}}" placeholder="{{_placeholder}}"
-				value="{{field_value}}"></textarea>
+				value="{{field_value}}" data-element="{{elementId}}"></textarea>
 			</div>
 			{{#if description}}
 				<span class="help-block">{{description}}</span>
@@ -127,7 +127,7 @@
 				<label for="{{compartmentId}}">{{label}}</label>
 				<select type="text" class="form-control dialog-selection {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
-					placeholder="{{_placeholder}}" >
+					placeholder="{{_placeholder}}" data-element="{{elementId}}">
 
 					{{#each values}}
 						<option selected="{{selected}}" mappedValue="{{value}}"
@@ -147,7 +147,7 @@
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
-					placeholder="{{_placeholder}}" list="row_{{_id}}">
+					placeholder="{{_placeholder}}" list="row_{{_id}}" data-element="{{elementId}}">
 
 					<datalist id="row_{{_id}}" class="datalist">
 						{{#each values}}
@@ -175,6 +175,7 @@
 					falseCompartmentStyle="{{false_compart_style}}"
 					trueElementStyle="{{true_elem_style}}"
 					trueCompartmentStyle="{{true_compart_style}}"
+					data-element="{{elementId}}"
 					>
 
 					<span class="custom-checkbox"></span>
@@ -201,7 +202,8 @@
 						mappedValue="{{value}}" 
 						elementStyleId="{{elementStyle}}" 
 						compartmentStyleId="{{compartmentStyle}}"
-						checked="{{checked}}" disabled="{{disabled}}" > 
+						checked="{{checked}}" disabled="{{disabled}}" 
+						data-element="{{elementId}}"> 
 
 						<span class="custom-radio"></span>
 						{{input}}

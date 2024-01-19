@@ -22,15 +22,15 @@ Template.dialogTabContent.events({
 
 		var src = $(e.target);
 		var parent = src.closest(".parent-compartment");
+		var elem_id = src.attr("data-element");
 		if (parent.length > 0) {
 			update_compartment_from_sub_fields(parent);
 		}
-
 		else {
 			var src_id = src.attr("id");
 			var src_val = src.val();
 
-			upsert_compartment_value(e, src_id, src_val);
+			upsert_compartment_value(e, elem_id, src_id, src_val);
 		}
 
 		Session.set("editingDialog", reset_variable());
@@ -71,6 +71,8 @@ Template.dialogTabContent.events({
 
 		var src = $(e.target);
 		var parent = src.closest(".parent-compartment");
+		var elem_id = src.attr("data-element");
+
 		if (parent.length > 0) {
 			update_compartment_from_sub_fields(parent);
 		}
@@ -84,7 +86,7 @@ Template.dialogTabContent.events({
 			var elem_style_id = selected.attr("elementStyleId");
 			var compart_style_id = selected.attr("compartmentStyleId");
 
-			upsert_compartment_value(e, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
+			upsert_compartment_value(e, elem_id, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
 		}
 	},
 
@@ -113,6 +115,8 @@ Template.dialogTabContent.events({
 
 		else {
 			var src_id = src.attr("id");
+			var elem_id = src.attr("data-element");
+
 			var checkbox_value = src.prop('checked');
 			var mapped_value;
 
@@ -129,7 +133,7 @@ Template.dialogTabContent.events({
 				compart_style_id = src.attr("falseCompartmentStyle");
 			}
 
-			upsert_compartment_value(e, src_id, checkbox_value.toString(), mapped_value, elem_style_id, compart_style_id);
+			upsert_compartment_value(e, elem_id, src_id, checkbox_value.toString(), mapped_value, elem_style_id, compart_style_id);
 		}
 	},
 
@@ -139,6 +143,8 @@ Template.dialogTabContent.events({
 
 		var src = $(e.target);
 		var parent = src.closest(".parent-compartment");
+		var elem_id = src.attr("data-element");
+
 		if (parent.length > 0) {
 			update_compartment_from_sub_fields(parent);
 		}
@@ -153,7 +159,7 @@ Template.dialogTabContent.events({
 			var elem_style_id = src.attr("elementStyleId");
 			var compart_style_id = src.attr("compartmentStyleId");
 
-			upsert_compartment_value(e, src_id, radio_value, mapped_value, elem_style_id, compart_style_id);
+			upsert_compartment_value(e, elem_id, src_id, radio_value, mapped_value, elem_style_id, compart_style_id);
 		}
 	},
 
@@ -290,6 +296,8 @@ function update_combobox(e) {
 
 	var src = $(e.target);
 	var parent = src.closest(".parent-compartment");
+	var elem_id = src.attr("data-element");
+
 	if (parent.length > 0) {
 		update_compartment_from_sub_fields(parent);
 	}
@@ -304,7 +312,7 @@ function update_combobox(e) {
 		var elem_style_id = selected.attr("elementStyleId");
 		var compart_style_id = selected.attr("compartmentStyleId");
 
-		upsert_compartment_value(e, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
+		upsert_compartment_value(e, elem_id, src_id, src_val, mapped_value, elem_style_id, compart_style_id);
 	}
 
 	Session.set("editingDialog", reset_variable());
@@ -345,7 +353,6 @@ function add_template_helpers(id) {
 
 			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
 				function(compart_type) {
-
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"],
 						 									elementId: Session.get("activeElement")});
 
@@ -739,7 +746,6 @@ function add_template_helpers(id) {
 	Template[id].helpers({
 
 		compart_types: function() {
-
 			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
@@ -777,7 +783,7 @@ function update_compartment_from_sub_fields(parent) {
 }
 
 
-function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId, compartStyleId) {
+function upsert_compartment_value(e, elem_id, src_id, src_val, mapped_value, elemStyleId, compartStyleId) {
 
 	//selecting the compartment type
 	var compart_type_id = $(e.target).closest(".compart-type").attr("id");
@@ -788,7 +794,7 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 	}
 
 	Interpreter.executeExtensionPoint(compart_type, "beforeUpdate", [src_id, src_val]);
-	var update_res = Interpreter.executeExtensionPoint(compart_type, "update", [src_id, src_val, mapped_value, elemStyleId, compartStyleId]) || {};
+	var update_res = Interpreter.executeExtensionPoint(compart_type, "update", [elem_id, src_id, src_val, mapped_value, elemStyleId, compartStyleId]) || {};
 
 	//after
 	var after_update = Interpreter.getExtensionPointProcedure("afterUpdate", compart_type);

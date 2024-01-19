@@ -273,6 +273,12 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	   			var element_list = editor.getElements();
 	   			var element = element_list[elem_id];
 
+	   			if (!element) {
+	   				console.error("No element", elem_id);
+	   				return;
+	   			}
+
+
 				if (element["type"] == "Swimlane") {
 					doc["_id"] = id;
 
@@ -497,12 +503,8 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
    				var compartments = compartment.compartments;
    				compartments.removeOne(id);
 
-   				console.log("compartment", compartment)
-
    				if (compartment["placement"] && compartment["placement"]["name"]) {
    					let name = compartment["placement"]["name"];
-   					console.log("name ", name)
-
    					compartments["placements"][name]["height"] -= compartment["textHeight"];
 
 					compartments.computeGroupsPositions();
