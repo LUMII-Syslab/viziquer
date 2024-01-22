@@ -498,7 +498,7 @@ Template.AddLink.events({
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
-					"main": {"limit": 30},
+					"main": {"limit": dataShapes.schema.limit},
 					"element": {"pList": {"in": elementParams,}}
 				}
 			} else {
@@ -509,7 +509,7 @@ Template.AddLink.events({
 					if(cls != null && cls != "" && cls.indexOf(":") !== -1) elementParams[0]["uriIndividual"] = cls;
 				}
 				params = {
-					"main": {"limit": 30},
+					"main": {"limit": dataShapes.schema.limit},
 					"element": {"pList": {"out": elementParams,}}
 				}
 			}
@@ -816,7 +816,7 @@ async function getAllAssociations(){
 
 				// if (schema.classExist(className)) {
 					
-					var param = {propertyKind:'ObjectExt', linksWithTargets:true};
+					var param = {propertyKind:'ObjectExt', linksWithTargets:true, limit: dataShapes.schema.limit};
 					var filter = $("#mySearch").val().toLowerCase();
 					if(filter != null) param["filter"] = filter;
 					param["limit"] = Template.AddLink.Count.get();

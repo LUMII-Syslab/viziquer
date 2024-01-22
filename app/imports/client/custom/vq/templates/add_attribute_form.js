@@ -945,7 +945,9 @@ function formParams(vq_obj, propertyKind, filter, limit) {
 
 	var param = {propertyKind: propertyKind};	
 	if (filter != null) param["filter"] = filter;
-	if (limit != null) param["limit"] = limit;
+	if (limit != null) {
+		param["limit"] = limit;
+	} else {param["limit"] = dataShapes.schema.limit;}
 	let value = $("#mySearch-attribute").val()
 	if ( $("#dbp_for_attributes").is(":checked") ) {
 		param.basicOrder = true;

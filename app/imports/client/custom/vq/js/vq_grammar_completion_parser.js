@@ -21157,7 +21157,7 @@ options = arguments[1];
 							}					
 						}
 						
-						var prop = await dataShapes.getProperties({propertyKind:'Data'}, newStartElement);
+						var prop = await dataShapes.getProperties({propertyKind:'Data', limit:dataShapes.schema.limit}, newStartElement);
 						prop = prop["data"];
 						
 						let schemaName = dataShapes.schema.schemaType;
@@ -21212,7 +21212,7 @@ options = arguments[1];
 								}						
 							}					
 					}
-					var prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, newStartElement);
+					var prop = await dataShapes.getProperties({propertyKind:'ObjectExt', limit:dataShapes.schema.limit}, newStartElement);
 					prop = prop["data"];
 					
 					let schemaName = dataShapes.schema.schemaType;
@@ -21388,7 +21388,7 @@ options = arguments[1];
 				var textEnd = loc.end.offset;
 				var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
         		// var varibleName = makeVar(o);
-        		let params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+        		let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}}
         		if(pathParts.length > 1){
         			 params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
         		} else {
@@ -21432,7 +21432,7 @@ options = arguments[1];
             	var targetSourceClass = "targetClass";
             	if(o.PathEltOrInverse.inv == "^")targetSourceClass = "sourceClass";
 
-				let p = {main:{propertyKind:'Data',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+				let p = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		let props= await dataShapes.getPropertiesFull(p);
 				
 				let schemaName = dataShapes.schema.schemaType;
@@ -21453,7 +21453,7 @@ options = arguments[1];
 					}
 				}
 							
-				p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+				p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
         		props= await dataShapes.getPropertiesFull(p);
 
             	props = props["data"];
@@ -21518,7 +21518,7 @@ options = arguments[1];
 					var textEnd = loc.end.offset;
 					var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
 					let varibleName = makeVar(o);
-					let params = {main:{propertyKind:'Data',"limit": 30}}
+					let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}}
 					var isInv = false;
 								
 					if(pathParts.length > 1){
@@ -21618,7 +21618,7 @@ options = arguments[1];
 				let loc = await location();
         		if(typeof classAliasTable[o] !== 'undefined') {
 					continuations[loc["end"]["offset"]] = {};
-					let params = {main:{propertyKind:'Data',"limit": 30}};
+					let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}};
 					params.element = {className: classAliasTable[o]};	
 
             		let props = await dataShapes.getPropertiesFull(params);
@@ -21686,7 +21686,7 @@ options = arguments[1];
 								
 						var prop;
 						if(pathParts.length > 1){
-							let params = {main:{propertyKind:'Data',"limit": 30}}
+							let params = {main:{propertyKind:'Data',"limit": dataShapes.schema.limit}}
 							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
 							if(pathParts[pathParts.length-1].startsWith("^")){
 								params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
@@ -21718,7 +21718,7 @@ options = arguments[1];
 						}
 								
 						if(pathParts.length > 1){
-							let params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+							let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}}
 							params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
 									// if(pathParts[pathParts.length-1].startsWith("^")){
 										// params.element = {"pList": {"out": [{"name": pathParts[pathParts.length-2], "type": "out"}]}}
@@ -21728,7 +21728,7 @@ options = arguments[1];
 										 
 							prop = await dataShapes.getPropertiesFull(params);
 										 
-						} else prop = await dataShapes.getProperties({propertyKind:'ObjectExt'}, newStartElement);
+						} else prop = await dataShapes.getProperties({propertyKind:'ObjectExt', limit: dataShapes.schema.limit}, newStartElement);
 						prop = prop["data"];
 						
 						for(let cl in prop){

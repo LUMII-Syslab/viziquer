@@ -451,6 +451,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			let params = {};
 			var vq_obj;
 			if(fullText != "") params.filter = fullText;
+			params.limit = dataShapes.schema.limit;
 			
 			const selected_elem_id = Session.get("activeElement");			
 			if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
@@ -463,7 +464,6 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 			}			
 			
 			cls = await dataShapes.getClasses(params, vq_obj);
-			
 			cls = cls["data"];
 			
 			var schemaName = dataShapes.schema.schemaType;

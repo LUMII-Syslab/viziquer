@@ -3612,8 +3612,8 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           	// var elTo=options.link.getEndElement();
           	// if (varibleName != "") params.filter=varibleName;
       		
-      		var p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
-			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": 30}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
+      		var p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"in": [{"name": propertyName, "type": "in"}]}}}
+			if(o.PathEltOrInverse.inv == "^") p = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}, element: {"pList": {"out": [{"name": propertyName, "type": "out"}]}}}
       		var props= await dataShapes.getPropertiesFull(p)
 			
 			var schemaName = dataShapes.schema.schemaType;
@@ -3643,7 +3643,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 			var textEnd = loc.end.offset;
 			var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
       		var varibleName = makeVar(o);
-      		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+      		var params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}}
       		var isInv = false;
     						
       		if(pathParts.length > 1){
@@ -3702,7 +3702,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 			var loc = await location();
 			var textEnd = loc.end.offset;
       		var pathParts = options.text.substring(0, textEnd).split(/[.\/]/);
-      		var params = {main:{propertyKind:'ObjectExt',"limit": 30}}
+      		var params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}}
       		if(pathParts.length > 1){
       			 params.element = {"pList": {"in": [{"name": pathParts[pathParts.length-2], "type": "in"}]}}
       		} else {
@@ -3744,7 +3744,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           async function getAssociations(place, priority){
 				var pathParts = options.text.split(/[.\/]/);
 				if(pathParts.length <= 1){
-					let params = {propertyKind:'Connect'};
+					let params = {propertyKind:'Connect', limit:dataShapes.schema.limit};
 					// if (fullText != "") params.filter = fullText;
 					var selected_elem_id = Session.get("activeElement");	
 					var props;
@@ -3753,7 +3753,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 						var elTo=options.link.getEndElement();
 						props = await dataShapes.getProperties(params, elFrom, elTo);
 					} else {
-						let params = {main:{propertyKind:'ObjectExt',"limit": 30}};
+						let params = {main:{propertyKind:'ObjectExt',"limit": dataShapes.schema.limit}};
 						if (typeof options.className !== 'undefined') params.element = {className: options.className};
 						props = await dataShapes.getPropertiesFull(params);
 					}
