@@ -380,7 +380,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		text  = prefixesText.join('\n') + text;
 	}
 	text = text.replace(/!(\s)*EXISTS/g, "NOT EXISTS")
-	  Utilities.callMeteorMethod("parseExpressionForCompletions", text);
+	  // Utilities.callMeteorMethod("parseExpressionForCompletions", text);
 	  Utilities.callMeteorMethod("parseSPARQLText", text, async function(parsedQuery) {
 		
 		if(Object.keys(parsedQuery).length == 0)  Interpreter.showErrorMsg("Error in the SPARQL text. See details in the Meteor console", -3);
