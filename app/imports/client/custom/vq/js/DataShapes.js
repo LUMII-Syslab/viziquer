@@ -65,7 +65,7 @@ const callWithGet = async (funcName) => {
 }
 //'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Q633795&language=en&limit=50&format=json&origin=*'
 const callWithGetWD = async (filter, limit) => {
-	var callText = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${filter}&language=en&limit=${limit}&format=json&origin=*`;
+	const callText = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${filter}&language=en&limit=${limit}&format=json&origin=*`;
 	try {
 		const response = await window.fetch(callText, {
 			method: 'GET',
@@ -139,17 +139,17 @@ const getPListI = (vq_obj) => {
 }
 
 const getPList = (vq_obj) => {
-	var pList = {in: [], out: []};
-	var field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
+	let pList = {in: [], out: []};
+	const field_list = vq_obj.getFields().filter(function(f){ return f.requireValues }).map(function(f) { return {name:f.exp, type: 'out'}});
 	_.each(field_list, function(link) {
 		if (link.name !== null && link.name !== undefined && link.name.indexOf('@') != -1)
 			link.name = link.name.substring(0,link.name.indexOf('@'));		
 	})
 	if (field_list.length > 0) pList.out = field_list;
 
-	var link_list =  vq_obj.getLinks();
+	const link_list =  vq_obj.getLinks();
 
-	var link_list_filtered = link_list.map( function(l) { var type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
+	let link_list_filtered = link_list.map( function(l) { const type = (l.start ? 'in': 'out'); return {name:l.link.getName(), t:l.link.getType(), type: type, eE:l.link.obj.endElement, sE:l.link.obj.startElement}});
 	_.each(link_list_filtered, function(link) {
 		if (link.name !== null && link.name !== undefined && link.name.substring(0,1) === '^') {
 			link.name = link.name.substring(1,link.name.length);
@@ -170,7 +170,7 @@ const getPList = (vq_obj) => {
 			}
 			else {
 				if (!vq_obj.isRoot()) {
-					var sE = new VQ_Element(link.sE);
+					const sE = new VQ_Element(link.sE);
 					if (sE.isRoot())
 						pList.in.push(link);
 				}
@@ -183,7 +183,7 @@ const getPList = (vq_obj) => {
 			}
 			else {
 				if (!vq_obj.isRoot()) {
-					var eE = new VQ_Element(link.eE);
+					const eE = new VQ_Element(link.eE);
 					if (eE.isRoot())
 						pList.out.push(link);
 				}
@@ -191,9 +191,9 @@ const getPList = (vq_obj) => {
 		}
 		
 		_.each(pList.in, function(link) {
-			var el = new VQ_Element(link.element);
-			var class_name = el.getName();
-			var individual =  el.getInstanceAlias();
+			const el = new VQ_Element(link.element);
+			const class_name = el.getName();
+			const individual =  el.getInstanceAlias();
 			if (class_name !== null && class_name !== undefined)
 				link.className = class_name;			
 			if (isIndividual(individual)) 
@@ -202,9 +202,9 @@ const getPList = (vq_obj) => {
 		
 		_.each(pList.out, function(link) {
 			if (link.element !== undefined ) {
-				var el = new VQ_Element(link.element);
-				var class_name = el.getName();
-				var individual =  el.getInstanceAlias();
+				const el = new VQ_Element(link.element);
+				const class_name = el.getName();
+				const individual =  el.getInstanceAlias();
 				if (class_name !== null && class_name !== undefined)
 					link.className = class_name;			
 				if (isIndividual(individual)) 
@@ -216,32 +216,32 @@ const getPList = (vq_obj) => {
 }
 
 const findElementDataForClass = (vq_obj) => {
-	var params = {}
-	var individual =  vq_obj.getInstanceAlias();
+	let params = {}
+	const individual =  vq_obj.getInstanceAlias();
 	if (isIndividual(individual)) 
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 
-	var pList = getPList(vq_obj);
+	const pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	return params;
 }
 
 const findElementDataForProperty = (vq_obj) => {
-	var params = {};
-	var individual =  vq_obj.getInstanceAlias();
-	var class_name = vq_obj.getName();
+	let params = {};
+	const individual =  vq_obj.getInstanceAlias();
+	const class_name = vq_obj.getName();
 	if (isIndividual(individual))
 		params.uriIndividual = dataShapes.getIndividualName(individual);
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
-	var pList = {in: [], out: []};	
+	let pList = {in: [], out: []};	
 	//if (dataShapes.schema.use_pp_rels) 
 	pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
 	//if (dataShapes.schema.schemaType !== 'wikidata') { // Ir uztaisīts, bet strādā drusku palēni
-	//	var pListI = getPListI(vq_obj);
+	//	const pListI = getPListI(vq_obj);
 	//	if ( pListI.type != undefined) params.pListI = pListI;
 	// }
 	
@@ -249,19 +249,19 @@ const findElementDataForProperty = (vq_obj) => {
 }
 
 const findElementDataForIndividual = (vq_obj) => {
-	var params = {};
-	var class_name = vq_obj.getName();
+	let params = {};
+	const class_name = vq_obj.getName();
 	if (class_name !== null && class_name !== undefined)
 		params.className = class_name;
 
 	if (vq_obj.isIndirectClassMembership())
 		params.isIndirectClassMembership = true;
 
-	var pList = getPList(vq_obj);
+	const pList = getPList(vq_obj);
 	if (pList.in.length > 0 || pList.out.length > 0) params.pList = pList;
 	
 	//if (dataShapes.schema.schemaType !== 'wikidata') {
-		var pListI = getPListI(vq_obj);
+		const pListI = getPListI(vq_obj);
 		if ( pListI.type != undefined) params.pListI = pListI;
 	// }
 	
@@ -270,21 +270,21 @@ const findElementDataForIndividual = (vq_obj) => {
 
 //const sparqlGetIndividualClasses = async (params, uriIndividual) => {
 const findPropertiesIds = async (direct_class_role, indirect_class_role, prop_list = []) => {
-		var id_list = [];
-		async function addProperty(propertyName) {
-			if (propertyName != '' && propertyName != undefined && propertyName != null ) {
-				var prop = await dataShapes.resolvePropertyByName({name: propertyName});
-				if (prop.data.length > 0)
-					id_list.push(prop.data[0].id);
-			}
+	let id_list = [];
+	async function addProperty(propertyName) {
+		if (propertyName != '' && propertyName != undefined && propertyName != null ) {
+			const prop = await dataShapes.resolvePropertyByName({name: propertyName});
+			if (prop.data.length > 0)
+				id_list.push(prop.data[0].id);
 		}
-		
-		await addProperty(direct_class_role);
-		await addProperty(indirect_class_role);
-		for (const element of prop_list) {
-			await addProperty(element);
-		}
-		return await id_list;
+	}
+	
+	await addProperty(direct_class_role);
+	await addProperty(indirect_class_role);
+	for (const element of prop_list) {
+		await addProperty(element);
+	}
+	return await id_list;
 }
 
 const classes = [
@@ -372,7 +372,7 @@ const dataShapes = {
 	},
 	getOntologiesOld : async function() {
 		//dataShapes.getOntologies()
-		var rr = await callWithGet('info/');
+		let rr = await callWithGet('info/');
 
 		if (!_.isEmpty(rr)) {
 			rr.unshift({display_name:""});
@@ -384,7 +384,7 @@ const dataShapes = {
 	},
 	getOntologies : async function() {
 		//dataShapes.getOntologies()
-		var rr = await callWithGet('info2/');
+		let rr = await callWithGet('info2/');
 
 		if (!_.isEmpty(rr) && !rr.error) {
 			//console.log("rr ", rr)
@@ -396,7 +396,7 @@ const dataShapes = {
 		return NaN;
 	},
 	getPublicNamespaces : async function() {
-		var rr = await callWithGet('public_ns/');
+		let rr = await callWithGet('public_ns/');
 		if (!_.isEmpty(rr)) {
 			this.schema.namespaces = rr;
 			return await rr;
@@ -406,7 +406,7 @@ const dataShapes = {
 	},
 	changeActiveProject : async function(proj_id) {
 		//console.log('------changeActiveProject-------')
-		var proj = Projects.findOne({_id: proj_id});
+		const proj = Projects.findOne({_id: proj_id});
 		//this.schema = getEmptySchema();
 		if (proj !== undefined) {
 			await this.changeActiveProjectFull(proj);
@@ -414,7 +414,7 @@ const dataShapes = {
 	},
 	changeActiveProjectFull : async function(proj) {
 		//console.log('------changeActiveProjectFull-------')
-		var projectId_in_process = this.schema.projectId_in_process;
+		let projectId_in_process = this.schema.projectId_in_process;
 		if ( proj !== undefined && projectId_in_process == proj._id ) {
 			while (projectId_in_process == proj._id) {
 				await delay(5000);
@@ -435,7 +435,7 @@ const dataShapes = {
 				if ( proj.uri != undefined && proj.uri !== '' )
 					this.schema.endpoint = `${proj.endpoint}?default-graph-uri=${proj.uri}`; 
 				
-				var info = await callWithGet('info/');
+				const info = await callWithGet('info/');
 
 				if (info.error) {
 					console.error(info);
@@ -444,19 +444,19 @@ const dataShapes = {
 
 
 				if (info.filter(function(o){ return o.display_name == proj.schema}).length > 0) {
-					var schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
+					const schema_info = info.filter(function(o){ return o.display_name == proj.schema})[0];
 					this.schema.schema = schema_info.db_schema_name;
 					this.schema.schemaType = schema_info.schema_name;
 					this.schema.use_pp_rels = schema_info.use_pp_rels;
 					this.schema.simple_prompt = schema_info.simple_prompt;
 					this.schema.hide_individuals = schema_info.hide_instances;
-					var prop_id_list = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role);
+					const prop_id_list = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role);
 					if (prop_id_list.length>0)
 						this.schema.deferred_properties = `id in ( ${prop_id_list})`;
 					
-					var ns = await this.getNamespaces_0();
+					const ns = await this.getNamespaces_0();
 					this.schema.namespaces = ns;
-					var local_ns = ns.filter(function(n){ return n.is_local == true});
+					const local_ns = ns.filter(function(n){ return n.is_local == true});
 					this.schema.local_ns = local_ns[0].name;
 					//if ( local_ns.length > 0 )
 					//	this.schema.localNS = local_ns[0].name;
@@ -476,7 +476,7 @@ const dataShapes = {
 						this.schema.tree.class = 'All classes';
 						this.schema.tree.classes = classes;
 						//this.schema.deferred_properties = `display_name LIKE 'wiki%' or prefix = 'rdf' and display_name = 'type' or prefix = 'dct' and display_name = 'subject' or prefix = 'owl' and display_name = 'sameAs' or prefix = 'prov' and display_name = 'wasDerivedFrom'`;
-						var prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['owl:sameAs', 'prov:wasDerivedFrom']);
+						const prop_id_list2 = await findPropertiesIds(schema_info.direct_class_role, schema_info.indirect_class_role, ['owl:sameAs', 'prov:wasDerivedFrom']);
 						this.schema.deferred_properties = `display_name LIKE 'wiki%' or id in ( ${prop_id_list2})`;
 					}
 					else if (this.schema.schemaType === 'wikidata') {   
@@ -484,8 +484,8 @@ const dataShapes = {
 						this.schema.tree.classes = [];
 					}
 					else if (!this.schema.hide_individuals) {
-						var clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
-						var c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
+						const clFull = await dataShapes.getTreeClasses({main:{treeMode: 'Top', limit: MAX_TREE_ANSWERS}});
+						const c_list = clFull.data.map(v => `${v.prefix}:${v.display_name}`)
 						this.schema.tree.class = c_list[0];
 						this.schema.tree.classes = c_list;
 					}
@@ -524,7 +524,7 @@ const dataShapes = {
 		}
 		//console.log(Projects.findOne({_id: Session.get("activeProject")}));
 		const startTime = Date.now();
-		var s = this.schema.schema;
+		let s = this.schema.schema;
 		
 		if (s === "" || s === undefined ) {
 			await this.changeActiveProject(Session.get("activeProject"));
@@ -532,7 +532,7 @@ const dataShapes = {
 		}
 
 		// *** console.log(params)
-		var rr = {complete: false, data: [], error: "DSS schema not found"};
+		let rr = {complete: false, data: [], error: "DSS schema not found"};
 		if (s !== "" && s !== undefined )
 		{
 			params.main.endpointUrl = this.schema.endpoint;
@@ -573,13 +573,13 @@ const dataShapes = {
 		if ( this.schema.namespaces.length > 0 )
 			return this.schema.namespaces;
 		else {
-			var rr = await this.callServerFunction("getNamespaces", {main:params});
+			let rr = await this.callServerFunction("getNamespaces", {main:params});
 			this.schema.namespaces = rr;
 			return rr;
 		} 
 	},
 	getNamespaces_0 : async function(params = {}) {
-		var rr = await this.callServerFunction("getNamespaces", {main:params});
+		let rr = await this.callServerFunction("getNamespaces", {main:params});
 		this.schema.namespaces = rr;
 		return rr;
 	},
@@ -593,8 +593,8 @@ const dataShapes = {
 		if ( params.filter !== undefined) 
 			params.filter = params.filter.replaceAll(' ','');
 		if ( params.filter !== undefined && params.filter.split(':').length > 1 ) {
-			var filter_split = params.filter.split(':');
-			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			const filter_split = params.filter.split(':');
+			const ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
 			if ( ns.length == 1 ) {
 				params.filter = filter_split[1];
 				params.namespaces = { in: [filter_split[0]]};
@@ -603,7 +603,7 @@ const dataShapes = {
 				params.filter = filter_split[1];
 			}
 		}		
-		var allParams = {main: params};
+		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForClass(vq_obj);
 			//allParams.main.orderByPrefix = `case when v.is_local = true then 0 else 1 end,`;
@@ -623,8 +623,8 @@ const dataShapes = {
 			params.main.filter = params.main.filter.replaceAll(' ','');
 			
 		if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
-			var filter_split = params.main.filter.split(':');
-			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			const filter_split = params.main.filter.split(':');
+			const ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
 			if ( ns.length == 1 ) {
 				params.main.filter = filter_split[1];
 				params.main.namespaces = { in: [filter_split[0]]};
@@ -638,7 +638,7 @@ const dataShapes = {
 	},
 	getTreeClasses : async function(params) {
 		function makeTreeName(params) {
-			var nList = [];
+			let nList = [];
 			if ( params.main.namespaces !== undefined) {
 				if ( params.main.namespaces.in !== undefined )
 					nList.push(params.main.namespaces.in.join('_'));
@@ -648,9 +648,9 @@ const dataShapes = {
 			nList.push(params.main.limit);
 			return nList.join('_');
 		}
-		var rr;
+		let rr;
 		if ( params.main.treeMode === 'Top' && ( params.main.filter === undefined || params.main.filter === '' )) {
-			var nsString = makeTreeName(params);
+			const nsString = makeTreeName(params);
 			//console.log(`in_${params.namespaces.in.join('_')}_notIn_${params.namespaces.notIn.join('_')}`)
 			if (this.schema.treeTopsC[nsString] !== undefined && this.schema.treeTopsC[nsString].error != undefined) {
 				rr = this.schema.treeTopsC[nsString];
@@ -662,8 +662,8 @@ const dataShapes = {
 		}
 		else {
 			if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
-				var filter_split = params.main.filter.split(':');
-				var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+				const filter_split = params.main.filter.split(':');
+				const ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
 				if ( ns.length == 1 ) {
 					params.main.filter = filter_split[1];
 					params.main.namespaces = { in: [filter_split[0]]};
@@ -696,8 +696,8 @@ const dataShapes = {
 		//dataShapes.getProperties({propertyKind:'Object', namespaces: { notIn: ['dbp']}}, new VQ_Element(Session.get("activeElement")))
 		params.deferred_properties = this.schema.deferred_properties;
 		if ( params.filter !== undefined && params.filter.split(':').length > 1 ) {
-			var filter_split = params.filter.split(':');
-			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			const filter_split = params.filter.split(':');
+			const ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
 			if ( ns.length == 1 ) {
 				params.filter = filter_split[1];
 				params.namespaces = { in: [filter_split[0]]};
@@ -706,7 +706,7 @@ const dataShapes = {
 				params.filter = filter_split[1];
 			}
 		}
-		var allParams = {main: params};
+		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined )
 			allParams.element = findElementDataForProperty(vq_obj);
 		if ( vq_obj_2 !== null && vq_obj_2 !== undefined )
@@ -725,8 +725,8 @@ const dataShapes = {
 		// *** dataShapes.getProperties({main:{propertyKind:'All', orderByPrefix: 'case when ns_id = 2 then 0 else 1 end desc,'}, element:{className: 'CareerStation'}})
 		params.main.deferred_properties = this.schema.deferred_properties;
 		if ( params.main.filter !== undefined && params.main.filter.split(':').length > 1 ) {
-			var filter_split = params.main.filter.split(':');
-			var ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
+			const filter_split = params.main.filter.split(':');
+			const ns = this.schema.namespaces.filter(function(n){ return n.name == filter_split[0];})
 			if ( ns.length == 1 ) {
 				params.main.filter = filter_split[1];
 				params.main.namespaces = { in: [filter_split[0]]};
@@ -750,7 +750,7 @@ const dataShapes = {
 	},
 	getTreeProperties : async function(params) {
 		function makeTreeName(params) {
-			var nList = [];
+			let nList = [];
 			nList.push(params.propertyKind);
 			if ( params.basicOrder !== undefined && params.basicOrder )
 				nList.push('Basic');
@@ -759,9 +759,9 @@ const dataShapes = {
 			nList.push(params.limit);
 			return nList.join('_');
 		}
-		var rr;
+		let rr;
 		if ( params.filter === undefined || params.filter === '' ) {
-			var tName = makeTreeName(params);
+			const tName = makeTreeName(params);
 			if (this.schema.treeTopsP[tName] !== undefined && this.schema.treeTopsP[tName].error != undefined ) {
 				rr = this.schema.treeTopsP[tName];
 			}
@@ -776,10 +776,10 @@ const dataShapes = {
 		return rr;
 	},
 	getIndividuals : async function(params = {}, vq_obj = null) {
-		var faasEnabled = await faas.isEnabled();
+		const faasEnabled = await faas.isEnabled();
 		// *** console.log("------------getIndividuals ------------------")
 		//dataShapes.getIndividuals({filter:'Julia'}, new VQ_Element(Session.get("activeElement")))
-		var rr;
+		let rr;
 
 		if (this.schema.schemaType == 'wikidata' && params.filter != undefined && faasEnabled == false)
 			return await this.getIndividualsWD(params.filter); 
@@ -787,7 +787,7 @@ const dataShapes = {
 		//if (this.schema.schemaType === 'wikidata') // TODO pagaidām filtrs ir atslēgts
 		//	params.filter = '';  
 
-		var allParams = {main: params};
+		let allParams = {main: params};
 		if ( vq_obj !== null && vq_obj !== undefined ) {
 			allParams.element = findElementDataForIndividual(vq_obj);
 		}
@@ -808,10 +808,10 @@ const dataShapes = {
 		return rr;
 	},
 	getIndividualsWD : async function(filter) {
-		var rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
+		const rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
 		if (rr.success == 1) {
-			var rez = _.map(rr.search, function(p) {
-				var localName = `wd:[${p.label} (${p.id})]`;				
+			const rez = _.map(rr.search, function(p) {
+				const localName = `wd:[${p.label} (${p.id})]`;				
 				return localName;
 			});
 			return rez;
@@ -822,8 +822,8 @@ const dataShapes = {
 	},
 	getTreeIndividuals : async function(params = {}, className) {
 		// *** console.log("------------getTreeIndividuals ------------------")
-		var rr = [];
-		var allParams = {main: params, element:{className: className}};	
+		let rr = [];
+		let allParams = {main: params, element:{className: className}};	
 		
 		if (this.schema.treeTopsI[className] !== undefined && params.filter === '' ) {
 			rr = this.schema.treeTopsI[className];
@@ -841,11 +841,11 @@ const dataShapes = {
 		return rr;
 	},
 	getTreeIndividualsWD : async function(filter) {
-		var rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
+		let rr = await callWithGetWD(filter, MAX_IND_ANSWERS);
 		if (rr.success == 1) {
-			var rez = _.map(rr.search, function(p) {
+			const rez = _.map(rr.search, function(p) {
 				// TODO jāpaskatās, kāds īsti ir ns
-				var localName = `wd:[${p.label} (${p.id})]`;				
+				const localName = `wd:[${p.label} (${p.id})]`;				
 				return {localName:localName , description: p.description, iri:p.concepturi, label:p.label};
 			});
 			return rez;
@@ -859,7 +859,7 @@ const dataShapes = {
 		//dataShapes.resolveClassByName({name: 'http://dbpedia.org/ontology/Year'})
 		//dataShapes.resolveClassByName({name: 'foaf:Document'})
 		
-		var rr;
+		let rr;
 		if (this.schema.resolvedClasses[params.name] !== undefined || this.schema.resolvedClassesF[params.name] !== undefined) {
 			if (this.schema.resolvedClasses[params.name] !== undefined)
 				rr = { complete:true, data: [this.schema.resolvedClasses[params.name]]};
@@ -885,7 +885,7 @@ const dataShapes = {
 		// *** console.log("------------resolvePropertyByName---"+ params.name +"---------------")
 		//dataShapes.resolvePropertyByName({name: 'dbo:president'})
 		//dataShapes.resolvePropertyByName({name: 'http://dbpedia.org/ontology/years'})
-		var rr;
+		let rr;
 		if ( typeof params.name !== "string" ) return { complete:false, name: '', data: []};
 		
 		if (this.schema.resolvedProperties[params.name] !== undefined || this.schema.resolvedPropertiesF[params.name] !== undefined) {
@@ -919,7 +919,7 @@ const dataShapes = {
 			params.name = params.name.substring(1, params.name.length-1);
 		
 		params.name = this.getIndividualName(params.name);
-		var rr;
+		let rr;
 		
 		if (this.schema.resolvedIndividuals[params.name] !== undefined || this.schema.resolvedIndividualsF[params.name] !== undefined) {
 			if (this.schema.resolvedIndividuals[params.name] !== undefined)
@@ -929,17 +929,17 @@ const dataShapes = {
 		}
 		else {
 			if (this.schema.schemaType === 'wikidata' &&  params.name.indexOf('//') == -1) {
-				var prefix = params.name.substring(0, params.name.indexOf(':')+1);
-				var iri = '';
+				const prefix = params.name.substring(0, params.name.indexOf(':')+1);
+				let iri = '';
 				_.each(this.schema.namespaces, function(n) {
 					if (params.name.indexOf(n.name) == 0 && prefix.length == n.name.length + 1)
 						iri = params.name.replace(':','').replace(n.name,n.value);
 				});
-				var name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
-				var individuals = await this.getTreeIndividualsWD(name);
+				const name= params.name.substring(params.name.indexOf(':')+1, params.name.length);
+				const individuals = await this.getTreeIndividualsWD(name);
 
 				if (individuals.length > 0) { 
-					var rez = {};
+					let rez = {};
 					_.each(individuals, function(i) {
 						if (i.iri == iri)
 							rez = {name: params.name, localName: i.localName, label: i.label};
@@ -966,10 +966,10 @@ const dataShapes = {
 		
 	},
 	generateClassUpdate : async function (label_name) {
-		var rr = await this.callServerFunction("generateClassUpdate", {main: {label_name: label_name}});
+		let rr = await this.callServerFunction("generateClassUpdate", {main: {label_name: label_name}});
 		//console.log(rr);
 		if (rr.data.length > 0) {
-			var link = document.createElement("a"); 
+			let link = document.createElement("a"); 
 			link.setAttribute("download", "Update.sql");
 			link.href = URL.createObjectURL(new Blob([rr.data.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 			document.body.appendChild(link);
@@ -977,8 +977,8 @@ const dataShapes = {
 		}
 	},
 	tt : function (all = 1) {
-		var el = new VQ_Element(Session.get("activeElement"));
-		//var comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
+		const el = new VQ_Element(Session.get("activeElement"));
+		//const comparts = Compartments.find({elementId: el._id()}, {sort: {index: 1}}).fetch();
 		//console.log(comparts)
 		Compartments.find({elementId: el._id()}, {sort: {index: 1}}).forEach(function (cc) {
 			console.log(cc)
@@ -992,7 +992,7 @@ const dataShapes = {
 
 	},
 	tt2 : function () {
-		var el = new VQ_Element(Session.get("activeElement"));
+		const el = new VQ_Element(Session.get("activeElement"));
 		console.log(el.getCoordinates());
 	},
 	tt3 : async function () {
@@ -1004,8 +1004,8 @@ const dataShapes = {
 		//await this.callServerFunction("xxx_test", {main: {}});
 		const pp = 'wdt:P31/wdt:P279*'
 		console.log('**************************')
-		var ll = pp.split('/');
-		var rez = [];
+		const ll = pp.split('/');
+		let rez = [];
 		ll.forEach(l => { rez.push(l.split('*')); })
 		console.log(rez)
 		//console.log(pp.split('*'))
@@ -1014,14 +1014,14 @@ const dataShapes = {
 	},
 	printLog : function() {
 		if ( this.schema.log.length > 0 ) {
-			var link = document.createElement("a"); 
+			let link = document.createElement("a"); 
 			link.setAttribute("download", "LOG.txt");
 			link.href = URL.createObjectURL(new Blob([this.schema.log.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 			document.body.appendChild(link);
 			link.click();
 		}
 		if ( this.schema.fullLog.length > 0 ) {
-			var link2 = document.createElement("a"); 
+			let link2 = document.createElement("a"); 
 			link2.setAttribute("download", "FULL_LOG.txt");
 			link2.href = URL.createObjectURL(new Blob([this.schema.fullLog.join("\r\n")], {type: "application/json;charset=utf-8;"}));
 			document.body.appendChild(link2);
@@ -1042,14 +1042,14 @@ const dataShapes = {
 	// console.log(dataShapes.getClassList({}))
 		//par = {class_count_limit:30, class_ind:1, only_local:false, not_in:['owl','rdf','rdfs']};
 		//console.log(par)
-		var rr = [];
-		var allParams = {main: { limit: par.class_count_limit, class_ind:par.class_ind, isLocal: par.only_local, not_in:par.not_in }};
+		let rr = [];
+		let allParams = {main: { limit: par.class_count_limit, class_ind:par.class_ind, isLocal: par.only_local, not_in:par.not_in }};
 		allParams.main.not_in = allParams.main.not_in.map(v => this.schema.namespaces.filter(function(n){ return n.name == v})[0].id); // TODO būs jāpapildina
 		rr = await this.callServerFunction("xx_getClassList", allParams);
 		//console.log(rr)
 		return rr.data;
 
-		//var c_list = rr.data.map(v => v.id);
+		//const c_list = rr.data.map(v => v.id);
 		//return c_list;		
 	},
 	getClassCount: async function() {
@@ -1058,15 +1058,15 @@ const dataShapes = {
 	},
 	makeDiagr : async function(c_list, p_list, superclassType, remSmall, addIds, disconnBig, compView, schema, info ) {
 		// Tiek padots zīmējamo klašu un propertiju saraksts
-		var rr;
+		let rr;
 		const connectDataClases = true;
 		const addAllProp = false;
-		var remBig = disconnBig > 0;
-		var remCount = disconnBig; 
-		var rezFull = {classes:{}, assoc:{}, schema:schema, info:info};
-		var allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
-		var Gnum = 101;
-		var Snum = 101;
+		const remBig = disconnBig > 0;
+		const remCount = disconnBig; 
+		let rezFull = {classes:{}, assoc:{}, schema:schema, info:info};
+		let allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
+		let Gnum = 101;
+		let Snum = 101;
 		// Funkcija skaita noapaļošanai, izmanto klasēm un propertijām
 		function roundCount(cnt) {
 			if ( cnt == '' ) {
@@ -1084,14 +1084,14 @@ const dataShapes = {
 		rr = await this.callServerFunction("xx_getClassListInfo", allParams);
 		// Pamata klašu saraksta izveidošana
 		_.each(rr.data, function(cl) {
-			var id = `c_${cl.id}`;
-			var isClasif = false;
-			var type = 'Class';
+			const id = `c_${cl.id}`;
+			let isClasif = false;
+			let type = 'Class';
 			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 				isClasif = true;
 				type = 'Classif';
 			}	
-			var full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
+			let full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
 			if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
 			rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, used2:false, hasGen:false, isClasif:isClasif, type:type, prefix:cl.prefix, displayName:cl.full_name, cnt:roundCount(cl.cnt),
 				cnt0:cl.cnt, sup:cl.s, sub:cl.b, fullName:full_name, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[],  all_atr:[] };
@@ -1100,17 +1100,17 @@ const dataShapes = {
 		rr = await this.callServerFunction("xx_getCCInfo", allParams); 
 		// DB virsklašu informācijas pielikšana
 		for (const cl of rr.data) {	
-			var id1 = `c_${cl.class_1_id}`;
-			var id2 = `c_${cl.class_2_id}`;
+			const id1 = `c_${cl.class_1_id}`;
+			const id2 = `c_${cl.class_2_id}`;
 			rezFull.classes[id1].super_classes.push(id2);
 			rezFull.classes[id2].used = true;
 			rezFull.classes[id1].hasGen = true;
 			rezFull.classes[id2].hasGen = true;
 		}
 		
-		var p_list_full = {};
-		var super_classes = {};	
-		var rem_props = {};
+		let p_list_full = {};
+		let super_classes = {};	
+		let rem_props = {};
 		// Funkcija potenciālo virsklašu veidošanai
 		function add_superclass (sc_list, prop_name) {
 			let sc_id = `c_${sc_list.join('_')}`;
@@ -1126,15 +1126,15 @@ const dataShapes = {
 		
 		rr = await this.callServerFunction("xx_getCPCInfo", allParams); 
 		const cpc_info = rr.data;
-		var has_cpc = false;
+		let has_cpc = false;
 		if ( cpc_info.length > 0 ) has_cpc = true;
 		allParams.main.p_list =  p_list.map(v => v.id);
 		rr = await this.callServerFunction("xx_getCPInfo", allParams); 
-		var cp_info = rr.data;
+		let cp_info = rr.data;
 		
 		// Mazo propertiju noņemšana, ja ir uzstādīts dotais parametrs
 		if ( remSmall > 0 ) {
-			var tt = [];
+			let tt = [];
 			for (const ii of cp_info) {
 				if ( Number(ii.cnt) > remSmall-1 ) {
 					if ( ii.object_cnt < remSmall && ii.object_cnt != 0) {
@@ -1151,14 +1151,14 @@ const dataShapes = {
 		
 		// Propertiju saraksta sākotnējā apstrāde, savāc galus
 		for (const p of p_list) {	
-			var p_id = `p_${p.id}`;
-			var p_name = `${p.prefix}:${p.display_name}`;
+			const p_id = `p_${p.id}`;
+			let p_name = `${p.prefix}:${p.display_name}`;
 			if ( addIds ) 
 				p_name = `${p_name}(${p.id})`;
 		
-			var cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; }); 
-			var c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2}); 
-			var c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1}); 
+			const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; }); 
+			const c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2}); 
+			const c_to = cp_info_p.filter(function(cp){ return cp.type_id == 1}); 
 
 			if ( p.max_cardinality == -1 ) 
 				p.max_cardinality = '*';
@@ -1178,8 +1178,8 @@ const dataShapes = {
 		// Funkcija propertijas pielikšanai, tiek izsaukta divās vietās, , izveido potenciālās virsklases, skatoties uz padoto parametru
 		function addProperty(pp, c_from, c_to) {
 			function addAttribute(cl, pp, class_name, object_cnt = -1) {
-				var id = `c_${cl.class_id}`;
-				var p_info = {p_name:pp.p_name, p_id:pp.id, class_name:class_name,  cnt:-1, object_cnt:object_cnt, is_domain:pp.is_domain, max_cardinality:pp.max_cardinality};
+				const id = `c_${cl.class_id}`;
+				const p_info = {p_name:pp.p_name, p_id:pp.id, class_name:class_name,  cnt:-1, object_cnt:object_cnt, is_domain:pp.is_domain, max_cardinality:pp.max_cardinality};
 				rezFull.classes[id].atr_list.push(p_info);
 				rezFull.classes[id].used = true;
 				if ( !rezFull.classes[id].all_atr.includes(pp.id)) rezFull.classes[id].all_atr.push(pp.id);				
@@ -1187,13 +1187,12 @@ const dataShapes = {
 			
 			if ( c_from.length > 0  && c_to.length == 0) {
 				for (const cl of c_from) {
-					var id = `c_${cl.class_id}`;
-					var class_name = ( cl.object_cnt > 0 ) ? '-> IRI' : '';	
+					const class_name = ( cl.object_cnt > 0 ) ? '-> IRI' : '';	
 					addAttribute(cl, pp, class_name);
 				}
 			}
 			else if ( c_from.length > 0  && c_to.length > 0) {
-				var temp_info = {sources:{}, targets:{}};
+				let temp_info = {sources:{}, targets:{}};
 				for (const c_1 of c_from) { 
 					temp_info.sources[c_1.class_id] = 0; 
 				}
@@ -1201,13 +1200,13 @@ const dataShapes = {
 					temp_info.targets[c_2.class_id] = 0; 
 				}
 				for (const c_1 of c_from) {
-					var from_id = `c_${c_1.class_id}`;
-					var addedToAtr = false;
+					let from_id = `c_${c_1.class_id}`;
+					let addedToAtr = false;
 					if ( c_1.object_cnt > 0 ) {
 						for (const c_2 of c_to) {
-							var to_id = `c_${c_2.class_id}`;
-							var cnt = -1;
-							var cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id && i.other_class_id == c_2.class_id});
+							const to_id = `c_${c_2.class_id}`;
+							let cnt = -1;
+							const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id && i.other_class_id == c_2.class_id});
 							if ( has_cpc && cpc_i.length > 0 || !has_cpc ) {  // Ja ir cpc, tad netiek ielikts tas klašu pāris, kura nav. Ja nu ir kāds iztrūkstošs pāris.
 								if ( cpc_i.length > 0) 
 									cnt = cpc_i[0].cnt;
@@ -1222,14 +1221,14 @@ const dataShapes = {
 									addedToAtr = true;
 								}
 								else {
-									var is_domain = pp.is_domain;
-									var is_range = pp.is_range;
+									let is_domain = pp.is_domain;
+									let is_range = pp.is_range;
 									if ( c_from.length == 1 && c_1.object_cnt == pp.cnt)
 										is_domain = 'D';  // TODO Šim vispār jau pie Aigas būtu jābūt korekti sarēķinātam
 									if ( c_to.length == 1 && cnt == pp.cnt)
 										is_range = 'R';  
-									var id = `c_${c_1.class_id}_c_${c_2.class_id}_${pp.p_name}`;
-									var p_info = {p_name:pp.p_name, p_id:`p_${pp.id}`, id:pp.id, cnt:cnt, is_range:is_range, is_domain:is_domain, max_cardinality:pp.max_cardinality}
+									const id = `c_${c_1.class_id}_c_${c_2.class_id}_${pp.p_name}`;
+									const p_info = {p_name:pp.p_name, p_id:`p_${pp.id}`, id:pp.id, cnt:cnt, is_range:is_range, is_domain:is_domain, max_cardinality:pp.max_cardinality}
 									rezFull.classes[from_id].used = true;
 									if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);
 									rezFull.classes[to_id].used = true;
@@ -1253,8 +1252,8 @@ const dataShapes = {
 						addAttribute(c_1, pp, '-> IRI');
 					}
 				}
-				var rr1;
-				var ok = true;
+				let rr1;
+				let ok = true;
 				for (const cc of Object.keys(temp_info.targets)) {
 					if ( temp_info.targets[cc] != c_from.length)
 						ok = false;
@@ -1277,14 +1276,14 @@ const dataShapes = {
 		
 		// Pamata propertiju pielikšana
 		for (const p of Object.keys(p_list_full)) {	
-			var pp = p_list_full[p];
-			var c_from = pp.c_from;
-			var c_to = pp.c_to;
+			const pp = p_list_full[p];
+			const c_from = pp.c_from;
+			const c_to = pp.c_to;
 			addProperty(pp, c_from, c_to);
 		}
 	
 		// Iztūkstošo propertiju pievienošana (pārbaudot arī apkārtni), skatās arī uz parametru
-		var val = (addAllProp) ? -1 : 0;	
+		const val = (addAllProp) ? -1 : 0;	
 		for (const cl of Object.keys(rezFull.classes)) {
 			let cl_info = rezFull.classes[cl];
 			if ( cl_info.type != 'Abstract') {
@@ -1299,18 +1298,15 @@ const dataShapes = {
 					}
 				}
 				
-				var cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > val;}).map(cp => cp.property_id); // TODO - Te ir jautājums par cover set (tagad var no saskarnes pamainīt)
+				const cp_info_p = cp_info.filter(function(cp){ return cp.class_id == cl_info.id && cp.type_id == 2 && cp.cover_set_index > val;}).map(cp => cp.property_id); // TODO - Te ir jautājums par cover set (tagad var no saskarnes pamainīt)
 				for (const p of cp_info_p) {
 					if ( !cl_info.all_atr.includes(p)) {
 						console.log('******** Pieliek papildus propertiju ***********', cl_info.fullName, p_list_full[`p_${p}`].p_name)
-						var c_from = cp_info.filter(function(cp){ 
+						const c_from = cp_info.filter(function(cp){ 
 							return cp.type_id == 2 && cp.property_id == p && cp.class_id == cl_info.id;
 						}); 
-						var c_to = cp_info.filter(function(cp){ 
+						const c_to = cp_info.filter(function(cp){ 
 							return cp.type_id == 1 && cp.property_id == p && c_list.includes(cp.class_id) && cp.cover_set_index > 0;
-						}); 
-						var c_to_full = cp_info.filter(function(cp){ 
-							return cp.type_id == 1 && cp.property_id == p && c_list.includes(cp.class_id);
 						}); 
 						addProperty(p_list_full[`p_${p}`], c_from, c_to);
 					}
@@ -1320,8 +1316,8 @@ const dataShapes = {
 		
 		console.log("*** super_classes ***", super_classes)
 		// Saliek abstraktās virsklases sarakstā, lai var sakārtot 
-		var temp = {};
-		var super_classes_list = [];
+		let temp = {};
+		let super_classes_list = [];
 		for (const sc of Object.keys(super_classes)) {
 			if ( super_classes[sc].count > 1 ) { // TODO Jāpadomā, vai šādi vispār ir labi, varbūt vajag savādāk šķirot
 				super_classes[sc].cl_list_orig = super_classes[sc].cl_list;
@@ -1338,13 +1334,13 @@ const dataShapes = {
 		for (const sc1 of super_classes_list) {	
 			for (const sc2 of super_classes_list) {	
 				if ( sc1.cl_list.length < sc2.cl_list.length ) {
-					var ii = 0;
+					let ii = 0;
 					for (const c of sc1.cl_list) {
 						if ( sc2.cl_list.includes(c) )
 							ii = ii+1;
 					}
 					if ( ii == sc1.cl_list.length) {
-						var cl_list = [];
+						let cl_list = [];
 						for (const c of sc2.cl_list) {
 							if ( !sc1.cl_list.includes(c) )
 								cl_list.push(c);
@@ -1362,10 +1358,10 @@ const dataShapes = {
 
 		// Pieliek abstraktās virsklases klašu sarakstā
 		for (const super_class of super_classes_list) {
-			var sc = super_class.id;
+			const sc = super_class.id;
 			rezFull.classes[sc] = { id:super_class.id0, fullName:'', used:true, used2:true, hasGen:true, type:'Abstract', cl_list: super_class.cl_list_orig, super_classes:[], sub_classes:[],
 									atr_list:[], atr_list2:[], in_prop:[], out_prop:[], all_atr:[] };
-			var sc_list = [];
+			let sc_list = [];
 			for (const c of super_class.cl_list) {
 				rezFull.classes[`c_${c}`].super_classes.push(sc); 
 				rezFull.classes[`c_${c}`].hasGen = true;
@@ -1373,7 +1369,7 @@ const dataShapes = {
 			}
 
 			sc_list = sc_list.sort((a, b) => { return b.cnt0 - a.cnt0; });
-			var n_list = [];				
+			let n_list = [];				
 			for (const c of sc_list) {
 				n_list.push(c.displayName);
 			}
@@ -1388,8 +1384,8 @@ const dataShapes = {
 		
 		// kopējo atribūtu pārvietošana pie virsklases
 		for (const super_class of super_classes_list) {	
-			var sc = super_class.id;
-			var atr_tree = {};
+			const sc = super_class.id;
+			let atr_tree = {};
 			for (const c of super_class.cl_list) {
 				for (const atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name] == undefined)
@@ -1411,7 +1407,7 @@ const dataShapes = {
 			}
 			
 			for (const c of super_class.cl_list) {
-				var atr_list = [];
+				let atr_list = [];
 				for (const atr of rezFull.classes[`c_${c}`].atr_list ) {
 					if ( atr_tree[atr.p_name].count != super_class.cl_list.length) {
 						atr_list.push(atr);
@@ -1423,13 +1419,13 @@ const dataShapes = {
 
 		// kopējo ienākošo propertiju pārvietošana pie virsklases
 		for (const super_class of super_classes_list) {	
-			var sc = super_class.id;
-			var atr_tree = {};
+			const sc = super_class.id;
+			let atr_tree = {};
 			for (const c of super_class.cl_list) {
 				for (const atr of rezFull.classes[`c_${c}`].in_prop ) {
-					var assoc = rezFull.assoc[atr];
+					let assoc = rezFull.assoc[atr];
 					if ( !assoc.removed ) {
-						var p_name = `${assoc.from}_${assoc.list[0].p_name}`;
+						const p_name = `${assoc.from}_${assoc.list[0].p_name}`;
 						if ( atr_tree[p_name] == undefined)
 							atr_tree[p_name] = {count:1, id_list:[atr], p_name:`${assoc.from}_${sc}_${assoc.list[0].p_name}`, 
 												info:{ removed: false, from:assoc.from, to:sc, id2:`${assoc.from}_${sc}`,
@@ -1458,13 +1454,13 @@ const dataShapes = {
 		
 		// kopējo izejošo propertiju pārvietošana pie virsklases
 		for (const super_class of super_classes_list) {
-			var sc = super_class.id;
-			var atr_tree = {};
+			const sc = super_class.id;
+			let atr_tree = {};
 			for (const c of super_class.cl_list) {
 				for (const atr of rezFull.classes[`c_${c}`].out_prop ) {
-					var assoc = rezFull.assoc[atr];
+					let assoc = rezFull.assoc[atr];
 					if ( !assoc.removed) {
-						var p_name = `${assoc.to}_${assoc.list[0].p_name}`;
+						const p_name = `${assoc.to}_${assoc.list[0].p_name}`;
 						if ( atr_tree[p_name] == undefined)
 							atr_tree[p_name] = {count:1, id_list:[atr], p_name:`${sc}_${assoc.to}_${assoc.list[0].p_name}`, 
 												info:{ removed: false, from:sc, to:assoc.to, id2:`${sc}_${assoc.to}`,
@@ -1494,47 +1490,47 @@ const dataShapes = {
 		// Saskaita, cik vietās ir propertija iezīmēta
 		for (const aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) {
-				var pId = rezFull.assoc[aa].list[0].p_id;
+				const pId = rezFull.assoc[aa].list[0].p_id;
 				p_list_full[pId].count = p_list_full[pId].count + 1;
 			}
 		}
 		
 		// Propertijas atvienošana
 		function disconnectProp(prop) {
-			var c_from = rezFull.classes[prop.from];	
-			var c_to = rezFull.classes[prop.to];	
-			var pr = prop.list[0];
-			var p_id = pr.p_id.substring(2,pr.p_id.length);
+			const c_from = rezFull.classes[prop.from];	
+			const c_to = rezFull.classes[prop.to];	
+			const pr = prop.list[0];
+			const p_id = pr.p_id.substring(2,pr.p_id.length);
 			if ( rezFull.classes[prop.from].type != 'Abstract' && rezFull.classes[prop.to].type != 'Abstract') {
 				c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from.displayName}); 
 				c_from.atr_list.push({p_name:pr.p_name, p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to.displayName}`,
 						max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
 			}
 			if ( rezFull.classes[prop.from].type == 'Abstract' && rezFull.classes[prop.to].type != 'Abstract') {
-				var c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
+				const c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
 				c_from.atr_list.push({p_name:pr.p_name, p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to.displayName}`,
 						max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
 				for (const from_id of c_from_id_list) {
-					var c_from_sub = rezFull.classes[from_id];
+					const c_from_sub = rezFull.classes[from_id];
 					c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from_sub.displayName}); 
 				}
 			}
 			if ( rezFull.classes[prop.from].type != 'Abstract' && rezFull.classes[prop.to].type == 'Abstract') {
-				var c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
+				const c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
 				c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from.displayName}); 
 				for (const to_id of c_to_id_list) {
-					var c_to_sub = rezFull.classes[to_id];
+					const c_to_sub = rezFull.classes[to_id];
 					c_from.atr_list.push({p_name:pr.p_name, p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to_sub.displayName}`,
 								max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
 				}
 			}
 			if ( rezFull.classes[prop.from].type == 'Abstract' && rezFull.classes[prop.to].type == 'Abstract') {
-				var c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
-				var c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
+				const c_from_id_list = rezFull.classes[prop.from].cl_list.map(i => `c_${i}`);
+				const c_to_id_list = rezFull.classes[prop.to].cl_list.map(i => `c_${i}`);
 				for (const from_id of c_from_id_list) {
 					for (const to_id of c_to_id_list) {
-						var c_from_sub = rezFull.classes[from_id];
-						var c_to_sub = rezFull.classes[to_id];
+						const c_from_sub = rezFull.classes[from_id];
+						const c_to_sub = rezFull.classes[to_id];
 						c_from.atr_list.push({p_name:pr.p_name,  p_id:p_id, cnt:-1, object_cnt:pr.cnt, class_name:`-> ${c_to_sub.displayName}`,
 								max_cardinality:pr.max_cardinality, is_domain:pr.is_domain});
 						c_to.atr_list2.push({p_name:pr.p_name, class_name:c_from_sub.displayName}); 
@@ -1545,7 +1541,7 @@ const dataShapes = {
 		
 		// Ievelk daudzgalu propertijas klasēs
 		for (const aa of Object.keys(rezFull.assoc)) {
-			var prop = rezFull.assoc[aa];
+			const prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
 				if ( remBig && p_list_full[prop.list[0].p_id].count > remCount ) { //5555 remCount
 					prop.removed = true;
@@ -1557,12 +1553,12 @@ const dataShapes = {
 
 		// Apstrādā tās klases, kurām nav izejošo propertiju, atvieno, ja ir vajadzīgais parametrs
 		for (const clId of Object.keys(rezFull.classes)) {
-			var cl = rezFull.classes[clId];
+			const cl = rezFull.classes[clId];
 			if ( !cl.hasGen && !cl.isClasif && cl.out_prop.length == 0) { // !cl.hasGen &&
 				cl.type = 'Data';
 				if ( !connectDataClases ) {
 					for (const p of cl.in_prop) {
-						var prop = rezFull.assoc[p];
+						const prop = rezFull.assoc[p];
 						if ( !prop.removed) {
 							prop.removed = true;
 							disconnectProp(prop);
@@ -1574,7 +1570,7 @@ const dataShapes = {
 		
 		// Pārbauda klašu aktuālo saistību ar citām
 		for (const aa of Object.keys(rezFull.assoc)) {
-			var prop = rezFull.assoc[aa];
+			const prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
 				rezFull.classes[prop.from].used2 = true;	
 				rezFull.classes[prop.to].used2 = true;
@@ -1585,7 +1581,7 @@ const dataShapes = {
 		for (const cl of Object.keys(rezFull.classes)) {
 			if ( !rezFull.classes[cl].used ) {
 				if ( rezFull.classes[cl].super_classes.length == 1 ) {
-					var sc = rezFull.classes[cl].super_classes[0];
+					const sc = rezFull.classes[cl].super_classes[0];
 					//rezFull.classes[sc].sub_classes.push(rezFull.classes[cl].fullName);
 					rezFull.classes[sc].sub_classes.push(rezFull.classes[cl]);
 				}
@@ -1596,13 +1592,13 @@ const dataShapes = {
 		
 		// Funkcija kompaktā atribūtu saraksta izveidošanai
 		function getCompactAtrList (atr_list, type, class_id = 0) {
-			var comp_atr_list = [];
-			var temp = {};
-			var temp2 = {};
+			let comp_atr_list = [];
+			let temp = {};
+			let temp2 = {};
 			if ( type == 'out') {
 				for (const a of atr_list) {
-					var ii = `${a.p_name}#${a.p_id}`;
-					var ii2 = `${a.p_name}_${a.p_id}_${a.class_name}`;
+					const ii = `${a.p_name}#${a.p_id}`;
+					const ii2 = `${a.p_name}_${a.p_id}_${a.class_name}`;
 					if( temp[ii] == undefined ) {
 						temp[ii] = [ii2];
 						temp2[ii] = a;
@@ -1615,10 +1611,10 @@ const dataShapes = {
 				}
 				for (const t of Object.keys(temp)) {
 					if ( temp[t].length > 1) {
-						var p_id = t.split('#')[1];
+						const p_id = t.split('#')[1];
 						if ( class_id >  0) {
-							var prop = p_list_full[`p_${p_id}`];
-							var cl_info = prop.c_from.filter(function(i){ return i.class_id == class_id});
+							const prop = p_list_full[`p_${p_id}`];
+							const cl_info = prop.c_from.filter(function(i){ return i.class_id == class_id});
 							if ( cl_info.length > 0 )
 								comp_atr_list.push({p_name:t.split('#')[0], p_id:p_id, cnt:Number(cl_info[0].cnt), object_cnt:cl_info[0].object_cnt, class_name:'->IRI', iri_card:temp[t].length, is_domain:'', max_cardinality:'*'});
 						}
@@ -1631,7 +1627,7 @@ const dataShapes = {
 			}
 			else {  // priekš atr_list2
 				for (const a of atr_list) {
-					var ii = a.p_name;
+					const ii = a.p_name;
 					if( temp[ii] == undefined ) {
 						temp[ii] = 1;
 						temp2[ii] = a;
@@ -1653,24 +1649,23 @@ const dataShapes = {
 		}
 
 		for (const cl of Object.keys(rezFull.classes)) {
-			var classInfo = rezFull.classes[cl];   
 			rezFull.classes[cl].sub_classes_group_string = '';
 		}
 		
 		// Vientuļo klašu apstrāde pilno atribūtu gadījumam 
 		if ( !compView ) {
 			// Savāc vientuļo klašu atribūtus, meklē līdzīgās (pirmā iterācija)
-			var temp = {};
+			let temp = {};
 			for (const clId of Object.keys(rezFull.classes)) {
-				var classInfo = rezFull.classes[clId];
+				const classInfo = rezFull.classes[clId];
 				if ( !classInfo.used2 && !classInfo.hasGen && !classInfo.isClasif ) {
 					classInfo.type = 'Data';
-					var atr_list = [];
+					let atr_list = [];
 					for (const a of classInfo.atr_list) {
-						var aa = {p_name:a.p_name, p_id:a.p_id, cnt:-1, object_cnt:-1, class_name:a.class_name, is_domain:'', max_cardinality:'*'};
+						const aa = {p_name:a.p_name, p_id:a.p_id, cnt:-1, object_cnt:-1, class_name:a.class_name, is_domain:'', max_cardinality:'*'};
 						atr_list.push(aa);
 					}
-					var cc = [classInfo.atr_list.map(n => `${n.p_name} ${n.class_name}`).sort().join('\n')];
+					let cc = [classInfo.atr_list.map(n => `${n.p_name} ${n.class_name}`).sort().join('\n')];
 					cc.push(classInfo.atr_list2.map(n => `${n.p_name} ${n.class_name}`).sort().join('\n'));
 					cc = cc.join('\n');
 					if ( cc != '') {
@@ -1683,9 +1678,9 @@ const dataShapes = {
 			}
 			
 			// Otrā iterācija līdzīgo vientuļo klasu savākšanai
-			var temp2 = {};
+			let temp2 = {};
 			for (const t of Object.keys(temp)) {
-				var cc = [getCompactAtrList(temp[t].atr_list, 'out').map(n => `${n.p_name}`).sort().join('\n')];
+				let cc = [getCompactAtrList(temp[t].atr_list, 'out').map(n => `${n.p_name}`).sort().join('\n')];
 				cc.push(getCompactAtrList(temp[t].atr_list2,'in').map(n => `${n.p_name}`).sort().join('\n'));
 				cc = cc.join('\n');
 				if ( temp2[cc] == undefined )
@@ -1693,7 +1688,7 @@ const dataShapes = {
 				else
 					temp2[cc].push(`c_${temp[t].class_list[0]}`);	
 				if (temp[t].class_list.length > 1 ) {
-					var cl_list = [];
+					let cl_list = [];
 					for (const cl_id of temp[t].class_list) {
 						cl_list.push(rezFull.classes[`c_${cl_id}`].fullName);
 						rezFull.classes[`c_${cl_id}`].used = false;
@@ -1710,7 +1705,7 @@ const dataShapes = {
 			// Līdzīgo klašu virsklases izveidošana
 			for (const t of Object.keys(temp2)) {
 				if ( temp2[t].length > 1 ) {
-					var sc = `c_${temp2[t].join('_')}`;
+					const sc = `c_${temp2[t].join('_')}`;
 					rezFull.classes[sc] = { id:`${temp2[t].join('_')}`, fullName:'', displayName:'', used:true, used2:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[],
 											atr_list:[], atr_list2:[], in_prop:[], out_prop:[], all_atr:[] };
 					for (const c of temp2[t]) {
@@ -1724,15 +1719,15 @@ const dataShapes = {
 		// Vientuļo klašu apstrāde kompakto atribūtu gadījumam 
 		if ( compView ) {
 			// Savāc vientuļo klašu atribūtus, meklē līdzīgās 
-			var temp = {};
+			let temp = {};
 			for (const clId of Object.keys(rezFull.classes)) {
-				var classInfo = rezFull.classes[clId];
+				const classInfo = rezFull.classes[clId];
 				if ( !classInfo.used2 && !classInfo.hasGen && !classInfo.isClasif ) {
 					classInfo.type = 'Data';
 					classInfo.free = true;
-					var atr_list = getCompactAtrList(classInfo.atr_list, 'out');
-					var atr_list2 = getCompactAtrList(classInfo.atr_list2, 'in');
-					var cc = [atr_list.map(n => n.p_name).sort().join('\n')];
+					const atr_list = getCompactAtrList(classInfo.atr_list, 'out');
+					const atr_list2 = getCompactAtrList(classInfo.atr_list2, 'in');
+					let cc = [atr_list.map(n => n.p_name).sort().join('\n')];
 					cc.push(atr_list2.map(n => n.p_name).sort().join('\n'));
 					cc = cc.join('\n');
 					if ( cc != '') {
@@ -1749,9 +1744,9 @@ const dataShapes = {
 			for (const t of Object.keys(temp)) {
 				if (temp[t].class_list.length > 1 ) {
 					console.log("****",t, temp[t])
-					var cl_list = [];
-					var atr_list = [];
-					var atr_list2 = [];
+					let cl_list = [];
+					let atr_list = [];
+					let atr_list2 = [];
 					for (const cl_id of temp[t].class_list) {
 						cl_list.push(rezFull.classes[`c_${cl_id}`].fullName);
 						rezFull.classes[`c_${cl_id}`].used = false;
@@ -1774,12 +1769,12 @@ const dataShapes = {
 		
 		// Meklē 'draudzīgās' klases starp brīvajām
 		function makeSupClass(sc, cl_list, temp) {
-			var sup_atr_list = [];
-			var sup_atr_list2 = [];
+			let sup_atr_list = [];
+			let sup_atr_list2 = [];
 			function makeAtrList(atr_list, type) {
-				var r_atr_list = [];
+				let r_atr_list = [];
 				for (let a of atr_list ) {
-					var p = a.p_name;
+					const p = a.p_name;
 					if ( temp[p] == cl_list.length ) {
 						if ( type == 'out')
 							sup_atr_list.push(a);
@@ -1796,7 +1791,7 @@ const dataShapes = {
 			rezFull.classes[sc] = { id:`${cl_list.join('_')}`, fullName:`S${Snum}`, displayName:`S${Snum}`, used:true, used2:true, hasGen:true, type:'Abstract', super_classes:[], sub_classes:[]};
 			Snum = Snum + 1;
 			for (let cl of cl_list) {
-				classInfo = rezFull.classes[`c_${cl}`];
+				const classInfo = rezFull.classes[`c_${cl}`];
 				classInfo.super_classes.push(sc); 
 				classInfo.hasGen = true;
 				if ( classInfo.group ) {
@@ -1812,43 +1807,48 @@ const dataShapes = {
 			rezFull.classes[sc].atr_list4 = sup_atr_list2;
 		}
 		
+
 		// Izveido klašu kopas, kuras ir līdzīgas ( ir kāds kopīgs atribūtu komplekts)
+		let temp2 = {};
+		let ii_1 = 0;
+		let ii_2 = 0;
+		function addAttrs(atr_list) {
+			for (const a of atr_list) {
+				if ( temp[a.p_name] == undefined) {
+					temp[a.p_name] = 1;
+					ii_1 = ii_1 + 1;
+				}
+				else {
+					temp[a.p_name] = temp[a.p_name] + 1;
+					ii_2 = ii_2 + 1;
+				}
+			}
+		}
 		if ( compView ) {
 			rezFull.lines = {};
-			var temp2 = {};
+
 			// Apstrādā klašu pārus, apvieno grupās
 			for (const clId_1 of Object.keys(rezFull.classes)) {
-				var classInfo1 = rezFull.classes[clId_1];
+				const classInfo1 = rezFull.classes[clId_1];
 				if ( (classInfo1.used && classInfo1.free) || classInfo1.group ) {
 					for (const clId_2 of Object.keys(rezFull.classes)) {
-						var classInfo2 = rezFull.classes[clId_2];
+						const classInfo2 = rezFull.classes[clId_2];
 						if ( (classInfo2.used && classInfo2.free) || classInfo2.group ) {
 							if ( classInfo1.id != classInfo2.id  && classInfo1.displayName < classInfo2.displayName) {
-								var temp = {};
-								var ii_1 = 0;
-								var ii_2 = 0;
-								function addAttrs(atr_list) {
-									for (const a of atr_list) {
-										if ( temp[a.p_name] == undefined) {
-											temp[a.p_name] = 1;
-											ii_1 = ii_1 + 1;
-										}
-										else {
-											temp[a.p_name] = temp[a.p_name] + 1;
-											ii_2 = ii_2 + 1;
-										}
-									}
-								}
+								temp = {};
+								ii_1 = 0;
+								ii_2 = 0;
+
 								addAttrs(getCompactAtrList(classInfo1.atr_list, 'out'));
 								addAttrs(getCompactAtrList(classInfo2.atr_list, 'out'));
 								addAttrs(getCompactAtrList(classInfo1.atr_list2, 'in'));
 								addAttrs(getCompactAtrList(classInfo2.atr_list2, 'in'));
 								if ( ii_1 - ii_2 < 4 && ii_2 > 3 ) {  // TODO šīs ir patvaļīgi izvēlētas konstantes ii_1 kopīgais atribūtu skaits klašu pārim, ii_2 sakrītošais atribūtu skaits
-									var id = `l_${classInfo1.id}_${classInfo2.id}`;
+									const id = `l_${classInfo1.id}_${classInfo2.id}`;
 									rezFull.lines[id] = {id:id, from:`c_${classInfo1.id}`, to: `c_${classInfo2.id}`, val:`diff_${ii_1 - ii_2}` };
-									var used = false;
+									let used = false;
 									for (let k of Object.keys(temp2)) {
-										var group = temp2[k];
+										const group = temp2[k];
 										if ( group.includes(classInfo1.id)) {
 											if ( !group.includes(classInfo2.id) )
 												temp2[k].push(classInfo2.id);
@@ -1872,18 +1872,18 @@ const dataShapes = {
 			// Atrastajām grupām izveido virsklases, sakārto atribūtus
 			console.log(temp2)
 			for (const k of Object.keys(temp2)) {
-				var temp = {};
+				let temp = {};
 				for (const cl of temp2[k]) {
-					classInfo = rezFull.classes[`c_${cl}`];
+					const classInfo = rezFull.classes[`c_${cl}`];
 					for (const atr of getCompactAtrList(classInfo.atr_list,'out') ) {
-						var prop = atr.p_name;
+						const prop = atr.p_name;
 						if ( temp[prop] == undefined)
 							temp[prop] = 1;
 						else
 							temp[prop] = temp[prop] + 1
 					}
 					for (const atr of getCompactAtrList(classInfo.atr_list2, 'in') ) {
-						var prop = atr.p_name;
+						const prop = atr.p_name;
 						if ( temp[prop] == undefined)
 							temp[prop] = 1;
 						else
@@ -1891,45 +1891,41 @@ const dataShapes = {
 					}
 				}
 				console.log(temp)
-				var sup_atr_list = [];
-				var sup_atr_list2 = [];
-				var sc = `c_${temp2[k].join('_')}`;
+				const sc = `c_${temp2[k].join('_')}`;
 				makeSupClass(sc, temp2[k], temp);
-	
-
 			}
 		}
 
 		// Funckcija atribūta izskata noformēšanai
 		function getAttrString(classInfo){
-			var class_id = classInfo.id;
-			var atr_list = [];
+			const class_id = classInfo.id;
+			let atr_list = [];
 			if ( class_id >  0) {
 				for (const a of classInfo.atr_list) {
-					var cl_info = p_list_full[`p_${a.p_id}`].c_from.filter(function(i){ return i.class_id == class_id});
+					const cl_info = p_list_full[`p_${a.p_id}`].c_from.filter(function(i){ return i.class_id == class_id});
 					if ( cl_info.length > 0 ) {  // parastās klases
-						var cnt = Number(cl_info[0].cnt);
-						var object_cnt = ( !compView && a.object_cnt > 0 && a.object_cnt != cnt ) ? `${roundCount(a.object_cnt)}/` : '';
-						var dataProc = '';
+						const cnt = Number(cl_info[0].cnt);
+						const object_cnt = ( !compView && a.object_cnt > 0 && a.object_cnt != cnt ) ? `${roundCount(a.object_cnt)}/` : '';
+						let dataProc = '';
 						if ( cl_info[0].object_cnt > 0 && cl_info[0].object_cnt != cnt) {
-							var proc = Math.round(100*(cnt-cl_info[0].object_cnt)/cnt);
+							let proc = Math.round(100*(cnt-cl_info[0].object_cnt)/cnt);
 							if ( proc == 100) proc = 99.9;
 							dataProc = ` ${proc}%d`;
 						}
-						var iri_card = ( a.iri_card != undefined) ? `(${a.iri_card})` : '';  
+						const iri_card = ( a.iri_card != undefined) ? `(${a.iri_card})` : '';  
 						atr_list.push(`${a.p_name} (${object_cnt}${roundCount(cnt)}${dataProc}) [${a.max_cardinality}] ${a.is_domain} ${a.class_name}${iri_card}`);	
 					}
 					else {
-						var cnt = ( a.cnt == -1 ) ? '': ` (${roundCount(a.cnt)})`;
-						var iri_card = ( a.iri_card != undefined) ? `(${a.iri_card})` : '';  
+						const cnt = ( a.cnt == -1 ) ? '': ` (${roundCount(a.cnt)})`;
+						const iri_card = ( a.iri_card != undefined) ? `(${a.iri_card})` : '';  
 						atr_list.push(`{a.p_name}${cnt} [${a.max_cardinality}] ${a.is_domain} ${a.class_name}${iri_card}`);
 					}	
 				}
 			}
 			else {
 				atr_list = classInfo.atr_list.map(function(a) {
-					var cnt = ( a.cnt == -1 ) ? '': ` (${roundCount(a.cnt)})`;
-					var iri_card = ( a.iri_card != undefined ) ? `(${a.iri_card})` : ''; 
+					const cnt = ( a.cnt == -1 ) ? '': ` (${roundCount(a.cnt)})`;
+					const iri_card = ( a.iri_card != undefined ) ? `(${a.iri_card})` : ''; 
 					return `${a.p_name}${cnt} [${a.max_cardinality}] ${a.is_domain} ${a.class_name}${iri_card}`;
 				});
 			}
@@ -1938,7 +1934,7 @@ const dataShapes = {
 
 		// Klases vizuālo atribūtu formēšana
 		for (const cl of Object.keys(rezFull.classes)) {
-			var classInfo = rezFull.classes[cl];   
+			const classInfo = rezFull.classes[cl];   
 			if ( compView ) {
 				if ( classInfo.atr_list3 != undefined) {
 					classInfo.atr_list = getCompactAtrList(classInfo.atr_list3, 'out');
@@ -1960,7 +1956,7 @@ const dataShapes = {
 			else if ( classInfo.sub_classes.length > 1 ) {
 				classInfo.sub_classes_string = '';
 				classInfo.sub_classes_clasif_string = '';
-				var list = classInfo.sub_classes.filter(function(c){ return c.isClasif == true});
+				let list = classInfo.sub_classes.filter(function(c){ return c.isClasif == true});
 				if ( list.length > 0 ) {  // TODO teorētiski varētu būt arī tikai viena klase
 					list = list.sort((a, b) => { return b.cnt0 - a.cnt0; });	
 					classInfo.sub_classes_clasif_string = list.map(c => c.fullName).sort().join('\n');
@@ -1979,7 +1975,7 @@ const dataShapes = {
 		}
 		
 		// Asociāciju savilkšana kopā - pie vienas līnijas vairākas propertijas
-		var assoc = {};
+		let assoc = {};
 		for (const aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) { 
 				rezFull.assoc[aa].list[0].cnt = ( rezFull.assoc[aa].list[0].cnt == -1  ) ? '' : ` (${roundCount(rezFull.assoc[aa].list[0].cnt)})`;	
@@ -1987,8 +1983,8 @@ const dataShapes = {
 				//	rezFull.assoc[aa].list[0].cnt = '';
 				//else 
 				//	rezFull.assoc[aa].list[0].cnt = `(${roundCount(rezFull.assoc[aa].list[0].cnt)})`;
-				var a = rezFull.assoc[aa];
-				var id = a.id2;
+				const a = rezFull.assoc[aa];
+				const id = a.id2;
 				if ( assoc[id] == undefined ){
 					assoc[id] = rezFull.assoc[aa];
 				}
@@ -2006,7 +2002,7 @@ const dataShapes = {
 
 		console.log("*** rezFull ***", rezFull);
 
-		var link = document.createElement("a");
+		let link = document.createElement("a");
 		link.setAttribute("download", "diagr_data.json");
 		link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
 		document.body.appendChild(link);
@@ -2122,7 +2118,7 @@ const dataShapes = {
 				for (const c_1 of c_from) {
 					const from_id = `c_${c_1.class_id}`;
 					// if ( c_1.object_cnt > 0 ) { TODO nez vai šo vajag pārbaudīt?
-					let cl_list = c_to.map( c => c.class_id);;
+					let cl_list = c_to.map( c => c.class_id);
 					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
 					if ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
@@ -2562,14 +2558,14 @@ const dataShapes = {
 
 		// Funkcija virsklašu veidošanai
 		function makeSupClass(cl_list, temp) {
-			var sc_id = `s_${Snum}`;
-			var sc_name = `S${Snum}`;  // TODO vārds būs cits
+			const sc_id = `s_${Snum}`;
+			const sc_name = `S${Snum}`;  // TODO vārds būs cits
 			Snum = Snum + 1;
-			var sup_atr_list = [];
+			let sup_atr_list = [];
 			function makeAtrList(atr_list) {
-				var r_atr_list = [];
+				let r_atr_list = [];
 				for (let a of atr_list ) {
-					var p = `${a.p_name}_${a.type}`;
+					const p = `${a.p_name}_${a.type}`;
 					if ( temp[p].count > 1 ) {  // TODO vismaz divām klasēm ir atribūts, ja grib precīzi, tad vajag šādi: temp[p].count == cl_list.length
 						if ( sup_atr_list.filter(function(a2){ return a2.p_name == a.p_name && a2.type == a.type}).length == 0 )  
 							sup_atr_list.push(a);
@@ -2583,7 +2579,7 @@ const dataShapes = {
 			
 			rezFull.classes[sc_id] = { id:sc_id, fullName:sc_name, displayName:sc_name, used:true, hasGen:true, type:'Abstract', super_classes:[], c_list:[] };
 			
-			var g_list = [];	
+			let g_list = [];	
 			for (let classInfo of cl_list) {
 				classInfo.super_classes.push(sc_id); 
 				classInfo.hasGen = true;
@@ -2594,7 +2590,7 @@ const dataShapes = {
 					}
 				}
 				rezFull.classes[sc_id].c_list.push(classInfo.id);
-				var atr_list = makeAtrList(classInfo.atr_list);
+				const atr_list = makeAtrList(classInfo.atr_list);
 				classInfo.atr_list = atr_list;
 				if ( atr_list.length == 0 ) {
 					if ( classInfo.isGroup ) {
@@ -2654,8 +2650,8 @@ const dataShapes = {
 		
 		// Saprot, kur ir īstie asociāciju gali (tas man noderēs)
 		function findNewClassList(atr, type) {
-			var c_list2 = [];
-			for ( var cl of atr.class_list) {
+			let c_list2 = [];
+			for ( const cl of atr.class_list) {
 				const cInfo = rezFull.classes[`c_${cl}`];
 				if ( cInfo.G_id == undefined && cInfo.S_id == undefined ) {
 					c_list2.push(`c_${cl}`);
@@ -2665,7 +2661,7 @@ const dataShapes = {
 						c_list2.push(cInfo.G_id);
 				}
 				if ( cInfo.S_id != undefined ) {  
-					var aa = rezFull.classes[cInfo.S_id].atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == type}); 
+					const aa = rezFull.classes[cInfo.S_id].atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == type}); 
 					if ( aa.length > 0) {
 						if ( !c_list2.includes(cInfo.S_id))
 							c_list2.push(cInfo.S_id);
@@ -2681,10 +2677,10 @@ const dataShapes = {
 			}
 			return 	c_list2;		
 		}
-		for (var clId of Object.keys(rezFull.classes)) {
-			var classInfo = rezFull.classes[clId];
+		for (const clId of Object.keys(rezFull.classes)) {
+			const classInfo = rezFull.classes[clId];
 			if ( classInfo.used) {
-				for ( var atr of classInfo.atr_list) {
+				for (const atr of classInfo.atr_list) {
 					if ( atr.type == 'out') {
 							atr.class_list2 = findNewClassList(atr, 'in',);
 					}
@@ -2701,7 +2697,7 @@ const dataShapes = {
 			if ( classInfo.used) {
 				for ( const atr of classInfo.atr_list) {
 					if ( atr.type == 'out') {
-						for (var to_id of atr.class_list2) {
+						for (const to_id of atr.class_list2) {
 							// TODO asociācijas redzamā vērtība būs drusku bagātīgāka
 							rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:atr.p_name, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
 						}
@@ -2713,8 +2709,7 @@ const dataShapes = {
 		// Saskaita cik vietās propertija ir iezīmēta
 		for (const aa of Object.keys(rezFull.assoc)) {
 			if ( !rezFull.assoc[aa].removed) {
-				var pId = rezFull.assoc[aa].p_id;
-				p_list_full[pId].count = p_list_full[pId].count + 1;
+				p_list_full[rezFull.assoc[aa].p_id].count++;
 			}
 		}
 		for (const pId of Object.keys(p_list_full)) {
@@ -2723,7 +2718,7 @@ const dataShapes = {
 		}
 		
 		for (const aa of Object.keys(rezFull.assoc)) {
-			var prop = rezFull.assoc[aa];
+			const prop = rezFull.assoc[aa];
 			if ( !prop.removed) {
 				if ( remBig && p_list_full[prop.p_id].count > remCount ) { 
 					prop.removed = true;
@@ -2736,7 +2731,7 @@ const dataShapes = {
 			// Iegūst atribūtu rādāmo izskatu, noder diagrammai
 			function getAtrString(atr_info) {
 				// TODO te būs daudz sarežģītāk
-				var p_name = atr_info.p_name;
+				let p_name = atr_info.p_name;
 				if ( addIds ) 
 					p_name = `${p_name}(${atr_info.p_id})`;
 				
@@ -2747,17 +2742,17 @@ const dataShapes = {
 				//	return `${p_name} ${atr_info.type} [${atr_info.cnt}] (${atr_info.class_list2.length})`;
 			}
 			
-			for (var clId of Object.keys(rezFull.classes)) {
-				var classInfo = rezFull.classes[clId];
+			for (const clId of Object.keys(rezFull.classes)) {
+				const classInfo = rezFull.classes[clId];
 				if ( classInfo.used )
 					classInfo.atr_string = classInfo.atr_list.map( a => getAtrString(a)).sort().join('\n');
 			}
 			// Savāc kopā asociācijas
-			var assoc = {}; 
-			for (var aa of Object.keys(rezFull.assoc)) {
-				var aInfo = rezFull.assoc[aa];
+			let assoc = {}; 
+			for (const aa of Object.keys(rezFull.assoc)) {
+				const aInfo = rezFull.assoc[aa];
 				if ( !aInfo.removed) {
-					var aID = `${aInfo.from}_${aInfo.to}`;
+					const aID = `${aInfo.from}_${aInfo.to}`;
 					if ( assoc[aID] != undefined ) {
 						assoc[aID].string = `${assoc[aID].string}\n${aInfo.string}`
 					}
@@ -2775,7 +2770,7 @@ const dataShapes = {
 		
 		// Funkcija diagrammas izdrukāšanai  **** kaut kad nevajadzēs
 		function printDiagram() {
-			var link = document.createElement("a");
+			let link = document.createElement("a");
 			link.setAttribute("download", "diagr_data.json");
 			link.href = URL.createObjectURL(new Blob([JSON.stringify(rezFull, 0, 4)], {type: "application/json;charset=utf-8;"}));
 			document.body.appendChild(link);
@@ -2812,7 +2807,7 @@ const dataShapes = {
 	getCPName: function(localName, type) {
 		//dataShapes.getCPName('http://dbpedia.org/ontology/Year', 'C') 
 		if (localName.indexOf('//') == -1 && localName.indexOf(':' ) == -1) {
-			var ns = '';
+			let ns = '';
 			if (this.schema.schemaType === 'wikidata' && type == 'P')
 				ns = 'wdt';
 			else
@@ -2820,23 +2815,23 @@ const dataShapes = {
 				//ns = this.schema.namespaces.filter(function(n){ return n.is_local == true})[0].name
 			localName = `${ns}:${localName}`;
 		} 
-		var name = this.getIndividualName(localName);
+		const name = this.getIndividualName(localName);
 		return name;
 	},
 	getIndividualName: function(localName, gen = false) {
 		//dataShapes.getIndividualName('wd:[Luigi Pirandello (Q1403)]')
-		var rez = ''; 
-		var prefix = '';
+		let rez = ''; 
+		let prefix = '';
 		if (localName.startsWith("="))
 			localName = localName.substring(1,localName.length);
 		if (localName.startsWith("["))	
 			localName = `${this.schema.local_ns}:${localName}`;
 			
 		function getLastB(name){
-			var r = -1; 
-			var searchStrLen = 1;
-			var startIndex = 0;
-			var index;
+			let r = -1; 
+			const searchStrLen = 1;
+			let startIndex = 0;
+			let index;
 			while ((index = name.indexOf('(', startIndex)) > -1) {
 				r = index;
 				startIndex = index + searchStrLen;
@@ -2855,7 +2850,7 @@ const dataShapes = {
 			rez = `${prefix}:${name}`;			
 		}
 		else if (localName.indexOf('//') != -1) {
-			var name = '';
+			let name = '';
 			_.each(this.schema.namespaces, function(ns) {
 				if (localName.indexOf(ns.value) == 0 && localName.length > ns.value.length) {
 					name = `${ns.name}:${localName.replace(ns.value,'')}`;
