@@ -39,7 +39,6 @@ Template.schemaExtra.NsFilters = new ReactiveVar("");
 Template.schemaExtra.ClassCount = new ReactiveVar("");
 Template.schemaExtra.IndCount = new ReactiveVar("");
 Template.schemaExtra.SuperclassType = new ReactiveVar("");
-Template.schemaExtra.DataClass = new ReactiveVar("checked");
  
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
@@ -366,7 +365,6 @@ function setClassListInfo(classes, restClasses) {
 
 function setClassList0() {
 	Template.schemaExtra.ManualDisabled.set("disabled");
-	Template.schemaExtra.DataClass.set("checked");
 	Template.schemaExtra.FilterDisabled.set("");
 	Template.schemaExtra.Properties.set([]);
 	var nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
@@ -396,7 +394,7 @@ function setClassList0() {
 		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 	}
-	else if ( schema == 'nobel_prizes_v0' || schema == 'nobel_prizes_x' ) {
+	else if ( schema == 'nobel_prizes_v0' || schema == 'nobel_prizes_x' || schema == 'nobel_prizes_y' || schema == 'nobel_prizes') {
 		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 		indCountSel = 10;
@@ -1064,9 +1062,6 @@ Template.schemaExtra.helpers({
 	superclassType: function() {
 		return Template.schemaExtra.SuperclassType.get();
 	},
-	dataClass: function() {
-		return Template.schemaExtra.DataClass.get();
-	},
 	properties: function() {
 		return Template.schemaExtra.Properties.get();
 	},
@@ -1114,20 +1109,15 @@ Template.schemaExtra.events({
 		if ( $("#superclassType").val() != 0) {
 			info.push(`Superclasses based on ${Template.schemaExtra.SuperclassType.get().find(function(f){ return f.value == $("#superclassType").val();}).name}`);
 		}
-		if ( !$("#dataClass").is(":checked") )
-			info.push('Data classes are disconnected');
 		
 		if ( $("#remS").is(":checked") )
 			info.push('Small properties are removed');
 			
-		if ( $("#prop0").is(":checked") )
-			info.push('All class properties are added');
-			
 		if ( $("#compView").is(":checked") )
 			info.push('Compact attribute view');			
 
-		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(), $("#dataClass").is(":checked"), 
-			$("#prop0").is(":checked"), remSmall, $("#addIds").is(":checked"), $("#disconnBig").val(), 
+		await dataShapes.makeDiagr(classList, propList, $("#superclassType").val(),  
+			remSmall, $("#addIds").is(":checked"), $("#disconnBig").val(), 
 			$("#compView").is(":checked"), dataShapes.schema.schema, info.join('\n')); 
 
 	},
@@ -1160,11 +1150,36 @@ Template.schemaExtra.events({
 		
 		if ( $("#remS").is(":checked") )
 			info.push('Small properties are removed');
-			
-		await dataShapes.makeSuperDiagr(classList, propList, $("#addIds").is(":checked"), $("#disconnBig").val(), 
-			$("#compView").is(":checked"), dataShapes.schema.schema, info.join('\n'));
+
+		const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+					diffG:$("#diffG").val(), diffS:$("#diffS").val(), schema:dataShapes.schema.schema};
+		await dataShapes.makeSuperDiagr(classList, propList, par, info.join('\n'));
 		//await dataShapes.makeSuperDiagr(classList, propList, remSmall, dataShapes.schema.schema, info.join('\n'));
 
+	},
+	'click #calck': async function(e) {
+		//TODO šis vēlāk vairs nebūs
+		var classList = Template.schemaExtra.Classes.get();
+		var all_s = [];
+		_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+		
+		_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+			if ( all_s.includes(cl.id)) cl.selected = 1;
+		});
+		classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+
+		classList = classList.map(v => v.id);
+		var propList = Template.schemaExtra.Properties.get();
+		var remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		if ( propList.length == 0 ) {
+			var allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
+			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
+			propList = rr.data;
+		}
+		
+		const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+					diffG:$("#diffG").val(), diffS:$("#diffS").val(), schema:dataShapes.schema.schema};
+		await dataShapes.makeSuperDiagr(classList, propList, par, '', true);
 	},
 	'click #getProperties': async function(e) {
 		var classList = Template.schemaExtra.Classes.get();
