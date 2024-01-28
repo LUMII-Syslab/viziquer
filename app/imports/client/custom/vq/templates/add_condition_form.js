@@ -100,7 +100,7 @@ Template.AddCondition.events({
 					compart.subCompartments.Conditions.Conditions["Allow result multiplication"].value = allowMultiplicationInput;
 					compart.subCompartments.Conditions.Conditions.Expression.value = condition;
 					compart.subCompartments.Conditions.Conditions.Expression.input = condition;
-					Dialog.updateCompartmentValue(compart_type, condition, fullText, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
+					Dialog.updateCompartmentValue(compart_type, selected_elem_id, condition, fullText, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 				}
 			}
 		}

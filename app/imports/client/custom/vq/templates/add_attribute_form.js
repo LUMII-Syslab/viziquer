@@ -315,7 +315,7 @@ Template.AddAttribute.events({
 				
 				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
-				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
+				Dialog.updateCompartmentValue(compart_type, act_elem, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
 			let value = $("#mySearch-attribute").val().toLowerCase();
 			let attributes = await getAttributes(value);
@@ -379,7 +379,7 @@ Template.AddAttribute.events({
 				
 				let value = Dialog.buildCompartmentValue(compart_type, fullText, fullText);
 				
-				Dialog.updateCompartmentValue(compart_type, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
+				Dialog.updateCompartmentValue(compart_type, act_elem, fullText, value, $(e.target).closest(".attribute")[0].childNodes[1].getAttribute("name"), null, null, compart.subCompartments);
 			}
 			let value = $("#mySearch-attribute").val().toLowerCase();
 			let attributes = await getAttributes(value);
@@ -828,7 +828,7 @@ Template.AddNewAttribute.events({
 
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["value"] = prefixesValue;
 				compart.subCompartments["Attributes"]["Attributes"]["Prefixes"]["input"] = prefixesValue;
-				Dialog.updateCompartmentValue(compart_type, fullText, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
+				Dialog.updateCompartmentValue(compart_type, act_elem, fullText, value, elem.getAttribute("compartmentId"), null, null, compart.subCompartments);
 			}
 			let value = $("#mySearch-attribute").val().toLowerCase();
 			let attributes = await getAttributes(value);

@@ -93,7 +93,7 @@ Interpreter.customMethods({
 	},
 	
 
-	UpdateInstanceCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	UpdateInstanceCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
 		let compart_type = this;
 
 		let value = input;
@@ -145,15 +145,15 @@ Interpreter.customMethods({
 		}
 
 		// elem.setCompartmentValue("Instance", input, value, false);
-		return Dialog.updateCompartmentValue(compart_type, input, value, src_id);
+		return Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id);
 	},
 
 
-	UpdateGroupByCompartment: function(src_id, input, mapped_value, elemStyleId, compartStyleId) {
+	UpdateGroupByCompartment: function(elem_id, src_id, input, mapped_value, elemStyleId, compartStyleId) {
 		let compart_type = this;
 		let value = input;
 
-		let elem = new VQ_Element(Session.get("activeElement"));
+		let elem = new VQ_Element(elem_id);
 		let instance_input = elem.getCompartmentValue("Instance") || "";
 
 		// if (instance_input == "") {
@@ -174,7 +174,7 @@ Interpreter.customMethods({
 		// }
 	
 		// elem.setCompartmentValue("Group by this", input, value, false);
-		return Dialog.updateCompartmentValue(compart_type, input, value, src_id);
+		return Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id);
 	},
 
 	VQsetGroupBy: function(params) {
@@ -563,7 +563,7 @@ Interpreter.customMethods({
 				if (c["input"] == "true" && String(c_cal["value"]).indexOf("inv") == -1){
 
 					// Dialog.updateCompartmentValue(ct, "true", "<inv>", c["_id"]);
-					Dialog.updateCompartmentValue(ctn, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]);
+					Dialog.updateCompartmentValue(ctn, act_elem, "inv(".concat(cn["input"], ")"), "inv(".concat(cn["input"], ")"), cn["_id"]);
 				}
 				else if (c["input"] == "false" && String(c_cal["value"]).indexOf("inv") > -1) {
 					var s = cn["value"].indexOf("(");
@@ -571,7 +571,7 @@ Interpreter.customMethods({
 					var name = cn["value"].substring(s + 1, e);
 
 					// Dialog.updateCompartmentValue(ct, "false", "", c["_id"]);
-					Dialog.updateCompartmentValue(ctn, name, name, cn["_id"]);
+					Dialog.updateCompartmentValue(ctn, act_elem, name, name, cn["_id"]);
 				}
 			}
 		}

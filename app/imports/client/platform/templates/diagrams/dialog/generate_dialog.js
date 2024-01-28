@@ -24,7 +24,7 @@ Template.dialogTabContent.events({
 		var parent = src.closest(".parent-compartment");
 		var elem_id = src.attr("data-element");
 		if (parent.length > 0) {
-			update_compartment_from_sub_fields(parent);
+			update_compartment_from_sub_fields(parent, elem_id);
 		}
 		else {
 			var src_id = src.attr("id");
@@ -74,7 +74,7 @@ Template.dialogTabContent.events({
 		var elem_id = src.attr("data-element");
 
 		if (parent.length > 0) {
-			update_compartment_from_sub_fields(parent);
+			update_compartment_from_sub_fields(parent, elem_id);
 		}
 
 		else {
@@ -103,19 +103,19 @@ Template.dialogTabContent.events({
 		Session.set("editingDialog", true);
 	},
 
-	'change .dialog-checkbox' : function(e) {
-
+	'change .dialog-checkbox': function(e) {
 		e.stopPropagation();
 
 		var src = $(e.target);
+		var elem_id = src.attr("data-element");
+
 		var parent = src.closest(".parent-compartment");
 		if (parent.length > 0) {
-			update_compartment_from_sub_fields(parent);
+			update_compartment_from_sub_fields(parent, elem_id);
 		}
 
 		else {
 			var src_id = src.attr("id");
-			var elem_id = src.attr("data-element");
 
 			var checkbox_value = src.prop('checked');
 			var mapped_value;
@@ -146,7 +146,7 @@ Template.dialogTabContent.events({
 		var elem_id = src.attr("data-element");
 
 		if (parent.length > 0) {
-			update_compartment_from_sub_fields(parent);
+			update_compartment_from_sub_fields(parent, elem_id);
 		}
 
 		else {
@@ -299,7 +299,7 @@ function update_combobox(e) {
 	var elem_id = src.attr("data-element");
 
 	if (parent.length > 0) {
-		update_compartment_from_sub_fields(parent);
+		update_compartment_from_sub_fields(parent, elem_id);
 	}
 
 	else {
@@ -761,10 +761,10 @@ function add_template_helpers(id) {
 }
 
 
-function update_compartment_from_sub_fields(parent) {
+function update_compartment_from_sub_fields(parent, elem_id) {
 
 	var compart_type_id = parent.attr("id");
-
+	elem_id = elem_id || Session.get("activeElement");
 	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
 	if (!compart_type) {
 		return;
@@ -777,9 +777,7 @@ function update_compartment_from_sub_fields(parent) {
 	var input = res;
 	var value = input;
 
-	var compart_style, elem_style;
-
-	Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
+	Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 }
 
 
@@ -788,7 +786,6 @@ function upsert_compartment_value(e, elem_id, src_id, src_val, mapped_value, ele
 	//selecting the compartment type
 	var compart_type_id = $(e.target).closest(".compart-type").attr("id");
 	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
-
 	if (!compart_type) {
 		return;
 	}

@@ -10,7 +10,7 @@
 
 
 <template name="multiFieldBody">
-	<div id="{{_id}}" class="multi-field multi-field-parent">
+	<div id="{{_id}}" class="multi-field multi-field-parent" data-element="{{elementId}}">
 		<table class="table table-striped " style="margin-bottom:0px;">
 			<thead>
 				<tr>
@@ -50,7 +50,7 @@
     {{#with field_obj}}
 
 		<!-- Modal for new document -->
-	    <div id="{{_id}}" class="modal fade row-form compart-type" compartmentId="{{compartmentId}}">
+	    <div id="{{_id}}" class="modal fade row-form compart-type" compartmentId="{{compartmentId}}" data-element="{{elementId}}">
 	        <div class="modal-dialog">
 
 	            <div class="modal-content">
@@ -60,7 +60,7 @@
 	                    <h4 class="modal-title">{{name}}</h4>
 	                </div>
 
-	                <div  class="modal-body multi-field" style="width: 550px">
+	                <div class="modal-body multi-field" style="width: 550px">
 	                    <form onsubmit="return false;">
 	                    	{{#if fields}}
 

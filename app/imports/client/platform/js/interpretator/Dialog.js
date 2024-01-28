@@ -68,7 +68,6 @@ const Dialog = {
 	updateCompartmentValue: function(compart_type, elem_id, input, value, src_id, compart_style, elem_style, sub_comparts) {
 
 		var list = Dialog.buildCompartmentList(compart_type, elem_id, input, value);
-
 		if (sub_comparts) {
 			list["subCompartments"] = sub_comparts;
 		}
@@ -85,7 +84,6 @@ const Dialog = {
 						};
 
 			_.extend(list, tmp_list);
-
 
 			//updating the compartment
 			update_compartment(list);
@@ -175,7 +173,6 @@ const Dialog = {
 	},
 
 	buildSubCompartmentTree: function(parent, compart_type, compart_tree) {
-
 		var sub_compart_types = compart_type["subCompartmentTypes"];
 
 		var len = sub_compart_types.length;
@@ -226,12 +223,10 @@ const Dialog = {
 				}
 
 				else if (input_control.hasClass("dialog-checkbox")) {
-
 					var tmp_val = input_control.prop('checked');
 					if (tmp_val === true) {
 						input_value = "true";
 					}
-
 					else {
 					 	input_value = "false";
 					}
@@ -272,6 +267,7 @@ const Dialog = {
 				res.push(val);
 
 			}
+
 
 			//if there are more then one compartment; checking the last compartment
 			if (len > 1 && i < len-1) {

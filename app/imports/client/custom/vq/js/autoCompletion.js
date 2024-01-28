@@ -416,16 +416,21 @@ function updateInputValue(input, prefix, suggestion) {
 	const act_elem = Session.get("activeElement");
 	const act_el = Elements.findOne({_id: act_elem});
 	if(typeof act_el !== 'undefined'){
-		const compart_type_id = $(input).closest(".compart-type").attr("id");
+		const compart_type_id = $(input).closest(".parent-compartment").closest(".compart-type").attr("id");
+		// const compart_type_id = $(input).closest(".compart-type").attr("id");
 		const compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+		if (!compart_type) {
+			console.error("No CompartmentType", compart_type_id);
+			return;
+		}
 	
 		const compart = Compartments.findOne({compartmentTypeId: compart_type_id, elementId: act_elem});
 		if(typeof compart !== "undefined"){
 			let elem = new VQ_Element(act_elem);
-            if (elem.isIndirectClassMembership()) {
-				Dialog.updateCompartmentValue(compart_type, newValue, ".. "+newValue, compart["_id"]);
+      if (elem.isIndirectClassMembership()) {
+				Dialog.updateCompartmentValue(compart_type, act_elem, newValue, ".. "+newValue, compart["_id"]);
 			} else {
-				Dialog.updateCompartmentValue(compart_type, newValue, newValue, compart["_id"]);
+				Dialog.updateCompartmentValue(compart_type, act_elem, newValue, newValue, compart["_id"]);
 			};
 		}
 	}

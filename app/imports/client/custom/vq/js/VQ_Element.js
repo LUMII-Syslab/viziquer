@@ -1293,11 +1293,12 @@ VQ_Element.prototype = {
       return;
     }
 
+    var elem_id = this._id();
 		var ct = CompartmentTypes.findOne({name: comp_name, elementTypeId: this.obj["elementTypeId"]});
 		if (ct) {
-			var c = Compartments.findOne({elementId: this._id(), compartmentTypeId: ct["_id"]});
+			var c = Compartments.findOne({elementId: elem_id, compartmentTypeId: ct["_id"]});
 			if (c && !insertMode) {
-				Dialog.updateCompartmentValue(ct, input, value, c["_id"]);
+				Dialog.updateCompartmentValue(ct, elem_id, input, value, c["_id"]);
 				return 1;
 			}
 			else {

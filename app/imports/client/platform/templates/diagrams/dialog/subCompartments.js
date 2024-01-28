@@ -227,14 +227,14 @@ Template.show_multi_field_form.events({
 		}
 		
 		var src_id = form.attr("compartmentId");
+		var elem_id = form.attr("date-element") || Session.get("activeElement");
 
 		var elem_style;
 		var compart_style;
 		
-		if(typeof src_id === "undefined") Interpreter.executeExtensionPoint(compart_type, "createCompartment", [Session.get("activeElement")]);
+		if(typeof src_id === "undefined") Interpreter.executeExtensionPoint(compart_type, "createCompartment", [elem_id]);
 		
-
-		Dialog.updateCompartmentValue(compart_type, input, value, src_id, compart_style, elem_style, sub_compart_tree);
+		Dialog.updateCompartmentValue(compart_type, elem_id, input, value, src_id, compart_style, elem_style, sub_compart_tree);
 	},
 
 
@@ -369,13 +369,21 @@ function get_multi_fields_obj() {
 		return;
 	}
 
-	var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
-	var compartments = Compartments.find({compartmentTypeId: data_in["_id"],
-											elementId: Session.get("activeElement")}, {sort: {index: 1}});
+	var elem_id = Session.get("activeElement");
 
-	res["values"] = compartments.fetch();
+	var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
+	var compartments = Compartments.find({compartmentTypeId: data_in["_id"], elementId: elem_id}, {sort: {index: 1}}).fetch();
+
+	compartments = _.map(compartments, function(compart) {
+						_.extend(compart, {compartmentId: compart._id,});
+						return compart;
+					});
+
+
+	res["values"] = compartments;
 	res["compartmentTypeId"] = Session.get("multiRowCompartmentTypeId");
 	res["next_level_form"] = "show_multi_field_form";
+	res["elementId"] = elem_id;
 
 	return res;
 }

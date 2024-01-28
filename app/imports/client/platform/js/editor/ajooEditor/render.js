@@ -272,7 +272,6 @@ Interpreter.renderAjooEditorDiagram = function(editor, template) {
 	   			var elem_id = doc["elementId"];
 	   			var element_list = editor.getElements();
 	   			var element = element_list[elem_id];
-
 	   			if (!element) {
 	   				console.error("No element", elem_id);
 	   				return;
