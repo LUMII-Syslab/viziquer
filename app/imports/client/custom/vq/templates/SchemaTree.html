@@ -294,11 +294,6 @@
 								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
 							{{/each}}
 						</select>
-						<label class="form-check-label">
-							<input class="form-check-input" name = "dataClass" id="dataClass" type="checkbox" checked={{dataClass}}>
-							<span class="custom-checkbox"></span>
-							Connect data classes
-						</label>
 						<select class="form-control" id="disconnBig" >
 							  <option selected value=7 >Disconnect prop > 7 </option>
 							  <option value=10 >Disconnect prop > 10 </option>
@@ -309,11 +304,19 @@
 							<span class="custom-checkbox"></span>
 							Compact attribute view
 						</label>
-						<label class="form-check-label">
-							<input class="form-check-input" name = "prop0" id="prop0" type="checkbox">
-							<span class="custom-checkbox"></span>
-							Add all properties to classes
-						</label>
+						<select class="form-control" id="diffG" >
+							<option value=0 >Without grouping</option>
+							<option value=1 >Very weak grouping (diff-1) </option>
+							<option value=2 >Weak grouping (diff-1,2) </option>
+							<option selected value=5 >Basic grouping (diff under 5)</option>
+							<option value=10 >Strong grouping (diff under 10) </option>
+						</select>
+						<select class="form-control" id="diffS" >
+							<option value=-1 >Sup. sim. -1 </option>
+							<option value=5 >Sup. sim. 5 </option>
+							<option value=25 >Sup. sim. 25 </option>
+							<option selected value=50 >Sup. sim. 50 </option>
+						</select>
 						<label class="form-check-label">
 							<input class="form-check-input" name = "remS" id="remS" type="checkbox">
 							<span class="custom-checkbox"></span>
@@ -345,6 +348,9 @@
 					<div class="col-sm-6">
 						<div class="form-group">
 							<button id="makeDiagr2" type="button" class="btn btn-primary" data-dismiss="modal">Property summarization</button>
+						</div>
+						<div class="form-group">
+							<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate  class count</button>
 						</div>
 					</div>
 				</div>

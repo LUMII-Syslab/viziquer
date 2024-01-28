@@ -2255,46 +2255,6 @@ Meteor.methods({
 			add_compartment(list, item, new_diagram_id, diagram_type._id, new_box_id, box_type._id);
 		});
 
-
-		// Line3 part
-		let line3_type = ElementTypes.findOne({name: "Line", diagramTypeId: diagram_type._id});
-		if (!line3_type) {
-			console.error("No Line3 type");
-			return;
-		}
-
-		let line3_style = line3_type["styles"][0];
-		let line3_style_id = line3_style["id"];
-
-		_.each(ontology.Line3, function(item, key) {
-			let object = {diagramId: new_diagram_id,
-							type: "Line",
-							points: [0, 10, 10, 10],
-							startElement: element_map[item.source],
-							endElement: element_map[item.target],
-
-							styleId: line3_style_id,
-							style: {
-								elementStyle: line3_style.elementStyle,
-								startShapeStyle: line3_style.startShapeStyle,
-								endShapeStyle: line3_style.endShapeStyle,
-								lineType: "Orthogonal",
-							},
-
-							elementTypeId: line3_type._id,
-							diagramTypeId: diagram_type._id,
-
-							projectId: list.projectId,
-							versionId: list.versionId,
-						};
-
-			let new_line_id = Elements.insert(object);
-			element_map[key] = new_line_id;
-
-			add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, line3_type._id);
-		});
-
-
 		// Gen part
 		let gen_type = ElementTypes.findOne({name: "Gen", diagramTypeId: diagram_type._id});
 		if (!gen_type) {
@@ -2338,6 +2298,46 @@ Meteor.methods({
 			add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, gen_type._id);
 		});
 
+
+		// Line3 part
+		let line3_type = ElementTypes.findOne({name: "Line", diagramTypeId: diagram_type._id});
+		if (!line3_type) {
+			console.error("No Line3 type");
+			return;
+		}
+
+		let line3_style = line3_type["styles"][0];
+		let line3_style_id = line3_style["id"];
+
+		_.each(ontology.Line3, function(item, key) {
+			let object = {diagramId: new_diagram_id,
+							type: "Line",
+							points: [0, 10, 10, 10],
+							startElement: element_map[item.source],
+							endElement: element_map[item.target],
+
+							styleId: line3_style_id,
+							style: {
+								elementStyle: line3_style.elementStyle,
+								startShapeStyle: line3_style.startShapeStyle,
+								endShapeStyle: line3_style.endShapeStyle,
+								lineType: "Orthogonal",
+							},
+
+							elementTypeId: line3_type._id,
+							diagramTypeId: diagram_type._id,
+
+							projectId: list.projectId,
+							versionId: list.versionId,
+						};
+
+			let new_line_id = Elements.insert(object);
+			element_map[key] = new_line_id;
+
+			add_compartment(list, item, new_diagram_id, diagram_type._id, new_line_id, line3_type._id);
+		});
+
+
 	},
 });
 
@@ -2348,22 +2348,16 @@ function add_compartment(list, item, diagram_id, diagram_type_id, element_id, el
 	let fill = "";
 	let placement = "";
 	let value = "";
-	if (compartments.A) {
-		value = replace_newline(compartments.A);
-		placement = "end-left";
+	if (compartments.string) {
+		value = replace_newline(compartments.string);
+		placement = "start-left";
 		fill = "rgb(65,113,156)";
 	}
 	else {
-		if (compartments.Val) {
-			value = replace_newline(compartments.Val);
-			placement = "end-left";
-			fill = "rgb(65,113,156)";
-		}
-		else {
-			value = replace_newline(compartments.Type) + "\n" + replace_newline(compartments.name) + "\n" + replace_newline(compartments.A4) + "\n" + replace_newline(compartments.A6);
-			placement = "inside";
-			fill = "white";
-		}
+		value = replace_newline(compartments.name) + "\n" + replace_newline(compartments.atr_string) + "\n" + replace_newline(compartments.group_string);
+		placement = "inside";
+		fill = "white";
+
 	}
 
 
