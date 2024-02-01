@@ -53,33 +53,37 @@ import { makeString } from './parserCommon';
         peg$c14 = { type: "literal", value: ">", description: "\">\"" },
         peg$c15 = "!",
         peg$c16 = { type: "literal", value: "!", description: "\"!\"" },
-        peg$c17 = async function(Relation) {return Relation},
-        peg$c18 = /^[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]/,
-        peg$c19 = { type: "class", value: "[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]", description: "[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]" },
-        peg$c20 = /^[0-9]/,
-        peg$c21 = { type: "class", value: "[0-9]", description: "[0-9]" },
-        peg$c22 = "_",
-        peg$c23 = { type: "literal", value: "_", description: "\"_\"" },
-        peg$c24 = "-",
-        peg$c25 = { type: "literal", value: "-", description: "\"-\"" },
-        peg$c26 = " ",
-        peg$c27 = { type: "literal", value: " ", description: "\" \"" },
-        peg$c28 = " ]",
-        peg$c29 = { type: "literal", value: " ]", description: "\" ]\"" },
-        peg$c30 = async function(Literal) {return makeVar(Literal)},
-        peg$c31 = "\"",
-        peg$c32 = { type: "literal", value: "\"", description: "\"\\\"\"" },
-        peg$c33 = "/",
-        peg$c34 = { type: "literal", value: "/", description: "\"/\"" },
-        peg$c35 = "'",
-        peg$c36 = { type: "literal", value: "'", description: "\"'\"" },
-        peg$c37 = "",
-        peg$c38 = async function() {return insertVariable()},
-        peg$c39 = ",",
-        peg$c40 = { type: "literal", value: ",", description: "\",\"" },
-        peg$c41 = async function() {return " AND "},
-        peg$c42 = async function() {return " "},
-        peg$c43 = async function() {return " = "},
+        peg$c17 = "~*",
+        peg$c18 = { type: "literal", value: "~*", description: "\"~*\"" },
+        peg$c19 = "~",
+        peg$c20 = { type: "literal", value: "~", description: "\"~\"" },
+        peg$c21 = async function(Relation) {return Relation},
+        peg$c22 = /^[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]/,
+        peg$c23 = { type: "class", value: "[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]", description: "[A-Za-z\u0101\u010D\u0113\u0123\u012B\u0137\u013C\u0146\u0161\u016B\u017E\u0100\u010C\u0112\u0122\u012A\u0136\u013B\u0145\u0160\u016A\u017D]" },
+        peg$c24 = /^[0-9]/,
+        peg$c25 = { type: "class", value: "[0-9]", description: "[0-9]" },
+        peg$c26 = "_",
+        peg$c27 = { type: "literal", value: "_", description: "\"_\"" },
+        peg$c28 = "-",
+        peg$c29 = { type: "literal", value: "-", description: "\"-\"" },
+        peg$c30 = " ",
+        peg$c31 = { type: "literal", value: " ", description: "\" \"" },
+        peg$c32 = " ]",
+        peg$c33 = { type: "literal", value: " ]", description: "\" ]\"" },
+        peg$c34 = async function(Literal) {return makeVar(Literal)},
+        peg$c35 = "\"",
+        peg$c36 = { type: "literal", value: "\"", description: "\"\\\"\"" },
+        peg$c37 = "/",
+        peg$c38 = { type: "literal", value: "/", description: "\"/\"" },
+        peg$c39 = "'",
+        peg$c40 = { type: "literal", value: "'", description: "\"'\"" },
+        peg$c41 = "",
+        peg$c42 = async function() {return insertVariable()},
+        peg$c43 = ",",
+        peg$c44 = { type: "literal", value: ",", description: "\",\"" },
+        peg$c45 = async function() {return " AND "},
+        peg$c46 = async function() {return " "},
+        peg$c47 = async function() {return " = "},
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -508,6 +512,24 @@ import { makeString } from './parserCommon';
                       s1 = peg$FAILED;
                       if (peg$silentFails === 0) { await peg$fail(peg$c16); }
                     }
+                    if (s1 === peg$FAILED) {
+                      if (input.substr(peg$currPos, 2) === peg$c17) {
+                        s1 = peg$c17;
+                        peg$currPos += 2;
+                      } else {
+                        s1 = peg$FAILED;
+                        if (peg$silentFails === 0) { await peg$fail(peg$c18); }
+                      }
+                      if (s1 === peg$FAILED) {
+                        if (input.charCodeAt(peg$currPos) === 126) {
+                          s1 = peg$c19;
+                          peg$currPos++;
+                        } else {
+                          s1 = peg$FAILED;
+                          if (peg$silentFails === 0) { await peg$fail(peg$c20); }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -517,7 +539,7 @@ import { makeString } from './parserCommon';
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c17(s1);
+        s1 = await peg$c21(s1);
       }
       s0 = s1;
 
@@ -540,44 +562,44 @@ import { makeString } from './parserCommon';
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c18.test(input.charAt(peg$currPos))) {
+      if (peg$c22.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c23); }
       }
       if (s2 === peg$FAILED) {
-        if (peg$c20.test(input.charAt(peg$currPos))) {
+        if (peg$c24.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c25); }
         }
         if (s2 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 95) {
-            s2 = peg$c22;
+            s2 = peg$c26;
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c27); }
           }
           if (s2 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 45) {
-              s2 = peg$c24;
+              s2 = peg$c28;
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c29); }
             }
             if (s2 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 32) {
-                s2 = peg$c26;
+                s2 = peg$c30;
                 peg$currPos++;
               } else {
                 s2 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c27); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c31); }
               }
             }
           }
@@ -585,44 +607,44 @@ import { makeString } from './parserCommon';
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c18.test(input.charAt(peg$currPos))) {
+        if (peg$c22.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c23); }
         }
         if (s4 === peg$FAILED) {
-          if (peg$c20.test(input.charAt(peg$currPos))) {
+          if (peg$c24.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c25); }
           }
           if (s4 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 95) {
-              s4 = peg$c22;
+              s4 = peg$c26;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c27); }
             }
             if (s4 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 45) {
-                s4 = peg$c24;
+                s4 = peg$c28;
                 peg$currPos++;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c29); }
               }
               if (s4 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c28) {
-                  s4 = peg$c28;
+                if (input.substr(peg$currPos, 2) === peg$c32) {
+                  s4 = peg$c32;
                   peg$currPos += 2;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                 }
               }
             }
@@ -630,44 +652,44 @@ import { makeString } from './parserCommon';
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c18.test(input.charAt(peg$currPos))) {
+          if (peg$c22.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c23); }
           }
           if (s4 === peg$FAILED) {
-            if (peg$c20.test(input.charAt(peg$currPos))) {
+            if (peg$c24.test(input.charAt(peg$currPos))) {
               s4 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c25); }
             }
             if (s4 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 95) {
-                s4 = peg$c22;
+                s4 = peg$c26;
                 peg$currPos++;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c27); }
               }
               if (s4 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 45) {
-                  s4 = peg$c24;
+                  s4 = peg$c28;
                   peg$currPos++;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c29); }
                 }
                 if (s4 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c28) {
-                    s4 = peg$c28;
+                  if (input.substr(peg$currPos, 2) === peg$c32) {
+                    s4 = peg$c32;
                     peg$currPos += 2;
                   } else {
                     s4 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                   }
                 }
               }
@@ -687,7 +709,7 @@ import { makeString } from './parserCommon';
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c30(s1);
+        s1 = await peg$c34(s1);
       }
       s0 = s1;
 
@@ -710,52 +732,52 @@ import { makeString } from './parserCommon';
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 34) {
-        s1 = peg$c31;
+        s1 = peg$c35;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c32); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c36); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
-        if (peg$c18.test(input.charAt(peg$currPos))) {
+        if (peg$c22.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c23); }
         }
         if (s3 === peg$FAILED) {
-          if (peg$c20.test(input.charAt(peg$currPos))) {
+          if (peg$c24.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c25); }
           }
           if (s3 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 95) {
-              s3 = peg$c22;
+              s3 = peg$c26;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c27); }
             }
             if (s3 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 45) {
-                s3 = peg$c24;
+                s3 = peg$c28;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c29); }
               }
               if (s3 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 32) {
-                  s3 = peg$c26;
+                  s3 = peg$c30;
                   peg$currPos++;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c27); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c31); }
                 }
               }
             }
@@ -763,52 +785,52 @@ import { makeString } from './parserCommon';
         }
         if (s3 !== peg$FAILED) {
           s4 = [];
-          if (peg$c18.test(input.charAt(peg$currPos))) {
+          if (peg$c22.test(input.charAt(peg$currPos))) {
             s5 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c23); }
           }
           if (s5 === peg$FAILED) {
-            if (peg$c20.test(input.charAt(peg$currPos))) {
+            if (peg$c24.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c25); }
             }
             if (s5 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 47) {
-                s5 = peg$c33;
+                s5 = peg$c37;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c34); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c38); }
               }
               if (s5 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 95) {
-                  s5 = peg$c22;
+                  s5 = peg$c26;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c27); }
                 }
                 if (s5 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 45) {
-                    s5 = peg$c24;
+                    s5 = peg$c28;
                     peg$currPos++;
                   } else {
                     s5 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c29); }
                   }
                   if (s5 === peg$FAILED) {
-                    if (input.substr(peg$currPos, 2) === peg$c28) {
-                      s5 = peg$c28;
+                    if (input.substr(peg$currPos, 2) === peg$c32) {
+                      s5 = peg$c32;
                       peg$currPos += 2;
                     } else {
                       s5 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                     }
                   }
                 }
@@ -817,52 +839,52 @@ import { makeString } from './parserCommon';
           }
           while (s5 !== peg$FAILED) {
             s4.push(s5);
-            if (peg$c18.test(input.charAt(peg$currPos))) {
+            if (peg$c22.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c23); }
             }
             if (s5 === peg$FAILED) {
-              if (peg$c20.test(input.charAt(peg$currPos))) {
+              if (peg$c24.test(input.charAt(peg$currPos))) {
                 s5 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c25); }
               }
               if (s5 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 47) {
-                  s5 = peg$c33;
+                  s5 = peg$c37;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c34); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c38); }
                 }
                 if (s5 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 95) {
-                    s5 = peg$c22;
+                    s5 = peg$c26;
                     peg$currPos++;
                   } else {
                     s5 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c27); }
                   }
                   if (s5 === peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 45) {
-                      s5 = peg$c24;
+                      s5 = peg$c28;
                       peg$currPos++;
                     } else {
                       s5 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c29); }
                     }
                     if (s5 === peg$FAILED) {
-                      if (input.substr(peg$currPos, 2) === peg$c28) {
-                        s5 = peg$c28;
+                      if (input.substr(peg$currPos, 2) === peg$c32) {
+                        s5 = peg$c32;
                         peg$currPos += 2;
                       } else {
                         s5 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                        if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                       }
                     }
                   }
@@ -883,15 +905,15 @@ import { makeString } from './parserCommon';
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 34) {
-            s3 = peg$c31;
+            s3 = peg$c35;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c32); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c36); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = await peg$c30(s2);
+            s1 = await peg$c34(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -925,52 +947,52 @@ import { makeString } from './parserCommon';
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c35;
+        s1 = peg$c39;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c36); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c40); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
-        if (peg$c18.test(input.charAt(peg$currPos))) {
+        if (peg$c22.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c23); }
         }
         if (s3 === peg$FAILED) {
-          if (peg$c20.test(input.charAt(peg$currPos))) {
+          if (peg$c24.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c25); }
           }
           if (s3 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 95) {
-              s3 = peg$c22;
+              s3 = peg$c26;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c27); }
             }
             if (s3 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 45) {
-                s3 = peg$c24;
+                s3 = peg$c28;
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c29); }
               }
               if (s3 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 32) {
-                  s3 = peg$c26;
+                  s3 = peg$c30;
                   peg$currPos++;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c27); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c31); }
                 }
               }
             }
@@ -978,52 +1000,52 @@ import { makeString } from './parserCommon';
         }
         if (s3 !== peg$FAILED) {
           s4 = [];
-          if (peg$c18.test(input.charAt(peg$currPos))) {
+          if (peg$c22.test(input.charAt(peg$currPos))) {
             s5 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c23); }
           }
           if (s5 === peg$FAILED) {
-            if (peg$c20.test(input.charAt(peg$currPos))) {
+            if (peg$c24.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c25); }
             }
             if (s5 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 47) {
-                s5 = peg$c33;
+                s5 = peg$c37;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c34); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c38); }
               }
               if (s5 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 95) {
-                  s5 = peg$c22;
+                  s5 = peg$c26;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c27); }
                 }
                 if (s5 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 45) {
-                    s5 = peg$c24;
+                    s5 = peg$c28;
                     peg$currPos++;
                   } else {
                     s5 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c29); }
                   }
                   if (s5 === peg$FAILED) {
-                    if (input.substr(peg$currPos, 2) === peg$c28) {
-                      s5 = peg$c28;
+                    if (input.substr(peg$currPos, 2) === peg$c32) {
+                      s5 = peg$c32;
                       peg$currPos += 2;
                     } else {
                       s5 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                     }
                   }
                 }
@@ -1032,52 +1054,52 @@ import { makeString } from './parserCommon';
           }
           while (s5 !== peg$FAILED) {
             s4.push(s5);
-            if (peg$c18.test(input.charAt(peg$currPos))) {
+            if (peg$c22.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { await peg$fail(peg$c19); }
+              if (peg$silentFails === 0) { await peg$fail(peg$c23); }
             }
             if (s5 === peg$FAILED) {
-              if (peg$c20.test(input.charAt(peg$currPos))) {
+              if (peg$c24.test(input.charAt(peg$currPos))) {
                 s5 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { await peg$fail(peg$c21); }
+                if (peg$silentFails === 0) { await peg$fail(peg$c25); }
               }
               if (s5 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 47) {
-                  s5 = peg$c33;
+                  s5 = peg$c37;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { await peg$fail(peg$c34); }
+                  if (peg$silentFails === 0) { await peg$fail(peg$c38); }
                 }
                 if (s5 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 95) {
-                    s5 = peg$c22;
+                    s5 = peg$c26;
                     peg$currPos++;
                   } else {
                     s5 = peg$FAILED;
-                    if (peg$silentFails === 0) { await peg$fail(peg$c23); }
+                    if (peg$silentFails === 0) { await peg$fail(peg$c27); }
                   }
                   if (s5 === peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 45) {
-                      s5 = peg$c24;
+                      s5 = peg$c28;
                       peg$currPos++;
                     } else {
                       s5 = peg$FAILED;
-                      if (peg$silentFails === 0) { await peg$fail(peg$c25); }
+                      if (peg$silentFails === 0) { await peg$fail(peg$c29); }
                     }
                     if (s5 === peg$FAILED) {
-                      if (input.substr(peg$currPos, 2) === peg$c28) {
-                        s5 = peg$c28;
+                      if (input.substr(peg$currPos, 2) === peg$c32) {
+                        s5 = peg$c32;
                         peg$currPos += 2;
                       } else {
                         s5 = peg$FAILED;
-                        if (peg$silentFails === 0) { await peg$fail(peg$c29); }
+                        if (peg$silentFails === 0) { await peg$fail(peg$c33); }
                       }
                     }
                   }
@@ -1098,15 +1120,15 @@ import { makeString } from './parserCommon';
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c35;
+            s3 = peg$c39;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { await peg$fail(peg$c36); }
+            if (peg$silentFails === 0) { await peg$fail(peg$c40); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = await peg$c30(s2);
+            s1 = await peg$c34(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -1139,10 +1161,10 @@ import { makeString } from './parserCommon';
       }
 
       s0 = peg$currPos;
-      s1 = peg$c37;
+      s1 = peg$c41;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c38();
+        s1 = await peg$c42();
       }
       s0 = s1;
 
@@ -1165,15 +1187,15 @@ import { makeString } from './parserCommon';
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 44) {
-        s1 = peg$c39;
+        s1 = peg$c43;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c40); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c44); }
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c41();
+        s1 = await peg$c45();
       }
       s0 = s1;
 
@@ -1197,25 +1219,25 @@ import { makeString } from './parserCommon';
       s0 = peg$currPos;
       s1 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s2 = peg$c26;
+        s2 = peg$c30;
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { await peg$fail(peg$c27); }
+        if (peg$silentFails === 0) { await peg$fail(peg$c31); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s2 = peg$c26;
+          s2 = peg$c30;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { await peg$fail(peg$c27); }
+          if (peg$silentFails === 0) { await peg$fail(peg$c31); }
         }
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c42();
+        s1 = await peg$c46();
       }
       s0 = s1;
 
@@ -1237,10 +1259,10 @@ import { makeString } from './parserCommon';
       }
 
       s0 = peg$currPos;
-      s1 = peg$c37;
+      s1 = peg$c41;
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = await peg$c43();
+        s1 = await peg$c47();
       }
       s0 = s1;
 

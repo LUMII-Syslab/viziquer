@@ -1312,6 +1312,7 @@ function getPathFullGrammarChangeDirection (expressionTable){
 				let pathPart =  "";
 				
 				if(expressionTable[key]["var"]["type"]["prefix"] !== "") pathPart = getPrefix(expressionTable[key]["var"]["type"]["prefix"]) + ":" + expressionTable[key]["var"]["name"];
+				else if(typeof expressionTable[key]["Prefix"] !== "undefined" && expressionTable[key]["Prefix"] !== "") pathPart = expressionTable[key]["Prefix"] + expressionTable[key]["var"]["name"];
 				else pathPart = expressionTable[key]["var"]["name"];
 				
 				path = path + pathPart;
@@ -1796,10 +1797,9 @@ function transformBetweenLike(expressionTable){
 				  regaxExpression = regaxExpression["string"];
 			  }	 
 			 
-			 if (expressionTable[key]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
-			 if (expressionTable[key]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
 			 if(arg3 == null){
-				
+				if (expressionTable[key]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
+				if (expressionTable[key]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
 				expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [
                             	   "REGEX",
@@ -1970,7 +1970,7 @@ function transformBetweenLike(expressionTable){
 				if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["start"] == null)  regaxExpression = "^" + regaxExpression; 
 				if (expressionTable[key]["iri"]["PrefixedName"]["FunctionLike"]["end"] == null)  regaxExpression = regaxExpression + "$"; 
 			 }
-			
+
 			 if(arg3 == null){
 			 expressionTable["PrimaryExpression"] = {
                                "RegexExpression" : [

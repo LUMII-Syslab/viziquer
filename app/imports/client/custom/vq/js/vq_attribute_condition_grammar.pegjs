@@ -14,7 +14,7 @@
 	
 	ConditionGrammar = Condition:(space Condition ( space comma space Condition)*){return makeExpression(Condition)}
 	Condition = Variable Condition:((Relation / nil) space (Literal/QuotedLiteralA/QuotedLiteralB))
-	Relation = Relation:("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">" / "!") {return Relation}
+	Relation = Relation:("=" / "!=" / "<>" / "<=" / ">=" /"<" / ">" / "!" / "~*" / "~") {return Relation}
 	Literal =  Literal:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_" / "-"/ " ") (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ]  / [0-9] / "_" / "-"/ " ]"))*){return makeVar(Literal)}
 	QuotedLiteralA =  '"' Literal:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_" / "-"/ " ") (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ]  / [0-9] / "/" / "_" / "-"/ " ]"))*) '"'{return makeVar(Literal)}
 	QuotedLiteralB =  "'" Literal:(([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ] / [0-9] / "_" / "-"/ " ") (([A-Za-zāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ]  / [0-9] / "/" / "_" / "-"/ " ]"))*) "'"{return makeVar(Literal)}

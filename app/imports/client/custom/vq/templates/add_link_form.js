@@ -522,7 +522,7 @@ Template.AddLink.events({
 
 		_.each(classes, function(e){
 			var prefix;
-			if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
+			if(proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true && (e.is_local == true || e.prefix == "" || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wd")))prefix = "";
 			else prefix = e.prefix+":";
 			// e.short_class_name = prefix + e.display_name;
 			e.short_class_name = e.full_name;
@@ -846,7 +846,7 @@ async function getAllAssociations(){
 						
 						if (e.class_iri !== undefined && e.class_iri !== null) {
 							var prefix;
-							if(e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
+							if((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && e.class_is_local == true || (schemaName.toLowerCase() == "wikidata" && e.class_prefix == "wd"))prefix = "";
 							else prefix = e.class_prefix+":";
 							e.short_class_name = prefix + e.class_display_name;						
 						}
@@ -897,7 +897,7 @@ async function getAllAssociations(){
 						//prefix:name
 						var prefix;
 
-						if(proj.showPrefixesForAllNames != "true" && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
+						if((proj.showPrefixesForAllNames != "true" && proj.showPrefixesForAllNames != true) && (e.is_local == true || (schemaName.toLowerCase() == "wikidata" && e.prefix == "wdt")))prefix = "";
 						else prefix = e.prefix+":";
 						var eName = prefix + e.display_name;
 						
@@ -954,7 +954,7 @@ async function getAllAssociations(){
 					}
 				}
       		}
-			
+				
       		asc = asc.filter(function(obj, index, self) { 
 				return index === self.findIndex(function(t) { return t['name'] === obj['name'] &&  t['type'] === obj['type'] &&  t['class'] === obj['class'] });
 			}); 

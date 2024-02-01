@@ -1556,10 +1556,10 @@
                 "name": "Attributes",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
-                "inputType": {
+				"inputType": {
                   "type": "custom",
                   "inputType": "text",
-                  "templateName": "multiField"
+                  "templateName": "classAttributeField"
                 },
                 "styles": [
                   {

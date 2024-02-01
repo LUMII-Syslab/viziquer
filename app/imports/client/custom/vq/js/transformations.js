@@ -1,4 +1,5 @@
 import { Interpreter } from '/imports/client/lib/interpreter'
+import { Utilities } from '/imports/client/platform/js/utilities/utils.js'
 import { Projects, Elements, Compartments, ElementTypes, CompartmentTypes  } from '/imports/db/platform/collections'
 import { Dialog } from '/imports/client/platform/js/interpretator/Dialog'
 import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from './genAbstractQuery';

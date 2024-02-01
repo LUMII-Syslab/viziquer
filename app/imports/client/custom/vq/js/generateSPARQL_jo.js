@@ -1352,6 +1352,7 @@ function generateSPARQLtext(abstractQueryTable){
 			temp = temp.concat(whereInfo["phase2"]);
 			temp = temp.concat(whereInfo["graphService"]);
 			temp = temp.concat(whereInfo["phase3"]);
+			
 			temp = temp.concat(whereInfo["filters"]);
 			temp = temp.concat(whereInfo["filtersExists"]);
 			temp = temp.concat(whereInfo["plainOptionalNotLinks"]);
@@ -1365,7 +1366,6 @@ function generateSPARQLtext(abstractQueryTable){
 			temp = temp.concat(whereInfo["bind"]);
 			// temp = temp.concat(whereInfo["minusSubQueries"]);
 			// temp = temp.concat(whereInfo["directSparql"]);
-			
 			
 			var classMembership;
 			if(typeof rootClass["indirectClassMembership"] !== 'undefined' && rootClass["indirectClassMembership"] == true && typeof parameterTable["indirectClassMembershipRole"] !== 'undefined' && parameterTable["indirectClassMembershipRole"] != null && parameterTable["indirectClassMembershipRole"] != ""){
@@ -1722,7 +1722,9 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 			for(let prefix in resultClass["prefixTable"]) {
 				if(typeof resultClass["prefixTable"][prefix] === 'string') prefixTable[prefix] = resultClass["prefixTable"][prefix];
 			}
-			counter = resultClass["counter"]
+
+			// counter = resultClass["counter"]
+
 			let temp = [];
 			messages = messages.concat(resultClass["messages"]);
 
@@ -3411,7 +3413,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	//filters. Phase 3
 	for(let expression in sparqlTable["filters"]){
 			if(typeof sparqlTable["filters"][expression] === 'string'){
-				if(sparqlTable["filters"][expression].indexOf("EXISTS{") === -1) filtersExists.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
+				if(sparqlTable["filters"][expression].indexOf("EXISTS{") !== -1) filtersExists.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
 				else filters.push(sparqlTable["filters"][expression].replace(/\n/g, '\n'+SPARQL_interval));
 			}
 	}
@@ -4122,6 +4124,10 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		minusSubQueries = [];
 		// directSparql = [];
 		filters = [];
+		
+		tempWhereInfo = tempWhereInfo.filter(function (el, i, arr) {
+			return arr.indexOf(el) === i;
+		});		
 		
 		let tempString = "FILTER NOT EXISTS{"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 		if(sparqlTable["isGlobalSubQuery"] == true)tempString = "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval);

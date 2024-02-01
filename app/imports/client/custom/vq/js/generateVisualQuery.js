@@ -79,7 +79,7 @@ generateVisualQueryAll: async function(queries, xx, yy, queryId, queryQuestion){
 				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 			  }; 
 			  
-			  if(proj.showPrefixesForAllNames == true) showPrefixesForAllNames = true;
+			  if(proj.showPrefixesForAllNames == true || proj.showPrefixesForAllNames == "true") showPrefixesForAllNames = true;
   
 		 }
 		 
@@ -413,7 +413,7 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 				if(indirectClassMembershipRole == "wdt:P31/wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 				if(indirectClassMembershipRole == "wdt:P31.wdt:P279*") indirectClassMembershipRole = "[instance of (P31)].[subclass of (P279)]*";
 			  }; 
-			   if(proj.showPrefixesForAllNames == true) showPrefixesForAllNames = true;
+			   if(proj.showPrefixesForAllNames == true || proj.showPrefixesForAllNames == "true" ) showPrefixesForAllNames = true;
 			  
 		 }
 
@@ -560,8 +560,10 @@ generateVisualQuery: async function(text, xx, yy, queryId, queryQuestion){
 		let conditionLinks = generateClassCtructuretemp.conditionLinks;
 		classesTable["orderings"] = abstractTable["orderTable"];
 		classesTable["graphs"] = abstractTable["fromTable"];
+		
 		if(typeof classesTable["groupings"] !== "undefined") classesTable["groupings"] = classesTable["groupings"].concat( abstractTable["groupTable"]);
 		else classesTable["groupings"] = abstractTable["groupTable"];
+		
 		if(typeof parsedQuery["limit"] !== 'undefined') classesTable["limit"] =  parsedQuery["limit"];
 		else if(parsedQuery["queryType"] == "ASK"){ 
 			classesTable["limit"] = 1;
@@ -908,6 +910,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	var aggregationInSelect = false;
 	
 	for(let key = 0; key < variables.length; key++){
+		
 		let proj = Projects.findOne({_id: Session.get("activeProject")});
 		 if (proj) {
 			  
@@ -927,91 +930,152 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 		
 		//if(Object.keys(variables[key]).length != 0)
 		if(typeof variables[key] === 'string'){
-			if(serviceLabelLang != "" && 
+			if((serviceLabelLang != "" && 
 			(variables[key].endsWith("Label") == true && typeof variableList[variables[key].substring(0, variables[key].length-5)] !== "undefined")
 			|| (variables[key].endsWith("AltLabel") == true && typeof variableList[variables[key].substring(0, variables[key].length-8)] !== "undefined")
 			|| (variables[key].endsWith("Description") == true && typeof variableList[variables[key].substring(0, variables[key].length-11)] !== "undefined")
-			){
+			) || variables.indexOf("_"+variables[key]) !== -1){
 				
 			} else {
-				var isVariable = false;
-				for(let link = 0; link< linkTable.length; link++){
-					if( typeof linkTable[link] !== "undefined" && typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"] == variables[key] || starInSelect == true)){
-						isVariable = true;
-						if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
-							linkTable[link]["linkIdentification"]["local_name"] = linkTable[link]["linkIdentification"]["local_name"].substring(1);
-							linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
-						}
-						
-						break;
-					}
-				}
 				
-				
-				if(typeof bindTable[variables[key]] !== "undefined" && typeof bindTable[variables[key]]["class"] !== "undefined"){	
-					var cl = classesTable[bindTable[variables[key]]["class"]];
-					if(typeof cl["fields"] !== "undefined"){
-						for(let field = 0; field < cl["fields"].length; field++){							
-							if(typeof bindTable[cl["fields"][field]["alias"]] !== "undefined") cl["fields"][field]["isInternal"] = false;
-						}
-					}
-				}
-				
-				//check kind (Class, reference or Property)
-				//class
-				
-				
-				var classes2 = findByShortName(classesTable, variables[key]);
-				// for(let clazz in classes2){
-					// if(typeof classes2[clazz] !== "function"){
-						// classesTable[clazz]["identification"]["short_name"] = classesTable[clazz]["identification"]["short_name"];
-					// }
-				// }		
-				
-				let classes = findByVariableName(classesTable, variables[key]);
-				// if(Object.keys(classes).length > 0 && typeof nodeList[variables[key]] !== "undefined"){
-				if(Object.keys(classes).length > 0){
-					//add class as attribute
-					var parsedClass = getVariable(variables[key])["value"];
-					var identification = await dataShapes.resolveClassByName({name: parsedClass});
-
-					let addLabel = false;
-					if(typeof variableList[variables[key]+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
-					let addAltLabel = false;
-					if(typeof variableList[variables[key]+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
-					let addDescription = false;
-					if(typeof variableList[variables[key]+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
-		
-					let attributeInfo = {
-						"alias":"",
-						"identification":identification.data[0],
-						"exp":"(select this)",
-						"addLabel":addLabel,
-						"addAltLabel":addAltLabel,
-						"addDescription":addDescription,
-						"counter":0
-					}
-
-					orderCounter++;
-					if(identification.complete == true) {
-						let sn = identification.data[0].display_name;
-						
-						if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
-						else if(identification.data[0].is_local != true || showPrefixesForAllNames == true)sn = identification.data[0].prefix+ ":" + sn;
-						attributeInfo.identification.short_name = sn;	
-					}
-					for(let clazz in classes){
-						if(typeof classes[clazz] !== "function"){
-							classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-							// console.log("1", attributeInfo)
+				let addVariable = true;
+				for(let clazz in classesTable){
+					if(typeof classesTable[clazz] !== "function" && typeof classesTable[clazz]["identification"] !== "undefined" && classesTable[clazz]["identification"] !== null){
+						if(classesTable[clazz]["identification"]["short_name"] === "?" + variables[key]){
+							addVariable = false;
 						}
 					}
 					
-					if(typeof nodeList[variables[key]] === "undefined"){
+				}
+				if(addVariable === true){
+					var isVariable = false;
+					for(let link = 0; link< linkTable.length; link++){
+						if( typeof linkTable[link] !== "undefined" && typeof linkTable[link]["isVariable"] !== "undefined" && linkTable[link]["isVariable"] == true && (linkTable[link]["linkIdentification"]["short_name"] == variables[key] || starInSelect == true)){
+							isVariable = true;
+							if(linkTable[link]["linkIdentification"]["short_name"].startsWith("??")){
+								linkTable[link]["linkIdentification"]["local_name"] = linkTable[link]["linkIdentification"]["local_name"].substring(1);
+								linkTable[link]["linkIdentification"]["short_name"] = linkTable[link]["linkIdentification"]["short_name"].substring(1);
+							}
+							
+							break;
+						}
+					}
+					
+					
+					if(typeof bindTable[variables[key]] !== "undefined" && typeof bindTable[variables[key]]["class"] !== "undefined"){	
+						var cl = classesTable[bindTable[variables[key]]["class"]];
+						if(typeof cl["fields"] !== "undefined"){
+							for(let field = 0; field < cl["fields"].length; field++){							
+								if(typeof bindTable[cl["fields"][field]["alias"]] !== "undefined") cl["fields"][field]["isInternal"] = false;
+							}
+						}
+					}
+					
+					//check kind (Class, reference or Property)
+					//class
+					
+					
+					// var classes2 = findByShortName(classesTable, variables[key]);
+					// for(let clazz in classes2){
+						// if(typeof classes2[clazz] !== "function"){
+							// classesTable[clazz]["identification"]["short_name"] = classesTable[clazz]["identification"]["short_name"];
+						// }
+					// }		
+					
+					let classes = findByVariableName(classesTable, variables[key]);
+					
+					// if(Object.keys(classes).length > 0 && typeof nodeList[variables[key]] !== "undefined"){
+					if(Object.keys(classes).length > 0){
+						//add class as attribute
+						var parsedClass = getVariable(variables[key])["value"];
+						var identification = await dataShapes.resolveClassByName({name: parsedClass});
+
+						let addLabel = false;
+						if(typeof variableList[variables[key]+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+						let addAltLabel = false;
+						if(typeof variableList[variables[key]+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
+						let addDescription = false;
+						if(typeof variableList[variables[key]+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
+			
+						let attributeInfo = {
+							"alias":"",
+							"identification":identification.data[0],
+							"exp":"(select this)",
+							"addLabel":addLabel,
+							"addAltLabel":addAltLabel,
+							"addDescription":addDescription,
+							"counter":0
+						}
+
+						orderCounter++;
+						if(identification.complete == true) {
+							let sn = identification.data[0].display_name;
+							
+							if(schemaName == "wikidata" && identification.data[0].prefix == "wd"){}
+							else if(identification.data[0].is_local != true || showPrefixesForAllNames == true)sn = identification.data[0].prefix+ ":" + sn;
+							attributeInfo.identification.short_name = sn;	
+						}
+						for(let clazz in classes){
+							if(typeof classes[clazz] !== "function"){
+								classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+								// console.log("1", attributeInfo)
+							}
+						}
+						
+						if(typeof nodeList[variables[key]] === "undefined"){
+							let parsedAttributeRes = getVariable(variables[key]);	
+							let parsedAttribute = parsedAttributeRes["value"];	
+							if(typeof bindTable[parsedAttribute] === 'undefined'){		
+								if(isVariable == false && variableList[variables[key]] != 1){
+									let addLabel = false;
+									let addAltLabel = false;
+									let addDescription = false;
+									for(let k = 0; k < variables.length; k++){
+										if(typeof variables[k] === "string"){
+											if(variables[k].endsWith("Label") == true && variables[k].startsWith(variables[key])) addLabel = true;
+											if(variables[k].endsWith("AltLabel") == true && variables[k].startsWith(variables[key])) addAltLabel = true;
+											if(variables[k].endsWith("Description") == true && variables[k].startsWith(variables[key])) addDescription = true;
+										}
+									}
+									
+									if(parsedAttributeRes["type"] == "varName")parsedAttribute = "@"+ parsedAttribute
+
+									let attributeInfo = {
+										"alias":"",
+										"identification":null,
+										"requireValues":false,
+										"isInternal":false,
+										"groupValues":false,
+										"exp":parsedAttribute,
+										"addLabel":addLabel,
+										"addAltLabel":addAltLabel,
+										"addDescription":addDescription,
+										"counter":orderCounter
+									}
+								
+									orderCounter++;
+
+									for(let clazz in classesTable){
+										if(typeof classesTable[clazz] !== "function"){
+											classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+											// console.log("1,5", attributeInfo)
+											break;
+										}
+									}
+								} else if(variableList[variables[key]] == 1) {
+									// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
+								}
+							}
+						}
+					} else if (Object.keys(findByShortName(classesTable, variables[key])).length > 0){
+						
+					}
+					//reference
+					else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key]] === 'undefined' && variableList[variables[key]] > 0){	
 						let parsedAttributeRes = getVariable(variables[key]);	
 						let parsedAttribute = parsedAttributeRes["value"];	
 						if(typeof bindTable[parsedAttribute] === 'undefined'){		
-							if(isVariable == false && variableList[variables[key]] != 1){
+							if(isVariable == false){
 								let addLabel = false;
 								let addAltLabel = false;
 								let addDescription = false;
@@ -1024,7 +1088,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 								}
 								
 								if(parsedAttributeRes["type"] == "varName")parsedAttribute = "@"+ parsedAttribute
-
+								
 								let attributeInfo = {
 									"alias":"",
 									"identification":null,
@@ -1039,151 +1103,111 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 								}
 							
 								orderCounter++;
-
-								for(let clazz in classesTable){
-									if(typeof classesTable[clazz] !== "function"){
-										classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-										// console.log("1,5", attributeInfo)
-										break;
+								
+								for(let attr in attributeTable){
+									
+									if(typeof attributeTable[attr] !== "function" && attributeTable[attr]["exp"] === "?"+ variables[key]){
+										addVariable = false;
+									}
+								}
+								if(addVariable === true){
+									for(let clazz in classesTable){
+										if(typeof classesTable[clazz] !== "function"){
+											classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
+											// console.log("2", attributeInfo, classesTable[clazz], attributeTable)
+											break;
+										}
 									}
 								}
 							} else if(variableList[variables[key]] == 1) {
 								// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
 							}
-						}
-					}
-				} else if (Object.keys(findByShortName(classesTable, variables[key])).length > 0){
-					
-				}
-				//reference
-				else if(typeof variableList[variables[key]] !== 'undefined' && typeof attributeTable[variables[key]] === 'undefined' && variableList[variables[key]] > 0){	
-					let parsedAttributeRes = getVariable(variables[key]);	
-					let parsedAttribute = parsedAttributeRes["value"];	
-					if(typeof bindTable[parsedAttribute] === 'undefined'){		
-						if(isVariable == false){
-							let addLabel = false;
-							let addAltLabel = false;
-							let addDescription = false;
-							for(let k = 0; k < variables.length; k++){
-								if(typeof variables[k] === "string"){
-									if(variables[k].endsWith("Label") == true && variables[k].startsWith(variables[key])) addLabel = true;
-									if(variables[k].endsWith("AltLabel") == true && variables[k].startsWith(variables[key])) addAltLabel = true;
-									if(variables[k].endsWith("Description") == true && variables[k].startsWith(variables[key])) addDescription = true;
-								}
-							}
-							
-							if(parsedAttributeRes["type"] == "varName")parsedAttribute = "@"+ parsedAttribute
-							
+						} else if(variableList[parsedAttribute] != "seen") {
+			
 							let attributeInfo = {
-								"alias":"",
+								"alias":bindTable[parsedAttribute]["alias"],
 								"identification":null,
 								"requireValues":false,
 								"isInternal":false,
 								"groupValues":false,
-								"exp":parsedAttribute,
-								"addLabel":addLabel,
-								"addAltLabel":addAltLabel,
-								"addDescription":addDescription,
+								"exp":bindTable[parsedAttribute]["exp"],
 								"counter":orderCounter
 							}
-						
+			
 							orderCounter++;
+							bindTable[parsedAttribute]["seen"] = true;
 
 							for(let clazz in classesTable){
 								if(typeof classesTable[clazz] !== "function"){
 									classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-									// console.log("2", attributeInfo)
+									// console.log("3", attributeInfo)
 									break;
 								}
 							}
-						} else if(variableList[variables[key]] == 1) {
-							// Interpreter.showErrorMsg("Unbound variable '" + variables[key] + "' excluded from the visual presentation", -3);
-						}
-					} else if(variableList[parsedAttribute] != "seen") {
-		
-						let attributeInfo = {
-							"alias":bindTable[parsedAttribute]["alias"],
-							"identification":null,
-							"requireValues":false,
-							"isInternal":false,
-							"groupValues":false,
-							"exp":bindTable[parsedAttribute]["exp"],
-							"counter":orderCounter
-						}
-		
-						orderCounter++;
-						bindTable[parsedAttribute]["seen"] = true;
-
-						for(let clazz in classesTable){
-							if(typeof classesTable[clazz] !== "function"){
-								classesTable[clazz] = addAttributeToClass(classesTable[clazz], attributeInfo);
-								// console.log("3", attributeInfo)
-								break;
-							}
 						}
 					}
-				}
-				
-				
-				//property
-				
-				if(typeof attributeTable[getVariable(variables[key])["value"]] !== 'undefined') {
-					// add attribute
 					
-					let parsedAttribute = getVariable(variables[key])["value"];	
-					let attributes = findByVariableName(attributeTable, parsedAttribute);
 					
-					for(let attribute in attributes){
-					  if(typeof attributes[attribute] !== "function"){
-						if(attributeTable[attribute]["seen"] != true){
-							let attributeInfoTemp = attributeTable[attribute];
-							let exp = attributeInfoTemp["identification"]["short_name"];
-							if(typeof attributeInfoTemp.exp !== 'undefined') exp = attributeInfoTemp.exp;
-							
-							var attrAlias = attributeInfoTemp["alias"];
-							if(attrAlias == "" && typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["short_name"].indexOf(":")!= -1) attrAlias = attributeInfoTemp["identification"]["local_name"];
-							
-							let addLabel = false;
-							if(typeof variableList[attrAlias+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
-							let addAltLabel = false;
-							if(typeof variableList[attrAlias+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
-							let addDescription = false;
-							if(typeof variableList[attrAlias+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
-							
-							// if(typeof variableList[attrAlias] !== 'undefined' && variableList[attrAlias] <=1 ) attrAlias = "";
-							var attributeConditionSelection = attributeInfoTemp["attributeCondition"];
-							var attributeCondition = true;
-							if(typeof attributeConditionSelection == "undefined") {
-								attributeConditionSelection = "";
-								attributeCondition = false;
-							};
-							let attributeInfo = {
-								"alias":attrAlias,
-								"identification":attributeInfoTemp["identification"],
-								"requireValues":attributeInfoTemp["requireValues"],
-								"isInternal":false,
-								"groupValues":false,
-								"exp":exp,
-								"addLabel":addLabel,
-								"addAltLabel":addAltLabel,
-								"addDescription":addDescription,
-								"graph":attributeInfoTemp["graph"],
-								"graphInstruction":attributeInfoTemp["graphInstruction"],
-								"counter":attributeInfoTemp["counter"],
-								"attributeConditionSelection": attributeConditionSelection,
-								"attributeCondition":attributeCondition
-							}
-							
-							if(typeof attributeInfoTemp.bgp === "undefined") exp = "@"+exp;
+					//property
+					
+					if(typeof attributeTable[getVariable(variables[key])["value"]] !== 'undefined') {
+						// add attribute
+						
+						let parsedAttribute = getVariable(variables[key])["value"];	
+						let attributes = findByVariableName(attributeTable, parsedAttribute);
+						
+						for(let attribute in attributes){
+						  if(typeof attributes[attribute] !== "function"){
+							if(attributeTable[attribute]["seen"] != true){
+								let attributeInfoTemp = attributeTable[attribute];
+								let exp = attributeInfoTemp["identification"]["short_name"];
+								if(typeof attributeInfoTemp.exp !== 'undefined') exp = attributeInfoTemp.exp;
+								
+								var attrAlias = attributeInfoTemp["alias"];
+								if(attrAlias == "" && typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["identification"]["short_name"].indexOf(":")!= -1) attrAlias = attributeInfoTemp["identification"]["local_name"];
+								
+								let addLabel = false;
+								if(typeof variableList[attrAlias+"Label"] !== "undefined" && serviceLabelLang != "")addLabel = true;
+								let addAltLabel = false;
+								if(typeof variableList[attrAlias+"AltLabel"] !== "undefined" && serviceLabelLang != "")addAltLabel = true;
+								let addDescription = false;
+								if(typeof variableList[attrAlias+"Description"] !== "undefined" && serviceLabelLang != "")addDescription = true;
+								
+								// if(typeof variableList[attrAlias] !== 'undefined' && variableList[attrAlias] <=1 ) attrAlias = "";
+								var attributeConditionSelection = attributeInfoTemp["attributeCondition"];
+								var attributeCondition = true;
+								if(typeof attributeConditionSelection == "undefined") {
+									attributeConditionSelection = "";
+									attributeCondition = false;
+								};
+								let attributeInfo = {
+									"alias":attrAlias,
+									"identification":attributeInfoTemp["identification"],
+									"requireValues":attributeInfoTemp["requireValues"],
+									"isInternal":false,
+									"groupValues":false,
+									"exp":exp,
+									"addLabel":addLabel,
+									"addAltLabel":addAltLabel,
+									"addDescription":addDescription,
+									"graph":attributeInfoTemp["graph"],
+									"graphInstruction":attributeInfoTemp["graphInstruction"],
+									"counter":attributeInfoTemp["counter"],
+									"attributeConditionSelection": attributeConditionSelection,
+									"attributeCondition":attributeCondition
+								}
+								
+								if(typeof attributeInfoTemp.bgp === "undefined") exp = "@"+exp;
 
-							if(attributeTable[attribute]["class"] != attribute){
-								classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
-								// console.log("4", attributeInfoTemp,attributeInfo, variableList)
-								attributeTable[attribute]["seen"] = true;
+								if(attributeTable[attribute]["class"] != attribute){
+									classesTable[attributeTable[attribute]["class"]] = addAttributeToClass(classesTable[attributeTable[attribute]["class"]], attributeInfo);
+									// console.log("4", attributeInfoTemp,attributeInfo, variableList)
+									attributeTable[attribute]["seen"] = true;
+								}
+							} else {
+								attributeTable[attribute]["isInternal"] = false;
 							}
-						} else {
-							attributeTable[attribute]["isInternal"] = false;
-						}
+							}
 						}
 					}
 				}
@@ -1734,6 +1758,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 		if(typeof group[key] !== "function"){
 			let exp = getVariable(group[key]["expression"])["value"];
 			let classes = findByVariableName(classesTable, group[key]["expression"]["value"]);
+			
 			if(Object.keys(classes).length > 0){
 				for(let clazz in classes){
 					if(typeof classes[clazz] !== "function" && (typeof classesTable[clazz]["identification"] === "undefined" || classesTable[clazz]["identification"] == null)){
@@ -1748,7 +1773,9 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 						inSelect = true;
 					}
 				}
-				if(inSelect == false) groupTable.push(exp); 
+				if(inSelect == false) {
+					groupTable.push(exp); 
+				}
 			}
 		}
 
@@ -2386,184 +2413,210 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 	
 	//type=filter
 	if(where["type"] == "filter"){
-		
-		let temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, patternType, bindTable, checkIfOrAndInFilter(where["expression"], generateOnlyExpression));
-		
-		let allowMul = "";
-		let relations = ["=", "!=", "<", ">", "<=", ">="];
-		if(where["expression"]["type"] == "operation" && relations.indexOf(where["expression"]["operator"]) !== -1) {allowMul = "* ";}
-		
-		classesTable = temp["classesTable"];
-		attributeTable = temp["attributeTable"];
-		filterTable = temp["filterTable"];
-		attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
-		bindTable = temp["bindTable"];
-		
-		if(filterTable.length == 0 && temp["viziQuerExpr"]["exprString"] == ""){
-			linkTable = linkTable.concat(temp["linkTableAdded"]);
-			linkTableAdded = temp["linkTableAdded"];
-		}else{
-			viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
-			viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
-			let filterAdded = false;
-			
-			let className;
-
-			for(let fil = 0; fil < viziQuerExpr["exprVariables"].length; fil++){
-				let classes = [];
-				// class name as property
-				var conditionExpr = viziQuerExpr["exprVariables"][fil];
-				if(conditionExpr.startsWith("@")) conditionExpr = conditionExpr.substring(1);
-				if(typeof classesTable[conditionExpr] !== 'undefined') {
-					className = viziQuerExpr["exprVariables"][fil];
-					classes = findByVariableName(classesTable, className);
-				} 
-				// attribute
-				else if(typeof  attributeTable[conditionExpr] != 'undefined') {
-					className = attributeTable[conditionExpr]["class"];
-					var attributeNames = findByVariableName(attributeTable, conditionExpr);
-					for(let attributeName in attributeNames){
-						if(typeof attributeTable[attributeName] !== "function"){
-							var classN = attributeTable[attributeName]["class"];
-							classes[classN] = classesTable[classN];
-						}
-					}
-					classes[className] = classesTable[className];
-
-					if(classesTable[className]["variableName"].startsWith("?"))className = classesTable[className]["variableName"];
-					else className = classesTable[className]["variableName"];
-
-				} 
-				//class name
-				/*else if(typeof classesTable[conditionExpr] !== 'undefined') {
-					className = classesTable[conditionExpr]["variableName"];
-					// classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
-
-					let classUnderOptional = false;
-					if(bgptype == "plain"){
-						for(let link = 0; link< linkTable.length; link++){
-							if( linkTable[link] !== "undefined" && linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
-								classUnderOptional = true;
-								break;
-							}
-						}
-					}
-					if(classUnderOptional != true){
-						classes[conditionExpr] = classesTable[conditionExpr];
-					} else {
-						for(let clazz in classesTable){
-							if(typeof classesTable[clazz] !== "function"){
-								className = clazz;
-								break;
-							}
-						}
-						classes = findByVariableName(classesTable, className);
-					}
-				}*/
-				// bind attribute
-				else if(typeof bindTable[conditionExpr]  !== 'undefined'){
-					className = bindTable[conditionExpr]["class"];
-					let classUnderOptional = false;
-					if(bgptype == "plain"){
-						for(let link = 0; link< linkTable.length; link++){
-							if( typeof linkTable[link] !== "undefined" && linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
-								classUnderOptional = true;
-								break;
-							}
-						}
-					}
-					if(classUnderOptional != true){
-						classes[conditionExpr] = classesTable[conditionExpr];
-						
-					} else {
-						for(let clazz in classesTable){
-							if(typeof classesTable[clazz] !== "function"){
-								className = clazz;
-								break;
-							}
-						}
-						classes = findByVariableName(classesTable, className);
-					}
-				}
-				else{
-					if(typeof className === 'undefined'){
-						for(let clazz in classesTable){
-							if(typeof classesTable[clazz] !== "function"){
-								className = clazz;
-								break;
-							}
-						}
-						classes = findByVariableName(classesTable, className);
-					}
-				}
+		let generateFilter = true;
+		if(where["expression"]["type"] === "operation" && where["expression"]["operator"] === "="){
+			let arg1 = where["expression"]["args"][0];
+			let arg2 = where["expression"]["args"][1];
+			if(arg1["termType"] === "Variable" && typeof classesTable[arg1["value"]] !== "undefined"
+			&& arg2["termType"] === "NamedNode" && classesTable[arg1["value"]]["instanceAlias"] === null){
 				
-
-				// var classes = findByVariableName(classesTable, className);
-				if(generateOnlyExpression != true){
-					for(let clazz in classes){
-						if(typeof classes[clazz] !== "function"){
-							if((typeof nodeList[className] !== 'undefined' && typeof nodeList[className]["uses"][clazz] !== 'undefined') || typeof nodeList[className] !== 'undefined' && typeof nodeList[className]["uses"][clazz] !== 'undefined'){	
-									if(typeof classesTable[clazz]["conditions"] === 'undefined') {
-										classesTable[clazz]["conditions"] = [];
-									}
-									let conditionString = allowMul + viziQuerExpr["exprString"];
-									if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
-										conditionString = conditionString.substring(2);
-									};
-									if(allowMul == ""){
-										if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
-											classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
-										}
-									}
-									classesTable[clazz]["conditions"].push(conditionString);
-									
-									// console.log("condition 7", conditionString, viziQuerExpr["exprString"], classesTable[clazz]["conditions"].indexOf(conditionString))
-									
-									filterAdded = true;
-									break;
-							} 
-						}
-					}
-				}	
-				if(filterAdded == true) break;
+				let uriResolved = null;
+				if(schemaName == "wikidata") {
+					let uriResolvedTemp = await dataShapes.getTreeIndividualsWD(arg2["value"]);
+					uriResolved = {"data": uriResolvedTemp};
+					if(uriResolvedTemp.length > 0) uriResolved.complete = true; 
+				}else  uriResolved = await dataShapes.resolveIndividualByName({name: arg2["value"]});
+				
+				if(uriResolved.complete === true) {
+					classesTable[arg1["value"]]["instanceAlias"] =   uriResolved["data"][0]["localName"];
+					generateFilter = false;
+				}
 			}
-			if(viziQuerExpr["exprVariables"].length == 0){
-				for(let n in nodeList){
-					if(typeof nodeList[n] !== "function"){
-						let classes = findByVariableName(classesTable, n);
-						if(generateOnlyExpression != true){
-							for(let clazz in classes){
-								if(typeof classes[clazz] !== "function"){							
-									if(typeof classesTable[clazz]["conditions"] === 'undefined') {
-										classesTable[clazz]["conditions"] = [];
-									}
-									let conditionString = allowMul + viziQuerExpr["exprString"];
-									if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
-										conditionString = conditionString.substring(2);
-									};
-									if(allowMul == ""){
-										if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
-											classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
-										}
-									}
-									classesTable[clazz]["conditions"].push(conditionString);
-									// console.log("condition 8", conditionString, viziQuerExpr["exprString"])
-									filterAdded = true;
+		}
+		if(generateFilter === true){
+			let temp = await parseSPARQLjsStructureWhere(where["expression"], nodeList, parentNodeList, classesTable, filterTable, attributeTable, linkTable, selectVariables, "plain", allClasses, variableList, patternType, bindTable, checkIfOrAndInFilter(where["expression"], generateOnlyExpression));
+			
+			
+			
+			
+			let allowMul = "";
+			let relations = ["=", "!=", "<", ">", "<=", ">="];
+			if(where["expression"]["type"] == "operation" && relations.indexOf(where["expression"]["operator"]) !== -1) {allowMul = "* ";}
+			
+			classesTable = temp["classesTable"];
+			attributeTable = temp["attributeTable"];
+			filterTable = temp["filterTable"];
+			attributeTableAdded = attributeTableAdded.concat(temp["attributeTableAdded"]);
+			bindTable = temp["bindTable"];
+			
+			if(filterTable.length == 0 && temp["viziQuerExpr"]["exprString"] == ""){
+				linkTable = linkTable.concat(temp["linkTableAdded"]);
+				linkTableAdded = temp["linkTableAdded"];
+			}else{
+				viziQuerExpr["exprString"] = viziQuerExpr["exprString"]+ temp["viziQuerExpr"]["exprString"];
+				viziQuerExpr["exprVariables"] = viziQuerExpr["exprVariables"].concat(temp["viziQuerExpr"]["exprVariables"]);
+				let filterAdded = false;
+				
+				let className;
+
+				for(let fil = 0; fil < viziQuerExpr["exprVariables"].length; fil++){
+					let classes = [];
+					// class name as property
+					var conditionExpr = viziQuerExpr["exprVariables"][fil];
+					if(conditionExpr.startsWith("@")) conditionExpr = conditionExpr.substring(1);
+					if(typeof classesTable[conditionExpr] !== 'undefined') {
+						className = viziQuerExpr["exprVariables"][fil];
+						classes = findByVariableName(classesTable, className);
+					} 
+					// attribute
+					else if(typeof  attributeTable[conditionExpr] != 'undefined') {
+						className = attributeTable[conditionExpr]["class"];
+						var attributeNames = findByVariableName(attributeTable, conditionExpr);
+						for(let attributeName in attributeNames){
+							if(typeof attributeTable[attributeName] !== "function"){
+								var classN = attributeTable[attributeName]["class"];
+								classes[classN] = classesTable[classN];
+							}
+						}
+						classes[className] = classesTable[className];
+
+						if(classesTable[className]["variableName"].startsWith("?"))className = classesTable[className]["variableName"];
+						else className = classesTable[className]["variableName"];
+
+					} 
+					//class name
+					/*else if(typeof classesTable[conditionExpr] !== 'undefined') {
+						className = classesTable[conditionExpr]["variableName"];
+						// classes[viziQuerExpr["exprVariables"][fil]] = classesTable[viziQuerExpr["exprVariables"][fil]];
+
+						let classUnderOptional = false;
+						if(bgptype == "plain"){
+							for(let link = 0; link< linkTable.length; link++){
+								if( linkTable[link] !== "undefined" && linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
+									classUnderOptional = true;
 									break;
 								}
 							}
-						}	
-						break;
+						}
+						if(classUnderOptional != true){
+							classes[conditionExpr] = classesTable[conditionExpr];
+						} else {
+							for(let clazz in classesTable){
+								if(typeof classesTable[clazz] !== "function"){
+									className = clazz;
+									break;
+								}
+							}
+							classes = findByVariableName(classesTable, className);
+						}
+					}*/
+					// bind attribute
+					else if(typeof bindTable[conditionExpr]  !== 'undefined'){
+						className = bindTable[conditionExpr]["class"];
+						let classUnderOptional = false;
+						if(bgptype == "plain"){
+							for(let link = 0; link< linkTable.length; link++){
+								if( typeof linkTable[link] !== "undefined" && linkTable[link]["linkType"] == "OPTIONAL" && linkTable[link]["object"] == className) {
+									classUnderOptional = true;
+									break;
+								}
+							}
+						}
+						if(classUnderOptional != true){
+							classes[conditionExpr] = classesTable[conditionExpr];
+							
+						} else {
+							for(let clazz in classesTable){
+								if(typeof classesTable[clazz] !== "function"){
+									className = clazz;
+									break;
+								}
+							}
+							classes = findByVariableName(classesTable, className);
+						}
+					}
+					else{
+						if(typeof className === 'undefined'){
+							for(let clazz in classesTable){
+								if(typeof classesTable[clazz] !== "function"){
+									className = clazz;
+									break;
+								}
+							}
+							classes = findByVariableName(classesTable, className);
+						}
+					}
+					
+
+					// var classes = findByVariableName(classesTable, className);
+					if(generateOnlyExpression != true){
+						for(let clazz in classes){
+							if(typeof classes[clazz] !== "function"){
+								if((typeof nodeList[className] !== 'undefined' && typeof nodeList[className]["uses"][clazz] !== 'undefined') || typeof nodeList[className] !== 'undefined' && typeof nodeList[className]["uses"][clazz] !== 'undefined'){	
+										if(typeof classesTable[clazz]["conditions"] === 'undefined') {
+											classesTable[clazz]["conditions"] = [];
+										}
+										let conditionString = allowMul + viziQuerExpr["exprString"];
+										if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
+											conditionString = conditionString.substring(2);
+										};
+										if(allowMul == ""){
+											if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
+												classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
+											}
+										}
+										classesTable[clazz]["conditions"].push(conditionString);
+										
+										// console.log("condition 7", conditionString, viziQuerExpr["exprString"], classesTable[clazz]["conditions"].indexOf(conditionString))
+										
+										filterAdded = true;
+										break;
+								} 
+							}
+						}
+					}	
+					if(filterAdded == true) break;
+				}
+				if(viziQuerExpr["exprVariables"].length == 0){
+					for(let n in nodeList){
+						if(typeof nodeList[n] !== "function"){
+							let classes = findByVariableName(classesTable, n);
+							if(generateOnlyExpression != true){
+								for(let clazz in classes){
+									if(typeof classes[clazz] !== "function"){							
+										if(typeof classesTable[clazz]["conditions"] === 'undefined') {
+											classesTable[clazz]["conditions"] = [];
+										}
+										let conditionString = allowMul + viziQuerExpr["exprString"];
+										if(allowMul == "" && conditionString.indexOf("* ") !== -1) {
+											conditionString = conditionString.substring(2);
+										};
+										if(allowMul == ""){
+											if(classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"]) !== -1) {
+												classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])] = classesTable[clazz]["conditions"][classesTable[clazz]["conditions"].indexOf("* "+ viziQuerExpr["exprString"])].substring(2)
+											}
+										}
+										classesTable[clazz]["conditions"].push(conditionString);
+										// console.log("condition 8", conditionString, viziQuerExpr["exprString"])
+										filterAdded = true;
+										break;
+									}
+								}
+							}	
+							break;
+						}
 					}
 				}
+				if(typeof className !== 'undefined' &&  typeof classesTable[className] !== 'undefined' && typeof classesTable[className]["conditions"] !== 'undefined') {
+					classesTable[className]["conditions"] = classesTable[className]["conditions"].filter(function (el, i, arr) {
+						return arr.indexOf(el) === i;
+					});
+				}
+				
+				if(typeof filterTable.find(e => e.filterString === viziQuerExpr["exprString"]) === "undefined"){
+					filterTable.push({filterString:viziQuerExpr["exprString"], filterVariables:viziQuerExpr["exprVariables"], filterAdded:filterAdded});
+				}
 			}
-			if(typeof className !== 'undefined' &&  typeof classesTable[className] !== 'undefined' && typeof classesTable[className]["conditions"] !== 'undefined') {
-				classesTable[className]["conditions"] = classesTable[className]["conditions"].filter(function (el, i, arr) {
-					return arr.indexOf(el) === i;
-				});
-			}
-			
-			if(typeof filterTable.find(e => e.filterString === viziQuerExpr["exprString"]) === "undefined") filterTable.push({filterString:viziQuerExpr["exprString"], filterVariables:viziQuerExpr["exprVariables"], filterAdded:filterAdded});
 		}
 	}
 	
@@ -2954,6 +3007,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 		
 		
 		for(let u = 0; u < where["patterns"].length; u++){
+			
 			let unionBlock = where["patterns"][u];	
 			
 			// ------------------------------------------------------------------------------------------------
@@ -4324,6 +4378,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					linkTableAdded[link]["linkType"] = "NOT";
 					if(patternType == "minus") linkTableAdded[link]["isGlobalSubQuery"] = true;
 					for(let attr = 0; attr < attributeTableAdded.length; attr++){
+						let addAttribute = true;
+						for(let filter = 0; filter < filterTable.length; filter++){
+							if(filterTable[filter]["filterVariables"].indexOf("@" + attributeTableAdded[attr]) !== -1) addAttribute = false;
+							console.log("filterVariables", filterTable[filter]["filterVariables"], attributeTableAdded[attr])
+						}
 						let attributeInfoTemp = attributeTable[attributeTableAdded[attr]];
 						let attributeInfo = {
 							"alias":attributeInfoTemp["alias"],
@@ -4334,8 +4393,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 							"exp":attributeInfoTemp["identification"]["short_name"],
 							"counter":attributeInfoTemp["counter"]
 						}
-						classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
-						// console.log("19", attributeInfo)
+						
+						if(addAttribute === true)classesTable[attributeTable[attributeTableAdded[attr]]["class"]] = addAttributeToClass(classesTable[attributeTable[attributeTableAdded[attr]]["class"]], attributeInfo);
+						// console.log("19", attributeInfo, attributeTable[attributeTableAdded[attr]], filterTable)
 						attributeTable[attributeTableAdded[attr]]["seen"] = true;
 					}
 				}
@@ -4818,24 +4878,31 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 			|| 
 		 (typeof subSel["variables"][1]["expression"] !== "undefined" && typeof subSel["variables"][1]["expression"]["aggregation"] !== "undefined" && typeof subSel["variables"][0]["termType"] !== "undefined" && subSel["variables"][0]["termType"] == "Variable" && typeof allClasses[subSel["variables"][0]["value"]] !== "undefined")
 		))){
-			
 			let aggregateExpression = null;
-				let alias = "";
+			let alias = "";
+			let propertyAlias = "@@@";
 				
-				if(subSel["variables"].length == 1){
-					aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][0]["expression"]["expression"])["value"] + ")";
+			if(subSel["variables"].length == 1){
+					propertyAlias = getVariable(subSel["variables"][0]["expression"]["expression"])["value"];
+					aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "(" + propertyAlias + ")";
 					alias = subSel["variables"][0]["variable"]["value"];
 
-				} else if (subSel["variables"].length == 2){
+			} else if (subSel["variables"].length == 2){
 					if(typeof subSel["variables"][0]["expression"] !== "undefined"){
-						aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][0]["expression"]["expression"])["value"] + ")";
+						let distinct = "";
+						propertyAlias = getVariable(subSel["variables"][0]["expression"]["expression"])["value"];
+						if(subSel["variables"][0]["expression"]["distinct"] === true) distinct = "DISTINCT ";
+						aggregateExpression = subSel["variables"][0]["expression"]["aggregation"]+ "("+ distinct + propertyAlias + ")";
 						alias = subSel["variables"][0]["variable"]["value"];
 					}else {
-						aggregateExpression = subSel["variables"][1]["expression"]["aggregation"]+ "(" + getVariable(subSel["variables"][1]["expression"]["expression"])["value"] + ")";	
+						let distinct = "";
+						propertyAlias = getVariable(subSel["variables"][1]["expression"]["expression"])["value"];
+						if(subSel["variables"][1]["expression"]["distinct"] === true) distinct = "DISTINCT ";
+						aggregateExpression = subSel["variables"][1]["expression"]["aggregation"]+ "(" + distinct+ propertyAlias + ")";	
 						alias = subSel["variables"][1]["variable"]["value"];
 					}
-				}		
-			
+			}	
+
 			if(subSel["where"].length == 1){
 				let wherePattern = subSel["where"][0];
 				if(wherePattern["type"] == "bgp" ){
@@ -4844,6 +4911,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						let propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
 						if(propertyResolved.complete == true && typeof classesTable[triple["subject"]["value"]] !== "undefined"){
 							let data = propertyResolved["data"][0];
+							aggregateExpression = aggregateExpression.replace(propertyAlias, data["full_name"]);
 							isLocalAggregation = true;
 							let attributeInfo = {
 								"alias":alias,
@@ -4866,10 +4934,11 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					} else if (typeof wherePattern["triples"] !== "undefined" && wherePattern["triples"].length == 2){
 						for(let t = 0; t < 2; t++){
 							let triple = wherePattern["triples"][t];
-							if(triple["object"]["termType"] == "Variable"){
+							if(triple["object"]["termType"] === "Variable" && triple["subject"]["termType"] !== "Variable"){
 								let propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
 								if(propertyResolved.complete == true && typeof classesTable[triple["subject"]["value"]] !== "undefined"){
 									let data = propertyResolved["data"][0];
+									aggregateExpression = aggregateExpression.replace(propertyAlias, data["full_name"]);
 									isLocalAggregation = true;
 									let attributeInfo = {
 										"alias":alias,
@@ -4898,6 +4967,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					let propertyResolved = await dataShapes.resolvePropertyByName({name: triple["predicate"]["value"]});
 					if(propertyResolved.complete == true && typeof classesTable[triple["subject"]["value"]] !== "undefined"){
 						let data = propertyResolved["data"][0];
+						aggregateExpression = aggregateExpression.replace(propertyAlias, data["full_name"]);
 						isLocalAggregation = true;
 						let attributeInfo = {
 							"alias":alias,
@@ -4930,6 +5000,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 						
 						if(propertyResolved.complete == true && typeof classesTable[triple["subject"]["value"]] !== "undefined"){
 							let data = propertyResolved["data"][0];
+							aggregateExpression = aggregateExpression.replace(propertyAlias, data["full_name"]);
 							isLocalAggregation = true;
 							let attributeInfo = {
 								"alias":alias,
@@ -5748,7 +5819,7 @@ function findAttributeInAttributeTable(attributeTable, parsedVariableName, varia
 }
 
 function findByVariableName(classesTable, variableName){
-	if(variableName.startsWith("@")) variableName = variableName.substring(1);
+	if(typeof variableName !== "undefined" && variableName.startsWith("@")) variableName = variableName.substring(1);
 	let classes = [];
 	for(let c in classesTable){
 		if(typeof classesTable[c] !== "function"){
@@ -5780,11 +5851,10 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 	
 	for(let triple = 0; triple < triples.length; triple++) {
 	  if(typeof triples[triple] !== "undefined"){
-		  
-		  
+
 		//class definitions
 		
-		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")) && typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' && triples[triple]["object"]["termType"] !== "BlankNode"
+		if(((triples[triple]["predicate"]["value"] == directClassMembershipRole || typeof classifiers[triples[triple]["predicate"]["value"]] !== "undefined")) && (typeof allClasses[triples[triple]["subject"]["value"]] === 'undefined' || isUnderUnion === true) && triples[triple]["object"]["termType"] !== "BlankNode"
 			&& typeof variableList[triples[triple]["object"]["value"]+"Label"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"AltLabel"] === "undefined" && typeof variableList[triples[triple]["object"]["value"]+"Description"] === "undefined"){
 			let instanceAlias = null;
 			//var classResolvedR = await dataShapes.resolveClassByName({name: triples[triple]["object"]});
@@ -5946,6 +6016,7 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 					nodeList[triples[triple]["subject"]["value"]]["uses"][subjectNameParsed["value"]+counter] = "class";
 					counter++;
 				}
+				
 				// 	If class earlier was defined without identification (from object/data property) - add identification to existing class
 				if(addToClass != false){
 					// console.log("CLASS 6", addToClass, classResolved, classesTable[addToClass]);
@@ -7350,6 +7421,7 @@ function generateArgument(argument){
 }
 
 function addAttributeToClass(classesTable, identification){
+	
 	if(typeof classesTable["fields"] === 'undefined')classesTable["fields"] = [];
 	
 	var fieldExists = false;
@@ -7413,8 +7485,6 @@ function optimizeAggregationInStartClass(generateClassCtructuretemp){
 
 // Generate tree like ViziQuer query structure, from class and link tables 
 function generateClassCtructure(clazz, className, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList){
-	
-	
 	// In link table find all links with a subject or an object as given the class. Add class from opposite link end and link information, as given class children.
 	clazz.c_id = className;
 	for(let linkName = 0; linkName < linkTable.length; linkName++){
@@ -7424,6 +7494,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 				
 				linkTable[linkName]["isVisited"] = true;
 				let tempAddClass = addClass(classesTable[linkTable[linkName]["object"]], linkTable[linkName], linkTable[linkName]["object"], linkTable[linkName]["linkIdentification"], linkTable[linkName]["graph"], linkTable[linkName]["graphInstruction"], false, classesTable, linkTable, whereTriplesVaribles, visitedClasses, conditionLinks, variableList);
+				
 				visitedClasses = tempAddClass["visitedClasses"];
 
 				conditionLinks = tempAddClass["conditionLinks"];
@@ -7529,7 +7600,7 @@ function generateClassCtructure(clazz, className, classesTable, linkTable, where
 							}
 						
 						if(createAttribute)clazz = addAttributeToClass(clazz, attributeInfo);
-						if(typeof childerenClass["groupByThis"] !== 'undefined' && childerenClass["groupByThis"] == true) {
+						if(createAttribute === true && attributeInfo["isInternal"] === true && typeof childerenClass["groupByThis"] !== 'undefined' && childerenClass["groupByThis"] == true) {
 							var group = exp;
 							if(childerenClass["instanceAlias"] != null && childerenClass["instanceAlias"] != "") group = childerenClass["instanceAlias"];
 							if(typeof clazz["groupings"] === "undefined") clazz["groupings"] = [];
@@ -7667,11 +7738,11 @@ function addClass(childrenClass, linkInformation, childrenClassName, linkIdentif
 function addConditinClass(linkInformation, targetClass, isInverse, isNot){
 	var conditionLink = {};
 	if(isNot == "NOT") isNot = true;
+	else isNot = false;
 	conditionLink["isInverse"] = isInverse;
 	conditionLink["identification"] = linkInformation["linkIdentification"];
 	conditionLink["isNot"] = isNot;
 	conditionLink["target"] = targetClass;
-	
 	return conditionLink;
 }
 
