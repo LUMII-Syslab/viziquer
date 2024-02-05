@@ -683,6 +683,7 @@ Interpreter.customMethods({
 		let x = 10;
 		let y = 10;
 		var queries = q;
+		
 		if(typeof q === "undefined"){
 			let yasqe3 = Template.sparqlForm.yasqe3.get();
 			var query_text = yasqe3.getValue();
@@ -695,14 +696,12 @@ Interpreter.customMethods({
 				if (editor.data.ev) {
 					e = editor.data.ev;
 				}
-
-				let x, y;
+				
 				if (e) {
 					var mouse_state_obj = editor.getMouseStateObject();
 					var mouse_pos = mouse_state_obj.getMousePosition(e);
 					x = mouse_pos["x"];
 					y = mouse_pos["y"];
-
 				}
 				if(x == 0 && y == 0){
 					x = e.evt.layerX;
