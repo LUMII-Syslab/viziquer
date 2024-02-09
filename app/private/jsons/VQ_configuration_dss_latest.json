@@ -229,6 +229,10 @@
           {
             "item": "Layout",
             "procedure": "ComputeLayout"
+          },
+          {
+            "item": "DSS schema",
+            "procedure": "VQ_DSS_schema"
           }
         ],
         "readModeNoCollectionContextMenu": [
