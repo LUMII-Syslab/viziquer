@@ -703,7 +703,7 @@ const runCompletionNew = async function (text, fullText, cursorPosition, symbolT
 				let parsed_exp = await vq_grammar_completion_parser.parse(text, {time:time, text:text, schema:null, symbol_table:symbolTable, className:className, type:grammarType, context:act_el});
 			}
 		} catch (com) {
-			// console.log(com);
+			console.log(com);
 			// console.log(JSON.stringify(com["message"], null, 2));
 			// console.log(JSON.parse(com["message"]));
 			var cont = JSON.parse(com["message"]);

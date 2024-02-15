@@ -1877,7 +1877,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				//agregation in class
 				if(result["isAggregate"] == true) {
 					
-					if(typeof field.attributeConditionSelection !== "undefined"){
+					if(typeof field.attributeConditionSelection !== "undefined" && field.attributeConditionSelection !== null && field.attributeConditionSelection !== ""){
 						messages.push({
 							"type" : "Error",
 							"message" : "The attribute condition '" + field.attributeConditionSelection.exp +"' is not allowed with local aggregation " + field.exp,
@@ -2484,7 +2484,7 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 					else if (clazz["isUnion"] == true && parentClass == null) subject = null;
 					else subject = idTable[parentClass["identification"]["_id"]];
 					blankNodeName = idTable[subclazz["identification"]["_id"]];
-					
+
 					if(typeof temp["sparqlTable"]["isParentBlankNode"] !== "undefined") {
 						object = temp["sparqlTable"]["class"];
 						if(object.startsWith("?_:name"))object = object.substring(1);
@@ -2522,10 +2522,22 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						for(let triple in  temp["sparqlTable"]["filterTriples"]){
 							if(typeof temp["sparqlTable"]["filterTriples"][triple] !== "function"){
 								for(let t = 0; t < temp["sparqlTable"]["filterTriples"][triple]["triple"].length; t++){
+
+									for(let filter = 0; filter < temp["sparqlTable"]["filters"].length; filter++){
+										if(temp["sparqlTable"]["filters"][filter].startsWith("FILTER(?") && temp["sparqlTable"]["filters"][filter].indexOf(" = ") !== -1){
+											let variableName = temp["sparqlTable"]["filters"][filter].substring(7, temp["sparqlTable"]["filters"][filter].indexOf(" = "));
+											if(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].endsWith(variableName + ".")){
+												temp["sparqlTable"]["filterTriples"][triple]["triple"][t] = temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(variableName, temp["sparqlTable"]["filters"][filter].substring(temp["sparqlTable"]["filters"][filter].indexOf(" = ")+3, temp["sparqlTable"]["filters"][filter].length-1));
+												delete temp["sparqlTable"]["filters"][filter];
+											}
+										}
+									}
+									
 									blankNodes.push(temp["sparqlTable"]["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
 								}
 							}
 						}
+						
 						temp["sparqlTable"]["filterTriples"] = [];
 						object = object + blankNodes.join(";");
 						object = object+ "]";

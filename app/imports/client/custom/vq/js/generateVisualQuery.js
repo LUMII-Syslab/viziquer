@@ -1594,7 +1594,8 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 	//internal attributes
 	for(let attribute in attributeTable){
 	  if(typeof attributeTable[attribute] !== "function"){
-		if(attributeTable[attribute]["seen"] != true || variableList[attribute] <= 1 || variableList[attribute] == 4){
+		 
+		if(attributeTable[attribute]["seen"] != true || variableList[attribute] <= 1 || variableList[attribute] == 3){
 			let attributeInfoTemp = attributeTable[attribute];
 			var found = false;
 			
@@ -1662,7 +1663,7 @@ async function generateAbstractTable(parsedQuery, allClasses, variableList, pare
 				}
 				
 			}
-			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList[attributeInfoTemp["alias"]] === "undefined" || variableList[attributeInfoTemp["alias"]] <=1 || variableList[attribute] == 4)){
+			if(typeof attributeInfoTemp["identification"] !== 'undefined' && attributeInfoTemp["alias"] != "" && (typeof variableList[attributeInfoTemp["alias"]] === "undefined" || variableList[attributeInfoTemp["alias"]] <=1 || variableList[attribute] == 3)){
 				//agregations
 				if(typeof classesTable[attributeTable[attribute]["class"]]["aggregations"] !== "undefined"){
 					
@@ -4117,7 +4118,9 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 				}
 							
 				let dataPropertyResolved = await dataShapes.resolvePropertyByName({name: where["args"][0]["triples"][0]["predicate"]["value"]});
-
+				
+				
+				
 				if(dataPropertyResolved.complete==true){
 					
 					let sn = dataPropertyResolved.data[0].display_name;
@@ -4128,6 +4131,7 @@ async function parseSPARQLjsStructureWhere(where, nodeList, parentNodeList, clas
 					if(dataPropertyResolved.data[0].data_cnt == 0 || Object.keys(classesTable).length == 0){
 						var classesS = findByVariableName(classesTable, where["args"][0]["triples"][0]["subject"]["value"])
 						var classesO = findByVariableName(classesTable, where["args"][0]["triples"][0]["object"]["value"])
+						
 						
 						if(classesO.length == 0 || classesS.length == 0 ){
  
@@ -5675,7 +5679,7 @@ function findClassToConnectUnion(classesTable,parentClassesTable, linkTable, nod
 
 function createNodeListInstance(nodeList, nodeName){
 	var nodeListInstance = {};
-	if(typeof nodeList[nodeName] === 'undefined'){
+	if(typeof nodeList[nodeName] === 'undefined' || typeof nodeList[nodeName] === 'function'){
 		return {count:1, uses:[]}
 	} else{
 		nodeListInstance = nodeList[nodeName];
@@ -6389,18 +6393,17 @@ async function generateTypebgp(triples, nodeList, parentNodeList, classesTable, 
 				
 				if(objectNameParsed["type"] != "number" && objectNameParsed["type"] != "string" && objectNameParsed["type"] != "RDFLiteral" && (triples[triple]["predicate"]["value"] != directClassMembershipRole && typeof classifiers[triples[triple]["predicate"]["value"]] === "undefined")){
 					objectNameParsed = objectNameParsed["value"];
-					
-					if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined" || (typeof nodeList[triples[triple]["object"]["value"]] !== "function" && Object.keys(nodeList[triples[triple]["object"]["value"]]["uses"]).length == 0) || triples[triple]["subject"]["termType"] == "BlankNode"){
-						if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined") nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
+					if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined" || typeof nodeList[triples[triple]["object"]["value"]] === "function" || (typeof nodeList[triples[triple]["object"]["value"]] !== "function" && Object.keys(nodeList[triples[triple]["object"]["value"]]["uses"]).length == 0) || triples[triple]["subject"]["termType"] == "BlankNode"){
+						if(typeof nodeList[triples[triple]["object"]["value"]] === "undefined" || typeof nodeList[triples[triple]["object"]["value"]] === "function") nodeList[triples[triple]["object"]["value"]] = createNodeListInstance(nodeList, triples[triple]["object"]["value"]);
 						let instanceAlias = await generateInstanceAlias(objectNameParsed);
 						
 						if(triples[triple]["object"]["termType"] == "BlankNode"){
 							instanceAlias = "";
 						}
 						
-						if(typeof parentNodeList[triples[triple]["object"]["value"]] === 'undefined'){
-	
-							if(typeof allClasses[objectNameParsed] === 'undefined'){
+						if(typeof parentNodeList[triples[triple]["object"]["value"]] === 'undefined' || typeof parentNodeList[triples[triple]["object"]["value"]] === 'function'){
+							if(typeof allClasses[objectNameParsed] === 'undefined' || typeof allClasses[objectNameParsed] === 'function'){
+								
 								classesTable[objectNameParsed] = {
 									"variableName":triples[triple]["object"]["value"],
 									"identification":null,
@@ -7901,15 +7904,17 @@ async function getAllVariablesInQuery2(expression, variableTable){
 	return variableTable;
 }
 
-async function getAllVariablesForAlias(expression, variableAliasTable){
+async function getAllVariablesForAlias(expression, variableAliasTable, underUnion){
 	for(let key in expression){
 		if(typeof expression[key] === 'object'){
 			if(expression[key]["type"] == "bgp"){		
 				let triples = expression[key]["triples"];
 				for(let triple = 0; triple < triples.length; triple++) {
 					if(typeof triples[triple] !== "undefined"){
-						if(triples[triple]["subject"]["termType"] == "Variable" && variableAliasTable[triples[triple]["subject"]["value"]] != false) {
+						if(triples[triple]["subject"]["termType"] == "Variable" && variableAliasTable[triples[triple]["subject"]["value"]] != false && underUnion !== true) {
 							variableAliasTable[triples[triple]["subject"]["value"]] = true;
+						} else if(triples[triple]["subject"]["termType"] == "Variable" && underUnion === true){
+							variableAliasTable[triples[triple]["subject"]["value"]] = false;
 						}
 					}
 				}
@@ -7919,7 +7924,12 @@ async function getAllVariablesForAlias(expression, variableAliasTable){
 					if(expression[key]["termType"] == "Variable"){
 						variableAliasTable[expression[key]["value"]] = false;
 					}
-					let temp = await getAllVariablesForAlias(expression[key], variableAliasTable);
+					let underUnionTemp = underUnion;
+					if(expression[key]["type"] === "union"){
+						
+						underUnionTemp = true;
+					}
+					let temp = await getAllVariablesForAlias(expression[key], variableAliasTable, underUnionTemp);
 					for(let t in temp){
 						if(typeof temp[t] !== "function"){
 							variableAliasTable[t] = temp[t];
@@ -8195,6 +8205,7 @@ async function visualizeQuery(clazz, variableListAlias, parentClass, variableLis
 		// else  classBox.setCompartmentValue("Instance", "", "{group} ", false);
 	// } else
 	if(instanceAlias != null ) {
+		// console.log("parentClass", parentClass, variableListAlias);
 		if(typeof variableListAlias[clazz["instanceAlias"]] !== "undefined" && variableListAlias[clazz["instanceAlias"]] == true && className != "") {}
 		else classBox.setInstanceAlias(instanceAlias);
 	}
@@ -8745,10 +8756,10 @@ function getVariable(variable){
 					return {value:'"'+variable.value+ '"@'+variable.language, type:"RDFLiteral"}
 				}
 				if(variable.datatype.termType == "NamedNode" && variable.datatype.value === "http://www.w3.org/2001/XMLSchema#date"){
-					return {value:'"'+variable.value+ '^^xsd:date', type:"RDFLiteral"}
+					return {value:'"'+variable.value+ '"^^xsd:date', type:"RDFLiteral"}
 				}
 				if(variable.datatype.termType == "NamedNode" && variable.datatype.value === "http://www.w3.org/2001/XMLSchema#dateTime"){
-					return {value:'"'+variable.value+ '^^xsd:dateTime', type:"RDFLiteral"}
+					return {value:'"'+variable.value+ '"^^xsd:dateTime', type:"RDFLiteral"}
 				}
 				var IntegerIRI = ["http://www.w3.org/2001/XMLSchema#integer", "http://www.w3.org/2001/XMLSchema#double", "http://www.w3.org/2001/XMLSchema#decimal"];
 				if(variable.datatype.termType == "NamedNode" && IntegerIRI.indexOf(variable.datatype.value) !== -1){

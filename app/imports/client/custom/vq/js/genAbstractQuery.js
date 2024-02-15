@@ -955,7 +955,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 	 for (const c of obj_class.conditions) {
 		await parseExpObject(c,obj_class.identification);
 		if(obj_class.isBlankNode == true ){
-			if(c.exp.indexOf("=") === -1){
+			if(c.exp.indexOf("=") === -1 && c.exp.indexOf("->") === -1){
 				obj_class.isBlankNode = false;
 				obj_class.instanceAlias = "expr_"+count;
 				obj_class.instanceIsVariable = true;
@@ -969,7 +969,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 				
 				//filter as triple
 				if(typeof rel['Relation'] !== 'undefined' 
-						&& rel['Relation'] == "=" && isSimpleFilter == true &&
+						&& (rel['Relation'] == "=" || rel['Relation'] == "->") && isSimpleFilter == true &&
 							(
 							   (((typeof left["var"] !== 'undefined' && typeof left["var"]["kind"] !== 'undefined' && left["var"]["kind"] == "PROPERTY_NAME" && left["var"]["ref"] == null) 
 								|| typeof left["Path"] !== 'undefined' 
@@ -991,7 +991,7 @@ async function resolveTypesAndBuildSymbolTable(query) {
 								)
 							))
 				{
-					
+					rel['Relation'] = "=";
 				} else {
 					obj_class.isBlankNode = false;
 					obj_class.instanceAlias = "expr_"+count;
