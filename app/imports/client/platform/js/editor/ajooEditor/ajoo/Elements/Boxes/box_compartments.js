@@ -1,5 +1,7 @@
 // import { _ } from 'vue-underscore';
 
+import html2canvas from 'html2canvas';
+
 var BoxCompartments = function(element, comparts_in) {
 
 	var compartments = this;
@@ -60,7 +62,6 @@ BoxCompartments.prototype = {
 		}
 
 		else {
-
 			compartments.recomputeCompartmentsPosition();
 
 			//setting position for the Texts group
@@ -164,7 +165,7 @@ BoxCompartments.prototype = {
 			text.width(text_width);
 			text.y(total_height);	
 
-			var text_height = text.getHeight();
+			var text_height = text.getHeight() || 20;
 			total_height = total_height + text_height;
 
 			compart.textWidth = text_width;
@@ -243,7 +244,8 @@ var Compartment = function(compartments, compart_in, parent) {
 
 	compart.presentation = text;
 
-	compart.textWidth = text.getTextWidth();
+	compart.textWidth = 20;
+	// compart.textWidth = text.getTextWidth();
 	compart.textHeight = text.getHeight();
 
 	compart.value = compart_in.value;
@@ -268,7 +270,22 @@ Compartment.prototype = {
 
 		var text = new Konva.Text(attr_list);
 
+		// 	text = new Konva.Image({
+		// 								// x: 0,
+		// 						        // y: 10,
+		// 						        // draggable: false,
+		// 						        // stroke: 'red',
+		// 						        // scaleX: 1 / 1,
+		// 						        // scaleY: 1 / 1,
+
+		// 						        // scaleX: 1 / window.devicePixelRatio,
+		// 						        // scaleY: 1 / window.devicePixelRatio,
+		// 						      });
+
+
 		texts_group.add(text);
+		// compart.renderText(compart_in, text);
+
 
 		if ((compart_in.underline == true) || (compart_in.compartmentType && compart_in.compartmentType.underline)) {
 			var red_line = new Konva.Line({points: [0, 0, 0, 0],
@@ -312,6 +329,26 @@ Compartment.prototype = {
 
 		compart.presentation = undefined;
 	},
+
+
+    renderText: function(compart_in, item) {
+        // convert DOM into image
+
+    	$("#render-compart-value").text(compart_in.value);
+
+        html2canvas(document.querySelector('#very-good'), {
+        	imageTimeout: 0,
+        	scale: 1,
+        	backgroundColor: null,
+          // backgroundColor: 'rgba(0,0,0,0)',
+        }).then((canvas) => {
+
+        	// console.log("canvas", compart_in, canvas)
+
+          // show it inside Konva.Image
+          item.image(canvas);
+        });
+    }
 
 }
 

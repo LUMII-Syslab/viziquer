@@ -13,6 +13,7 @@
     "@babel/runtime": "^7.23.6",
     "ClientStorage": "^4.0.1",
     "dotenv": "^16.3.1",
+    "html2canvas": "^1.4.1",
     "jquery": "^3.7.0",
     "json2csv": "^5.0.7",
     "meteor-node-stubs": "^1.2.7",

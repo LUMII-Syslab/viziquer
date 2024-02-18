@@ -217,13 +217,24 @@ Meteor.methods({
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
-				if (list["elements"]) {
+				var element_ids = list["elements"];
+				if (element_ids) {
+					var elements = Elements.find({_id: {$in: element_ids}}).fetch();
+					var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
+
+					var element_type_names = get_element_type_names(elements);
+					var compartment_type_names = get_compartment_type_names(compartments);
+
+					add_element_type_names(elements, element_type_names);
+					add_compartment_type_names(compartments, compartment_type_names);
+
 					Clipboard.update({userId: user_id,
 										// toolId: list.toolId,
 										// diagramTypeId: list.diagramTypeId,
 									},
 
-									{$set: {elements: list["elements"],
+									{$set: {elements: elements,
+											compartments: compartments,
 											projectId: list.projectId,
 											versionId: list.versionId,
 											diagramId: list.diagramId,
@@ -278,11 +289,14 @@ Meteor.methods({
 						offset_y = offset;
 					}
 
-					var element_ids = clipboard["elements"];
+					// var element_ids = clipboard["elements"];
 
-					var elements = Elements.find({_id: {$in: element_ids}}).fetch();
-					var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
-					var elements_sections = ElementsSections.find({elementId: {$in: element_ids}}).fetch();
+					var elements = clipboard["elements"];
+					var compartments = clipboard["compartments"];
+
+					// var elements = Elements.find({_id: {$in: element_ids}}).fetch();
+					// var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
+					// var elements_sections = ElementsSections.find({elementId: {$in: element_ids}}).fetch();
 
 					//var elements = clipboard["elements"];
 					//var compartments = clipboard["compartments"];
@@ -294,6 +308,8 @@ Meteor.methods({
 					var boxes = [];
 					var lines = [];
 
+					add_element_type_ids(elements, list.diagramId);
+
 					//iterates over boxes
 					_.each(elements, function(element) {
 						if (element["type"] == "Box") {
@@ -301,6 +317,7 @@ Meteor.methods({
 
 							//removes element id to have new one
 							delete element["_id"];
+							delete element["typeName"];
 
 							var location = element["location"];
 							location["x"] = location["x"] + offset_x;
@@ -323,6 +340,7 @@ Meteor.methods({
 							var old_id = element["_id"];
 
 							delete element["_id"];
+							delete element["typeName"];
 
 							//sets a new start element id for line
 							var start_elem_id = element["startElement"];
@@ -358,8 +376,10 @@ Meteor.methods({
 						}
 					});
 
+					add_compartment_type_ids(compartments, list.diagramId);
 					_.each(compartments, function(compartment) {
 						delete compartment["_id"];
+						delete compartment["typeName"];
 						compartment["elementId"] = old_new_id_list[compartment["elementId"]];
 
 						_.extend(compartment, new_ids);
@@ -367,14 +387,14 @@ Meteor.methods({
 						Compartments.insert(compartment);
 					});
 
-					_.each(elements_sections, function(element_section) {
-						delete element_section["_id"];
-						element_section["elementId"] = old_new_id_list[element_section["elementId"]];
+					// _.each(elements_sections, function(element_section) {
+					// 	delete element_section["_id"];
+					// 	element_section["elementId"] = old_new_id_list[element_section["elementId"]];
 
-						_.extend(element_section, new_ids);
+					// 	_.extend(element_section, new_ids);
 
-						ElementsSections.insert(element_section);
-					});
+					// 	ElementsSections.insert(element_section);
+					// });
 
 					if (!x && !y) {
 						Clipboard.update({_id: clipboard["_id"]}, {$inc: {count: 1}});
@@ -651,6 +671,107 @@ function build_diagram_notification(system_id, list, edit) {
 	return notification;
 }
 
+
+function get_element_type_names(elements) {
+
+	let element_type_ids = _.map(elements, function(elem) {
+									return elem.elementTypeId;
+								});
+
+	let element_types_map = {};
+	ElementTypes.find({_id: {"$in": element_type_ids}}).forEach(function(element_type) {
+		element_types_map[element_type._id] = element_type.name;
+	});
+
+	return element_types_map;
+}
+
+
+function get_compartment_type_names(compartments) {
+	let compartment_type_ids = _.map(compartments, function(compartment) {
+									return compartment.compartmentTypeId;
+								});
+
+	let compartment_types_map = {};
+	CompartmentTypes.find({_id: {"$in": compartment_type_ids}}).forEach(function(compartment_type) {
+		compartment_types_map[compartment_type._id] = compartment_type.name;
+	});
+
+	return compartment_types_map;
+}
+
+
+function add_element_type_names(elements, element_type_names) {
+	_.each(elements, function(element) {
+		_.extend(element, {typeName: element_type_names[element.elementTypeId]});
+	});
+}
+
+
+function add_compartment_type_names(compartments, compartemnt_type_names) {
+	_.each(compartments, function(compartment) {
+		_.extend(compartment, {typeName: compartemnt_type_names[compartment.compartmentTypeId]});
+	});
+}
+
+
+function add_element_type_ids(elements, diagram_id) {
+
+	let diagram = Diagrams.findOne({_id: diagram_id});
+	if (!diagram) {
+		console.error("No Diagram by id", diagram_id);
+		return;
+	}
+
+	let elem_types_ids_map = {};
+	let elem_types_names_map = {};
+	ElementTypes.find({diagramTypeId: diagram.diagramTypeId}).forEach(function(elem_type) {
+		elem_types_ids_map[elem_type._id] = 1;
+		elem_types_names_map[elem_type.name] = elem_type._id; 
+	});
+
+	_.each(elements, function(elem) {
+						let elem_type_id = elem.elementTypeId;
+						let new_elem_type_id = elem_type_id;
+						if (!elem_types_ids_map[elem_type_id]) {
+							new_elem_type_id = elem_types_names_map[elem.typeName];
+						}
+
+						_.extend(elem, {elementTypeId: new_elem_type_id,});
+					});
+}
+
+
+function add_compartment_type_ids(compartments, diagram_id) {
+
+	let diagram = Diagrams.findOne({_id: diagram_id});
+	if (!diagram) {
+		console.error("No Diagram by id", diagram_id);
+		return;
+	}
+
+	let compart_types_ids_map = {};
+	let compart_types_names_map = {};
+	CompartmentTypes.find({diagramTypeId: diagram.diagramTypeId}).forEach(function(compart_type) {
+		compart_types_ids_map[compart_type._id] = 1;
+		compart_types_names_map[compart_type.name] = compart_type._id; 
+	});
+
+	_.each(compartments, function(compart) {
+							let compart_type_id = compart.elementTypeId;
+							let new_compart_type_id = compart_type_id;
+							if (!compart_types_ids_map[compart_type_id]) {
+								new_compart_type_id = compart_types_names_map[compart.typeName];
+							}
+
+							_.extend(compart, {compartmentTypeId: new_compart_type_id,});
+						});
+}
+
+
+
 export {
   build_diagram_notification,
 }
+
+

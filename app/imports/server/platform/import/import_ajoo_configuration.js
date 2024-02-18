@@ -92,7 +92,8 @@ ImportAjooConfiguration.prototype = {
 
 	importTool: function(tool) {
 		Tools.update({_id: this.toolId},
-					 {$set: {name: tool.name, toolbar: tool.toolbar,}
+					 {$set: {toolbar: tool.toolbar,}
+					 // {$set: {name: tool.name, toolbar: tool.toolbar,}
 					});
 	},
 

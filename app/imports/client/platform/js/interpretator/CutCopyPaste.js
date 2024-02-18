@@ -9,7 +9,9 @@ Interpreter.methods({
 	Cut: function() {
 
 		if (Interpreter.editor.isEditMode()) {
-			Copy();
+			// Interpreter.Copy();
+			Interpreter.execute("Copy");
+			Interpreter.execute("Delete");
 			//Delete();
 		}
 	},
