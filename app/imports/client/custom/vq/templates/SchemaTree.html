@@ -185,11 +185,15 @@
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-sm-6">
-						<select class="form-control" id="classCount" {{filterDisabled}}>
-							{{#each classCount}}
-								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-							{{/each}}
-						</select>
+						<!--<select class="form-control" id="classCount" {{filterDisabled}}> -->
+						<!--	{{#each classCount}} -->
+						<!--		<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option> -->
+						<!--	{{/each}} -->
+						<!--</select> -->
+						<div class="slidecontainer">
+							<p><span id="classCount-slider-span"> </span>Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
+							<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount">
+						  </div>
 						<select class="form-control" id="nsFilter" {{filterDisabled}}>
 							{{#each nsFilters}}
 								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
@@ -203,7 +207,8 @@
 							{{/each}}
 						</select>
 						<select class="form-control" id="sortPar" >
-							  <option selected value=1 >Sort by count</option>
+							  <option selected value=1 >Sort by class count</option>
+							  <option value=3 >Sort by in prop. count</option>
 							  <option value=2 >Sort by namespaces</option>
 						</select>
 					</div>
@@ -233,9 +238,9 @@
 						<div class="form-group">
 							<button id="addSelected" type="button" class="btn btn-primary" {{manualDisabled}}>Add selected (multi select)</button>
 						</div>
-						<div class="form-group">
-							<button id="addWithN" type="button" class="btn btn-primary" {{manualDisabled}}>Add one selected with neighbors</button>
-						</div>
+						<!--<div class="form-group"> -->
+						<!--	<button id="addWithN" type="button" class="btn btn-primary" {{manualDisabled}}>Add one selected with neighbors</button> -->
+						<!--</div> -->
 					</div>
 				</div>
 			</div>	
@@ -312,10 +317,15 @@
 							<option value=10 >Strong grouping (diff under 10) </option>
 						</select>
 						<select class="form-control" id="diffS" >
-							<option value=-1 >Sup. sim. -1 </option>
+							<option value=-1 >Without superclasses </option>
 							<option value=5 >Sup. sim. 5 </option>
 							<option value=25 >Sup. sim. 25 </option>
 							<option selected value=50 >Sup. sim. 50 </option>
+						</select>
+						<select class="form-control" id="supPar" >
+							<option select value=1 >Savelk kopā vispārināšanas virknes</option>
+							<option value=0 >Atstāj Shēmas vispārināšanas</option>
+							<option value=2 >Savelk kopā Shēmas vispārināšanas</option>
 						</select>
 						<label class="form-check-label">
 							<input class="form-check-input" name = "remS" id="remS" type="checkbox">
@@ -350,7 +360,13 @@
 							<button id="makeDiagr2" type="button" class="btn btn-primary" data-dismiss="modal">Property summarization</button>
 						</div>
 						<div class="form-group">
-							<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate  class count</button>
+							<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate class count</button>
+						</div>
+						<div class="form-group">
+							<button id="printGroups" type="button" class="btn btn-primary" data-dismiss="modal">Print groups</button>
+						</div>
+						<div class="form-group">
+							<button id="printDiffs" type="button" class="btn btn-primary" data-dismiss="modal">Print diffs</button>
 						</div>
 					</div>
 				</div>

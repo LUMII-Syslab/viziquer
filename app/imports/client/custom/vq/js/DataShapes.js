@@ -21,7 +21,7 @@ const MAX_IND_ANSWERS = 100;
 const MAX_TREE_ANSWERS = 30;
 const TREE_PLUS = 20;
 const BIG_CLASS_CNT = 500000;
-const DIAGRAM_CLASS_LIMIT = 1000;
+const DIAGRAM_CLASS_LIMIT = 2000;
 const LONG_ANSWER = 3000;
 const MakeLog = false;
 const ConsoleLog = false;
@@ -1154,7 +1154,7 @@ const dataShapes = {
 			const p_id = `p_${p.id}`;
 			let p_name = `${p.prefix}:${p.display_name}`;
 			if ( addIds ) 
-				p_name = `${p_name}(${p.id})`;
+				p_name = `${p_name}(ID-${p.id})`;
 		
 			const cp_info_p = cp_info.filter(function(cp){ return cp.property_id == p.id && c_list.includes(cp.class_id) && cp.cover_set_index > 0; }); 
 			const c_from = cp_info_p.filter(function(cp){ return cp.type_id == 2}); 
@@ -1999,6 +1999,7 @@ const dataShapes = {
 			//rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name} (${n.cnt}/${n.cnt_all}) [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 			rezFull.assoc[aa].string = rezFull.assoc[aa].list.map(n => `${n.p_name}${n.cnt} [${n.max_cardinality}] ${n.is_domain}${n.is_range}`).sort().join('\n');
 		}
+		rezFull.lines = {};
 
 		console.log("*** rezFull ***", rezFull);
 
@@ -2010,16 +2011,21 @@ const dataShapes = {
 		console.log("**********************************");
 		
 	},
-	makeSuperDiagr : async function(c_list, p_list, par, info, calk = false ) {
+	makeSuperDiagr : async function(c_list, p_list, par, info = '', calk = false ) {
 		// Tiek padots zīmējamo klašu un propertiju saraksts
 		let rr;
 		const addIds = par.addIds;
-		const compView = par.compView;
+		const compView = par.compView; // Atribūtu parametrs
 		const schema = par.schema;
 		const diffG = par.diffG;
-		const diffS = par.diffS;
+		let diffS = par.diffS;
 		const remBig = par.disconnBig > 0;
-		const remCount = par.disconnBig; 		
+		const remCount = par.disconnBig;
+		const printGroups = par.printGroups ? true: false;
+		const printDiffs = par.printDiffs ? true: false;
+		const compChain = ( par.supPar == 1 ) ? true : false; // Vai apvienot vispārinašanas virknes
+		const compTree = ( par.supPar == 2 ) ? true : false; // Vai apvienot sākotnējos klašu kokus
+		if ( compTree ) diffS = -1; // Ja ir parametrs savilkt visparinašanas, tad arī abstraktās netiek taisītas	
 
 		let rezFull = {classes:{}, assoc:{}, lines:{}, schema:schema, info:info, type:'makeSuperDiagr'};
 		let allParams = {main: { c_list: `${c_list}`, limit:c_list.length}};
@@ -2029,6 +2035,7 @@ const dataShapes = {
 		let cpc_info;
 		let has_cpc = false;
 		let cp_info;
+
 		// Funkcija skaita noapaļošanai, izmanto klasēm un propertijām
 		function roundCount(cnt) {
 			if ( cnt == '' ) {
@@ -2053,9 +2060,9 @@ const dataShapes = {
 			}	
 			let full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
 			if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
-				rezFull.classes[id] = { id:id, super_classes:[], used:false, hasGen:false, type:type, 
+				rezFull.classes[id] = { id:id, id_id:cl.id, c_list_id:[cl.id],	super_classes:[], used:false, hasGen:false, type:type, 
 					displayName:cl.full_name, fullName:full_name,			
-					sup:cl.s, sub:cl.b, atr_list:[], all_atr:[], cnt:cl.cnt };
+					sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, atr_list:[], atr_list_c:[], all_atr:[], cnt:cl.cnt };
 			//rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, used2:false, hasGen:false, isClasif:isClasif, type:type, prefix:cl.prefix, displayName:cl.full_name, cnt:roundCount(cl.cnt),
 			//	cnt0:cl.cnt, sup:cl.s, sub:cl.b, fullName:full_name, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[],  all_atr:[] };
 		});
@@ -2070,6 +2077,7 @@ const dataShapes = {
 			rezFull.classes[id2].used = true;
 			rezFull.classes[id1].hasGen = true;
 			rezFull.classes[id2].hasGen = true;
+
 		}	
 		
 		rr = await this.callServerFunction("xx_getCPCInfo", allParams); 
@@ -2108,7 +2116,7 @@ const dataShapes = {
 			if ( c_from.length > 0  && c_to.length == 0) {	
 				for (const cl of c_from) {
 					const cl_id = `c_${cl.class_id}`;
-					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), object_cnt:cl.object_cnt, is_domain:pp.is_domain, max_cardinality:pp.max_cardinality, class_list:[]};
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), object_cnt:cl.object_cnt, is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[]};
 					rezFull.classes[cl_id].atr_list.push(p_info);
 					rezFull.classes[cl_id].used = true;
 					if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);	
@@ -2178,7 +2186,74 @@ const dataShapes = {
 			}
 		} 
 		console.log(p_list_full);
-		
+
+		// Sākotnējo klašu koku apvienošana
+		if ( compTree ) {
+			let top_classes = [];
+			for (const clId of Object.keys(rezFull.classes)) {
+				const classInfo = rezFull.classes[clId];
+				if ( classInfo.sup0.length == 0 && classInfo.sub0.length > 0 ) {
+					top_classes.push(classInfo);
+				}
+			}
+			for (const tClass of top_classes) {
+				let class_list = [];
+				for (const cId of tClass.sub) {
+					class_list.push(rezFull.classes[`c_${cId}`]);
+				}
+				// TODO varētu būt papildus nosacījumi, vai doto klašu koku var apvienot
+				console.log('Klašu koki******************', class_list)
+				makeClassGroup(class_list, 'Class', false); 
+			}
+		}
+
+		// Virsklašu virkņu apvienošana - compTree un compChain ir savstarpēji izslēdzoši
+		if ( compChain) {
+			let top_classes = [];
+			for (const clId of Object.keys(rezFull.classes)) {
+				const classInfo = rezFull.classes[clId];
+				if ( classInfo.sub0.length == 1 && ( classInfo.sup0.length != 1 || classInfo.cnt != rezFull.classes[`c_${classInfo.sup0[0]}`].cnt)) {
+					const classInfo2 = rezFull.classes[`c_${classInfo.sub0[0]}`];
+					if ( classInfo.cnt == classInfo2.cnt && classInfo2.sup0.length == 1) {
+						top_classes.push(classInfo);
+					}	
+				}
+			}
+			console.log('Virkņu sākumi', top_classes)
+			for (const topClass of top_classes) {
+				let isNext = true;
+				let class_chain = [topClass];
+				let thisClass = topClass;
+				while ( isNext || class_chain.length > 100) { // TODO Te tāda dīvaina konstante, skatās, vai tās virknes nav pārāk garas 
+					isNext = false;
+					const nextClass = rezFull.classes[`c_${thisClass.sub0[0]}`];
+					class_chain.push(nextClass);
+					if (nextClass.sub0.length == 1 ) {
+						const nextNextClass = rezFull.classes[`c_${nextClass.sub0[0]}`];
+						if ( nextClass.cnt == nextNextClass.cnt && nextNextClass.sup0.length == 1 ) {
+							isNext = true;
+							thisClass = nextClass;
+						}
+					} 
+				}
+				const classGrId = makeClassGroup(class_chain, 'Class', false);
+				rezFull.classes[classGrId].super_classes = class_chain[0].super_classes;
+			}
+			for (const clId of Object.keys(rezFull.classes)) {
+				let classInfo = rezFull.classes[clId];
+				if ( classInfo.used ) {
+					let s_list = [];
+					for (const sId of classInfo.super_classes) {
+						if (rezFull.classes[sId].G_id == undefined)
+							s_list.push(sId);
+						else
+							s_list.push(rezFull.classes[sId].G_id[0]); //TODO Ir pieņēmums, ka būs pareizi koki
+					}
+					classInfo.super_classes = s_list;
+				}
+			}
+		}
+	
 		// *******************************************
 		// Funkcija atribūtu apvienojuma veidošanai
 		function makeAtrTree(cl_list) {
@@ -2187,65 +2262,78 @@ const dataShapes = {
 				for (const atr of classInfo.atr_list ) {
 					let prop = `${atr.p_name}_${atr.type}`;
 					if ( atrTree[prop] == undefined) {
-						if ( atr.type == 'data' ) {
-							atrTree[prop] = { class_list:atr.class_list, cnt:atr.cnt, is_domain:atr.is_domain, max_cardinality:atr.max_cardinality, 
-								object_cnt:atr.object_cnt, p_id:atr.p_id, p_name:atr.p_name, type:atr.type, count:1};							
-						}	
-						else {
-							atrTree[prop] = { class_list:atr.class_list, cnt:atr.cnt, is_domain:atr.is_domain, is_range:atr.is_range, max_cardinality:atr.max_cardinality, 
-								object_cnt:atr.object_cnt, p_id:atr.p_id, p_name:atr.p_name, type:atr.type, count:1};	
-						}
+						atrTree[prop] = { class_list:atr.class_list, cnt:atr.cnt, is_domain:atr.is_domain, is_range:atr.is_range, max_cardinality:atr.max_cardinality, 
+							object_cnt:atr.object_cnt, p_id:atr.p_id, p_name:atr.p_name, type:atr.type, count:1};	
 					}	
 					else {
 						atrTree[prop].count = atrTree[prop].count + 1;
 						atrTree[prop].cnt = atrTree[prop].cnt + atr.cnt;
 						atrTree[prop].object_cnt = atrTree[prop].object_cnt + atr.object_cnt;
-						// TODO būtu jāapvieno arī class_list - pagaidām pieņemsim, ka visiem ir vienadi
-					}	
+						if ( atr.max_cardinality == '*' )
+							atrTree[prop].max_cardinality = '*';
+						if ( !(atrTree[prop].is_domain == 'D' && atr.is_domain == 'D'))
+							atrTree[prop].is_domain = '';
+						if ( !(atrTree[prop].is_range == 'R' && atr.is_range == 'R'))
+							atrTree[prop].is_range = '';
+						for (const cl of atr.class_list) {
+							if ( !atrTree[prop].class_list.includes(cl))
+								atrTree[prop].class_list.push(cl);
+						}
+					}
+
 				}
 			}		
 			return atrTree;
 		}
 		
 		// Funkcija klašu grupas izveidošanai, izmanto dažādās situācijās 
-		function makeClassGroup(cl_list, sup = []) {
-			function addClassGroup(list, sup) {  
-				if ( list.length > 1 ) {
-					let atr_list = [];
-					const atrTree = makeAtrTree(cl_list);
-					let c_list_full = [];
-					for (const pId of Object.keys(atrTree)) {
-						atr_list.push(atrTree[pId]);
-					}
-					const g_id = `g_${Gnum}`;
-					let i = 0;
-					for (let classInfo of cl_list )	{
-						classInfo.used = false;
-						i = i + classInfo.cnt;
-						if ( classInfo.isGroup ) {
-							for (const cId of classInfo.c_list) {
-								let cInfo = rezFull.classes[cId];
-								cInfo.G_id = g_id;
-								c_list_full.push(cInfo);
-							}							
-						}
-						else {
-							classInfo.G_id = g_id;
-							c_list_full.push(classInfo);
-						}		
-					}	
-					let fullName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. G${Gnum} (~${roundCount(i)})`;
-					if ( c_list_full.length == 2 )
-						fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} (~${roundCount(i)})`;
-					rezFull.classes[g_id] = { id:g_id, super_classes:sup, used:true, hasGen:false, type:list[0].type, 
-					displayName:g_id, fullName:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), sub_classes_group_string:c_list_full.map(c => c.fullName).sort().join('\n'),			
-					sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:i }; 
-
-					Gnum = Gnum + 1;
+		function makeClassGroup(list, type, sum = true) {
+			let g_id = '';
+			if ( list.length > 1 ) {
+				let atr_list = [];
+				const atrTree = makeAtrTree(list);
+				let c_list_full = [];
+				for (const pId of Object.keys(atrTree)) {
+					atr_list.push(atrTree[pId]);
 				}
+				g_id = `g_${Gnum}`;
+				let i = 0;
+				for (let classInfo of list )	{
+					classInfo.used = false;
+					i = i + classInfo.cnt;
+					if ( classInfo.isGroup ) {
+						for (const cId of classInfo.c_list) {
+							let cInfo = rezFull.classes[cId];
+							if ( cInfo.G_id == undefined )
+								cInfo.G_id = [g_id];
+							else
+								cInfo.G_id.push(g_id);
+							c_list_full.push(cInfo);
+						}							
+					}
+					else {
+						if ( classInfo.G_id == undefined )
+							classInfo.G_id = [g_id];
+						else
+							classInfo.G_id.push(g_id);
+						c_list_full.push(classInfo);
+					}		
+				}
+				const cnt = ( sum ) ? `(~${roundCount(i)})`: `(${roundCount(list[0].cnt)})`;
+				let fullName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. G${Gnum} ${cnt}`;
+				let displayName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al.`;
+				if ( c_list_full.length == 2 ) {
+					fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} G${Gnum} ${cnt}`;
+					displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
+				}
+				rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:type, 
+					displayName:displayName, fullName:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
+					sub_classes_group_string:c_list_full.map(c => c.fullName).sort().join('\n'),			
+					sup:[], sub:[], atr_list:atr_list, atr_list_c:[], all_atr:[], cnt:i }; 
+
+				Gnum = Gnum + 1;
 			}
-			addClassGroup(cl_list.filter(function(c){ return c.type == 'Class'; }), sup);
-			addClassGroup(cl_list.filter(function(c){ return c.type == 'Classif'; }), sup);
+			return g_id;
 		}
 		function makeClassGroupFromTree(GroupTree) {
 			for (const Gid of Object.keys(GroupTree)) {
@@ -2253,11 +2341,11 @@ const dataShapes = {
 				for (const cId of GroupTree[Gid]) {
 					c_list_full.push(rezFull.classes[cId]);
 				}
-				makeClassGroup(c_list_full);
+				makeClassGroup(c_list_full, 'Class');
 			}
 		}
 		
-		//
+		// Statistikas savākšana, vēlāk nevajadzēs
 		let diffInfo = { diff: [0,0,0,0,0,0,0], diff2: [0,0,0,0,0,0,0], sim:[3,2,1]}; 
 		for ( const clId1 of Object.keys(rezFull.classes)) {
 			for ( const clId2 of Object.keys(rezFull.classes)) {
@@ -2265,7 +2353,9 @@ const dataShapes = {
 				const classInfo2 = rezFull.classes[clId2];
 				if ( classInfo1.displayName < classInfo2.displayName ) {
 					const diff = getDifference(classInfo1, classInfo2);
-					if ( diff[1] < 6 ) { // && diff[0] > diff[1]) 
+					if ( diff[1] == 0.5 )
+						diff[1] = 0;
+					if ( diff[1] < 6  ) { // && diff[0] > diff[1]) 
 						diffInfo.diff[diff[1]]++;	
 						if (diff[0] > diff[1]) 
 							diffInfo.diff2[diff[1]]++;
@@ -2287,7 +2377,7 @@ const dataShapes = {
 					}	
 					else if ( diff[0] > diffInfo.sim[2] )
 						diffInfo.sim[2] = diff[0];
-					//if ( diff[0] > 10 &&  diff[1] > 0) ***
+					//if ( diff[0] > 10 &&  diff[1] > 0) // Informatīva druka
 					//	console.log(diff[0], diff[1], classInfo1.displayName, classInfo2.displayName)
 				}
 			}
@@ -2303,23 +2393,32 @@ const dataShapes = {
 			let equivalent_classes = {};
 			for (const clId of Object.keys(rezFull.classes)) {
 				let classInfo = rezFull.classes[clId];
-				if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 0 ) {
-					empty_classes.push(classInfo);
-				}
-				if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 1 ) {
-					if ( empty_sub_classes[classInfo.super_classes[0]] == undefined)
-						empty_sub_classes[classInfo.super_classes[0]] = [classInfo];
-					else
-						empty_sub_classes[classInfo.super_classes[0]].push(classInfo);
+				if ( classInfo.used ) {
+					if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 0 ) {
+						empty_classes.push(classInfo);
+					}
+					if ( classInfo.atr_list.length == 0 && classInfo.super_classes.length == 1 ) {
+						if ( empty_sub_classes[classInfo.super_classes[0]] == undefined)
+							empty_sub_classes[classInfo.super_classes[0]] = [classInfo];
+						else
+							empty_sub_classes[classInfo.super_classes[0]].push(classInfo);
+					}
 				}
 			}
 			
 			// Veido dažādas klašu grupas, bez atribūtiem, bez vai ar virsklasēm
 			if ( empty_classes.length > 0 ) {
-				makeClassGroup(empty_classes); 
+				makeClassGroup(empty_classes.filter(function(c){ return c.type == 'Class'; }), 'Class');
+				makeClassGroup(empty_classes.filter(function(c){ return c.type == 'Classif'; }), 'Classif');
 			}
 			for (const sup_id of Object.keys(empty_sub_classes)) {
-				makeClassGroup(empty_sub_classes[sup_id], [sup_id])
+				const classGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Class'; }), 'Class');
+				if ( classGrId != '' )
+					rezFull.classes[classGrId].super_classes = [sup_id];
+				const classifGrId =  makeClassGroup(empty_sub_classes[sup_id].filter(function(c){ return c.type == 'Classif'; }), 'Classif');
+				if ( classifGrId != '' )
+					rezFull.classes[classifGrId].super_classes = [sup_id];
+
 			}
 			
 			// Veido klašu grupas, skatoties uz atribūtiem, klasēm, kas neietilpst vispārinašanās
@@ -2329,6 +2428,31 @@ const dataShapes = {
 		}
 		if ( diffG > 0 )
 			makeFirstGroups()
+		
+		// Zīmē klases un to līdzības
+		if ( printDiffs ) {
+			rezFull.lines = {};
+			for ( const clId1 of Object.keys(rezFull.classes)) {
+				for ( const clId2 of Object.keys(rezFull.classes)) {
+					const classInfo1 = rezFull.classes[clId1];
+					const classInfo2 = rezFull.classes[clId2];
+					const diff = getDifference(classInfo1, classInfo2);
+					if ( classInfo1.displayName < classInfo2.displayName && diff[0] > 0 && classInfo1.used && classInfo2.used) {
+						const lId = `${classInfo1.id}_${classInfo2.id}`;
+						if ( diff[0] > 50 )
+							rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'7'}; 
+						else if ( diff[0] > diff[1] )
+							rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'0'}; 
+						//else if ( diff[1] < 5 )
+						//	rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'1'}; 
+					}
+				}
+			}
+			rezFull.type = 'printDiffs';
+			makeDiagramData();
+			printDiagram();
+			return;
+		}
 		
 		// Funkcija klašu attāluma izrēķināšanai, ļoti svarīga funkcija ******
 		function getDifference(classInfo1, classInfo2) {
@@ -2384,7 +2508,11 @@ const dataShapes = {
 			//diff = Ad + Ao - Bd - Bo;
 			//return Math.round(diff);
 			//console.log(classInfo1.displayName, classInfo2.displayName, Math.round(Ad + Ao), Math.round(Bd + Bo)  )
-			return [Math.round(Ad + Ao), Math.round(Bd + Bo)];
+			let diifB = Math.round(Bd + Bo);
+				if ( diifB == 0 && Bd + Bo > 0 ) {
+					diifB = 0.5;
+				}
+			return [Math.round(Ad + Ao), diifB]; //[Math.round(Ad + Ao), Math.round(Bd + Bo)]; 
 		}		
 		
 		// ***************** Konstantes***************************
@@ -2520,6 +2648,7 @@ const dataShapes = {
 					}
 				}
 				for (const clId of Object.keys(temp)) {
+					// TODO šeit izmet ārā tās klases, kuras nav parāk draudzīgas ar pārējām
 					if ( temp[clId].count < temp2[gId].length/2 ) {
 						temp2[gId].splice(temp2[gId].indexOf(clId), 1);
 						for (const lId of temp[clId].lines) {
@@ -2537,7 +2666,7 @@ const dataShapes = {
 							const lId2 = `l_${cId2}_${cId1}`;
 							if ( rezFull.lines[lId1] == undefined && rezFull.lines[lId2] == undefined) {
 								const diff = getDifference(classInfo1, classInfo2);
-								if ( diff[0] > diff[1])
+								if ( diff[0] > diff[1]) // TODO šet arī kaut kādu līdzību pieprasa, it ka 'else' varētu arī neiestāties
 									rezFull.lines[lId1] = { id:lId1, from:cId1, to:cId2, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'1' };
 								else
 									rezFull.lines[lId1] = { id:lId1, from:cId1, to:cId2, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'2' };
@@ -2548,18 +2677,34 @@ const dataShapes = {
 			}
 			return temp2;				
 		}
-	
+
 		// Apvieno tuvās klases grupās
 		if ( diffG > 0 ) {
 			const similarClassesG = findSimilarClasses(1); // Meklējam līdzīgas klases grupēšanai
 			console.log("Līdzīgās klases grupu veidošanai", similarClassesG);
+		// Izdrukā potencialās klašu grupas un beidz darbu
+			if ( printGroups) {
+				rezFull.type = 'printGroups';
+				for (const lId of Object.keys(rezFull.lines)) {
+					rezFull.classes[rezFull.lines[lId].from].gr = true;
+					rezFull.classes[rezFull.lines[lId].to].gr = true;
+				}
+				for (const cId of Object.keys(rezFull.classes)) {
+					if ( rezFull.classes[cId].gr )
+						rezFull.classes[cId].used = true;
+					else
+						rezFull.classes[cId].used = false;
+				}
+				makeDiagramData();
+				printDiagram();
+				return;
+			}
 			makeClassGroupFromTree(similarClassesG);
 		}
 
 		// Funkcija virsklašu veidošanai
 		function makeSupClass(cl_list, temp) {
 			const sc_id = `s_${Snum}`;
-			const sc_name = `S${Snum}`;  // TODO vārds būs cits
 			Snum = Snum + 1;
 			let sup_atr_list = [];
 			function makeAtrList(atr_list) {
@@ -2577,17 +2722,26 @@ const dataShapes = {
 				return r_atr_list;
 			}
 			
-			rezFull.classes[sc_id] = { id:sc_id, fullName:sc_name, displayName:sc_name, used:true, hasGen:true, type:'Abstract', super_classes:[], c_list:[] };
+			rezFull.classes[sc_id] = { id:sc_id, used:true, hasGen:true,
+				type:'Abstract', super_classes:[], c_list:[], c_list_id:[], atr_list_c:[]};
 			
-			let g_list = [];	
+			let g_list = [];
+			let c_list_full = [];
+			let cnt = 0;	
 			for (let classInfo of cl_list) {
+				c_list_full.push(classInfo);
+				cnt = cnt + classInfo.cnt;
 				classInfo.super_classes.push(sc_id); 
 				classInfo.hasGen = true;
 				classInfo.S_id = sc_id;
 				if ( classInfo.isGroup ) {
 					for (let g_cl of classInfo.c_list) {
 						rezFull.classes[g_cl].S_id = sc_id;
+						rezFull.classes[sc_id].c_list_id.push(rezFull.classes[g_cl].id_id);
 					}
+				}
+				else {
+					rezFull.classes[sc_id].c_list_id.push(classInfo.id_id);
 				}
 				rezFull.classes[sc_id].c_list.push(classInfo.id);
 				const atr_list = makeAtrList(classInfo.atr_list);
@@ -2607,7 +2761,17 @@ const dataShapes = {
 			if ( g_list.length > 1 ) {
 				makeClassGroup(g_list, [sc_id])
 			}
+
 			rezFull.classes[sc_id].atr_list = sup_atr_list;
+			
+			let fullName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al. S${Snum} (~${roundCount(cnt)})`;
+			let displayName = `${c_list_full.sort((a, b) => { return b.cnt - a.cnt; })[0].displayName} et al.`;
+			if ( c_list_full.length == 2 ) {
+				fullName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName} S${Gnum} (~${roundCount(cnt)})`;
+				displayName = `${c_list_full[0].displayName} or ${c_list_full[1].displayName}`;
+			}
+			rezFull.classes[sc_id].fullName = fullName;
+			rezFull.classes[sc_id].displayName = displayName;
 		}
 		
 		// Virsklašu veidošanas daļa
@@ -2625,6 +2789,7 @@ const dataShapes = {
 					makeSupClass(c_list_full, atrTree);
 				}
 			}
+			rezFull.lines = {};
 		}
 
 		if ( calk ) {
@@ -2644,34 +2809,38 @@ const dataShapes = {
 			console.log('Klašu skaits ', clCount);
 			console.log('Grupu skaits ', grCount);
 			console.log('Virsklašu skaits ', abstrCount);
+			console.log(rezFull)
 			return;
 		}
 
-		
 		// Saprot, kur ir īstie asociāciju gali (tas man noderēs)
 		function findNewClassList(atr, type) {
 			let c_list2 = [];
 			for ( const cl of atr.class_list) {
 				const cInfo = rezFull.classes[`c_${cl}`];
-				if ( cInfo.G_id == undefined && cInfo.S_id == undefined ) {
-					c_list2.push(`c_${cl}`);
-				}
-				if ( cInfo.G_id != undefined && cInfo.S_id == undefined) {
-					if ( !c_list2.includes(cInfo.G_id))
-						c_list2.push(cInfo.G_id);
-				}
-				if ( cInfo.S_id != undefined ) {  
-					const aa = rezFull.classes[cInfo.S_id].atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == type}); 
-					if ( aa.length > 0) {
-						if ( !c_list2.includes(cInfo.S_id))
-							c_list2.push(cInfo.S_id);
-					}
-					else if ( cInfo.G_id != undefined ) {
-						if ( !c_list2.includes(cInfo.G_id))
-							c_list2.push(cInfo.G_id);
-					}
-					else {
+				if ( cInfo != undefined ) {
+					if ( cInfo.G_id == undefined && cInfo.S_id == undefined ) {
 						c_list2.push(`c_${cl}`);
+					}
+					if ( cInfo.G_id != undefined && cInfo.S_id == undefined) {
+						for (const g of cInfo.G_id) {
+							if ( !c_list2.includes(g))
+								c_list2.push(g);
+						}
+					}
+					if ( cInfo.S_id != undefined ) {  
+						const aa = rezFull.classes[cInfo.S_id].atr_list.filter(function(a){ return a.p_name == atr.p_name && a.type == type}); 
+						if ( aa.length > 0) {
+							if ( !c_list2.includes(cInfo.S_id))
+								c_list2.push(cInfo.S_id);
+						}
+						else if ( cInfo.G_id != undefined ) {  // TODO te ir pieņēmums, ka visrklases taisot, katra klase var būt tikai viena grupā
+							if ( !c_list2.includes(cInfo.G_id[0]))
+								c_list2.push(cInfo.G_id[0]);
+						}
+						else {
+							c_list2.push(`c_${cl}`);
+						}
 					}
 				}
 			}
@@ -2697,9 +2866,35 @@ const dataShapes = {
 			if ( classInfo.used) {
 				for ( const atr of classInfo.atr_list) {
 					if ( atr.type == 'out') {
+						if ( has_cpc ) {
+							const cpc_info_full = cpc_info.filter(function(i){ 
+								return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && atr.class_list.includes(i.other_class_id)}); 
+							atr.object_cnt_dgr = cpc_info_full.map( v => v.cnt).reduce((a, b) => a + b, 0);
+						}
+						else {
+							atr.object_cnt_dgr = atr.object_cnt; // TODO te varētu būt arī savādāk, kā darīt, ja nav cpc_rels
+						}
+
 						for (const to_id of atr.class_list2) {
+							//if ( clId == to_id){ // TODO te mēģināju ielilkt ciklus klasē iekšā
+							//	const ac = { p_name:atr.p_name, p_id:atr.p_id, cnt:atr.cnt, object_cnt:atr.object_cnt, is_domain:atr.is_domain, is_range:atr.is_range, type:'cycle', class_list2:[clId]};
+							//	classInfo.atr_list_c.push(ac);
+							//}
+							//else {
+								const aId = `${clId}_${to_id}_${atr.p_name}`;
+								const p_name = ( addIds ) ? `${atr.p_name}(ID-${atr.p_id})`: atr.p_name;
+								if ( !has_cpc) {
+									rezFull.assoc[aId] = {string:`${p_name}  ${atr.is_domain}${atr.is_range}`, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+								}
+								else {
+									const cpc_info_a = cpc_info.filter(function(i){ 
+										return i.property_id == atr.p_id && i.type_id == 2 && classInfo.c_list_id.includes(i.class_id) && rezFull.classes[to_id].c_list_id.includes(i.other_class_id)}); 
+									const aCnt = cpc_info_a.map( v => v.cnt).reduce((a, b) => a + b, 0);
+									if ( aCnt > 0 )
+										rezFull.assoc[aId] = {string:`${p_name} (${roundCount(aCnt)}) ${atr.is_domain}${atr.is_range}`, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
+								}
+							//}
 							// TODO asociācijas redzamā vērtība būs drusku bagātīgāka
-							rezFull.assoc[`${clId}_${to_id}_${atr.p_name}`] = {string:atr.p_name, p_name:atr.p_name, p_id:`p_${atr.p_id}`, from:clId, to:to_id, removed:false };
 						}
 					}
 				}
@@ -2714,14 +2909,16 @@ const dataShapes = {
 		}
 		for (const pId of Object.keys(p_list_full)) {
 			if ( p_list_full[pId].count  > remCount )
-			console.log('Propertija netiek vilkta', p_list_full[pId].p_name, p_list_full[pId].count);
+				console.log('Propertija netiek vilkta', p_list_full[pId].p_name, p_list_full[pId].count);
 		}
-		
 		for (const aa of Object.keys(rezFull.assoc)) {
-			const prop = rezFull.assoc[aa];
-			if ( !prop.removed) {
-				if ( remBig && p_list_full[prop.p_id].count > remCount ) { 
-					prop.removed = true;
+			const assoc = rezFull.assoc[aa];
+			if ( !assoc.removed) {
+				if ( remBig && p_list_full[assoc.p_id].count > remCount ) { 
+					assoc.removed = true;
+				}
+				else {
+					p_list_full[assoc.p_id].in_diagram = true;
 				}
 			}
 		}
@@ -2730,12 +2927,44 @@ const dataShapes = {
 		function makeDiagramData() {
 			// Iegūst atribūtu rādāmo izskatu, noder diagrammai
 			function getAtrString(atr_info) {
-				// TODO te būs daudz sarežģītāk
-				let p_name = atr_info.p_name;
-				if ( addIds ) 
-					p_name = `${p_name}(${atr_info.p_id})`;
-				
-				return `${p_name} ${atr_info.type} [${roundCount(atr_info.cnt)}]`; 
+				let rez = '';
+				const p_name = ( addIds ) ? `${atr_info.p_name}(ID-${atr_info.p_id})`: atr_info.p_name;
+				let cntString = roundCount(atr_info.cnt);
+				let dataProc = '';
+				if ( atr_info.object_cnt != atr_info.cnt && atr_info.object_cnt > 0) {
+					let proc = Math.round(100*(atr_info.cnt-atr_info.object_cnt)/atr_info.cnt);
+					if ( proc == 100) proc = 99.9;
+					if ( proc == 0 ) proc = 0.01;
+					dataProc = ` ${proc}%d`;
+				}
+				cntString = `(${cntString}${dataProc})`;
+				if ( atr_info.type == 'data') {
+					rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}`; 
+					if ( atr_info.object_cnt > 0 )
+						rez = `${rez} -> IRI`;
+				}
+				else {
+					// TODO klašu saraksta rādīšanā būtu jāskatās, vai kompaktie, vai nekompaktie atribūti
+					let classNames = '';
+					if ( !(atr_info.class_list2 == undefined) ) {
+						if ( atr_info.class_list2.length > 3 ) 
+							classNames = ` ${rezFull.classes[atr_info.class_list2[0]].displayName},${rezFull.classes[atr_info.class_list2[1]].displayName}..(${atr_info.class_list2.length})`;
+						else 
+							classNames = ` ${atr_info.class_list2.map(cl => rezFull.classes[cl].displayName).sort().join(',')}`;
+					}
+					if ( atr_info.type == 'out' ) {
+						if ( p_list_full[`p_${atr_info.p_id}`].in_diagram )
+							rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} -> dgr,IRI`;
+						else
+							rez = `${p_name} ${cntString} [${atr_info.max_cardinality}] ${atr_info.is_domain}${atr_info.is_range} -> ${classNames}`;
+					}
+					if (atr_info.type == 'in') 
+						rez = `<-${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <- ${classNames}`;
+					if (atr_info.type == 'cycle') 
+						rez = `${p_name} ${cntString} ${atr_info.is_range}${atr_info.is_domain} <-> ${classNames}`;
+					}	
+				return rez; 
+				//const clCount = ( atr_info.type != 'data') ? ` (${atr_info.class_list2.length})` : '';
 				//if ( atr_info.type == 'data' )
 				//	return `${p_name} ${atr_info.type} [${atr_info.cnt}]`;
 				//else	
@@ -2744,8 +2973,32 @@ const dataShapes = {
 			
 			for (const clId of Object.keys(rezFull.classes)) {
 				const classInfo = rezFull.classes[clId];
-				if ( classInfo.used )
-					classInfo.atr_string = classInfo.atr_list.map( a => getAtrString(a)).sort().join('\n');
+				let restAtrList = [];
+				let inPropList = [];
+				if ( classInfo.used ) {
+					for ( const atr of classInfo.atr_list) {
+						if ( atr.type == 'data' )
+							restAtrList.push(atr);
+						if ( atr.type == 'out' ) {
+							if ( !(p_list_full[`p_${atr.p_id}`].in_diagram && atr.object_cnt_dgr == atr.object_cnt) )
+								restAtrList.push(atr);
+						}
+						if ( atr.type == 'in' && !p_list_full[`p_${atr.p_id}`].in_diagram)
+							inPropList.push(atr);
+					}
+					for ( const atr of classInfo.atr_list_c) {
+						if ( p_list_full[`p_${atr.p_id}`].in_diagram )
+							restAtrList.push(atr);
+					}
+
+					classInfo.atr_string = restAtrList.map(a => getAtrString(a)).sort().join('\n');
+					if ( inPropList.length > 0 )
+						classInfo.atr_string = `${classInfo.atr_string}\n${inPropList.map(a => getAtrString(a)).sort().join('\n')}`;
+					
+					if ( classInfo.atr_string.length > 300 && p_list.length > 1000) // TODO Te vajag skaistāk darīt
+						classInfo.atr_string = `${classInfo.atr_string.slice(0,300)}\n...`
+
+				}
 			}
 			// Savāc kopā asociācijas
 			let assoc = {}; 
@@ -2761,12 +3014,19 @@ const dataShapes = {
 					}
 				}	
 			}
+			// TODO Pagaidu risinajums 'treknajiem'
+			if ( p_list.length > 1000 ) {
+				for (const aa of Object.keys(assoc)) {
+					const aInfo = assoc[aa];
+					if ( aInfo.string.length > 100)
+						aInfo.string = `${aInfo.string.slice(0,100)}\n...`
+				}
+			}
 			rezFull.assoc = assoc;
 			console.log(rezFull);
 					
 		}
-		makeDiagramData()
-		
+		makeDiagramData();
 		
 		// Funkcija diagrammas izdrukāšanai  **** kaut kad nevajadzēs
 		function printDiagram() {

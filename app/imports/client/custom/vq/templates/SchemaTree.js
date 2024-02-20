@@ -39,7 +39,8 @@ Template.schemaExtra.NsFilters = new ReactiveVar("");
 Template.schemaExtra.ClassCount = new ReactiveVar("");
 Template.schemaExtra.IndCount = new ReactiveVar("");
 Template.schemaExtra.SuperclassType = new ReactiveVar("");
- 
+Template.schemaExtra.ClassCountForSlider = new ReactiveVar("");
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 //Template.schemaTree.Count = new ReactiveVar("");
 //Template.schemaTree.TopClass = new ReactiveVar("");
@@ -336,27 +337,26 @@ function setClassListInfo(classes, restClasses) {
 	Template.schemaExtra.ClassCountRest.set(restClasses.length);
 }
 
+
 function setClassList0() {
 	Template.schemaExtra.ManualDisabled.set("disabled");
 	Template.schemaExtra.FilterDisabled.set("");
 	Template.schemaExtra.Properties.set([]);
 	const nsFilters = [{value:'All' ,name:'Classes in all namespaces'},{value:'Local' ,name:'Only local classes'},{value:'Exclude' ,name:'Exclude owl:, rdf:, rdfs:'}];
-	const classCount = [{value:15 ,name:'15 classes in the diagram'}, {value:30 ,name:'30 classes in the diagram'}, {value:40 ,name:'40 classes in the diagram'}, {value:50 ,name:'50 classes in the diagram'}, {value:100 ,name:'100 classes in the diagram'}, {value:300 ,name:'300 classes in the diagram'}];
+	//const classCount = [{value:15 ,name:'15 classes in the diagram'}, {value:30 ,name:'30 classes in the diagram'}, {value:40 ,name:'40 classes in the diagram'}, {value:50 ,name:'50 classes in the diagram'}, {value:100 ,name:'100 classes in the diagram'}, {value:300 ,name:'300 classes in the diagram'}];
 	const indCount = [{value:1 ,name:'Classes of all sizes'}, {value:10 ,name:'At least 10 individuals'}, {value:50 ,name:'At least 50 individuals'}, {value:100 ,name:'At least 100 individuals'}];
 	const superclassType = [{value:1 ,name:'targets'}, {value:2 ,name:'sources and targets'}, {value:0 ,name:'Without superclasses'},];
 	const schema = dataShapes.schema.schema;
-	let nsFiltersSel = '';
-	let classCountSel = 30;
+	let nsFiltersSel = 'Exclude';
+	let classCountSel = 300;
 	let indCountSel = 1;
 	let superclassTypeSel = 1;
 	
 	let filteredClassList = dataShapes.schema.diagram.classList;	
 	filteredClassList = filteredClassList.filter(function(c){ return c.is_local == 1;});
-	
+	console.log('*** Esam koka veidošanā ***', schema)
 	// TODO  Šis ir manai ērtībai, vai nu jāmet ārā, vai jāliek konfigurācijā
 	if ( schema == 'iswc2017') {
-		classCountSel = 40;
-		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 0;
 	}
 	else if ( schema == 'mondial' ) {
@@ -364,47 +364,49 @@ function setClassList0() {
 		superclassTypeSel = 2;
 	}
 	else if ( schema == 'europeana' ) {
-		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 	}
 	else if ( schema == 'nobel_prizes_v0' || schema == 'nobel_prizes_x' || schema == 'nobel_prizes_y' || schema == 'nobel_prizes') {
-		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 1;
 		indCountSel = 10;
 	}
 	else if ( schema == 'academy_sampo_x' || schema == 'academy_sampo' ) {
-		classCountSel = 300;
-		nsFiltersSel = 'Exclude';
 		superclassTypeSel = 2;
 	}
-	else if ( schema == 'war_sampo_2' || schema == 'war_sampo_2' ) {
-		classCountSel = 50;
+	else if ( schema == 'war_sampo' || schema == 'war_sampo_2' ) {
 		nsFiltersSel = 'Local';
 		superclassTypeSel = 2;
 	}
-	else {
-		if ( filteredClassList.length > 0 ) 
-			nsFiltersSel = 'Local';
-		else 
-			nsFiltersSel = 'Exclude';
+	else if ( schema == 'data_europa_eu' ) {
+		superclassTypeSel = 2;
 	}
+	//else { // TODO Izskatās, ko tikai lokālās klases nav interesantas
+	//	if ( filteredClassList.length > 0 ) 
+	//		nsFiltersSel = 'Local';
+	//	else 
+	//		nsFiltersSel = 'Exclude';
+	//}
 	
 	if ( nsFiltersSel == 'Exclude' ) 
 		filteredClassList = dataShapes.schema.diagram.classList.filter(function(c){ const not_in = ['owl','rdf','rdfs']; return !not_in.includes(c.prefix);});
 	
 	if ( indCountSel > 1 )
 		filteredClassList = filteredClassList.filter(function(c){ return c.cnt >= indCountSel;});
-		
+	
+	if ( filteredClassList.length < 300 )	
+		classCountSel = filteredClassList.length;
+	
 	dataShapes.schema.diagram.filteredClassList = filteredClassList;
 	Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);
+	Template.schemaExtra.ClassCountForSlider.set(classCountSel);
 		
 	nsFilters.find(function(f){ return f.value == nsFiltersSel;}).selected = "selected";
-	classCount.find(function(f){ return f.value == classCountSel;}).selected = "selected";
+	//classCount.find(function(f){ return f.value == classCountSel;}).selected = "selected";
 	indCount.find(function(f){ return f.value == indCountSel;}).selected = "selected";
 	superclassType.find(function(f){ return f.value == superclassTypeSel;}).selected = "selected";
 	
 	Template.schemaExtra.NsFilters.set(nsFilters);
-	Template.schemaExtra.ClassCount.set(classCount);
+	//Template.schemaExtra.ClassCount.set(classCount);
 	Template.schemaExtra.IndCount.set(indCount);
 	Template.schemaExtra.SuperclassType.set(superclassType);
 
@@ -425,8 +427,10 @@ function sortClassList() {
 	const sortP = $("#sortPar").val();
 	if  ( sortP == 1) 
 		classList = classList.sort(function(a,b){ return b.cnt-a.cnt;});
-	else
+	if  ( sortP == 2) 
 		classList = classList.sort(function(a,b){ return a.order-b.order;});
+	if  ( sortP == 3) 
+		classList = classList.sort(function(a,b){ return b.in_props-a.in_props;});
 	
 	dataShapes.schema.diagram.classList = classList;
 	
@@ -437,22 +441,26 @@ function sortClassList() {
 			classes = classes.sort(function(a,b){ return b.cnt-a.cnt;});
 			restClasses = restClasses.sort(function(a,b){ return b.cnt-a.cnt;});
 		}	
-		else {
+		if  ( sortP == 2) {
 			classes = classes.sort(function(a,b){ return a.order-b.order;});
 			restClasses = restClasses.sort(function(a,b){ return a.order-b.order;});
+		}
+		if  ( sortP == 3) {
+			classes = classes.sort(function(a,b){ return b.in_props-a.in_props;});
+			restClasses = restClasses.sort(function(a,b){ return b.in_props-a.in_props;});
 		}
 		setClassListInfo(classes, restClasses);
 	}
 	else
-		setClassList();
+		setClassList(true);
 }
 
-function setClassList() {
+function setClassList(changeCount = false) {
 
 	if (Template.schemaExtra.ManualDisabled.get() == "disabled") {
 		let filteredClassList = dataShapes.schema.diagram.classList;
 		const nsFilter = $("#nsFilter").val();
-		const classCount = $("#classCount").val();
+		let classCount = $("#classCount").val();
 		const indCount = $("#indCount").val();
 
 		if ( nsFilter == 'Exclude')
@@ -464,6 +472,13 @@ function setClassList() {
 			filteredClassList = filteredClassList.filter(function(c){ return c.cnt >= indCount;});
 			
 		Template.schemaExtra.ClassCountFiltered.set(filteredClassList.length);	
+
+		const classCountForSlider = ( filteredClassList.length < 300 ) ? filteredClassList.length : 300;
+		Template.schemaExtra.ClassCountForSlider.set(classCountForSlider);
+		if ( !changeCount )
+			classCount = classCountForSlider; 
+		//if ( classCount > classCountForSlider ) // TODO nez kā ir labāk?
+		//	classCount = classCountForSlider;
 		
 		let classes = [];
 		let restClasses = [];
@@ -1011,6 +1026,9 @@ Template.schemaExtra.helpers({
 	manualDisabled: function() {
 		return Template.schemaExtra.ManualDisabled.get();
 	},
+	classCountForSlider: function() {
+		return Template.schemaExtra.ClassCountForSlider.get();
+	},
 	filterDisabled: function() {
 		return Template.schemaExtra.FilterDisabled.get();
 	},
@@ -1043,6 +1061,42 @@ function addSuperclasses(classes) {
 	
 	return dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
 } */
+
+function getParams() {
+	const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+	diffG:$("#diffG").val(), diffS:$("#diffS").val(), supPar:$("#supPar").val(), schema:dataShapes.schema.schema};
+	return par;
+}
+
+async function printSup(par0) {
+	let classList = Template.schemaExtra.Classes.get();
+	let all_s = [];
+	_.each(classList, function(cl) { all_s = [...new Set([...all_s, ...cl.s])]; });	
+	
+	_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+		if ( all_s.includes(cl.id)) cl.selected = 1;
+	});
+	classList = dataShapes.schema.diagram.filteredClassList.filter(function(c){ return c.selected == 1});
+
+	classList = classList.map(v => v.id);
+	let propList = Template.schemaExtra.Properties.get();
+	const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+	if ( propList.length == 0 ) {
+		const allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
+		const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
+		propList = rr.data;
+	}
+	const par = getParams();
+	par.printGroups = par0.printGroups; 
+	par.printDiffs = par0.printDiffs;
+
+	const info = [ `${Template.schemaExtra.ClassCountSelected.get()} classes in the diagram`,
+		$('#nsFilter option:selected').text(),  $('#indCount option:selected').text(),
+		$('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
+		$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
+
+	await dataShapes.makeSuperDiagr(classList, propList, par, info.join('\n'));	
+}
 
 Template.schemaExtra.events({
 	'click #makeDiagr': async function() {
@@ -1109,16 +1163,18 @@ Template.schemaExtra.events({
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
 			propList = rr.data;
 		}
-		let info = [ `${$("#classCount").val()} classes in the diagram`,
+		let info = [ `${Template.schemaExtra.ClassCountSelected.get()} classes in the diagram`,
 			Template.schemaExtra.NsFilters.get().find(function(f){ return f.value == $("#nsFilter").val();}).name,
-			Template.schemaExtra.IndCount.get().find(function(f){ return f.value == $("#indCount").val();}).name ];
+			Template.schemaExtra.IndCount.get().find(function(f){ return f.value == $("#indCount").val();}).name,
+			$('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
+			$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
 		
 		if ( $("#remS").is(":checked") )
 			info.push('Small properties are removed');
 
-		const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
-					diffG:$("#diffG").val(), diffS:$("#diffS").val(), schema:dataShapes.schema.schema};
-		await dataShapes.makeSuperDiagr(classList, propList, par, info.join('\n'));
+			// TODO Info vajag papildināt
+
+		await dataShapes.makeSuperDiagr(classList, propList, getParams(), info.join('\n'));
 		//await dataShapes.makeSuperDiagr(classList, propList, remSmall, dataShapes.schema.schema, info.join('\n'));
 
 	},
@@ -1142,9 +1198,15 @@ Template.schemaExtra.events({
 			propList = rr.data;
 		}
 		
-		const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
-					diffG:$("#diffG").val(), diffS:$("#diffS").val(), schema:dataShapes.schema.schema};
-		await dataShapes.makeSuperDiagr(classList, propList, par, '', true);
+		await dataShapes.makeSuperDiagr(classList, propList, getParams(), '', true);
+	},
+	'click #printGroups': async function() {
+		//TODO šis vēlāk vairs nebūs
+		await printSup({printGroups:true});
+	},	
+	'click #printDiffs': async function() {
+		//TODO šis vēlāk vairs nebūs
+		await printSup({printDiffs:true});
 	},
 	'click #getProperties': async function() {
 		let classList = Template.schemaExtra.Classes.get();
@@ -1154,7 +1216,7 @@ Template.schemaExtra.events({
 		Template.schemaExtra.Properties.set(rr.data);
 	},
 	'change #classCount': function() {
-		setClassList();
+		setClassList(true);
 	},
 	'change #indCount': function() {
 		setClassList();
@@ -1205,19 +1267,19 @@ Template.schemaExtra.events({
 			makeClassLists();
 		}
 	},		
-	'click #addWithN': function() {
-		if ($("#restClasses").val() != undefined) {
-			const selected = $("#restClasses").val().map(v => Number(v));
-			if ( selected.length > 0 ) {
-				const list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id == selected[0]; }).c;
-				_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
-					if ( list.includes(cl.id) || cl.id == selected[0] )
-						cl.selected = 1; 
-				});
-				makeClassLists();			
-			}
-		}
-	},
+	//'click #addWithN': function() {
+	//	if ($("#restClasses").val() != undefined) {
+	//		const selected = $("#restClasses").val().map(v => Number(v));
+	//		if ( selected.length > 0 ) {
+	//			const list = dataShapes.schema.diagram.filteredClassList.find(function(cl) { return cl.id == selected[0]; }).c;
+	//			_.each(dataShapes.schema.diagram.filteredClassList, function(cl) {
+	//				if ( list.includes(cl.id) || cl.id == selected[0] )
+	//					cl.selected = 1; 
+	//			});
+	//			makeClassLists();			
+	//		}
+	//	}
+	//},
 	'click #removeProperties': function() {
 		if ($("#selectedProperties").val() != undefined) {
 			const selected = $("#selectedProperties").val().map(v => Number(v));
