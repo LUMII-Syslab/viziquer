@@ -192,8 +192,8 @@
 						<!--</select> -->
 						<div class="slidecontainer">
 							<p><span id="classCount-slider-span"> </span>Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
-							<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount">
-						  </div>
+							<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
+						</div>
 						<select class="form-control" id="nsFilter" {{filterDisabled}}>
 							{{#each nsFilters}}
 								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>

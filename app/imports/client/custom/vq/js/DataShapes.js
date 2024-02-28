@@ -2062,7 +2062,7 @@ const dataShapes = {
 			if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
 				rezFull.classes[id] = { id:id, id_id:cl.id, c_list_id:[cl.id],	super_classes:[], used:false, hasGen:false, type:type, 
 					displayName:cl.full_name, fullName:full_name,			
-					sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, atr_list:[], atr_list_c:[], all_atr:[], cnt:cl.cnt };
+					sup:cl.s, sub:cl.b, sup0:cl.s0, sub0:cl.b0, atr_list:[], all_atr:[], cnt:cl.cnt };
 			//rezFull.classes[id] = { id:cl.id, super_classes:[], sub_classes:[], used:false, used2:false, hasGen:false, isClasif:isClasif, type:type, prefix:cl.prefix, displayName:cl.full_name, cnt:roundCount(cl.cnt),
 			//	cnt0:cl.cnt, sup:cl.s, sub:cl.b, fullName:full_name, data_prop:cl.data_prop, object_prop:cl.obj_prop, atr_list:[], atr_list2:[], in_prop:[], out_prop:[],  all_atr:[] };
 		});
@@ -2329,7 +2329,7 @@ const dataShapes = {
 				rezFull.classes[g_id] = { id:g_id, super_classes:[], used:true, hasGen:false, type:type, 
 					displayName:displayName, fullName:fullName, isGroup:true, c_list:c_list_full.map(c => c.id), c_list_id:c_list_full.map(c => c.id_id),
 					sub_classes_group_string:c_list_full.map(c => c.fullName).sort().join('\n'),			
-					sup:[], sub:[], atr_list:atr_list, atr_list_c:[], all_atr:[], cnt:i }; 
+					sup:[], sub:[], atr_list:atr_list, all_atr:[], cnt:i }; 
 
 				Gnum = Gnum + 1;
 			}
@@ -2441,7 +2441,7 @@ const dataShapes = {
 						const lId = `${classInfo1.id}_${classInfo2.id}`;
 						if ( diff[0] > 50 )
 							rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'7'}; 
-						else if ( diff[0] > diff[1] )
+						else // if ( diff[0] > diff[1] )
 							rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'0'}; 
 						//else if ( diff[1] < 5 )
 						//	rezFull.lines[lId] = {from:classInfo1.id, to:classInfo2.id, val:`diff_${diff[0]}_${diff[1]}`, val2:`diff_${diff[0]}_${diff[1]}`, red:'1'}; 
@@ -2723,7 +2723,7 @@ const dataShapes = {
 			}
 			
 			rezFull.classes[sc_id] = { id:sc_id, used:true, hasGen:true,
-				type:'Abstract', super_classes:[], c_list:[], c_list_id:[], atr_list_c:[]};
+				type:'Abstract', super_classes:[], c_list:[], c_list_id:[]};
 			
 			let g_list = [];
 			let c_list_full = [];
@@ -2876,7 +2876,7 @@ const dataShapes = {
 						}
 
 						for (const to_id of atr.class_list2) {
-							//if ( clId == to_id){ // TODO te mēģināju ielilkt ciklus klasē iekšā
+							//if ( clId == to_id){ // TODO te mēģināju ielikt ciklus klasē iekšā
 							//	const ac = { p_name:atr.p_name, p_id:atr.p_id, cnt:atr.cnt, object_cnt:atr.object_cnt, is_domain:atr.is_domain, is_range:atr.is_range, type:'cycle', class_list2:[clId]};
 							//	classInfo.atr_list_c.push(ac);
 							//}
@@ -2986,10 +2986,10 @@ const dataShapes = {
 						if ( atr.type == 'in' && !p_list_full[`p_${atr.p_id}`].in_diagram)
 							inPropList.push(atr);
 					}
-					for ( const atr of classInfo.atr_list_c) {
-						if ( p_list_full[`p_${atr.p_id}`].in_diagram )
-							restAtrList.push(atr);
-					}
+					//for ( const atr of classInfo.atr_list_c) {
+					//	if ( p_list_full[`p_${atr.p_id}`].in_diagram )
+					//		restAtrList.push(atr);
+					//}
 
 					classInfo.atr_string = restAtrList.map(a => getAtrString(a)).sort().join('\n');
 					if ( inPropList.length > 0 )
