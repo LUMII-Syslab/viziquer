@@ -1181,19 +1181,26 @@ function findEmptyPrefix(prefixTable){
 function generateSPARQLtext(abstractQueryTable){
 	// console.log("abstractQueryTable", abstractQueryTable)
 		 var messages = [];
-
+		
+		 // let schemaNames = setSchemaNamesForQuery(abstractQueryTable["root"], [], "");
+		 // console.log("SSSSSSSSSSSSSSS", schemaNames)
+		
 		 var rootClass = abstractQueryTable["root"];
 		 var symbolTable = abstractQueryTable["symbolTable"];
 
 		 var parameterTable = abstractQueryTable["params"];
 		 var knownPrefixes = abstractQueryTable["prefixes"];
+		 
+		 let knownPrefixesCombined = combineWithDefinedPrefixes(knownPrefixes, abstractQueryTable.prefixDeclarations);
+		 knownPrefixes = knownPrefixesCombined.knownPrefixes;
+		 messages = messages.concat(knownPrefixesCombined["messages"]);
+		 
 		 var classifiers = abstractQueryTable["classifiers"];
 		 if(typeof classifiers !== "undefined" && classifiers != null && typeof classifiers["data"] !== "undefined" )classifiers = classifiers["data"];
 		 else classifiers = [];
 
  		 //generate table with unique class names in form [_id] = class_unique_name
 		 var generateIdsResult = generateIds(rootClass, knownPrefixes, symbolTable);
-		 
 		 var idTable = generateIdsResult["idTable"];
 		 
 		 var referenceTable = generateIdsResult["referenceTable"];
@@ -1295,29 +1302,26 @@ function generateSPARQLtext(abstractQueryTable){
 			
 			var fromText = "";
 			if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
-				var graphService = null;
-
-				for(let g in rootClass["graphs"]){
-					if(typeof rootClass["graphs"][g] === "object"){
-						if(rootClass["graphs"][g]["graphInstruction"] == "FROM" || rootClass["graphs"][g]["graphInstruction"] == "FROM NAMED"){
-							fromText =  fromText +"\n"+ rootClass["graphs"][g]["graphInstruction"] + " " + rootClass["graphs"][g]["graph"] ;
-						} else if(graphService == null) {
-							graphService = rootClass["graphs"][g];
-						}
+				for(let g in rootClass["namedGraphs"]){
+					if(typeof rootClass["namedGraphs"][g] === "object" && typeof rootClass["namedGraphs"][g]["graphInstruction"] !== "undefined" && typeof rootClass["namedGraphs"][g]["graph"] !== "undefined"){
+						fromText =  fromText +"\n"+ rootClass["namedGraphs"][g]["graphInstruction"] + " " + rootClass["namedGraphs"][g]["graph"] ;
 					}
 				}
 			}
-			
-			if(graphService != null){
-				if(!graphService["graph"].startsWith("??") && graphService["graph"].startsWith("?")) SPARQL_text = SPARQL_text + " " +graphService["graph"];
-			 }
+			// var graphService = rootClass.graphsService;
+			// if(typeof graphService.graph === "undefined")graphService = null;
+			// if(graphService != null){
+				// if(!graphService["graph"].startsWith("??") && graphService["graph"].startsWith("?")) SPARQL_text = SPARQL_text + " " +graphService["graph"];
+			 // }
 			 SPARQL_text = SPARQL_text + fromText;
 			 
 			 SPARQL_text = SPARQL_text + " WHERE{\n";
 			 
-			 if(graphService != null){
-				 SPARQL_text = SPARQL_text + graphService["graphInstruction"] + " " + graphService["graph"] + " {\n";
-			 }
+			 // if(graphService != null){
+				 // let graphName = graphService["graph"];
+				 // if(graphName.startsWith("??")) graphName = graphName.substring(1);
+				 // SPARQL_text = SPARQL_text + graphService["graphInstruction"] + " " + graphName + " {\n";
+			 // }
 
 			var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable, classMembership, knownPrefixes, symbolTable, generateIdsResult.variableNamesTable, generateIdsResult.variableNamesCounter);
 
@@ -1416,9 +1420,9 @@ function generateSPARQLtext(abstractQueryTable){
 				prefixTable["bd:"] = "<http://www.bigdata.com/rdf#>";
 			 }
 			 
-			 if(graphService != null){
-				 SPARQL_text = SPARQL_text + "\n}";
-			 }
+			 // if(graphService != null){
+				 // SPARQL_text = SPARQL_text + "\n}";
+			 // }
 			 SPARQL_text = SPARQL_text + "\n}";
 			 // if(rootClass["distinct"] == true && rootClass["aggregations"].length > 0) SPARQL_text = SPARQL_text + "}}";
 			 //GROUP BY
@@ -1656,10 +1660,11 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 	sparqlTable["groupByThis"] = clazz["groupByThis"]; // group By This class
 	sparqlTable["getSubQueryResults"] = false; // getSubQueryResults
 	sparqlTable["labelServiceLanguages"] = clazz["labelServiceLanguages"]; // labelServiceLanguages
-	sparqlTable["graph"] = clazz["graph"]; // graph
-	sparqlTable["graphInstruction"] = clazz["graphInstruction"]; // graphInstruction
-	sparqlTable["graphs"] = clazz["graphs"]; // graphInstruction
-
+	sparqlTable["graph"] = clazz["graphsService"]; // graph
+	sparqlTable["graphLink"] = clazz["graphsServiceLink"]; // graph link
+	
+	// sparqlTable["graphInstruction"] = clazz["graphInstruction"]; // graphInstruction
+	// sparqlTable["graphs"] = clazz["graphs"]; // graphInstruction
 	var classSimpleTriples = [];
 	var classExpressionTriples = [];
 	var classFunctionTriples = [];
@@ -1966,10 +1971,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 
 					let tripleTemp = getTriple(result, alias, field["requireValues"], true);
 					
-					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
-								tripleTemp["graph"] = field["graph"];
-								tripleTemp["graphInstruction"] = field["graphInstruction"];
-							}
+					// if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								// tripleTemp["graph"] = field["graph"];
+								// tripleTemp["graphInstruction"] = field["graphInstruction"];
+							// }
 							
 					if(field["requireValues"] == true) tripleTemp["requireValues"] = true;
 					else tripleTemp["requireValues"] = false;
@@ -1998,10 +2003,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 				else if(result["isExpression"] == true) {
 					//expressionTriples
 					let tripleTemp = getTriple(result, alias, field["requireValues"], true);
-					if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
-						tripleTemp["graph"] = field["graph"];
-						tripleTemp["graphInstruction"] = field["graphInstruction"];
-					}	
+					// if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+						// tripleTemp["graph"] = field["graph"];
+						// tripleTemp["graphInstruction"] = field["graphInstruction"];
+					// }	
 					
 					if(field["requireValues"] != true && typeof tripleTemp["triple"] !== "undefined" && tripleTemp["triple"].length > 0 ){	
 						for(let t = 0; t < tripleTemp["triple"].length; t++){
@@ -2038,10 +2043,10 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 						tempTripleTable["triple"] = [];
 						for(let triple in result["triples"]){
 							if(typeof result["triples"][triple] === 'string')tempTripleTable["triple"].push(result["triples"][triple]);
-							if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
-								tempTripleTable["graph"] = field["graph"];
-								tempTripleTable["graphInstruction"] = field["graphInstruction"];
-							}
+							// if(typeof field["graph"] !== "undefined" && typeof field["graphInstruction"] !== "undefined" && field["graph"] !== null && field["graphInstruction"] !== null && field["graph"] !== "" && field["graphInstruction"] !== ""){
+								// tempTripleTable["graph"] = field["graph"];
+								// tempTripleTable["graphInstruction"] = field["graphInstruction"];
+							// }
 						}
 						if(typeof result.nodeLevelCondition !== "undefined") tempTripleTable["nodeLevelCondition"] = result.nodeLevelCondition;	
 						//sparqlTable["simpleTriples"].push(tempTripleTable);
@@ -2330,6 +2335,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		if(object != "[]")sparqlTable["classTriple"] = object;
 		
 	}
+	
+											
 	//subClasses
 	if(clazz["children"].length > 0){
 		sparqlTable["subClasses"] = []; // class all sub classes
@@ -2679,6 +2686,8 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		sparqlTable["conditionLinks"].push(triple);
 		
 	})
+	
+
 
 	// console.log("sparqlTable", JSON.stringify(sparqlTable,null,2), sparqlTable)
 	return {variableNamesAll:variableNamesAll, sparqlTable:sparqlTable, prefixTable:prefixTable, counter:counter, fieldNames:fieldNames, messages:messages};
@@ -3094,15 +3103,15 @@ function generateSPARQLWHEREInfoPhase2(sparqlTable, ws, fil, lin, referenceTable
 	
 							subQuery = subQuery + tempSelect.join(" ");
 							
-							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
-								if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
-									for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
-										if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
-											subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
-										}
-									}
-								}
-							}
+							// if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
+								// if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
+									// for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
+										// if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
+											// subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
+										// }
+									// }
+								// }
+							// }
 							
 							subQuery = subQuery +" WHERE{\n";
 							
@@ -3313,9 +3322,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	}
 	// simpleTriples. Phase 3
 	for(let expression = 0; expression < sparqlTable["simpleTriples"].length; expression++){
-		
-		
-		
+			
 		var generateTimeFunctionForVirtuoso = false;
 		if(generateTimeFunctionForVirtuoso == true && sparqlTable["simpleTriples"][expression]["isTimeFunction"] == true){
 			
@@ -3432,7 +3439,7 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	// }
 	
 	//link phase 1
-	if(typeof sparqlTable["linkTriple"] === 'string'){
+	if(typeof sparqlTable["linkTriple"] === 'string' && typeof sparqlTable.graph.graph === "undefined"){
 		// plainRequiredLinks.push(sparqlTable["linkTriple"]);
 		classes.push(sparqlTable["linkTriple"]);
 	}
@@ -3576,7 +3583,6 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 					if(typeof sparqlTable["linkType"] === 'string' && (sparqlTable["linkType"] == "OPTIONAL" || sparqlTable["linkType"] == "NOT")) SPARQL_interval_temp = SPARQL_interval_temp+"  ";
 					
 					let temp = generateSPARQLWHEREInfo(sparqlTable["subClasses"][subclass], whereInfo, filters, links, referenceTable, SPARQL_interval_temp, parameterTable);
-					
 					//phase 1
 					if(sparqlTable["subClasses"][subclass]["linkType"] == "REQUIRED"){	
 						if(sparqlTable["subClasses"][subclass]["linkNameType"] == "singleProperty") singleProperty = singleProperty.concat(temp["classes"]);
@@ -3718,15 +3724,15 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	
 							subQuery = subQuery + tempSelect.join(" ");
 							
-							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
-								if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
-									for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
-										if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
-											subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
-										}
-									}
-								}
-							}
+							// if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
+								// if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
+									// for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
+										// if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
+											// subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
+										// }
+									// }
+								// }
+							// }
 							
 							subQuery = subQuery +" WHERE{\n";
 							
@@ -4015,6 +4021,40 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 	//phase 4
 	phase4 = phase4.concat(minusSubQueries);
 	phase4 = phase4.concat(aggregateTriples);
+	
+	// graph / service from class
+	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable.graph.graph !== "undefined" && sparqlTable.graph.graphInstruction !== "undefined"){
+		
+		let tempWhereInfo = [];
+		
+		tempWhereInfo = tempWhereInfo.concat(classes);
+		tempWhereInfo = tempWhereInfo.concat(grounding);
+		tempWhereInfo = tempWhereInfo.concat(phase2);
+		tempWhereInfo = tempWhereInfo.concat(graphService);
+		tempWhereInfo = tempWhereInfo.concat(phase3);
+		tempWhereInfo = tempWhereInfo.concat(filters);
+		tempWhereInfo = tempWhereInfo.concat(filtersExists);
+		tempWhereInfo = tempWhereInfo.concat(plainOptionalNotLinks);
+		tempWhereInfo = tempWhereInfo.concat(phase4);
+		tempWhereInfo = tempWhereInfo.concat(bind);
+
+		classes = [];
+		classes.push(sparqlTable["linkTriple"]);
+		grounding = [];
+		phase2 = [];
+		phase3 = [];
+		phase4 = [];
+		graphService = [];
+		plainRequiredLinks = [];
+		plainOptionalNotLinks = [];
+		bind = [];
+		minusSubQueries = [];
+		filters = [];
+		
+		SPARQL_interval = SPARQL_interval + "  ";
+		let tempString = sparqlTable.graph.graphInstruction + " "+ sparqlTable.graph.graph + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
+		graphService.push(tempString);
+	}
 
 	//link type
 	if(typeof sparqlTable["linkType"] === 'string' && sparqlTable["linkType"] == "OPTIONAL"){
@@ -4146,8 +4186,9 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		plainOptionalNotLinks.push(tempString);
 
 	}
+	
 	// graph / service from link
-	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable["graph"] === 'string' && sparqlTable["graph"] != "" && typeof sparqlTable["graphInstruction"] === 'string' && sparqlTable["graphInstruction"] != "" ){	
+	if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true && typeof sparqlTable.graphLink !== "undefined" && typeof sparqlTable.graphLink.graph !== "undefined" && sparqlTable.graphLink.graphInstruction !== "undefined"){	
 		let tempWhereInfo = [];
 		
 		tempWhereInfo = tempWhereInfo.concat(classes);
@@ -4159,39 +4200,26 @@ function generateSPARQLWHEREInfo(sparqlTable, ws, fil, lin, referenceTable, SPAR
 		tempWhereInfo = tempWhereInfo.concat(filtersExists);
 		tempWhereInfo = tempWhereInfo.concat(plainOptionalNotLinks);
 		tempWhereInfo = tempWhereInfo.concat(phase4);
-		// tempWhereInfo = tempWhereInfo.concat(requiredSubQueries);
-		// tempWhereInfo = tempWhereInfo.concat(optionalSubQueries);
-		// tempWhereInfo = tempWhereInfo.concat(directSubQueries);
-		// tempWhereInfo = tempWhereInfo.concat(unions);
-		// tempWhereInfo = tempWhereInfo.concat(plainRequiredLinks);
-		// tempWhereInfo = tempWhereInfo.concat(attributesValues);
 		tempWhereInfo = tempWhereInfo.concat(bind);
-		// tempWhereInfo = tempWhereInfo.concat(minusSubQueries);
-		// tempWhereInfo = tempWhereInfo.concat(directSparql);
-	
+
 		classes = [];
 		grounding = [];
 		phase2 = [];
 		phase3 = [];
 		phase4 = [];
 		graphService = [];
-		// requiredSubQueries = [];
-		// optionalSubQueries = [];
-		// directSubQueries = [];
-		// unions = [];
 		plainRequiredLinks = [];
-		// attributesValues = [];
 		plainOptionalNotLinks = [];
 		bind = [];
 		minusSubQueries = [];
-		// directSparql = [];
 		filters = [];
 		
 		SPARQL_interval = SPARQL_interval + "  ";
-		let tempString = sparqlTable["graphInstruction"] + " "+ sparqlTable["graph"] + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
+		let graphName = sparqlTable.graphLink.graph;
+		if(graphName.startsWith("??")) graphName = graphName.substring(1);
+		let tempString = sparqlTable.graphLink.graphInstruction + " "+ graphName + " {"+ "\n"+SPARQL_interval + tempWhereInfo.join("\n"+SPARQL_interval) + "\n"+ SPARQL_interval.substring(2)+ "}";
 
 		graphService.push(tempString);
-
 	}
 
 	return {
@@ -4539,15 +4567,15 @@ function generateSPARQLWHEREInfo2(sparqlTable, ws, fil, lin, referenceTable, SPA
 	
 							subQuery = subQuery + tempSelect.join(" ");
 							
-							if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
-								if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
-									for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
-										if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
-											subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
-										}
-									}
-								}
-							}
+							// if(typeof parameterTable["showGraphServiceCompartments"] !== "undefined" && parameterTable["showGraphServiceCompartments"] == true){
+								// if(typeof sparqlTable["subClasses"][subclass]["graphs"] !== "undefined"){
+									// for(let g = 0; g < sparqlTable["subClasses"][subclass]["graphs"].length; g++){
+										// if(sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM" || sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] == "FROM NAMED"){
+											// subQuery = subQuery + "\n"+ SPARQL_interval.substring(2) +sparqlTable["subClasses"][subclass]["graphs"][g]["graphInstruction"] + " "+ sparqlTable["subClasses"][subclass]["graphs"][g]["graph"] + "\n" + SPARQL_interval.substring(2);
+										// }
+									// }
+								// }
+							// }
 							
 							subQuery = subQuery +" WHERE{\n";
 							
@@ -5536,4 +5564,57 @@ function getAggregationFromFragment(clazz){
 	})
 	
 	return aggregation;
+}
+
+function setSchemaNamesForQuery(abstractQueryTable, schemaNamesTable, parentSchemaName){
+	let schemaName = parentSchemaName;
+	if(typeof abstractQueryTable["graphsService"] !== "undefined" && abstractQueryTable["graphsService"] !== null && abstractQueryTable["graphsService"]["schema"] !== null && abstractQueryTable["graphsService"]["schema"] !== ""){
+		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsService"]["schema"];
+		schemaName = abstractQueryTable["graphsService"]["schema"];
+	} else {
+		schemaNamesTable[abstractQueryTable.identification._id] = parentSchemaName;
+	}
+	if(typeof abstractQueryTable["graphsServiceLink"] !== "undefined" && abstractQueryTable["graphsServiceLink"] !== null && abstractQueryTable["graphsServiceLink"]["schema"] !== null && abstractQueryTable["graphsServiceLink"]["schema"] !== ""){
+		schemaNamesTable[abstractQueryTable.linkIdentification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
+		schemaNamesTable[abstractQueryTable.identification._id] = abstractQueryTable["graphsServiceLink"]["schema"];
+		schemaName = abstractQueryTable["graphsServiceLink"]["schema"];
+	} else {
+		schemaNamesTable[abstractQueryTable.identification._id] = parentSchemaName;
+	}
+	for(let c = 0; c < abstractQueryTable.children.length; c++){
+		schemaNamesTable = setSchemaNamesForQuery(abstractQueryTable.children[c], schemaNamesTable, parentSchemaName)
+	}
+	return schemaNamesTable;
+}
+
+function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
+	messages = [];
+	for(let pr in prefixDeclarations){
+		if(typeof prefixDeclarations[pr] !== "function"){
+			let prefixExists = false;
+			for(let kpr = 0; kpr < knownPrefixes.length; kpr++){
+				if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] !== prefixDeclarations[pr]){
+					messages.push({
+						"type" : "Warning",
+						"message" : "Prefix name '" + pr + "' already exists in the schema. Prefix '" + pr + ": <" + prefixDeclarations[pr] +">' ignored",
+						"isBlocking" : false
+					});
+					prefixExists = true;
+					break;
+				} else if(knownPrefixes[kpr]["name"] === pr && knownPrefixes[kpr]["value"] !== prefixDeclarations[pr]){
+					prefixExists = true;
+					break;
+				}
+			}
+			if(prefixExists === false){
+				knownPrefixes.push({
+					is_local: false,
+					name: pr,
+					value: prefixDeclarations[pr]
+				})
+			}
+		}
+		console.log("PRRRRRRPPPPPPP", pr, prefixDeclarations[pr]);
+	}
+	return {knownPrefixes:knownPrefixes, messages:messages};
 }

@@ -277,12 +277,39 @@ Interpreter.customMethods({
 	]
   },
   
+	  VQgetNamedGraphInstructions: function() {
+		return  [
+		{input:"FROM",value:"FROM"},
+		{input:"FROM NAMED",value:"FROM NAMED"},
+		]
+	  },
+  
 	VQgetGraphInstructionsClass: function() {
+	 // let act_elem = Session.get("activeElement");
+		 // if (!act_elem) {
+ 			// return [];
+ 		// }
+ 	// let elem = new VQ_Element(act_elem);
+
+	// if(elem.getType() === "condition"){
+		// return  [
+			// {input:"GRAPH",value:"GRAPH"},
+			// {input:"SERVICE",value:"SERVICE"}
+		// ]
+	// }
+	
+	
 	return  [
-	{input:"FROM",value:"FROM"},
-	{input:"FROM NAMED",value:"FROM NAMED"},
-	{input:"GRAPH",value:"GRAPH"},
-	{input:"SERVICE",value:"SERVICE"}
+		// {input:"FROM",value:"FROM"},
+		// {input:"FROM NAMED",value:"FROM NAMED"},
+		{input:"GRAPH",value:"GRAPH"},
+		{input:"SERVICE",value:"SERVICE"}
+	]
+  },
+  
+  VQgetSchemaNames: function() {
+	//to do get schema names
+	return  [
 	]
   },
   
@@ -531,12 +558,33 @@ Interpreter.customMethods({
 		
 		link.setLinkType("REQUIRED");		 
 		if (link.getStartElement().isRoot() && link.getEndElement().isRoot()){
+	
+			let elem = link.getStartElement();
+			let namedGraphsFromQuery = findNamedGraphsInQuery(elem, [elem.obj._id]);
+			for(let e = 0; e < namedGraphsFromQuery.length; e++){
+				elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
+			}
 		 	link.getEndElement().setClassStyle("condition");
+			
 		} else if (!link.getStartElement().isRoot() && link.getEndElement().isRoot()) {
 			if (link.getStartElement().getLinkToRoot().start == false){
 				console.log("condition class has no connected query class")
 			} else {
 				link.getEndElement().setClassStyle("condition");
+			}
+		}
+	},
+	
+	VQmoveNamedGraphs: function(params) {
+		if(params.input === "query"){
+			console.log("VQmoveNamedGraphs", params.input);
+			let c = Compartments.findOne({_id:params["compartmentId"]});
+			if (c) {
+				let elem = new VQ_Element(c["elementId"]);
+				let namedGraphsFromQuery = findNamedGraphsInQuery(elem, [c["elementId"]]);
+				for(let e = 0; e < namedGraphsFromQuery.length; e++){
+					elem.addNamedGraph(namedGraphsFromQuery[e]["graph"], namedGraphsFromQuery[e]["graphInstruction"])
+				}
 			}
 		}
 	},
@@ -677,6 +725,34 @@ Interpreter.customMethods({
 				if(instrunction!= null && instrunction != "") instrunction = instrunction+": ";
 				elem.setGraph(elem.getGraph(), "{" + instrunction + elem.getGraph() + "}");
 			} 
+	},
+	
+	VQsetPrefixNamespace: function(e, compart) {
+		
+		var elem = document.activeElement;
+
+		var text = e.originalEvent.target.value;
+		
+		// let elem_name = params["input"];
+		// var c = Compartments.findOne({_id:params["compartmentId"]});
+		// if (c) {
+			// var elem = new VQ_Element(c["elementId"]);
+
+			// if (elem.isIndirectClassMembership() && elem_name !== null && elem_name !== "") {
+				// let elem_name_pref = ".. " + elem_name;
+				// elem.setNameValue(elem_name_pref, elem_name);
+			// }
+			// else {
+				// if (elem_name !== null) {
+					// elem.setNameValue(elem_name, elem_name);
+				// }
+			// }
+
+       		// _.each(elem.getLinks().map(function(l) {return l.link}), function(link) {
+				// link.hideDefaultLinkName(link.shouldHideDefaultLinkName());
+			// });
+		// }
+			
 	},
 		
 	visualizeSPARQL: function(q) {
@@ -1027,6 +1103,22 @@ Interpreter.customMethods({
 		return false;
 	},
 	
+	setIsVisibleForNamedGraphs: function() {
+		let proj = Projects.findOne({_id: Session.get("activeProject")});	
+		if (proj) {	
+			if (proj.showGraphServiceCompartments == true) {
+				let selected_elem_id = Session.get("activeElement");
+				if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
+
+					 let vq_obj = new VQ_Element(selected_elem_id);
+					 let type = vq_obj.getType();
+					if(type === "query") return true;
+				}
+			}
+		}
+		return false;
+	},
+	
 	AddSelectThis: function(){
 		
 		var selected_elem_id = Session.get("activeElement");
@@ -1251,16 +1343,17 @@ function findAttributeInAbstractTable(context, clazz, fieldValue){
 }
 
 async function generateSymbolTable() {
- // console.log("    generateSymbolTable")
+ 
 	var editor = Interpreter.editor;
 	var elem = _.keys(editor.getSelectedElements());
 	var abstractQueryTable = {}
-		
+	//console.log("    generateSymbolTable", elem)
     // now we should find the connected classes ...
     if (elem) {
        var selected_elem = new VQ_Element(elem[0]);
+	   if(selected_elem.obj.type === "Line") selected_elem = selected_elem.getStartElement();
        var visited_elems = {};
-
+		//console.log("  1  generateSymbolTable", elem, selected_elem.obj.type, selected_elem.getStartElement())
        function GetComponentIds(vq_elem) {
            visited_elems[vq_elem._id()]=true;
            _.each(vq_elem.getLinks(),function(link) {
@@ -1283,7 +1376,6 @@ async function generateSymbolTable() {
 
        var elem_ids = _.keys(visited_elems);  
        var queries = await genAbstractQueryForElementList(elem_ids, null); 
-	  
 	  
 	   for (const q of queries) {
 	    //_.each(queries,async function(q) {
@@ -1313,6 +1405,35 @@ async function generateSymbolTable() {
 
 function make_group_by_instance_value(input) {
 	return "{group} " + input;
+}
+
+function findNamedGraphsInQuery(elem, visitedClasses){
+	let namedGraphs = [];
+	let elemLinks = elem.getLinks();
+	for(let e = 0; e < elemLinks.length; e++){
+		let clazzId;
+		if(elemLinks[e]["start"] === false){
+			clazzId = elemLinks[e]["link"]["obj"]["endElement"];
+		} else {
+			clazzId = elemLinks[e]["link"]["obj"]["startElement"];
+		}
+		clazz = new VQ_Element(clazzId);
+		if(visitedClasses.indexOf(clazzId) === -1) {
+			visitedClasses.push(clazzId);
+			let nGraphs = clazz.getNamedGraphs();
+			for(let ng = 0; ng < nGraphs.length; ng++){
+				namedGraphs.push({graph:nGraphs[ng].graph, graphInstruction: nGraphs[ng].graphInstruction})
+				var list = {compartmentId: nGraphs[ng]["_id"],
+					projectId: Session.get("activeProject"),
+					versionId: Session.get("versionId"),
+				};
+				Utilities.callMeteorMethod("removeCompartment", list);
+			}
+			namedGraphs = namedGraphs.concat(findNamedGraphsInQuery(clazz, visitedClasses))
+		}
+	}
+	
+	return namedGraphs;
 }
 
 export {

@@ -2559,6 +2559,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 					if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
 						id = "wd:"+id;
 					}
+					//console.log("resolveTypeFromSchemaForClass", options.schemaName)
 					var cls = await dataShapes.resolveClassByName({name: id})
 					if(cls["complete"] == false) return null;
 					if(cls["data"].length > 0){
@@ -2573,6 +2574,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
 					if(options.schemaName.toLowerCase() == "wikidata" && ((id.startsWith("[") && id.endsWith("]")) || id.indexOf(":") == -1)){
 						id = "wdt:"+id;
 					}
+					//console.log("resolveTypeFromSchemaForAttributeAndLink", options.schemaName)
 					var aorl = await dataShapes.resolvePropertyByName({name: id})
 	
 					// if(aorl["complete"] == false) return null;

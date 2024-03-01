@@ -3784,7 +3784,7 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes';
           async function resolveTypeFromSymbolTable(id) {
 			var context = options.context._id;
               			
-            if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined') return null;
+            if(typeof options.symbol_table === 'undefined' || typeof options.symbol_table[context] === 'undefined' || options.symbol_table === null) return null;
 
             var st_row = options.symbol_table[context][id];
             if (st_row) {

@@ -1627,48 +1627,6 @@
                     },
                     "subCompartmentTypes": [
                       {
-                        "_id": "4myxmzuqpuosoyj4o6y1m0sd",
-                        "index": 0,
-                        "name": "Graph instruction",
-                        "extensionPoints": [
-                          {
-							 "extensionPoint": "dynamicDropDown",
-							 "procedure": "VQgetGraphInstructions"
-						  },
-						  {
-							"extensionPoint": "isVisible",
-							"procedure": "setIsVisibleForGraphFields"
-						  }
-                        ],
-                        "prefix": null,
-                        "suffix": null,
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "combobox"
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Graph/Service mode"
-                      },
-					  {
-                        "_id": "su465uh97s8gf52uaamk58gv",
-                        "index": 1,
-                        "name": "Graph",
-                        "label": "Graph/Service URI or shorthand",
-                        "extensionPoints": [
-						  {
-							"extensionPoint": "isVisible",
-							"procedure": "setIsVisibleForGraphFields"
-						  }
-						],
-                        "prefix": null,
-					    "suffix": null,
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "input"
-                        },
-                        "subCompartmentTypes": []
-                      },
-					  {
                         "_id": "479fc64e382dc2d31bcc0755",
                         "index": 7,
                         "name": "Field Name",
@@ -2005,7 +1963,7 @@
                 "index": 103,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
-                "name": "Graphs",
+                "name": "Graph/Service",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
                 "inputType": {
@@ -2065,8 +2023,8 @@
                 "subCompartmentTypes": [
                   {
                     "_id": "h9y7720icc01v6ydqt5ist6m",
-                    "name": "Graphs",
-                    "label": "Graph",
+                    "name": "Graph/Service",
+                    "label": "Graph/Service",
                     "extensionPoints": [
                       {
                         "extensionPoint": "procDecompose",
@@ -2094,13 +2052,155 @@
                           "type": "combobox"
                         },
                         "subCompartmentTypes": [],
-                        "label": "Graph/Service mode"
+                        "label": "Block type (choose graph or service)"
                       },
 					  {
                         "_id": "jrdmkqgrxfpp7w6oobxfhlg1",
                         "index": 8,
                         "name": "Graph",
-                        "label": "Graph/Service URI or shorthand",
+                        "label": "Graph/Service description (e.g., URI or variable)",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "u9pnjcgerkp0pj9g591b3g0g",
+                        "index": 9,
+                        "name": "Schema",
+                        "label": "Schema name",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetSchemaNames"
+                          }
+                        ],
+                        "prefix": "[",
+                        "suffix": "]",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ]
+                  }
+                ],
+                "dialogTabId": "Exf3sEg8fpo7hYYRc",
+                "label": "Graph/Service"
+              }
+            },
+			{
+              "object": {
+                "_id": "WYkieexBu8mGH4ELf",
+                "elementTypeId": "2uLFFsW4oQ3Myr4sB",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementId": "r4MZYEQtHdDWvwSfd",
+                "tabIndex": 9,
+                "index": 104,
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "name": "Named Graphs",
+                "isObjectRepresentation": false,
+                "noRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "1ad164fa838409317ed7a987",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate"
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate"
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix"
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix"
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "createCompartment"
+                  },
+				  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleForNamedGraphs"
+                  }
+                ],
+                "subCompartmentTypes": [
+                  {
+                    "_id": "h9y7720icc01v6ydqt5ist6m",
+                    "name": "Named Graphs",
+                    "label": "Named Graphs",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "snlg4g9sdnj7wm5819ij90xl",
+                        "index": 7,
+                        "name": "Graph instruction",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetNamedGraphInstructions"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": " ",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Block type (choose from or from named)"
+                      },
+					  {
+                        "_id": "jrdmkqgrxfpp7w6oobxfhlg1",
+                        "index": 8,
+                        "name": "Graph",
+                        "label": "Named Graph description (e.g., URI or variable)",
                         "extensionPoints": [],
                         "prefix": null,
                         "suffix": null,
@@ -2114,7 +2214,7 @@
                   }
                 ],
                 "dialogTabId": "Exf3sEg8fpo7hYYRc",
-                "label": "Graphs"
+                "label": "Named Graphs"
               }
             },
             {
@@ -3110,7 +3210,8 @@
                     "procedure": "UpdateCompartment"
                   },
                   {
-                    "extensionPoint": "afterUpdate"
+                    "extensionPoint": "afterUpdate",
+					"procedure": "VQmoveNamedGraphs"
                   },
                   {
                     "extensionPoint": "dynamicPrefix"
@@ -3401,6 +3502,370 @@
               "name": "Style",
               "elementTypeId": "2uLFFsW4oQ3Myr4sB",
               "index": 3
+            }
+          ]
+        },
+		{
+          "object": {
+            "_id": "6gm4bkMfqwYEgtJiu",
+            "toolId": "3v8WrqRP2oos7kaSA",
+            "versionId": "cMoFeT3YoEkLwDabd",
+            "diagramTypeId": "5MCHCcnGRwF5axfDj",
+            "diagramId": "7RrwRcGyxshqjBh9p",
+            "elementId": "guv6MiFkNuM2tBkdM",
+            "superTypeIds": [],
+            "type": "Box",
+            "extensionPoints": [
+              {
+                "extensionPoint": "createElement",
+                "procedure": "MakeElement"
+              },
+              {
+                "extensionPoint": "resizeElement",
+                "procedure": "ResizeElement"
+              }
+            ],
+            "keyStrokes": [
+              {
+                "keyStroke": "Ctrl C",
+                "procedure": "Copy"
+              },
+              {
+                "keyStroke": "Ctrl X",
+                "procedure": "Cut"
+              },
+              {
+                "keyStroke": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeKeyStrokes": [],
+            "contextMenu": [
+              {
+                "item": "Cut",
+                "procedure": "Cut"
+              },
+              {
+                "item": "Copy",
+                "procedure": "Copy"
+              },
+              {
+                "item": "Delete",
+                "procedure": "Delete"
+              }
+            ],
+            "readModeContextMenu": [],
+            "styles": [
+              {
+                "id": "1b1eaa9c4846dd754f534231",
+                "name": "Default",
+                "elementStyle": {
+                  "fill": "rgb(248,244,178)",
+                  "fillPriority": "color",
+                  "fillLinearGradientStartPointX": 0.5,
+                  "fillLinearGradientStartPointY": 0,
+                  "fillLinearGradientEndPointX": 0.5,
+                  "fillLinearGradientEndPointY": 1,
+                  "fillLinearGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "fillRadialGradientStartPointX": 0.5,
+                  "fillRadialGradientStartPointY": 0.5,
+                  "fillRadialGradientEndPointX": 0.5,
+                  "fillRadialGradientEndPointY": 0.5,
+                  "fillRadialGradientStartRadius": 0,
+                  "fillRadialGradientEndRadius": 1,
+                  "fillRadialGradientColorStops": [
+                    0,
+                    "white",
+                    1,
+                    "black"
+                  ],
+                  "stroke": "rgb(95,91,28)",
+                  "strokeWidth": 1,
+                  "shadowColor": "red",
+                  "shadowBlur": 0,
+                  "shadowOpacity": 1,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 0,
+                  "tension": 0,
+                  "opacity": 1,
+                  "dash": [],
+                  "shape": "Rectangle"
+                }
+              }
+            ],
+            "name": "Declaration",
+            "isAbstract": false,
+            "targetDiagramTypeId": "5MCHCcnGRwF5axfDj"
+          },
+          "compartmentTypes": [
+            {
+              "object": {
+                "_id": "yyf6o77ut2MinaRGx",
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementTypeId": "6gm4bkMfqwYEgtJiu",
+                "elementId": "guv6MiFkNuM2tBkdM",
+                "index": 0,
+                "noRepresentation": false,
+                "tabIndex": 1,
+                "dialogTabId": "c78CGoM8GRRE4uW82",
+                "name": "Prefix Declarations",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "1ad164fa838409317ed7a987",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": ""
+                  }
+                ],
+				"subCompartmentTypes": [
+                  {
+                    "_id": "eaxwp9mjehanqr2b4mmh2e0u",
+                    "name": "Prefix Declarations",
+                    "label": "Prefix Declarations",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "wv90nt5kj09f62ch0zz7pi8b",
+                        "index": 7,
+                        "name": "Prefix",
+                        "extensionPoints": [
+						  {
+							"extensionPoint": "update",
+							"procedure": "VQsetPrefixNamespace"
+						  },
+						  {
+							"extensionPoint": "processKeyStroke",
+							"procedure": "VQsetPrefixNamespace"
+						  }
+                        ],
+                        "prefix": "PREFIX ",
+                        "suffix": ": ",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Prefix"
+                      },
+					  {
+                        "_id": "vnefhgjcdu0v3gjmbdgnqj42",
+                        "index": 8,
+                        "name": "Namespace",
+                        "label": "Namespace",
+                        "extensionPoints": [],
+                        "prefix": "<",
+                        "suffix": ">",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ]
+                  }
+                ],
+                "label": "Prefix Declarations"
+              }
+            },
+            {
+              "object": {
+                "_id": "EKMgic963o2oPTieP",
+                "toolId": "3v8WrqRP2oos7kaSA",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "diagramTypeId": "5MCHCcnGRwF5axfDj",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "elementTypeId": "6gm4bkMfqwYEgtJiu",
+                "elementId": "guv6MiFkNuM2tBkdM",
+                "index": 1,
+                "noRepresentation": false,
+                "tabIndex": 2,
+                "dialogTabId": "c78CGoM8GRRE4uW82",
+                "name": "Schema Declarations",
+                "description": "",
+                "prefix": "",
+                "suffix": "",
+                "defaultValue": "",
+                "isObjectRepresentation": false,
+                "inputType": {
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
+                },
+                "styles": [
+                  {
+                    "name": "Default",
+                    "id": "1ad164fa838409317ed7a987",
+                    "style": {
+                      "align": "left",
+                      "fill": "#000000",
+                      "padding": 2,
+                      "placement": "start-left",
+                      "visible": true,
+                      "fontSize": 14,
+                      "fontStyle": "normal",
+                      "fontFamily": "Candara",
+                      "fontVariant": "normal",
+                      "strokeWidth": "1"
+                    }
+                  }
+                ],
+                "extensionPoints": [
+                  {
+                    "extensionPoint": "beforeUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "update",
+                    "procedure": "UpdateCompartment"
+                  },
+                  {
+                    "extensionPoint": "afterUpdate",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicPrefix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicSuffix",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDefaultValue",
+                    "procedure": ""
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown",
+                    "procedure": ""
+                  }
+                ],
+				"subCompartmentTypes": [
+                  {
+                    "_id": "bq6bg0pkxfxci1w55yzirk6q",
+                    "name": "Schema Declarations",
+                    "label": "Schema Declarations",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": null,
+                    "suffix": null,
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "vc49w74a0fpdm2f2gyv12nkt",
+                        "index": 7,
+                        "name": "Schema",
+                        "extensionPoints": [
+                        ],
+                        "prefix": "SCHEMA [",
+                        "suffix": "] ",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Schema"
+                      },
+					  {
+                        "_id": "xy27hw6322k58uq3thaer62z",
+                        "index": 8,
+                        "name": "Endpoint URI",
+                        "label": "Endpoint URI",
+                        "extensionPoints": [],
+                        "prefix": "<",
+                        "suffix": ">",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ]
+                  }
+                ],
+                "label": "Schema Declarations"
+              }
+            }
+          ],
+          "dialog": [
+            {
+              "_id": "c78CGoM8GRRE4uW82",
+              "toolId": "3v8WrqRP2oos7kaSA",
+              "versionId": "cMoFeT3YoEkLwDabd",
+              "diagramId": "7RrwRcGyxshqjBh9p",
+              "diagramTypeId": "5MCHCcnGRwF5axfDj",
+              "elementTypeId": "6gm4bkMfqwYEgtJiu",
+              "name": "Main",
+              "index": 1
             }
           ]
         }
@@ -3829,7 +4294,7 @@
 			
 			{
               "object": {
-                "_id": "WtNMiLuHi19RtF5Hf",
+                "_id": "1S784UfnvxKqDyEfT",
                 "elementTypeId": "vjSWyPTpvbs9JEB3a",
                 "diagramTypeId": "5MCHCcnGRwF5axfDj",
                 "diagramId": "7RrwRcGyxshqjBh9p",
@@ -3838,82 +4303,14 @@
                 "index": 0,
                 "toolId": "3v8WrqRP2oos7kaSA",
                 "versionId": "cMoFeT3YoEkLwDabd",
-                "name": "Graph instruction",
+                "name": "Graph/Service",
                 "isObjectRepresentation": false,
                 "noRepresentation": false,
                 "inputType": {
-                  "type": "combobox"
+                  "type": "custom",
+                  "inputType": "text",
+                  "templateName": "multiField"
                 },
-                "styles": [
-                  {
-                    "name": "Default",
-                    "id": "a1c61033a295ef5e1eb2329b",
-                    "style": {
-                      "align": "left",
-                      "fill": "#000000",
-                      "padding": 0,
-                      "placement": "end-left",
-                      "visible": false,
-                      "fontSize": 16,
-                      "fontStyle": "normal",
-                      "fontFamily": "Calibri",
-                      "fontVariant": "normal",
-                      "strokeWidth": "1"
-                    }
-                  }
-                ],
-                "extensionPoints": [
-                  {
-                    "extensionPoint": "beforeUpdate"
-                  },
-				  {
-                     "extensionPoint": "dynamicDropDown",
-                     "procedure": "VQgetGraphInstructions"
-                  },
-                  {
-                    "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
-                  },
-                  {
-                    "extensionPoint": "afterUpdate",
-					"procedure": "VQsetGraphPrefixFromInstructions"
-                  },
-				  {
-                    "extensionPoint": "isVisible",
-					"procedure": "setIsVisibleForGraphFields"
-                  },
-                  {
-                    "extensionPoint": "dynamicPrefix"
-                  },
-                  {
-                    "extensionPoint": "dynamicSuffix"
-                  },
-                  {
-                    "extensionPoint": "processKeyStroke"
-                  }
-                ],
-                "dialogTabId": "LH5gP2Peqhnu5rMeB",
-                "label": "Graph/Service mode"
-              }
-            },
-			{
-              "object": {
-                "_id": "lOIHCTG7Z2ZwhQBDP",
-                "elementTypeId": "vjSWyPTpvbs9JEB3a",
-                "diagramTypeId": "5MCHCcnGRwF5axfDj",
-                "diagramId": "7RrwRcGyxshqjBh9p",
-                "elementId": "dbsGQGHqCahkCgkip",
-                "tabIndex": 9,
-                "index": 1,
-                "toolId": "3v8WrqRP2oos7kaSA",
-                "versionId": "cMoFeT3YoEkLwDabd",
-                "name": "Graph",
-                "isObjectRepresentation": false,
-                "noRepresentation": false,
-                "inputType": {
-                  "type": "input"
-                },
-				"suffix": "} ",
                 "styles": [
                   {
                     "name": "Default",
@@ -3943,23 +4340,98 @@
                   {
                     "extensionPoint": "afterUpdate"
                   },
-				  {
-                    "extensionPoint": "isVisible",
-					"procedure": "setIsVisibleForGraphFields"
-                  },
                   {
-                    "extensionPoint": "dynamicPrefix",
-                    "procedure": "VQsetGraphPrefix"
+                    "extensionPoint": "dynamicPrefix"
                   },
                   {
                     "extensionPoint": "dynamicSuffix"
                   },
                   {
-                    "extensionPoint": "processKeyStroke"
+                    "extensionPoint": "dynamicDefaultValue"
+                  },
+                  {
+                    "extensionPoint": "dynamicDropDown"
+                  },
+                  {
+                    "extensionPoint": "createCompartment"
+                  },
+				  {
+                    "extensionPoint": "isVisible",
+                    "procedure": "setIsVisibleForGraphFields"
+                  }
+                ],
+                "subCompartmentTypes": [
+                  {
+                    "_id": "h9y7720icc01v6ydqt5ist6m",
+                    "name": "Graph/Service",
+                    "label": "Graph/Service",
+                    "extensionPoints": [
+                      {
+                        "extensionPoint": "procDecompose",
+                        "procedure": ""
+                      }
+                    ],
+                    "prefix": "{",
+					"suffix": "}",
+                    "defaultValue": null,
+                    "subCompartmentTypes": [
+                      {
+                        "_id": "1rqetwhmyjp6xm4jp1rzf43k",
+                        "index": 7,
+                        "name": "Graph instruction",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetGraphInstructions"
+                          }
+                        ],
+                        "prefix": null,
+                        "suffix": " ",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": [],
+                        "label": "Block type (choose graph or service)"
+                      },
+					  {
+                        "_id": "q4g1mccea3dr93padg59xkxq",
+                        "index": 8,
+                        "name": "Graph",
+                        "label": "Graph/Service description (e.g., URI or variable)",
+                        "extensionPoints": [],
+                        "prefix": null,
+                        "suffix": null,
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "input"
+                        },
+                        "subCompartmentTypes": []
+                      },
+					  {
+                        "_id": "d5zgur9996g72j8hew6bvn33",
+                        "index": 9,
+                        "name": "Schema",
+                        "label": "Schema name",
+                        "extensionPoints": [
+                          {
+                            "extensionPoint": "dynamicDropDown",
+                            "procedure": "VQgetSchemaNames"
+                          }
+                        ],
+                        "prefix": "[",
+                        "suffix": "]",
+                        "defaultValue": null,
+                        "inputType": {
+                          "type": "combobox"
+                        },
+                        "subCompartmentTypes": []
+                      }
+                    ]
                   }
                 ],
                 "dialogTabId": "LH5gP2Peqhnu5rMeB",
-                "label": "Graph/Service URI or shorthand"
+                "label": "Graph/Service"
               }
             },
 			{
@@ -4924,6 +5396,19 @@
           "index": 2,
           "toolId": "3v8WrqRP2oos7kaSA",
           "versionId": "cMoFeT3YoEkLwDabd"
+        },
+		{
+          "_id": "2DeDannNmdxFiqzwr",
+          "toolId": "3v8WrqRP2oos7kaSA",
+          "versionId": "cMoFeT3YoEkLwDabd",
+          "diagramTypeId": "5MCHCcnGRwF5axfDj",
+          "diagramId": "iPEd3KtbG6komMGku",
+          "elementTypeIds": [
+            "6gm4bkMfqwYEgtJiu"
+          ],
+          "name": "Declaration",
+          "type": "Box",
+          "index": 6
         }
       ]
     }
@@ -5244,6 +5729,94 @@
                 },
                 "isObjectRepresentation": true,
                 "value": "NamedQuery",
+                "valueLC": "box",
+                "toolId": "3v8WrqRP2oos7kaSA"
+              }
+            }
+          ]
+        },
+		{
+          "object": {
+            "_id": "guv6MiFkNuM2tBkdM",
+            "diagramId": "7RrwRcGyxshqjBh9p",
+            "diagramTypeId": "fubQejm8ayXa7qNXJ",
+            "elementTypeId": "geiaHHeqP2nw8LdHK",
+            "style": {
+              "elementStyle": {
+                "fill": "rgb(248,244,178)",
+                "fillPriority": "color",
+                "fillLinearGradientStartPointX": 0.5,
+                "fillLinearGradientStartPointY": 0,
+                "fillLinearGradientEndPointX": 0.5,
+                "fillLinearGradientEndPointY": 1,
+                "fillLinearGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "fillRadialGradientStartPointX": 0.5,
+                "fillRadialGradientStartPointY": 0.5,
+                "fillRadialGradientEndPointX": 0.5,
+                "fillRadialGradientEndPointY": 0.5,
+                "fillRadialGradientStartRadius": 0,
+                "fillRadialGradientEndRadius": 1,
+                "fillRadialGradientColorStops": [
+                  0,
+                  "white",
+                  1,
+                  "black"
+                ],
+                "stroke": "rgb(95,91,28)",
+                "strokeWidth": 1,
+                "shadowColor": "red",
+                "shadowBlur": 0,
+                "shadowOpacity": 1,
+                "shadowOffsetX": 0,
+                "shadowOffsetY": 0,
+                "tension": 0,
+                "opacity": 1,
+                "dash": [],
+                "shape": "Rectangle"
+              }
+            },
+            "styleId": "fb529d8bdd572bbeff72b450",
+            "type": "Box",
+            "location": {
+              "x": 285,
+              "y": 301,
+              "width": 162,
+              "height": 58
+            },
+            "toolId": "3v8WrqRP2oos7kaSA",
+            "versionId": "cMoFeT3YoEkLwDabd"
+          },
+          "compartments": [
+            {
+              "object": {
+                "_id": "c9LagzvKswGY3sbcB",
+                "elementId": "guv6MiFkNuM2tBkdM",
+                "diagramId": "7RrwRcGyxshqjBh9p",
+                "diagramTypeId": "fubQejm8ayXa7qNXJ",
+                "elementTypeId": "geiaHHeqP2nw8LdHK",
+                "versionId": "cMoFeT3YoEkLwDabd",
+                "compartmentTypeId": "odfcDfpE8wTuyXkG4",
+                "input": "Declaration",
+                "index": 1,
+                "styleId": "f91deae06cb12187959867e0",
+                "style": {
+                  "align": "center",
+                  "fill": "white",
+                  "padding": 0,
+                  "placement": "start-left",
+                  "visible": true,
+                  "fontSize": 14,
+                  "fontStyle": "normal",
+                  "fontFamily": "Arial",
+                  "fontVariant": "normal"
+                },
+                "isObjectRepresentation": true,
+                "value": "Declaration",
                 "valueLC": "box",
                 "toolId": "3v8WrqRP2oos7kaSA"
               }

@@ -681,6 +681,41 @@ VQ_Element.prototype = {
     [{title:"graph",name:"Graph"},
     {title:"graphInstruction",name:"Graph instruction"}]);
   },
+  
+  getGraphsServices: function() {  
+    let gs = this.getMultiCompartmentSubCompartmentValues("Graph/Service",
+    [{title:"graph",name:"Graph"},
+    {title:"graphInstruction",name:"Graph instruction"},
+    {title:"schema",name:"Schema"}]);
+	if(gs.length > 0) return gs[0];
+	return gs
+  },
+  
+  getNamedGraphs: function() {
+    return this.getMultiCompartmentSubCompartmentValues("Named Graphs",
+    [{title:"graph",name:"Graph"},
+    {title:"graphInstruction",name:"Graph instruction"}]);
+  },
+  
+  addNamedGraph: function(graph,graphInstruction) {
+    this.addCompartmentSubCompartments("Named Graphs",[
+      {name:"Graph",value:graph},
+      {name:"Graph instruction",value:graphInstruction},
+    ])
+  },
+  
+  getPrefixDeclarations: function() {
+    return this.getMultiCompartmentSubCompartmentValues("Prefix Declarations",
+    [{title:"prefix",name:"Prefix"},
+    {title:"namespace",name:"Namespace"}]);
+  },
+  
+  getSchemaDeclarations: function() {
+    return this.getMultiCompartmentSubCompartmentValues("Schema Declarations",
+    [{title:"schema",name:"Schema"},
+    {title:"endpointURI",name:"Endpoint URI"}]);
+  },
+  
   // string, string -->
   addGraph: function(graph,graphInstruction) {
     this.addCompartmentSubCompartments("Graph",[
