@@ -2320,14 +2320,18 @@ function forAbstractQueryTable(variableNamesTable, variableNamesCounter, attribu
 		var object = "[";
 						let blankNodes = [];
 						for(let triple in  sparqlTable["blankNodeTriples"]){
-							for(let t = 0; t < sparqlTable["blankNodeTriples"][triple]["triple"].length; t++){
-								blankNodes.push(sparqlTable["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+							if(typeof sparqlTable["blankNodeTriples"] !== "undefined" && typeof sparqlTable["blankNodeTriples"][triple] !== "function" && typeof sparqlTable["blankNodeTriples"][triple] !== "undefined" && typeof sparqlTable["blankNodeTriples"][triple]["triple"] !== "undefined"){
+								for(let t = 0; t < sparqlTable["blankNodeTriples"][triple]["triple"].length; t++){
+									blankNodes.push(sparqlTable["blankNodeTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));
+								}
 							}
 						}
 						
 						for(let triple in  sparqlTable["filterTriples"]){
-							for(let t = 0; t < sparqlTable["filterTriples"][triple]["triple"].length; t++){
-								blankNodes.push(sparqlTable["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
+							if(typeof sparqlTable["filterTriples"] !== "undefined" && typeof sparqlTable["filterTriples"][triple] !== "function" && typeof sparqlTable["filterTriples"][triple] !== "undefined" && typeof sparqlTable["filterTriples"][triple]["triple"] !== "undefined"){
+								for(let t = 0; t < sparqlTable["filterTriples"][triple]["triple"].length; t++){
+									blankNodes.push(sparqlTable["filterTriples"][triple]["triple"][t].replace(blankNodeName, "").replace(".", ""));		
+								}
 							}
 						}
 						object = object + blankNodes.join(";");
