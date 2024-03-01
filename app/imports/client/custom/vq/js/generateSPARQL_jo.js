@@ -5614,7 +5614,6 @@ function combineWithDefinedPrefixes(knownPrefixes, prefixDeclarations){
 				})
 			}
 		}
-		console.log("PRRRRRRPPPPPPP", pr, prefixDeclarations[pr]);
 	}
 	return {knownPrefixes:knownPrefixes, messages:messages};
 }

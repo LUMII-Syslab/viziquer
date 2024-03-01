@@ -43,32 +43,33 @@ Interpreter.customMethods({
 function getDeclarations(){
 	const diagramId = Session.get("activeDiagram");
 	const elem_type = ElementTypes.findOne({name: "Declaration"});
-	
-    var elems_in_diagram_ids = Elements.find({diagramId:diagramId, elementTypeId: elem_type["_id"]}).map(function(e) {
-      return e["_id"]
-    });
 	let declarationPrefixes = [];
 	let declarationSchemas = [];
-	for(let d = 0; d < elems_in_diagram_ids.length; d++){
-		let declaration = new VQ_Element(elems_in_diagram_ids[d]);
-		let prefixes = declaration.getPrefixDeclarations();
-		let schemas = declaration.getSchemaDeclarations();
-		for(let p = 0; p < prefixes.length; p++){
-			if(typeof declarationPrefixes[prefixes[p]["prefix"]] === "undefined") {
-				declarationPrefixes[prefixes[p]["prefix"]] = prefixes[p]["namespace"];
-			} else {
-				console.log("ERROR declarationPrefixes")
+	if(typeof elem_type !== "undefined"){
+		var elems_in_diagram_ids = Elements.find({diagramId:diagramId, elementTypeId: elem_type["_id"]}).map(function(e) {
+		  return e["_id"]
+		});
+		
+		for(let d = 0; d < elems_in_diagram_ids.length; d++){
+			let declaration = new VQ_Element(elems_in_diagram_ids[d]);
+			let prefixes = declaration.getPrefixDeclarations();
+			let schemas = declaration.getSchemaDeclarations();
+			for(let p = 0; p < prefixes.length; p++){
+				if(typeof declarationPrefixes[prefixes[p]["prefix"]] === "undefined") {
+					declarationPrefixes[prefixes[p]["prefix"]] = prefixes[p]["namespace"];
+				} else {
+					console.log("ERROR declarationPrefixes")
+				}
 			}
-		}
-		for(let s = 0; s < schemas.length; s++){
-			if(typeof declarationSchemas[schemas[s]["schema"]] === "undefined") {
-				declarationSchemas[schemas[s]["schema"]] = schemas[s]["endpointURI"];
-			} else {
-				console.log("ERROR declarationSchemas")
+			for(let s = 0; s < schemas.length; s++){
+				if(typeof declarationSchemas[schemas[s]["schema"]] === "undefined") {
+					declarationSchemas[schemas[s]["schema"]] = schemas[s]["endpointURI"];
+				} else {
+					console.log("ERROR declarationSchemas")
+				}
 			}
 		}
 	}
-	
 	return {prefixes:declarationPrefixes, schemas:declarationSchemas}
 }
 
