@@ -1080,7 +1080,7 @@ async function printSup(par0) {
 
 	classList = classList.map(v => v.id);
 	let propList = Template.schemaExtra.Properties.get();
-	const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+	const remSmall = 0; //($("#remS").is(":checked")) ? 10 : 0;
 	if ( propList.length == 0 ) {
 		const allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
 		const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
@@ -1111,7 +1111,7 @@ Template.schemaExtra.events({
 
 		classList = classList.map(v => v.id);
 		let propList = Template.schemaExtra.Properties.get();
-		const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		const remSmall = 0; //($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
 			//let not_in = [];
 			//if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
@@ -1129,8 +1129,8 @@ Template.schemaExtra.events({
 			info.push(`Superclasses based on ${Template.schemaExtra.SuperclassType.get().find(function(f){ return f.value == $("#superclassType").val();}).name}`);
 		}
 		
-		if ( $("#remS").is(":checked") )
-			info.push('Small properties are removed');
+		//if ( $("#remS").is(":checked") )
+		//	info.push('Small properties are removed');
 			
 		if ( $("#compView").is(":checked") )
 			info.push('Compact attribute view');			
@@ -1152,7 +1152,7 @@ Template.schemaExtra.events({
 
 		classList = classList.map(v => v.id);
 		let propList = Template.schemaExtra.Properties.get();
-		const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		const remSmall = 0; //($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
 			//let not_in = [];
 			//if ($("#nsFilter").val() == 'Exclude' || $("#nsFilter").val() == 'Local')
@@ -1169,8 +1169,8 @@ Template.schemaExtra.events({
 			$('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
 			$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
 		
-		if ( $("#remS").is(":checked") )
-			info.push('Small properties are removed');
+		//if ( $("#remS").is(":checked") )
+		//	info.push('Small properties are removed');
 
 			// TODO Info vajag papildināt
 
@@ -1191,7 +1191,7 @@ Template.schemaExtra.events({
 
 		classList = classList.map(v => v.id);
 		let propList = Template.schemaExtra.Properties.get();
-		const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		const remSmall = 0; //($("#remS").is(":checked")) ? 10 : 0;
 		if ( propList.length == 0 ) {
 			const allParams = {main: { c_list: `${classList}`, remSmall:remSmall }};
 			const rr = await dataShapes.callServerFunction("xx_getPropList", allParams);	
@@ -1211,7 +1211,7 @@ Template.schemaExtra.events({
 	'click #getProperties': async function() {
 		let classList = Template.schemaExtra.Classes.get();
 		classList = classList.map(v => v.id);
-		const remSmall = ($("#remS").is(":checked")) ? 10 : 0;
+		const remSmall = 0; //($("#remS").is(":checked")) ? 10 : 0;
 		const rr = await dataShapes.callServerFunction("xx_getPropList", {main: { c_list: `${classList}`, remSmall:remSmall}});
 		Template.schemaExtra.Properties.set(rr.data);
 	},

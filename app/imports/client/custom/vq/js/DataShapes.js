@@ -2058,6 +2058,7 @@ const dataShapes = {
 			if ( cl.classification_property != undefined && cl.classification_property != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 				type = 'Classif';
 			}	
+			cl.cnt = Number(cl.cnt);
 			let full_name = `${cl.full_name} (${roundCount(cl.cnt)})`;
 			if ( addIds ) full_name = `${full_name} ID-${cl.id}`;
 				rezFull.classes[id] = { id:id, id_id:cl.id, c_list_id:[cl.id],	super_classes:[], used:false, hasGen:false, type:type, 
@@ -2113,10 +2114,10 @@ const dataShapes = {
 	
 		// Funkcija propertijas pielikšanai, tiek izsaukta divās vietās
 		function addProperty(pp, c_from, c_to) {
-			if ( c_from.length > 0  && c_to.length == 0) {	
+			if ( c_from.length > 0  && c_to.length == 0 ) {	
 				for (const cl of c_from) {
 					const cl_id = `c_${cl.class_id}`;
-					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), object_cnt:cl.object_cnt, is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[]};
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'data', cnt:Number(cl.cnt), object_cnt:Number(cl.object_cnt), is_domain:pp.is_domain, is_range:'', max_cardinality:pp.max_cardinality, class_list:[]};
 					rezFull.classes[cl_id].atr_list.push(p_info);
 					rezFull.classes[cl_id].used = true;
 					if ( !rezFull.classes[cl_id].all_atr.includes(pp.id)) rezFull.classes[cl_id].all_atr.push(pp.id);	
@@ -2130,7 +2131,7 @@ const dataShapes = {
 					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_1.id }); 
 					if ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
-					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), object_cnt:c_1.object_cnt, is_domain:pp.is_domain, is_range:pp.is_range, max_cardinality:pp.max_cardinality, class_list:cl_list.sort()};
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'out', cnt:Number(c_1.cnt), object_cnt:Number(c_1.object_cnt), is_domain:pp.is_domain, is_range:pp.is_range, max_cardinality:pp.max_cardinality, class_list:cl_list.sort()};
 					rezFull.classes[from_id].atr_list.push(p_info);
 					rezFull.classes[from_id].used = true;
 					if ( !rezFull.classes[from_id].all_atr.includes(pp.id)) rezFull.classes[from_id].all_atr.push(pp.id);						
@@ -2141,7 +2142,7 @@ const dataShapes = {
 					const cpc_i = cpc_info.filter(function(i){ return i.cp_rel_id == c_2.id }); 
 					if ( !compView && has_cpc && cpc_i.length > 0 )
 						cl_list = cpc_i.map( c => c.other_class_id);
-					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), object_cnt:c_2.object_cnt, is_domain:pp.is_domain, is_range:pp.is_range, class_list:cl_list.sort()};
+					const p_info = {p_name:pp.p_name, p_id:pp.id, type:'in', cnt:Number(c_2.cnt), object_cnt:Number(c_2.object_cnt), is_domain:pp.is_domain, is_range:pp.is_range, class_list:cl_list.sort()};
 					rezFull.classes[to_id].atr_list.push(p_info);
 					rezFull.classes[to_id].used = true;
 				}

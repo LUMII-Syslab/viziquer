@@ -293,22 +293,13 @@
 						<div class="form-group">
 							<button id="removeProperties" type="button" class="btn btn-primary" data-dismiss="modal">Remove selected properties</button>
 						</div>
-						<label> Make superclasses based on: </label>
-						<select class="form-control" id="superclassType" >
-							{{#each superclassType}}
-								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-							{{/each}}
+						<label> Ko dara ar shēmas vispārināšanām: </label>
+						<select class="form-control" id="supPar" >
+							<option select value=1 >Savelk kopā vispārināšanas virknes</option>
+							<option value=0 >Atstāj Shēmas vispārināšanas</option>
+							<option value=2 >Savelk kopā Shēmas vispārināšanas</option>
 						</select>
-						<select class="form-control" id="disconnBig" >
-							  <option selected value=7 >Disconnect prop > 7 </option>
-							  <option value=10 >Disconnect prop > 10 </option>
-							  <option value=0 >Show all properties</option>
-						</select>
-						<label class="form-check-label">
-							<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
-							<span class="custom-checkbox"></span>
-							Compact attribute view
-						</label>
+						<label> Klašu grupēšanas parametrs: </label>
 						<select class="form-control" id="diffG" >
 							<option value=0 >Without grouping</option>
 							<option value=1 >Very weak grouping (diff-1) </option>
@@ -316,27 +307,47 @@
 							<option selected value=5 >Basic grouping (diff under 5)</option>
 							<option value=10 >Strong grouping (diff under 10) </option>
 						</select>
+						<label> Abstrakto klašu veidošana: </label>
 						<select class="form-control" id="diffS" >
-							<option value=-1 >Without superclasses </option>
-							<option value=5 >Sup. sim. 5 </option>
-							<option value=25 >Sup. sim. 25 </option>
-							<option selected value=50 >Sup. sim. 50 </option>
+							<option value=-1 >Without abstract superclasses</option>
+							<option value=5 >Zems līdzības līmenis</option>
+							<option value=25 >Vidējs līdzības līmenis</option>
+							<option selected value=50 >Augsts līdzības līmmenis</option>
 						</select>
-						<select class="form-control" id="supPar" >
-							<option select value=1 >Savelk kopā vispārināšanas virknes</option>
-							<option value=0 >Atstāj Shēmas vispārināšanas</option>
-							<option value=2 >Savelk kopā Shēmas vispārināšanas</option>
-						</select>
+						<label> Propertijas diagrammā: </label>
+						<select class="form-control" id="disconnBig" >
+							<option selected value=7 >Disconnect prop > 7 </option>
+							<option value=10 >Disconnect prop > 10 </option>
+							<option value=0 >Show all properties</option>
+					    </select>	
 						<label class="form-check-label">
-							<input class="form-check-input" name = "remS" id="remS" type="checkbox">
+							<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
 							<span class="custom-checkbox"></span>
-							Remove small properties
-						</label>						
+							Compact attribute view
+						</label>	
+						<div class="form-group">
+							<button id="makeDiagr2" type="button" class="btn btn-xs btn-success button-new" data-dismiss="modal">SAVE DIAGRAM DATA</button>
+						</div>
 						<label class="form-check-label">
 							<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
 							<span class="custom-checkbox"></span>
 							Show DB IDs in names
-						</label>						
+						</label>
+						<label> Make superclasses based on: </label>
+						<select class="form-control" id="superclassType" >
+							{{#each superclassType}}
+								<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
+							{{/each}}
+						</select>
+						<div class="form-group">
+							<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal">Save diagram data (old)</button>
+						</div>
+
+						<!--<label class="form-check-label"> -->
+							<!--<input class="form-check-input" name = "remS" id="remS" type="checkbox"> -->
+							<!--<span class="custom-checkbox"></span> -->
+							<!--Remove small properties -->
+						<!--</label>	--> 					
 					</div>
 					<div class="col-sm-7">
 						<select class="form-select" id="selectedProperties" size="20" multiple aria-label="multiple select 3">
@@ -344,21 +355,6 @@
 								<option value="{{id}}">{{p_name}}</option>
 							{{/each}}
 						</select>	
-					</div>
-				</div>
-			</div>				
-			
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-sm-6">
-						<div class="form-group">
-							<button id="makeDiagr" type="button" class="btn btn-primary" data-dismiss="modal">Save diagram data</button>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-group">
-							<button id="makeDiagr2" type="button" class="btn btn-primary" data-dismiss="modal">Property summarization</button>
-						</div>
 						<div class="form-group">
 							<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate class count</button>
 						</div>
@@ -370,9 +366,8 @@
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>				
 			
-
 			{{/if}}
 
 		</form>
