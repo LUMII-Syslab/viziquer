@@ -99,7 +99,7 @@
 		{{#if input}}
 			<div id="{{_id}}" class="form-group compart-type" style="margin-bottom:10px;">
 				<label for="{{compartmentId}}">{{label}}</label>
-				<input autocomplete="off" type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm"
+				<input autocomplete="off" type="{{input_type}}" class="form-control dialog-input {{subCompartmentTypeId}} input-sm" data-update-procedure={{updateProcedure}} data-subCompartmentTypeId={{subCompartmentTypeId}}
 				id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
 				placeholder="{{_placeholder}}" data-element="{{elementId}}" data-value="{{field_value}}">
 			</div>
@@ -147,7 +147,7 @@
 				<label for="{{compartmentId}}">{{label}}</label>
 				<input type="text" class="form-control dialog-combobox {{subCompartmentTypeId}} input-sm"
 					id="{{compartmentId}}" value="{{field_value}}" disabled="{{disabled}}"
-					placeholder="{{_placeholder}}" list="row_{{_id}}" data-element="{{elementId}}">
+					placeholder="{{_placeholder}}" list="row_{{_id}}" data-element="{{elementId}}" data-update-procedure={{updateProcedure}} data-subCompartmentTypeId={{subCompartmentTypeId}}> 
 
 					<datalist id="row_{{_id}}" class="datalist">
 						{{#each values}}

@@ -305,6 +305,15 @@ function process_sub_compart_types(subCompartmentTypes, fields, sub_compartments
 
 			field["isSubCompartmentType"] = true;
 
+			var update_extension_point = _.find(sub_compart_type.extensionPoints, function(ext_point) {
+											return ext_point.extensionPoint == "update";
+										});
+
+			if (update_extension_point) {
+				field["updateProcedure"] = update_extension_point.procedure;
+			}
+			
+
 			fields.push(field);
 
 			return;
@@ -384,6 +393,8 @@ function get_multi_fields_obj() {
 	res["compartmentTypeId"] = Session.get("multiRowCompartmentTypeId");
 	res["next_level_form"] = "show_multi_field_form";
 	res["elementId"] = elem_id;
+
+	console.log("res out ", res)
 
 	return res;
 }

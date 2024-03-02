@@ -33,6 +33,8 @@ Template.dialogTabContent.events({
 			upsert_compartment_value(e, elem_id, src_id, src_val);
 		}
 
+		execute_on_sub_field_update(e);
+
 		Session.set("editingDialog", reset_variable());
 
 		return false;
@@ -96,6 +98,7 @@ Template.dialogTabContent.events({
 
 	'blur .dialog-combobox': function(e) {
 		update_combobox(e);
+		execute_on_sub_field_update(e);
 	},
 
 	'input .dialog-combobox': function(e) {
@@ -823,4 +826,15 @@ function find_compart_type_object(sub_compart_types, compart_type_id) {
 		}
 	}
 
+}
+
+
+function execute_on_sub_field_update(e) {
+	var src = $(e.target);
+
+	var src_val = src.val();
+	var sub_compartment_type_id = src.attr("data-subCompartmentTypeId");
+
+	var update_procedure = src.attr("data-update-procedure");
+	Interpreter.execute(update_procedure, [sub_compartment_type_id, src_val]);
 }

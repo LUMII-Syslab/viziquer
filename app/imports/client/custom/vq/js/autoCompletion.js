@@ -16,6 +16,10 @@ var time;
 
 Interpreter.customMethods({
 
+	testUpdateOnSubcomartmentField: function(sub_compartment_type_id, src_val) {
+		console.log("this is custom method abcd", sub_compartment_type_id, src_val);
+	},
+
 	conditionAutoCompletion: async function(e, compart) {
 		grammarType = "class"
 		const d = new Date();
