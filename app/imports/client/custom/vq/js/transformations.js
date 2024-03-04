@@ -6,6 +6,7 @@ import { genAbstractQueryForElementList, resolveTypesAndBuildSymbolTable } from 
 import { getPathFullGrammarChangeDirection } from './parser.js';
 import { Create_VQ_Element, VQ_Element, VQ_Schema } from './VQ_Element';
 import * as vq_property_path_grammar_parser from '/imports/client/custom/vq/js/vq_property_path_grammar_parser.js'
+import { dataShapes } from '/imports/client/custom/vq/js/DataShapes.js'
 
 Interpreter.customMethods({
 	
@@ -308,9 +309,12 @@ Interpreter.customMethods({
   },
   
   VQgetSchemaNames: function() {
-	//to do get schema names
-	return  [
-	]
+	let schemaName = dataShapes.getOntologiesSync();
+	
+	schemaName = schemaName.map(function(e) {
+      return {input:e["db_schema_name"],value:e["db_schema_name"]}
+	})
+	return  schemaName;
   },
   
 	VQgetAggregateNames: function() {
@@ -728,10 +732,10 @@ Interpreter.customMethods({
 	},
 	
 	VQsetPrefixNamespace: function(e, compart) {
-		
-		var elem = document.activeElement;
+		//console.log("FFFFFFFFFFFFFFFFFF", e, compart)
+		// var elem = document.activeElement;
 
-		var text = e.originalEvent.target.value;
+		// var text = e.originalEvent.target.value;
 		
 		// let elem_name = params["input"];
 		// var c = Compartments.findOne({_id:params["compartmentId"]});
