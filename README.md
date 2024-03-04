@@ -17,7 +17,7 @@ following the pattern given in sample.env).
 
 See https://github.com/LUMII-Syslab/data-shape-server
 
-The DSS shall need a link to a PostGres SQL database, holding the data schemas for the endpoints to be queried. 
+The DSS shall need a link to a PostgreSQL database, holding the data schemas for the endpoints to be queried. 
 
 The sample schemas are available; means for their creation are described at https://viziquer.lumii.lv
 
