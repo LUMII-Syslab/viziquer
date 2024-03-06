@@ -816,8 +816,8 @@ Template.AddNewAttribute.events({
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Attribute Condition"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Attribute Condition"]["input"] = addAttributeCondition.toString();
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Node-level Condition"] !== "undefined")compart.subCompartments["Attributes"]["Attributes"]["Node-level Condition"]["input"] = addNodeLevelCondition.toString();
 				// compart.subCompartments["Attributes"]["Attributes"]["AttributeCondition"]["input"] = requiredCondition;
-				compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
-				compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
+				// compart.subCompartments["Attributes"]["Attributes"]["Graph"]["input"] = graph;
+				// compart.subCompartments["Attributes"]["Attributes"]["Graph instruction"]["input"] = graphInstruction;
 				
 				if(typeof compart.subCompartments["Attributes"]["Attributes"]["Prefixes"] == 'undefined'){
 					var prefixes_compart_type = _.find(compart_type.subCompartmentTypes[0].subCompartmentTypes, function(sub_compart_type) {
