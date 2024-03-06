@@ -217,24 +217,13 @@ Meteor.methods({
 		if (list["projectId"]) {
 			if (is_project_version_admin(user_id, list) || is_public_diagram(list["diagramId"])) {
 
-				var element_ids = list["elements"];
-				if (element_ids) {
-					var elements = Elements.find({_id: {$in: element_ids}}).fetch();
-					var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
-
-					var element_type_names = get_element_type_names(elements);
-					var compartment_type_names = get_compartment_type_names(compartments);
-
-					add_element_type_names(elements, element_type_names);
-					add_compartment_type_names(compartments, compartment_type_names);
-
+				if (list["elements"]) {
 					Clipboard.update({userId: user_id,
 										// toolId: list.toolId,
 										// diagramTypeId: list.diagramTypeId,
 									},
 
-									{$set: {elements: elements,
-											compartments: compartments,
+									{$set: {elements: list["elements"],
 											projectId: list.projectId,
 											versionId: list.versionId,
 											diagramId: list.diagramId,
@@ -289,14 +278,11 @@ Meteor.methods({
 						offset_y = offset;
 					}
 
-					// var element_ids = clipboard["elements"];
+					var element_ids = clipboard["elements"];
 
-					var elements = clipboard["elements"];
-					var compartments = clipboard["compartments"];
-
-					// var elements = Elements.find({_id: {$in: element_ids}}).fetch();
-					// var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
-					// var elements_sections = ElementsSections.find({elementId: {$in: element_ids}}).fetch();
+					var elements = Elements.find({_id: {$in: element_ids}}).fetch();
+					var compartments = Compartments.find({elementId: {$in: element_ids}}).fetch();
+					var elements_sections = ElementsSections.find({elementId: {$in: element_ids}}).fetch();
 
 					//var elements = clipboard["elements"];
 					//var compartments = clipboard["compartments"];
@@ -308,8 +294,6 @@ Meteor.methods({
 					var boxes = [];
 					var lines = [];
 
-					add_element_type_ids(elements, list.diagramId);
-
 					//iterates over boxes
 					_.each(elements, function(element) {
 						if (element["type"] == "Box") {
@@ -317,7 +301,6 @@ Meteor.methods({
 
 							//removes element id to have new one
 							delete element["_id"];
-							delete element["typeName"];
 
 							var location = element["location"];
 							location["x"] = location["x"] + offset_x;
@@ -340,7 +323,6 @@ Meteor.methods({
 							var old_id = element["_id"];
 
 							delete element["_id"];
-							delete element["typeName"];
 
 							//sets a new start element id for line
 							var start_elem_id = element["startElement"];
@@ -376,10 +358,8 @@ Meteor.methods({
 						}
 					});
 
-					add_compartment_type_ids(compartments, list.diagramId);
 					_.each(compartments, function(compartment) {
 						delete compartment["_id"];
-						delete compartment["typeName"];
 						compartment["elementId"] = old_new_id_list[compartment["elementId"]];
 
 						_.extend(compartment, new_ids);
@@ -387,14 +367,14 @@ Meteor.methods({
 						Compartments.insert(compartment);
 					});
 
-					// _.each(elements_sections, function(element_section) {
-					// 	delete element_section["_id"];
-					// 	element_section["elementId"] = old_new_id_list[element_section["elementId"]];
+					_.each(elements_sections, function(element_section) {
+						delete element_section["_id"];
+						element_section["elementId"] = old_new_id_list[element_section["elementId"]];
 
-					// 	_.extend(element_section, new_ids);
+						_.extend(element_section, new_ids);
 
-					// 	ElementsSections.insert(element_section);
-					// });
+						ElementsSections.insert(element_section);
+					});
 
 					if (!x && !y) {
 						Clipboard.update({_id: clipboard["_id"]}, {$inc: {count: 1}});
