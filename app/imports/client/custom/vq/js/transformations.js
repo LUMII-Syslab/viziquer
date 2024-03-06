@@ -1100,17 +1100,18 @@ Interpreter.customMethods({
 	},
 	
 	setIsVisibleForGraphFields: function() {
-		var proj = Projects.findOne({_id: Session.get("activeProject")});	
-		if (proj) {	
-			if (proj.showGraphServiceCompartments == true) return true;
-		}
-		return false;
+		// var proj = Projects.findOne({_id: Session.get("activeProject")});	
+		// if (proj) {	
+			// if (proj.showGraphServiceCompartments == true) return true;
+		// }
+		// return false;
+		return true;
 	},
 	
 	setIsVisibleForNamedGraphs: function() {
-		let proj = Projects.findOne({_id: Session.get("activeProject")});	
-		if (proj) {	
-			if (proj.showGraphServiceCompartments == true) {
+		// let proj = Projects.findOne({_id: Session.get("activeProject")});	
+		// if (proj) {	
+			// if (proj.showGraphServiceCompartments == true) {
 				let selected_elem_id = Session.get("activeElement");
 				if (Elements.findOne({_id: selected_elem_id})){ //Because in case of deleted element ID is still "activeElement"
 
@@ -1118,8 +1119,8 @@ Interpreter.customMethods({
 					 let type = vq_obj.getType();
 					if(type === "query") return true;
 				}
-			}
-		}
+			// }
+		// }
 		return false;
 	},
 	

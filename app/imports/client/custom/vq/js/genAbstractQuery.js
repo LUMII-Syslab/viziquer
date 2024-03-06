@@ -1355,9 +1355,10 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 		  if (proj.allowTopDownNamesInBINDs) {
             proj_params.allowTopDownNamesInBINDs = proj.allowTopDownNamesInBINDs;
           };
-		  if (proj.showGraphServiceCompartments) {
-            proj_params.showGraphServiceCompartments = proj.showGraphServiceCompartments;
-          };
+		  // if (proj.showGraphServiceCompartments) {
+            // proj_params.showGraphServiceCompartments = proj.showGraphServiceCompartments;
+          // };
+		  proj_params.showGraphServiceCompartments = true;
 		  if (proj.endpointUsername) {
             proj_params.endpointUsername = proj.endpointUsername;
           };
@@ -1367,9 +1368,9 @@ const genAbstractQueryForElementList = async function (element_id_list, virtual_
 		  if (proj.schema) {
             proj_params.schema = proj.schema;
           };
-		  if (proj.graphsInstructions) {
-            proj_params.graphsInstructions = proj.graphsInstructions;
-          };
+		  // if (proj.graphsInstructions) {
+            // proj_params.graphsInstructions = proj.graphsInstructions;
+          // };
           return proj_params;
      }
    };
@@ -1558,16 +1559,15 @@ function checkIfInstanceIsConstantOrVariable(instanceAlias, instanceMode){
 
 function getGraphFullForm(graph, prefixes){
 
-	 var proj = Projects.findOne({_id: Session.get("activeProject")});
-   	 if (proj && proj.graphsInstructions) {
+	 // var proj = Projects.findOne({_id: Session.get("activeProject")});
+   	 // if (proj && proj.graphsInstructions) {
 		
-		var graphs = JSON.parse(proj.graphsInstructions)
-		//for(var g in graphs){
-		for (let g = 0; g < graphs.length; g++) {
-			if(graphs[g]["Graph/Service shorthand"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Expansion (e.g., URI)"]+">";
-		}
+		// var graphs = JSON.parse(proj.graphsInstructions)
+		// for (let g = 0; g < graphs.length; g++) {
+			// if(graphs[g]["Graph/Service shorthand"].toLowerCase() == graph.toLowerCase()) return graph = "<"+graphs[g]["Expansion (e.g., URI)"]+">";
+		// }
 
-     }
+     // }
 	
 	var graphIsUri = isURI(graph)
 	if(graphIsUri == 4){
