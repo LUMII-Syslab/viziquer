@@ -5,7 +5,7 @@
 	<!-- Modal for new document -->
     <div id="VQ-DSS-schema" class="modal fade" data-backdrop="static" data-keyboard="false">
         
-        <div class="modal-dialog" style="width:750px">
+        <div class="modal-dialog" style="width:1000px">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -14,8 +14,8 @@
 					{{else}}
 						
 					<ul class="nav nav-tabs" id="vq-tab">
-						  <li class="active"><a data-toggle="tab" href="#main">Main</a></li>
-						  <li><a data-toggle="tab" href="#todo">To Do</a></li>
+						  <li class="active"><a data-toggle="tab" href="#main">Classes and properties</a></li>
+						  <li><a data-toggle="tab" href="#todo">Groups</a></li>
 						  <li><a data-toggle="tab" href="#support">Support</a></li>
 					  </ul>
 					  <div class="tab-content" style="overflow:auto; height:800px;">
@@ -26,14 +26,9 @@
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
-										<!-- <select class="form-control" id="classCount" {{filterDisabled}}> -->
-											<!-- {{#each classCount}} -->
-												<!-- <option style="height:30px" {{selected}} value="{{value}}">{{name}}</option> -->
-											<!-- {{/each}} -->
-										<!-- </select> -->
 										<div class="slidecontainer">
-										  <p><span id="classCount-slider-span">0</span> classes in the diagram</p>
-										  <input type="range" min="0" max={{classCountAll}} value="0" class="slider" id="classCount">
+											<p><span id="classCount-slider-span"> </span>Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
+											<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
 										</div>
 										
 										<select class="form-control" id="nsFilter" {{filterDisabled}}>
@@ -43,50 +38,24 @@
 										</select>
 									</div>
 									<div class="col-sm-6">
-										<select class="form-control" id="indCount" {{filterDisabled}}>
-											{{#each indCount}}
-												<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-											{{/each}}
-										</select>
 										<select class="form-control" id="sortPar" >
-											  <option selected value=1 >Sort by count</option>
-											  <option value=2 >Sort by namespaces</option>
+											<option selected value=1 >Sort by class weight</option>
+											<option value=3 >Sort by in class ind. count</option>
+											<option value=4 >Sort by in prop. count</option>
+											<option value=2 >Sort by namespaces</option>
 										</select>
 									</div>
 								</div>
 							</div>
 							<div class="explain-form-group">
-							   <span>  </span>
-							</div>		
+								<span>  </span>
+							 </div>
 							<div class="explain-form-group">
 							   <span>Manual class list selection</span>
 									<label class="form-check-label">
 										<input class="form-check-input" id="manual" name="manual" index = 1 type="checkbox" >
 										<span class="custom-checkbox"></span>
 									</label>
-							</div>
-							<div class="container-fluid">
-								<div class="row" >
-									<div class="col-sm-6">
-										<!-- <div class="form-group"> -->
-											<!-- <button id="removeSelected" type="button" class="btn btn-primary" {{manualDisabled}}>Remove selected (multi select)</button> -->
-										<!-- </div> -->
-										<div class="form-group">
-											<button id="removeAll" type="button" class="btn btn-primary" {{manualDisabled}}>Remove all</button>
-										</div>
-									</div>
-									<div class="col-sm-6">
-										<!-- <div class="form-group"> -->
-											<!-- <button id="addSelected" type="button" class="btn btn-primary" {{manualDisabled}}>Add selected (multi select)</button> -->
-										<!-- </div> -->
-										<div class="form-group">
-											<button id="addWithN" type="button" class="btn btn-primary" {{manualDisabled}}>Add one selected with neighbors</button>
-										</div>
-									</div>
-								</div>
-							</div>	
-							<div class="explain-form-group" style="padding-bottom:1px;">
-							   <span>Class lists:</span>
 							</div>
 							<div class="container-fluid">
 								<div class="row">
@@ -101,9 +70,9 @@
 							
 							<div class="container-fluid">
 									<div style="display: inline-block; vertical-align:top;">
-										<select class="form-select" id="selectedClasses" size="20" multiple aria-label="multiple select 1" style="width: 280px;">
+										<select class="form-select" id="selectedClasses" size="15" multiple aria-label="multiple select 1" style="width: 400px;">
 											{{#each classes}}
-												<option value="{{id}}" >{{display_name}}</option>
+												<option value="{{id}}" {{selected}}>{{display_name}} </option>
 											{{/each}}
 										</select>						
 									</div>
@@ -112,84 +81,50 @@
 										<button id="addSelected" type="button" class="btn btn-primary" {{manualDisabled}}>&larr;</button>
 									</div>
 									<div style="display: inline-block; vertical-align:top;">
-										<select class="form-select" id="restClasses" size="20" multiple aria-label="multiple select 2" style="width: 280px;">
+										<select class="form-select" id="restClasses" size="15" multiple aria-label="multiple select 2" style="width: 400px;">
 											{{#each restClasses}}
-												<option value="{{id}}">{{display_name}}</option>
+												<option value="{{id}}" {{selected}}>{{display_name}}</option>
 											{{/each}}
 										</select>					
 									</div>
 							</div>
-							
-							<div class="explain-form-group">
-							   <span>  </span>
-							</div>
-							<div class="explain-form-group">
-							   <span>Diagram parameters:</span>
-							</div>
-							
+
+							<div class="form-group">
+								<button id="getProperties" type="button" class="btn btn-primary">Show all properties</button>
+							</div>							
 							<div class="container-fluid">
 								<div class="row">
-									<div class="col-sm-5">
-										<div class="form-group">
-											<button id="getProperties" type="button" class="btn btn-primary">Show all properties</button>
-										</div>
-										<div class="form-group">
-											<button id="removeProperties" type="button" class="btn btn-primary">Remove selected properties</button>
-										</div>
-										<label> Make superclasses based on: </label>
-										<select class="form-control" id="superclassType" >
-											{{#each superclassType}}
-												<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
-											{{/each}}
-										</select>
-										<select class="form-control" id="disconnBig" >
-											  <option selected value=7 >Disconnect prop > 7 </option>
-											  <option value=10 >Disconnect prop > 10 </option>
-											  <option value=0 >Show all properties</option>
-										</select>
-										<label class="form-check-label">
-											<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
-											<span class="custom-checkbox"></span>
-											Compact attribute view
-										</label>
-										<select class="form-control" id="diffG" >
-											<option value=0 >Without grouping</option>
-											<option value=1 >Very weak grouping (diff-1) </option>
-											<option value=2 >Weak grouping (diff-1,2) </option>
-											<option selected value=5 >Basic grouping (diff under 5)</option>
-											<option value=10 >Strong grouping (diff under 10) </option>
-										</select>
-										<!-- <select class="form-control" id="diffS" > -->
-											<!-- <option value=-1 >Sup. sim. -1 </option> -->
-											<!-- <option value=5 >Sup. sim. 5 </option> -->
-											<!-- <option value=25 >Sup. sim. 25 </option> -->
-											<!-- <option selected value=50 >Sup. sim. 50 </option> -->
-										<!-- </select> -->
-										<div class="slidecontainer">
-										  <p>Sup. sim. <span id="diffS-slider-span">50</span></p>
-										  <input type="range" min="-1" max="50" value="50" class="slider" id="diffS">
-										</div>
-										<label class="form-check-label">
-											<input class="form-check-input" name = "remS" id="remS" type="checkbox">
-											<span class="custom-checkbox"></span>
-											Remove small properties
-										</label>						
-										<label class="form-check-label">
-											<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
-											<span class="custom-checkbox"></span>
-											Show DB IDs in names
-										</label>						
+									<div class="col-sm-6">
+										<label>Selected properties ({{propCount}})</label>
 									</div>
-									<div class="col-sm-7">
-										<select class="form-select" id="selectedProperties" size="20" multiple aria-label="multiple select 3">
-											{{#each properties}}
-												<option value="{{id}}">{{p_name}}</option>
-											{{/each}}
-										</select>	
+									<div class="col-sm-6">
+										<label>Rest properties ({{propCountRest}})</label>
 									</div>
 								</div>
 							</div>				
-							
+
+							<div class="container-fluid">
+								<div style="display: inline-block; vertical-align:top;">
+									<select class="form-select" id="selectedProperties" multiple size="15" style="width: 400px;">
+										{{#each properties}}
+											<option value="{{id}}">{{p_name}} </option>
+										{{/each}}
+									</select>						
+								</div>
+								<div style="display: inline-block; vertical-align:top;">
+									<button id="removeSelectedProp" type="button" class="btn btn-primary" >&rarr;</button>
+									<button id="addSelectedProp" type="button" class="btn btn-primary">&larr;</button>
+								</div>
+								<div style="display: inline-block; vertical-align:top;">
+									<select class="form-select" id="restProperties" multiple size="15"  style="width: 400px;">
+										{{#each restProperties}}
+											<option value="{{id}}">{{p_name}}</option>
+										{{/each}}
+									</select>					
+								</div>
+							</div>
+
+
 							<div class="container-fluid">
 								<div class="row">
 									<!-- <div class="col-sm-6"> -->
@@ -198,22 +133,108 @@
 										<!-- </div> -->
 									<!-- </div> -->
 									<div class="col-sm-6">
-										<div class="form-group">
-											<button id="makeDiagr2" type="button" class="btn btn-primary">Property summarization</button>
-										</div>
-										<div class="form-group">
-											<button id="calck" type="button" class="btn btn-primary">Calculate  class count</button>
-										</div>
+
 									</div>
 								</div>
 							</div>	
 						  </div>
 						  <!-- //////////////////////////////////////// -->
 						  <div id="todo" class="tab-pane fade">
-							
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-6">
+											<select class="form-control" id="supPar" >
+												<option select value=1 >Savelk kopā vispārināšanas virknes</option>
+												<option value=0 >Atstāj Shēmas vispārināšanas</option>
+												<option value=2 >Savelk kopā Shēmas vispārināšanas</option>
+											</select>
+											<select class="form-control" id="diffG" >
+												<option value=0 >Without grouping</option>
+												<option value=1 >Very weak grouping (diff-1) </option>
+												<option value=2 >Weak grouping (diff-1,2) </option>
+												<option selected value=5 >Basic grouping (diff under 5)</option>
+												<option value=10 >Strong grouping (diff under 10) </option>
+											</select>
+											<select class="form-control" id="diffS" >
+												<option value=-1 >Without superclasses </option>
+												<option value=5 >Zems līdzības līmenis veidojot virsklases</option>
+												<option value=25 >Vidējs līdzības līmenis veidojot virsklases</option>
+												<option selected value=50 >Augsts līdzības līmenis veidojot virsklases</option>
+											</select>
+
+										</div>
+									</div>	
+									<div class="form-group">
+										<button id="showClassess" type="button" class="btn btn-primary">Show initial classes and properties</button>
+									</div>
+								</div>
+								<span>Class count- {{classCountUsed}}, groups - {{classCountGroups}} </span>
+								<div class="container-fluid">
+									<div style="display: inline-block; vertical-align:top;">
+										<select class="form-select" id="usedClasses" size="30" style="width: 300px;">
+											{{#each usedClasses}}
+												<option value={{id}} {{selected}}> {{display_name}} </option>
+											{{/each}}
+										</select>						
+									</div>
+									<div style="display: inline-block; vertical-align:top;">
+										<select class="form-select" id="subClasses" size="30" style="width: 300px;">
+											{{#each subClasses}}
+												<option value={{id}} {{selected}}>{{display_name}}</option>
+											{{/each}}
+										</select>					
+									</div>
+									<div style="display: inline-block; vertical-align:top;">
+										<select class="form-select" id="classProperties" size="30" multiple style="width: 300px;">
+											{{#each classProperties}}
+												<option value={{id}} {{selected}}>{{display_name}}</option>
+											{{/each}}
+										</select>					
+									</div>
+								</div>
+								<div class="container-fluid">
+									<div class="form-group">
+										<button id="showGroups" type="button" class="btn btn-primary">Show groups -(skos:altLabel,skos:prefLabel,rdf:type)</button>
+									</div>
+									<div class="slidecontainer"  style="width: 300px;">
+										<p>Abstraktās virsklases <span id="diffS-slider-span">50</span></p>
+										<input type="range" min="-1" max="50" value="50" class="slider" id="diffS">
+									  </div>
+								</div>
 						  </div>
-						   <div id="support" class="tab-pane fade">
-						   
+
+						  <div id="support" class="tab-pane fade">
+							<div class="explain-form-group">
+								<span>  </span>
+							 </div>
+							 <div class="explain-form-group">
+								<span>Diagram parameters:</span>
+							 </div>  
+							 <select class="form-control" id="disconnBig" >
+								<option selected value=7 >Disconnect prop > 7 </option>
+								<option value=10 >Disconnect prop > 10 </option>
+								<option value=0 >Show all properties</option>
+							</select>
+							<label class="form-check-label">
+								<input class="form-check-input" name = "compView" id="compView" type="checkbox" checked = "checked">
+								<span class="custom-checkbox"></span>
+								Compact attribute view
+							</label>
+							<label class="form-check-label">
+								<input class="form-check-input" name = "addIds" id="addIds" type="checkbox">
+								<span class="custom-checkbox"></span>
+								Show DB IDs in names
+							</label>
+							<div class="form-group">
+								<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate class count</button>
+							</div>
+							<div class="form-group">
+								<button id="printGroups" type="button" class="btn btn-primary" data-dismiss="modal">Print groups</button>
+							</div>
+							<div class="form-group">
+								<button id="printDiffs" type="button" class="btn btn-primary" data-dismiss="modal">Print diffs</button>
+							</div>
+
 						  </div>
 					  </div>
 						
