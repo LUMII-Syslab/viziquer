@@ -1,0 +1,815 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="2833" height="1074" viewBox="0 0 2833 1074">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002686110"><polygon points="230,473 530,473 530,630 230,630 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="227,476 527,476 527,633 227,633 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="247" y="491">meshvocab:AllowedDescriptorQualifierPair or </tspan>
+<tspan x="246" y="507">meshvocab:DisallowedDescriptorQualifierPair </tspan>
+<tspan x="336" y="523">G105 (~6.8e6)</tspan>
+</text>
+<line x1="231" y1="526" x2="525" y2="526"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="231" y="538">meshvocab:active (6.8e5) [1] </tspan>
+<tspan x="231" y="553">meshvocab:lastActiveYear (5.3e4) [1] </tspan>
+<tspan x="231" y="568">rdf:type (6.8e6) [*]  -&gt;  owl:Class</tspan>
+<tspan x="231" y="583">rdfs:label (6.8e6) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="231" y="598">meshvocab:AllowedDescriptorQualifierPair (6.8e6)</tspan>
+<tspan x="231" y="613">meshvocab:DisallowedDescriptorQualifierPair (1.</tspan>
+<tspan x="231" y="628">1e4)</tspan>
+</text>
+</g>
+<g id="2002686121"><polygon points="1570,910 1870,910 1870,955 1570,955 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1644" y="925">owl:AnnotationProperty (1)</tspan>
+</text>
+<line x1="1574" y1="928" x2="1868" y2="928"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1574" y="940">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002686132"><polygon points="2082,627 2382,627 2382,872 2082,872 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2188" y="642">void:Dataset (1)</tspan>
+</text>
+<line x1="2086" y1="645" x2="2380" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2086" y="657">dct:created (1) [1] </tspan>
+<tspan x="2086" y="672">dct:creator (1) [1] </tspan>
+<tspan x="2086" y="687">dct:description (1) [1] </tspan>
+<tspan x="2086" y="702">dct:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="717">dct:publisher (1) [1] D</tspan>
+<tspan x="2086" y="732">dct:subject (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="747">dct:title (1) [1] </tspan>
+<tspan x="2086" y="762">foaf:homepage (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="777">foaf:page (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="792">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2086" y="807">rdfs:comment (1) [1] </tspan>
+<tspan x="2086" y="822">void:dataDump (6) [*] D</tspan>
+<tspan x="2086" y="837">void:feature (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="852">void:uriLookupEndpoint (1) [1] D -&gt; IRI</tspan>
+<tspan x="2086" y="867">void:uriSpace (1) [1] D</tspan>
+</text>
+</g>
+<g id="2002686143"><polygon points="671,387 971,387 971,542 671,542 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="741" y="402">meshvocab:Concept (4.6e6)</tspan>
+</text>
+<line x1="675" y1="405" x2="969" y2="405"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="675" y="417">meshvocab:active (4.7e5) [1] </tspan>
+<tspan x="675" y="432">meshvocab:casn1_label (2.5e5) [1] D</tspan>
+<tspan x="675" y="447">meshvocab:identifier (4.6e6) [1] </tspan>
+<tspan x="675" y="462">meshvocab:lastActiveYear (4454) [1] </tspan>
+<tspan x="675" y="477">meshvocab:registryNumber (3.7e6) [1] D</tspan>
+<tspan x="675" y="492">meshvocab:relatedRegistryNumber (4.4e5) [*] D</tspan>
+<tspan x="675" y="507">meshvocab:scopeNote (3.5e5) [1] D</tspan>
+<tspan x="675" y="522">rdf:type (4.6e6) [*]  -&gt;  owl:Class</tspan>
+<tspan x="675" y="537">rdfs:label (4.6e6) [*] </tspan>
+</text>
+</g>
+<g id="2002686154"><polygon points="896,723 1196,723 1196,969 896,969 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="893,726 1193,726 1193,972 893,972 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="898" y="741">meshvocab:GeographicalDescriptor or meshvocab:</tspan>
+<tspan x="956" y="757">PublicationType G103 (~6298)</tspan>
+</text>
+<line x1="897" y1="760" x2="1191" y2="760"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="897" y="772">meshvocab:active (590) [1] </tspan>
+<tspan x="897" y="787">meshvocab:annotation (3862) [1] </tspan>
+<tspan x="897" y="802">meshvocab:dateCreated (6298) [1] </tspan>
+<tspan x="897" y="817">meshvocab:dateEstablished (5764) [1] </tspan>
+<tspan x="897" y="832">meshvocab:dateRevised (6157) [1] </tspan>
+<tspan x="897" y="847">meshvocab:historyNote (3710) [1] </tspan>
+<tspan x="897" y="862">meshvocab:identifier (6298) [1] </tspan>
+<tspan x="897" y="877">meshvocab:nlmClassificationNumber (97) [1] </tspan>
+<tspan x="897" y="892">meshvocab:onlineNote (460) [1] </tspan>
+<tspan x="897" y="907">meshvocab:previousIndexing (728) [*] </tspan>
+<tspan x="897" y="922">rdf:type (6298) [*]  -&gt;  owl:Class</tspan>
+<tspan x="897" y="937">rdfs:label (6298) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="897" y="952">meshvocab:GeographicalDescriptor (4356)</tspan>
+<tspan x="897" y="967">meshvocab:PublicationType (1942)</tspan>
+</text>
+</g>
+<g id="2002686165"><polygon points="1870,138 2170,138 2170,218 1870,218 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1953" y="153">owl:ObjectProperty (21)</tspan>
+</text>
+<line x1="1874" y1="156" x2="2168" y2="156"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1874" y="168">dct:description (20) [1] </tspan>
+<tspan x="1874" y="183">rdf:type (22) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1874" y="198">rdfs:comment (20) [1] </tspan>
+<tspan x="1874" y="213">rdfs:label (20) [*] </tspan>
+</text>
+</g>
+<g id="2002686176"><polygon points="508,97 808,97 808,372 508,372 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="505,100 805,100 805,375 505,375 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="517" y="115">meshvocab:SCR_Chemical et al. G104 (~3.1e6)</tspan>
+</text>
+<line x1="509" y1="118" x2="803" y2="118"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="509" y="130">meshvocab:active (3.3e5) [1] </tspan>
+<tspan x="509" y="145">meshvocab:dateCreated (3.1e6) [1] </tspan>
+<tspan x="509" y="160">meshvocab:dateRevised (2.3e6) [1] </tspan>
+<tspan x="509" y="175">meshvocab:frequency (3.1e6) [1] </tspan>
+<tspan x="509" y="190">meshvocab:identifier (3.1e6) [1] </tspan>
+<tspan x="509" y="205">meshvocab:lastActiveYear (3528) [1] </tspan>
+<tspan x="509" y="220">meshvocab:note (2.3e6) [1] </tspan>
+<tspan x="509" y="235">meshvocab:previousIndexing (5.8e5) [*] </tspan>
+<tspan x="509" y="250">meshvocab:source (2.7e6) [*] </tspan>
+<tspan x="509" y="265">rdf:type (3.1e6) [*]  -&gt;  owl:Class</tspan>
+<tspan x="509" y="280">rdfs:label (3.1e6) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="509" y="295">meshvocab:SCR_Anatomy (47)</tspan>
+<tspan x="509" y="310">meshvocab:SCR_Chemical (2.7e6)</tspan>
+<tspan x="509" y="325">meshvocab:SCR_Disease (7.2e4)</tspan>
+<tspan x="509" y="340">meshvocab:SCR_Organism (3.5e5)</tspan>
+<tspan x="509" y="355">meshvocab:SCR_Population (5292)</tspan>
+<tspan x="509" y="370">meshvocab:SCR_Protocol (1.3e4)</tspan>
+</text>
+</g>
+<g id="2002686187"><polygon points="1812,16 2112,16 2112,126 1812,126 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1922" y="31">owl:Class (17)</tspan>
+</text>
+<line x1="1816" y1="34" x2="2110" y2="34"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1816" y="46">dct:description (17) [1] </tspan>
+<tspan x="1816" y="61">rdf:type (17) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1816" y="76">rdfs:comment (17) [1] </tspan>
+<tspan x="1816" y="91">rdfs:label (17) [*] </tspan>
+<tspan x="1816" y="106">&lt;-rdf:type (2.4e7)  &lt;-  void:DatasetDescription,sd:</tspan>
+<tspan x="1816" y="121">Service..(19)</tspan>
+</text>
+</g>
+<g id="2002686198"><polygon points="1205,121 1505,121 1505,276 1205,276 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1279" y="136">meshvocab:CheckTag (22)</tspan>
+</text>
+<line x1="1209" y1="139" x2="1503" y2="139"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1209" y="151">meshvocab:active (2) [1] </tspan>
+<tspan x="1209" y="166">meshvocab:annotation (22) [1] </tspan>
+<tspan x="1209" y="181">meshvocab:dateCreated (22) [1] </tspan>
+<tspan x="1209" y="196">meshvocab:dateEstablished (18) [1] </tspan>
+<tspan x="1209" y="211">meshvocab:dateRevised (22) [1] </tspan>
+<tspan x="1209" y="226">meshvocab:historyNote (22) [1] </tspan>
+<tspan x="1209" y="241">meshvocab:identifier (22) [1] </tspan>
+<tspan x="1209" y="256">rdf:type (22) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1209" y="271">rdfs:label (22) [*] </tspan>
+</text>
+</g>
+<g id="2002686209"><polygon points="2523,691 2823,691 2823,771 2523,771 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2634" y="706">sd:Service (1)</tspan>
+</text>
+<line x1="2527" y1="709" x2="2821" y2="709"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2527" y="721">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2527" y="736">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="2527" y="751">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="2527" y="766">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002686220"><polygon points="1936,878 2236,878 2236,928 1936,928 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2040" y="893">owl:Ontology (1)</tspan>
+</text>
+<line x1="1940" y1="896" x2="2234" y2="896"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1940" y="908">owl:versionInfo (1) [1] </tspan>
+<tspan x="1940" y="923">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002686231"><polygon points="1624,635 1924,635 1924,880 1624,880 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1668" y="650">meshvocab:TopicalDescriptor (3.2e5)</tspan>
+</text>
+<line x1="1628" y1="653" x2="1922" y2="653"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1628" y="665">meshvocab:active (3.0e4) [1] </tspan>
+<tspan x="1628" y="680">meshvocab:annotation (1.4e5) [1] </tspan>
+<tspan x="1628" y="695">meshvocab:considerAlso (729) [1] D</tspan>
+<tspan x="1628" y="710">meshvocab:dateCreated (3.2e5) [1] </tspan>
+<tspan x="1628" y="725">meshvocab:dateEstablished (3.1e5) [1] </tspan>
+<tspan x="1628" y="740">meshvocab:dateRevised (3.0e5) [1] </tspan>
+<tspan x="1628" y="755">meshvocab:historyNote (2.8e5) [1] </tspan>
+<tspan x="1628" y="770">meshvocab:identifier (3.2e5) [1] </tspan>
+<tspan x="1628" y="785">meshvocab:lastActiveYear (76) [1] </tspan>
+<tspan x="1628" y="800">meshvocab:nlmClassificationNumber (6.2e4) [1] </tspan>
+<tspan x="1628" y="815">meshvocab:onlineNote (3.3e4) [1] </tspan>
+<tspan x="1628" y="830">meshvocab:previousIndexing (2.9e5) [*] </tspan>
+<tspan x="1628" y="845">meshvocab:publicMeSHNote (2.7e5) [1] D</tspan>
+<tspan x="1628" y="860">rdf:type (3.2e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1628" y="875">rdfs:label (3.2e5) [*] </tspan>
+</text>
+</g>
+<g id="2002686242"><polygon points="2060,503 2360,503 2360,613 2060,613 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2133" y="518">void:DatasetDescription (1)</tspan>
+</text>
+<line x1="2064" y1="521" x2="2358" y2="521"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2064" y="533">dct:creator (1) [1] </tspan>
+<tspan x="2064" y="548">dct:date (1) [1] D</tspan>
+<tspan x="2064" y="563">dct:description (1) [1] </tspan>
+<tspan x="2064" y="578">dct:title (1) [1] </tspan>
+<tspan x="2064" y="593">owl:versionInfo (1) [1] </tspan>
+<tspan x="2064" y="608">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002686253"><polygon points="2286,78 2586,78 2586,182 2286,182 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2362" y="93">owl:DatatypeProperty (28)</tspan>
+</text>
+<line x1="2290" y1="96" x2="2584" y2="96"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2290" y="108">dct:description (27) [1] </tspan>
+<tspan x="2290" y="123">rdf:type (28) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2290" y="138">rdfs:comment (27) [1] </tspan>
+<tspan x="2290" y="153">rdfs:label (27) [*] </tspan>
+</text>
+</g>
+<g id="2002686264"><polygon points="1384,282 1684,282 1684,482 1384,482 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1464" y="297">meshvocab:Term (8.5e6)</tspan>
+</text>
+<line x1="1388" y1="300" x2="1682" y2="300"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1388" y="312">meshvocab:abbreviation (873) [1] D</tspan>
+<tspan x="1388" y="327">meshvocab:active (8.7e5) [1] </tspan>
+<tspan x="1388" y="342">meshvocab:altLabel (1.3e6) [*] D</tspan>
+<tspan x="1388" y="357">meshvocab:dateCreated (6.0e6) [1] </tspan>
+<tspan x="1388" y="372">meshvocab:entryVersion (1.8e5) [1] D</tspan>
+<tspan x="1388" y="387">meshvocab:identifier (8.5e6) [1] </tspan>
+<tspan x="1388" y="402">meshvocab:lastActiveYear (1.3e4) [1] </tspan>
+<tspan x="1388" y="417">meshvocab:lexicalTag (8.5e6) [1] D</tspan>
+<tspan x="1388" y="432">meshvocab:prefLabel (8.5e6) [1] D</tspan>
+<tspan x="1388" y="447">meshvocab:sortVersion (4.3e4) [1] D</tspan>
+<tspan x="1388" y="462">meshvocab:thesaurusID (9.0e6) [*] D</tspan>
+<tspan x="1388" y="477">rdf:type (8.5e6) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002686275"><polygon points="1143,984 1443,984 1443,1064 1143,1064 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1202" y="999">meshvocab:TreeNumber (6.8e5)</tspan>
+</text>
+<line x1="1147" y1="1002" x2="1441" y2="1002"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1147" y="1014">meshvocab:active (8.2e4) [1] </tspan>
+<tspan x="1147" y="1029">meshvocab:lastActiveYear (1.7e4) [1] </tspan>
+<tspan x="1147" y="1044">rdf:type (6.8e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1147" y="1059">rdfs:label (6.8e5) [*] </tspan>
+</text>
+</g>
+<g id="2002686286"><polygon points="1876,237 2176,237 2176,282 1876,282 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1954" y="252">owl:TransitiveProperty (1)</tspan>
+</text>
+</g>
+<g id="2002686297"><polygon points="204,645 504,645 504,830 204,830 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="280" y="660">meshvocab:Qualifier (864)</tspan>
+</text>
+<line x1="208" y1="663" x2="502" y2="663"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="208" y="675">meshvocab:active (84) [1] </tspan>
+<tspan x="208" y="690">meshvocab:annotation (864) [1] </tspan>
+<tspan x="208" y="705">meshvocab:dateCreated (864) [1] </tspan>
+<tspan x="208" y="720">meshvocab:dateEstablished (864) [1] </tspan>
+<tspan x="208" y="735">meshvocab:dateRevised (864) [1] </tspan>
+<tspan x="208" y="750">meshvocab:historyNote (864) [1] </tspan>
+<tspan x="208" y="765">meshvocab:identifier (864) [1] </tspan>
+<tspan x="208" y="780">meshvocab:lastActiveYear (8) [1] </tspan>
+<tspan x="208" y="795">meshvocab:onlineNote (844) [1] </tspan>
+<tspan x="208" y="810">rdf:type (864) [*]  -&gt;  owl:Class</tspan>
+<tspan x="208" y="825">rdfs:label (864) [*] </tspan>
+</text>
+</g>
+<g id="2002685903"><path d="M227,555 L75,555 71,553 69,549 69,438 71,434 75,432 260,432 264,434 266,438 266,476 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="263" y1="470" x2="266" y2="476"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="269" y1="470" x2="266" y2="476"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="79" y="568">meshvocab:useInstead  D</tspan>
+</text>
+</g>
+<g id="2002685908"><path d="M1624,778 L1378,778 1374,776 1372,772 1372,491 1370,487 1366,485 971,485 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="977" y1="482" x2="971" y2="485"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="977" y1="488" x2="971" y2="485"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1442" y="791">meshvocab:preferredConcept  R</tspan>
+<tspan x="1442" y="806">meshvocab:concept  R</tspan>
+</text>
+</g>
+<g id="2002685913"><path d="M893,882 L706,882 702,880 700,876 700,542 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="697" y1="548" x2="700" y2="542"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="703" y1="548" x2="700" y2="542"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="711" y="895">meshvocab:preferredConcept  R</tspan>
+<tspan x="711" y="910">meshvocab:concept  R</tspan>
+</text>
+</g>
+<g id="2002685918"><path d="M504,708 L1384,708 1388,706 1390,702 1390,482 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1387" y1="488" x2="1390" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1393" y1="488" x2="1390" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="508" y="706">meshvocab:preferredTerm  R</tspan>
+</text>
+</g>
+<g id="2002685923"><path d="M1624,863 L1404,863 1400,865 1398,869 1398,984 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1395" y1="978" x2="1398" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1401" y1="978" x2="1398" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1472" y="876">meshvocab:treeNumber  R</tspan>
+</text>
+</g>
+<g id="2002685928"><path d="M204,738 L16,738 12,736 10,732 10,645 12,641 16,639 354,639 354,645 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="351" y1="639" x2="354" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="357" y1="639" x2="354" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="20" y="751">meshvocab:broaderQualifier  DR</tspan>
+</text>
+</g>
+<g id="2002685933"><path d="M1624,658 L1420,658 1416,656 1414,652 1414,612 1416,608 1420,606 1768,606 1772,608 1774,612 1774,635 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1771" y1="629" x2="1774" y2="635"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1777" y1="629" x2="1774" y2="635"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1422" y="671">meshvocab:broaderDescriptor  </tspan>
+<tspan x="1422" y="686">meshvocab:pharmacologicalAction  </tspan>
+<tspan x="1422" y="701">R</tspan>
+<tspan x="1422" y="716">meshvocab:seeAlso  </tspan>
+</text>
+</g>
+<g id="2002685938"><path d="M2286,120 L2112,120 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2118" y1="117" x2="2112" y2="120"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2118" y1="123" x2="2112" y2="120"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2220" y="133">rdfs:range  </tspan>
+</text>
+</g>
+<g id="2002685943"><path d="M1193,915 L1347,915 1351,917 1353,921 1353,984 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1350" y1="978" x2="1353" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1356" y1="978" x2="1353" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1197" y="913">meshvocab:treeNumber  R</tspan>
+</text>
+</g>
+<g id="2002685948"><path d="M2286,84 L2124,84 2120,82 2118,78 2118,78 2120,74 2124,72 2436,72 2436,78 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2433" y1="72" x2="2436" y2="78"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2439" y1="72" x2="2436" y2="78"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2126" y="97">owl:propertyDisjointWith  DR</tspan>
+<tspan x="2126" y="112">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002685953"><path d="M1143,1011 L676,1011 672,1009 670,1005 670,984 672,980 676,978 1248,978 1248,984 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1245" y1="978" x2="1248" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1251" y1="978" x2="1248" y2="984"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="943" y="1024">meshvocab:parentTreeNumber  DR</tspan>
+</text>
+</g>
+<g id="2002685958"><path d="M1505,198 L1672,198 1676,200 1678,204 1678,282 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1675" y1="276" x2="1678" y2="282"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1681" y1="276" x2="1678" y2="282"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1509" y="196">meshvocab:preferredTerm  R</tspan>
+</text>
+</g>
+<g id="2002685963"><path d="M805,369 L1372,369 1376,371 1378,375 1378,765 1380,769 1384,771 1624,771 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="768" x2="1624" y2="771"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="774" x2="1624" y2="771"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="809" y="307">meshvocab:preferredMappedTo  </tspan>
+<tspan x="809" y="322">meshvocab:indexerConsiderAlso  </tspan>
+<tspan x="809" y="337">meshvocab:pharmacologicalAction  </tspan>
+<tspan x="809" y="352">R</tspan>
+<tspan x="809" y="367">meshvocab:mappedTo  </tspan>
+</text>
+</g>
+<g id="2002685968"><path d="M2082,755 L1924,755 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1930" y1="752" x2="1924" y2="755"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1930" y1="758" x2="1924" y2="755"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1928" y="768">void:exampleResource  DR</tspan>
+</text>
+</g>
+<g id="2002685973"><path d="M1624,748 L1408,748 1404,746 1402,742 1402,720 1400,716 1396,714 504,714 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="711" x2="504" y2="714"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="717" x2="504" y2="714"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1439" y="761">meshvocab:allowableQualifier  R</tspan>
+</text>
+</g>
+<g id="2002685978"><path d="M2082,813 L1936,813 1932,815 1930,819 1930,903 1936,903 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1930" y1="900" x2="1936" y2="903"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1930" y1="906" x2="1936" y2="903"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1980" y="826">void:vocabulary  D</tspan>
+</text>
+</g>
+<g id="2002685983"><path d="M1870,186 L1750,186 1746,184 1744,180 1744,95 1746,91 1750,89 1812,89 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1806" y1="86" x2="1812" y2="89"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1806" y1="92" x2="1812" y2="89"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1776" y="199">rdfs:range  </tspan>
+<tspan x="1776" y="214">rdfs:domain  DR</tspan>
+</text>
+</g>
+<g id="2002685988"><path d="M1870,162 L1756,162 1752,160 1750,156 1750,138 1752,134 1756,132 2020,132 2020,138 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2017" y1="132" x2="2020" y2="138"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2023" y1="132" x2="2020" y2="138"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1758" y="175">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002685993"><path d="M971,429 L1384,429 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1378" y1="426" x2="1384" y2="429"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1378" y1="432" x2="1384" y2="429"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="975" y="412">meshvocab:preferredTerm  R</tspan>
+<tspan x="975" y="427">meshvocab:term  DR</tspan>
+</text>
+</g>
+<g id="2002685998"><path d="M2286,144 L2170,144 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2176" y1="141" x2="2170" y2="144"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2176" y1="147" x2="2170" y2="144"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2174" y="157">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002686003"><path d="M2170,176 L2286,176 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2280" y1="173" x2="2286" y2="176"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2280" y1="179" x2="2286" y2="176"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2174" y="174">rdfs:subPropertyOf  </tspan>
+</text>
+</g>
+<g id="2002686008"><path d="M1193,857 L1624,857 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="854" x2="1624" y2="857"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="860" x2="1624" y2="857"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1197" y="840">meshvocab:broaderDescriptor  </tspan>
+<tspan x="1197" y="855">meshvocab:seeAlso  </tspan>
+</text>
+</g>
+<g id="2002686013"><path d="M527,578 L1360,578 1364,580 1366,584 1366,808 1368,812 1372,814 1624,814 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="811" x2="1624" y2="814"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1618" y1="817" x2="1624" y2="814"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="531" y="561">meshvocab:hasDescriptor  </tspan>
+<tspan x="531" y="576">meshvocab:useInstead  D</tspan>
+</text>
+</g>
+<g id="2002686018"><path d="M2382,752 L2523,752 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2517" y1="749" x2="2523" y2="752"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2517" y1="755" x2="2523" y2="752"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2386" y="750">void:sparqlEndpoint  DR</tspan>
+</text>
+</g>
+<g id="2002686023"><path d="M527,620 L682,620 686,622 688,626 688,645 686,649 682,651 504,651 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="648" x2="504" y2="651"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="654" x2="504" y2="651"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="531" y="618">meshvocab:hasQualifier  R</tspan>
+</text>
+</g>
+<g id="2002686028"><path d="M893,756 L712,756 708,754 706,750 706,726 708,722 712,720 993,720 993,726 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="990" y1="720" x2="993" y2="726"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="996" y1="720" x2="993" y2="726"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="716" y="769">meshvocab:broaderDescriptor  </tspan>
+<tspan x="716" y="784">meshvocab:seeAlso  </tspan>
+</text>
+</g>
+<g id="2002686033"><path d="M504,813 L658,813 662,815 664,819 664,1032 666,1036 670,1038 1143,1038 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1137" y1="1035" x2="1143" y2="1038"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1137" y1="1041" x2="1143" y2="1038"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="508" y="811">meshvocab:treeNumber  R</tspan>
+</text>
+</g>
+<g id="2002686038"><path d="M1193,765 L1390,765 1394,763 1396,759 1396,482 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1393" y1="488" x2="1396" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1399" y1="488" x2="1396" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1197" y="763">meshvocab:preferredTerm  R</tspan>
+</text>
+</g>
+<g id="2002686043"><path d="M1205,198 L1021,198 1017,200 1015,204 1015,387 1013,391 1009,393 971,393 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="977" y1="390" x2="971" y2="393"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="977" y1="396" x2="971" y2="393"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1023" y="211">meshvocab:preferredConcept  R</tspan>
+</text>
+</g>
+<g id="2002686048"><path d="M504,687 L688,687 692,685 694,681 694,542 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="691" y1="548" x2="694" y2="542"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="697" y1="548" x2="694" y2="542"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="508" y="670">meshvocab:preferredConcept  R</tspan>
+<tspan x="508" y="685">meshvocab:concept  R</tspan>
+</text>
+</g>
+<g id="2002686053"><path d="M1624,724 L1414,724 1410,722 1408,718 1408,482 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1405" y1="488" x2="1408" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1411" y1="488" x2="1408" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1459" y="737">meshvocab:preferredTerm  R</tspan>
+</text>
+</g>
+<g id="2002686058"><path d="M1624,821 L1193,821 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1199" y1="818" x2="1193" y2="821"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1199" y1="824" x2="1193" y2="821"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1447" y="834">meshvocab:broaderDescriptor  </tspan>
+<tspan x="1447" y="849">meshvocab:seeAlso  </tspan>
+</text>
+</g>
+<g id="2002686063"><path d="M671,404 L323,404 319,402 317,398 317,387 319,383 323,381 821,381 821,387 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="818" y1="381" x2="821" y2="387"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="824" y1="381" x2="821" y2="387"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="481" y="417">meshvocab:narrowerConcept  DR</tspan>
+<tspan x="481" y="432">meshvocab:broaderConcept  DR</tspan>
+<tspan x="481" y="447">meshvocab:relatedConcept  DR</tspan>
+<tspan x="481" y="462">meshvocab:Concept  DR</tspan>
+</text>
+</g>
+<g id="2002686068"><path d="M2523,705 L2394,705 2390,703 2388,699 2388,690 2390,686 2394,684 2667,684 2671,686 2673,690 2673,691 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2670" y1="685" x2="2673" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2676" y1="685" x2="2673" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2430" y="718">sd:endpoint  DR</tspan>
+<tspan x="2430" y="733">sd:url  DR</tspan>
+</text>
+</g>
+<g id="2002686073"><path d="M893,792 L504,792 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="789" x2="504" y2="792"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="510" y1="795" x2="504" y2="792"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="708" y="805">meshvocab:allowableQualifier  R</tspan>
+</text>
+</g>
+<g id="2002686078"><path d="M2060,558 L1936,558 1932,560 1930,564 1930,685 1932,689 1936,691 2082,691 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2076" y1="688" x2="2082" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2076" y1="694" x2="2082" y2="691"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1938" y="571">foaf:primaryTopic  DR</tspan>
+</text>
+</g>
+<g id="2002686083"><path d="M805,288 L1384,288 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1378" y1="285" x2="1384" y2="288"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1378" y1="291" x2="1384" y2="288"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="809" y="286">meshvocab:preferredTerm  R</tspan>
+</text>
+</g>
+<g id="2002686088"><path d="M505,192 L311,192 307,194 305,198 305,476 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="302" y1="470" x2="305" y2="476"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="308" y1="470" x2="305" y2="476"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="313" y="205">meshvocab:preferredMappedTo  </tspan>
+<tspan x="313" y="220">meshvocab:indexerConsiderAlso  </tspan>
+<tspan x="313" y="235">meshvocab:mappedTo  </tspan>
+</text>
+</g>
+<g id="2002686093"><path d="M505,283 L317,283 313,285 311,289 311,464 313,468 317,470 671,470 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="665" y1="467" x2="671" y2="470"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="665" y1="473" x2="671" y2="470"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="323" y="296">meshvocab:preferredConcept  R</tspan>
+<tspan x="323" y="311">meshvocab:concept  R</tspan>
+</text>
+</g>
+<g id="2002686098"><path d="M1812,53 L1696,53 1692,51 1690,47 1690,16 1692,12 1696,10 1962,10 1962,16 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1959" y1="10" x2="1962" y2="16"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1965" y1="10" x2="1962" y2="16"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1698" y="66">owl:disjointWith  DR</tspan>
+<tspan x="1698" y="81">rdfs:subClassOf  </tspan>
+</text>
+</g>
+<g id="2002686103"><path d="M527,599 L1087,599 1091,601 1093,605 1093,726 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1090" y1="720" x2="1093" y2="726"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1096" y1="720" x2="1093" y2="726"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="531" y="597">meshvocab:hasDescriptor  </tspan>
+</text>
+</g>
+<g id="2002686108"><path d="M2023,218 L2023,237 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2028,228 2023,218 2018,228 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2025" y="233"> </tspan>
+</text>
+</g>
+</svg>

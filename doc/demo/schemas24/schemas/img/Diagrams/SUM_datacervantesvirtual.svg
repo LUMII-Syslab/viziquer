@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="810" height="504" viewBox="0 0 810 504">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002675455"><polygon points="177,99 477,99 477,494 177,494 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="257" y="114">geonames:Feature (703)</tspan>
+</text>
+<line x1="181" y1="117" x2="475" y2="117"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="181" y="129">geonames:alternateName (2.0e4) [*] D</tspan>
+<tspan x="181" y="144">geonames:childrenFeatures (43) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="159">geonames:countryCode (703) [1] D</tspan>
+<tspan x="181" y="174">geonames:featureClass (703) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="189">geonames:featureCode (703) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="204">geonames:locationMap (703) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="219">geonames:name (703) [1] D</tspan>
+<tspan x="181" y="234">geonames:nearbyFeatures (660) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="249">geonames:neighbouringFeatures (42) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="264">geonames:officialName (2256) [*] D</tspan>
+<tspan x="181" y="279">geonames:parentADM1 (659) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="294">geonames:parentADM2 (607) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="309">geonames:parentADM3 (546) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="324">geonames:parentADM4 (82) [1] D -&gt; IRI</tspan>
+<tspan x="181" y="339">geonames:population (636) [1] D</tspan>
+<tspan x="181" y="354">geonames:postalCode (4659) [*] D</tspan>
+<tspan x="181" y="369">geonames:shortName (103) [*] D</tspan>
+<tspan x="181" y="384">geonames:wikipediaArticle (826) [*] D -&gt; IRI</tspan>
+<tspan x="181" y="399">n10:alt (87) [1] D</tspan>
+<tspan x="181" y="414">n10:lat (703) [1] D</tspan>
+<tspan x="181" y="429">n10:long (703) [1] D</tspan>
+<tspan x="181" y="444">owl:sameAs (1243) [*]  -&gt; IRI</tspan>
+<tspan x="181" y="459">rdf:type (703) [*]  -&gt; IRI</tspan>
+<tspan x="181" y="474">rdfs:isDefinedBy (703) [*]  -&gt; IRI</tspan>
+<tspan x="181" y="489">rdfs:seeAlso (523) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002675466"><polygon points="166,13 466,13 466,78 166,78 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="192" y="28">http://www.w3.org/2006/time#Instant (1534)</tspan>
+</text>
+<line x1="170" y1="31" x2="464" y2="31"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="170" y="43">rdf:type () [*] </tspan>
+<tspan x="170" y="58">rdfs:label () [*] </tspan>
+<tspan x="170" y="73">time:inDateTime () [1] </tspan>
+</text>
+</g>
+<g id="2002675444"><polygon points="500,105 800,105 800,200 500,200 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="594" y="120">n7:Translation (153)</tspan>
+</text>
+<line x1="504" y1="123" x2="798" y2="123"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="504" y="135">n7:hasCountryCode (153) [1] D</tspan>
+<tspan x="504" y="150">n7:hasEnglishText (153) [1] D</tspan>
+<tspan x="504" y="165">n7:hasLatinText (153) [1] D</tspan>
+<tspan x="504" y="180">owl:sameAs (146) [*]  -&gt; IRI</tspan>
+<tspan x="504" y="195">rdf:type (153) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002675477"><polygon points="499,217 799,217 799,297 499,297 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="593" y="232">n14:C10007 (2.2e4)</tspan>
+</text>
+<line x1="503" y1="235" x2="797" y2="235"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="503" y="247">foaf:depiction (2.6e4) [1]  -&gt; IRI</tspan>
+<tspan x="503" y="262">n8:P30111 (2.6e4) [1] D -&gt; IRI</tspan>
+<tspan x="503" y="277">n8:title (2.7e4) [*] D</tspan>
+<tspan x="503" y="292">rdf:type (2.6e4) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002675439"><path d="M177,296 L16,296 12,294 10,290 10,99 12,95 16,93 327,93 327,99 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="324" y1="93" x2="327" y2="99"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="330" y1="93" x2="327" y2="99"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="18" y="309">geonames:parentFeature  D</tspan>
+<tspan x="18" y="324">geonames:parentCountry  D</tspan>
+</text>
+</g>
+</svg>

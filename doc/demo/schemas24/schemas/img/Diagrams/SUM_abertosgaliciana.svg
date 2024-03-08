@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="1506" height="786" viewBox="0 0 1506 786">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002685669"><polygon points="1196,163 1496,163 1496,438 1196,438 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1293" y="178">edm:Agent (1.5e5)</tspan>
+</text>
+<line x1="1200" y1="181" x2="1494" y2="181"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1200" y="193">edm:begin (585) [*] </tspan>
+<tspan x="1200" y="208">edm:end (580) [*] </tspan>
+<tspan x="1200" y="223">rdf:type (1.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="1200" y="238">rdvocab:biographicalInformation (683) [*] </tspan>
+<tspan x="1200" y="253">rdvocab:dateOfBirth (498) [*] </tspan>
+<tspan x="1200" y="268">rdvocab:dateOfDeath (524) [*] </tspan>
+<tspan x="1200" y="283">rdvocab:dateOfEstablishment (48) [1] </tspan>
+<tspan x="1200" y="298">rdvocab:dateOfTermination (30) [1] </tspan>
+<tspan x="1200" y="313">rdvocab:gender (691) [*] </tspan>
+<tspan x="1200" y="328">rdvocab:placeOfBirth (685) [*] </tspan>
+<tspan x="1200" y="343">rdvocab:placeOfDeath (597) [*] </tspan>
+<tspan x="1200" y="358">rdvocab:professionOrOccupation (3398) [*] </tspan>
+<tspan x="1200" y="373">skos:altLabel (4581) [*] </tspan>
+<tspan x="1200" y="388">skos:note (3710) [*] </tspan>
+<tspan x="1200" y="403">skos:prefLabel (1.5e5) [*] </tspan>
+<tspan x="1200" y="418">vocab:oaiSourceIdentifier (1.2e6) [*] </tspan>
+<tspan x="1200" y="433">vocab:oaiSourceRepository (1.5e5) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002685680"><polygon points="228,463 528,463 528,508 228,508 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="338" y="478">cc:License (4)</tspan>
+</text>
+</g>
+<g id="2002685735"><polygon points="484,711 784,711 784,776 484,776 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="498" y="726">edm:ProvidedCHO or cc:License S101 (~5.5e5)</tspan>
+</text>
+<line x1="488" y1="729" x2="782" y2="729"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="488" y="741">rdf:type (4) [1]  -&gt; IRI</tspan>
+<tspan x="488" y="756">vocab:oaiSourceIdentifier (1.1e5) [*] </tspan>
+<tspan x="488" y="771">vocab:oaiSourceRepository (4) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002685713"><polygon points="125,326 425,326 425,406 125,406 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="216" y="341">skos:Concept (4444)</tspan>
+</text>
+<line x1="129" y1="344" x2="423" y2="344"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="129" y="356">rdf:type (4444) [1]  -&gt; IRI</tspan>
+<tspan x="129" y="371">skos:altLabel (6737) [*] </tspan>
+<tspan x="129" y="386">skos:note (2800) [*] </tspan>
+<tspan x="129" y="401">skos:prefLabel (4444) [*] </tspan>
+</text>
+</g>
+<g id="2002685691"><polygon points="87,540 387,540 387,680 87,680 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="170" y="555">ore:Aggregation (5.5e5)</tspan>
+</text>
+<line x1="91" y1="558" x2="385" y2="558"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="91" y="570">edm:dataProvider (5.5e5) [1] </tspan>
+<tspan x="91" y="585">edm:isShownAt (5.5e5) [*]  -&gt; IRI</tspan>
+<tspan x="91" y="600">edm:isShownBy (3.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="91" y="615">edm:object (3.4e5) [*]  -&gt; IRI</tspan>
+<tspan x="91" y="630">edm:provider (5.5e5) [1] </tspan>
+<tspan x="91" y="645">rdf:type (5.5e5) [1]  -&gt; IRI</tspan>
+<tspan x="91" y="660">vocab:oaiSourceIdentifier (5.5e5) [*] </tspan>
+<tspan x="91" y="675">vocab:oaiSourceRepository (5.5e5) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002685724"><polygon points="632,304 932,304 932,684 632,684 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="708" y="319">edm:ProvidedCHO (5.5e5)</tspan>
+</text>
+<line x1="636" y1="322" x2="930" y2="322"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="636" y="334">dc:date (5.5e5) [*] </tspan>
+<tspan x="636" y="349">dc:description (8.4e5) [*] </tspan>
+<tspan x="636" y="364">dc:format (5.5e5) [*] </tspan>
+<tspan x="636" y="379">dc:identifier (9.1e5) [*] </tspan>
+<tspan x="636" y="394">dc:language (5.6e5) [*] </tspan>
+<tspan x="636" y="409">dc:relation (246) [*] </tspan>
+<tspan x="636" y="424">dc:rights (9.4e5) [*] </tspan>
+<tspan x="636" y="439">dc:source (10) [*] </tspan>
+<tspan x="636" y="454">dc:title (9.1e5) [*] </tspan>
+<tspan x="636" y="469">dc:type (8.5e5) [*] </tspan>
+<tspan x="636" y="484">dct:alternative (3.2e4) [*] </tspan>
+<tspan x="636" y="499">dct:created (510) [*] </tspan>
+<tspan x="636" y="514">dct:extent (3.7e5) [*] </tspan>
+<tspan x="636" y="529">dct:hasFormat (8) [*] </tspan>
+<tspan x="636" y="544">dct:isReferencedBy (3.7e4) [*] </tspan>
+<tspan x="636" y="559">dct:isVersionOf (13) [*] </tspan>
+<tspan x="636" y="574">dct:issued (2.3e5) [*] </tspan>
+<tspan x="636" y="589">dct:medium (5799) [*] </tspan>
+<tspan x="636" y="604">dct:provenance (2) [1] </tspan>
+<tspan x="636" y="619">dct:tableOfContents (2.5e4) [*] </tspan>
+<tspan x="636" y="634">dct:temporal (4.4e4) [*] </tspan>
+<tspan x="636" y="649">edm:currentLocation (3.7e5) [*] </tspan>
+<tspan x="636" y="664">edm:hasType (3.7e5) [*] </tspan>
+<tspan x="636" y="679">edm:type (5.5e5) [*] </tspan>
+</text>
+</g>
+<g id="2002685702"><polygon points="739,77 1039,77 1039,217 739,217 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="839" y="92">edm:Place (3975)</tspan>
+</text>
+<line x1="743" y1="95" x2="1037" y2="95"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="743" y="107">rdf:type (3975) [1]  -&gt; IRI</tspan>
+<tspan x="743" y="122">skos:altLabel (521) [*] </tspan>
+<tspan x="743" y="137">skos:note (2269) [*] </tspan>
+<tspan x="743" y="152">skos:prefLabel (4823) [*] </tspan>
+<tspan x="743" y="167">vocab:oaiSourceIdentifier (1.2e5) [*] </tspan>
+<tspan x="743" y="182">vocab:oaiSourceRepository (3975) [1]  -&gt; IRI</tspan>
+<tspan x="743" y="197">wgs84_pos:lat (817) [*] </tspan>
+<tspan x="743" y="212">wgs84_pos:long (842) [*] </tspan>
+</text>
+</g>
+<g id="2002685600"><path d="M932,432 L1196,432 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1190" y1="429" x2="1196" y2="432"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1190" y1="435" x2="1196" y2="432"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="936" y="355">dc:creator  </tspan>
+<tspan x="936" y="370">dc:publisher  </tspan>
+<tspan x="936" y="385">dc:subject  </tspan>
+<tspan x="936" y="400">dc:contributor  </tspan>
+<tspan x="936" y="415">dct:isPartOf  </tspan>
+<tspan x="936" y="430">edm:isRelatedTo  </tspan>
+</text>
+</g>
+<g id="2002685605"><path d="M1196,169 L1089,169 1085,167 1083,163 1083,113 1085,109 1089,107 1277,107 1281,109 1283,113 1283,163 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1280" y1="157" x2="1283" y2="163"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1286" y1="157" x2="1283" y2="163"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1091" y="182">edm:isRelatedTo  </tspan>
+</text>
+</g>
+<g id="2002685610"><path d="M1196,190 L1039,190 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1045" y1="187" x2="1039" y2="190"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1045" y1="193" x2="1039" y2="190"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1118" y="203">owl:sameAs  </tspan>
+</text>
+</g>
+<g id="2002685615"><path d="M228,487 L129,487 125,485 123,481 123,457 125,453 129,451 352,451 356,453 358,457 358,463 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="355" y1="457" x2="358" y2="463"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="361" y1="457" x2="358" y2="463"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="131" y="500">odrl:inheritFrom  </tspan>
+</text>
+</g>
+<g id="2002685625"><path d="M1039,211 L1196,211 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1190" y1="208" x2="1196" y2="211"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1190" y1="214" x2="1196" y2="211"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1043" y="209">dct:isPartOf  </tspan>
+</text>
+</g>
+<g id="2002685645"><path d="M632,447 L425,447 421,445 419,441 419,406 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="416" y1="412" x2="419" y2="406"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="422" y1="412" x2="419" y2="406"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="566" y="460">dc:subject  </tspan>
+</text>
+</g>
+<g id="2002685655"><path d="M125,344 L16,344 12,342 10,338 10,268 12,264 16,262 266,262 270,264 272,268 272,326 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="269" y1="320" x2="272" y2="326"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="275" y1="320" x2="272" y2="326"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="23" y="357">skos:closeMatch  </tspan>
+<tspan x="23" y="372">skos:related  </tspan>
+<tspan x="23" y="387">skos:broader  </tspan>
+<tspan x="23" y="402">skos:narrower  </tspan>
+</text>
+</g>
+<g id="2002685660"><path d="M1196,336 L932,336 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="938" y1="333" x2="932" y2="336"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="938" y1="339" x2="932" y2="336"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1091" y="349">edm:isRelatedTo  </tspan>
+</text>
+</g>
+<g id="2002685667"><path d="M484,745 L37,745 33,743 31,739 31,442 33,438 37,436 374,436 378,438 380,442 380,463 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="474,750 484,745 474,740 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="470" y="758"> </tspan>
+</text>
+</g>
+<g id="2002685620"><path d="M387,625 L632,625 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="626" y1="622" x2="632" y2="625"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="626" y1="628" x2="632" y2="625"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="391" y="623">edm:aggregatedCHO  </tspan>
+</text>
+</g>
+<g id="2002685630"><path d="M349,540 L349,508 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="346" y1="514" x2="349" y2="508"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="352" y1="514" x2="349" y2="508"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="282" y="536">edm:rights  </tspan>
+</text>
+</g>
+<g id="2002685650"><path d="M739,108 L654,108 650,106 648,102 648,16 650,12 654,10 841,10 845,12 847,16 847,77 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="844" y1="71" x2="847" y2="77"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="850" y1="71" x2="847" y2="77"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="661" y="121">dct:isPartOf  </tspan>
+<tspan x="661" y="136">dct:hasPart  </tspan>
+<tspan x="661" y="151">owl:sameAs  </tspan>
+</text>
+</g>
+<g id="2002685640"><path d="M816,304 L816,217 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="813" y1="223" x2="816" y2="217"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="819" y1="223" x2="816" y2="217"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="745" y="255">dc:subject  </tspan>
+<tspan x="745" y="270">dct:spatial  </tspan>
+<tspan x="745" y="285">dct:isPartOf  </tspan>
+<tspan x="745" y="300">dct:hasPart  </tspan>
+</text>
+</g>
+<g id="2002685635"><path d="M909,217 L909,304 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="906" y1="298" x2="909" y2="304"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="912" y1="298" x2="909" y2="304"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="911" y="232">dct:isPartOf  </tspan>
+<tspan x="911" y="247">dct:hasPart  </tspan>
+</text>
+</g>
+<g id="2002685595"><path d="M632,326 L474,326 470,324 468,320 468,266 470,262 474,260 688,260 692,262 694,266 694,304 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="691" y1="298" x2="694" y2="304"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="697" y1="298" x2="694" y2="304"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="494" y="339">dct:isPartOf  </tspan>
+<tspan x="494" y="354">dct:isReplacedBy  </tspan>
+<tspan x="494" y="369">dct:replaces  </tspan>
+<tspan x="494" y="384">dct:hasPart  </tspan>
+<tspan x="494" y="399">edm:isRelatedTo  </tspan>
+<tspan x="494" y="414">edm:isNextInSequence  </tspan>
+</text>
+</g>
+<g id="2002685665"><path d="M784,741 L821,741 825,739 827,735 827,684 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="794,746 784,741 794,736 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="788" y="739"> </tspan>
+</text>
+</g>
+</svg>

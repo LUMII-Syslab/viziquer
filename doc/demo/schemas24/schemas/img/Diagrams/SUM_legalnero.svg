@@ -1,0 +1,427 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="1403" height="766" viewBox="0 0 1403 766">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002688560"><polygon points="904,376 1204,376 1204,471 904,471 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="998" y="391">dcat:Distribution (1)</tspan>
+</text>
+<line x1="908" y1="394" x2="1202" y2="394"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="908" y="406">dcat:mediaType (1) [1] D</tspan>
+<tspan x="908" y="421">dct:description (1) [1] D</tspan>
+<tspan x="908" y="436">dct:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="908" y="451">dct:title (1) [1] </tspan>
+<tspan x="908" y="466">rdf:type (1) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688571"><polygon points="1096,122 1396,122 1396,367 1096,367 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1093,125 1393,125 1393,370 1093,370 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1170" y="140">prov:Entity et al. G101 (1)</tspan>
+</text>
+<line x1="1097" y1="143" x2="1391" y2="143"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1097" y="155">dcat:contactPoint (1) [1] D -&gt; IRI</tspan>
+<tspan x="1097" y="170">dcat:keyword (2) [*] D</tspan>
+<tspan x="1097" y="185">dct:accrualPeriodicity (1) [1] D -&gt; IRI</tspan>
+<tspan x="1097" y="200">dct:issued (1) [1] D</tspan>
+<tspan x="1097" y="215">dct:language (1) [1] D -&gt; IRI</tspan>
+<tspan x="1097" y="230">dct:spatial (1) [1] D -&gt; IRI</tspan>
+<tspan x="1097" y="245">dct:temporal (1) [1] D -&gt; IRI</tspan>
+<tspan x="1097" y="260">dct:title (1) [1] </tspan>
+<tspan x="1097" y="275">owl:versionInfo (1) [1] D</tspan>
+<tspan x="1097" y="290">pavont:version (1) [1] D</tspan>
+<tspan x="1097" y="305">powla:documentID (1) [1] </tspan>
+<tspan x="1097" y="320">rdf:type (3) [*]  -&gt; IRI</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1097" y="335">dcat:Dataset (1)</tspan>
+<tspan x="1097" y="350">powla:Corpus (1)</tspan>
+<tspan x="1097" y="365">prov:Entity (1)</tspan>
+</text>
+</g>
+<g id="2002688582"><polygon points="468,392 768,392 768,437 468,437 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="535" y="407">powla:DocumentLayer (1110)</tspan>
+</text>
+<line x1="472" y1="410" x2="766" y2="410"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="472" y="422">rdf:type (1110) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688593"><polygon points="586,257 886,257 886,307 586,307 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="672" y="272">powla:Document (370)</tspan>
+</text>
+<line x1="590" y1="275" x2="884" y2="275"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="590" y="287">powla:documentID (370) [1] </tspan>
+<tspan x="590" y="302">rdf:type (370) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688604"><polygon points="442,96 742,96 742,158 442,158 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="551" y="111">foaf:Person (2)</tspan>
+</text>
+<line x1="446" y1="114" x2="740" y2="114"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="446" y="126">foaf:givenName (2) [1] D</tspan>
+<tspan x="446" y="141">foaf:mbox (2) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688615"><polygon points="185,462 485,462 485,512 185,512 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="182,465 482,465 482,515 182,515 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="193" y="480">nerdont:Thing or ont:LegalResource G102 (3387)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="186" y="495">nerdont:Thing (3387)</tspan>
+<tspan x="186" y="510">ont:LegalResource (3387)</tspan>
+</text>
+</g>
+<g id="2002688626"><polygon points="713,477 1013,477 1013,557 713,557 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="808" y="492">powla:Node (2.9e5)</tspan>
+</text>
+<line x1="717" y1="495" x2="1011" y2="495"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="717" y="507">geonames:Feature (2744) [1] D</tspan>
+<tspan x="717" y="522">nif-core:anchorOf (2.8e5) [1] D</tspan>
+<tspan x="717" y="537">powla:string (2.8e5) [1] D</tspan>
+<tspan x="717" y="552">rdf:type (6.0e5) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688637"><polygon points="691,10 991,10 991,55 691,55 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="802" y="25">prov:Agent (3)</tspan>
+</text>
+<line x1="695" y1="28" x2="989" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="695" y="40">rdf:type (6) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688648"><polygon points="893,74 1193,74 1193,119 893,119 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="986" y="89">foaf:Organization (1)</tspan>
+</text>
+<line x1="897" y1="92" x2="1191" y2="92"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="897" y="104">foaf:name (1) [1] D</tspan>
+</text>
+</g>
+<g id="2002688659"><polygon points="957,586 1257,586 1257,636 957,636 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1042" y="601">nif-core:Phrase (1.7e4)</tspan>
+</text>
+<line x1="961" y1="604" x2="1255" y2="604"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="961" y="616">nif-core:beginIndex (1.7e4) [1] D</tspan>
+<tspan x="961" y="631">nif-core:endIndex (1.7e4) [1] D</tspan>
+</text>
+</g>
+<g id="2002688670"><polygon points="651,592 951,592 951,717 651,717 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="731" y="607">nif-core:Sentence (8284)</tspan>
+</text>
+</g>
+<g id="2002688681"><polygon points="960,652 1260,652 1260,732 960,732 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="957,655 1257,655 1257,735 957,735 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="988" y="670">nerdont:Organization et al. G103 (~1.4e4)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="961" y="685">nerdont:Location (2276)</tspan>
+<tspan x="961" y="700">nerdont:Organization (6209)</tspan>
+<tspan x="961" y="715">nerdont:Person (914)</tspan>
+<tspan x="961" y="730">nerdont:Time (4643)</tspan>
+</text>
+</g>
+<g id="2002688692"><polygon points="166,586 466,586 466,756 166,756 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="256" y="601">nif-core:Word (2.7e5)</tspan>
+</text>
+<line x1="170" y1="604" x2="464" y2="604"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="170" y="616">ext-format:NE (2.6e5) [1] D</tspan>
+<tspan x="170" y="631">format.html:DEPREL (2.7e5) [1] D</tspan>
+<tspan x="170" y="646">format.html:FEATS (2.2e5) [1] D</tspan>
+<tspan x="170" y="661">format.html:FORM (2.7e5) [1] D</tspan>
+<tspan x="170" y="676">format.html:HEAD (2.7e5) [1] D</tspan>
+<tspan x="170" y="691">format.html:ID (2.7e5) [1] D</tspan>
+<tspan x="170" y="706">format.html:LEMMA (2.7e5) [1] D</tspan>
+<tspan x="170" y="721">format.html:MISC (4.8e4) [1] D</tspan>
+<tspan x="170" y="736">format.html:UPOS (2.7e5) [1] D</tspan>
+<tspan x="170" y="751">format.html:XPOS (2.7e5) [1] D</tspan>
+</text>
+</g>
+<g id="2002688703"><polygon points="598,186 898,186 898,251 598,251 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="699" y="201">skos:Concept (1)</tspan>
+</text>
+<line x1="602" y1="204" x2="896" y2="204"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="602" y="216">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="602" y="231">skos:inScheme (1) [1] D -&gt; IRI</tspan>
+<tspan x="602" y="246">skos:prefLabel (2) [*] D</tspan>
+</text>
+</g>
+<g id="2002688478"><path d="M651,598 L478,598 474,596 472,592 472,592 474,588 478,586 753,586 753,592 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="750" y1="586" x2="753" y2="592"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="756" y1="586" x2="753" y2="592"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="480" y="611">nif-core:previousSentence  DR</tspan>
+<tspan x="480" y="626">nif-core:nextSentence  DR</tspan>
+</text>
+</g>
+<g id="2002688483"><path d="M651,634 L466,634 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="472" y1="631" x2="466" y2="634"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="472" y1="637" x2="466" y2="634"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="530" y="647">nif-core:word  D</tspan>
+<tspan x="530" y="662">nif-core:lastWord  DR</tspan>
+<tspan x="530" y="677">nif-core:firstWord  DR</tspan>
+</text>
+</g>
+<g id="2002688488"><path d="M1093,131 L992,131 988,129 986,125 986,119 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="983" y1="125" x2="986" y2="119"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="989" y1="125" x2="986" y2="119"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="994" y="144">dct:publisher  DR</tspan>
+</text>
+</g>
+<g id="2002688493"><path d="M886,295 L1093,295 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1087" y1="292" x2="1093" y2="295"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1087" y1="298" x2="1093" y2="295"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="890" y="293">powla:hasSuperDocument  DR</tspan>
+</text>
+</g>
+<g id="2002688498"><path d="M166,671 L16,671 12,669 10,665 10,573 12,569 16,567 260,567 264,569 266,573 266,586 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="263" y1="580" x2="266" y2="586"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="269" y1="580" x2="266" y2="586"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="18" y="684">nif-core:previousWord  DR</tspan>
+<tspan x="18" y="699">nif-core:nextWord  DR</tspan>
+</text>
+</g>
+<g id="2002688503"><path d="M1093,152 L742,152 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="748" y1="149" x2="742" y2="152"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="748" y1="155" x2="742" y2="152"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1008" y="165">dct:creator  DR</tspan>
+</text>
+</g>
+<g id="2002688508"><path d="M713,535 L594,535 590,533 588,529 588,437 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="585" y1="443" x2="588" y2="437"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="591" y1="443" x2="588" y2="437"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="598" y="548">powla:hasLayer  DR</tspan>
+</text>
+</g>
+<g id="2002688513"><path d="M468,414 L323,414 319,412 317,408 317,288 319,284 323,282 586,282 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="580" y1="279" x2="586" y2="282"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="580" y1="285" x2="586" y2="282"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="326" y="427">powla:hasDocument  DR</tspan>
+</text>
+</g>
+<g id="2002688518"><path d="M713,499 L600,499 596,497 594,493 594,477 596,473 600,471 863,471 863,477 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="860" y1="471" x2="863" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="866" y1="471" x2="863" y2="477"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="602" y="512">powla:next  DR</tspan>
+<tspan x="602" y="527">powla:previous  DR</tspan>
+</text>
+</g>
+<g id="2002688523"><path d="M1093,213 L898,213 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="904" y1="210" x2="898" y2="213"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="904" y1="216" x2="898" y2="213"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1004" y="226">dcat:theme  DR</tspan>
+</text>
+</g>
+<g id="2002688528"><path d="M742,113 L893,113 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="887" y1="110" x2="893" y2="113"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="887" y1="116" x2="893" y2="113"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="746" y="111">prov:actedOnBehalfOf  DR</tspan>
+</text>
+</g>
+<g id="2002688533"><path d="M1093,332 L780,332 776,334 774,338 774,418 776,422 780,424 904,424 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="898" y1="421" x2="904" y2="424"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="898" y1="427" x2="904" y2="424"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="978" y="345">dcat:distribution  DR</tspan>
+</text>
+</g>
+<g id="2002688538"><path d="M1093,263 L886,263 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="892" y1="260" x2="886" y2="263"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="892" y1="266" x2="886" y2="263"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="929" y="276">powla:hasSubDocument  DR</tspan>
+</text>
+</g>
+<g id="2002688543"><path d="M466,711 L651,711 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="645" y1="708" x2="651" y2="711"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="645" y1="714" x2="651" y2="711"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="470" y="694">nif-core:sentence  DR</tspan>
+<tspan x="470" y="709">powla:hasParent  DR</tspan>
+</text>
+</g>
+<g id="2002688548"><path d="M934,557 L934,574 936,578 940,580 1107,580 1107,586 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="939,567 934,557 929,567 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="936" y="572"> </tspan>
+</text>
+</g>
+<g id="2002688550"><path d="M856,557 L856,592 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="861,567 856,557 851,567 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="858" y="572"> </tspan>
+</text>
+</g>
+<g id="2002688552"><path d="M1107,636 L1107,655 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1112,646 1107,636 1102,646 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="651"> </tspan>
+</text>
+</g>
+<g id="2002688554"><path d="M705,55 L705,96 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="710,65 705,55 700,65 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="707" y="70"> </tspan>
+</text>
+</g>
+<g id="2002688556"><path d="M784,557 L784,574 782,578 778,580 366,580 366,586 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="789,567 784,557 779,567 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="786" y="572"> </tspan>
+</text>
+</g>
+<g id="2002688558"><path d="M945,55 L945,74 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="950,65 945,55 940,65 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="947" y="70"> </tspan>
+</text>
+</g>
+</svg>

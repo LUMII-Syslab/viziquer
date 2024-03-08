@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="976" height="297" viewBox="0 0 976 297">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002677200"><polygon points="198,139 348,139 348,164 198,164 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="240" y="147">musim:Similarity (722)</tspan>
+</text>
+<line x1="200" y1="148" x2="347" y2="148"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="200" y="154">musim:method (722) [1] D -&gt; IRI</tspan>
+<tspan x="200" y="162">rdf:type (1444) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677222"><polygon points="599,150 749,150 749,175 599,175 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="643" y="158">foaf:Document (5247)</tspan>
+</text>
+<line x1="601" y1="159" x2="748" y2="159"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="601" y="165">cl-vocab:siteName (5247) [1] D</tspan>
+<tspan x="601" y="173">rdf:type (1.0e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677156"><polygon points="31,235 181,235 181,258 31,258 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="82" y="243">rdf:Property (37)</tspan>
+</text>
+<line x1="33" y1="244" x2="180" y2="244"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="33" y="250">rdf:type (41) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677211"><polygon points="375,237 525,237 525,269 375,269 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="426" y="245">bio:Death (4420)</tspan>
+</text>
+<line x1="377" y1="246" x2="524" y2="246"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="377" y="252">bio:date (4420) [1] </tspan>
+<tspan x="377" y="260">cl-vocab:approximate (331) [1] </tspan>
+<tspan x="377" y="268">rdf:type (8840) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677244"><polygon points="386,16 536,16 536,48 386,48 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="439" y="24">bio:Birth (6921)</tspan>
+</text>
+<line x1="388" y1="25" x2="535" y2="25"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="388" y="31">bio:date (6921) [1] </tspan>
+<tspan x="388" y="39">cl-vocab:approximate (333) [1] </tspan>
+<tspan x="388" y="47">rdf:type (1.4e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677167"><polygon points="199,187 349,187 349,212 199,212 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="251" y="195">clr:Pianist (942)</tspan>
+</text>
+<line x1="201" y1="196" x2="348" y2="196"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="201" y="202">foaf:name (942) [*] </tspan>
+<tspan x="201" y="210">rdf:type (1884) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677266"><polygon points="8,186 158,186 158,211 8,211 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="53" y="194">clr:Conductor (1222)</tspan>
+</text>
+<line x1="10" y1="195" x2="157" y2="195"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="10" y="201">foaf:name (1223) [*] </tspan>
+<tspan x="10" y="209">rdf:type (2444) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677255"><polygon points="107,92 257,92 257,117 107,117 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="148" y="100">cmnav:StylePeriod (37)</tspan>
+</text>
+<line x1="109" y1="101" x2="256" y2="101"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="109" y="107">dc:title (37) [1] </tspan>
+<tspan x="109" y="115">rdf:type (74) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677189"><polygon points="401,79 551,79 551,179 401,179 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="446" y="87">clr:Composer (8312)</tspan>
+</text>
+<line x1="403" y1="88" x2="550" y2="88"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="403" y="94">cl-vocab:gender (246) [1] D</tspan>
+<tspan x="403" y="102">cl-vocab:nationality (3183) [*] D</tspan>
+<tspan x="403" y="110">cl-vocab:period (2205) [1] D</tspan>
+<tspan x="403" y="118">cl-vocab:remarks (432) [1] </tspan>
+<tspan x="403" y="126">foaf:based_near (2998) [*] D -&gt; IRI</tspan>
+<tspan x="403" y="134">foaf:name (8293) [*] </tspan>
+<tspan x="403" y="142">mb-vocab:alias (1.7e4) [*] </tspan>
+<tspan x="403" y="150">rdf:type (1.7e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677288"><polygon points="35,267 185,267 185,292 35,292 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="77" y="275">owl:ObjectProperty (2)</tspan>
+</text>
+<line x1="37" y1="276" x2="184" y2="276"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="37" y="282">rdf:type (6) [*]  -&gt;  owl:Class</tspan>
+<tspan x="37" y="290">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002677233"><polygon points="605,72 755,72 755,105 605,105 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="645" y="80">mo:Composition (2.2e4)</tspan>
+</text>
+<line x1="607" y1="81" x2="754" y2="81"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="607" y="87">bio:date (1.3e4) [1] </tspan>
+<tspan x="607" y="95">bio:place (597) [1] D</tspan>
+<tspan x="607" y="103">rdf:type (4.5e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677277"><polygon points="821,127 971,127 971,205 821,205 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="860" y="135">mo:MusicalWork (2.5e4)</tspan>
+</text>
+<line x1="823" y1="136" x2="970" y2="136"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="823" y="142">cl-vocab:form (587) [1] D -&gt; IRI</tspan>
+<tspan x="823" y="150">cl-vocab:remarks (7746) [1] </tspan>
+<tspan x="823" y="158">dc:title (2.5e4) [1] </tspan>
+<tspan x="823" y="166">mb-vocab:alias (6888) [*] </tspan>
+<tspan x="823" y="174">mo:catalogue (8624) [1] D</tspan>
+<tspan x="823" y="182">mo:key (3922) [1] D</tspan>
+<tspan x="823" y="190">mo:number (4770) [1] D</tspan>
+<tspan x="823" y="198">mo:opus (6440) [1] D</tspan>
+<tspan x="823" y="206">rdf:type (5.1e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002677178"><polygon points="569,10 719,10 719,50 569,50 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="625" y="18">owl:Class (1)</tspan>
+</text>
+<line x1="571" y1="19" x2="718" y2="19"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="571" y="25">rdf:type (2) [*]  -&gt;  owl:Class</tspan>
+<tspan x="571" y="33">rdfs:subClassOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="571" y="41">serql:directSubClassOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="571" y="49">&lt;-rdf:type (8312)  &lt;-  clr:Composer,rdf:Property..(13)</tspan>
+</text>
+</g>
+<g id="2002677081"><path d="M348,155 L401,155 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="398" y1="154" x2="401" y2="155"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="398" y1="157" x2="401" y2="155"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="351" y="147">musim:subject  D</tspan>
+<tspan x="351" y="155">musim:object  D</tspan>
+</text>
+</g>
+<g id="2002677086"><path d="M821,156 L749,156 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="752" y1="155" x2="749" y2="156"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="752" y1="158" x2="749" y2="156"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="791" y="163">foaf:page  </tspan>
+</text>
+</g>
+<g id="2002677116"><path d="M551,166 L599,166 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="596" y1="165" x2="599" y2="166"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="596" y1="168" x2="599" y2="166"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="553" y="158">foaf:page  </tspan>
+<tspan x="553" y="166">mo:wikipedia  D</tspan>
+</text>
+</g>
+<g id="2002677146"><path d="M749,172 L821,172 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="818" y1="171" x2="821" y2="172"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="818" y1="174" x2="821" y2="172"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="751" y="171">foaf:primaryTopic  DR</tspan>
+</text>
+</g>
+<g id="2002677131"><path d="M448,179 L448,237 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="447" y1="234" x2="448" y2="237"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="450" y1="234" x2="448" y2="237"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="450" y="187">cl-vocab:death  DR</tspan>
+</text>
+</g>
+<g id="2002677141"><path d="M404,179 L404,195 403,197 401,198 349,198 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="352" y1="196" x2="349" y2="198"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="352" y1="199" x2="349" y2="198"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="406" y="187">owl:sameAs  </tspan>
+</text>
+</g>
+<g id="2002677126"><path d="M158,200 L199,200 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="196" y1="198" x2="199" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="196" y1="201" x2="199" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="160" y="199">owl:sameAs  </tspan>
+</text>
+</g>
+<g id="2002677101"><path d="M221,139 L221,117 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="219" y1="120" x2="221" y2="117"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="222" y1="120" x2="221" y2="117"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="172" y="130">musim:subject  D</tspan>
+<tspan x="172" y="138">musim:object  D</tspan>
+</text>
+</g>
+<g id="2002677136"><path d="M401,114 L257,114 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="260" y1="112" x2="257" y2="114"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="260" y1="115" x2="257" y2="114"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="318" y="120">cmnav:influencedBy  D</tspan>
+<tspan x="318" y="128">cmnav:hasInfluenced  D</tspan>
+<tspan x="318" y="136">cmnav:from_style_period  DR</tspan>
+</text>
+</g>
+<g id="2002677091"><path d="M522,79 L522,48 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="521" y1="51" x2="522" y2="48"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="524" y1="51" x2="522" y2="48"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="474" y="77">cl-vocab:birth  DR</tspan>
+</text>
+</g>
+<g id="2002677151"><path d="M401,84 L332,84 330,83 329,81 329,65 330,63 332,62 415,62 417,63 418,65 418,79 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="416" y1="76" x2="418" y2="79"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="419" y1="76" x2="418" y2="79"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="333" y="90">cmnav:influencedBy  D</tspan>
+<tspan x="333" y="98">cmnav:hasInfluenced  D</tspan>
+</text>
+</g>
+<g id="2002677111"><path d="M605,91 L551,91 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="554" y1="90" x2="551" y2="91"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="554" y1="93" x2="551" y2="91"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="553" y="98">mo:composer  DR</tspan>
+</text>
+</g>
+<g id="2002677106"><path d="M821,189 L776,189 774,190 773,192 773,226 774,228 776,229 860,229 862,228 863,226 863,205 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="861" y1="208" x2="863" y2="205"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="864" y1="208" x2="863" y2="205"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="777" y="195">dc:isPartOf  DR</tspan>
+<tspan x="777" y="203">dc:hasPart  DR</tspan>
+</text>
+</g>
+<g id="2002677096"><path d="M821,135 L684,135 682,134 681,132 681,105 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="680" y1="108" x2="681" y2="105"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="683" y1="108" x2="681" y2="105"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="759" y="141">mo:composed_in  DR</tspan>
+</text>
+</g>
+<g id="2002677121"><path d="M755,100 L838,100 840,101 841,103 841,127 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="840" y1="124" x2="841" y2="127"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="843" y1="124" x2="841" y2="127"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:6px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="758" y="99">mo:produced_work  DR</tspan>
+</text>
+</g>
+</svg>

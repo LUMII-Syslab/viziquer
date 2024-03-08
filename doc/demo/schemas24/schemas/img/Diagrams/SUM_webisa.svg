@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="320" height="359" viewBox="0 0 320 359">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002680680"><polygon points="13,217 313,217 313,282 13,282 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="10,220 310,220 310,285 10,285 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="39" y="235">eclass:C_AAB316003-tax et al. G104 (~3)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="14" y="250">eclass:C_AAB316003-tax (1)</tspan>
+<tspan x="14" y="265">eclass:C_AKE112003-tax (1)</tspan>
+<tspan x="14" y="280">eclass:C_AKJ315005-tax (1)</tspan>
+</text>
+</g>
+<g id="2002680691"><polygon points="13,7 313,7 313,88 13,88 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="10,10 310,10 310,91 10,91 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="18" y="25">gr:ProductOrServiceSomeInstancePlaceholder et </tspan>
+<tspan x="123" y="41">al. G103 (~3)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="14" y="56">gr:ActualProductOrServicesInstance (1)</tspan>
+<tspan x="14" y="71">gr:PriceSpecification (1)</tspan>
+<tspan x="14" y="86">gr:ProductOrServiceSomeInstancePlaceholder (1)</tspan>
+</text>
+</g>
+<g id="2002680702"><polygon points="10,304 310,304 310,349 10,349 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="89" y="319">owl:OntologyProperty (4)</tspan>
+</text>
+</g>
+<g id="2002680713"><polygon points="13,105 313,105 313,200 13,200 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="10,108 310,108 310,203 10,203 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="73" y="123">rdf:Property et al. G102 (~233)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="14" y="138">gr:ProductOrServicesSomeInstancesPlaceholder (3)</tspan>
+<tspan x="14" y="153">rdf:Property (170)</tspan>
+<tspan x="14" y="168">rdfs:Class (56)</tspan>
+<tspan x="14" y="183">vcard-rdf:voice (2)</tspan>
+<tspan x="14" y="198">vcard-rdf:work (2)</tspan>
+</text>
+</g>
+</svg>

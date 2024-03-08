@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="848" height="631" viewBox="0 0 848 631">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002687518"><polygon points="149,200 449,200 449,265 149,265 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="262" y="215">owl:Class (3)</tspan>
+</text>
+<line x1="153" y1="218" x2="447" y2="218"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="153" y="230">owl:unionOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="153" y="245">rdf:type (3) [*]  -&gt; IRI</tspan>
+<tspan x="153" y="260">rdfs:label (2) [1] </tspan>
+</text>
+</g>
+<g id="2002687529"><polygon points="321,85 621,85 621,165 321,165 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="432" y="100">sd:Service (1)</tspan>
+</text>
+<line x1="325" y1="103" x2="619" y2="103"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="325" y="115">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="325" y="130">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="325" y="145">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="325" y="160">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002687540"><polygon points="521,282 821,282 821,327 521,327 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="600" y="297">owl:OntologyProperty (4)</tspan>
+</text>
+</g>
+<g id="2002687551"><polygon points="190,286 490,286 490,621 190,621 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="291" y="301">e-lion:Log (7.3e6)</tspan>
+</text>
+<line x1="194" y1="304" x2="488" y2="304"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="194" y="316">e-lion:logAction (7.3e6) [1] D</tspan>
+<tspan x="194" y="331">e-lion:logAnonymous (7.3e6) [1] D</tspan>
+<tspan x="194" y="346">e-lion:logComponent (7.3e6) [1] D</tspan>
+<tspan x="194" y="361">e-lion:logContextId (7.3e6) [1] D</tspan>
+<tspan x="194" y="376">e-lion:logContextInstanceId (7.3e6) [1] D</tspan>
+<tspan x="194" y="391">e-lion:logContextLevel (7.3e6) [1] D</tspan>
+<tspan x="194" y="406">e-lion:logCrud (7.3e6) [1] D</tspan>
+<tspan x="194" y="421">e-lion:logEduLevel (7.3e6) [1] D</tspan>
+<tspan x="194" y="436">e-lion:logEventName (7.3e6) [1] D</tspan>
+<tspan x="194" y="451">e-lion:logId (7.3e6) [1] D</tspan>
+<tspan x="194" y="466">e-lion:logObjectId (4.4e6) [1] D</tspan>
+<tspan x="194" y="481">e-lion:logObjectTable (7.3e6) [1] D</tspan>
+<tspan x="194" y="496">e-lion:logOrigin (7.3e6) [1] D</tspan>
+<tspan x="194" y="511">e-lion:logSumClick (7.3e6) [1] D</tspan>
+<tspan x="194" y="526">e-lion:logTarget (7.3e6) [1] D</tspan>
+<tspan x="194" y="541">e-lion:logTimeCreated (7.3e6) [1] D</tspan>
+<tspan x="194" y="556">e-lion:recordCourse (7.3e6) [1] D -&gt; IRI</tspan>
+<tspan x="194" y="571">e-lion:recordUser (6.2e6) [1] D -&gt; IRI</tspan>
+<tspan x="194" y="586">e-lion:recordUserReal (4.2e4) [1] D -&gt; IRI</tspan>
+<tspan x="194" y="601">e-lion:recordUserRelated (3.2e6) [1] D -&gt; IRI</tspan>
+<tspan x="194" y="616">rdf:type (7.3e6) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002687562"><polygon points="520,355 820,355 820,465 520,465 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="624" y="370">owl:Ontology (1)</tspan>
+</text>
+<line x1="524" y1="373" x2="818" y2="373"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="524" y="385">owl:imports (1) [1] D -&gt; IRI</tspan>
+<tspan x="524" y="400">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
+<tspan x="524" y="415">owl:versionInfo (1) [1] D</tspan>
+<tspan x="524" y="430">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="524" y="445">rdfs:comment (1) [1] D</tspan>
+<tspan x="524" y="460">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002687573"><polygon points="538,198 838,198 838,263 538,263 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="642" y="213">rdf:Property (23)</tspan>
+</text>
+<line x1="542" y1="216" x2="836" y2="216"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="542" y="228">rdf:type (28) [*]  -&gt; IRI</tspan>
+<tspan x="542" y="243">rdfs:label (23) [1] </tspan>
+<tspan x="542" y="258">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002687584"><polygon points="250,10 550,10 550,55 250,55 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="324" y="25">owl:AnnotationProperty (5)</tspan>
+</text>
+<line x1="254" y1="28" x2="548" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="254" y="40">rdf:type (6) [*]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002687501"><path d="M149,233 L16,233 12,231 10,227 10,200 12,196 16,194 299,194 299,200 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="296" y1="194" x2="299" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="302" y1="194" x2="299" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="18" y="246">owl:complementOf  DR</tspan>
+</text>
+</g>
+<g id="2002687506"><path d="M321,125 L226,125 222,123 220,119 220,85 222,81 226,79 471,79 471,85 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="468" y1="79" x2="471" y2="85"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="474" y1="79" x2="471" y2="85"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="228" y="138">sd:endpoint  DR</tspan>
+<tspan x="228" y="153">sd:url  DR</tspan>
+</text>
+</g>
+<g id="2002687511"><path d="M538,231 L449,231 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="455" y1="228" x2="449" y2="231"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="455" y1="234" x2="449" y2="231"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="453" y="244">rdfs:domain  D</tspan>
+<tspan x="453" y="259">rdfs:range  D</tspan>
+</text>
+</g>
+<g id="2002687516"><path d="M680,263 L680,282 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="685,273 680,263 675,273 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="682" y="278"> </tspan>
+</text>
+</g>
+</svg>
