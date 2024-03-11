@@ -61,5 +61,5 @@ The schema visualization experiment description and results involves the followi
 
 - `shemas`: a folder with visual schema diagrams in .SVG format
 - `database`: the DSS (schema server) database supporting the visual queries and schemas over the example SPARQL endpoints (the database is to be loaded into a PostGres server, pointed to from the DSS).
-- `endpoints.xls`: the selection of the considered endpoints and their analysis
+- `sparql_endpoints.xls`: the selection of the considered endpoints and their analysis
 - `protocol.pdf`: a description of the work done within the schema visualization experiment
