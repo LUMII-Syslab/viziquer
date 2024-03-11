@@ -26,19 +26,19 @@
 							<div class="container-fluid">
 								<div class="row">
 									<div class="col-sm-6">
-										<div class="slidecontainer">
+										<div class="slidecontainer" style="width: 400px;">
 											<p><span id="classCount-slider-span"> </span>Classes in the diagram - {{classCountSelected}} from {{classCountForSlider}}</p>
 											<input type="range" min="0" max={{classCountForSlider}} value={{classCountSelected}} class="slider" id="classCount"  {{filterDisabled}}>
 										</div>
 										
-										<select class="form-control" id="nsFilter" {{filterDisabled}}>
+										<select class="form-control" id="nsFilter" {{filterDisabled}} style="width: 400px;">
 											{{#each nsFilters}}
 												<option style="height:30px" {{selected}} value="{{value}}">{{name}}</option>
 											{{/each}}
 										</select>
 									</div>
 									<div class="col-sm-6">
-										<select class="form-control" id="sortPar" >
+										<select class="form-control" id="sortPar" style="width: 400px;">
 											<option selected value=1 >Sort by class weight</option>
 											<option value=3 >Sort by in class ind. count</option>
 											<option value=4 >Sort by in prop. count</option>
@@ -142,20 +142,41 @@
 						  <div id="todo" class="tab-pane fade">
 								<div class="container-fluid">
 									<div class="row">
+										<div class="col-sm-3">
+											<label>Ko dara ar shēmas vispārināšanām:</label>
+										</div>
 										<div class="col-sm-6">
-											<select class="form-control" id="supPar" >
+											<select class="form-control" id="supPar" style="width:300px" >
 												<option select value=1 >Savelk kopā vispārināšanas virknes</option>
 												<option value=0 >Atstāj Shēmas vispārināšanas</option>
 												<option value=2 >Savelk kopā Shēmas vispārināšanas</option>
 											</select>
-											<select class="form-control" id="diffG" >
+										</div>
+									</div>	
+								</div>
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-3">
+											<label>Klašu grupēšanas parametrs: </label>
+										</div>
+										<div class="col-sm-6">
+											<select class="form-control" id="diffG" style="width:300px" >
 												<option value=0 >Without grouping</option>
 												<option value=1 >Very weak grouping (diff-1) </option>
 												<option value=2 >Weak grouping (diff-1,2) </option>
 												<option selected value=5 >Basic grouping (diff under 5)</option>
 												<option value=10 >Strong grouping (diff under 10) </option>
 											</select>
-											<select class="form-control" id="diffS" >
+										</div>
+									</div>	
+								</div>
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-3">
+											<label>Abstrakto klašu veidošana: </label>
+										</div>
+										<div class="col-sm-6">
+											<select class="form-control" id="diffS" style="width:300px"  >
 												<option value=-1 >Without superclasses </option>
 												<option value=5 >Zems līdzības līmenis veidojot virsklases</option>
 												<option value=25 >Vidējs līdzības līmenis veidojot virsklases</option>
@@ -196,10 +217,10 @@
 									<div class="form-group">
 										<button id="showGroups" type="button" class="btn btn-primary">Show groups -(skos:altLabel,skos:prefLabel,rdf:type)</button>
 									</div>
-									<div class="slidecontainer"  style="width: 300px;">
-										<p>Abstraktās virsklases <span id="diffS-slider-span">50</span></p>
-										<input type="range" min="-1" max="50" value="50" class="slider" id="diffS">
-									  </div>
+									<!--<div class="slidecontainer"  style="width: 300px;"> -->
+									<!--	<p>Abstraktās virsklases <span id="diffS-slider-span">50</span></p> -->
+									<!--	<input type="range" min="-1" max="50" value="50" class="slider" id="diffS"> -->
+									<!--  </div> -->
 								</div>
 						  </div>
 
@@ -210,7 +231,7 @@
 							 <div class="explain-form-group">
 								<span>Diagram parameters:</span>
 							 </div>  
-							 <select class="form-control" id="disconnBig" >
+							 <select class="form-control" id="disconnBig" style="width: 400px;">
 								<option selected value=7 >Disconnect prop > 7 </option>
 								<option value=10 >Disconnect prop > 10 </option>
 								<option value=0 >Show all properties</option>
@@ -225,9 +246,6 @@
 								<span class="custom-checkbox"></span>
 								Show DB IDs in names
 							</label>
-							<div class="form-group">
-								<button id="calck" type="button" class="btn btn-primary" data-dismiss="modal">Calculate class count</button>
-							</div>
 							<div class="form-group">
 								<button id="printGroups" type="button" class="btn btn-primary" data-dismiss="modal">Print groups</button>
 							</div>
