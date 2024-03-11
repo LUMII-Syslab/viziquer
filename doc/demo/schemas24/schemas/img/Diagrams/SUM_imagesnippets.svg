@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="866" height="1132" viewBox="0 0 866 1132">
+ width="1789" height="1500" viewBox="0 0 1789 1500">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,271 +38,271 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002681495"><polygon points="121,101 301,101 301,131 121,131 "
+<g id="2002681528"><polygon points="53,1171 353,1171 353,1216 53,1216 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="182" y="110">n36:Point (4633)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="182" y="1186">n50: (1)</tspan>
 </text>
-<line x1="123" y1="112" x2="299" y2="112"
+</g>
+<g id="2002681517"><polygon points="1021,458 1321,458 1321,1108 1021,1108 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1124" y="473">lio:Image (8.0e4)</tspan>
+</text>
+<line x1="1025" y1="476" x2="1319" y2="476"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="123" y="119">n36:lat (4633) [*] </tspan>
-<tspan x="123" y="128">rdf:type (4633) [*]  -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1025" y="488">dbo:date (1) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="503">dbo:location (4) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="518">dc:rights (3.3e4 95%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="533">dc:subject (6520) [*] </tspan>
+<tspan x="1025" y="548">dc:title (4.0e4) [*] </tspan>
+<tspan x="1025" y="563">lio:IsIn (1685) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="578">lio:conveys (588) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="593">lio:folderPath (8.4e4) [*] </tspan>
+<tspan x="1025" y="608">lio:hasArtisticElement (3767) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="623">lio:hasColor (3) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="638">lio:hasDepictedBackground (1643) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="653">lio:hasMachineTag (1.5e5) [*] D -&gt; IRI</tspan>
+<tspan x="1025" y="668">lio:hasSceneLocation (1.1e4) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="683">lio:hasSetting (1.3e4) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="698">lio:hasTag (1.0e6 99.9%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="713">lio:isIn (1073) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="728">lio:isRelated (1982) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="743">lio:location (4039) [1]  -&gt; IRI</tspan>
+<tspan x="1025" y="758">lio:materials (4767) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="773">lio:oidImageId (2.3e4) [*] D -&gt; IRI</tspan>
+<tspan x="1025" y="788">lio:technique (8546) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="803">n20:AltTextAccessibility (1996) [1] </tspan>
+<tspan x="1025" y="818">n20:CiEmailWork (8117 99%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="833">n20:CiUrlWork (3.7e4) [*] </tspan>
+<tspan x="1025" y="848">n20:ExtDescrAccessibility (1231 99.9%d) [1]  -&gt; IRI</tspan>
+<tspan x="1025" y="863">n20:Scene (7756 0.01%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="878">n29:WebStatement (8697 4%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="893">n29:usageTerms (3.4e4 99.9%d) [1]  -&gt; IRI</tspan>
+<tspan x="1025" y="908">n52:type (29) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="923">photoshop:City (1955 98%d) [1]  -&gt; IRI</tspan>
+<tspan x="1025" y="938">photoshop:Country (1658 98%d) [1]  -&gt; IRI</tspan>
+<tspan x="1025" y="953">photoshop:Credit (1928 99.9%d) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="968">photoshop:DateCreated (4.7e4) [*] </tspan>
+<tspan x="1025" y="983">rdf:type (1.6e5) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="998">rdfs:comment (4.1e4 99.9%d) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="1013">rdfs:seeAlso (8.7e4) [*] D -&gt; IRI</tspan>
+<tspan x="1025" y="1028">schema:acquireLicensePage (1996) [*] D</tspan>
+<tspan x="1025" y="1043">schema:copyrightNotice (3.3e4 95%d) [*] D -&gt; IRI</tspan>
+<tspan x="1025" y="1058">schema:keywords (6.8e4) [*] D</tspan>
+<tspan x="1025" y="1073">schema:license (8567) [*] D</tspan>
+<tspan x="1025" y="1088">schema:name (3.9e4) [*] D</tspan>
+<tspan x="1025" y="1103">useplus:LicensorURL (2125) [*] </tspan>
 </text>
 </g>
-<g id="2002681517"><polygon points="383,13 563,13 563,403 383,403 "
+<g id="2002681484"><polygon points="470,320 855,320 855,1490 470,1490 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="444" y="22">lio:Image (8.0e4)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="579" y="335">schema:ImageObject (8.0e4)</tspan>
 </text>
-<line x1="385" y1="23" x2="562" y2="23"
+<line x1="474" y1="338" x2="853" y2="338"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="385" y="30">dbo:date (1) [1] D -&gt; IRI</tspan>
-<tspan x="385" y="39">dbo:location (4) [1] D -&gt; IRI</tspan>
-<tspan x="385" y="48">dc:rights (3.3e4 95%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="57">dc:subject (6520) [*] </tspan>
-<tspan x="385" y="66">dc:title (4.0e4) [*] </tspan>
-<tspan x="385" y="75">lio:IsIn (1685) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="84">lio:conveys (588) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="93">lio:folderPath (8.4e4) [*] </tspan>
-<tspan x="385" y="102">lio:hasArtisticElement (3767) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="111">lio:hasColor (3) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="120">lio:hasDepictedBackground (1643) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="129">lio:hasMachineTag (1.5e5) [*] D -&gt; IRI</tspan>
-<tspan x="385" y="138">lio:hasSceneLocation (1.1e4) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="147">lio:hasSetting (1.3e4) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="156">lio:hasTag (1.0e6 99.9%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="165">lio:isIn (1073) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="174">lio:isRelated (1982) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="183">lio:location (4039) [1]  -&gt; IRI</tspan>
-<tspan x="385" y="192">lio:materials (4767) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="201">lio:oidImageId (2.3e4) [*] D -&gt; IRI</tspan>
-<tspan x="385" y="210">lio:technique (8546) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="219">n20:AltTextAccessibility (1996) [1] </tspan>
-<tspan x="385" y="228">n20:CiEmailWork (8117 99%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="237">n20:CiUrlWork (3.7e4) [*] </tspan>
-<tspan x="385" y="246">n20:ExtDescrAccessibility (1231 99.9%d) [1]  -&gt; IRI</tspan>
-<tspan x="385" y="255">n20:Scene (7756 0.01%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="264">n29:WebStatement (8697 4%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="273">n29:usageTerms (3.4e4 99.9%d) [1]  -&gt; IRI</tspan>
-<tspan x="385" y="282">n52:type (29) [1] D -&gt; IRI</tspan>
-<tspan x="385" y="291">photoshop:City (1955 98%d) [1]  -&gt; IRI</tspan>
-<tspan x="385" y="300">photoshop:Country (1658 98%d) [1]  -&gt; IRI</tspan>
-<tspan x="385" y="309">photoshop:Credit (1928 99.9%d) [1] D -&gt; IRI</tspan>
-<tspan x="385" y="318">photoshop:DateCreated (4.7e4) [*] </tspan>
-<tspan x="385" y="327">rdf:type (1.6e5) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="336">rdfs:comment (4.1e4 99.9%d) [*]  -&gt; IRI</tspan>
-<tspan x="385" y="345">rdfs:seeAlso (8.7e4) [*] D -&gt; IRI</tspan>
-<tspan x="385" y="354">schema:acquireLicensePage (1996) [*] D</tspan>
-<tspan x="385" y="363">schema:copyrightNotice (3.3e4 95%d) [*] D -&gt; IRI</tspan>
-<tspan x="385" y="372">schema:keywords (6.8e4) [*] D</tspan>
-<tspan x="385" y="381">schema:license (8567) [*] D</tspan>
-<tspan x="385" y="390">schema:name (3.9e4) [*] D</tspan>
-<tspan x="385" y="399">useplus:LicensorURL (2125) [*] </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="474" y="350">aas:AffineA (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="365">aas:AffineB (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="380">aas:AffineC (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="395">aas:AffineD (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="410">aas:AffineX (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="425">aas:AffineY (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="440">aas:CropH (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="455">aas:CropW (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="470">aas:CropX (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="485">aas:CropY (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="500">aas:Curve0x (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="515">aas:Curve0y (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="530">aas:Curve1x (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="545">aas:Curve1y (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="560">aas:Curve2x (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="575">aas:Curve2y (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="590">aas:Curve3x (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="605">aas:Curve3y (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="620">aas:Curve4x (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="635">aas:Curve4y (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="650">aas:FaceBalanceOrigI (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="665">aas:FaceBalanceOrigQ (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="680">aas:FaceBalanceStrength (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="695">aas:FaceBalanceWarmth (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="710">auto_1:xmpMM:DerivedFromDocumentID (3372) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="725">auto_1:xmpMM:DerivedFromInstanceID (2186) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="740">auto_1:xmpMM:DerivedFromOriginalDocumentID (2540) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="755">auto_1:xmpMM:DerivedFromRenditionClass (2) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="770">auto_1:xmpMM:DocumentID (5758) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="785">auto_1:xmpMM:InstanceID (5376) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="800">auto_1:xmpMM:ManifestLinkForm (2) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="815">auto_1:xmpMM:ManifestPlacedResolutionUnit (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="830">auto_1:xmpMM:ManifestPlacedXResolution (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="845">auto_1:xmpMM:ManifestPlacedYResolution (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="860">auto_1:xmpMM:ManifestReferenceDocumentID (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="875">auto_1:xmpMM:ManifestReferenceFilePath (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="890">auto_1:xmpMM:ManifestReferenceInstanceID (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="905">auto_1:xmpMM:OriginalDocumentID (4041) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="920">auto_1:xmpMM:PreservedFileName (46) [*] D -&gt; IRI</tspan>
+<tspan x="474" y="935">auto_1:xmpMM:RenditionClass (2) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="950">auto_1:xmpMM:VersionID (2) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="965">axifca:AEBBracketValue (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="980">axifca:AFAreaHeight (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="995">axifca:AFAreaWidth (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1010">axifca:AFAreaXPositions (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1025">axifca:AFAreaYPositions (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1040">axifca:AFImageHeight (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1055">axifca:AFImageWidth (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1070">axifca:AFPointsInFocus (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1085">axifca:AutoExposureBracketing (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1100">axifca:AutoISO (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1115">axifca:AutoRotate (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1130">axifca:BaseISO (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1145">axifca:BlackMaskBottomBorder (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1160">axifca:BlackMaskLeftBorder (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1175">axifca:BlackMaskRightBorder (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1190">axifca:BlackMaskTopBorder (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1205">axifca:BracketMode (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1220">axifca:BracketShotNumber (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1235">axifca:BracketValue (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1250">axifca:BulbDuration (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1265">axifca:CameraType (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1280">axifca:CanonExposureMode (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1295">axifca:CanonFirmwareVersion (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1310">axifca:CanonFlashMode (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1325">axifca:CanonImageHeight (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1340">axifca:CanonImageSize (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1355">axifca:CanonImageType (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1370">axifca:CanonImageWidth (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1385">axifca:CanonModelID (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1400">axifca:ColorTempAsShot (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1415">axifca:ColorTempAuto (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1430">axifca:ColorTempCloudy (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1445">axifca:ColorTempCustom1 (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1460">axifca:ColorTempCustom2 (1) [1] D -&gt; IRI</tspan>
+<tspan x="474" y="1475">axifca:ColorTempDaylight (1) [1] D -...</tspan>
 </text>
 </g>
-<g id="2002681506"><polygon points="680,528 860,528 860,621 680,621 "
+<g id="2002681495"><polygon points="1479,642 1779,642 1779,692 1479,692 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="733" y="537">schema:Person (290)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1582" y="657">n36:Point (4633)</tspan>
 </text>
-<line x1="682" y1="539" x2="859" y2="539"
+<line x1="1483" y1="660" x2="1777" y2="660"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="682" y="546">lio:isAiming (1) [1] D -&gt; IRI</tspan>
-<tspan x="682" y="555">lio:isDriving (2) [*] D -&gt; IRI</tspan>
-<tspan x="682" y="564">lio:isHolding (3) [*]  -&gt; IRI</tspan>
-<tspan x="682" y="573">lio:isMaking (2) [1] D -&gt; IRI</tspan>
-<tspan x="682" y="582">lio:isTalkingOn (1) [1] D -&gt; IRI</tspan>
-<tspan x="682" y="591">lio:isWearing (6) [*]  -&gt; IRI</tspan>
-<tspan x="682" y="600">lio:with (4) [*]  -&gt; IRI</tspan>
-<tspan x="682" y="609">rdf:type (290) [*]  -&gt; IRI</tspan>
-<tspan x="682" y="618">rdfs:label (306) [*] </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1483" y="672">n36:lat (4633) [*] </tspan>
+<tspan x="1483" y="687">rdf:type (4633) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002681528"><polygon points="32,703 212,703 212,730 32,730 "
+<g id="2002681506"><polygon points="1021,1305 1321,1305 1321,1460 1021,1460 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="109" y="712">n50: (1)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1110" y="1320">schema:Person (290)</tspan>
 </text>
-</g>
-<g id="2002681484"><polygon points="320,424 551,424 551,1126 320,1126 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="386" y="433">schema:ImageObject (8.0e4)</tspan>
-</text>
-<line x1="322" y1="435" x2="550" y2="435"
+<line x1="1025" y1="1323" x2="1319" y2="1323"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="322" y="442">aas:AffineA (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="451">aas:AffineB (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="460">aas:AffineC (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="469">aas:AffineD (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="478">aas:AffineX (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="487">aas:AffineY (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="496">aas:CropH (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="505">aas:CropW (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="514">aas:CropX (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="523">aas:CropY (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="532">aas:Curve0x (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="541">aas:Curve0y (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="550">aas:Curve1x (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="559">aas:Curve1y (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="568">aas:Curve2x (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="577">aas:Curve2y (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="586">aas:Curve3x (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="595">aas:Curve3y (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="604">aas:Curve4x (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="613">aas:Curve4y (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="622">aas:FaceBalanceOrigI (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="631">aas:FaceBalanceOrigQ (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="640">aas:FaceBalanceStrength (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="649">aas:FaceBalanceWarmth (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="658">auto_1:xmpMM:DerivedFromDocumentID (3372) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="667">auto_1:xmpMM:DerivedFromInstanceID (2186) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="676">auto_1:xmpMM:DerivedFromOriginalDocumentID (2540) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="685">auto_1:xmpMM:DerivedFromRenditionClass (2) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="694">auto_1:xmpMM:DocumentID (5758) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="703">auto_1:xmpMM:InstanceID (5376) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="712">auto_1:xmpMM:ManifestLinkForm (2) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="721">auto_1:xmpMM:ManifestPlacedResolutionUnit (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="730">auto_1:xmpMM:ManifestPlacedXResolution (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="739">auto_1:xmpMM:ManifestPlacedYResolution (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="748">auto_1:xmpMM:ManifestReferenceDocumentID (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="757">auto_1:xmpMM:ManifestReferenceFilePath (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="766">auto_1:xmpMM:ManifestReferenceInstanceID (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="775">auto_1:xmpMM:OriginalDocumentID (4041) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="784">auto_1:xmpMM:PreservedFileName (46) [*] D -&gt; IRI</tspan>
-<tspan x="322" y="793">auto_1:xmpMM:RenditionClass (2) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="802">auto_1:xmpMM:VersionID (2) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="811">axifca:AEBBracketValue (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="820">axifca:AFAreaHeight (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="829">axifca:AFAreaWidth (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="838">axifca:AFAreaXPositions (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="847">axifca:AFAreaYPositions (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="856">axifca:AFImageHeight (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="865">axifca:AFImageWidth (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="874">axifca:AFPointsInFocus (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="883">axifca:AutoExposureBracketing (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="892">axifca:AutoISO (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="901">axifca:AutoRotate (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="910">axifca:BaseISO (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="919">axifca:BlackMaskBottomBorder (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="928">axifca:BlackMaskLeftBorder (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="937">axifca:BlackMaskRightBorder (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="946">axifca:BlackMaskTopBorder (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="955">axifca:BracketMode (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="964">axifca:BracketShotNumber (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="973">axifca:BracketValue (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="982">axifca:BulbDuration (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="991">axifca:CameraType (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1000">axifca:CanonExposureMode (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1009">axifca:CanonFirmwareVersion (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1018">axifca:CanonFlashMode (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1027">axifca:CanonImageHeight (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1036">axifca:CanonImageSize (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1045">axifca:CanonImageType (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1054">axifca:CanonImageWidth (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1063">axifca:CanonModelID (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1072">axifca:ColorTempAsShot (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1081">axifca:ColorTempAuto (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1090">axifca:ColorTempCloudy (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1099">axifca:ColorTempCustom1 (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1108">axifca:ColorTempCustom2 (1) [1] D -&gt; IRI</tspan>
-<tspan x="322" y="1117">axifca:ColorTempDaylight (1) [1] D -...</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1025" y="1335">lio:isAiming (1) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="1350">lio:isDriving (2) [*] D -&gt; IRI</tspan>
+<tspan x="1025" y="1365">lio:isHolding (3) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="1380">lio:isMaking (2) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="1395">lio:isTalkingOn (1) [1] D -&gt; IRI</tspan>
+<tspan x="1025" y="1410">lio:isWearing (6) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="1425">lio:with (4) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="1440">rdf:type (290) [*]  -&gt; IRI</tspan>
+<tspan x="1025" y="1455">rdfs:label (306) [*] </tspan>
 </text>
 </g>
-<g id="2002681450"><path d="M383,116 L301,116 "
+<g id="2002681450"><path d="M1321,671 L1479,671 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="304" y1="114" x2="301" y2="116"
+<line x1="1473" y1="668" x2="1479" y2="671"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="304" y1="118" x2="301" y2="116"
+<line x1="1473" y1="674" x2="1479" y2="671"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="316" y="123">lio:wasCreatedAt  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1325" y="669">lio:wasCreatedAt  D</tspan>
 </text>
 </g>
-<g id="2002681455"><path d="M680,532 L657,532 655,530 653,528 653,528 655,526 657,524 683,524 683,528 "
+<g id="2002681460"><path d="M855,1406 L1021,1406 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="682" y1="524" x2="683" y2="528"
+<line x1="1015" y1="1403" x2="1021" y2="1406"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="685" y1="524" x2="683" y2="528"
+<line x1="1015" y1="1409" x2="1021" y2="1406"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="659" y="539">lio:is  </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="859" y="1359">foaf:depicts  D</tspan>
+<tspan x="859" y="1374">lio:isPartOf  </tspan>
+<tspan x="859" y="1389">lio:hasPhotographer  D</tspan>
+<tspan x="859" y="1404">lio:AOCreator  DR</tspan>
 </text>
 </g>
-<g id="2002681460"><path d="M551,574 L680,574 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="676" y1="572" x2="680" y2="574"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="676" y1="576" x2="680" y2="574"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="554" y="546">foaf:depicts  D</tspan>
-<tspan x="554" y="555">lio:isPartOf  </tspan>
-<tspan x="554" y="564">lio:hasPhotographer  D</tspan>
-<tspan x="554" y="573">lio:AOCreator  DR</tspan>
-</text>
-</g>
-<g id="2002681482"><path d="M431,403 L431,424 "
-style="fill:none;stroke-width:1;stroke:Fuchsia;"/>
-<polygon points="434,409 431,403 428,409 "
+<g id="2002681482"><path d="M1021,773 L855,773 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1011,778 1021,773 1011,768 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="432" y="411"> </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1007" y="786"> </tspan>
 </text>
 </g>
-<g id="2002681465"><path d="M320,627 L232,627 230,626 229,623 229,520 230,518 232,517 320,517 "
+<g id="2002681465"><path d="M470,326 L345,326 341,324 339,320 339,320 341,316 345,314 476,314 476,320 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="515" x2="320" y2="517"
+<line x1="473" y1="314" x2="476" y2="320"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="518" x2="320" y2="517"
+<line x1="479" y1="314" x2="476" y2="320"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="635">owl:sameAs  DR</tspan>
-<tspan x="246" y="644">schema:contentUrl  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="347" y="339">owl:sameAs  DR</tspan>
+<tspan x="347" y="354">schema:contentUrl  D</tspan>
 </text>
 </g>
-<g id="2002681470"><path d="M383,378 L308,378 306,379 305,382 305,434 306,437 308,438 320,438 "
+<g id="2002681470"><path d="M1021,794 L855,794 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="436" x2="320" y2="438"
+<line x1="861" y1="791" x2="855" y2="794"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="440" x2="320" y2="438"
+<line x1="861" y1="797" x2="855" y2="794"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="310" y="386">lio:hasVisualPart  </tspan>
-<tspan x="310" y="395">schema:thumbnail  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="899" y="807">lio:hasVisualPart  </tspan>
+<tspan x="899" y="822">schema:thumbnail  D</tspan>
 </text>
 </g>
-<g id="2002681480"><path d="M320,716 L212,716 "
-style="fill:none;stroke-width:1;stroke:Fuchsia;"/>
-<polygon points="314,719 320,716 314,713 "
+<g id="2002681480"><path d="M470,1193 L353,1193 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="460,1198 470,1193 460,1188 "
 style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="312" y="723"> </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="456" y="1206"> </tspan>
 </text>
 </g>
-<g id="2002681475"><path d="M563,208 L704,208 706,209 707,211 707,528 "
+<g id="2002681475"><path d="M1251,1108 L1251,1305 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="706" y1="524" x2="707" y2="528"
+<line x1="1248" y1="1299" x2="1251" y2="1305"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="709" y1="524" x2="707" y2="528"
+<line x1="1254" y1="1299" x2="1251" y2="1305"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:7px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="566" y="107">dc:creator  </tspan>
-<tspan x="566" y="116">foaf:depiction  D</tspan>
-<tspan x="566" y="125">lio:shows  </tspan>
-<tspan x="566" y="134">lio:depicts  </tspan>
-<tspan x="566" y="143">lio:hasInBackground  </tspan>
-<tspan x="566" y="152">lio:usesPictorially  </tspan>
-<tspan x="566" y="161">lio:hasInForeground  </tspan>
-<tspan x="566" y="170">lio:is  </tspan>
-<tspan x="566" y="179">n51:Property:P180  D</tspan>
-<tspan x="566" y="188">schema:creator  D</tspan>
-<tspan x="566" y="197">schema:about  D</tspan>
-<tspan x="566" y="206">schema:mentions  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1253" y="1123">dc:creator  </tspan>
+<tspan x="1253" y="1138">foaf:depiction  D</tspan>
+<tspan x="1253" y="1153">lio:shows  </tspan>
+<tspan x="1253" y="1168">lio:depicts  </tspan>
+<tspan x="1253" y="1183">lio:hasInBackground  </tspan>
+<tspan x="1253" y="1198">lio:usesPictorially  </tspan>
+<tspan x="1253" y="1213">lio:hasInForeground  </tspan>
+<tspan x="1253" y="1228">lio:is  </tspan>
+<tspan x="1253" y="1243">n51:Property:P180  D</tspan>
+<tspan x="1253" y="1258">schema:creator  D</tspan>
+<tspan x="1253" y="1273">schema:about  D</tspan>
+<tspan x="1253" y="1288">schema:mentions  D</tspan>
+</text>
+</g>
+<g id="2002681455"><path d="M1321,1322 L1534,1322 1538,1324 1540,1328 1540,1334 1538,1338 1534,1340 1321,1340 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1327" y1="1337" x2="1321" y2="1340"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1327" y1="1343" x2="1321" y2="1340"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1325" y="1320">lio:is  </tspan>
 </text>
 </g>
 </svg>

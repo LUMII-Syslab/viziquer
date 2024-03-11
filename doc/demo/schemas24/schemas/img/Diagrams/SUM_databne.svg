@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="876" height="993" viewBox="0 0 876 993">
+ width="1563" height="1584" viewBox="0 0 1563 1584">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,850 +38,752 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002676857"><polygon points="194,200 314,200 314,226 194,226 "
+<g id="2002695905"><polygon points="584,270 948,270 948,920 584,920 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="224" y="206">skos:ConceptScheme (7)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="678" y="285">bne-d:[Person (C1005)] (1.5e6)</tspan>
 </text>
-<line x1="195" y1="208" x2="313" y2="208"
+<line x1="588" y1="288" x2="946" y2="288"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="195" y="213">rdf:type (7) [*]  -&gt; IRI</tspan>
-<tspan x="195" y="219">rdfs:comment (7) [1] </tspan>
-<tspan x="195" y="225">rdfs:label (7) [*] </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="588" y="300">bne-d:OP7001 (23) [*]  -&gt;  bne-d:[Corporate body (C1006)],bne-d:</tspan>
+<tspan x="588" y="315">[Person (C1005)]..(5)</tspan>
+<tspan x="588" y="330">bne-d:P1100 (1.6e6) [*] </tspan>
+<tspan x="588" y="345">bne-d:P3066 (2.9e4) [*] </tspan>
+<tspan x="588" y="360">bne-d:P3067 (3.8e4) [*] </tspan>
+<tspan x="588" y="375">bne-d:P5010 (2.8e5) [*] D</tspan>
+<tspan x="588" y="390">bne-d:P5012 (4.6e5) [*] D</tspan>
+<tspan x="588" y="405">bne-d:P5013 (6464) [*] D</tspan>
+<tspan x="588" y="420">bne-d:P5014 (722) [*] D</tspan>
+<tspan x="588" y="435">bne-d:P5024 (9.6e5) [*] D</tspan>
+<tspan x="588" y="450">bne-d:P5222 (1.9e4) [*] D</tspan>
+<tspan x="588" y="465">bne-d:[Catalogers note (P1007)] (7518) [*] </tspan>
+<tspan x="588" y="480">bne-d:[Dates (P5002)] (3.4e5) [1] D</tspan>
+<tspan x="588" y="495">bne-d:[Fuller form of name (P5004)] (1.6e4) [1] D</tspan>
+<tspan x="588" y="510">bne-d:[Information found (P1003)] (1.4e6) [*] </tspan>
+<tspan x="588" y="525">bne-d:[Name (P5001)] (1.5e6) [1] D</tspan>
+<tspan x="588" y="540">bne-d:[Note on pseudonyms (P5008)] (1.0e4) [*] D</tspan>
+<tspan x="588" y="555">bne-d:[Numeration (P5007)] (1204) [1] D</tspan>
+<tspan x="588" y="570">bne-d:[Other biographical or historical data (P5005)] (1.9e4) [*] D</tspan>
+<tspan x="588" y="585">bne-d:[Related group or body (P5009)] (8718) [*] D</tspan>
+<tspan x="588" y="600">bne-d:[Related person (P5006)] (1.0e4) [*] D</tspan>
+<tspan x="588" y="615">bne-d:[Source consulted (P1002)] (1.6e6) [*] </tspan>
+<tspan x="588" y="630">bne-d:[Title, rank or office (P5003)] (4.9e4) [*] D</tspan>
+<tspan x="588" y="645">bne-d:[date of death (P5011)] (1.1e5) [*] D</tspan>
+<tspan x="588" y="660">bne-d:id (1.5e6) [1] </tspan>
+<tspan x="588" y="675">owl:sameAs (1.1e6) [*]  -&gt; IRI</tspan>
+<tspan x="588" y="690">rda-a:P50100 (7.9e4) [*] D</tspan>
+<tspan x="588" y="705">rda-a:P50101 (3.0e4) [*] D</tspan>
+<tspan x="588" y="720">rda-a:P50102 (2.5e5) [*] D</tspan>
+<tspan x="588" y="735">rda-a:P50104 (3.3e5) [*] D</tspan>
+<tspan x="588" y="750">rda-a:P50108 (2839) [*] D</tspan>
+<tspan x="588" y="765">rda-a:P50109 (5721) [*] D</tspan>
+<tspan x="588" y="780">rda-a:P50110 (1804) [*] D</tspan>
+<tspan x="588" y="795">rda-a:P50116 (1.0e6) [*] D</tspan>
+<tspan x="588" y="810">rda-a:P50118 (1.9e4) [*] D</tspan>
+<tspan x="588" y="825">rda-a:P50119 (1.2e5) [*] D</tspan>
+<tspan x="588" y="840">rdf:type (1.5e6) [*]  -&gt; IRI</tspan>
+<tspan x="588" y="855">rdfs:label (1.5e6) [*] </tspan>
+<tspan x="588" y="870">rdfs:seeAlso (1.7e5 74%d) [*]  -&gt; IRI</tspan>
+<tspan x="588" y="885">&lt;-bne-d:OP7001 (3.9e4)  &lt;-  bne-d:[Corporate body (C1006)],bne-</tspan>
+<tspan x="588" y="900">d:[Person (C1005)]..(4)</tspan>
 </text>
 </g>
-<g id="2002676868"><polygon points="597,731 717,731 717,757 597,757 "
+<g id="2002695872"><polygon points="112,40 412,40 412,120 112,120 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="638" y="737">rdf:Property (23)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="223" y="55">sd:Service (1)</tspan>
 </text>
-<line x1="598" y1="738" x2="716" y2="738"
+<line x1="116" y1="58" x2="410" y2="58"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="598" y="743">rdf:type (28) [*]  -&gt; IRI</tspan>
-<tspan x="598" y="749">rdfs:label (23) [*] </tspan>
-<tspan x="598" y="755">rdfs:subPropertyOf (2) [1] D -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="116" y="70">rdf:type (1) [*]  -&gt; IRI</tspan>
+<tspan x="116" y="85">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="116" y="100">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
+<tspan x="116" y="115">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002676879"><polygon points="397,945 517,945 517,989 397,989 "
+<g id="2002695883"><polygon points="548,1215 848,1215 848,1385 548,1385 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="433" y="951">bne-d:C1004 (1.2e7)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="608" y="1230">bne-d:[Version (C1002)] (1.5e6)</tspan>
 </text>
-<line x1="399" y1="952" x2="516" y2="952"
+<line x1="552" y1="1233" x2="846" y2="1233"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="399" y="957">bne-d:P4001 (1.2e7) [*] D</tspan>
-<tspan x="399" y="963">bne-d:P4007 (1.2e7) [1] D</tspan>
-<tspan x="399" y="969">bne-d:P4008 (1.2e7) [1] D</tspan>
-<tspan x="399" y="975">bne-d:P4010 (1.2e6) [*] D</tspan>
-<tspan x="399" y="981">bne-d:P4014 (1.2e7) [*] D</tspan>
-<tspan x="399" y="987">rdf:type (1.2e7) [*]  -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="552" y="1245">bne-d:OP7001 (16) [*]  -&gt;  bne-d:[Corporate body </tspan>
+<tspan x="552" y="1260">(C1006)],bne-d:[Person (C1005)]..(5)</tspan>
+<tspan x="552" y="1275">bne-d:P3066 (9.4e4) [*]  -&gt; IRI</tspan>
+<tspan x="552" y="1290">bne-d:[Form (P2002)] (5.1e4) [*] D</tspan>
+<tspan x="552" y="1305">bne-d:[Language (P2001)] (1.5e6) [1] D</tspan>
+<tspan x="552" y="1320">bne-d:id (1.5e6) [1] </tspan>
+<tspan x="552" y="1335">owl:sameAs (1.6e4) [*]  -&gt; IRI</tspan>
+<tspan x="552" y="1350">rdf:type (1.5e6) [*]  -&gt; IRI</tspan>
+<tspan x="552" y="1365">&lt;-bne-d:OP7001 (70)  &lt;-  bne-d:[Corporate body </tspan>
+<tspan x="552" y="1380">(C1006)],bne-d:[Person (C1005)]..(4)</tspan>
 </text>
 </g>
-<g id="2002676890"><polygon points="603,765 723,765 723,783 603,783 "
+<g id="2002695861"><polygon points="26,437 394,437 394,982 26,982 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="634" y="771">owl:OntologyProperty (4)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="98" y="452">bne-d:[Corporate body (C1006)] (3.6e5)</tspan>
+</text>
+<line x1="30" y1="455" x2="392" y2="455"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="30" y="467">bne-d:OP7001 (121) [*]  -&gt;  bne-d:[Corporate body (C1006)],bne-d:</tspan>
+<tspan x="30" y="482">[Person (C1005)]..(5)</tspan>
+<tspan x="30" y="497">bne-d:P1100 (2.8e5) [*] </tspan>
+<tspan x="30" y="512">bne-d:P3066 (6 33%d) [*]  -&gt; IRI</tspan>
+<tspan x="30" y="527">bne-d:P3067 (1) [*] </tspan>
+<tspan x="30" y="542">bne-d:P6014 (156) [1] D</tspan>
+<tspan x="30" y="557">bne-d:P6024 (9.0e4) [*] D</tspan>
+<tspan x="30" y="572">bne-d:[Catalogers note (P1007)] (1.0e4) [*] </tspan>
+<tspan x="30" y="587">bne-d:[Date of meeting or treaty signing (P6003)] (7.6e4) [*] D</tspan>
+<tspan x="30" y="602">bne-d:[Information found (P1003)] (2.5e5) [*] </tspan>
+<tspan x="30" y="617">bne-d:[Name (P6001)] (3.6e5) [*] D</tspan>
+<tspan x="30" y="632">bne-d:[Note (P6008)] (5330) [*] D</tspan>
+<tspan x="30" y="647">bne-d:[Number of meeting (P6006)] (5.8e4) [*] D</tspan>
+<tspan x="30" y="662">bne-d:[Other variant name (P6005)] (1.4e5) [*] D</tspan>
+<tspan x="30" y="677">bne-d:[Place of congress or exhibition (P6004)] (6.7e4) [1] D</tspan>
+<tspan x="30" y="692">bne-d:[Related group or body (P6007)] (1.6e4) [*] D</tspan>
+<tspan x="30" y="707">bne-d:[Related person (P6009)] (9245) [*] D</tspan>
+<tspan x="30" y="722">bne-d:[Source consulted (P1002)] (2.8e5) [*] </tspan>
+<tspan x="30" y="737">bne-d:[Subordinate unit (P6002)] (7.8e4) [*] D</tspan>
+<tspan x="30" y="752">bne-d:id (3.6e5) [1] </tspan>
+<tspan x="30" y="767">owl:sameAs (1.1e5) [*]  -&gt; IRI</tspan>
+<tspan x="30" y="782">rda-a:P50022 (3.1e4) [*] D</tspan>
+<tspan x="30" y="797">rda-a:P50023 (1.6e4) [*] D</tspan>
+<tspan x="30" y="812">rda-a:P50031 (3.0e4) [*] D</tspan>
+<tspan x="30" y="827">rda-a:P50033 (2.6e4) [*] D</tspan>
+<tspan x="30" y="842">rda-a:P50034 (1708) [*] D</tspan>
+<tspan x="30" y="857">rda-a:P50037 (1.3e4) [*] D</tspan>
+<tspan x="30" y="872">rda-a:P50038 (6649) [*] D</tspan>
+<tspan x="30" y="887">rdf:type (3.6e5) [*]  -&gt; IRI</tspan>
+<tspan x="30" y="902">rdfs:label (3.6e5) [*] </tspan>
+<tspan x="30" y="917">rdfs:seeAlso (2.6e4 99.9%d) [*]  -&gt; IRI</tspan>
+<tspan x="30" y="932">&lt;-bne-d:OP7001 (1.5e4)  &lt;-  bne-d:[Corporate body (C1006)],bne-</tspan>
+<tspan x="30" y="947">d:[Person (C1005)]..(4)</tspan>
 </text>
 </g>
-<g id="2002676901"><polygon points="4,446 124,446 124,464 4,464 "
+<g id="2002695916"><polygon points="185,254 403,254 403,364 185,364 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="33" y="452">owl:AnnotationProperty (5)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="238" y="269">bne-d:C1008 (1470)</tspan>
 </text>
-<line x1="6" y1="453" x2="123" y2="453"
+<line x1="189" y1="272" x2="401" y2="272"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="6" y="458">rdf:type (6) [*]  -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="189" y="284">bne-d:P8001 (1478) [*] D</tspan>
+<tspan x="189" y="299">bne-d:P8002 (1485) [*] D</tspan>
+<tspan x="189" y="314">bne-d:P8003 (355) [1] D</tspan>
+<tspan x="189" y="329">bne-d:P8004 (1958) [*] D</tspan>
+<tspan x="189" y="344">bne-d:P8005 (1485) [*] D</tspan>
+<tspan x="189" y="359">rdf:type (1472) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002676912"><polygon points="657,170 777,170 777,376 657,376 "
+<g id="2002695927"><polygon points="104,1021 404,1021 404,1386 104,1386 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="693" y="175">bne-d:C1006 (3.6e5)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="171" y="1036">bne-d:[Work (C1001)] (2.2e6)</tspan>
 </text>
-<line x1="659" y1="177" x2="776" y2="177"
+<line x1="108" y1="1039" x2="402" y2="1039"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="659" y="182">bne-d:OP7001 (121) [*]  -&gt;  bne-d:C1006,bne-d:</tspan>
-<tspan x="659" y="188">C1005..(5)</tspan>
-<tspan x="659" y="194">bne-d:P1002 (2.8e5) [*] </tspan>
-<tspan x="659" y="200">bne-d:P1003 (2.5e5) [*] </tspan>
-<tspan x="659" y="206">bne-d:P1007 (1.0e4) [*] </tspan>
-<tspan x="659" y="212">bne-d:P1100 (2.8e5) [*] </tspan>
-<tspan x="659" y="218">bne-d:P3066 (6 33%d) [*]  -&gt; IRI</tspan>
-<tspan x="659" y="224">bne-d:P3067 (1) [*] </tspan>
-<tspan x="659" y="230">bne-d:P6001 (3.6e5) [*] D</tspan>
-<tspan x="659" y="236">bne-d:P6002 (7.8e4) [*] D</tspan>
-<tspan x="659" y="242">bne-d:P6003 (7.6e4) [*] D</tspan>
-<tspan x="659" y="248">bne-d:P6004 (6.7e4) [1] D</tspan>
-<tspan x="659" y="254">bne-d:P6005 (1.4e5) [*] D</tspan>
-<tspan x="659" y="260">bne-d:P6006 (5.8e4) [*] D</tspan>
-<tspan x="659" y="266">bne-d:P6007 (1.6e4) [*] D</tspan>
-<tspan x="659" y="272">bne-d:P6008 (5330) [*] D</tspan>
-<tspan x="659" y="278">bne-d:P6009 (9245) [*] D</tspan>
-<tspan x="659" y="284">bne-d:P6014 (156) [1] D</tspan>
-<tspan x="659" y="290">bne-d:P6024 (9.0e4) [*] D</tspan>
-<tspan x="659" y="296">bne-d:id (3.6e5) [1] </tspan>
-<tspan x="659" y="302">owl:sameAs (1.1e5) [*]  -&gt; IRI</tspan>
-<tspan x="659" y="308">rda-a:P50022 (3.1e4) [*] D</tspan>
-<tspan x="659" y="314">rda-a:P50023 (1.6e4) [*] D</tspan>
-<tspan x="659" y="320">rda-a:P50031 (3.0e4) [*] D</tspan>
-<tspan x="659" y="326">rda-a:P50033 (2.6e4) [*] D</tspan>
-<tspan x="659" y="332">rda-a:P50034 (1708) [*] D</tspan>
-<tspan x="659" y="338">rda-a:P50037 (1.3e4) [*] D</tspan>
-<tspan x="659" y="344">rda-a:P50038 (6649) [*] D</tspan>
-<tspan x="659" y="350">rdf:type (3.6e5) [*]  -&gt; IRI</tspan>
-<tspan x="659" y="356">rdfs:label (3.6e5) [*] </tspan>
-<tspan x="659" y="362">rdfs:seeAlso (2.6e4 99.9%d) [*]  -&gt; IRI</tspan>
-<tspan x="659" y="368">&lt;-bne-d:OP7001 (1.5e4)  &lt;-  bne-d:C1006,bne-d:</tspan>
-<tspan x="659" y="374">C1005..(4)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="108" y="1051">bne-d:OP7001 (9.2e5) [*]  -&gt;  bne-d:[Corporate body </tspan>
+<tspan x="108" y="1066">(C1006)],bne-d:[Person (C1005)]..(5)</tspan>
+<tspan x="108" y="1081">bne-d:P1011 (1.4e6) [*] </tspan>
+<tspan x="108" y="1096">bne-d:P1012 (3.7e4) [*] D</tspan>
+<tspan x="108" y="1111">bne-d:P1100 (2.6e5) [*] </tspan>
+<tspan x="108" y="1126">bne-d:P3066 (8.8e4) [*]  -&gt; IRI</tspan>
+<tspan x="108" y="1141">bne-d:[Catalogers note (P1007)] (1777) [*] </tspan>
+<tspan x="108" y="1156">bne-d:[Date (P1004)] (1.1e5) [*] D</tspan>
+<tspan x="108" y="1171">bne-d:[Information found (P1003)] (2.1e5) [*] </tspan>
+<tspan x="108" y="1186">bne-d:[Key (P1009)] (8645) [1] D</tspan>
+<tspan x="108" y="1201">bne-d:[Medium of performance (P1008)] (1.4e4) [*] D</tspan>
+<tspan x="108" y="1216">bne-d:[Number (P1006)] (2.7e4) [*] D</tspan>
+<tspan x="108" y="1231">bne-d:[Signatory to the treaty (P1010)] (405) [1] D</tspan>
+<tspan x="108" y="1246">bne-d:[Source consulted (P1002)] (2.6e5) [*] </tspan>
+<tspan x="108" y="1261">bne-d:[Title (P1001)] (2.2e6) [*] D</tspan>
+<tspan x="108" y="1276">bne-d:[Variant title (P1005)] (6.6e4) [*] D</tspan>
+<tspan x="108" y="1291">bne-d:id (2.2e6) [1] </tspan>
+<tspan x="108" y="1306">owl:sameAs (6.9e4) [*]  -&gt; IRI</tspan>
+<tspan x="108" y="1321">rdf:type (2.2e6) [*]  -&gt; IRI</tspan>
+<tspan x="108" y="1336">rdfs:label (2.2e6) [*] </tspan>
+<tspan x="108" y="1351">skos:altLabel (2.5e4) [*] </tspan>
+<tspan x="108" y="1366">&lt;-bne-d:OP7001 (9901)  &lt;-  bne-d:[Corporate body </tspan>
+<tspan x="108" y="1381">(C1006)],bne-d:[Person (C1005)]..(4)</tspan>
 </text>
 </g>
-<g id="2002676923"><polygon points="181,754 301,754 301,786 181,786 "
+<g id="2002695894"><polygon points="1134,16 1525,16 1525,1158 1134,1158 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="225" y="760">sd:Service (1)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1241" y="31">bne-d:[Edition (C1003)] (5.6e6)</tspan>
 </text>
-<line x1="183" y1="762" x2="300" y2="762"
+<line x1="1138" y1="34" x2="1523" y2="34"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="183" y="767">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="183" y="773">sd:feature (2) [*] D -&gt; IRI</tspan>
-<tspan x="183" y="779">sd:resultFormat (8) [*] D -&gt; IRI</tspan>
-<tspan x="183" y="785">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1138" y="46">bne-d:P1011 (3.4e6) [*] </tspan>
+<tspan x="1138" y="61">bne-d:P3046 (7.2e4) [*] D</tspan>
+<tspan x="1138" y="76">bne-d:P3051 (1.1e4) [1] D</tspan>
+<tspan x="1138" y="91">bne-d:P3064 (5.6e6) [1] D</tspan>
+<tspan x="1138" y="106">bne-d:P3065 (4.4e4) [*] D</tspan>
+<tspan x="1138" y="121">bne-d:P3066 (2.6e5) [*]  -&gt; IRI</tspan>
+<tspan x="1138" y="136">bne-d:P3077 (6379) [*] D</tspan>
+<tspan x="1138" y="151">bne-d:P3078 (9268) [*] D</tspan>
+<tspan x="1138" y="166">bne-d:P3079 (466) [*] D</tspan>
+<tspan x="1138" y="181">bne-d:P3082 (3598) [*] D</tspan>
+<tspan x="1138" y="196">bne-d:P3083 (3061) [*] D</tspan>
+<tspan x="1138" y="211">bne-d:P3084 (1.1e5) [*] D</tspan>
+<tspan x="1138" y="226">bne-d:P3085 (7.2e4) [*] D</tspan>
+<tspan x="1138" y="241">bne-d:P3086 (5391) [*] D</tspan>
+<tspan x="1138" y="256">bne-d:P3089 (1.5e5) [*] D</tspan>
+<tspan x="1138" y="271">bne-d:P3090 (4.0e4) [*] D</tspan>
+<tspan x="1138" y="286">bne-d:P3091 (3.0e4) [*] D</tspan>
+<tspan x="1138" y="301">bne-d:P3092 (1.5e5) [*] D</tspan>
+<tspan x="1138" y="316">bne-d:P3093 (4.6e5) [*] D</tspan>
+<tspan x="1138" y="331">bne-d:P3094 (1.6e4) [*] D</tspan>
+<tspan x="1138" y="346">bne-d:[Accompanying material (P3029)] (2.0e5) [*] D</tspan>
+<tspan x="1138" y="361">bne-d:[Basis of descripción (P3037)] (8.3e4) [*] D</tspan>
+<tspan x="1138" y="376">bne-d:[Bibliographic reference (P3025)] (3.7e5) [*] D</tspan>
+<tspan x="1138" y="391">bne-d:[Cartographic mathematical data (P3063)] (233) [1] D</tspan>
+<tspan x="1138" y="406">bne-d:[Chronological or sequential designation (P3031)] (1.4e5) [*] D</tspan>
+<tspan x="1138" y="421">bne-d:[Content form (P3005)] (3.4e6) [*] D</tspan>
+<tspan x="1138" y="436">bne-d:[Content form (P3061)] (2.2e6) [*] D</tspan>
+<tspan x="1138" y="451">bne-d:[Coordinates (P3056)] (829) [1] D</tspan>
+<tspan x="1138" y="466">bne-d:[Date of impression or manufacturing (P3048)] (1.6e4) [*] D</tspan>
+<tspan x="1138" y="481">bne-d:[Date of publication (P3006)] (5.6e6) [*] D</tspan>
+<tspan x="1138" y="496">bne-d:[Dependent title (P3030)] (1.8e5) [*] D</tspan>
+<tspan x="1138" y="511">bne-d:[Dependent title (P3033)] (1.4e5) [*] D</tspan>
+<tspan x="1138" y="526">bne-d:[Dependent title of series (P3045)] (2.7e4) [*] D</tspan>
+<tspan x="1138" y="541">bne-d:[Dependent title of series (P3053)] (1980) [*] D</tspan>
+<tspan x="1138" y="556">bne-d:[Dimension (P3007)] (5.1e6) [*] D</tspan>
+<tspan x="1138" y="571">bne-d:[Edition (P3017)] (1.1e6) [*] D</tspan>
+<tspan x="1138" y="586">bne-d:[Edition statement (P3050)] (1.1e4) [*] D</tspan>
+<tspan x="1138" y="601">bne-d:[Fingerprint (P3059)] (122) [*] D</tspan>
+<tspan x="1138" y="616">bne-d:[Frequency (P3032)] (1.3e5) [*] D</tspan>
+<tspan x="1138" y="631">bne-d:[ISBN (P3013)] (2.3e6) [*] D</tspan>
+<tspan x="1138" y="646">bne-d:[ISSN (P3039)] (7.7e4) [*] D</tspan>
+<tspan x="1138" y="661">bne-d:[Legal Deposit (P3009)] (3.8e6) [*] D</tspan>
+<tspan x="1138" y="676">bne-d:[Longitude and latitude (P3057)] (737) [1] D</tspan>
+<tspan x="1138" y="691">bne-d:[Media type (P3062)] (2.0e6) [*] D</tspan>
+<tspan x="1138" y="706">bne-d:[Music editor number (P3020)] (5.3e5) [*] D</tspan>
+<tspan x="1138" y="721">bne-d:[Note (P3015)] (5.0e6) [*] D</tspan>
+<tspan x="1138" y="736">bne-d:[Note (P3021)] (7.0e5) [*] D</tspan>
+<tspan x="1138" y="751">bne-d:[Note (P3040)] (4.8e4) [*] D</tspan>
+<tspan x="1138" y="766">bne-d:[Note (P3042)] (8.9e4) [*] D</tspan>
+<tspan x="1138" y="781">bne-d:[Note on binding (P3060)] (187) [*] D</tspan>
+<tspan x="1138" y="796">bne-d:[Note on contents (P3023)] (5.3e5) [*] D</tspan>
+<tspan x="1138" y="811">bne-d:[Note on edition (P3043)] (7.8e4) [*] D</tspan>
+<tspan x="1138" y="826">bne-d:[Note on mode of access (P3058)] (2.4e4) [*] D</tspan>
+<tspan x="1138" y="841">bne-d:[Note on publication (P3026)] (4.1e5) [*] D</tspan>
+<tspan x="1138" y="856">bne-d:[Note on use (P3036)] (4.6e4) [*] D</tspan>
+<tspan x="1138" y="871">bne-d:[Numbering within series (P3018)] (1.1e6) [*] D</tspan>
+<tspan x="1138" y="886">bne-d:[Other physical details (P3012)] (2.6e6) [*] D</tspan>
+<tspan x="1138" y="901">bne-d:[Other standard identifier (P3041)] (1.1e5) [*] D</tspan>
+<tspan x="1138" y="916">bne-d:[Performers (P3024)] (3.6e5) [*] D</tspan>
+<tspan x="1138" y="931">bne-d:[Physical description or extent (P3004)] (5.5e6) [*] D</tspan>
+<tspan x="1138" y="946">bne-d:[Place of printing (P3027)] (3.1e5) [*] D</tspan>
+<tspan x="1138" y="961">bne-d:[Place of publication (P3003)] (5.4e6) [*] D</tspan>
+<tspan x="1138" y="976">bne-d:[Price (P3038)] (6.5e4) [*] D</tspan>
+<tspan x="1138" y="991">bne-d:[Printer (P3019)] (5.9e5) [*] D</tspan>
+<tspan x="1138" y="1006">bne-d:[Publisher (P3001)] (5.5e6) [*] D</tspan>
+<tspan x="1138" y="1021">bne-d:[Related resource (P3034)] (3.2e5) [*] D</tspan>
+<tspan x="1138" y="1036">bne-d:[Remainder of title (P3014)] (2.2e6) [*] D</tspan>
+<tspan x="1138" y="1051">bne-d:[Reproduction note (P3047)] (2.3e4) [*] D</tspan>
+<tspan x="1138" y="1066">bne-d:[Scale (P3035)] (1.2e5) [*] D</tspan>
+<tspan x="1138" y="1081">bne-d:[Series (P3016)] (1.5e6) [*] D</tspan>
+<tspan x="1138" y="1096">bne-d:[Series (P3022)] (2.7e5) [*] D</tspan>
+<tspan x="1138" y="1111">bne-d:[Series ISSN (P3049)] (1.7e4) [*] D</tspan>
+<tspan x="1138" y="1126">bne-d:[Series note (P3052)] (9478) [*] D</tspan>
+<tspan x="1138" y="1141">bne-d:[Statement of responsabilidad (P3008)] (3.9e6...</tspan>
 </text>
 </g>
-<g id="2002676934"><polygon points="371,383 491,383 491,895 371,895 "
+<g id="2002695839"><polygon points="801,154 1037,154 1037,264 801,264 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="407" y="389">bne-d:C1003 (5.6e6)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="839" y="169">bne-d:[Item (C1004)] (1.2e7)</tspan>
 </text>
-<line x1="372" y1="390" x2="490" y2="390"
+<line x1="805" y1="172" x2="1035" y2="172"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="372" y="395">bne-d:P1011 (3.4e6) [*] </tspan>
-<tspan x="372" y="401">bne-d:P3001 (5.5e6) [*] D</tspan>
-<tspan x="372" y="407">bne-d:P3002 (5.6e6) [*] D</tspan>
-<tspan x="372" y="413">bne-d:P3003 (5.4e6) [*] D</tspan>
-<tspan x="372" y="419">bne-d:P3004 (5.5e6) [*] D</tspan>
-<tspan x="372" y="425">bne-d:P3005 (3.4e6) [*] D</tspan>
-<tspan x="372" y="431">bne-d:P3006 (5.6e6) [*] D</tspan>
-<tspan x="372" y="437">bne-d:P3007 (5.1e6) [*] D</tspan>
-<tspan x="372" y="443">bne-d:P3008 (3.9e6) [*] D</tspan>
-<tspan x="372" y="449">bne-d:P3009 (3.8e6) [*] D</tspan>
-<tspan x="372" y="455">bne-d:P3012 (2.6e6) [*] D</tspan>
-<tspan x="372" y="461">bne-d:P3013 (2.3e6) [*] D</tspan>
-<tspan x="372" y="467">bne-d:P3014 (2.2e6) [*] D</tspan>
-<tspan x="372" y="473">bne-d:P3015 (5.0e6) [*] D</tspan>
-<tspan x="372" y="479">bne-d:P3016 (1.5e6) [*] D</tspan>
-<tspan x="372" y="485">bne-d:P3017 (1.1e6) [*] D</tspan>
-<tspan x="372" y="491">bne-d:P3018 (1.1e6) [*] D</tspan>
-<tspan x="372" y="497">bne-d:P3019 (5.9e5) [*] D</tspan>
-<tspan x="372" y="503">bne-d:P3020 (5.3e5) [*] D</tspan>
-<tspan x="372" y="509">bne-d:P3021 (7.0e5) [*] D</tspan>
-<tspan x="372" y="515">bne-d:P3022 (2.7e5) [*] D</tspan>
-<tspan x="372" y="521">bne-d:P3023 (5.3e5) [*] D</tspan>
-<tspan x="372" y="527">bne-d:P3024 (3.6e5) [*] D</tspan>
-<tspan x="372" y="533">bne-d:P3025 (3.7e5) [*] D</tspan>
-<tspan x="372" y="539">bne-d:P3026 (4.1e5) [*] D</tspan>
-<tspan x="372" y="545">bne-d:P3027 (3.1e5) [*] D</tspan>
-<tspan x="372" y="551">bne-d:P3028 (3.2e5) [*] D</tspan>
-<tspan x="372" y="557">bne-d:P3029 (2.0e5) [*] D</tspan>
-<tspan x="372" y="563">bne-d:P3030 (1.8e5) [*] D</tspan>
-<tspan x="372" y="569">bne-d:P3031 (1.4e5) [*] D</tspan>
-<tspan x="372" y="575">bne-d:P3032 (1.3e5) [*] D</tspan>
-<tspan x="372" y="581">bne-d:P3033 (1.4e5) [*] D</tspan>
-<tspan x="372" y="587">bne-d:P3034 (3.2e5) [*] D</tspan>
-<tspan x="372" y="593">bne-d:P3035 (1.2e5) [*] D</tspan>
-<tspan x="372" y="599">bne-d:P3036 (4.6e4) [*] D</tspan>
-<tspan x="372" y="605">bne-d:P3037 (8.3e4) [*] D</tspan>
-<tspan x="372" y="611">bne-d:P3038 (6.5e4) [*] D</tspan>
-<tspan x="372" y="617">bne-d:P3039 (7.7e4) [*] D</tspan>
-<tspan x="372" y="623">bne-d:P3040 (4.8e4) [*] D</tspan>
-<tspan x="372" y="629">bne-d:P3041 (1.1e5) [*] D</tspan>
-<tspan x="372" y="635">bne-d:P3042 (8.9e4) [*] D</tspan>
-<tspan x="372" y="641">bne-d:P3043 (7.8e4) [*] D</tspan>
-<tspan x="372" y="647">bne-d:P3044 (4.3e4) [*] D</tspan>
-<tspan x="372" y="653">bne-d:P3045 (2.7e4) [*] D</tspan>
-<tspan x="372" y="659">bne-d:P3046 (7.2e4) [*] D</tspan>
-<tspan x="372" y="665">bne-d:P3047 (2.3e4) [*] D</tspan>
-<tspan x="372" y="671">bne-d:P3048 (1.6e4) [*] D</tspan>
-<tspan x="372" y="677">bne-d:P3049 (1.7e4) [*] D</tspan>
-<tspan x="372" y="683">bne-d:P3050 (1.1e4) [*] D</tspan>
-<tspan x="372" y="689">bne-d:P3051 (1.1e4) [1] D</tspan>
-<tspan x="372" y="695">bne-d:P3052 (9478) [*] D</tspan>
-<tspan x="372" y="701">bne-d:P3053 (1980) [*] D</tspan>
-<tspan x="372" y="707">bne-d:P3054 (5412) [*] D</tspan>
-<tspan x="372" y="713">bne-d:P3055 (3705) [*] D</tspan>
-<tspan x="372" y="719">bne-d:P3056 (829) [1] D</tspan>
-<tspan x="372" y="725">bne-d:P3057 (737) [1] D</tspan>
-<tspan x="372" y="731">bne-d:P3058 (2.4e4) [*] D</tspan>
-<tspan x="372" y="737">bne-d:P3059 (122) [*] D</tspan>
-<tspan x="372" y="743">bne-d:P3060 (187) [*] D</tspan>
-<tspan x="372" y="749">bne-d:P3061 (2.2e6) [*] D</tspan>
-<tspan x="372" y="755">bne-d:P3062 (2.0e6) [*] D</tspan>
-<tspan x="372" y="761">bne-d:P3063 (233) [1] D</tspan>
-<tspan x="372" y="767">bne-d:P3064 (5.6e6) [1] D</tspan>
-<tspan x="372" y="773">bne-d:P3065 (4.4e4) [*] D</tspan>
-<tspan x="372" y="779">bne-d:P3066 (2.6e5) [*]  -&gt; IRI</tspan>
-<tspan x="372" y="785">bne-d:P3077 (6379) [*] D</tspan>
-<tspan x="372" y="791">bne-d:P3078 (9268) [*] D</tspan>
-<tspan x="372" y="797">bne-d:P3079 (466) [*] D</tspan>
-<tspan x="372" y="803">bne-d:P3082 (3598) [*] D</tspan>
-<tspan x="372" y="809">bne-d:P3083 (3061) [*] D</tspan>
-<tspan x="372" y="815">bne-d:P3084 (1.1e5) [*] D</tspan>
-<tspan x="372" y="821">bne-d:P3085 (7.2e4) [*] D</tspan>
-<tspan x="372" y="827">bne-d:P3086 (5391) [*] D</tspan>
-<tspan x="372" y="833">bne-d:P3089 (1.5e5) [*] D</tspan>
-<tspan x="372" y="839">bne-d:P3090 (4.0e4) [*] D</tspan>
-<tspan x="372" y="845">bne-d:P3091 (3.0e4) [*] D</tspan>
-<tspan x="372" y="851">bne-d:P3092 (1.5e5) [*] D</tspan>
-<tspan x="372" y="857">bne-d:P3093 (4.6e5) [*] D</tspan>
-<tspan x="372" y="863">bne-d:P3094 (1.6e4) [*] D</tspan>
-<tspan x="372" y="869">bne-d:id (5.6e6) [1] </tspan>
-<tspan x="372" y="875">dct:language (5.4e6) [*] D -&gt; IRI</tspan>
-<tspan x="372" y="881">rdf:type (5.6e6) [*]  -&gt; IRI</tspan>
-<tspan x="372" y="887">rdfs:label (5.6e6) [*] </tspan>
-<tspan x="372" y="893">rdfs:seeAlso (2.0e5) [*]  -&gt; IRI</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="805" y="184">bne-d:P4001 (1.2e7) [*] D</tspan>
+<tspan x="805" y="199">bne-d:P4007 (1.2e7) [1] D</tspan>
+<tspan x="805" y="214">bne-d:P4008 (1.2e7) [1] D</tspan>
+<tspan x="805" y="229">bne-d:P4010 (1.2e6) [*] D</tspan>
+<tspan x="805" y="244">bne-d:P4014 (1.2e7) [*] D</tspan>
+<tspan x="805" y="259">rdf:type (1.2e7) [*]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002676945"><polygon points="374,44 494,44 494,112 374,112 "
+<g id="2002695828"><polygon points="880,1361 1109,1361 1109,1426 880,1426 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="411" y="49">bne-d:C1002 (1.5e6)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="921" y="1376">skos:ConceptScheme (7)</tspan>
 </text>
-<line x1="376" y1="51" x2="494" y2="51"
+<line x1="884" y1="1379" x2="1107" y2="1379"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="376" y="56">bne-d:OP7001 (16) [*]  -&gt;  bne-d:C1006,bne-d:C1005.</tspan>
-<tspan x="376" y="62">.(5)</tspan>
-<tspan x="376" y="68">bne-d:P2001 (1.5e6) [1] D</tspan>
-<tspan x="376" y="74">bne-d:P2002 (5.1e4) [*] D</tspan>
-<tspan x="376" y="80">bne-d:P3066 (9.4e4) [*]  -&gt; IRI</tspan>
-<tspan x="376" y="86">bne-d:id (1.5e6) [1] </tspan>
-<tspan x="376" y="92">owl:sameAs (1.6e4) [*]  -&gt; IRI</tspan>
-<tspan x="376" y="98">rdf:type (1.5e6) [*]  -&gt; IRI</tspan>
-<tspan x="376" y="104">&lt;-bne-d:OP7001 (70)  &lt;-  bne-d:C1006,bne-d:C1005..</tspan>
-<tspan x="376" y="110">(4)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="884" y="1391">rdf:type (7) [*]  -&gt; IRI</tspan>
+<tspan x="884" y="1406">rdfs:comment (7) [1] </tspan>
+<tspan x="884" y="1421">rdfs:label (7) [*] </tspan>
 </text>
 </g>
-<g id="2002676956"><polygon points="373,122 493,122 493,376 373,376 "
+<g id="2002695850"><polygon points="1227,1293 1553,1293 1553,1574 1227,1574 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="409" y="127">bne-d:C1005 (1.5e6)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1329" y="1308">skos:Concept (7.1e5)</tspan>
 </text>
-<line x1="375" y1="129" x2="492" y2="129"
+<line x1="1231" y1="1311" x2="1551" y2="1311"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="375" y="134">bne-d:OP7001 (23) [*]  -&gt;  bne-d:C1006,bne-d:C1005.</tspan>
-<tspan x="375" y="140">.(5)</tspan>
-<tspan x="375" y="146">bne-d:P1002 (1.6e6) [*] </tspan>
-<tspan x="375" y="152">bne-d:P1003 (1.4e6) [*] </tspan>
-<tspan x="375" y="158">bne-d:P1007 (7518) [*] </tspan>
-<tspan x="375" y="164">bne-d:P1100 (1.6e6) [*] </tspan>
-<tspan x="375" y="170">bne-d:P3066 (2.9e4) [*] </tspan>
-<tspan x="375" y="176">bne-d:P3067 (3.8e4) [*] </tspan>
-<tspan x="375" y="182">bne-d:P5001 (1.5e6) [1] D</tspan>
-<tspan x="375" y="188">bne-d:P5002 (3.4e5) [1] D</tspan>
-<tspan x="375" y="194">bne-d:P5003 (4.9e4) [*] D</tspan>
-<tspan x="375" y="200">bne-d:P5004 (1.6e4) [1] D</tspan>
-<tspan x="375" y="206">bne-d:P5005 (1.9e4) [*] D</tspan>
-<tspan x="375" y="212">bne-d:P5006 (1.0e4) [*] D</tspan>
-<tspan x="375" y="218">bne-d:P5007 (1204) [1] D</tspan>
-<tspan x="375" y="224">bne-d:P5008 (1.0e4) [*] D</tspan>
-<tspan x="375" y="230">bne-d:P5009 (8718) [*] D</tspan>
-<tspan x="375" y="236">bne-d:P5010 (2.8e5) [*] D</tspan>
-<tspan x="375" y="242">bne-d:P5011 (1.1e5) [*] D</tspan>
-<tspan x="375" y="248">bne-d:P5012 (4.6e5) [*] D</tspan>
-<tspan x="375" y="254">bne-d:P5013 (6464) [*] D</tspan>
-<tspan x="375" y="260">bne-d:P5014 (722) [*] D</tspan>
-<tspan x="375" y="266">bne-d:P5024 (9.6e5) [*] D</tspan>
-<tspan x="375" y="272">bne-d:P5222 (1.9e4) [*] D</tspan>
-<tspan x="375" y="278">bne-d:id (1.5e6) [1] </tspan>
-<tspan x="375" y="284">owl:sameAs (1.1e6) [*]  -&gt; IRI</tspan>
-<tspan x="375" y="290">rda-a:P50100 (7.9e4) [*] D</tspan>
-<tspan x="375" y="296">rda-a:P50101 (3.0e4) [*] D</tspan>
-<tspan x="375" y="302">rda-a:P50102 (2.5e5) [*] D</tspan>
-<tspan x="375" y="308">rda-a:P50104 (3.3e5) [*] D</tspan>
-<tspan x="375" y="314">rda-a:P50108 (2839) [*] D</tspan>
-<tspan x="375" y="320">rda-a:P50109 (5721) [*] D</tspan>
-<tspan x="375" y="326">rda-a:P50110 (1804) [*] D</tspan>
-<tspan x="375" y="332">rda-a:P50116 (1.0e6) [*] D</tspan>
-<tspan x="375" y="338">rda-a:P50118 (1.9e4) [*] D</tspan>
-<tspan x="375" y="344">rda-a:P50119 (1.2e5) [*] D</tspan>
-<tspan x="375" y="350">rdf:type (1.5e6) [*]  -&gt; IRI</tspan>
-<tspan x="375" y="356">rdfs:label (1.5e6) [*] </tspan>
-<tspan x="375" y="362">rdfs:seeAlso (1.7e5 74%d) [*]  -&gt; IRI</tspan>
-<tspan x="375" y="368">&lt;-bne-d:OP7001 (3.9e4)  &lt;-  bne-d:C1006,bne-d:</tspan>
-<tspan x="375" y="374">C1005..(4)</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1231" y="1323">bne-d:id (7.1e5) [1] </tspan>
+<tspan x="1231" y="1338">geo:lat (2.3e4) [*] D</tspan>
+<tspan x="1231" y="1353">geo:long (2.3e4) [*] D</tspan>
+<tspan x="1231" y="1368">madsrdf:citationNote (1.6e5) [*] D</tspan>
+<tspan x="1231" y="1383">madsrdf:citationSource (2.0e5) [*] D</tspan>
+<tspan x="1231" y="1398">madsrdf:editorialNote (4155) [*] D</tspan>
+<tspan x="1231" y="1413">madsrdf:isMemberOfMADSCollection (8.6e4) [1] D -&gt; IRI</tspan>
+<tspan x="1231" y="1428">owl:sameAs (1) [*]  -&gt; IRI</tspan>
+<tspan x="1231" y="1443">rdf:type (7.1e5) [*]  -&gt; IRI</tspan>
+<tspan x="1231" y="1458">rdfs:label (7.1e5) [*] </tspan>
+<tspan x="1231" y="1473">skos:altLabel (1.0e5) [*] </tspan>
+<tspan x="1231" y="1488">skos:closeMatch (1.4e5) [*] D -&gt; IRI</tspan>
+<tspan x="1231" y="1503">skos:notation (7.7e4) [*] D</tspan>
+<tspan x="1231" y="1518">skos:prefLabel (7.9e5) [*] D</tspan>
+<tspan x="1231" y="1533">skos:scopeNote (6308) [*] D</tspan>
+<tspan x="1231" y="1548">&lt;-bne-d:OP7001 (8.6e5)  &lt;-  bne-d:[Corporate body </tspan>
+<tspan x="1231" y="1563">(C1006)],bne-d:[Person (C1005)]..(4)</tspan>
 </text>
 </g>
-<g id="2002676967"><polygon points="4,480 124,480 124,524 4,524 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="45" y="486">owl:Ontology (1)</tspan>
-</text>
-<line x1="6" y1="487" x2="123" y2="487"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="6" y="492">owl:imports (1) [1] D -&gt; IRI</tspan>
-<tspan x="6" y="498">owl:priorVersion (1) [1] D -&gt; IRI</tspan>
-<tspan x="6" y="504">owl:versionInfo (1) [1] D</tspan>
-<tspan x="6" y="510">rdf:type (1) [*]  -&gt; IRI</tspan>
-<tspan x="6" y="516">rdfs:comment (1) [1] </tspan>
-<tspan x="6" y="522">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002676978"><polygon points="752,720 872,720 872,746 752,746 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="798" y="726">owl:Class (3)</tspan>
-</text>
-<line x1="754" y1="728" x2="872" y2="728"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="754" y="733">owl:unionOf (1) [1] D -&gt; IRI</tspan>
-<tspan x="754" y="739">rdf:type (3) [*]  -&gt; IRI</tspan>
-<tspan x="754" y="745">rdfs:label (2) [*] </tspan>
-</text>
-</g>
-<g id="2002676989"><polygon points="635,16 755,16 755,162 635,162 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="671" y="22">bne-d:C1001 (2.2e6)</tspan>
-</text>
-<line x1="636" y1="24" x2="754" y2="24"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="636" y="29">bne-d:OP7001 (9.2e5) [*]  -&gt;  bne-d:C1006,bne-d:</tspan>
-<tspan x="636" y="35">C1005..(5)</tspan>
-<tspan x="636" y="41">bne-d:P1001 (2.2e6) [*] D</tspan>
-<tspan x="636" y="47">bne-d:P1002 (2.6e5) [*] </tspan>
-<tspan x="636" y="53">bne-d:P1003 (2.1e5) [*] </tspan>
-<tspan x="636" y="59">bne-d:P1004 (1.1e5) [*] D</tspan>
-<tspan x="636" y="65">bne-d:P1005 (6.6e4) [*] D</tspan>
-<tspan x="636" y="71">bne-d:P1006 (2.7e4) [*] D</tspan>
-<tspan x="636" y="77">bne-d:P1007 (1777) [*] </tspan>
-<tspan x="636" y="83">bne-d:P1008 (1.4e4) [*] D</tspan>
-<tspan x="636" y="89">bne-d:P1009 (8645) [1] D</tspan>
-<tspan x="636" y="95">bne-d:P1010 (405) [1] D</tspan>
-<tspan x="636" y="101">bne-d:P1011 (1.4e6) [*] </tspan>
-<tspan x="636" y="107">bne-d:P1012 (3.7e4) [*] D</tspan>
-<tspan x="636" y="113">bne-d:P1100 (2.6e5) [*] </tspan>
-<tspan x="636" y="119">bne-d:P3066 (8.8e4) [*]  -&gt; IRI</tspan>
-<tspan x="636" y="125">bne-d:id (2.2e6) [1] </tspan>
-<tspan x="636" y="131">owl:sameAs (6.9e4) [*]  -&gt; IRI</tspan>
-<tspan x="636" y="137">rdf:type (2.2e6) [*]  -&gt; IRI</tspan>
-<tspan x="636" y="143">rdfs:label (2.2e6) [*] </tspan>
-<tspan x="636" y="149">skos:altLabel (2.5e4) [*] </tspan>
-<tspan x="636" y="155">&lt;-bne-d:OP7001 (9901)  &lt;-  bne-d:C1006,bne-d:</tspan>
-<tspan x="636" y="161">C1005..(4)</tspan>
-</text>
-</g>
-<g id="2002677000"><polygon points="588,648 708,648 708,692 588,692 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="626" y="653">bne-d:C1008 (1470)</tspan>
-</text>
-<line x1="590" y1="655" x2="708" y2="655"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="590" y="660">bne-d:P8001 (1478) [*] D</tspan>
-<tspan x="590" y="666">bne-d:P8002 (1485) [*] D</tspan>
-<tspan x="590" y="672">bne-d:P8003 (355) [1] D</tspan>
-<tspan x="590" y="678">bne-d:P8004 (1958) [*] D</tspan>
-<tspan x="590" y="684">bne-d:P8005 (1485) [*] D</tspan>
-<tspan x="590" y="690">rdf:type (1472) [*]  -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002677011"><polygon points="124,229 244,229 244,345 124,345 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="159" y="235">skos:Concept (7.1e5)</tspan>
-</text>
-<line x1="126" y1="236" x2="243" y2="236"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="126" y="241">bne-d:id (7.1e5) [1] </tspan>
-<tspan x="126" y="247">geo:lat (2.3e4) [*] D</tspan>
-<tspan x="126" y="253">geo:long (2.3e4) [*] D</tspan>
-<tspan x="126" y="259">madsrdf:citationNote (1.6e5) [*] D</tspan>
-<tspan x="126" y="265">madsrdf:citationSource (2.0e5) [*] D</tspan>
-<tspan x="126" y="271">madsrdf:editorialNote (4155) [*] D</tspan>
-<tspan x="126" y="277">madsrdf:isMemberOfMADSCollection (8.6e4) [1] D -&gt; </tspan>
-<tspan x="126" y="283">IRI</tspan>
-<tspan x="126" y="289">owl:sameAs (1) [*]  -&gt; IRI</tspan>
-<tspan x="126" y="295">rdf:type (7.1e5) [*]  -&gt; IRI</tspan>
-<tspan x="126" y="301">rdfs:label (7.1e5) [*] </tspan>
-<tspan x="126" y="307">skos:altLabel (1.0e5) [*] </tspan>
-<tspan x="126" y="313">skos:closeMatch (1.4e5) [*] D -&gt; IRI</tspan>
-<tspan x="126" y="319">skos:notation (7.7e4) [*] D</tspan>
-<tspan x="126" y="325">skos:prefLabel (7.9e5) [*] D</tspan>
-<tspan x="126" y="331">skos:scopeNote (6308) [*] D</tspan>
-<tspan x="126" y="337">&lt;-bne-d:OP7001 (8.6e5)  &lt;-  bne-d:C1006,bne-d:</tspan>
-<tspan x="126" y="343">C1005..(4)</tspan>
-</text>
-</g>
-<g id="2002676655"><path d="M635,35 L591,35 589,34 588,33 588,6 589,5 591,4 693,4 694,5 695,6 695,16 "
+<g id="2002695643"><path d="M404,1347 L548,1347 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="694" y1="14" x2="695" y2="16"
+<line x1="542" y1="1344" x2="548" y2="1347"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="696" y1="14" x2="695" y2="16"
+<line x1="542" y1="1350" x2="548" y2="1347"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="592" y="41">bne-d:OP6001  </tspan>
-<tspan x="592" y="47">bne-d:OP1005  </tspan>
-<tspan x="592" y="53">bne-d:OP1004  DR</tspan>
-<tspan x="592" y="59">bne-d:OP1003  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="408" y="1330">bne-d:OP1002  R</tspan>
+<tspan x="408" y="1345">bne-d:OP2004  R</tspan>
 </text>
 </g>
-<g id="2002676660"><path d="M635,62 L494,62 "
+<g id="2002695658"><path d="M1134,471 L948,471 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="497" y1="60" x2="494" y2="62"
+<line x1="954" y1="468" x2="948" y2="471"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="497" y1="63" x2="494" y2="62"
+<line x1="954" y1="474" x2="948" y2="471"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="596" y="67">bne-d:OP1002  R</tspan>
-<tspan x="596" y="73">bne-d:OP2004  R</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1026" y="484">bne-d:OP3008  D</tspan>
+<tspan x="1026" y="499">bne-d:OP3006  D</tspan>
+<tspan x="1026" y="514">bne-d:OP3003  DR</tspan>
+<tspan x="1026" y="529">bne-d:OP3007  D</tspan>
 </text>
 </g>
-<g id="2002676665"><path d="M244,324 L316,324 318,324 318,326 318,376 319,377 321,378 690,378 690,376 "
+<g id="2002695708"><path d="M948,665 L1134,665 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="689" y1="378" x2="690" y2="376"
+<line x1="1128" y1="662" x2="1134" y2="665"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="691" y1="378" x2="690" y2="376"
+<line x1="1128" y1="668" x2="1134" y2="665"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="299">madsrdf:hasRelatedAuthority  D</tspan>
-<tspan x="246" y="305">skos:semanticRelation  D</tspan>
-<tspan x="246" y="311">skos:related  D</tspan>
-<tspan x="246" y="317">skos:narrower  D</tspan>
-<tspan x="246" y="323">skos:broader  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="952" y="663">bne-d:OP5002  D</tspan>
 </text>
 </g>
-<g id="2002676670"><path d="M657,316 L549,316 548,316 547,314 547,94 546,93 544,92 494,92 "
+<g id="2002695718"><path d="M112,46 L17,46 13,44 11,40 11,40 13,36 17,34 118,34 118,40 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="497" y1="91" x2="494" y2="92"
+<line x1="115" y1="34" x2="118" y2="40"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="497" y1="93" x2="494" y2="92"
+<line x1="121" y1="34" x2="118" y2="40"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="618" y="322">bne-d:OP1002  R</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="19" y="59">sd:endpoint  DR</tspan>
+<tspan x="19" y="74">sd:url  DR</tspan>
 </text>
 </g>
-<g id="2002676675"><path d="M491,435 L535,435 536,434 537,433 537,344 536,342 535,341 493,341 "
+<g id="2002695723"><path d="M1134,949 L394,949 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="340" x2="493" y2="341"
+<line x1="400" y1="946" x2="394" y2="949"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="342" x2="493" y2="341"
+<line x1="400" y1="952" x2="394" y2="949"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="493" y="417">bne-d:OP3008  D</tspan>
-<tspan x="493" y="423">bne-d:OP3006  D</tspan>
-<tspan x="493" y="429">bne-d:OP3003  DR</tspan>
-<tspan x="493" y="435">bne-d:OP3007  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1026" y="962">bne-d:OP3008  D</tspan>
+<tspan x="1026" y="977">bne-d:OP3006  D</tspan>
+<tspan x="1026" y="992">bne-d:OP3004  DR</tspan>
+<tspan x="1026" y="1007">bne-d:OP3007  D</tspan>
 </text>
 </g>
-<g id="2002676680"><path d="M373,178 L330,178 329,177 328,176 328,119 329,117 330,116 411,116 413,117 414,119 414,122 "
+<g id="2002695733"><path d="M204,364 L204,437 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="412" y1="119" x2="414" y2="122"
+<line x1="201" y1="431" x2="204" y2="437"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="415" y1="119" x2="414" y2="122"
+<line x1="207" y1="431" x2="204" y2="437"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="334" y="183">bne-d:OP1001  R</tspan>
-<tspan x="334" y="189">bne-d:OP5001  D</tspan>
-<tspan x="334" y="195">bne-d:OP5006  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="206" y="379">bne-d:OP8002  DR</tspan>
 </text>
 </g>
-<g id="2002676685"><path d="M491,540 L542,540 544,539 544,538 544,132 545,130 547,129 635,129 "
+<g id="2002695738"><path d="M584,592 L394,592 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="128" x2="635" y2="129"
+<line x1="400" y1="589" x2="394" y2="592"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="130" x2="635" y2="129"
+<line x1="400" y1="595" x2="394" y2="592"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="493" y="527">bne-d:OP3008  D</tspan>
-<tspan x="493" y="533">bne-d:OP3006  D</tspan>
-<tspan x="493" y="539">bne-d:OP3007  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="485" y="605">bne-d:OP5009  D</tspan>
 </text>
 </g>
-<g id="2002676690"><path d="M588,670 L544,670 543,669 542,667 542,309 541,307 540,306 493,306 "
+<g id="2002695808"><path d="M394,662 L584,662 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="305" x2="493" y2="306"
+<line x1="578" y1="659" x2="584" y2="662"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="308" x2="493" y2="306"
+<line x1="578" y1="665" x2="584" y2="662"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="546" y="675">bne-d:OP8001  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="398" y="660">bne-d:OP6009  D</tspan>
 </text>
 </g>
-<g id="2002676695"><path d="M374,54 L296,54 294,53 294,52 294,44 294,42 296,41 435,41 435,44 "
+<g id="2002695813"><path d="M1227,1400 L1109,1400 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="434" y1="41" x2="435" y2="44"
+<line x1="1115" y1="1397" x2="1109" y2="1400"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="436" y1="41" x2="435" y2="44"
+<line x1="1115" y1="1403" x2="1109" y2="1400"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="335" y="59">bne-d:OP2002  D</tspan>
-<tspan x="335" y="65">bne-d:OP1002  R</tspan>
-<tspan x="335" y="71">bne-d:OP2003  D</tspan>
-<tspan x="335" y="77">bne-d:OP2004  R</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1113" y="1413">skos:inScheme  DR</tspan>
 </text>
 </g>
-<g id="2002676700"><path d="M493,272 L588,272 590,273 591,274 591,648 "
+<g id="2002695793"><path d="M1227,1446 L337,1446 333,1444 331,1440 331,1386 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="590" y1="645" x2="591" y2="648"
+<line x1="328" y1="1392" x2="331" y2="1386"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="592" y1="645" x2="591" y2="648"
+<line x1="334" y1="1392" x2="331" y2="1386"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="495" y="271">bne-d:OP5004  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1049" y="1459">madsrdf:hasRelatedAuthority  D</tspan>
+<tspan x="1049" y="1474">skos:related  D</tspan>
+<tspan x="1049" y="1489">skos:narrower  D</tspan>
 </text>
 </g>
-<g id="2002676705"><path d="M494,89 L547,89 548,90 549,91 549,294 550,296 552,297 657,297 "
+<g id="2002695693"><path d="M1257,1158 L1257,1293 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="296" x2="657" y2="297"
+<line x1="1254" y1="1287" x2="1257" y2="1293"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="298" x2="657" y2="297"
+<line x1="1260" y1="1287" x2="1257" y2="1293"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="497" y="88">bne-d:OP2002  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1259" y="1173">bne-d:OP3008  D</tspan>
 </text>
 </g>
-<g id="2002676710"><path d="M371,724 L187,724 185,723 184,722 184,345 "
+<g id="2002695678"><path d="M548,1228 L444,1228 440,1226 438,1222 438,1199 440,1195 444,1193 536,1193 540,1195 542,1199 542,1222 548,1222 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="183" y1="347" x2="184" y2="345"
+<line x1="542" y1="1219" x2="548" y2="1222"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="186" y1="347" x2="184" y2="345"
+<line x1="542" y1="1225" x2="548" y2="1222"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="332" y="729">bne-d:OP3008  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="449" y="1241">bne-d:OP1002  R</tspan>
+<tspan x="449" y="1256">bne-d:OP2002  D</tspan>
+<tspan x="449" y="1271">bne-d:OP2004  R</tspan>
+<tspan x="449" y="1286">bne-d:OP2003  D</tspan>
 </text>
 </g>
-<g id="2002676715"><path d="M244,291 L373,291 "
+<g id="2002695823"><path d="M787,920 L787,1215 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="371" y1="290" x2="373" y2="291"
+<line x1="784" y1="1209" x2="787" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="371" y1="292" x2="373" y2="291"
+<line x1="790" y1="1209" x2="787" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="273">madsrdf:hasRelatedAuthority  D</tspan>
-<tspan x="246" y="279">skos:related  D</tspan>
-<tspan x="246" y="285">skos:narrower  D</tspan>
-<tspan x="246" y="291">skos:broader  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="789" y="935">bne-d:OP1002  R</tspan>
 </text>
 </g>
-<g id="2002676720"><path d="M517,967 L561,967 563,966 564,964 564,772 563,771 561,770 491,770 "
+<g id="2002695668"><path d="M1134,1035 L404,1035 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="769" x2="491" y2="770"
+<line x1="410" y1="1032" x2="404" y2="1035"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="771" x2="491" y2="770"
+<line x1="410" y1="1038" x2="404" y2="1035"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="519" y="966">bne-d:OP4001  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1035" y="1048">bne-d:OP3008  D</tspan>
+<tspan x="1035" y="1063">bne-d:OP3006  D</tspan>
+<tspan x="1035" y="1078">bne-d:OP3007  D</tspan>
 </text>
 </g>
-<g id="2002676725"><path d="M373,333 L330,333 329,334 328,336 328,551 329,553 330,554 371,554 "
+<g id="2002695803"><path d="M1227,1325 L848,1325 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="368" y1="552" x2="371" y2="554"
+<line x1="854" y1="1322" x2="848" y2="1325"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="368" y1="555" x2="371" y2="554"
+<line x1="854" y1="1328" x2="848" y2="1325"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="334" y="339">bne-d:OP5002  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1049" y="1338">madsrdf:hasRelatedAuthority  D</tspan>
 </text>
 </g>
-<g id="2002676730"><path d="M373,235 L328,235 326,234 326,232 326,104 326,102 328,101 374,101 "
+<g id="2002695648"><path d="M1134,1086 L799,1086 795,1088 793,1092 793,1215 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="100" x2="374" y2="101"
+<line x1="790" y1="1209" x2="793" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="102" x2="374" y2="101"
+<line x1="796" y1="1209" x2="793" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="334" y="240">bne-d:OP1002  R</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1026" y="1099">bne-d:OP3008  D</tspan>
+<tspan x="1026" y="1114">bne-d:OP3006  D</tspan>
+<tspan x="1026" y="1129">bne-d:OP3002  DR</tspan>
+<tspan x="1026" y="1144">bne-d:OP3007  D</tspan>
 </text>
 </g>
-<g id="2002676735"><path d="M181,770 L143,770 142,770 141,768 141,754 142,753 143,752 241,752 241,754 "
+<g id="2002695788"><path d="M1233,1293 L1233,1179 1235,1175 1239,1173 1241,1173 1245,1175 1247,1179 1247,1293 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="240" y1="752" x2="241" y2="754"
+<line x1="1244" y1="1287" x2="1247" y2="1293"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="242" y1="752" x2="241" y2="754"
+<line x1="1250" y1="1287" x2="1247" y2="1293"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="145" y="776">sd:endpoint  DR</tspan>
-<tspan x="145" y="782">sd:url  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1057" y="1229">madsrdf:hasRelatedAuthority  D</tspan>
+<tspan x="1057" y="1244">skos:semanticRelation  D</tspan>
+<tspan x="1057" y="1259">skos:related  D</tspan>
+<tspan x="1057" y="1274">skos:narrower  D</tspan>
+<tspan x="1057" y="1289">skos:broader  D</tspan>
 </text>
 </g>
-<g id="2002676740"><path d="M491,645 L720,645 722,644 722,643 722,376 "
+<g id="2002695743"><path d="M376,437 L376,364 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="721" y1="378" x2="722" y2="376"
+<line x1="373" y1="370" x2="376" y2="364"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="724" y1="378" x2="722" y2="376"
+<line x1="379" y1="370" x2="376" y2="364"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="493" y="627">bne-d:OP3008  D</tspan>
-<tspan x="493" y="633">bne-d:OP3006  D</tspan>
-<tspan x="493" y="639">bne-d:OP3004  DR</tspan>
-<tspan x="493" y="645">bne-d:OP3007  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="270" y="433">bne-d:OP6006  DR</tspan>
 </text>
 </g>
-<g id="2002676745"><path d="M635,150 L598,150 596,150 596,152 596,255 596,256 598,257 657,257 "
+<g id="2002695673"><path d="M403,276 L584,276 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="256" x2="657" y2="257"
+<line x1="578" y1="273" x2="584" y2="276"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="258" x2="657" y2="257"
+<line x1="578" y1="279" x2="584" y2="276"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="599" y="155">bne-d:OP6001  </tspan>
-<tspan x="599" y="161">bne-d:OP1005  </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="407" y="274">bne-d:OP8001  DR</tspan>
 </text>
 </g>
-<g id="2002676750"><path d="M708,670 L752,670 754,669 755,667 755,376 "
+<g id="2002695663"><path d="M584,456 L480,456 476,458 474,462 474,501 476,505 480,507 584,507 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="754" y1="378" x2="755" y2="376"
+<line x1="578" y1="504" x2="584" y2="507"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="756" y1="378" x2="755" y2="376"
+<line x1="578" y1="510" x2="584" y2="507"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="711" y="669">bne-d:OP8002  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="485" y="469">bne-d:OP5001  D</tspan>
+<tspan x="485" y="484">bne-d:OP1001  R</tspan>
+<tspan x="485" y="499">bne-d:OP5006  D</tspan>
 </text>
 </g>
-<g id="2002676755"><path d="M493,238 L657,238 "
+<g id="2002695683"><path d="M584,300 L403,300 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="236" x2="657" y2="238"
+<line x1="409" y1="297" x2="403" y2="300"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="655" y1="239" x2="657" y2="238"
+<line x1="409" y1="303" x2="403" y2="300"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="495" y="237">bne-d:OP5009  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="494" y="313">bne-d:OP5004  </tspan>
+<tspan x="494" y="328">DR</tspan>
 </text>
 </g>
-<g id="2002676760"><path d="M244,244 L316,244 318,244 318,242 318,83 319,81 321,80 374,80 "
+<g id="2002695798"><path d="M781,1215 L781,920 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="79" x2="374" y2="80"
+<line x1="778" y1="926" x2="781" y2="920"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="82" x2="374" y2="80"
+<line x1="784" y1="926" x2="781" y2="920"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="244">madsrdf:hasRelatedAuthority  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="684" y="1211">bne-d:OP2002  D</tspan>
 </text>
 </g>
-<g id="2002676765"><path d="M493,165 L695,165 695,162 "
+<g id="2002695688"><path d="M670,1215 L670,982 668,978 664,976 394,976 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="694" y1="165" x2="695" y2="162"
+<line x1="400" y1="973" x2="394" y2="976"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="696" y1="165" x2="695" y2="162"
+<line x1="400" y1="979" x2="394" y2="976"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="495" y="164">bne-d:OP5001  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="573" y="1211">bne-d:OP2002  D</tspan>
 </text>
 </g>
-<g id="2002676770"><path d="M494,100 L537,100 539,101 540,103 540,485 539,487 537,488 491,488 "
+<g id="2002695653"><path d="M394,970 L670,970 674,972 676,976 676,1215 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="486" x2="491" y2="488"
+<line x1="673" y1="1209" x2="676" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="489" x2="491" y2="488"
+<line x1="679" y1="1209" x2="676" y2="1215"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="497" y="100">bne-d:OP2001  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="398" y="968">bne-d:OP1002  R</tspan>
 </text>
 </g>
-<g id="2002676775"><path d="M717,744 L752,744 "
+<g id="2002695773"><path d="M394,943 L1134,943 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="750" y1="743" x2="752" y2="744"
+<line x1="1128" y1="940" x2="1134" y2="943"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="750" y1="745" x2="752" y2="744"
+<line x1="1128" y1="946" x2="1134" y2="943"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="719" y="737">rdfs:domain  D</tspan>
-<tspan x="719" y="743">rdfs:range  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="398" y="941">bne-d:OP6004  D</tspan>
 </text>
 </g>
-<g id="2002676780"><path d="M371,468 L328,468 326,467 326,466 326,383 326,381 328,380 431,380 431,383 "
+<g id="2002695768"><path d="M258,982 L258,1021 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="430" y1="380" x2="431" y2="383"
+<line x1="255" y1="1015" x2="258" y2="1021"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="432" y1="380" x2="431" y2="383"
+<line x1="261" y1="1015" x2="258" y2="1021"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="332" y="473">bne-d:P3075  D</tspan>
-<tspan x="332" y="479">bne-d:P3073  D</tspan>
-<tspan x="332" y="485">bne-d:OP3009  D</tspan>
-<tspan x="332" y="491">bne-d:OP3010  D</tspan>
-<tspan x="332" y="497">bne-d:P3074  D</tspan>
-<tspan x="332" y="503">bne-d:P3076  D</tspan>
-<tspan x="332" y="509">bne-d:OP3011  D</tspan>
-<tspan x="332" y="515">dct:relation  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="260" y="997">bne-d:OP6001  </tspan>
+<tspan x="260" y="1012">bne-d:OP1005  </tspan>
 </text>
 </g>
-<g id="2002676785"><path d="M657,178 L600,178 599,177 598,176 598,170 599,168 600,167 717,167 717,170 "
+<g id="2002695728"><path d="M232,1021 L232,982 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="716" y1="167" x2="717" y2="170"
+<line x1="229" y1="988" x2="232" y2="982"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="718" y1="167" x2="717" y2="170"
+<line x1="235" y1="988" x2="232" y2="982"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="615" y="183">bne-d:OP6001  </tspan>
-<tspan x="615" y="189">bne-d:OP1005  </tspan>
-<tspan x="615" y="195">bne-d:OP6002  DR</tspan>
-<tspan x="615" y="201">bne-d:OP6003  DR</tspan>
-<tspan x="615" y="207">bne-d:OP6007  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="144" y="1002">bne-d:OP6001  </tspan>
+<tspan x="144" y="1017">bne-d:OP1005  </tspan>
 </text>
 </g>
-<g id="2002676790"><path d="M752,723 L699,723 698,722 697,720 697,720 698,719 699,718 812,718 812,720 "
+<g id="2002695763"><path d="M394,825 L508,825 512,827 514,831 514,856 512,860 508,862 394,862 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="811" y1="718" x2="812" y2="720"
+<line x1="400" y1="859" x2="394" y2="862"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="814" y1="718" x2="812" y2="720"
+<line x1="400" y1="865" x2="394" y2="862"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="701" y="728">owl:complementOf  DR</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="398" y="763">bne-d:OP6001  </tspan>
+<tspan x="398" y="778">bne-d:OP1005  </tspan>
+<tspan x="398" y="793">bne-d:OP6002  DR</tspan>
+<tspan x="398" y="808">bne-d:OP6003  DR</tspan>
+<tspan x="398" y="823">bne-d:OP6007  D</tspan>
 </text>
 </g>
-<g id="2002676795"><path d="M371,810 L330,810 329,810 328,812 328,964 329,966 330,967 397,967 "
+<g id="2002695638"><path d="M404,1159 L521,1159 525,1157 527,1153 527,1099 525,1095 521,1093 404,1093 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="395" y1="966" x2="397" y2="967"
+<line x1="410" y1="1090" x2="404" y2="1093"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="395" y1="968" x2="397" y2="967"
+<line x1="410" y1="1096" x2="404" y2="1093"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="332" y="815">bne-d:OP3001  D</tspan>
-<tspan x="332" y="821">bne-d:P3073  D</tspan>
-<tspan x="332" y="827">dct:relation  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="408" y="1112">bne-d:OP6001  </tspan>
+<tspan x="408" y="1127">bne-d:OP1005  </tspan>
+<tspan x="408" y="1142">bne-d:OP1004  DR</tspan>
+<tspan x="408" y="1157">bne-d:OP1003  DR</tspan>
 </text>
 </g>
-<g id="2002676800"><path d="M657,277 L596,277 594,276 593,274 593,142 594,140 596,140 635,140 "
+<g id="2002695758"><path d="M1134,28 L1027,28 1027,28 1029,24 1033,22 1134,22 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="138" x2="635" y2="140"
+<line x1="1128" y1="19" x2="1134" y2="22"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="141" x2="635" y2="140"
+<line x1="1128" y1="25" x2="1134" y2="22"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="622" y="282">bne-d:OP6001  </tspan>
-<tspan x="622" y="288">bne-d:OP1005  </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1035" y="41">bne-d:P3075  D</tspan>
+<tspan x="1035" y="56">bne-d:P3073  D</tspan>
+<tspan x="1035" y="71">bne-d:OP3009  D</tspan>
+<tspan x="1035" y="86">bne-d:OP3010  D</tspan>
+<tspan x="1035" y="101">bne-d:P3074  D</tspan>
+<tspan x="1035" y="116">bne-d:P3076  D</tspan>
+<tspan x="1035" y="131">bne-d:OP3011  D</tspan>
+<tspan x="1035" y="146">dct:relation  D</tspan>
 </text>
 </g>
-<g id="2002676805"><path d="M657,336 L596,336 594,337 593,338 593,590 592,592 591,593 491,593 "
+<g id="2002695713"><path d="M1134,293 L1011,293 1007,291 1005,287 1005,264 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="592" x2="491" y2="593"
+<line x1="1002" y1="270" x2="1005" y2="264"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="493" y1="594" x2="491" y2="593"
+<line x1="1008" y1="270" x2="1005" y2="264"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="618" y="341">bne-d:OP6004  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1035" y="306">bne-d:OP3001  D</tspan>
+<tspan x="1035" y="321">bne-d:P3073  D</tspan>
+<tspan x="1035" y="336">dct:relation  D</tspan>
 </text>
 </g>
-<g id="2002676810"><path d="M494,80 L635,80 "
+<g id="2002695703"><path d="M1011,264 L1011,281 1013,285 1017,287 1134,287 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="79" x2="635" y2="80"
+<line x1="1128" y1="284" x2="1134" y2="287"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="82" x2="635" y2="80"
+<line x1="1128" y1="290" x2="1134" y2="287"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="497" y="74">bne-d:OP2002  D</tspan>
-<tspan x="497" y="80">bne-d:OP2003  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1013" y="279">bne-d:OP4001  DR</tspan>
 </text>
 </g>
-<g id="2002676815"><path d="M124,287 L52,287 50,286 50,284 50,229 50,227 52,226 184,226 184,229 "
+<g id="2002695753"><path d="M848,1232 L949,1232 953,1230 955,1226 955,1158 957,1154 961,1152 1134,1152 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="183" y1="226" x2="184" y2="229"
+<line x1="1128" y1="1149" x2="1134" y2="1152"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="186" y1="226" x2="184" y2="229"
+<line x1="1128" y1="1155" x2="1134" y2="1152"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="53" y="292">madsrdf:hasRelatedAuthority  D</tspan>
-<tspan x="53" y="298">skos:semanticRelation  D</tspan>
-<tspan x="53" y="304">skos:related  D</tspan>
-<tspan x="53" y="310">skos:narrower  D</tspan>
-<tspan x="53" y="316">skos:broader  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="852" y="1230">bne-d:OP2001  D</tspan>
 </text>
 </g>
-<g id="2002676820"><path d="M244,265 L318,265 320,264 321,262 321,116 322,115 323,114 635,114 "
+<g id="2002695783"><path d="M548,1353 L404,1353 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="113" x2="635" y2="114"
+<line x1="410" y1="1350" x2="404" y2="1353"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="632" y1="115" x2="635" y2="114"
+<line x1="410" y1="1356" x2="404" y2="1353"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="252">madsrdf:hasRelatedAuthority  D</tspan>
-<tspan x="246" y="258">skos:related  D</tspan>
-<tspan x="246" y="264">skos:narrower  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="449" y="1366">bne-d:OP2002  D</tspan>
+<tspan x="449" y="1381">bne-d:OP2003  D</tspan>
 </text>
 </g>
-<g id="2002676825"><path d="M494,109 L535,109 536,110 537,111 537,141 536,142 535,143 493,143 "
+<g id="2002695748"><path d="M695,270 L695,226 693,222 689,220 22,220 18,222 16,226 16,1410 18,1414 22,1416 104,1416 108,1414 110,1410 110,1386 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="142" x2="493" y2="143"
+<line x1="107" y1="1392" x2="110" y2="1386"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="144" x2="493" y2="143"
+<line x1="113" y1="1392" x2="110" y2="1386"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="497" y="108">bne-d:OP2002  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="598" y="266">bne-d:OP5001  D</tspan>
 </text>
 </g>
-<g id="2002676830"><path d="M371,639 L326,639 324,638 323,636 323,93 324,92 326,91 374,91 "
+<g id="2002695778"><path d="M1227,1497 L67,1497 63,1495 61,1491 61,982 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="90" x2="374" y2="91"
+<line x1="58" y1="988" x2="61" y2="982"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="372" y1="92" x2="374" y2="91"
+<line x1="64" y1="988" x2="61" y2="982"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="328" y="644">bne-d:OP3008  D</tspan>
-<tspan x="328" y="650">bne-d:OP3006  D</tspan>
-<tspan x="328" y="656">bne-d:OP3002  DR</tspan>
-<tspan x="328" y="662">bne-d:OP3007  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1049" y="1510">madsrdf:hasRelatedAuthority  D</tspan>
+<tspan x="1049" y="1525">skos:semanticRelation  D</tspan>
+<tspan x="1049" y="1540">skos:related  D</tspan>
+<tspan x="1049" y="1555">skos:narrower  D</tspan>
+<tspan x="1049" y="1570">skos:broader  D</tspan>
 </text>
 </g>
-<g id="2002676835"><path d="M657,210 L493,210 "
+<g id="2002695698"><path d="M1510,1293 L1510,1231 1512,1227 1516,1225 1530,1225 1534,1223 1536,1219 1536,16 1534,12 1530,10 759,10 755,12 753,16 753,270 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="209" x2="493" y2="210"
+<line x1="750" y1="264" x2="753" y2="270"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="496" y1="212" x2="493" y2="210"
+<line x1="756" y1="264" x2="753" y2="270"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="618" y="216">bne-d:OP6009  D</tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1334" y="1244">madsrdf:hasRelatedAuthority  D</tspan>
+<tspan x="1334" y="1259">skos:related  D</tspan>
+<tspan x="1334" y="1274">skos:narrower  D</tspan>
+<tspan x="1334" y="1289">skos:broader  D</tspan>
 </text>
 </g>
-<g id="2002676840"><path d="M244,236 L314,236 315,235 316,234 316,214 314,214 "
+<g id="2002695818"><path d="M116,1386 L116,1418 114,1422 110,1424 16,1424 12,1422 10,1418 10,220 12,216 16,214 695,214 699,216 701,220 701,270 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="212" x2="314" y2="214"
+<line x1="698" y1="264" x2="701" y2="270"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="316" y1="215" x2="314" y2="214"
+<line x1="704" y1="264" x2="701" y2="270"
  style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="246" y="235">skos:inScheme  DR</tspan>
-</text>
-</g>
-<g id="2002676845"><path d="M635,119 L454,119 454,122 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="452" y1="119" x2="454" y2="122"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="455" y1="119" x2="454" y2="122"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="596" y="125">bne-d:OP1001  R</tspan>
-</text>
-</g>
-<g id="2002676850"><path d="M657,356 L613,356 612,357 611,358 611,648 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="610" y1="645" x2="611" y2="648"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="612" y1="645" x2="611" y2="648"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="615" y="361">bne-d:OP6006  DR</tspan>
-</text>
-</g>
-<g id="2002676855"><path d="M660,757 L660,765 "
-style="fill:none;stroke-width:1;stroke:Fuchsia;"/>
-<polygon points="662,761 660,757 658,761 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:5px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="661" y="763"> </tspan>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="118" y="1401">bne-d:OP1001  R</tspan>
 </text>
 </g>
 </svg>

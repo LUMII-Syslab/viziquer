@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1479" height="869" viewBox="0 0 1479 869">
+ width="1479" height="937" viewBox="0 0 1479 937">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -56,15 +56,15 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="542" y="110">owl:ObjectProperty (7)</tspan>
 </text>
 </g>
-<g id="2002679215"><polygon points="531,130 831,130 831,199 531,199 "
+<g id="2002679215"><polygon points="531,131 831,131 831,200 531,200 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="644" y="145">owl:Class (4)</tspan>
+<tspan x="644" y="146">owl:Class (4)</tspan>
 </text>
-<line x1="535" y1="148" x2="829" y2="148"
+<line x1="535" y1="149" x2="829" y2="149"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="535" y="160">rdfs:label (4) [1] </tspan>
+<tspan x="535" y="161">rdfs:label (4) [1] </tspan>
 </text>
 </g>
 <g id="2002679226"><polygon points="909,10 1209,10 1209,55 909,55 "
@@ -76,62 +76,6 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="913" y="40">rdfs:label (20) [1] </tspan>
-</text>
-</g>
-<g id="2002679237"><polygon points="481,205 781,205 781,856 481,856 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="478,208 778,208 778,859 478,859 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="494" y="223">assembly:Assembly_Database_Entry or iden: </tspan>
-<tspan x="597" y="239">G101 (377)</tspan>
-</text>
-<line x1="482" y1="242" x2="776" y2="242"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="482" y="254">assembly:asm_name (377) [1] D</tspan>
-<tspan x="482" y="269">assembly:assembly_id (377) [1] D</tspan>
-<tspan x="482" y="284">assembly:assembly_level (377) [1] D</tspan>
-<tspan x="482" y="299">assembly:bioproject (377) [1] D -&gt; IRI</tspan>
-<tspan x="482" y="314">assembly:bioproject_accession (377) [1] D</tspan>
-<tspan x="482" y="329">assembly:biosample (363) [1] D -&gt; IRI</tspan>
-<tspan x="482" y="344">assembly:biosample_accession (377) [1] D</tspan>
-<tspan x="482" y="359">assembly:contig-N50 (293) [1] D</tspan>
-<tspan x="482" y="374">assembly:contig-count (293) [1] D</tspan>
-<tspan x="482" y="389">assembly:ftp_path (377) [1] D</tspan>
-<tspan x="482" y="404">assembly:gbrs_paired_asm (377) [1] D</tspan>
-<tspan x="482" y="419">assembly:genome_rep (377) [1] D</tspan>
-<tspan x="482" y="434">assembly:infraspecific_name (377) [1] D</tspan>
-<tspan x="482" y="449">assembly:isolate (377) [1] D</tspan>
-<tspan x="482" y="464">assembly:molecule-count (377) [1] D</tspan>
-<tspan x="482" y="479">assembly:organism_name (377) [1] D</tspan>
-<tspan x="482" y="494">assembly:paired_asm_comp (377) [1] D</tspan>
-<tspan x="482" y="509">assembly:refseq_category (377) [1] D</tspan>
-<tspan x="482" y="524">assembly:region-count (377) [1] D</tspan>
-<tspan x="482" y="539">assembly:release_date (377) [1] D</tspan>
-<tspan x="482" y="554">assembly:release_type (377) [1] D</tspan>
-<tspan x="482" y="569">assembly:scaffold-L50 (61) [1] D</tspan>
-<tspan x="482" y="584">assembly:scaffold-N50 (61) [1] D</tspan>
-<tspan x="482" y="599">assembly:scaffold-N75 (61) [1] D</tspan>
-<tspan x="482" y="614">assembly:scaffold-N90 (61) [1] D</tspan>
-<tspan x="482" y="629">assembly:scaffold-count (61) [1] D</tspan>
-<tspan x="482" y="644">assembly:sequnece (8.1e4) [*] D -&gt; IRI</tspan>
-<tspan x="482" y="659">assembly:spanned-gaps (377) [1] D</tspan>
-<tspan x="482" y="674">assembly:species_taxid (377) [1] D</tspan>
-<tspan x="482" y="689">assembly:submitter (377) [1] D</tspan>
-<tspan x="482" y="704">assembly:tax_id (377) [1] D</tspan>
-<tspan x="482" y="719">assembly:top-level-count (377) [1] D</tspan>
-<tspan x="482" y="734">assembly:total-gap-length (377) [1] D</tspan>
-<tspan x="482" y="749">assembly:total-length (377) [1] D</tspan>
-<tspan x="482" y="764">assembly:unspanned-gaps (377) [1] D</tspan>
-<tspan x="482" y="779">assembly:version_status (377) [1] D</tspan>
-<tspan x="482" y="794">assembly:wasDerivedFrom (377) [1] D</tspan>
-<tspan x="482" y="809">assembly:wgs_master (377) [1] D</tspan>
-<tspan x="482" y="824">rdfs:seeAlso (377) [*]  -&gt; IRI</tspan>
-</text>
-<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="482" y="839">assembly:Assembly_Database_Entry (377)</tspan>
-<tspan x="482" y="854">iden: (377)</tspan>
 </text>
 </g>
 <g id="2002679248"><polygon points="111,153 411,153 411,218 111,218 "
@@ -147,7 +91,63 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="115" y="213">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002679259"><polygon points="1169,88 1469,88 1469,438 1169,438 "
+<g id="2002679237"><polygon points="481,273 781,273 781,924 481,924 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="478,276 778,276 778,927 478,927 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="494" y="291">assembly:Assembly_Database_Entry or iden: </tspan>
+<tspan x="597" y="307">G101 (377)</tspan>
+</text>
+<line x1="482" y1="310" x2="776" y2="310"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="482" y="322">assembly:asm_name (377) [1] D</tspan>
+<tspan x="482" y="337">assembly:assembly_id (377) [1] D</tspan>
+<tspan x="482" y="352">assembly:assembly_level (377) [1] D</tspan>
+<tspan x="482" y="367">assembly:bioproject (377) [1] D -&gt; IRI</tspan>
+<tspan x="482" y="382">assembly:bioproject_accession (377) [1] D</tspan>
+<tspan x="482" y="397">assembly:biosample (363) [1] D -&gt; IRI</tspan>
+<tspan x="482" y="412">assembly:biosample_accession (377) [1] D</tspan>
+<tspan x="482" y="427">assembly:contig-N50 (293) [1] D</tspan>
+<tspan x="482" y="442">assembly:contig-count (293) [1] D</tspan>
+<tspan x="482" y="457">assembly:ftp_path (377) [1] D</tspan>
+<tspan x="482" y="472">assembly:gbrs_paired_asm (377) [1] D</tspan>
+<tspan x="482" y="487">assembly:genome_rep (377) [1] D</tspan>
+<tspan x="482" y="502">assembly:infraspecific_name (377) [1] D</tspan>
+<tspan x="482" y="517">assembly:isolate (377) [1] D</tspan>
+<tspan x="482" y="532">assembly:molecule-count (377) [1] D</tspan>
+<tspan x="482" y="547">assembly:organism_name (377) [1] D</tspan>
+<tspan x="482" y="562">assembly:paired_asm_comp (377) [1] D</tspan>
+<tspan x="482" y="577">assembly:refseq_category (377) [1] D</tspan>
+<tspan x="482" y="592">assembly:region-count (377) [1] D</tspan>
+<tspan x="482" y="607">assembly:release_date (377) [1] D</tspan>
+<tspan x="482" y="622">assembly:release_type (377) [1] D</tspan>
+<tspan x="482" y="637">assembly:scaffold-L50 (61) [1] D</tspan>
+<tspan x="482" y="652">assembly:scaffold-N50 (61) [1] D</tspan>
+<tspan x="482" y="667">assembly:scaffold-N75 (61) [1] D</tspan>
+<tspan x="482" y="682">assembly:scaffold-N90 (61) [1] D</tspan>
+<tspan x="482" y="697">assembly:scaffold-count (61) [1] D</tspan>
+<tspan x="482" y="712">assembly:sequnece (8.1e4) [*] D -&gt; IRI</tspan>
+<tspan x="482" y="727">assembly:spanned-gaps (377) [1] D</tspan>
+<tspan x="482" y="742">assembly:species_taxid (377) [1] D</tspan>
+<tspan x="482" y="757">assembly:submitter (377) [1] D</tspan>
+<tspan x="482" y="772">assembly:tax_id (377) [1] D</tspan>
+<tspan x="482" y="787">assembly:top-level-count (377) [1] D</tspan>
+<tspan x="482" y="802">assembly:total-gap-length (377) [1] D</tspan>
+<tspan x="482" y="817">assembly:total-length (377) [1] D</tspan>
+<tspan x="482" y="832">assembly:unspanned-gaps (377) [1] D</tspan>
+<tspan x="482" y="847">assembly:version_status (377) [1] D</tspan>
+<tspan x="482" y="862">assembly:wasDerivedFrom (377) [1] D</tspan>
+<tspan x="482" y="877">assembly:wgs_master (377) [1] D</tspan>
+<tspan x="482" y="892">rdfs:seeAlso (377) [*]  -&gt; IRI</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="482" y="907">assembly:Assembly_Database_Entry (377)</tspan>
+<tspan x="482" y="922">iden: (377)</tspan>
+</text>
+</g>
+<g id="2002679259"><polygon points="1169,88 1469,88 1469,482 1169,482 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
 <tspan x="1269" y="103">tax:Taxon (2.0e6)</tspan>
@@ -179,32 +179,32 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="1173" y="433">tax:uniqueName (1.4e5) [*] D</tspan>
 </text>
 </g>
-<g id="2002679270"><polygon points="1011,488 1311,488 1311,613 1011,613 "
+<g id="2002679270"><polygon points="824,330 1124,330 1124,455 824,455 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<polygon points="1008,491 1308,491 1308,616 1008,616 "
+<polygon points="821,333 1121,333 1121,458 821,458 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1051" y="506">tax:Rank or owl:Ontology G102 (~30)</tspan>
+<tspan x="864" y="348">tax:Rank or owl:Ontology G102 (~30)</tspan>
 </text>
-<line x1="1012" y1="509" x2="1306" y2="509"
+<line x1="825" y1="351" x2="1119" y2="351"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1012" y="521">dct:license (1) [1] D -&gt; IRI</tspan>
-<tspan x="1012" y="536">owl:versionInfo (1) [1] D</tspan>
-<tspan x="1012" y="551">rdfs:comment (1) [1] D</tspan>
-<tspan x="1012" y="566">rdfs:label (30) [1] </tspan>
-<tspan x="1012" y="581">rdfs:seeAlso (2) [*]  -&gt; IRI</tspan>
+<tspan x="825" y="363">dct:license (1) [1] D -&gt; IRI</tspan>
+<tspan x="825" y="378">owl:versionInfo (1) [1] D</tspan>
+<tspan x="825" y="393">rdfs:comment (1) [1] D</tspan>
+<tspan x="825" y="408">rdfs:label (30) [1] </tspan>
+<tspan x="825" y="423">rdfs:seeAlso (2) [*]  -&gt; IRI</tspan>
 </text>
 <text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1012" y="596">owl:Ontology (1)</tspan>
-<tspan x="1012" y="611">tax:Rank (29)</tspan>
+<tspan x="825" y="438">owl:Ontology (1)</tspan>
+<tspan x="825" y="453">tax:Rank (29)</tspan>
 </text>
 </g>
-<g id="2002679139"><path d="M538,68 L423,68 419,70 417,74 417,166 419,170 423,172 531,172 "
+<g id="2002679139"><path d="M538,68 L423,68 419,70 417,74 417,167 419,171 423,173 531,173 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="525" y1="169" x2="531" y2="172"
+<line x1="525" y1="170" x2="531" y2="173"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="525" y1="175" x2="531" y2="172"
+<line x1="525" y1="176" x2="531" y2="173"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="453" y="81">rdf:type  </tspan>
@@ -212,25 +212,15 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
 <tspan x="453" y="111">rdfs:domain  R</tspan>
 </text>
 </g>
-<g id="2002679149"><path d="M1169,151 L831,151 "
+<g id="2002679149"><path d="M1169,158 L831,158 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="148" x2="831" y2="151"
+<line x1="837" y1="155" x2="831" y2="158"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="154" x2="831" y2="151"
+<line x1="837" y1="161" x2="831" y2="158"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1069" y="164">rdf:type  </tspan>
-<tspan x="1069" y="179">rdfs:subClassOf  </tspan>
-</text>
-</g>
-<g id="2002679154"><path d="M778,415 L1169,415 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1163" y1="412" x2="1169" y2="415"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1163" y1="418" x2="1169" y2="415"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="782" y="413">assembly:taxon  D</tspan>
+<tspan x="1069" y="171">rdf:type  </tspan>
+<tspan x="1069" y="186">rdfs:subClassOf  </tspan>
 </text>
 </g>
 <g id="2002679159"><path d="M111,185 L16,185 12,183 10,179 10,136 12,132 16,130 255,130 259,132 261,136 261,153 "
@@ -244,35 +234,35 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
 <tspan x="18" y="213">sd:endpoint  DR</tspan>
 </text>
 </g>
-<g id="2002679164"><path d="M1169,115 L1039,115 1035,113 1033,109 1033,55 "
+<g id="2002679164"><path d="M1169,122 L1039,122 1035,120 1033,116 1033,55 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
 <line x1="1030" y1="61" x2="1033" y2="55"
  style="stroke-width:1;stroke:Black;"/>
 <line x1="1036" y1="61" x2="1033" y2="55"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1041" y="128">tax:geneticCode  D</tspan>
-<tspan x="1041" y="143">tax:geneticCodeMt  DR</tspan>
+<tspan x="1041" y="135">tax:geneticCode  D</tspan>
+<tspan x="1041" y="150">tax:geneticCodeMt  DR</tspan>
 </text>
 </g>
-<g id="2002679174"><path d="M1169,94 L1045,94 1041,92 1039,88 1039,87 1041,83 1045,81 1313,81 1317,83 1319,87 1319,88 "
+<g id="2002679174"><path d="M1169,101 L1039,101 1039,101 1041,97 1045,95 1169,95 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1316" y1="82" x2="1319" y2="88"
+<line x1="1163" y1="92" x2="1169" y2="95"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1322" y1="82" x2="1319" y2="88"
+<line x1="1163" y1="98" x2="1169" y2="95"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1069" y="107">rdfs:subClassOf  </tspan>
+<tspan x="1069" y="114">rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002679179"><path d="M411,193 L531,193 "
+<g id="2002679179"><path d="M411,194 L531,194 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="525" y1="190" x2="531" y2="193"
+<line x1="525" y1="191" x2="531" y2="194"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="525" y1="196" x2="531" y2="193"
+<line x1="525" y1="197" x2="531" y2="194"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="415" y="191">rdf:type  </tspan>
+<tspan x="415" y="192">rdf:type  </tspan>
 </text>
 </g>
 <g id="2002679184"><path d="M538,47 L406,47 402,45 400,41 400,34 402,30 406,28 688,28 688,34 "
@@ -285,65 +275,75 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
 <tspan x="408" y="60">rdfs:subPropertyOf  DR</tspan>
 </text>
 </g>
-<g id="2002679189"><path d="M531,136 L429,136 425,134 423,130 423,127 425,123 429,121 675,121 679,123 681,127 681,130 "
+<g id="2002679189"><path d="M531,137 L429,137 425,135 423,131 423,127 425,123 429,121 675,121 679,123 681,127 681,131 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="678" y1="124" x2="681" y2="130"
+<line x1="678" y1="125" x2="681" y2="131"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="684" y1="124" x2="681" y2="130"
+<line x1="684" y1="125" x2="681" y2="131"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="431" y="149">rdf:type  </tspan>
-<tspan x="431" y="164">rdfs:subClassOf  </tspan>
+<tspan x="431" y="150">rdf:type  </tspan>
+<tspan x="431" y="165">rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002679194"><path d="M778,310 L933,310 937,308 939,304 939,199 937,195 933,193 831,193 "
+<g id="2002679199"><path d="M831,194 L1169,194 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="190" x2="831" y2="193"
+<line x1="1163" y1="191" x2="1169" y2="194"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="196" x2="831" y2="193"
+<line x1="1163" y1="197" x2="1169" y2="194"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="782" y="308">rdf:type  </tspan>
+<tspan x="835" y="192">rdfs:subClassOf  </tspan>
 </text>
 </g>
-<g id="2002679199"><path d="M831,187 L1169,187 "
+<g id="2002679134"><path d="M1230,482 L1230,522 1228,526 1224,528 1133,528 1129,526 1127,522 1127,452 1121,452 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1163" y1="184" x2="1169" y2="187"
+<line x1="1127" y1="449" x2="1121" y2="452"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="1163" y1="190" x2="1169" y2="187"
+<line x1="1127" y1="455" x2="1121" y2="452"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="835" y="185">rdfs:subClassOf  </tspan>
+<tspan x="1232" y="497">tax:rank  D</tspan>
 </text>
 </g>
-<g id="2002679169"><path d="M1008,514 L897,514 893,512 891,508 891,211 889,207 885,205 825,205 825,199 "
+<g id="2002679144"><path d="M942,55 L942,131 940,135 936,137 831,137 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="822" y1="205" x2="825" y2="199"
+<line x1="837" y1="134" x2="831" y2="137"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="828" y1="205" x2="825" y2="199"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="959" y="527">rdf:type  </tspan>
-</text>
-</g>
-<g id="2002679134"><path d="M1230,438 L1230,491 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1227" y1="485" x2="1230" y2="491"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1233" y1="485" x2="1230" y2="491"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1232" y="453">tax:rank  D</tspan>
-</text>
-</g>
-<g id="2002679144"><path d="M942,55 L942,130 940,134 936,136 831,136 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="133" x2="831" y2="136"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="837" y1="139" x2="831" y2="136"
+<line x1="837" y1="140" x2="831" y2="137"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="944" y="70">rdf:type  </tspan>
+</text>
+</g>
+<g id="2002679169"><path d="M891,333 L891,212 889,208 885,206 825,206 825,200 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="822" y1="206" x2="825" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="828" y1="206" x2="825" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="844" y="329">rdf:type  </tspan>
+</text>
+</g>
+<g id="2002679194"><path d="M573,276 L573,200 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="570" y1="206" x2="573" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="576" y1="206" x2="573" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="526" y="272">rdf:type  </tspan>
+</text>
+</g>
+<g id="2002679154"><path d="M778,783 L1381,783 1385,781 1387,777 1387,482 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1384" y1="488" x2="1387" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1390" y1="488" x2="1387" y2="482"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="782" y="781">assembly:taxon  D</tspan>
 </text>
 </g>
 </svg>

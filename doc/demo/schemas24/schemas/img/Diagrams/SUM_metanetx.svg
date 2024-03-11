@@ -105,18 +105,6 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="170" y="372">rdfs:label (744) [*] </tspan>
 </text>
 </g>
-<g id="2002688311"><polygon points="1361,635 1661,635 1661,685 1361,685 "
-style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="1443" y="650">mschema:CPLX (3.7e5)</tspan>
-</text>
-<line x1="1365" y1="653" x2="1659" y2="653"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1365" y="665">rdf:type (3.7e5) [*]  -&gt; IRI</tspan>
-<tspan x="1365" y="680">rdfs:label (3.7e5) [*] </tspan>
-</text>
-</g>
 <g id="2002688333"><polygon points="760,113 1060,113 1060,298 760,298 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
@@ -274,6 +262,18 @@ style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <tspan x="160" y="504">rdfs:isDefinedBy (3) [*] D -&gt; IRI</tspan>
 </text>
 </g>
+<g id="2002688311"><polygon points="1361,704 1661,704 1661,754 1361,754 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1443" y="719">mschema:CPLX (3.7e5)</tspan>
+</text>
+<line x1="1365" y1="722" x2="1659" y2="722"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1365" y="734">rdf:type (3.7e5) [*]  -&gt; IRI</tspan>
+<tspan x="1365" y="749">rdfs:label (3.7e5) [*] </tspan>
+</text>
+</g>
 <g id="2002688142"><path d="M598,316 L478,316 474,314 472,310 472,259 474,255 478,253 760,253 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
 <line x1="754" y1="250" x2="760" y2="253"
@@ -303,16 +303,6 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="480" y="350">mschema:comp  DR</tspan>
-</text>
-</g>
-<g id="2002688157"><path d="M1392,568 L1502,568 1506,570 1508,574 1508,635 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1505" y1="629" x2="1508" y2="635"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1511" y1="629" x2="1508" y2="635"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1396" y="566">mschema:cplx  DR</tspan>
 </text>
 </g>
 <g id="2002688167"><path d="M1494,23 L1329,23 1325,21 1323,17 1323,16 1325,12 1329,10 1644,10 1644,16 "
@@ -345,16 +335,6 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="408" y="645">sd:endpoint  DR</tspan>
 <tspan x="408" y="660">sd:url  DR</tspan>
-</text>
-</g>
-<g id="2002688187"><path d="M1361,664 L1242,664 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="1248" y1="661" x2="1242" y2="664"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="1248" y1="667" x2="1242" y2="664"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="1246" y="677">mschema:subu  DR</tspan>
 </text>
 </g>
 <g id="2002688192"><path d="M166,330 L16,330 12,328 10,324 10,297 12,293 16,291 316,291 316,297 "
@@ -472,6 +452,26 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="1194" y="186">owl:sameAs  DR</tspan>
+</text>
+</g>
+<g id="2002688187"><path d="M1361,737 L1242,737 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1248" y1="734" x2="1242" y2="737"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1248" y1="740" x2="1242" y2="737"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1246" y="750">mschema:subu  DR</tspan>
+</text>
+</g>
+<g id="2002688157"><path d="M1372,599 L1372,704 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1369" y1="698" x2="1372" y2="704"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1375" y1="698" x2="1372" y2="704"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1374" y="614">mschema:cplx  DR</tspan>
 </text>
 </g>
 </svg>

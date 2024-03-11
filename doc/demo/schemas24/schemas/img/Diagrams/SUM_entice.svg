@@ -553,6 +553,14 @@ style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <tspan x="397" y="523"> </tspan>
 </text>
 </g>
+<g id="2002684840"><path d="M814,446 L814,525 812,529 808,531 483,531 479,533 477,537 477,543 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="819,456 814,446 809,456 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="816" y="461"> </tspan>
+</text>
+</g>
 <g id="2002684842"><path d="M867,197 L867,262 "
 style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
 <polygon points="872,207 867,197 862,207 "
@@ -585,6 +593,14 @@ style="fill:Silver;stroke-width:1;stroke:Black;"/>
 <tspan x="895" y="461"> </tspan>
 </text>
 </g>
+<g id="2002684836"><path d="M483,508 L483,531 485,535 489,537 796,537 796,543 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="488,518 483,508 478,518 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="485" y="523"> </tspan>
+</text>
+</g>
 <g id="2002684741"><path d="M341,665 L421,665 425,663 427,659 427,607 429,603 433,601 1265,601 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
 <line x1="1259" y1="598" x2="1265" y2="601"
@@ -604,22 +620,6 @@ style="fill:none;stroke-width:1;stroke:Black;"/>
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
 <tspan x="345" y="764">rdfs:isDefinedBy  </tspan>
-</text>
-</g>
-<g id="2002684836"><path d="M483,508 L483,531 485,535 489,537 796,537 796,543 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="488,518 483,508 478,518 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="485" y="523"> </tspan>
-</text>
-</g>
-<g id="2002684840"><path d="M814,446 L814,525 812,529 808,531 483,531 479,533 477,537 477,543 "
-style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
-<polygon points="819,456 814,446 809,456 "
-style="fill:Silver;stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="816" y="461"> </tspan>
 </text>
 </g>
 </svg>

@@ -3,7 +3,7 @@
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
- width="1146" height="717" viewBox="0 0 1146 717">
+ width="1107" height="829" viewBox="0 0 1107 829">
  onmousemove="movetip(evt)" onmouseup="endmove()">
 <rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
 <script type="application/ecmascript"> <![CDATA[
@@ -38,140 +38,140 @@ tip.setAttributeNS(null,"visibility","hidden");
 <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
 <stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
 </linearGradient></defs>
-<g id="2002683054"><polygon points="183,143 483,143 483,223 183,223 "
+<g id="2002683065"><polygon points="155,530 455,530 455,615 155,615 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="253" y="158">ontolex:LexicalEntry (1.6e5)</tspan>
+<tspan x="222" y="545">ontolex:LexicalSense (2.1e5)</tspan>
 </text>
-<line x1="187" y1="161" x2="481" y2="161"
+<line x1="159" y1="548" x2="453" y2="548"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="187" y="173">ontolex:canonicalForm (2.1e5) [*] D -&gt; IRI</tspan>
-<tspan x="187" y="188">princ:partOfSpeech (1.6e5) [1]  -&gt; IRI</tspan>
-<tspan x="187" y="203">rdf:type (1.6e5) [1]  -&gt; IRI</tspan>
-<tspan x="187" y="218">synsem:synBehavior (9.9e4) [*] D -&gt; IRI</tspan>
+<tspan x="159" y="560">rdf:type (2.1e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683043"><polygon points="659,51 959,51 959,520 659,520 "
+<g id="2002683043"><polygon points="605,104 857,104 857,427 605,427 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="720" y="66">ontolex:LexicalConcept (1.2e5)</tspan>
+<tspan x="642" y="119">ontolex:LexicalConcept (1.2e5)</tspan>
 </text>
-<line x1="663" y1="69" x2="957" y2="69"
+<line x1="609" y1="122" x2="855" y2="122"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="663" y="81">dct:subject (1.2e5) [1] D</tspan>
-<tspan x="663" y="96">owl:sameAs (1.2e5) [1] D -&gt; IRI</tspan>
-<tspan x="663" y="111">princ:definition (1.2e5) [1] D -&gt; IRI</tspan>
-<tspan x="663" y="126">princ:partOfSpeech (1.2e5) [1]  -&gt; IRI</tspan>
-<tspan x="663" y="141">rdf:type (1.2e5) [1]  -&gt; IRI</tspan>
+<tspan x="609" y="134">dct:subject (1.2e5) [1] D</tspan>
+<tspan x="609" y="149">owl:sameAs (1.2e5) [1] D -&gt; IRI</tspan>
+<tspan x="609" y="164">princ:definition (1.2e5) [1] D -&gt; IRI</tspan>
+<tspan x="609" y="179">princ:partOfSpeech (1.2e5) [1]  -&gt; IRI</tspan>
+<tspan x="609" y="194">rdf:type (1.2e5) [1]  -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683065"><polygon points="173,369 473,369 473,557 173,557 "
+<g id="2002683054"><polygon points="208,90 508,90 508,170 208,170 "
 style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
-<tspan x="240" y="384">ontolex:LexicalSense (2.1e5)</tspan>
+<tspan x="278" y="105">ontolex:LexicalEntry (1.6e5)</tspan>
 </text>
-<line x1="177" y1="387" x2="471" y2="387"
+<line x1="212" y1="108" x2="506" y2="108"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="177" y="399">rdf:type (2.1e5) [1]  -&gt; IRI</tspan>
-</text>
-</g>
-<g id="2002683033"><path d="M659,398 L473,398 "
-style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="479" y1="395" x2="473" y2="398"
- style="stroke-width:1;stroke:Black;"/>
-<line x1="479" y1="401" x2="473" y2="398"
- style="stroke-width:1;stroke:Black;"/>
-<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="507" y="411">princ:similar  </tspan>
-<tspan x="507" y="426">princ:domain_topic  </tspan>
-<tspan x="507" y="441">princ:has_domain_topic  </tspan>
-<tspan x="507" y="456">princ:also  </tspan>
-<tspan x="507" y="471">princ:has_domain_region  </tspan>
-<tspan x="507" y="486">princ:domain_region  </tspan>
-<tspan x="507" y="501">princ:is_exemplified_by  </tspan>
-<tspan x="507" y="516">princ:exemplifies  </tspan>
+<tspan x="212" y="120">ontolex:canonicalForm (2.1e5) [*] D -&gt; IRI</tspan>
+<tspan x="212" y="135">princ:partOfSpeech (1.6e5) [1]  -&gt; IRI</tspan>
+<tspan x="212" y="150">rdf:type (1.6e5) [1]  -&gt; IRI</tspan>
+<tspan x="212" y="165">synsem:synBehavior (9.9e4) [*] D -&gt; IRI</tspan>
 </text>
 </g>
-<g id="2002683038"><path d="M390,223 L390,369 "
+<g id="2002683033"><path d="M611,427 L611,549 609,553 605,555 455,555 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="387" y1="363" x2="390" y2="369"
+<line x1="461" y1="552" x2="455" y2="555"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="393" y1="363" x2="390" y2="369"
+<line x1="461" y1="558" x2="455" y2="555"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="392" y="238">ontolex:sense  DR</tspan>
+<tspan x="613" y="442">princ:similar  </tspan>
+<tspan x="613" y="457">princ:domain_topic  </tspan>
+<tspan x="613" y="472">princ:has_domain_topic  </tspan>
+<tspan x="613" y="487">princ:also  </tspan>
+<tspan x="613" y="502">princ:has_domain_region  </tspan>
+<tspan x="613" y="517">princ:domain_region  </tspan>
+<tspan x="613" y="532">princ:is_exemplified_by  </tspan>
+<tspan x="613" y="547">princ:exemplifies  </tspan>
 </text>
 </g>
-<g id="2002683018"><path d="M173,375 L16,375 12,373 10,369 10,308 12,304 16,302 329,302 333,304 335,308 335,369 "
+<g id="2002683038"><path d="M375,170 L375,530 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="332" y1="363" x2="335" y2="369"
+<line x1="372" y1="524" x2="375" y2="530"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="338" y1="363" x2="335" y2="369"
+<line x1="378" y1="524" x2="375" y2="530"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="21" y="388">princ:derivation  DR</tspan>
-<tspan x="21" y="403">princ:similar  </tspan>
-<tspan x="21" y="418">princ:antonym  DR</tspan>
-<tspan x="21" y="433">princ:domain_topic  </tspan>
-<tspan x="21" y="448">princ:has_domain_topic  </tspan>
-<tspan x="21" y="463">princ:pertainym  DR</tspan>
-<tspan x="21" y="478">princ:also  </tspan>
-<tspan x="21" y="493">princ:has_domain_region  </tspan>
-<tspan x="21" y="508">princ:domain_region  </tspan>
-<tspan x="21" y="523">princ:is_exemplified_by  </tspan>
-<tspan x="21" y="538">princ:exemplifies  </tspan>
-<tspan x="21" y="553">princ:participle  DR</tspan>
+<tspan x="377" y="185">ontolex:sense  DR</tspan>
 </text>
 </g>
-<g id="2002683028"><path d="M959,368 L1129,368 1133,366 1135,362 1135,16 1133,12 1129,10 836,10 832,12 830,16 830,51 "
+<g id="2002683023"><path d="M449,615 L449,812 451,816 455,818 763,818 767,816 769,812 769,427 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="827" y1="45" x2="830" y2="51"
+<line x1="766" y1="433" x2="769" y2="427"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="833" y1="45" x2="830" y2="51"
+<line x1="772" y1="433" x2="769" y2="427"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="963" y="66">princ:hypernym  DR</tspan>
-<tspan x="963" y="81">princ:hyponym  DR</tspan>
-<tspan x="963" y="96">princ:similar  </tspan>
-<tspan x="963" y="111">princ:holo_member  DR</tspan>
-<tspan x="963" y="126">princ:mero_member  DR</tspan>
-<tspan x="963" y="141">princ:holo_part  DR</tspan>
-<tspan x="963" y="156">princ:mero_part  DR</tspan>
-<tspan x="963" y="171">princ:instance_hyponym  DR</tspan>
-<tspan x="963" y="186">princ:instance_hypernym  DR</tspan>
-<tspan x="963" y="201">princ:domain_topic  </tspan>
-<tspan x="963" y="216">princ:has_domain_topic  </tspan>
-<tspan x="963" y="231">princ:also  </tspan>
-<tspan x="963" y="246">princ:has_domain_region  </tspan>
-<tspan x="963" y="261">princ:domain_region  </tspan>
-<tspan x="963" y="276">princ:is_exemplified_by  </tspan>
-<tspan x="963" y="291">princ:exemplifies  </tspan>
-<tspan x="963" y="306">princ:attribute  DR</tspan>
-<tspan x="963" y="321">princ:mero_substance  DR</tspan>
-<tspan x="963" y="336">princ:holo_substance  DR</tspan>
-<tspan x="963" y="351">princ:entails  DR</tspan>
-<tspan x="963" y="366">princ:causes  DR</tspan>
+<tspan x="451" y="630">ontolex:isLexicalizedSenseOf  DR</tspan>
+<tspan x="451" y="645">princ:similar  </tspan>
+<tspan x="451" y="660">princ:domain_topic  </tspan>
+<tspan x="451" y="675">princ:has_domain_topic  </tspan>
+<tspan x="451" y="690">princ:also  </tspan>
+<tspan x="451" y="705">princ:has_domain_region  </tspan>
+<tspan x="451" y="720">princ:domain_region  </tspan>
+<tspan x="451" y="735">princ:is_exemplified_by  </tspan>
+<tspan x="451" y="750">princ:exemplifies  </tspan>
 </text>
 </g>
-<g id="2002683023"><path d="M467,557 L467,700 469,704 473,706 706,706 710,704 712,700 712,520 "
+<g id="2002683028"><path d="M857,421 L1090,421 1094,419 1096,415 1096,16 1094,12 1090,10 797,10 793,12 791,16 791,104 "
 style="fill:none;stroke-width:1;stroke:Black;"/>
-<line x1="709" y1="526" x2="712" y2="520"
+<line x1="788" y1="98" x2="791" y2="104"
  style="stroke-width:1;stroke:Black;"/>
-<line x1="715" y1="526" x2="712" y2="520"
+<line x1="794" y1="98" x2="791" y2="104"
  style="stroke-width:1;stroke:Black;"/>
 <text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
-<tspan x="469" y="572">ontolex:isLexicalizedSenseOf  DR</tspan>
-<tspan x="469" y="587">princ:similar  </tspan>
-<tspan x="469" y="602">princ:domain_topic  </tspan>
-<tspan x="469" y="617">princ:has_domain_topic  </tspan>
-<tspan x="469" y="632">princ:also  </tspan>
-<tspan x="469" y="647">princ:has_domain_region  </tspan>
-<tspan x="469" y="662">princ:domain_region  </tspan>
-<tspan x="469" y="677">princ:is_exemplified_by  </tspan>
-<tspan x="469" y="692">princ:exemplifies  </tspan>
+<tspan x="861" y="119">princ:hypernym  DR</tspan>
+<tspan x="861" y="134">princ:hyponym  DR</tspan>
+<tspan x="861" y="149">princ:similar  </tspan>
+<tspan x="861" y="164">princ:holo_member  DR</tspan>
+<tspan x="861" y="179">princ:mero_member  DR</tspan>
+<tspan x="861" y="194">princ:holo_part  DR</tspan>
+<tspan x="861" y="209">princ:mero_part  DR</tspan>
+<tspan x="861" y="224">princ:instance_hyponym  DR</tspan>
+<tspan x="861" y="239">princ:instance_hypernym  DR</tspan>
+<tspan x="861" y="254">princ:domain_topic  </tspan>
+<tspan x="861" y="269">princ:has_domain_topic  </tspan>
+<tspan x="861" y="284">princ:also  </tspan>
+<tspan x="861" y="299">princ:has_domain_region  </tspan>
+<tspan x="861" y="314">princ:domain_region  </tspan>
+<tspan x="861" y="329">princ:is_exemplified_by  </tspan>
+<tspan x="861" y="344">princ:exemplifies  </tspan>
+<tspan x="861" y="359">princ:attribute  DR</tspan>
+<tspan x="861" y="374">princ:mero_substance  DR</tspan>
+<tspan x="861" y="389">princ:holo_substance  DR</tspan>
+<tspan x="861" y="404">princ:entails  DR</tspan>
+<tspan x="861" y="419">princ:causes  DR</tspan>
+</text>
+</g>
+<g id="2002683018"><path d="M161,530 L161,326 163,322 167,320 339,320 343,322 345,326 345,530 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="342" y1="524" x2="345" y2="530"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="348" y1="524" x2="345" y2="530"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="11" y="361">princ:derivation  DR</tspan>
+<tspan x="11" y="376">princ:similar  </tspan>
+<tspan x="11" y="391">princ:antonym  DR</tspan>
+<tspan x="11" y="406">princ:domain_topic  </tspan>
+<tspan x="11" y="421">princ:has_domain_topic  </tspan>
+<tspan x="11" y="436">princ:pertainym  DR</tspan>
+<tspan x="11" y="451">princ:also  </tspan>
+<tspan x="11" y="466">princ:has_domain_region  </tspan>
+<tspan x="11" y="481">princ:domain_region  </tspan>
+<tspan x="11" y="496">princ:is_exemplified_by  </tspan>
+<tspan x="11" y="511">princ:exemplifies  </tspan>
+<tspan x="11" y="526">princ:participle  DR</tspan>
 </text>
 </g>
 </svg>
