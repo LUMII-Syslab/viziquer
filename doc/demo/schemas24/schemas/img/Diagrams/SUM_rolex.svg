@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="836" height="362" viewBox="0 0 836 362">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002688784"><polygon points="270,182 512,182 512,352 270,352 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="328" y="197">lemon:limeLexicon (1)</tspan>
+</text>
+<line x1="274" y1="200" x2="510" y2="200"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="274" y="212">ccorg:nslicense (1) [1] D</tspan>
+<tspan x="274" y="227">dc:language (1) [1] D</tspan>
+<tspan x="274" y="242">dc:publisher (1) [1] D</tspan>
+<tspan x="274" y="257">dc:source (1) [1] D</tspan>
+<tspan x="274" y="272">n2:rdf-schemalabel (1) [1] </tspan>
+<tspan x="274" y="287">n4:owlversionInfo (1) [1] D</tspan>
+<tspan x="274" y="302">rdf:type (1) [1]  -&gt; IRI</tspan>
+<tspan x="274" y="317">schema:citation (1) [1] D</tspan>
+<tspan x="274" y="332">schema:email (1) [1] D</tspan>
+<tspan x="274" y="347">schema:url (1) [1] D</tspan>
+</text>
+</g>
+<g id="2002688795"><polygon points="10,63 310,63 310,143 10,143 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="83" y="78">lemon:ontolexForm (3.5e5)</tspan>
+</text>
+<line x1="14" y1="81" x2="308" y2="81"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="14" y="93">lemon:ontolexphoneticRep (3.3e5) [*] D</tspan>
+<tspan x="14" y="108">lemon:ontolexwrittenRep (1.0e6) [*] D</tspan>
+<tspan x="14" y="123">n5:POS (3.2e5) [*] D</tspan>
+<tspan x="14" y="138">rdf:type (3.5e5) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688806"><polygon points="526,62 826,62 826,142 526,142 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="578" y="77">lemon:ontolexLexicalEntry (3.1e4)</tspan>
+</text>
+<line x1="530" y1="80" x2="824" y2="80"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="530" y="92">gwshemas:wnili (4.3e4) [*] D -&gt; IRI</tspan>
+<tspan x="530" y="107">gwshemas:wnpartOfSpeech (3.1e4) [1] D -&gt; IRI</tspan>
+<tspan x="530" y="122">n2:rdf-schemalabel (3.1e4) [1] </tspan>
+<tspan x="530" y="137">rdf:type (3.1e4) [1]  -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002688779"><path d="M526,110 L310,110 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="107" x2="310" y2="110"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="113" x2="310" y2="110"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="339" y="123">lemon:ontolexlexicalForm  DR</tspan>
+<tspan x="339" y="138">lemon:ontolexcanonicalForm  DR</tspan>
+</text>
+</g>
+</svg>

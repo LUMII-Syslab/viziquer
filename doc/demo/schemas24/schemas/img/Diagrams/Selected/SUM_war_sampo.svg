@@ -1,0 +1,2495 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+ width="3646" height="1961" viewBox="0 0 3646 1961">
+ onmousemove="movetip(evt)" onmouseup="endmove()">
+<rect x="0" y="0" width="100%" height="100%" style="fill:White;"/>
+<script type="application/ecmascript"> <![CDATA[
+var dragtipid = null; var dragcase = false; function init(evt){
+if (window.svgDocument==null) svgDocument = evt.target.ownerDocument;
+}
+function movetip(evt){if (dragtipid!=null){ dragcase = true;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}}
+function endmove(){dragtipid = null;}
+function startmove(evt,id){dragtipid = id; dragcase = false;
+var tip=svgDocument.getElementById(dragtipid);
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+}
+function Showtip(evt,id){ dragtipid = null;
+var tip=svgDocument.getElementById(id);
+var vis=tip.getAttributeNS(null,"visibility");
+if (vis=="hidden"){
+tip.setAttributeNS(null,"x",evt.clientX-2);
+tip.setAttributeNS(null,"y",evt.clientY-2);
+tip.setAttributeNS(null,"visibility","visible");
+}}
+function Hidetip(id){ dragtipid = null; if (dragcase==false){
+var tip=svgDocument.getElementById(id);
+tip.setAttributeNS(null,"visibility","hidden");
+}}
+]]></script>
+<defs><linearGradient id="activ1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FFFF00;stop-opacity:1"/>
+<stop offset="100%" style="stop-color:#FFFFF0;stop-opacity:1"/>
+</linearGradient></defs>
+<g id="2002697845"><polygon points="659,1096 959,1096 959,1146 659,1146 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="759" y="1111">s_photos:Size (3)</tspan>
+</text>
+<line x1="663" y1="1114" x2="957" y2="1114"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="663" y="1126">rdf:type (3) [*]  -&gt;  owl:Class</tspan>
+<tspan x="663" y="1141">skos:prefLabel (6) [*] </tspan>
+</text>
+</g>
+<g id="2002697922"><polygon points="741,374 1185,374 1185,575 741,575 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="812" y="389">w:Person or w:MilitaryUnit or w:Group S115 (~1.2e5)</tspan>
+</text>
+<line x1="745" y1="392" x2="1183" y2="392"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="745" y="404">crm:P3_has_note (208) [*] </tspan>
+<tspan x="745" y="419">dct:description (303) [*] </tspan>
+<tspan x="745" y="434">dct:source (2.2e4) [*]  -&gt;  w:Source or dct:BibliographicResource</tspan>
+<tspan x="745" y="449">foaf:page (492) [*]  -&gt; IRI</tspan>
+<tspan x="745" y="464">owl:differentFrom (1022) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="745" y="479">owl:sameAs (249) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="745" y="494">rdf:type (1.6e4) [*]  -&gt;  owl:Class</tspan>
+<tspan x="745" y="509">skos:altLabel (1.4e4) [*] </tspan>
+<tspan x="745" y="524">skos:prefLabel (1.6e4) [*] </tspan>
+<tspan x="745" y="539">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002697999"><polygon points="1876,22 2176,22 2176,248 1876,248 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1982" y="37">w:Article (3357)</tspan>
+</text>
+<line x1="1880" y1="40" x2="2174" y2="40"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1880" y="52">dc:title (3357) [1] D</tspan>
+<tspan x="1880" y="67">dct:hasFormat (3357) [*]  -&gt; IRI</tspan>
+<tspan x="1880" y="82">dct:subject (46) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1880" y="97">rdf:type (3357) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1880" y="112">rdfs:comment (1489) [*] </tspan>
+<tspan x="1880" y="127">s_articles:author (3358) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="1880" y="142">s_articles:mentionsGeneral (3381) [*] D -&gt; IRI</tspan>
+<tspan x="1880" y="157">s_articles:mentionsPerson (3963) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="1880" y="172">s_articles:mentionsUnit (74) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="1880" y="187">s_articles:mentionsWar (1193) [*] D -&gt; IRI</tspan>
+<tspan x="1880" y="202">s_articles:page (3357) [1] D</tspan>
+<tspan x="1880" y="217">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698065"><polygon points="234,192 534,192 534,302 234,302 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="344" y="207">w:Medal (200)</tspan>
+</text>
+<line x1="238" y1="210" x2="532" y2="210"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="238" y="222">dct:description (4) [*] </tspan>
+<tspan x="238" y="237">foaf:page (2) [*]  -&gt; IRI</tspan>
+<tspan x="238" y="252">rdf:type (200) [*]  -&gt;  owl:Class</tspan>
+<tspan x="238" y="267">skos:altLabel (89) [*] </tspan>
+<tspan x="238" y="282">skos:prefLabel (200) [*] </tspan>
+<tspan x="238" y="297">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698164"><polygon points="2933,1625 3233,1625 3233,1705 2933,1705 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3023" y="1640">rdf:Statement (1.7e4)</tspan>
+</text>
+<line x1="2937" y1="1643" x2="3231" y2="1643"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2937" y="1655">dct:source (1.7e4) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="2937" y="1670">BibliographicResource</tspan>
+<tspan x="2937" y="1685">rdf:predicate (1.7e4) [1] D -&gt; dgr,IRI</tspan>
+<tspan x="2937" y="1700">rdf:type (1.7e4) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002698296"><polygon points="2966,1721 3266,1721 3266,1891 2966,1891 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3076" y="1736">owl:Class (86)</tspan>
+</text>
+<line x1="2970" y1="1739" x2="3264" y2="1739"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2970" y="1751">rdf:type (162) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2970" y="1766">rdfs:isDefinedBy (2) [1]  -&gt; IRI</tspan>
+<tspan x="2970" y="1781">rdfs:label (3) [*] </tspan>
+<tspan x="2970" y="1796">rdfs:subClassOf (85) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="2970" y="1811">skos:definition (2) [1] </tspan>
+<tspan x="2970" y="1826">skos:example (1) [1] </tspan>
+<tspan x="2970" y="1841">skos:prefLabel (168) [*] </tspan>
+<tspan x="2970" y="1856">skos:scopeNote (1) [1] </tspan>
+<tspan x="2970" y="1871">&lt;-rdf:type (1.0e6)  &lt;-  hipla:Topology,w:Man-made_</tspan>
+<tspan x="2970" y="1886">feature et al. et al...(47)</tspan>
+</text>
+</g>
+<g id="2002698307"><polygon points="3272,1865 3572,1865 3572,1915 3272,1915 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3346" y="1880">owl:AnnotationProperty (6)</tspan>
+</text>
+<line x1="3276" y1="1883" x2="3570" y2="1883"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3276" y="1895">skos:example (1) [1] </tspan>
+<tspan x="3276" y="1910">skos:scopeNote (1) [1] </tspan>
+</text>
+</g>
+<g id="2002698439"><polygon points="1048,1154 1348,1154 1348,1249 1048,1249 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1072" y="1169">w:Photograph or w:Cemetery S115 (~1.7e5)</tspan>
+</text>
+<line x1="1052" y1="1172" x2="1346" y2="1172"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1052" y="1184">dct:source (1230) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="1052" y="1199">BibliographicResource</tspan>
+<tspan x="1052" y="1214">rdf:type (672) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1052" y="1229">skos:prefLabel (672) [*] </tspan>
+<tspan x="1052" y="1244">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698032"><polygon points="2266,832 2538,832 2538,988 2266,988 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2273" y="847">w:DeathRecord or w:PrisonerRecord S115 (~</tspan>
+<tspan x="2385" y="863">9.9e4)</tspan>
+</text>
+<line x1="2270" y1="866" x2="2536" y2="866"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2270" y="878">biocrm:has_occupation (5457) [*] R -&gt; dgr,IRI</tspan>
+<tspan x="2270" y="893">crm:P70_documents (4202) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="2270" y="908">rdf:type (4200) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2270" y="923">skos:prefLabel (4199) [*] </tspan>
+<tspan x="2270" y="938">w:date_of_birth (4011) [*] </tspan>
+<tspan x="2270" y="953">w:family_name (4200) [1] </tspan>
+<tspan x="2270" y="968">w:given_names (4004) [1] </tspan>
+<tspan x="2270" y="983">w:mother_tongue (4200) [1] R -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002697944"><polygon points="3386,1491 3595,1491 3595,1677 3386,1677 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="3383,1494 3592,1494 3592,1680 3383,1680 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3405" y="1509">owl:DatatypeProperty or owl:</tspan>
+<tspan x="3406" y="1525">ObjectProperty G111 (~150)</tspan>
+</text>
+<line x1="3387" y1="1528" x2="3590" y2="1528"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3387" y="1540">dct:description (48) [*] </tspan>
+<tspan x="3387" y="1555">rdf:type (151) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3387" y="1570">rdfs:domain (109) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3387" y="1585">rdfs:label (3) [*] </tspan>
+<tspan x="3387" y="1600">rdfs:range (97) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3387" y="1615">rdfs:subPropertyOf (32) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3387" y="1630">skos:prefLabal (2) [*] D</tspan>
+<tspan x="3387" y="1645">skos:prefLabel (291) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3387" y="1660">owl:DatatypeProperty (88)</tspan>
+<tspan x="3387" y="1675">owl:ObjectProperty (62)</tspan>
+</text>
+</g>
+<g id="2002698208"><polygon points="2788,906 2957,906 2957,956 2788,956 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2821" y="921">w:Citizenship (10)</tspan>
+</text>
+<line x1="2792" y1="924" x2="2955" y2="924"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2792" y="936">rdf:type (10) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2792" y="951">skos:prefLabel (20) [*] </tspan>
+</text>
+</g>
+<g id="2002698483"><polygon points="1998,580 2284,580 2284,645 1998,645 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2097" y="595">suo:kunta (627)</tspan>
+</text>
+<line x1="2002" y1="598" x2="2282" y2="598"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2002" y="610">municipalities:narc_map_id (625) [1] D</tspan>
+<tspan x="2002" y="625">schema:polygon (488) [1] D</tspan>
+</text>
+</g>
+<g id="2002698373"><polygon points="322,68 622,68 622,163 322,163 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="392" y="83">crm:E52_Time-Span (2.4e5)</tspan>
+</text>
+<line x1="326" y1="86" x2="620" y2="86"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="326" y="98">crm:P82a_begin_of_the_begin (2.4e5) [1] D</tspan>
+<tspan x="326" y="113">crm:P82b_end_of_the_end (2.4e5) [1] D</tspan>
+<tspan x="326" y="128">rdf:type (2.4e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="326" y="143">skos:prefLabel (2.3e5) [*] </tspan>
+<tspan x="326" y="158">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002697834"><polygon points="1355,13 1655,13 1655,319 1355,319 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1352,16 1652,16 1652,322 1352,322 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1365" y="31">w:Source or dct:BibliographicResource G105 (~</tspan>
+<tspan x="1487" y="47">2551)</tspan>
+</text>
+<line x1="1356" y1="50" x2="1650" y2="50"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1356" y="62">basic:doi (2) [1] D</tspan>
+<tspan x="1356" y="77">basic:url (6) [*] D -&gt; IRI</tspan>
+<tspan x="1356" y="92">dct:bibliographicCitation (3) [1] D</tspan>
+<tspan x="1356" y="107">dct:bibliographiccitation (2) [1] D</tspan>
+<tspan x="1356" y="122">dct:description (1) [*] </tspan>
+<tspan x="1356" y="137">dct:identifier (1) [1] D</tspan>
+<tspan x="1356" y="152">dct:license (1) [1]  -&gt; IRI</tspan>
+<tspan x="1356" y="167">dct:rights (2) [1] D -&gt; IRI</tspan>
+<tspan x="1356" y="182">dct:title (6) [*] </tspan>
+<tspan x="1356" y="197">rdf:type (2551) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1356" y="212">skos:note (1) [1] </tspan>
+<tspan x="1356" y="227">skos:prefLabel (2574) [*] </tspan>
+<tspan x="1356" y="242">skos:preflabel (3) [*] D</tspan>
+<tspan x="1356" y="257">&lt;-dct:source (9.0e5)  &lt;-  w:Photography et al.,w:Man-</tspan>
+<tspan x="1356" y="272">made_feature et al. et al...(13)</tspan>
+<tspan x="1356" y="287">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1356" y="302">dct:BibliographicResource (5)</tspan>
+<tspan x="1356" y="317">w:Source (2546)</tspan>
+</text>
+</g>
+<g id="2002698175"><polygon points="808,44 1108,44 1108,304 808,304 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="805,47 1105,47 1105,307 805,307 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="829" y="62">w:Formation or w:Dissolution G113 (~2.1e4)</tspan>
+</text>
+<line x1="809" y1="65" x2="1103" y2="65"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="809" y="77">crm:P3_has_note (2) [*] </tspan>
+<tspan x="809" y="92">crm:P7_took_place_at (1863) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="809" y="107">crm:P95_has_formed (1.3e4) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="809" y="122">crm:P99_dissolved (7711) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="809" y="137">dct:description (4) [*] </tspan>
+<tspan x="809" y="152">dct:source (1.6e4) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="809" y="167">BibliographicResource</tspan>
+<tspan x="809" y="182">rdf:type (2.1e4) [*]  -&gt;  owl:Class</tspan>
+<tspan x="809" y="197">skos:altLabel (1.2e4) [*] </tspan>
+<tspan x="809" y="212">skos:prefLabel (2.1e4) [*] </tspan>
+<tspan x="809" y="227">w_actors:comment (35) [*] </tspan>
+<tspan x="809" y="242">w_actors:hasPlace (126) [*] </tspan>
+<tspan x="809" y="257">w_actors:number (35) [1] </tspan>
+<tspan x="809" y="272">w_actors:placed_at (869) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="809" y="287">w:Dissolution (7701)</tspan>
+<tspan x="809" y="302">w:Formation (1.3e4)</tspan>
+</text>
+</g>
+<g id="2002698285"><polygon points="552,216 799,216 799,311 552,311 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="620" y="231">w:WarDiary (2.6e4)</tspan>
+</text>
+<line x1="556" y1="234" x2="797" y2="234"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="556" y="246">crm:P70_documents (2.6e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="556" y="261">dct:hasFormat (2.6e4) [*] </tspan>
+<tspan x="556" y="276">rdf:type (2.6e4) [*]  -&gt;  owl:Class</tspan>
+<tspan x="556" y="291">skos:prefLabel (2.6e4) [*] </tspan>
+<tspan x="556" y="306">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698142"><polygon points="54,305 354,305 354,460 54,460 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="51,308 351,308 351,463 51,463 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="62" y="323">w:Promotion or w:MedalAwarding G112 (~1.1e5)</tspan>
+</text>
+<line x1="55" y1="326" x2="349" y2="326"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="55" y="338">crm:P11_had_participant (1.1e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="55" y="353">dct:description (1) [*] </tspan>
+<tspan x="55" y="368">dct:source (1.1e5) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="55" y="383">BibliographicResource</tspan>
+<tspan x="55" y="398">rdf:type (1.1e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="55" y="413">s_actors:hasRank (1.1e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="55" y="428">skos:prefLabel (2.1e5) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="55" y="443">w:MedalAwarding (6086)</tspan>
+<tspan x="55" y="458">w:Promotion (1.1e5)</tspan>
+</text>
+</g>
+<g id="2002698010"><polygon points="466,611 769,611 769,781 466,781 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="569" y="626">w:Person (1.0e5)</tspan>
+</text>
+<line x1="470" y1="629" x2="767" y2="629"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="470" y="641">foaf:familyName (1.0e5) [*] </tspan>
+<tspan x="470" y="656">foaf:firstName (1.0e5) [*] </tspan>
+<tspan x="470" y="671">foaf:givenName (9.4e4) [1] D</tspan>
+<tspan x="470" y="686">s_actors:genicom (9348) [1]  -&gt; IRI</tspan>
+<tspan x="470" y="701">s_actors:genitree (9348) [1]  -&gt; IRI</tspan>
+<tspan x="470" y="716">s_actors:hasEvent (27) [*] D</tspan>
+<tspan x="470" y="731">s_actors:hasTitle (656) [*] D</tspan>
+<tspan x="470" y="746">s_actors:hasType (855) [1] D</tspan>
+<tspan x="470" y="761">s_actors:hasUnit (17) [*] </tspan>
+<tspan x="470" y="776">s_actors:knight (191) [1] D</tspan>
+</text>
+</g>
+<g id="2002697889"><polygon points="52,1676 353,1676 353,1756 52,1756 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="92" y="1691">w:Conflict or crm:E4_Period S115 (~5)</tspan>
+</text>
+<line x1="56" y1="1694" x2="351" y2="1694"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="56" y="1706">crm:P10_falls_within (1) [1] R -&gt; dgr,IRI</tspan>
+<tspan x="56" y="1721">crm:P4_has_time-span (1) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="56" y="1736">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+<tspan x="56" y="1751">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002698538"><polygon points="72,527 372,527 372,742 72,742 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="69,530 369,530 369,745 69,745 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="82" y="545">w:PersonJoining or w:UnitJoining G110 (~1.0e5)</tspan>
+</text>
+<line x1="73" y1="548" x2="367" y2="548"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="73" y="560">crm:P107_1_kind_of_member (849) [1] D</tspan>
+<tspan x="73" y="575">crm:P143_joined (1.0e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="73" y="590">crm:P144_joined_with (1.0e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="73" y="605">crm:P3_has_note (1) [*] </tspan>
+<tspan x="73" y="620">dct:description (415) [*] </tspan>
+<tspan x="73" y="635">dct:source (9.9e4) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="73" y="650">BibliographicResource</tspan>
+<tspan x="73" y="665">rdf:type (1.0e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="73" y="680">s_actors:hasUnit (557) [*] </tspan>
+<tspan x="73" y="695">skos:prefLabel (1.9e5) [*] </tspan>
+<tspan x="73" y="710">w_actors:hasTime (163) [1] D</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="73" y="725">w:PersonJoining (9.3e4)</tspan>
+<tspan x="73" y="740">w:UnitJoining (9422)</tspan>
+</text>
+</g>
+<g id="2002698362"><polygon points="2788,964 2953,964 2953,1014 2788,1014 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2816" y="979">w:MaritalStatus (5)</tspan>
+</text>
+<line x1="2792" y1="982" x2="2951" y2="982"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2792" y="994">rdf:type (5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2792" y="1009">skos:prefLabel (10) [*] </tspan>
+</text>
+</g>
+<g id="2002697977"><polygon points="2307,457 2607,457 2607,620 2307,620 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2322" y="472">w:Man-made_feature et al. et al. S103 (~3.4e4)</tspan>
+</text>
+<line x1="2311" y1="475" x2="2605" y2="475"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2311" y="487">dct:source (627) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="2311" y="502">BibliographicResource</tspan>
+<tspan x="2311" y="517">geo:lat (492) [*] </tspan>
+<tspan x="2311" y="532">geo:long (492) [*] </tspan>
+<tspan x="2311" y="547">geosparql:sfWithin (627) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="2311" y="562">rdf:type (627) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2311" y="577">skos:prefLabel (627) [*] </tspan>
+<tspan x="2311" y="592">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698406"><polygon points="2267,684 2567,684 2567,764 2267,764 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2328" y="699">s_casualties:Municipality (632)</tspan>
+</text>
+<line x1="2271" y1="702" x2="2565" y2="702"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2271" y="714">georss:point (513) [1] D</tspan>
+<tspan x="2271" y="729">s_casualties:current_municipality (558) [1] D -&gt; IRI</tspan>
+<tspan x="2271" y="744">s_casualties:preferred_municipality (632) [1] D -&gt; dgr,</tspan>
+<tspan x="2271" y="759">IRI</tspan>
+</text>
+</g>
+<g id="2002697878"><polygon points="2628,594 2874,594 2874,734 2628,734 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2625,597 2871,597 2871,737 2625,737 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2629" y="612">w:Man-made_feature et al. G106 (~3.2e4)</tspan>
+</text>
+<line x1="2629" y1="615" x2="2869" y2="615"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2629" y="627">crm:P3_has_note (2) [*] </tspan>
+<tspan x="2629" y="642">skos:altLabel (4) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2629" y="657">suo:laani (11)</tspan>
+<tspan x="2629" y="672">w:Body_of_water (5554)</tspan>
+<tspan x="2629" y="687">w:Hypsographic_feature (1.1e4)</tspan>
+<tspan x="2629" y="702">w:Man-made_feature (1.4e4)</tspan>
+<tspan x="2629" y="717">w:Town (50)</tspan>
+<tspan x="2629" y="732">w:Village (1551)</tspan>
+</text>
+</g>
+<g id="2002697955"><polygon points="2625,546 2780,546 2780,591 2625,591 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2661" y="561">w:Symbol (29)</tspan>
+</text>
+</g>
+<g id="2002697867"><polygon points="2500,37 2700,37 2700,82 2500,82 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2548" y="52">foaf:Person (1586)</tspan>
+</text>
+</g>
+<g id="2002698252"><polygon points="2597,776 2769,776 2769,826 2597,826 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2623" y="791">w:MotherTongue (11)</tspan>
+</text>
+<line x1="2601" y1="794" x2="2767" y2="794"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2601" y="806">rdf:type (11) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2601" y="821">skos:prefLabel (22) [*] </tspan>
+</text>
+</g>
+<g id="2002698516"><polygon points="2579,888 2747,888 2747,938 2579,938 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2614" y="903">w:Nationality (11)</tspan>
+</text>
+<line x1="2583" y1="906" x2="2745" y2="906"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2583" y="918">rdf:type (11) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2583" y="933">skos:prefLabel (22) [*] </tspan>
+</text>
+</g>
+<g id="2002698340"><polygon points="2573,832 2738,832 2738,882 2573,882 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2619" y="847">w:Gender (3)</tspan>
+</text>
+<line x1="2577" y1="850" x2="2736" y2="850"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2577" y="862">rdf:type (3) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2577" y="877">skos:prefLabel (6) [*] </tspan>
+</text>
+</g>
+<g id="2002698329"><polygon points="3054,751 3354,751 3354,917 3054,917 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3128" y="766">skos:ConceptScheme (17)</tspan>
+</text>
+<line x1="3058" y1="769" x2="3352" y2="769"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3058" y="781">dct:creator (9 78%d) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="3058" y="796">dct:description (7) [*] </tspan>
+<tspan x="3058" y="811">dct:rightsHolder (2) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="3058" y="826">dct:title (14) [*] </tspan>
+<tspan x="3058" y="841">owl:versionInfo (1) [1] D</tspan>
+<tspan x="3058" y="856">skos:hasTopConcept (3221) [*] D -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002698098"><polygon points="2788,1020 2973,1020 2973,1070 2788,1070 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2812" y="1035">w:PerishingCategory (7)</tspan>
+</text>
+<line x1="2792" y1="1038" x2="2971" y2="1038"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2792" y="1050">rdf:type (7) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2792" y="1065">skos:prefLabel (14) [*] </tspan>
+</text>
+</g>
+<g id="2002698527"><polygon points="2769,1105 3105,1105 3105,1428 2769,1428 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2872" y="1120">w:DeathRecord (9.5e4)</tspan>
+</text>
+<line x1="2773" y1="1123" x2="3103" y2="1123"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2773" y="1135">s_casualties:additional_information (3720) [1] D</tspan>
+<tspan x="2773" y="1150">s_casualties:graveyard_number (1.0e4) [1] D</tspan>
+<tspan x="2773" y="1165">s_casualties:municipality_of_burial (9.4e4) [1] D -&gt; dgr,IRI</tspan>
+<tspan x="2773" y="1180">s_casualties:place_of_burial_number (9.5e4) [1] D</tspan>
+<tspan x="2773" y="1195">s_casualties:rank_literal (9.4e4) [1] D</tspan>
+<tspan x="2773" y="1210">s_casualties:unit (8.8e4) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="2773" y="1225">s_casualties:unit_code (4.6e4) [1] D</tspan>
+<tspan x="2773" y="1240">s_casualties:unit_literal (9.3e4) [1] D</tspan>
+<tspan x="2773" y="1255">skos:note (5) [1] </tspan>
+<tspan x="2773" y="1270">w:date_of_death (9.5e4) [1] D</tspan>
+<tspan x="2773" y="1285">w:date_of_going_mia (6016) [1] D</tspan>
+<tspan x="2773" y="1300">w:date_of_wounding (1.4e4) [1] D</tspan>
+<tspan x="2773" y="1315">w:number_of_children (9.0e4) [1] D</tspan>
+<tspan x="2773" y="1330">w:occupation_literal (8.6e4) [1] D</tspan>
+<tspan x="2773" y="1345">w:place_of_death_literal (7.7e4) [1] D</tspan>
+<tspan x="2773" y="1360">w:place_of_going_mia_literal (5339) [1] D</tspan>
+<tspan x="2773" y="1375">w:place_of_wounding (1.2e4) [1] D</tspan>
+<tspan x="2773" y="1390">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698384"><polygon points="495,1775 708,1775 708,1840 495,1840 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="564" y="1790">w:Conflict (4)</tspan>
+</text>
+<line x1="499" y1="1793" x2="706" y2="1793"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="499" y="1820">&lt;-void:exampleResource (1) D &lt;-  sd:</tspan>
+<tspan x="499" y="1835">Graph</tspan>
+</text>
+</g>
+<g id="2002697933"><polygon points="1583,1432 1790,1432 1790,1497 1583,1497 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1651" y="1447">w:Video (27)</tspan>
+</text>
+<line x1="1587" y1="1450" x2="1788" y2="1450"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1587" y="1462">rdf:type (27) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1587" y="1477">schema:contentUrl (27) [*]  -&gt; IRI</tspan>
+<tspan x="1587" y="1492">skos:prefLabel (27) [*] </tspan>
+</text>
+</g>
+<g id="2002698021"><polygon points="1565,1503 1801,1503 1801,1568 1565,1568 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1607" y="1518">w:PersonDocument (2314)</tspan>
+</text>
+<line x1="1569" y1="1521" x2="1799" y2="1521"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1569" y="1533">rdf:type (2314) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1569" y="1548">schema:contentUrl (2328) [*]  -&gt; IRI</tspan>
+<tspan x="1569" y="1563">skos:prefLabel (2314) [*] </tspan>
+</text>
+</g>
+<g id="2002698131"><polygon points="1915,711 2130,711 2130,756 1915,756 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1965" y="726">hipla:Topology (625)</tspan>
+</text>
+<line x1="1919" y1="729" x2="2128" y2="729"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1919" y="741">rdf:type (625) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002698263"><polygon points="1893,799 2095,799 2095,864 1893,864 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1953" y="814">hipla:Place (3)</tspan>
+</text>
+<line x1="1897" y1="817" x2="2093" y2="817"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1897" y="829">rdf:type (3) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1897" y="844">skos:definition (3) [1] </tspan>
+<tspan x="1897" y="859">skos:prefLabel (3) [*] </tspan>
+</text>
+</g>
+<g id="2002698043"><polygon points="1583,1211 1785,1211 1785,1276 1583,1276 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1625" y="1226">w:SotilaanAani (340)</tspan>
+</text>
+<line x1="1587" y1="1229" x2="1783" y2="1229"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1587" y="1241">rdf:type (340) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1587" y="1256">schema:contentUrl (340) [*]  -&gt; IRI</tspan>
+<tspan x="1587" y="1271">skos:prefLabel (340) [*] </tspan>
+</text>
+</g>
+<g id="2002698241"><polygon points="1311,641 1611,641 1611,901 1311,901 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="1308,644 1608,644 1608,904 1308,904 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1343" y="659">w:MilitaryUnit or w:Group G108 (~1.6e4)</tspan>
+</text>
+<line x1="1312" y1="662" x2="1606" y2="662"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1312" y="674">crm:P7_took_place_at (129) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1312" y="689">rdfs:label (90) [*] </tspan>
+<tspan x="1312" y="704">s_actors:comment (1) [1] </tspan>
+<tspan x="1312" y="719">s_actors:covernumber (1.1e4) [*] </tspan>
+<tspan x="1312" y="734">s_actors:hasUnitCategory (4522) [*]  -&gt; IRI</tspan>
+<tspan x="1312" y="749">skos:hiddenLabel (2926) [*] </tspan>
+<tspan x="1312" y="764">w_actors:comment (329) [*] </tspan>
+<tspan x="1312" y="779">w_actors:covernumber (2) [*] D</tspan>
+<tspan x="1312" y="794">w_actors:foundation (895) [*] D</tspan>
+<tspan x="1312" y="809">w_actors:hasCommander (299) [*] D</tspan>
+<tspan x="1312" y="824">w_actors:hasPlace (1) [*] </tspan>
+<tspan x="1312" y="839">w_actors:hasUnitCategory (1) [1] D -&gt; IRI</tspan>
+<tspan x="1312" y="854">w_actors:hasUpperUnit (78) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="1312" y="869">w_actors:upper (300) [1] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1312" y="884">w:Group (203)</tspan>
+<tspan x="1312" y="899">w:MilitaryUnit (1.6e4)</tspan>
+</text>
+</g>
+<g id="2002697856"><polygon points="1253,1515 1553,1515 1553,1700 1253,1700 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1342" y="1530">w:Photograph (1.7e5)</tspan>
+</text>
+<line x1="1257" y1="1533" x2="1551" y2="1533"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1257" y="1545">crm:P138_represents (2.6e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1257" y="1560">crm:P1_is_identified_by (1.6e5) [1] D</tspan>
+<tspan x="1257" y="1575">crm:P3_has_note (2.2e4) [*] </tspan>
+<tspan x="1257" y="1590">dct:created (1.2e5) [1] D</tspan>
+<tspan x="1257" y="1605">dct:description (1.6e5) [*] </tspan>
+<tspan x="1257" y="1620">s_photos:is_color (1.6e5) [1] D</tspan>
+<tspan x="1257" y="1635">s_photos:photographer_string (1.3e5) [1] D</tspan>
+<tspan x="1257" y="1650">s_photos:place_String (1) [1] D</tspan>
+<tspan x="1257" y="1665">s_photos:place_string (1.4e5) [1] D</tspan>
+<tspan x="1257" y="1680">s_photos:theme (1.0e5) [1] D</tspan>
+<tspan x="1257" y="1695">skos:hiddenLabel (1.8e5) [*] </tspan>
+</text>
+</g>
+<g id="2002697966"><polygon points="675,1265 975,1265 975,1510 675,1510 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="775" y="1280">w:Cemetery (672)</tspan>
+</text>
+<line x1="679" y1="1283" x2="973" y2="1283"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="679" y="1295">geo:lat (614) [*] </tspan>
+<tspan x="679" y="1310">geo:long (614) [*] </tspan>
+<tspan x="679" y="1325">s_cemeteries:address (614) [1] D</tspan>
+<tspan x="679" y="1340">s_cemeteries:architect (238) [1] D</tspan>
+<tspan x="679" y="1355">s_cemeteries:camera_club (612) [1] D</tspan>
+<tspan x="679" y="1370">s_cemeteries:cemetery_id (615) [1] D</tspan>
+<tspan x="679" y="1385">s_cemeteries:cemetery_type (615) [1] D</tspan>
+<tspan x="679" y="1400">s_cemeteries:current_municipality (615) [1] D</tspan>
+<tspan x="679" y="1415">s_cemeteries:date_of_foundation (246) [1] D</tspan>
+<tspan x="679" y="1430">s_cemeteries:former_municipality (191) [1] D</tspan>
+<tspan x="679" y="1445">s_cemeteries:memorial (302) [1] D</tspan>
+<tspan x="679" y="1460">s_cemeteries:memorial_sculptor (531) [1] D</tspan>
+<tspan x="679" y="1475">s_cemeteries:memorial_unveiling_date (513) [1] D</tspan>
+<tspan x="679" y="1490">s_cemeteries:number_of_graves (581) [1] D</tspan>
+<tspan x="679" y="1505">skos:altLabel (502) [*] </tspan>
+</text>
+</g>
+<g id="2002698494"><polygon points="2382,1528 2611,1528 2611,1638 2382,1638 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2415" y="1543">s_prisoners:Captivity (1.1e4)</tspan>
+</text>
+<line x1="2386" y1="1546" x2="2609" y2="1546"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2386" y="1558">rdf:type (1.1e4) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2386" y="1573">s_prisoners:date_begin (5926) [1] D</tspan>
+<tspan x="2386" y="1588">s_prisoners:date_end (5926) [1] D</tspan>
+<tspan x="2386" y="1603">s_prisoners:location_literal (1.1e4) [1] D</tspan>
+<tspan x="2386" y="1618">s_prisoners:order (1.1e4) [1] D</tspan>
+<tspan x="2386" y="1633">skos:prefLabel (2.2e4) [*] </tspan>
+</text>
+</g>
+<g id="2002698054"><polygon points="165,1821 356,1821 356,1866 165,1866 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="208" y="1836">crm:E4_Period (1)</tspan>
+</text>
+</g>
+<g id="2002698461"><polygon points="1789,1025 2089,1025 2089,1180 1789,1180 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="1902" y="1040">w:Rank (206)</tspan>
+</text>
+<line x1="1793" y1="1043" x2="2087" y2="1043"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1793" y="1055">dct:description (244) [*] </tspan>
+<tspan x="1793" y="1070">foaf:page (166) [*]  -&gt; IRI</tspan>
+<tspan x="1793" y="1085">owl:sameAs (35) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="1793" y="1100">rdf:type (206) [*]  -&gt;  owl:Class</tspan>
+<tspan x="1793" y="1115">rdfs:comment (25) [*] </tspan>
+<tspan x="1793" y="1130">s_actors:level (130) [1] D</tspan>
+<tspan x="1793" y="1145">skos:altLabel (132) [*] </tspan>
+<tspan x="1793" y="1160">skos:prefLabel (304) [*] </tspan>
+<tspan x="1793" y="1175">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+</g>
+<g id="2002698076"><polygon points="2024,1296 2376,1296 2376,1934 2024,1934 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2130" y="1311">w:PrisonerRecord (4200)</tspan>
+</text>
+<line x1="2028" y1="1314" x2="2374" y2="1314"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2028" y="1326">s_prisoners:additional_information (2539) [*] D</tspan>
+<tspan x="2028" y="1341">s_prisoners:cause_of_death (716) [*] D</tspan>
+<tspan x="2028" y="1356">s_prisoners:confiscated_possession (197) [1] D</tspan>
+<tspan x="2028" y="1371">s_prisoners:date_of_capture (4472) [*] D</tspan>
+<tspan x="2028" y="1386">s_prisoners:date_of_death (4166) [*] D</tspan>
+<tspan x="2028" y="1401">s_prisoners:date_of_declaration_of_death (263) [1] D</tspan>
+<tspan x="2028" y="1416">s_prisoners:date_of_going_mia (1622) [*] D</tspan>
+<tspan x="2028" y="1431">s_prisoners:date_of_return (2748) [*] D</tspan>
+<tspan x="2028" y="1446">s_prisoners:description_of_capture (6594) [*] D</tspan>
+<tspan x="2028" y="1461">s_prisoners:finnish_return_interrogation_file (730) [1] D</tspan>
+<tspan x="2028" y="1476">s_prisoners:flyer (646) [*] D</tspan>
+<tspan x="2028" y="1491">s_prisoners:hide_documents (2930) [1] D</tspan>
+<tspan x="2028" y="1506">s_prisoners:karaganda_card_file (222) [1] D</tspan>
+<tspan x="2028" y="1521">s_prisoners:karelian_archive_documents (12) [1] D</tspan>
+<tspan x="2028" y="1536">s_prisoners:memoir (687) [*] D</tspan>
+<tspan x="2028" y="1551">s_prisoners:municipality_of_capture_literal (3673) [*] D</tspan>
+<tspan x="2028" y="1566">s_prisoners:municipality_of_death (2192) [*] D -&gt; IRI</tspan>
+<tspan x="2028" y="1581">s_prisoners:municipality_of_death_literal (2595) [1] D</tspan>
+<tspan x="2028" y="1596">s_prisoners:municipality_of_domicile_literal (3996) [*] D</tspan>
+<tspan x="2028" y="1611">s_prisoners:municipality_of_residence_literal (4118) [*] D</tspan>
+<tspan x="2028" y="1626">s_prisoners:number_of_children (3403) [*] D</tspan>
+<tspan x="2028" y="1641">s_prisoners:occupation_literal (5436) [*] D</tspan>
+<tspan x="2028" y="1656">s_prisoners:original_name (4009) [1] D</tspan>
+<tspan x="2028" y="1671">s_prisoners:personal_information_removed (191) [1] D</tspan>
+<tspan x="2028" y="1686">s_prisoners:photograph (603) [*] D</tspan>
+<tspan x="2028" y="1701">s_prisoners:place_of_burial_literal (502) [*] D</tspan>
+<tspan x="2028" y="1716">s_prisoners:place_of_capture_battle_literal (1806) [*] D</tspan>
+<tspan x="2028" y="1731">s_prisoners:place_of_capture_literal (2145) [*] D</tspan>
+<tspan x="2028" y="1746">s_prisoners:place_of_death (776) [*] D</tspan>
+<tspan x="2028" y="1761">s_prisoners:place_of_going_mia_literal (1519) [*] D</tspan>
+<tspan x="2028" y="1776">s_prisoners:propaganda_magazine (211) [*] D</tspan>
+<tspan x="2028" y="1791">s_prisoners:propaganda_magazine_link (188) [*] D -&gt; IRI</tspan>
+<tspan x="2028" y="1806">s_prisoners:radio_report (866) [*] D</tspan>
+<tspan x="2028" y="1821">s_prisoners:rank_literal (4373) [*] D</tspan>
+<tspan x="2028" y="1836">s_prisoners:recording (27) [1] D</tspan>
+<tspan x="2028" y="1851">s_prisoners:sotilaan_aani (2060) [*] D</tspan>
+<tspan x="2028" y="1866">s_prisoners:soviet_card_files (5707) [*] D</tspan>
+<tspan x="2028" y="1881">s_prisoners:unit (3861) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="2028" y="1896">s_prisoners:unit_literal (4109) [1] D</tspan>
+<tspan x="2028" y="1911">s_prisoners:winter_war_collection (78) [*] D</tspan>
+<tspan x="2028" y="1926">w:municipality_of_birth_literal (4059) [*] D</tspan>
+</text>
+</g>
+<g id="2002698230"><polygon points="2498,1668 2745,1668 2745,1899 2498,1899 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2495,1671 2742,1671 2742,1902 2495,1902 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2505" y="1686">w:PowCamp or w:PowHospital G107 (~</tspan>
+<tspan x="2606" y="1702">205)</tspan>
+</text>
+<line x1="2499" y1="1705" x2="2740" y2="1705"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2499" y="1717">geo:lat (165) [*] </tspan>
+<tspan x="2499" y="1732">geo:long (165) [*] </tspan>
+<tspan x="2499" y="1747">rdf:type (205) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2499" y="1762">s_prisoners:camp_id (150) [*] </tspan>
+<tspan x="2499" y="1777">s_prisoners:camp_information (125) [*] </tspan>
+<tspan x="2499" y="1792">s_prisoners:camp_photographs (19) [*] </tspan>
+<tspan x="2499" y="1807">s_prisoners:captivity_location (120) [1] D</tspan>
+<tspan x="2499" y="1822">s_prisoners:coordinates (166) [*] </tspan>
+<tspan x="2499" y="1837">s_prisoners:hospital_type (78) [1] D</tspan>
+<tspan x="2499" y="1852">s_prisoners:time_of_operation (67) [*] D</tspan>
+<tspan x="2499" y="1867">skos:prefLabel (205) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2499" y="1882">w:PowCamp (120)</tspan>
+<tspan x="2499" y="1897">w:PowHospital (85)</tspan>
+</text>
+</g>
+<g id="2002698274"><polygon points="3322,1053 3622,1053 3622,1103 3322,1103 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3436" y="1068">suo:valtio (1)</tspan>
+</text>
+<line x1="3326" y1="1071" x2="3620" y2="1071"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3326" y="1083">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3326" y="1098">skos:prefLabel (1) [*] </tspan>
+</text>
+</g>
+<g id="2002698109"><polygon points="3325,1108 3625,1108 3625,1249 3325,1249 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="3322,1111 3622,1111 3622,1252 3322,1252 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3326" y="1126">w:UnitCategory or skos:OrderedCollection G114 (~</tspan>
+<tspan x="3460" y="1142">185)</tspan>
+</text>
+<line x1="3326" y1="1145" x2="3620" y2="1145"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3326" y="1157">dct:source (185) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="3326" y="1172">BibliographicResource</tspan>
+<tspan x="3326" y="1187">rdf:type (185) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3326" y="1202">skos:memberList (3) [1] D -&gt; IRI</tspan>
+<tspan x="3326" y="1217">skos:prefLabel (185) [*] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3326" y="1232">skos:OrderedCollection (3)</tspan>
+<tspan x="3326" y="1247">w:UnitCategory (182)</tspan>
+</text>
+</g>
+<g id="2002698153"><polygon points="2635,479 2867,479 2867,524 2635,524 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2672" y="494">ammo_s:Occupation (2258)</tspan>
+</text>
+<line x1="2639" y1="497" x2="2865" y2="497"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2639" y="509">ammo_s:hisco_product (32) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002698219"><polygon points="2384,225 2684,225 2684,356 2384,356 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2464" y="240">ammo_s:Concept (2447)</tspan>
+</text>
+<line x1="2388" y1="243" x2="2682" y2="243"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2388" y="255">ammo_s:coo1980_code (2310) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="2388" y="270">ammo_s:hisco_code (2448) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="2388" y="285">ammo_s:hisco_relation (208) [1] D -&gt; IRI</tspan>
+<tspan x="2388" y="300">ammo_s:hisco_status (650) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002698472"><polygon points="2764,10 3064,10 3064,225 2764,225 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2855" y="25">skos:Concept (7090)</tspan>
+</text>
+<line x1="2768" y1="28" x2="3062" y2="28"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2768" y="40">ammo_s:hiscam (361) [1] D</tspan>
+<tspan x="2768" y="55">dct:issued (377) [1] D</tspan>
+<tspan x="2768" y="70">dct:source (674) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="2768" y="85">BibliographicResource</tspan>
+<tspan x="2768" y="100">dct:spatial (843) [1] D</tspan>
+<tspan x="2768" y="115">rdf:type (1.4e4) [*]  -&gt;  owl:Class</tspan>
+<tspan x="2768" y="130">rdfs:label (2) [*] </tspan>
+<tspan x="2768" y="145">s_articles:order (1168) [1] D</tspan>
+<tspan x="2768" y="160">skos:altLabel (1270) [*] </tspan>
+<tspan x="2768" y="175">skos:exactMatch (33) [1] D -&gt; IRI</tspan>
+<tspan x="2768" y="190">skos:note (254) [1] </tspan>
+<tspan x="2768" y="205">skos:prefLabel (8311) [*] </tspan>
+<tspan x="2768" y="220">skos:relatedMatch (2880) [*] D -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002698450"><polygon points="2632,374 2829,374 2829,470 2632,470 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="2629,377 2826,377 2826,473 2629,473 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2634" y="392">ammo_s:Title et al. G102 (~191)</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2633" y="407">ammo_s:Degree (40)</tspan>
+<tspan x="2633" y="422">ammo_s:Military_rank (66)</tspan>
+<tspan x="2633" y="437">ammo_s:Role (17)</tspan>
+<tspan x="2633" y="452">ammo_s:Title (68)</tspan>
+</text>
+</g>
+<g id="2002698417"><polygon points="3304,1285 3604,1285 3604,1335 3304,1335 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3408" y="1300">rdfs:Property (7)</tspan>
+</text>
+<line x1="3308" y1="1303" x2="3602" y2="1303"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3308" y="1315">rdf:type (7) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3308" y="1330">skos:prefLabel (14) [*] </tspan>
+</text>
+</g>
+<g id="2002698197"><polygon points="645,817 895,817 895,862 645,862 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="719" y="832">biocrm:Brother (2)</tspan>
+</text>
+<line x1="649" y1="835" x2="893" y2="835"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="649" y="847">rdf:type (2) [*]  -&gt;  owl:Class</tspan>
+</text>
+</g>
+<g id="2002698351"><polygon points="615,1152 843,1152 843,1259 615,1259 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="626" y="1167">crm:E73_Information_Object (5.0e5)</tspan>
+</text>
+<line x1="619" y1="1170" x2="841" y2="1170"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="619" y="1182">rdf:type (5.0e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="619" y="1197">schema:contentUrl (5.0e5 1%d) [*]  -&gt; </tspan>
+<tspan x="619" y="1212">IRI</tspan>
+<tspan x="619" y="1227">skos:prefLabel (9.9e5) [*] </tspan>
+</text>
+</g>
+<g id="2002697900"><polygon points="3307,128 3607,128 3607,223 3307,223 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3418" y="143">sd:Service (1)</tspan>
+</text>
+<line x1="3311" y1="146" x2="3605" y2="146"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3311" y="158">rdf:type (1) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3311" y="173">sd:defaultEntailmentRegime (1) [1] D -&gt; IRI</tspan>
+<tspan x="3311" y="188">sd:feature (2) [*] D -&gt; IRI</tspan>
+<tspan x="3311" y="203">sd:resultFormat (4) [*] D -&gt; IRI</tspan>
+<tspan x="3311" y="218">sd:supportedLanguage (1) [1] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002698505"><polygon points="3442,284 3630,284 3630,349 3442,349 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3477" y="299">sd:NamedGraph (14)</tspan>
+</text>
+<line x1="3446" y1="302" x2="3628" y2="302"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3446" y="314">rdf:type (14) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3446" y="329">sd:graph (14) [1] D -&gt; dgr,IRI</tspan>
+<tspan x="3446" y="344">sd:name (14) [1] D -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002698120"><polygon points="2902,671 3079,671 3079,716 2902,716 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="2937" y="686">skos:Collection (2)</tspan>
+</text>
+<line x1="2906" y1="689" x2="3077" y2="689"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2906" y="701">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002697911"><polygon points="3188,644 3412,644 3412,740 3188,740 "
+style="fill:#FBECAE; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3211" y="659">skos:ConceptScheme or skos:</tspan>
+<tspan x="3238" y="675">Collection S115 (~19)</tspan>
+</text>
+<line x1="3192" y1="678" x2="3410" y2="678"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3192" y="690">dct:source (2) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="3192" y="705">BibliographicResource</tspan>
+<tspan x="3192" y="720">rdf:type (2) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3192" y="735">skos:member (156) [*] R -&gt; dgr,IRI</tspan>
+</text>
+</g>
+<g id="2002698186"><polygon points="3443,843 3636,843 3636,983 3443,983 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3493" y="858">owl:Ontology (2)</tspan>
+</text>
+<line x1="3447" y1="861" x2="3634" y2="861"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3447" y="873">dct:date (1) [1] D</tspan>
+<tspan x="3447" y="888">dct:description (1) [*] </tspan>
+<tspan x="3447" y="903">dct:license (1) [1]  -&gt; IRI</tspan>
+<tspan x="3447" y="918">dct:modified (1) [1] D</tspan>
+<tspan x="3447" y="933">dct:subject (1) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="3447" y="948">dct:title (1) [*] </tspan>
+<tspan x="3447" y="963">rdf:type (2) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3447" y="978">skos:prefLabel (2) [*] </tspan>
+</text>
+</g>
+<g id="2002697988"><polygon points="3418,645 3632,645 3632,740 3418,740 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3468" y="660">foaf:Organization (2)</tspan>
+</text>
+<line x1="3422" y1="663" x2="3630" y2="663"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3422" y="675">foaf:homepage (1) [1] </tspan>
+<tspan x="3422" y="690">foaf:mbox (1) [1] D</tspan>
+<tspan x="3422" y="705">foaf:phone (1) [1] D</tspan>
+<tspan x="3422" y="720">rdf:type (2) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3422" y="735">skos:prefLabel (4) [*] </tspan>
+</text>
+</g>
+<g id="2002698428"><polygon points="3070,331 3297,331 3297,561 3070,561 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="3067,334 3294,334 3294,564 3067,564 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3106" y="349">sd:Dataset et al. G101 (1)</tspan>
+</text>
+<line x1="3071" y1="352" x2="3292" y2="352"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3071" y="364">dct:description (1) [*] </tspan>
+<tspan x="3071" y="379">dct:license (1) [1]  -&gt; IRI</tspan>
+<tspan x="3071" y="394">dct:subject (5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="3071" y="409">dct:title (2) [*] </tspan>
+<tspan x="3071" y="424">foaf:homepage (1) [1]  -&gt; IRI</tspan>
+<tspan x="3071" y="439">ldf:dataVisualization (1) [1]  -&gt; IRI</tspan>
+<tspan x="3071" y="454">ldf:starRating (1) [1] D</tspan>
+<tspan x="3071" y="469">rdf:type (3) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3071" y="484">void:dataDump (1) [1] D -&gt; IRI</tspan>
+<tspan x="3071" y="499">void:uriLookupEndPoint (1) [1] D -&gt; IRI</tspan>
+<tspan x="3071" y="514">void:uriSpace (1) [1] </tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3071" y="529">dcat:Dataset (1)</tspan>
+<tspan x="3071" y="544">sd:Dataset (1)</tspan>
+<tspan x="3071" y="559">void:Dataset (1)</tspan>
+</text>
+</g>
+<g id="2002698395"><polygon points="3307,396 3630,396 3630,611 3307,611 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3429" y="411">sd:Graph (15)</tspan>
+</text>
+<line x1="3311" y1="414" x2="3628" y2="414"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3311" y="426">dct:description (15) [*] </tspan>
+<tspan x="3311" y="441">dct:license (15) [1]  -&gt; IRI</tspan>
+<tspan x="3311" y="456">dct:rightsHolder (11) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="3311" y="471">dct:source (1) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="3311" y="486">BibliographicResource</tspan>
+<tspan x="3311" y="501">dct:title (15) [*] </tspan>
+<tspan x="3311" y="516">ldf:dataDocumentation (14) [1] D -&gt; IRI</tspan>
+<tspan x="3311" y="531">ldf:dataVisualization (10) [1] </tspan>
+<tspan x="3311" y="546">rdf:type (15) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3311" y="561">void:exampleResource (15) [1] D -&gt;  w:Rank,w:Medal..(12)</tspan>
+<tspan x="3311" y="576">void:uriSpace (15) [1] </tspan>
+<tspan x="3311" y="591">void:vocabulary (86) [*] D -&gt; IRI</tspan>
+</text>
+</g>
+<g id="2002698087"><polygon points="3389,1688 3606,1688 3606,1843 3389,1843 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="3451" y="1703">rdf:Property (14)</tspan>
+</text>
+<line x1="3393" y1="1706" x2="3604" y2="1706"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3393" y="1718">owl:inverseOf (1) [1] D -&gt; IRI</tspan>
+<tspan x="3393" y="1733">rdf:type (21) [*]  -&gt;  owl:Class</tspan>
+<tspan x="3393" y="1748">rdfs:comment (13) [*] </tspan>
+<tspan x="3393" y="1763">rdfs:domain (8) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3393" y="1778">rdfs:isDefinedBy (13) [1]  -&gt; IRI</tspan>
+<tspan x="3393" y="1793">rdfs:label (18) [*] </tspan>
+<tspan x="3393" y="1808">rdfs:range (8) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3393" y="1823">rdfs:subPropertyOf (6) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="3393" y="1838">skos:definition (7) [1] </tspan>
+</text>
+</g>
+<g id="2002698318"><polygon points="42,862 395,862 395,1617 42,1617 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<polygon points="39,865 392,865 392,1620 39,1620 "
+style="fill:#F4D03F; stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="113" y="880">w:Photography et al. G109 (~3.4e5)</tspan>
+</text>
+<line x1="43" y1="883" x2="390" y2="883"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="43" y="895">crm:P100_was_death_of (9.9e4) [*] D -&gt; dgr,IRI</tspan>
+<tspan x="43" y="910">crm:P11_had_participant (5.0e4) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="43" y="925">crm:P4_has_time-span (2.9e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="43" y="940">crm:P7_took_place_at (2.2e5) [*]  -&gt; dgr,IRI</tspan>
+<tspan x="43" y="955">crm:P95_has_formed (3879) [1]  -&gt; dgr,IRI</tspan>
+<tspan x="43" y="970">crm:P98_brought_into_life (1.0e5) [1] D -&gt; dgr,IRI</tspan>
+<tspan x="43" y="985">dct:description (1.1e5) [*] </tspan>
+<tspan x="43" y="1000">dct:source (3.4e5) [*]  -&gt;  w:Source or dct:</tspan>
+<tspan x="43" y="1015">BibliographicResource</tspan>
+<tspan x="43" y="1030">foaf:page (1) [*]  -&gt; IRI</tspan>
+<tspan x="43" y="1045">narc:menehtymisluokka (604) [1] D -&gt; IRI</tspan>
+<tspan x="43" y="1060">rdf:type (3.4e5) [*]  -&gt;  owl:Class</tspan>
+<tspan x="43" y="1075">s_actors:comment (61) [1] </tspan>
+<tspan x="43" y="1090">s_actors:number (61) [1] D</tspan>
+<tspan x="43" y="1105">s_events:aircraft (231) [1] D</tspan>
+<tspan x="43" y="1120">s_events:enemy_aircraft (233) [1] D</tspan>
+<tspan x="43" y="1135">s_events:hadCommander (723) [*] D</tspan>
+<tspan x="43" y="1150">s_events:hadUnit (769) [*] D</tspan>
+<tspan x="43" y="1165">s_events:pilot (233) [1] D</tspan>
+<tspan x="43" y="1180">s_events:place_string (233) [1] D</tspan>
+<tspan x="43" y="1195">s_events:time_end (233) [1] D</tspan>
+<tspan x="43" y="1210">s_events:time_start (233) [1] D</tspan>
+<tspan x="43" y="1225">skos:altLabel (3161) [*] </tspan>
+<tspan x="43" y="1240">skos:prefLabel (5.5e5) [*] </tspan>
+<tspan x="43" y="1255">skos:related (584) [*]  -&gt; IRI</tspan>
+<tspan x="43" y="1270">w_actors:comment (52) [*] </tspan>
+<tspan x="43" y="1285">w_actors:hasPlace (1826) [*] </tspan>
+<tspan x="43" y="1300">w_actors:number (52) [1] </tspan>
+<tspan x="43" y="1315">w_actors:placed_at (617) [*] </tspan>
+<tspan x="43" y="1330">w_events:aircraft (1) [1] D</tspan>
+<tspan x="43" y="1345">w_events:enemy_aircraft (1) [1] D</tspan>
+<tspan x="43" y="1360">w_events:pilot (1) [1] D</tspan>
+<tspan x="43" y="1375">w_events:place_string (1) [1] D</tspan>
+<tspan x="43" y="1390">w_events:time_end (1) [1] D</tspan>
+<tspan x="43" y="1405">w_events:time_start (1) [1] D</tspan>
+<tspan x="43" y="1420">&lt;-void:exampleResource (1) D &lt;-  sd:Graph</tspan>
+</text>
+<text style="font-family:Arial;font-size:11px;kerning:0;word-spacing:-1px;fill:Black;font-weight:bold;">
+<tspan x="43" y="1435">w:Battle (938)</tspan>
+<tspan x="43" y="1450">w:Birth (1.0e5)</tspan>
+<tspan x="43" y="1465">w:Bombardment (78)</tspan>
+<tspan x="43" y="1480">w:Capture (4202)</tspan>
+<tspan x="43" y="1495">w:Death (9.9e4)</tspan>
+<tspan x="43" y="1510">w:Disappearing (5292)</tspan>
+<tspan x="43" y="1525">w:Event (154)</tspan>
+<tspan x="43" y="1540">w:MilitaryActivity (567)</tspan>
+<tspan x="43" y="1555">w:Photography (1.2e5)</tspan>
+<tspan x="43" y="1570">w:PoliticalActivity (231)</tspan>
+<tspan x="43" y="1585">w:TroopMovement (684)</tspan>
+<tspan x="43" y="1600">w:UnitNaming (3250)</tspan>
+<tspan x="43" y="1615">w:Wounding (7842)</tspan>
+</text>
+</g>
+<g id="2002697261"><path d="M3054,820 L2769,820 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2775" y1="817" x2="2769" y2="820"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2775" y1="823" x2="2769" y2="820"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2895" y="833">skos:hasTopConcept (11) D</tspan>
+</text>
+</g>
+<g id="2002697321"><path d="M351,457 L741,457 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="454" x2="741" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="460" x2="741" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="355" y="455">crm:P11_had_participant (1.1e5) </tspan>
+</text>
+</g>
+<g id="2002697336"><path d="M843,1173 L989,1173 993,1171 995,1167 995,1146 993,1142 989,1140 959,1140 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="965" y1="1137" x2="959" y2="1140"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="965" y1="1143" x2="959" y2="1140"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="847" y="1171">s_photos:size (5.0e5) DR</tspan>
+</text>
+</g>
+<g id="2002697376"><path d="M3233,1642 L3383,1642 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3377" y1="1639" x2="3383" y2="1642"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3377" y1="1645" x2="3383" y2="1642"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3237" y="1640">rdf:predicate (1.7e4) D</tspan>
+</text>
+</g>
+<g id="2002697396"><path d="M2933,1632 L2611,1632 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2617" y1="1629" x2="2611" y2="1632"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2617" y1="1635" x2="2611" y2="1632"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2849" y="1645">rdf:object (4) D</tspan>
+</text>
+</g>
+<g id="2002697406"><path d="M805,136 L622,136 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="628" y1="133" x2="622" y2="136"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="628" y1="139" x2="622" y2="136"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="626" y="149">crm:P4_has_time-span (1.6e4) </tspan>
+</text>
+</g>
+<g id="2002697461"><path d="M793,311 L793,374 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="790" y1="368" x2="793" y2="374"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="796" y1="368" x2="793" y2="374"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="795" y="326">crm:P70_documents (2.6e4) </tspan>
+</text>
+</g>
+<g id="2002697491"><path d="M3398,223 L3398,334 3396,338 3392,340 3294,340 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3300" y1="337" x2="3294" y2="340"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3300" y1="343" x2="3294" y2="340"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3400" y="238">sd:defaultDataset (3) DR</tspan>
+</text>
+</g>
+<g id="2002697521"><path d="M3304,1291 L3169,1291 3165,1289 3163,1285 3163,1285 3165,1281 3169,1279 3310,1279 3310,1285 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3307" y1="1279" x2="3310" y2="1285"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3313" y1="1279" x2="3310" y2="1285"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3177" y="1304">rdfs:subPropertyOf (3) </tspan>
+</text>
+</g>
+<g id="2002697551"><path d="M2933,1661 L2376,1661 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2382" y1="1658" x2="2376" y2="1661"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2382" y1="1664" x2="2376" y2="1661"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2809" y="1674">rdf:subject (1.7e4) DR</tspan>
+</text>
+</g>
+<g id="2002697556"><path d="M3389,1727 L3266,1727 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3272" y1="1724" x2="3266" y2="1727"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3272" y1="1730" x2="3266" y2="1727"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3298" y="1740">rdfs:domain (2) </tspan>
+<tspan x="3298" y="1755">rdfs:range (2) </tspan>
+</text>
+</g>
+<g id="2002697626"><path d="M2684,302 L2876,302 2880,300 2882,296 2882,225 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2879" y1="231" x2="2882" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2885" y1="231" x2="2882" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2688" y="240">ammo_s:hisclass12 (2453) DR</tspan>
+<tspan x="2688" y="255">ammo_s:hisclass7 (2452) DR</tspan>
+<tspan x="2688" y="270">ammo_s:hisclass5 (2452) DR</tspan>
+<tspan x="2688" y="285">ammo_s:hisco_code (452) D</tspan>
+<tspan x="2688" y="300">ammo_s:coo1980_code (2307) D</tspan>
+</text>
+</g>
+<g id="2002697671"><path d="M2176,154 L2764,154 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2758" y1="151" x2="2764" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2758" y1="157" x2="2764" y2="154"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2180" y="62">s_articles:event (2826) D</tspan>
+<tspan x="2180" y="77">s_articles:place (3854) DR</tspan>
+<tspan x="2180" y="92">s_articles:unit (3357) DR</tspan>
+<tspan x="2180" y="107">s_articles:volume (3357) DR</tspan>
+<tspan x="2180" y="122">s_articles:arms_of_service (3357) </tspan>
+<tspan x="2180" y="137">DR</tspan>
+<tspan x="2180" y="152">s_articles:issue (3357) DR</tspan>
+</text>
+</g>
+<g id="2002697706"><path d="M1105,223 L1352,223 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1346" y1="220" x2="1352" y2="223"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1346" y1="226" x2="1352" y2="223"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="221">dct: (1) DR</tspan>
+</text>
+</g>
+<g id="2002697731"><path d="M3383,1648 L3257,1648 3253,1650 3251,1654 3251,1721 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3248" y1="1715" x2="3251" y2="1721"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3254" y1="1715" x2="3251" y2="1721"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3278" y="1661">rdfs:domain (100) </tspan>
+<tspan x="3278" y="1676">rdfs:range (52) </tspan>
+</text>
+</g>
+<g id="2002697746"><path d="M769,638 L1792,638 1796,636 1798,632 1798,285 1800,281 1804,279 2384,279 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2378" y1="276" x2="2384" y2="279"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2378" y1="282" x2="2384" y2="279"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="773" y="636">biocrm:has_occupation (9.1e4) R</tspan>
+</text>
+</g>
+<g id="2002697798"><path d="M2538,944 L2776,944 2780,946 2782,950 2782,1105 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2548,949 2538,944 2548,939 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2542" y="942"> </tspan>
+</text>
+</g>
+<g id="2002697804"><path d="M3406,1843 L3406,1865 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="3411,1853 3406,1843 3401,1853 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3408" y="1858"> </tspan>
+</text>
+</g>
+<g id="2002697806"><path d="M327,1756 L327,1798 329,1802 333,1804 495,1804 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="332,1766 327,1756 322,1766 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="329" y="1771"> </tspan>
+</text>
+</g>
+<g id="2002697808"><path d="M306,1756 L306,1821 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="311,1766 306,1756 301,1766 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="308" y="1771"> </tspan>
+</text>
+</g>
+<g id="2002697814"><path d="M2607,614 L2625,614 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2617,619 2607,614 2617,609 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2611" y="612"> </tspan>
+</text>
+</g>
+<g id="2002697818"><path d="M2399,620 L2399,684 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2404,630 2399,620 2394,630 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2401" y="635"> </tspan>
+</text>
+</g>
+<g id="2002697826"><path d="M747,575 L747,611 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="752,585 747,575 742,585 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="749" y="590"> </tspan>
+</text>
+</g>
+<g id="2002697756"><path d="M369,568 L741,568 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="565" x2="741" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="571" x2="741" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="373" y="566">crm:P143_joined (1.0e5) </tspan>
+</text>
+</g>
+<g id="2002697701"><path d="M793,216 L793,163 791,159 787,157 622,157 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="628" y1="154" x2="622" y2="157"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="628" y1="160" x2="622" y2="157"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="616" y="212">crm:P4_has_time-span (2.6e4) </tspan>
+</text>
+</g>
+<g id="2002697666"><path d="M369,547 L540,547 544,545 546,541 546,163 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="543" y1="169" x2="546" y2="163"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="549" y1="169" x2="546" y2="163"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="373" y="545">crm:P4_has_time-span (738) </tspan>
+</text>
+</g>
+<g id="2002697381"><path d="M347,1756 L347,1777 349,1781 353,1783 495,1783 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="489" y1="1780" x2="495" y2="1783"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="489" y1="1786" x2="495" y2="1783"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="349" y="1771">crm:P10_falls_within (4) R</tspan>
+</text>
+</g>
+<g id="2002697656"><path d="M3389,1700 L3239,1700 3239,1700 3241,1696 3245,1694 3389,1694 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3383" y1="1691" x2="3389" y2="1694"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3383" y1="1697" x2="3389" y2="1694"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3262" y="1713">rdfs:subPropertyOf (5) </tspan>
+</text>
+</g>
+<g id="2002697830"><path d="M3188,678 L3079,678 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="3178,683 3188,678 3178,673 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3174" y="691"> </tspan>
+</text>
+</g>
+<g id="2002697476"><path d="M2176,43 L2500,43 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2494" y1="40" x2="2500" y2="43"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2494" y1="46" x2="2500" y2="43"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2180" y="41">s_articles:author (3356) D</tspan>
+</text>
+</g>
+<g id="2002697796"><path d="M2764,61 L2700,61 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2754,66 2764,61 2754,56 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2750" y="74"> </tspan>
+</text>
+</g>
+<g id="2002697800"><path d="M2307,603 L2284,603 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2297,608 2307,603 2297,598 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2293" y="616"> </tspan>
+</text>
+</g>
+<g id="2002697686"><path d="M3054,758 L2567,758 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2573" y1="755" x2="2567" y2="758"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2573" y1="761" x2="2567" y2="758"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2888" y="771">skos:hasTopConcept (632) D</tspan>
+</text>
+</g>
+<g id="2002697566"><path d="M2393,684 L2393,620 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2390" y1="626" x2="2393" y2="620"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2396" y1="626" x2="2393" y2="620"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2291" y="635">s_casualties:</tspan>
+<tspan x="2291" y="650">preferred_</tspan>
+<tspan x="2291" y="665">municipality (588) </tspan>
+<tspan x="2291" y="680">D</tspan>
+</text>
+</g>
+<g id="2002697812"><path d="M2607,585 L2625,585 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2617,590 2607,585 2617,580 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2611" y="583"> </tspan>
+</text>
+</g>
+<g id="2002697711"><path d="M3169,1625 L3169,1006 3167,1002 3163,1000 2953,1000 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2959" y1="997" x2="2953" y2="1000"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2959" y1="1003" x2="2953" y2="1000"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3080" y="1621">rdf:object (55) D</tspan>
+</text>
+</g>
+<g id="2002697531"><path d="M2004,645 L2004,711 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2001" y1="705" x2="2004" y2="711"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2007" y1="705" x2="2004" y2="711"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2006" y="660">hipla:topology (625) DR</tspan>
+</text>
+</g>
+<g id="2002697601"><path d="M2278,684 L2278,645 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2275" y1="651" x2="2278" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2281" y1="651" x2="2278" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2151" y="665">s_casualties:wartime_</tspan>
+<tspan x="2151" y="680">municipality (577) DR</tspan>
+</text>
+</g>
+<g id="2002697631"><path d="M2307,543 L1992,543 1992,543 1994,539 1998,537 2307,537 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="534" x2="2307" y2="537"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="540" x2="2307" y2="537"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2155" y="556">geosparql:sfWithin (3.1e4) </tspan>
+</text>
+</g>
+<g id="2002697486"><path d="M2143,1296 L2143,645 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2140" y1="651" x2="2143" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2146" y1="651" x2="2143" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1938" y="1202">s_prisoners:municipality_of_</tspan>
+<tspan x="1938" y="1217">residence (4006) DR</tspan>
+<tspan x="1938" y="1232">s_prisoners:municipality_of_</tspan>
+<tspan x="1938" y="1247">domicile (3908) DR</tspan>
+<tspan x="1938" y="1262">s_prisoners:municipality_of_capture </tspan>
+<tspan x="1938" y="1277">(3082) DR</tspan>
+<tspan x="1938" y="1292">w:municipality_of_birth (3915) DR</tspan>
+</text>
+</g>
+<g id="2002697291"><path d="M1105,301 L1270,301 1274,303 1276,307 1276,540 1274,544 1270,546 1185,546 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1191" y1="543" x2="1185" y2="546"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1191" y1="549" x2="1185" y2="546"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="299">crm:P11_had_participant (4) </tspan>
+</text>
+</g>
+<g id="2002697466"><path d="M351,325 L534,325 538,323 540,319 540,296 534,296 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="540" y1="293" x2="534" y2="296"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="540" y1="299" x2="534" y2="296"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="355" y="323">crm:P141_assigned (6086) DR</tspan>
+</text>
+</g>
+<g id="2002697721"><path d="M320,1620 L320,1664 322,1668 326,1670 566,1670 570,1672 572,1676 572,1775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="569" y1="1769" x2="572" y2="1775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="575" y1="1769" x2="572" y2="1775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="322" y="1635">s_actors:hasConflict (4) R</tspan>
+</text>
+</g>
+<g id="2002697641"><path d="M132,1620 L132,1676 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="129" y1="1670" x2="132" y2="1676"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="135" y1="1670" x2="132" y2="1676"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="134" y="1635">s_events:related_period (1.1e5) </tspan>
+</text>
+</g>
+<g id="2002697361"><path d="M447,192 L447,175 449,171 453,169 522,169 526,171 528,175 528,192 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="525" y1="186" x2="528" y2="192"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="531" y1="186" x2="528" y2="192"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="352" y="188">owl:same (1) DR</tspan>
+</text>
+</g>
+<g id="2002697791"><path d="M228,308 L228,163 230,159 234,157 322,157 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="154" x2="322" y2="157"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="160" x2="322" y2="157"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="54" y="304">crm:P4_has_time-span (6683) </tspan>
+</text>
+</g>
+<g id="2002697776"><path d="M351,346 L2307,346 2311,348 2313,352 2313,457 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2310" y1="451" x2="2313" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2316" y1="451" x2="2313" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="355" y="344">crm:P7_took_place_at (1) </tspan>
+</text>
+</g>
+<g id="2002697281"><path d="M1105,244 L1340,244 1344,246 1346,250 1346,322 1348,326 1352,328 2313,328 2317,330 2319,334 2319,457 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2316" y1="451" x2="2319" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2322" y1="451" x2="2319" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="242">crm:P7_took_place_at (1605) </tspan>
+</text>
+</g>
+<g id="2002697331"><path d="M2176,231 L2366,231 2370,233 2372,237 2372,457 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2369" y1="451" x2="2372" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2375" y1="451" x2="2372" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2180" y="229">s_articles:mentionsPlace (593) D</tspan>
+</text>
+</g>
+<g id="2002697296"><path d="M2764,160 L2384,160 2380,162 2378,166 2378,457 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2375" y1="451" x2="2378" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2381" y1="451" x2="2378" y2="457"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2616" y="173">skos:relatedMatch (476) D</tspan>
+</text>
+</g>
+<g id="2002697832"><path d="M2764,197 L2684,197 2680,199 2678,203 2678,225 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2754,202 2764,197 2754,192 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2750" y="210"> </tspan>
+</text>
+</g>
+<g id="2002697351"><path d="M2501,832 L2501,815 2503,811 2507,809 2597,809 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2591" y1="806" x2="2597" y2="809"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2591" y1="812" x2="2597" y2="809"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2349" y="828">w:mother_tongue (9.9e4) R</tspan>
+</text>
+</g>
+<g id="2002697736"><path d="M2769,1174 L2566,1174 2562,1172 2560,1168 2560,764 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2557" y1="770" x2="2560" y2="764"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2563" y1="770" x2="2560" y2="764"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2568" y="1187">s_casualties:municipality_of_burial </tspan>
+<tspan x="2568" y="1202">(9.4e4) D</tspan>
+<tspan x="2568" y="1217">s_casualties:municipality_of_</tspan>
+<tspan x="2568" y="1232">domicile (9.3e4) DR</tspan>
+<tspan x="2568" y="1247">s_casualties:municipality_of_</tspan>
+<tspan x="2568" y="1262">residence (8.8e4) DR</tspan>
+<tspan x="2568" y="1277">s_casualties:municipality_of_birth </tspan>
+<tspan x="2568" y="1292">(8.2e4) DR</tspan>
+<tspan x="2568" y="1307">s_casualties:municipality_of_death </tspan>
+<tspan x="2568" y="1322">(4.2e4) DR</tspan>
+<tspan x="2568" y="1337">s_casualties:municipality_of_</tspan>
+<tspan x="2568" y="1352">wounding (7673) DR</tspan>
+<tspan x="2568" y="1367">s_casualties:municipality_of_going</tspan>
+<tspan x="2568" y="1382">_mia (4117) DR</tspan>
+</text>
+</g>
+<g id="2002697371"><path d="M2776,1105 L2776,1085 2774,1081 2770,1079 2591,1079 2587,1077 2585,1073 2585,1014 2587,1010 2591,1008 2788,1008 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="1005" x2="2788" y2="1008"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="1011" x2="2788" y2="1008"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2620" y="1101">w:marital_status (9.5e4) DR</tspan>
+</text>
+</g>
+<g id="2002697676"><path d="M2769,1111 L2585,1111 2581,1109 2579,1105 2579,956 2581,952 2585,950 2788,950 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="947" x2="2788" y2="950"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="953" x2="2788" y2="950"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2632" y="1124">w:citizenship (9.5e4) DR</tspan>
+</text>
+</g>
+<g id="2002697661"><path d="M2769,1132 L2579,1132 2575,1130 2573,1126 2573,932 2579,932 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2573" y1="929" x2="2579" y2="932"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2573" y1="935" x2="2579" y2="932"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2635" y="1145">w:nationality (9.5e4) DR</tspan>
+</text>
+</g>
+<g id="2002697341"><path d="M2769,1153 L2573,1153 2569,1151 2567,1147 2567,876 2573,876 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2567" y1="873" x2="2573" y2="876"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2567" y1="879" x2="2573" y2="876"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2651" y="1166">w:gender (9.5e4) DR</tspan>
+</text>
+</g>
+<g id="2002697411"><path d="M3054,847 L2738,847 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2744" y1="844" x2="2738" y2="847"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2744" y1="850" x2="2738" y2="847"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2902" y="860">skos:hasTopConcept (3) D</tspan>
+</text>
+</g>
+<g id="2002697541"><path d="M3054,889 L2800,889 2796,891 2794,895 2794,906 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2791" y1="900" x2="2794" y2="906"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2797" y1="900" x2="2794" y2="906"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2895" y="902">skos:hasTopConcept (10) D</tspan>
+</text>
+</g>
+<g id="2002697286"><path d="M3188,650 L3061,650 3057,648 3055,644 3055,225 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3052" y1="231" x2="3055" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3058" y1="231" x2="3055" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3063" y="663">skos:member (607) R</tspan>
+</text>
+</g>
+<g id="2002697436"><path d="M3054,868 L2764,868 2760,870 2758,874 2758,913 2756,917 2752,919 2747,919 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2753" y1="916" x2="2747" y2="919"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2753" y1="922" x2="2747" y2="919"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2895" y="881">skos:hasTopConcept (11) D</tspan>
+</text>
+</g>
+<g id="2002697766"><path d="M3091,751 L3091,734 3089,730 3085,728 2894,728 2890,726 2888,722 2888,225 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2885" y1="231" x2="2888" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2891" y1="231" x2="2888" y2="225"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2920" y="747">skos:hasTopConcept (2542) D</tspan>
+</text>
+</g>
+<g id="2002697786"><path d="M2894,225 L2894,716 2896,720 2900,722 3091,722 3095,724 3097,728 3097,751 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3094" y1="745" x2="3097" y2="751"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3100" y1="745" x2="3097" y2="751"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2896" y="240">skos:inScheme (4055) DR</tspan>
+<tspan x="2896" y="255">skos:topConceptOf (41) DR</tspan>
+</text>
+</g>
+<g id="2002697761"><path d="M2925,1105 L2925,1070 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2922" y1="1076" x2="2925" y2="1070"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2928" y1="1076" x2="2925" y2="1070"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2790" y="1086">s_casualties:perishing_</tspan>
+<tspan x="2790" y="1101">category (9.5e4) DR</tspan>
+</text>
+</g>
+<g id="2002697828"><path d="M2266,971 L2155,971 2151,973 2149,977 2149,1296 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2256,976 2266,971 2256,966 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2252" y="984"> </tspan>
+</text>
+</g>
+<g id="2002697696"><path d="M2350,1296 L2350,1008 2352,1004 2356,1002 2788,1002 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="999" x2="2788" y2="1002"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2782" y1="1005" x2="2788" y2="1002"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2157" y="1277">s_prisoners:marital_status (3643) </tspan>
+<tspan x="2157" y="1292">DR</tspan>
+</text>
+</g>
+<g id="2002697386"><path d="M369,598 L1167,598 1171,600 1173,604 1173,676 1175,680 1179,682 1308,682 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1302" y1="679" x2="1308" y2="682"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1302" y1="685" x2="1308" y2="682"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="373" y="596">crm:P144_joined_with (1.0e5) </tspan>
+</text>
+</g>
+<g id="2002697691"><path d="M2266,927 L1164,927 1160,925 1158,921 1158,575 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1155" y1="581" x2="1158" y2="575"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1161" y1="581" x2="1158" y2="575"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2155" y="940">crm:P70_</tspan>
+<tspan x="2155" y="955">documents (9.9e4) </tspan>
+</text>
+</g>
+<g id="2002697621"><path d="M392,948 L1146,948 1150,946 1152,942 1152,575 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1149" y1="581" x2="1152" y2="575"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1155" y1="581" x2="1152" y2="575"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="396" y="931">crm:P11_had_participant (5.0e4) </tspan>
+<tspan x="396" y="946">crm:P14_carried_out_by (8.8e4) </tspan>
+</text>
+</g>
+<g id="2002697391"><path d="M741,421 L583,421 583,421 585,417 589,415 741,415 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="412" x2="741" y2="415"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="735" y1="418" x2="741" y2="415"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="600" y="434">owl:sameAs (246) </tspan>
+<tspan x="600" y="449">owl:differentFrom (1019) </tspan>
+</text>
+</g>
+<g id="2002697326"><path d="M2024,1630 L1599,1630 1595,1628 1593,1624 1593,1568 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1590" y1="1574" x2="1593" y2="1568"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1596" y1="1574" x2="1593" y2="1568"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1856" y="1643">w:person_document (2306) R</tspan>
+</text>
+</g>
+<g id="2002697451"><path d="M1876,184 L1670,184 1666,186 1664,190 1664,611 1662,615 1658,617 769,617 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="775" y1="614" x2="769" y2="617"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="775" y1="620" x2="769" y2="617"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1672" y="197">dct:subject (33) </tspan>
+<tspan x="1672" y="212">s_articles:mentionsPerson (3957) D</tspan>
+</text>
+</g>
+<g id="2002697356"><path d="M769,706 L1140,706 1144,708 1146,712 1146,957 1148,961 1152,963 2266,963 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2260" y1="960" x2="2266" y2="963"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2260" y1="966" x2="2266" y2="963"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="773" y="689">crm:P70i_is_documented_in (9.</tspan>
+<tspan x="773" y="704">9e4) D</tspan>
+</text>
+</g>
+<g id="2002697716"><path d="M2024,1567 L1843,1567 1839,1565 1837,1561 1837,1180 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1834" y1="1186" x2="1837" y2="1180"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1840" y1="1186" x2="1837" y2="1180"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1866" y="1580">s_prisoners:rank (4138) DR</tspan>
+</text>
+</g>
+<g id="2002697651"><path d="M2024,1588 L1819,1588 1815,1586 1813,1582 1813,1276 1811,1272 1807,1270 1785,1270 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1791" y1="1267" x2="1785" y2="1270"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1791" y1="1273" x2="1785" y2="1270"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1821" y="1601">w:sotilaan_aani_magazine (1982) R</tspan>
+</text>
+</g>
+<g id="2002697446"><path d="M2024,1609 L1813,1609 1809,1607 1807,1603 1807,1447 1805,1443 1801,1441 1790,1441 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1796" y1="1438" x2="1790" y2="1441"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1796" y1="1444" x2="1790" y2="1441"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1842" y="1622">w:documented_in_video (265) R</tspan>
+</text>
+</g>
+<g id="2002697751"><path d="M2024,1651 L1565,1651 1561,1649 1559,1645 1559,904 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1556" y1="910" x2="1559" y2="904"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1562" y1="910" x2="1559" y2="904"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1879" y="1664">s_prisoners:unit (3855) D</tspan>
+</text>
+</g>
+<g id="2002697501"><path d="M769,769 L1014,769 1018,771 1020,775 1020,1503 1022,1507 1026,1509 1565,1509 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1559" y1="1506" x2="1565" y2="1509"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1559" y1="1512" x2="1565" y2="1509"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="773" y="767">w:person_document (2306) R</tspan>
+</text>
+</g>
+<g id="2002697741"><path d="M2769,1411 L2406,1411 2402,1409 2400,1405 2400,1121 2398,1117 2394,1115 2089,1115 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2095" y1="1112" x2="2089" y2="1115"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2095" y1="1118" x2="2089" y2="1115"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2604" y="1424">s_casualties:rank (9.4e4) DR</tspan>
+</text>
+</g>
+<g id="2002697506"><path d="M1958,756 L1958,799 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1955" y1="793" x2="1958" y2="799"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1961" y1="793" x2="1958" y2="799"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1960" y="771">hipla:within (625) DR</tspan>
+</text>
+</g>
+<g id="2002697596"><path d="M392,990 L1876,990 1880,988 1882,984 1882,580 1884,576 1888,574 2307,574 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="571" x2="2307" y2="574"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="577" x2="2307" y2="574"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="396" y="988">crm:P7_took_place_at (2.1e5) </tspan>
+</text>
+</g>
+<g id="2002697496"><path d="M1608,682 L1861,682 1865,680 1867,676 1867,574 1869,570 1873,568 2307,568 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="565" x2="2307" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2301" y1="571" x2="2307" y2="568"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1612" y="680">crm:P7_took_place_at (92) </tspan>
+</text>
+</g>
+<g id="2002697421"><path d="M1608,816 L1775,816 1779,814 1781,810 1781,773 1779,769 1775,767 1608,767 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="764" x2="1608" y2="767"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="770" x2="1608" y2="767"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1612" y="814">w_actors:hasUpperUnit (70) </tspan>
+</text>
+</g>
+<g id="2002697681"><path d="M351,367 L1868,367 1872,369 1874,373 1874,1025 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1871" y1="1019" x2="1874" y2="1025"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1877" y1="1019" x2="1874" y2="1025"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="355" y="365">s_actors:hasRank (1.1e5) </tspan>
+</text>
+</g>
+<g id="2002697346"><path d="M2769,1390 L2412,1390 2408,1388 2406,1384 2406,1002 2404,998 2400,996 1874,996 1870,994 1868,990 1868,896 1866,892 1862,890 1608,890 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="887" x2="1608" y2="890"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="893" x2="1608" y2="890"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2617" y="1403">s_casualties:unit (8.8e4) D</tspan>
+</text>
+</g>
+<g id="2002697516"><path d="M769,727 L1134,727 1138,729 1140,733 1140,1097 1142,1101 1146,1103 1583,1103 1587,1105 1589,1109 1589,1211 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1586" y1="1205" x2="1589" y2="1211"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1592" y1="1205" x2="1589" y2="1211"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="773" y="725">w:sotilaan_aani_magazine (1982) R</tspan>
+</text>
+</g>
+<g id="2002697456"><path d="M1876,220 L1702,220 1698,222 1696,226 1696,655 1694,659 1690,661 1608,661 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="658" x2="1608" y2="661"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1614" y1="664" x2="1608" y2="661"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1704" y="233">s_articles:mentionsUnit (59) D</tspan>
+</text>
+</g>
+<g id="2002697561"><path d="M1105,280 L1334,280 1338,282 1340,286 1340,340 1340,340 1336,342 1334,346 1334,644 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1331" y1="638" x2="1334" y2="644"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1337" y1="638" x2="1334" y2="644"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1109" y="263">crm:P99_dissolved (7710) D</tspan>
+<tspan x="1109" y="278">crm:P95_has_formed (1.3e4) </tspan>
+</text>
+</g>
+<g id="2002697571"><path d="M769,748 L1020,748 1024,750 1026,754 1026,1435 1028,1439 1032,1441 1583,1441 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1577" y1="1438" x2="1583" y2="1441"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1577" y1="1444" x2="1583" y2="1441"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="773" y="746">w:documented_in_video (279) R</tspan>
+</text>
+</g>
+<g id="2002697771"><path d="M1253,1521 L1085,1521 1081,1519 1079,1515 1079,1249 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1076" y1="1255" x2="1079" y2="1249"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1082" y1="1255" x2="1079" y2="1249"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1087" y="1534">crm:P138_represents (2431) </tspan>
+</text>
+</g>
+<g id="2002697726"><path d="M843,1222 L1048,1222 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1042" y1="1219" x2="1048" y2="1222"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1042" y1="1225" x2="1048" y2="1222"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="847" y="1220">crm:P138_represents (5.0e5) </tspan>
+</text>
+</g>
+<g id="2002697802"><path d="M1048,1228 L971,1228 967,1230 965,1234 965,1265 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1038,1233 1048,1228 1038,1223 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1034" y="1241"> </tspan>
+</text>
+</g>
+<g id="2002697581"><path d="M392,1614 L1253,1614 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1247" y1="1611" x2="1253" y2="1614"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1247" y1="1617" x2="1253" y2="1614"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="396" y="1612">crm:P94_has_created (1.7e5) DR</tspan>
+</text>
+</g>
+<g id="2002697646"><path d="M1253,1542 L648,1542 644,1540 642,1536 642,1259 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="639" y1="1265" x2="642" y2="1259"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="645" y1="1265" x2="642" y2="1259"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1061" y="1555">crm:P138i_has_representation (5.</tspan>
+<tspan x="1061" y="1570">0e5) DR</tspan>
+</text>
+</g>
+<g id="2002697316"><path d="M2376,1497 L2584,1497 2588,1499 2590,1503 2590,1528 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2587" y1="1522" x2="2590" y2="1528"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2593" y1="1522" x2="2590" y2="1528"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2380" y="1495">s_prisoners:captivity (1.1e4) DR</tspan>
+</text>
+</g>
+<g id="2002697824"><path d="M1274,1249 L1274,1515 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1279,1259 1274,1249 1269,1259 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1276" y="1264"> </tspan>
+</text>
+</g>
+<g id="2002697636"><path d="M1789,1062 L1587,1062 1583,1064 1581,1068 1581,1115 1583,1119 1587,1121 1789,1121 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1783" y1="1118" x2="1789" y2="1121"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1783" y1="1124" x2="1789" y2="1121"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1595" y="1075">dct:isPartOf (171) DR</tspan>
+<tspan x="1595" y="1090">muninn_org:equalTo (106) DR</tspan>
+<tspan x="1595" y="1105">muninn_org:rankSeniorTo (42) DR</tspan>
+</text>
+</g>
+<g id="2002697606"><path d="M2538,1638 L2538,1671 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2535" y1="1665" x2="2538" y2="1671"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2541" y1="1665" x2="2538" y2="1671"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2540" y="1653">s_prisoners:location (8845) </tspan>
+</text>
+</g>
+<g id="2002697266"><path d="M3383,1500 L3239,1500 3235,1502 3233,1506 3233,1515 3235,1519 3239,1521 3383,1521 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3377" y1="1518" x2="3383" y2="1521"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3377" y1="1524" x2="3383" y2="1521"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3249" y="1513">rdfs:subPropertyOf (30) </tspan>
+</text>
+</g>
+<g id="2002697431"><path d="M2966,1733 L2805,1733 2805,1733 2807,1729 2811,1727 2966,1727 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2960" y1="1724" x2="2966" y2="1727"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2960" y1="1730" x2="2966" y2="1727"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2837" y="1746">owl:disjointWith (1) DR</tspan>
+<tspan x="2837" y="1761">rdfs:subClassOf (80) </tspan>
+</text>
+</g>
+<g id="2002697511"><path d="M2782,1428 L2782,1508 2780,1512 2776,1514 2766,1514 2762,1516 2760,1520 2760,1944 2758,1948 2754,1950 975,1950 971,1948 969,1944 969,1510 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="966" y1="1516" x2="969" y2="1510"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="972" y1="1516" x2="969" y2="1510"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2784" y="1443">s_casualties:buried_in (5) DR</tspan>
+<tspan x="2784" y="1458">w:buried_in (8.4e4) DR</tspan>
+</text>
+</g>
+<g id="2002697820"><path d="M2684,350 L2789,350 2793,352 2795,356 2795,377 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2694,355 2684,350 2694,345 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2688" y="348"> </tspan>
+</text>
+</g>
+<g id="2002697816"><path d="M2684,329 L2843,329 2847,331 2849,335 2849,479 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="2694,334 2684,329 2694,324 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2688" y="327"> </tspan>
+</text>
+</g>
+<g id="2002697611"><path d="M2341,832 L2341,776 2343,772 2347,770 2871,770 2875,768 2877,764 2877,314 2875,310 2871,308 2684,308 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2690" y1="305" x2="2684" y2="308"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2690" y1="311" x2="2684" y2="308"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2156" y="828">biocrm:has_occupation (9.2e4) R</tspan>
+</text>
+</g>
+<g id="2002697546"><path d="M2764,16 L1664,16 1660,18 1658,22 1658,328 1656,332 1652,334 574,334 570,336 568,340 568,611 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="565" y1="605" x2="568" y2="611"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="571" y1="605" x2="568" y2="611"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="2630" y="29">skos:relatedMatch (8) D</tspan>
+</text>
+</g>
+<g id="2002697481"><path d="M3064,219 L3264,219 3268,217 3270,213 3270,97 3268,93 3264,91 3064,91 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3070" y1="88" x2="3064" y2="91"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3070" y1="94" x2="3064" y2="91"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3068" y="142">ammo_coo:socioeconomic_status </tspan>
+<tspan x="3068" y="157">(419) DR</tspan>
+<tspan x="3068" y="172">skos:broader (1783) DR</tspan>
+<tspan x="3068" y="187">skos:narrower (441) DR</tspan>
+<tspan x="3068" y="202">skos:broadMatch (3) DR</tspan>
+<tspan x="3068" y="217">skos:narrowMatch (3) DR</tspan>
+</text>
+</g>
+<g id="2002697536"><path d="M3572,128 L3572,108 3570,104 3566,102 3464,102 3460,104 3458,108 3458,128 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3455" y1="122" x2="3458" y2="128"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3461" y1="122" x2="3458" y2="128"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3466" y="124">sd:endpoint (1) DR</tspan>
+</text>
+</g>
+<g id="2002697616"><path d="M392,969 L1520,969 1524,967 1526,963 1526,904 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="1523" y1="910" x2="1526" y2="904"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="1529" y1="910" x2="1526" y2="904"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="396" y="967">crm:P95_has_formed (3857) </tspan>
+</text>
+</g>
+<g id="2002697810"><path d="M1185,569 L1317,569 1321,571 1323,575 1323,644 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="1195,574 1185,569 1195,564 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1189" y="567"> </tspan>
+</text>
+</g>
+<g id="2002697781"><path d="M871,817 L871,781 869,777 865,775 769,775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="775" y1="772" x2="769" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="775" y1="778" x2="769" y2="775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="730" y="813">biocrm:inheres_in (2) DR</tspan>
+</text>
+</g>
+<g id="2002697576"><path d="M656,781 L656,817 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="653" y1="811" x2="656" y2="817"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="659" y1="811" x2="656" y2="817"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="658" y="796">biocrm:has_family_relation (2) DR</tspan>
+</text>
+</g>
+<g id="2002697301"><path d="M1253,1578 L615,1578 611,1576 609,1572 609,781 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="606" y1="787" x2="609" y2="781"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="612" y1="787" x2="609" y2="781"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1084" y="1591">crm:P138_represents (2.3e4) </tspan>
+<tspan x="1084" y="1606">crm:P67_refers_to (1) DR</tspan>
+</text>
+</g>
+<g id="2002697441"><path d="M1314,904 L1314,934 1312,938 1308,940 602,940 598,942 596,946 596,1775 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="593" y1="1769" x2="596" y2="1775"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="599" y1="1769" x2="596" y2="1775"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="1316" y="919">s_actors:hasConflict (1.6e4) R</tspan>
+</text>
+</g>
+<g id="2002697586"><path d="M266,865 L266,788 264,784 260,782 49,782 45,780 43,776 43,157 45,153 49,151 322,151 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="148" x2="322" y2="151"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="154" x2="322" y2="151"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="89" y="861">crm:P4_has_time-span (2.9e5) </tspan>
+</text>
+</g>
+<g id="2002697271"><path d="M3284,334 L3284,215 3286,211 3290,209 3307,209 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3301" y1="206" x2="3307" y2="209"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3301" y1="212" x2="3307" y2="209"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3134" y="330">void:sparqlEndpoint (1) DR</tspan>
+</text>
+</g>
+<g id="2002697276"><path d="M3294,380 L3469,380 3473,378 3475,374 3475,349 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3472" y1="355" x2="3475" y2="349"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3478" y1="355" x2="3475" y2="349"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3298" y="378">sd:namedGraph (14) DR</tspan>
+</text>
+</g>
+<g id="2002697311"><path d="M3517,349 L3517,396 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3514" y1="390" x2="3517" y2="396"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3520" y1="390" x2="3517" y2="396"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3519" y="364">sd:graph (13) D</tspan>
+<tspan x="3519" y="379">sd:name (13) D</tspan>
+</text>
+</g>
+<g id="2002697822"><path d="M3188,723 L3143,723 3139,725 3137,729 3137,751 "
+style="fill:none;stroke-width:2;stroke:Fuchsia;"/>
+<polygon points="3178,728 3188,723 3178,718 "
+style="fill:Silver;stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3174" y="736"> </tspan>
+</text>
+</g>
+<g id="2002697471"><path d="M3082,917 L3082,988 3080,992 3076,994 2953,994 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="2959" y1="991" x2="2953" y2="994"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="2959" y1="997" x2="2953" y2="994"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3084" y="932">skos:hasTopConcept (5) D</tspan>
+</text>
+</g>
+<g id="2002697526"><path d="M3263,917 L3263,967 3265,971 3269,973 3427,973 3431,971 3433,967 3433,740 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3430" y1="746" x2="3433" y2="740"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3436" y1="746" x2="3433" y2="740"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3265" y="932">dct:creator (1) </tspan>
+<tspan x="3265" y="947">dct:rightsHolder (1) </tspan>
+</text>
+</g>
+<g id="2002697366"><path d="M3560,843 L3560,740 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3557" y1="746" x2="3560" y2="740"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3563" y1="746" x2="3560" y2="740"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3450" y="809">dct:creator (1) </tspan>
+<tspan x="3450" y="824">dct:rightsHolder (1) </tspan>
+<tspan x="3450" y="839">dct:publisher (1) R</tspan>
+</text>
+</g>
+<g id="2002697401"><path d="M3490,611 L3490,645 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3487" y1="639" x2="3490" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3493" y1="639" x2="3490" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3492" y="626">dct:rightsHolder (10) </tspan>
+</text>
+</g>
+<g id="2002697426"><path d="M3189,564 L3189,624 3191,628 3195,630 3442,630 3446,632 3448,636 3448,645 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="3445" y1="639" x2="3448" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="3451" y1="639" x2="3448" y2="645"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="3191" y="579">dct:creator (2) </tspan>
+<tspan x="3191" y="594">dct:rightsHolder (2) </tspan>
+<tspan x="3191" y="609">dct:publisher (1) R</tspan>
+</text>
+</g>
+<g id="2002697591"><path d="M392,912 L597,912 601,910 603,906 603,781 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="600" y1="787" x2="603" y2="781"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="606" y1="787" x2="603" y2="781"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="396" y="880">crm:P98_brought_into_life (1.0e5) D</tspan>
+<tspan x="396" y="895">crm:P97_from_father (1) DR</tspan>
+<tspan x="396" y="910">crm:P100_was_death_of (9.9e4) D</tspan>
+</text>
+</g>
+<g id="2002697416"><path d="M63,463 L63,661 61,665 57,667 39,667 35,669 33,673 33,1699 35,1703 39,1705 52,1705 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="46" y1="1702" x2="52" y2="1705"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="46" y1="1708" x2="52" y2="1705"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="65" y="478">s_events:related_period (1) </tspan>
+</text>
+</g>
+<g id="2002697306"><path d="M124,1756 L124,1783 122,1787 118,1789 33,1789 29,1787 27,1783 27,151 29,147 33,145 322,145 "
+style="fill:none;stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="142" x2="322" y2="145"
+ style="stroke-width:1;stroke:Black;"/>
+<line x1="316" y1="148" x2="322" y2="145"
+ style="stroke-width:1;stroke:Black;"/>
+<text style="font-family:Arial;font-size:12px;kerning:0;word-spacing:-1px;fill:Black;">
+<tspan x="126" y="1771">crm:P4_has_time-span (5) </tspan>
+</text>
+</g>
+</svg>
