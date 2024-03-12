@@ -8,7 +8,6 @@ import { dataShapes } from '/imports/client/custom/vq/js/DataShapes'
 
 import './diagrams.html'
 import { joined_date } from '../../js/utilities/time_utilities'
-import { VQ_Schema } from '/imports/client/custom/vq/js/VQ_Element'
 
 // Start of diagramsTemplate template
 
@@ -48,7 +47,7 @@ Template.diagramsTemplate.events({
 						projectId: Session.get("activeProject"),
 						versionId: Session.get("versionId")};
 
-	    Session.set("diagrams", filter);
+			Session.set("diagrams", filter);
 	},
 
 });
@@ -64,7 +63,12 @@ Template.diagramsRibbon.events({
 		$('#add-diagram').modal("show");
 	},
 
-
+	'click #saveSchema': async function(e, templ) {
+		await dataShapes.changeActiveProject(Session.get("activeProject"));
+		Dialog.destroyTooltip(e);
+		await Template.VQ_DSS_schema.rendered();
+		$('#VQ-DSS-schema').modal("show");
+	},
 
 // //shows button's tooltip on mouse over
 //     'mouseenter .btn-ribbon' : function(e, templ) {
@@ -113,9 +117,17 @@ Template.diagramsRibbon.helpers({
 		}
 
 		// tool.toolbar = "diagramsToolbar";
+		if ( project.schema != undefined ) {
+			tool.schema = ` (schema -${project.schema})`;
+			tool.hasSchema = true;
+		}
+		else {
+			tool.schema = '';
+			tool.hasSchema = false;
+		}	
 
 		return tool;
-	}
+	},
 
 
 });
@@ -175,7 +187,6 @@ Template.diagramsToolbar.events({
 		Dialog.destroyTooltip(e);
 		$('#ontology-settings-form').modal("show");
 	},
-
 	'click #migrate' : function(e, templ) {
 		Dialog.destroyTooltip(e);
 		$("#migrate-form").modal("show");

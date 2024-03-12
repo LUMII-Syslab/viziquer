@@ -46,8 +46,24 @@ Interpreter.customMethods({
 	
 })
 
+Template.VQ_DSS_schema.rendered = function() {
+	Template.VQ_DSS_schema.SchemaName.set(dataShapes.schema.schemaName);
+	Template.VQ_DSS_schema.ClassCountAll.set(dataShapes.schema.classCount);
+	Template.VQ_DSS_schema.ClassCountFiltered.set('');
+	// TODO cik lielas shēmas vispār piedāvāju vizualizēt
+	if ( dataShapes.schema.classCount < dataShapes.schema.diagram.maxCount) {
+		Template.VQ_DSS_schema.isBig.set(false);
+		setClassList0();
+	}
+	else {
+		Template.VQ_DSS_schema.isBig.set(true);
+	}
+}
 
 Template.VQ_DSS_schema.helpers({
+	pub: function() {
+		return true;
+	}, 
 	classes: function() {
 		return Template.VQ_DSS_schema.Classes.get();
 	}, 
@@ -118,15 +134,18 @@ Template.VQ_DSS_schema.helpers({
 });
 
 function getParams() {
-	const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
-	diffG:$("#diffG").val(), diffS:$("#diffS").val(), supPar:$("#supPar").val(), schema:dataShapes.schema.schema};
+	// TODO ****** Jāliek šie atpakaļ būs
+	//const par = {addIds:$("#addIds").is(":checked"), disconnBig:$("#disconnBig").val(), compView:$("#compView").is(":checked"),
+	//diffG:$("#diffG").val(), diffS:$("#diffS").val(), supPar:$("#supPar").val(), schema:dataShapes.schema.schema};
+	const par = {addIds:false, disconnBig:7, compView:true,	diffG:5, diffS:50, supPar:1, schema:dataShapes.schema.schema};
 	return par;
 }
 
 function getInfo() {
-	return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
-	$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
-	$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
+	return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`];
+	//return  [ `${dataShapes.schema.endpoint}`, `${Template.VQ_DSS_schema.ClassCountSelected.get()} classes in the diagram`,
+	//$('#nsFilter option:selected').text(), $('#disconnBig option:selected').text(),  $('#diffG option:selected').text(),
+	//$('#diffS option:selected').text(),  $('#supPar option:selected').text()];
 } 
 
 async function getClassesAndProperties() {
@@ -406,7 +425,6 @@ function setClassList0() {
 	let classCountSel = 300;
 	
 	let filteredClassList = dataShapes.schema.diagram.classList;	
-	console.log('*** Esam koka veidošanā ***', schema)
 
 	// TODO  Šis ir manai ērtībai, vai nu jāmet ārā, vai jāliek konfigurācijā
 
@@ -539,7 +557,6 @@ var Snum = 101;
 var cpc_info = [];
 var has_cpc = false;
 function clearData() {
-	console.log('Iztīra datus')
 	rezFull = {classes:{}, assoc:{}, lines:{}, schema:dataShapes.schema.schema, type:'makeSuperDiagr'}; // TODO te zīmešanai nav vairāku variantu
 	p_list_full = {}; 
 	state = 0;
@@ -557,12 +574,15 @@ function clearData() {
 // ***************** Vairākkart izmantojamās funkcijas ******************************************************
 // **********************************************************************************************************
 function getDiffs() {
+	/*  TODO ***** (vajadzēs likt atpakaļ)
 	const diffG = $("#diffG").val();
 	let diffS = $("#diffS").val();
 	if ( $("#supPar").val() == 2 ) 
 		diffS = -1; // Ja ir parametrs savilkt visparinašanas, tad arī abstraktās netiek taisītas
 	
 		return {diffG:diffG, diffS:diffS};
+	*/	
+	return {diffG:5, diffS:50};
 }
 
 // ***************** Konstantes***************************
@@ -1103,7 +1123,7 @@ async function getBasicClasses() {
 		}
 	} 
 	console.log('p_list_full', p_list_full);
-	console.log('rezFull', rezFull);
+	//console.log('rezFull', rezFull);
 }
 
 // *** Izveido klašu grupas, skatoties uz parametiem
@@ -1434,7 +1454,7 @@ function makeAssociations() {
 		}
 	}
 	for (const pId of Object.keys(p_list_full)) {
-		if ( p_list_full[pId].count  > par.remCount )
+		if ( p_list_full[pId].count  > remCount )
 			console.log('Propertija netiek vilkta', p_list_full[pId].p_name, p_list_full[pId].count);
 	}
 	for (const aa of Object.keys(rezFull.assoc)) {

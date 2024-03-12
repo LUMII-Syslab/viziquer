@@ -413,14 +413,16 @@
 
         <!-- breadcrumb -->
         <ol class="breadcrumb">
-            <li><i class="fa fa-picture-o"></i> Diagrams ({{tool.name}})</li>
+            <li><i class="fa fa-picture-o"></i> Diagrams ({{tool.name}}){{tool.schema}}</li>
         </ol>
         <!-- end breadcrumb -->
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right1">
                 <button id="add" class="btn btn-ribbon toolbar-button" data-title="New Diagram" data-toggle="tooltip" data-placement="bottom">New diagram</button>
-
+                {{#if tool.hasSchema }}
+                    <button id="saveSchema" class="btn btn-ribbon toolbar-button" data-title="Data Schema" data-toggle="tooltip" data-placement="bottom">Data Schema</button>
+                {{/if}}
                 {{> Template.dynamic template=tool.toolbar }}
             </span>
         {{/if}}
@@ -450,6 +452,7 @@
     {{> uploadProject}}
     {{> ontologySettings}}
     {{> migrateForm}}
+    {{> VQ_DSS_schema}}
 
 </template>
 
