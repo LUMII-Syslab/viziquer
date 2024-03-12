@@ -378,27 +378,33 @@ function get_multi_fields_obj() {
 		return;
 	}
 
-
-	console.log("data_in 2", data_in)
-
+	var compart_type_id = data_in["_id"];
 
 	var elem_id = Session.get("activeElement");
 
 	var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
-	var compartments = Compartments.find({compartmentTypeId: data_in["_id"], elementId: elem_id}, {sort: {index: 1}}).fetch();
+	var compartments = Compartments.find({compartmentTypeId: compart_type_id, elementId: elem_id}, {sort: {index: 1}}).fetch();
+
+	var add_button_status = "";
+	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
+	if (compart_type) {
+		var max_compart_count = compart_type.maxCompartmentsCount || Infinity;
+		if (_.size(compartments) >= max_compart_count) {
+			add_button_status = "disabled";
+		}
+	}
 
 	compartments = _.map(compartments, function(compart) {
 						_.extend(compart, {compartmentId: compart._id,});
 						return compart;
 					});
 
-
-	res["values"] = compartments;
-	res["compartmentTypeId"] = Session.get("multiRowCompartmentTypeId");
-	res["next_level_form"] = "show_multi_field_form";
-	res["elementId"] = elem_id;
-
-	console.log("res out ", res)
+	_.extend(res, {values: compartments,
+					compartmentTypeId: Session.get("multiRowCompartmentTypeId"),
+					next_level_form: "show_multi_field_form",
+					elementId: elem_id,
+					addButtonStatus: add_button_status,
+		});
 
 	return res;
 }
