@@ -48,7 +48,7 @@ This database can be used for storing further imported data schemas, as well.
 
 2. Create a new project, choose the desired DSS schema in the project creation dialogue.
 
-3. Open the project, create a query diagram. There shall be a class tree in the right hand pane. Click on the 'Extra' tab, then choose the visualization parameters.
+3. Open the project, click on the 'Data Schema' button, then choose the visualization parameters.
 
 4. Follow the instructions given on https://github.com/LUMII-Syslab/dss-schema-explorer 
 (installation of the Schema Explorer tool, generating the data in ViziQuer and copying them from ViziQuer to the Schema Explorer).
