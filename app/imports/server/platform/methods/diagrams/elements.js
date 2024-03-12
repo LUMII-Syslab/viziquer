@@ -758,7 +758,8 @@ function add_compartment_type_ids(compartments, diagram_id) {
 	});
 
 	_.each(compartments, function(compart) {
-							let compart_type_id = compart.elementTypeId;
+							// let compart_type_id = compart.elementTypeId;
+							let compart_type_id = compart.compartmentTypeId;
 							let new_compart_type_id = compart_type_id;
 							if (!compart_types_ids_map[compart_type_id]) {
 								new_compart_type_id = compart_types_names_map[compart.typeName];

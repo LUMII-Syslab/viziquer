@@ -688,7 +688,6 @@ Template.dialog.helpers({
 
 		var isOpen = true;
 		return tabs.map(function(tab) {
-
 			var tab_id = tab["_id"];
 			var type = tab["type"];
 
@@ -722,7 +721,7 @@ Template.dialog.helpers({
 
 //Generating new dialog templates
 function define_dialog_tab_template(id) {
-
+	
 	var template_structure = '{{> Template.dynamic template="dialogTabContent" data=compart_types}}';
 
 	compileTemplate(id, template_structure);
@@ -752,7 +751,6 @@ function add_template_helpers(id) {
 			return CompartmentTypes.find({dialogTabId: id}, {sort: {tabIndex: 1}}).map(
 				function(compart_type) {
 					var compartment = Compartments.findOne({compartmentTypeId: compart_type["_id"], elementId: Session.get("activeElement")});
-
 					var is_visible = Dialog.checkCompartmentVisibility(compart_type, compartment);
 					if (is_visible) {
 						return Dialog.renderDialogFields(compart_type, compartment);

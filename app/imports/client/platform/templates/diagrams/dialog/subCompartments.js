@@ -378,6 +378,10 @@ function get_multi_fields_obj() {
 		return;
 	}
 
+
+	console.log("data_in 2", data_in)
+
+
 	var elem_id = Session.get("activeElement");
 
 	var res = {	_id: data_in["_id"], name: data_in["name"], label: data_in["label"], fields: [],};
